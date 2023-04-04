@@ -1,10 +1,10 @@
 <template>
   <div>
-    <Layout />
+    <!-- <Layout /> -->
     <RouterView />
   </div>
 </template>
 
 <script setup>
-import Layout from "./components/Layout.vue";
+// import Layout from "./components/Layout.vue";
 </script>
