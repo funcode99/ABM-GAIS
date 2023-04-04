@@ -1,4 +1,5 @@
 <template>
+  <Layout />
   <div class="pt-20 sm:pl-[350px] sm:pr-8">
     <InboxNotification />
   </div>
@@ -6,4 +7,5 @@
 
 <script setup>
 import InboxNotification from "../components/InboxNotification.vue";
+import Layout from "../components/Layout.vue";
 </script>
