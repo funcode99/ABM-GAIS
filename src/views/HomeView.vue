@@ -1,9 +1,13 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+  import Sidebar from '@/components/Sidebar.vue'
+  const empty = ''
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <div>
+      
+    </div>
+    <!-- <Sidebar/> -->
   </main>
 </template>
