@@ -7,5 +7,5 @@
 
 <script setup>
 import InboxNotification from "../components/InboxNotification.vue";
-import Layout from "../components/Layout.vue";
+import Layout from "../components/layout/Layout.vue";
 </script>

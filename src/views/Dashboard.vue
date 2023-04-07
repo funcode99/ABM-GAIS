@@ -6,6 +6,6 @@
 </template>
 
 <script setup>
-import Layout from "../components/Layout.vue";
+import Layout from "../components/layout/Layout.vue";
 import DataBarChart from "../components/chart/DataBarChart.vue";
 </script>
