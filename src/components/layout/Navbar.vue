@@ -15,7 +15,7 @@ import user from "../../assets/navbar/user.svg";
     <div class="navbar-end">
       <div class="grid grid-flow-col auto-cols-max">
         <div class="flex justify-center items-center">
-          <button class="btn btn-ghost btn-circle mx-4">
+          <button class="mx-10 hover:scale-125">
             <div class="indicator">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

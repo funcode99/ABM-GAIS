@@ -2,6 +2,7 @@
 import Layout from "../../components/layout/Layout.vue";
 import TableKaryawan from "../../components/karyawan/TableKaryawan.vue";
 import Pagination from "../../components/karyawan/Pagination.vue";
+import ModalAdd from "../../components/karyawan/ModalAdd.vue";
 </script>
 
 <template>
@@ -13,11 +14,7 @@ import Pagination from "../../components/karyawan/Pagination.vue";
       <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
         karyawan
       </p>
-      <button
-        class="btn btn-success bg-[#87C556] border-none hover:bg-none capitalize text-white font-Poppins text-xs"
-      >
-        + Add New
-      </button>
+      <ModalAdd />
     </div>
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
