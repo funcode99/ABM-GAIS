@@ -80,6 +80,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             <button>
               <img :src="editicon" class="w-6 h-6" />
             </button>
+
             <button>
               <img :src="deleteicon" class="w-6 h-6" />
             </button>
