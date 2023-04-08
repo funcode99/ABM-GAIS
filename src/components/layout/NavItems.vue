@@ -1,3 +1,9 @@
+<script setup>
+const props = defineProps({
+  item: Object,
+});
+</script>
+
 <template>
   <li v-if="!item.children.length" :href="item.href">
     <a>{{ item.label }}</a>
@@ -11,9 +17,3 @@
     </component>
   </div>
 </template>
-
-<script setup>
-const props = defineProps({
-  item: Object,
-});
-</script>

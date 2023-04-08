@@ -1,3 +1,5 @@
+<script setup></script>
+
 <template>
   <h1 class="text-4xl">Notification</h1>
   <div class="overflow-x-auto py-4">

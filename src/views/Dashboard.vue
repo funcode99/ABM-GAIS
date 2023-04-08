@@ -1,8 +1,8 @@
 <template>
   <Layout />
-  <div class="pt-20 sm:pl-[350px] sm:pr-8">
+  <!-- <div class="pt-20 sm:pl-[350px] sm:pr-8">
     <DataBarChart />
-  </div>
+  </div> -->
 </template>
 
 <script setup>

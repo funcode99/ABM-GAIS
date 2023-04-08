@@ -5,7 +5,18 @@ module.exports = {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    fontFamily: {
+      "Montserrat": ["'Montserrat', sans-serif;"],
+      "Poppins": ["'Poppins', sans-serif;"],
+      "Fira": ["'Fira Sans', sans-serif;"],
+      "Inter": ["'Inter', sans-serif;"],
+    },
+    extend: {
+      colors: {
+        "white": "#FFFFFF",
+        "black": "#000000",
+      }
+    },
   },
   plugins: [require("daisyui")],
 }
