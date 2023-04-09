@@ -5,9 +5,6 @@
 
 <template>
   <main>
-    <div>
-      
-    </div>
     <!-- <Sidebar/> -->
   </main>
 </template>

@@ -5,6 +5,8 @@ import DashboardView from '@/views/DashboardView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import RequestTripView from '@/views/RequestTripView.vue'
 
+import TestView from '@/views/TestView.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -27,6 +29,11 @@ const router = createRouter({
       path: '/request',
       name: 'tripRequest',
       component: RequestTripView
+    },
+    {
+      path: '/test',
+      name: 'Test-View',
+      component: TestView
     },
     {
       // path: '/about',
