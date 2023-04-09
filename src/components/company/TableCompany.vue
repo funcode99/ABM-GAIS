@@ -10,7 +10,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
       class="table-zebra table-compact w-full border border-black rounded-full"
     >
       <thead class="bg-white text-center font-Montserrat text-sm font-bold">
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-5">
           <th>
             <span>No</span>
             <button>
@@ -18,7 +18,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </th>
           <th>
-            <span>SN</span>
+            <span>Code</span>
             <button>
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
@@ -30,19 +30,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </th>
           <th>
-            <span> Sex </span>
-            <button>
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th>
-            <span> Email </span>
-            <button>
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th>
-            <span> Phone Number </span>
+            <span> Parent Company </span>
             <button>
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
@@ -51,21 +39,15 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
         </tr>
       </thead>
       <tbody class="bg-[#F5F5F5]">
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-5">
           <th class="font-Montserrat text-center text-sm font-normal">1</th>
           <th class="font-Montserrat text-center text-sm font-normal">
             2382193892
           </th>
           <th class="font-Montserrat text-center text-sm font-normal">
-            John Mane
+            PT Tunas Inti Abadi
           </th>
-          <th class="font-Montserrat text-center text-sm font-normal">Male</th>
-          <th class="font-Montserrat text-center text-sm font-normal">
-            Johnm@gmail.com
-          </th>
-          <th class="font-Montserrat text-center text-sm font-normal">
-            08723236283112
-          </th>
+          <th class="font-Montserrat text-center text-sm font-normal">MVC</th>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -75,20 +57,16 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-5">
           <th class="font-Montserrat text-center text-sm font-normal">2</th>
           <th class="font-Montserrat text-center text-sm font-normal">
             2349893929
           </th>
-          <th class="font-Montserrat text-center text-sm font-normal">Mae X</th>
           <th class="font-Montserrat text-center text-sm font-normal">
-            Female
+            PT ABM Investama
           </th>
           <th class="font-Montserrat text-center text-sm font-normal">
-            maex@gmail.com
-          </th>
-          <th class="font-Montserrat text-center text-sm font-normal">
-            0872323298929
+            PT ABM Investama
           </th>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -100,23 +78,15 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-5">
           <th class="font-Montserrat text-center text-sm font-normal">3</th>
           <th class="font-Montserrat text-center text-sm font-normal">
             2344784787
           </th>
           <th class="font-Montserrat text-center text-sm font-normal">
-            Nina Max
+            PT Cipta Kridatama
           </th>
-          <th class="font-Montserrat text-center text-sm font-normal">
-            Female
-          </th>
-          <th class="font-Montserrat text-center text-sm font-normal">
-            ninam@gmail.com
-          </th>
-          <th class="font-Montserrat text-center text-sm font-normal">
-            0893283728322
-          </th>
+          <th class="font-Montserrat text-center text-sm font-normal">MVC</th>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
