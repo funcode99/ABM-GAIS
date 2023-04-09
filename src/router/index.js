@@ -10,6 +10,8 @@ import ListDepartement from "../views/departemen/ListDepartement.vue"
 import EditDepartement from "../views/departemen/EditDepartement.vue"
 import ListFlight from "../views/flight/ListFlight.vue"
 import EditFlight from "../views/flight/EditFlight.vue"
+import ListHotel from "../views/hotel/ListHotel.vue"
+import EditHotel from "../views/hotel/EditHotel.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +70,16 @@ const router = createRouter({
       path: '/editflight',
       name: 'flightedit',
       component: EditFlight
+    },
+    {
+      path: '/hotel',
+      name: 'hotel',
+      component: ListHotel
+    },
+    {
+      path: '/edithotel',
+      name: 'hoteltedit',
+      component: EditHotel
     },
   ]
 })
