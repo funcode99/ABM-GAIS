@@ -12,6 +12,8 @@ import ListFlight from "../views/flight/ListFlight.vue"
 import EditFlight from "../views/flight/EditFlight.vue"
 import ListHotel from "../views/hotel/ListHotel.vue"
 import EditHotel from "../views/hotel/EditHotel.vue"
+import ListReimbursement from "../views/reimbursement/ListReimbursement.vue"
+import EditReimbursement from "../views/reimbursement/EditReimbursement.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -80,6 +82,16 @@ const router = createRouter({
       path: '/edithotel',
       name: 'hoteltedit',
       component: EditHotel
+    },
+    {
+      path: '/reimbursement',
+      name: 'reimbursement',
+      component: ListReimbursement
+    },
+    {
+      path: '/editreimbursement',
+      name: 'reimbursementedit',
+      component: EditReimbursement
     },
   ]
 })
