@@ -38,7 +38,9 @@ import Layout from "../../components/layout/Layout.vue";
           </div>
 
           <div class="mb-6">
-            <label for="sex" class="block mb-2 font-Poppins font-medium text-sm"
+            <label
+              for="parentcompany"
+              class="block mb-2 font-Poppins font-medium text-sm"
               >Parent Company<span class="text-red-600">*</span></label
             >
             <select class="select select-accent w-40">

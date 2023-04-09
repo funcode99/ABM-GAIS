@@ -6,6 +6,8 @@ import List from "../views/karyawan/List.vue"
 import Edit from "../views/karyawan/Edit.vue"
 import ListCompany from "../views/company/ListCompany.vue"
 import EditCompany from "../views/company/EditCompany.vue"
+import ListDepartement from "../views/departemen/ListDepartement.vue"
+import EditDepartement from "../views/departemen/EditDepartement.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +46,16 @@ const router = createRouter({
       path: '/editcompany',
       name: 'companyedit',
       component: EditCompany
+    },
+    {
+      path: '/departement',
+      name: 'departement',
+      component: ListDepartement
+    },
+    {
+      path: '/editdepartement',
+      name: 'departementedit',
+      component: EditDepartement
     },
   ]
 })

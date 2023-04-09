@@ -45,6 +45,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             id="name"
             placeholder="Nama Karyawan"
             class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            required
           />
         </div>
         <div class="mb-6">
@@ -56,13 +57,14 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             id="sn"
             placeholder="SN Karyawan"
             class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            required
           />
         </div>
         <div class="mb-6">
           <label for="sex" class="block mb-2 font-Poppins font-medium text-sm"
             >Sex<span class="text-red-600">*</span></label
           >
-          <select class="select select-accent w-40">
+          <select class="select select-accent w-40" required>
             <option disabled selected>Select Sex</option>
             <option>Male</option>
             <option>Female</option>
@@ -77,6 +79,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             id="phone_number"
             placeholder="Phone Number"
             class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            required
           />
         </div>
         <div class="mb-6">
@@ -88,6 +91,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             id="email"
             placeholder="Email"
             class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            required
           />
         </div>
       </form>

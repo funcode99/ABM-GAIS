@@ -1,6 +1,5 @@
 <script setup>
 import iconClose from "../../assets/navbar/icon_close.svg";
-import iconPlus from "../../assets/navbar/icon_plus.svg";
 </script>
 
 <template>
@@ -28,6 +27,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             id="code"
             placeholder="Code"
             class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            required
           />
         </div>
         <div class="mb-6">
@@ -39,13 +39,14 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             id="name"
             placeholder="Name Karyawan"
             class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            required
           />
         </div>
         <div class="mb-6">
           <label for="sex" class="block mb-2 font-Poppins font-medium text-sm"
             >Parent Company<span class="text-red-600">*</span></label
           >
-          <select class="select select-accent w-40">
+          <select class="select select-accent w-40" required>
             <option disabled selected>Select Company</option>
             <option>Company A</option>
             <option>Company B</option>
