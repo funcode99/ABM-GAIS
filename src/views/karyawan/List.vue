@@ -7,8 +7,11 @@ import Sidebar from '../../components/layout/Sidebar.vue'
 </script>
 
 <template>
-  <Layout />
-  <div class="card card-compact bg-white rounded-lg">
+
+  <div class="flex">
+    <Sidebar class="flex-none" />
+    <div class="dashboard card card-compact w-screen bg-white rounded-lg">
+    <Layout />
 
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -111,11 +114,11 @@ import Sidebar from '../../components/layout/Sidebar.vue'
     </div>
 
   </div>
+  </div>
 </template>
 
 <style scoped>
   .dashboard {
     width: calc(100% - 260px);
-
   }
 </style>
