@@ -5,7 +5,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
 </script>
 
 <template>
-  <div class="">
+  <div>
     <table class="table table-zebra table-compact w-full rounded-lg">
       <thead class="text-center font-JakartaSans text-sm font-bold">
         <tr>
