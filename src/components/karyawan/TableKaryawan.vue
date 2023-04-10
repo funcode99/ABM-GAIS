@@ -2,6 +2,8 @@
 import editicon from "../../assets/navbar/edit_icon.svg";
 import deleteicon from "../../assets/navbar/delete_icon.svg";
 import arrowicon from "../../assets/navbar/icon_arrow.svg";
+
+import dataDummy from '@/utils/Api/data.js'
 </script>
 
 <template>
@@ -101,6 +103,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
+
       </tbody>
     </table>
   </div>
