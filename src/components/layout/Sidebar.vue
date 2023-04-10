@@ -1,48 +1,50 @@
 <script setup>
-import NavItems from "./NavItems.vue";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", children: [], icon: null },
-  { href: "/inbox", label: "Inbox / Notifications", children: [], icon: null },
-  {
-    href: "#",
-    label: "Travel Management System",
-    children: [
-      { href: "#", label: "Request Trip", children: [], icon: null },
-      { href: "#", label: "Settlement", children: [], icon: null },
-      { href: "#", label: "Claim Reimbusement", children: [], icon: null },
-      {
-        href: "#",
-        label: "Cash Advance",
-        children: [
-          { href: "#", label: "Cash Advance Travel", children: [], icon: null },
-          {
-            href: "#",
-            label: "Cash Advance Non Travel",
-            children: [],
-            icon: null,
-          },
-        ],
-        icon: null,
-      },
-    ],
-    icon: null,
-  },
+// import NavItems from "./NavItems.vue";
 
-  {
-    href: "#",
-    label: "Facility Service System",
-    children: [
-      { href: "#", label: "Meeting Room", children: [], icon: null },
-      { href: "#", label: "ATK Request", children: [], icon: null },
-      { href: "#", label: "Document Delivery", children: [], icon: null },
-    ],
-  },
-];
+// const navItems = [
+//   { href: "/dashboard", label: "Dashboard", children: [], icon: null },
+//   { href: "/inbox", label: "Inbox / Notifications", children: [], icon: null },
+//   {
+//     href: "#",
+//     label: "Travel Management System",
+//     children: [
+//       { href: "#", label: "Request Trip", children: [], icon: null },
+//       { href: "#", label: "Settlement", children: [], icon: null },
+//       { href: "#", label: "Claim Reimbusement", children: [], icon: null },
+//       {
+//         href: "#",
+//         label: "Cash Advance",
+//         children: [
+//           { href: "#", label: "Cash Advance Travel", children: [], icon: null },
+//           {
+//             href: "#",
+//             label: "Cash Advance Non Travel",
+//             children: [],
+//             icon: null,
+//           },
+//         ],
+//         icon: null,
+//       },
+//     ],
+//     icon: null,
+//   },
+
+//   {
+//     href: "#",
+//     label: "Facility Service System",
+//     children: [
+//       { href: "#", label: "Meeting Room", children: [], icon: null },
+//       { href: "#", label: "ATK Request", children: [], icon: null },
+//       { href: "#", label: "Document Delivery", children: [], icon: null },
+//     ],
+//   },
+// ];
+
 </script>
 
 <template>
-  <div class="drawer drawer-mobile">
+  <!-- <div class="drawer drawer-mobile">
     <input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
     <div class="drawer-content flex flex-col items-start justify-start"></div>
     <div class="drawer-side">
@@ -51,5 +53,8 @@ const navItems = [
         <NavItems :item="item" v-for="item in navItems" :key="item.label" />
       </ul>
     </div>
+  </div> -->
+  <div class="flex flex-col w-[260px] h-screen">
+
   </div>
 </template>

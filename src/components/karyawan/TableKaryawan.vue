@@ -5,10 +5,11 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
 </script>
 
 <template>
-  <div class="overflow-x-auto">
+  <div class="">
     <table
       class="table table-zebra table-compact border w-full border-black rounded-full"
     >
+
       <thead class="bg-white text-center font-Montserrat text-sm font-bold">
         <tr class="">
           <th class="relative">
@@ -50,38 +51,39 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
           <th class="flex justify-center">Actions</th>
         </tr>
       </thead>
+
       <tbody class="bg-[#F5F5F5]">
 
         <tr>
-          <th
+          <td
           >
             1
-          </th>
-          <th
+          </td>
+          <td
             
           >
             2382193892
-          </th>
-          <th
+          </td>
+          <td
             
           >
             John Mane
-          </th>
-          <th
+          </td>
+          <td
             
           >
             Male
-          </th>
-          <th
+          </td>
+          <td
             
           >
             Johnm@gmail.com
-          </th>
-          <th
+          </td>
+          <td
             
           >
             08723236283112
-          </th>
+          </td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -93,36 +95,35 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
         </tr>
 
         <tr>
-          <th
-            
+          <td
           >
             2
-          </th>
-          <th
+          </td>
+          <td
             
           >
             2349893929
-          </th>
-          <th
+          </td>
+          <td
             
           >
             Mae X
-          </th>
-          <th
+          </td>
+          <td
             
           >
             Female
-          </th>
-          <th
+          </td>
+          <td
             
           >
             maex@gmail.com
-          </th>
-          <th
+          </td>
+          <td
             
           >
             0872323298929
-          </th>
+          </td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -135,36 +136,36 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
         </tr>
 
         <tr>
-          <th
+          <td
           
           >
             3
-          </th>
-          <th
+          </td>
+          <td
             
           >
             2344784787
-          </th>
-          <th
+          </td>
+          <td
             
           >
             Nina Max
-          </th>
-          <th
+          </td>
+          <td
             
           >
             Female
-          </th>
-          <th
+          </td>
+          <td
             
           >
             ninam@gmail.com
-          </th>
-          <th
+          </td>
+          <td
             
           >
             0893283728322
-          </th>
+          </td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -176,6 +177,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
         </tr>
 
       </tbody>
+      
     </table>
   </div>
 </template>
@@ -187,11 +189,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
     position: relative;
   }
 
-  /* th button {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-  } */
-
+  tr td {
+    text-align: center;
+  }
 </style>
