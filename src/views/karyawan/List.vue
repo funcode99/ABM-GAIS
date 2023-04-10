@@ -3,50 +3,48 @@ import Layout from "../../components/layout/Layout.vue";
 import TableKaryawan from "../../components/karyawan/TableKaryawan.vue";
 import Pagination from "../../components/karyawan/Pagination.vue";
 import ModalAdd from "../../components/karyawan/ModalAdd.vue";
+import Sidebar from '../../components/layout/Sidebar.vue'
 </script>
 
 <template>
   <Layout />
   <div class="card card-compact bg-white rounded-lg">
+
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
-      <p
-        class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
-      >
-        employee
+      <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
+        karyawan
       </p>
       <ModalAdd />
     </div>
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <div class="grid grid-flow-col auto-cols-max items-center gap-4">
-        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
-          sort
-        </p>
+        <p class="capitalize font-Fira text-xs text-black font-medium">sort</p>
         <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
           <button tabindex="0">
             <div tabindex="0" class="collapse collapse-arrow">
               <div class="collapse-title min-h-max py-3">
                 <p
-                  class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
+                  class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
                 >
-                  a to z
+                  A to Z
                 </p>
               </div>
             </div>
           </button>
           <ul
             tabindex="0"
-            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize font-JakartaSans"
+            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
           >
-            <li><a>a</a></li>
-            <li><a>b</a></li>
-            <li><a>c</a></li>
+            <li><a>A</a></li>
+            <li><a>B</a></li>
+            <li><a>C</a></li>
           </ul>
         </div>
 
-        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
+        <p class="capitalize font-Fira text-xs text-black font-medium">
           company
         </p>
 
@@ -55,7 +53,7 @@ import ModalAdd from "../../components/karyawan/ModalAdd.vue";
             <div tabindex="0" class="collapse collapse-arrow">
               <div class="collapse-title min-h-max py-3">
                 <p
-                  class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
+                  class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
                 >
                   company
                 </p>
@@ -64,11 +62,11 @@ import ModalAdd from "../../components/karyawan/ModalAdd.vue";
           </button>
           <ul
             tabindex="0"
-            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize font-JakartaSans"
+            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
           >
-            <li><a>company a</a></li>
-            <li><a>company b</a></li>
-            <li><a>company c</a></li>
+            <li><a>company A</a></li>
+            <li><a>company B</a></li>
+            <li><a>company C</a></li>
           </ul>
         </div>
       </div>
@@ -97,7 +95,7 @@ import ModalAdd from "../../components/karyawan/ModalAdd.vue";
           <input
             type="text"
             placeholder="Search..."
-            class="input input-bordered input-info w-full px-12 font-JakartaSans"
+            class="input input-bordered input-info w-full px-12"
           />
         </div>
       </form>
@@ -106,10 +104,18 @@ import ModalAdd from "../../components/karyawan/ModalAdd.vue";
     <TableKaryawan class="py-2 mx-4 overflow-x-auto" />
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-      <p class="font-JakartaSans text-xs font-normal text-[#888888]">
+      <p class="font-Inter text-xs font-normal text-[#888888]">
         Showing 1 to 10 of 50 entries
       </p>
       <Pagination />
     </div>
+
   </div>
 </template>
+
+<style scoped>
+  .dashboard {
+    width: calc(100% - 260px);
+
+  }
+</style>
