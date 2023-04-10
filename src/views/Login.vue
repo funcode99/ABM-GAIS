@@ -40,7 +40,7 @@
                         <div
                           class="mb-5 pb-1border-b-2 text-center font-base text-gray-700"
                         >
-                          <h1>Welcome to GAIS</h1>
+                          <h1>Welcome to GAIS TEST</h1>
                         </div>
                         <div
                           class="text-center font-semibold text-black capitalize"

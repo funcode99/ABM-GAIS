@@ -10,7 +10,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
       class="table-zebra table-compact w-full border border-black rounded-full"
     >
       <thead class="bg-white text-center font-Montserrat text-sm font-bold">
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-4">
           <th class="flex justify-between items-center">
             <span>No</span>
             <button>
@@ -18,31 +18,13 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </th>
           <th class="flex justify-between items-center">
-            <span>SN</span>
+            <span>Flight Class</span>
             <button>
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
           <th class="flex justify-between items-center">
-            <span> Name </span>
-            <button>
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="flex justify-between items-center">
-            <span> Sex </span>
-            <button>
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="flex justify-between items-center">
-            <span> Email </span>
-            <button>
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="flex justify-between items-center">
-            <span> Phone Number </span>
+            <span> Company </span>
             <button>
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
@@ -51,7 +33,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
         </tr>
       </thead>
       <tbody class="bg-[#F5F5F5]">
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-4">
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
@@ -60,27 +42,12 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
-            2382193892
+            Economy
           </th>
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
-            John Mane
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            Male
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            Johnm@gmail.com
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            08723236283112
+            MVC
           </th>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -91,7 +58,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-4">
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
@@ -100,27 +67,12 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
-            2349893929
+            Business
           </th>
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
-            Mae X
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            Female
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            maex@gmail.com
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            0872323298929
+            PT ABM
           </th>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -132,7 +84,7 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-7">
+        <tr class="grid grid-cols-4">
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
@@ -141,27 +93,12 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
-            2344784787
+            Premium Economy
           </th>
           <th
             class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
-            Nina Max
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            Female
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            ninam@gmail.com
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            0893283728322
+            PT ABM
           </th>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>

@@ -4,6 +4,16 @@ import Dashboard from "../views/Dashboard.vue"
 import Notification from "../views/Notification.vue"
 import List from "../views/karyawan/List.vue"
 import Edit from "../views/karyawan/Edit.vue"
+import ListCompany from "../views/company/ListCompany.vue"
+import EditCompany from "../views/company/EditCompany.vue"
+import ListDepartement from "../views/departemen/ListDepartement.vue"
+import EditDepartement from "../views/departemen/EditDepartement.vue"
+import ListFlight from "../views/flight/ListFlight.vue"
+import EditFlight from "../views/flight/EditFlight.vue"
+import ListHotel from "../views/hotel/ListHotel.vue"
+import EditHotel from "../views/hotel/EditHotel.vue"
+import ListReimbursement from "../views/reimbursement/ListReimbursement.vue"
+import EditReimbursement from "../views/reimbursement/EditReimbursement.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -32,6 +42,56 @@ const router = createRouter({
       path: '/editkaryawan',
       name: 'karyawanedit',
       component: Edit
+    },
+    {
+      path: '/company',
+      name: 'company',
+      component: ListCompany
+    },
+    {
+      path: '/editcompany',
+      name: 'companyedit',
+      component: EditCompany
+    },
+    {
+      path: '/departement',
+      name: 'departement',
+      component: ListDepartement
+    },
+    {
+      path: '/editdepartement',
+      name: 'departementedit',
+      component: EditDepartement
+    },
+    {
+      path: '/flight',
+      name: 'flight',
+      component: ListFlight
+    },
+    {
+      path: '/editflight',
+      name: 'flightedit',
+      component: EditFlight
+    },
+    {
+      path: '/hotel',
+      name: 'hotel',
+      component: ListHotel
+    },
+    {
+      path: '/edithotel',
+      name: 'hoteltedit',
+      component: EditHotel
+    },
+    {
+      path: '/reimbursement',
+      name: 'reimbursement',
+      component: ListReimbursement
+    },
+    {
+      path: '/editreimbursement',
+      name: 'reimbursementedit',
+      component: EditReimbursement
     },
   ]
 })
