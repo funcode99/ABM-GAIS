@@ -8,6 +8,7 @@ import ModalAdd from "../../components/karyawan/ModalAdd.vue";
 <template>
   <Layout />
   <div class="card card-compact bg-white rounded-lg">
+
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
@@ -99,7 +100,7 @@ import ModalAdd from "../../components/karyawan/ModalAdd.vue";
       </form>
     </div>
 
-    <TableKaryawan class="py-2 mx-4" />
+    <TableKaryawan class="py-2 mx-4 overflow-x-auto" />
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <p class="font-Inter text-xs font-normal text-[#888888]">
@@ -107,5 +108,6 @@ import ModalAdd from "../../components/karyawan/ModalAdd.vue";
       </p>
       <Pagination />
     </div>
+
   </div>
 </template>

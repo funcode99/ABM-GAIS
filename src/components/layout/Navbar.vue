@@ -1,11 +1,11 @@
 <script setup>
-import tail from "../../assets/navbar/tail.svg";
-import highlight from "../../assets/navbar/highlight_logo.svg";
-import user from "../../assets/navbar/user.svg";
+  import tail from "../../assets/navbar/tail.svg";
+  import highlight from "../../assets/navbar/highlight_logo.svg";
+  import user from "../../assets/navbar/user.svg";
 </script>
 
 <template>
-  <div class="navbar bg-base-100 py-0">
+  <div class="navbar bg-base-100 py-0 px-0">
     <div class="navbar-start">
       <img :src="tail" class="w-[285.85px] h-[90.27px]" />
     </div>

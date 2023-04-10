@@ -7,78 +7,78 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
 <template>
   <div class="overflow-x-auto">
     <table
-      class="table-zebra table-compact w-full border border-black rounded-full"
+      class="table table-zebra table-compact border w-full border-black rounded-full"
     >
       <thead class="bg-white text-center font-Montserrat text-sm font-bold">
-        <tr class="grid grid-cols-7">
-          <th class="flex justify-between items-center">
-            <span>No</span>
-            <button>
+        <tr class="">
+          <th class="relative">
+            <span class="flex justify-center">No</span>
+            <button class="absolute right-0 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span>SN</span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center">SN</span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span> Name </span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center">Name</span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span> Sex </span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center">Gender</span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span> Email </span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center"> Email </span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span> Phone Number </span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center">Phone Number</span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="justify-center">Actions</th>
+          <th class="flex justify-center">Actions</th>
         </tr>
       </thead>
       <tbody class="bg-[#F5F5F5]">
-        <tr class="grid grid-cols-7">
+
+        <tr>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
           >
             1
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             2382193892
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             John Mane
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             Male
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             Johnm@gmail.com
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             08723236283112
           </th>
@@ -91,34 +91,35 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-7">
+
+        <tr>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             2
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             2349893929
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             Mae X
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             Female
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             maex@gmail.com
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             0872323298929
           </th>
@@ -132,34 +133,35 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-7">
+
+        <tr>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+          
           >
             3
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             2344784787
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             Nina Max
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             Female
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             ninam@gmail.com
           </th>
           <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
+            
           >
             0893283728322
           </th>
@@ -172,7 +174,24 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
+
       </tbody>
     </table>
   </div>
 </template>
+
+<style scoped>
+  th {
+    padding: 2px;
+    text-align: left;
+    position: relative;
+  }
+
+  /* th button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  } */
+
+</style>

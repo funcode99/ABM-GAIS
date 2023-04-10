@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from "../views/Login.vue"
 import Dashboard from "../views/Dashboard.vue"
-import Notification from "../views/Notification.vue"
 import List from "../views/karyawan/List.vue"
 import Edit from "../views/karyawan/Edit.vue"
 import ListCompany from "../views/company/ListCompany.vue"
@@ -27,11 +26,6 @@ const router = createRouter({
       path: '/dashboard',
       name: 'dashboard',
       component: Dashboard
-    },
-    {
-      path: '/inbox',
-      name: 'inbox',
-      component: Notification
     },
     {
       path: '/karyawan',
