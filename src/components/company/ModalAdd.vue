@@ -16,39 +16,43 @@ import iconClose from "../../assets/navbar/icon_close.svg";
         <label for="my-modal-3" class="cursor-pointer absolute right-0">
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p class="font-Poppins text-2xl font-semibold">New Company</p>
+        <p class="font-JakartaSans text-2xl font-semibold">New Company</p>
         <div className="divider m-0"></div>
       </nav>
 
       <form>
         <div class="mb-6">
-          <label for="code" class="block mb-2 font-Poppins font-medium text-sm"
+          <label
+            for="code"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
           >
           <input
             type="text"
             id="code"
             placeholder="Code"
-            class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
         </div>
         <div class="mb-6">
-          <label for="name" class="block mb-2 font-Poppins font-medium text-sm"
+          <label
+            for="name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >Name<span class="text-red">*</span></label
           >
           <input
             type="text"
             id="name"
             placeholder="Name Company"
-            class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
         </div>
         <div class="mb-6">
           <label
             for="parent_company"
-            class="block mb-2 font-Poppins font-medium text-sm"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             id="parent_company"
             >Parent Company<span class="text-red">*</span></label
           >

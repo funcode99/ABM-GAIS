@@ -61,7 +61,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             type="text"
             id="sn"
             placeholder="Employee SN"
-            class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
         </div>

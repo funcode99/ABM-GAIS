@@ -8,32 +8,19 @@ import Layout from "../../components/layout/Layout.vue";
     <div class="card-body">
       <p class="font-Poppins font-semibold text-2xl">IT</p>
 
-      <div class="card-actions justify-start py-4 gap-4">
-        <button
-          class="btn text-[#1F7793] text-base font-Poppins font-bold capitalize w-[75px] h-[30px] bg-white border-[#1F7793] hover:bg-[#1F7793] hover:border-white hover:text-white"
-        >
-          Edit
-        </button>
-        <button
-          class="btn text-white text-base font-Poppins font-bold capitalize w-[75px] h-[30px] border-[#87C556] bg-[#87C556] hover:bg-white hover:text-[#87C556] hover:border-[#87C556]"
-        >
-          Save
-        </button>
-      </div>
-
-      <form class="py-4">
+      <form>
         <div class="flex flex-wrap justify-between lg:px-[220px] md:px-0">
           <div class="mb-6">
             <label
               for="name"
-              class="block mb-2 font-Poppins font-medium text-sm"
-              >Name<span class="text-red-600">*</span></label
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Name<span class="text-red">*</span></label
             >
             <input
               type="text"
               id="name"
               placeholder="Name"
-              class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               required
             />
           </div>
@@ -41,8 +28,9 @@ import Layout from "../../components/layout/Layout.vue";
           <div class="mb-6">
             <label
               for="company"
-              class="block mb-2 font-Poppins font-medium text-sm"
-              >Company<span class="text-red-600">*</span></label
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="company"
+              >Company<span class="text-red">*</span></label
             >
             <select class="select select-accent w-40" required>
               <option disabled selected>Select Company</option>
@@ -56,20 +44,23 @@ import Layout from "../../components/layout/Layout.vue";
           <div class="mb-6">
             <label
               for="cost_center"
-              class="block mb-2 font-Poppins font-medium text-sm"
-              >Cost Center<span class="text-red-600">*</span></label
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Cost Center<span class="text-red">*</span></label
             >
             <input
               type="text"
               id="cost_center"
               placeholder="Cost Center"
-              class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               required
             />
           </div>
           <div class="mb-6">
-            <label for="sex" class="block mb-2 font-Poppins font-medium text-sm"
-              >Division<span class="text-red-600">*</span></label
+            <label
+              for="division"
+              id="division"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Division<span class="text-red">*</span></label
             >
             <select class="select select-accent w-40" required>
               <option disabled selected>Select Division</option>
@@ -83,22 +74,23 @@ import Layout from "../../components/layout/Layout.vue";
           <div class="mb-6">
             <label
               for="gl_account"
-              class="block mb-2 font-Poppins font-medium text-sm"
-              >GL Account<span class="text-red-600">*</span></label
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >GL Account<span class="text-red">*</span></label
             >
             <input
               type="text"
               id="gl_account"
               placeholder="GL Account"
-              class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               required
             />
           </div>
           <div class="mb-6">
             <label
               for="dep_head"
-              class="block mb-2 font-Poppins font-medium text-sm"
-              >Departement Head<span class="text-red-600">*</span></label
+              id="dep_head"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Departement Head<span class="text-red">*</span></label
             >
             <select class="select select-accent w-40" required>
               <option disabled selected>Select</option>
@@ -112,8 +104,9 @@ import Layout from "../../components/layout/Layout.vue";
           <div class="mb-6">
             <label
               for="status"
-              class="block mb-2 font-Poppins font-medium text-sm"
-              >Status<span class="text-red-600">*</span></label
+              id="status"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Status<span class="text-red">*</span></label
             >
             <select class="select select-accent w-40" required>
               <option disabled selected>Status</option>
@@ -123,6 +116,19 @@ import Layout from "../../components/layout/Layout.vue";
           </div>
         </div>
       </form>
+    </div>
+
+    <div class="flex justify-start pb-4 px-8 gap-4">
+      <button
+        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+      >
+        Cancel
+      </button>
+      <button
+        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+      >
+        Save
+      </button>
     </div>
   </div>
 </template>
