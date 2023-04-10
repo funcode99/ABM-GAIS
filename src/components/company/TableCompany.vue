@@ -5,61 +5,44 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
 </script>
 
 <template>
-  <div class="overflow-x-auto">
-    <table
-      class="table-zebra table-compact w-full border border-black rounded-full"
-    >
-      <thead class="bg-white text-center font-Montserrat text-sm font-bold">
-        <tr class="grid grid-cols-5">
-          <th class="flex justify-between items-center">
-            <span>No</span>
-            <button>
+  <div>
+    <table class="table table-zebra table-compact w-full rounded-lg">
+      <thead class="text-center font-JakartaSans text-sm font-bold">
+        <tr>
+          <th class="relative">
+            <span class="flex justify-center">No</span>
+            <button class="absolute right-0 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span>Code</span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center">Code</span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span> Name </span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center">Name</span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="flex justify-between items-center">
-            <span> Parent Company </span>
-            <button>
+          <th class="relative">
+            <span class="flex justify-center">Parent Company</span>
+            <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
           <th class="justify-center">Actions</th>
         </tr>
       </thead>
+
       <tbody class="bg-[#F5F5F5]">
-        <tr class="grid grid-cols-5">
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            1
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            2382193892
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            PT Tunas Inti Abadi
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            MVC
-          </th>
+        <tr class="font-JakartaSans font-normal text-sm">
+          <td>1</td>
+          <td>2382193892</td>
+          <td>PT Tunas Inti Abadi</td>
+          <td>MVC</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -69,27 +52,12 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-5">
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            2
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            2349893929
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            PT ABM Investama
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            PT ABM Investama
-          </th>
+
+        <tr class="font-JakartaSans font-normal text-sm">
+          <td>2</td>
+          <td>2349893929</td>
+          <td>PT ABM Investama</td>
+          <td>PT ABM Investama</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -100,27 +68,12 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
             </button>
           </td>
         </tr>
-        <tr class="grid grid-cols-5">
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            3
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            2344784787
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            PT Cipta Kridatama
-          </th>
-          <th
-            class="flex justify-start font-Montserrat text-center text-sm font-normal"
-          >
-            MVC
-          </th>
+
+        <tr class="font-JakartaSans font-normal text-sm">
+          <td>3</td>
+          <td>2344784787</td>
+          <td>PT Cipta Kridatama</td>
+          <td>MVC</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -134,3 +87,22 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
     </table>
   </div>
 </template>
+
+<style scoped>
+th {
+  padding: 2px;
+  text-align: left;
+  position: relative;
+}
+
+tr td {
+  text-align: center;
+  white-space: nowrap;
+}
+
+tr th {
+  background-color: #015289;
+  text-transform: capitalize;
+  color: white;
+}
+</style>

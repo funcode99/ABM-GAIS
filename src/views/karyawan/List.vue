@@ -26,7 +26,9 @@ import icon_reset from "../../assets/icon_reset.svg";
         <p class="capitalize font-JakartaSans text-xs text-black font-medium">
           sort
         </p>
-        <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
+        <div
+          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
+        >
           <button tabindex="0">
             <div tabindex="0" class="collapse collapse-arrow">
               <div class="collapse-title min-h-max py-3">
@@ -52,7 +54,9 @@ import icon_reset from "../../assets/icon_reset.svg";
           company
         </p>
 
-        <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
+        <div
+          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
+        >
           <button tabindex="0">
             <div tabindex="0" class="collapse collapse-arrow">
               <div class="collapse-title min-h-max py-3">

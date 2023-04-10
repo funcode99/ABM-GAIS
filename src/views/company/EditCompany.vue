@@ -6,20 +6,7 @@ import Layout from "../../components/layout/Layout.vue";
   <Layout />
   <div class="card w-full bg-base-100 shadow-xl">
     <div class="card-body">
-      <p class="font-Poppins font-semibold text-2xl">PT Tunas Inti Abadi</p>
-
-      <div class="card-actions justify-start py-4 gap-4">
-        <button
-          class="btn text-[#1F7793] text-base font-Poppins font-bold capitalize w-[75px] h-[30px] bg-white border-[#1F7793] hover:bg-[#1F7793] hover:border-white hover:text-white"
-        >
-          Edit
-        </button>
-        <button
-          class="btn text-white text-base font-Poppins font-bold capitalize w-[75px] h-[30px] border-[#87C556] bg-[#87C556] hover:bg-white hover:text-[#87C556] hover:border-[#87C556]"
-        >
-          Save
-        </button>
-      </div>
+      <p class="font-JakartaSans font-semibold text-2xl">PT Tunas Inti Abadi</p>
 
       <form class="py-4">
         <div class="flex flex-wrap justify-between lg:mx-40 md:mx-0">
@@ -41,6 +28,7 @@ import Layout from "../../components/layout/Layout.vue";
             <label
               for="parentcompany"
               class="block mb-2 font-Poppins font-medium text-sm"
+              id="parentcompany"
               >Parent Company<span class="text-red-600">*</span></label
             >
             <select class="select select-accent w-40">
@@ -67,6 +55,19 @@ import Layout from "../../components/layout/Layout.vue";
           </div>
         </div>
       </form>
+
+      <div class="flex justify-start pb-4 px-8 gap-4">
+        <button
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+        >
+          Cancel
+        </button>
+        <button
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+        >
+          Save
+        </button>
+      </div>
     </div>
   </div>
 </template>

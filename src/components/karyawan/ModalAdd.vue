@@ -11,7 +11,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
   >
 
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
-  <div class="modal modal-bottom sm:modal-middle">
+  <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-white py-4">
         <label for="my-modal-3" class="cursor-pointer absolute right-0">
@@ -54,7 +54,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
           />
         </div>
         <div class="mb-6">
-          <label for="name" class="block mb-2 font-Poppins font-medium text-sm"
+          <label for="sn" class="block mb-2 font-Poppins font-medium text-sm"
             >SN<span class="text-red">*</span></label
           >
           <input
@@ -69,6 +69,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
           <label
             for="gender"
             class="block mb-2 font-JakartaSans font-medium text-sm"
+            id="gender"
             >Gender<span class="text-red">*</span></label
           >
           <select class="select select-accent w-40" required>
@@ -79,7 +80,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
         </div>
         <div class="mb-6">
           <label
-            for="name"
+            for="phone_number"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Phone Number<span class="text-red">*</span></label
           >
