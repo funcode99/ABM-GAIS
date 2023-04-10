@@ -9,8 +9,7 @@ import icon_reset from "../../assets/icon_reset.svg";
 
 <template>
   <Layout />
-  <div class="card card-compact bg-white rounded-lg">
-
+  <div class="card card-compact bg-white rounded-lg custom-card">
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
@@ -135,13 +134,16 @@ import icon_reset from "../../assets/icon_reset.svg";
       </p>
       <Pagination />
     </div>
-
   </div>
 </template>
 
 <style scoped>
-  .dashboard {
-    width: calc(100% - 260px);
+.dashboard {
+  width: calc(100% - 260px);
+}
 
-  }
+.custom-card {
+  box-shadow: 0px -4px #015289;
+  border-radius: 4px;
+}
 </style>
