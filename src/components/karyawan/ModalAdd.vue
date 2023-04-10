@@ -21,95 +21,91 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
         <div className="divider m-0"></div>
       </nav>
 
-      <main class="">
-        <div class="flex justify-center py-4">
-          <div class="avatar">
-            <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
-              <div class="flex justify-center items-center py-8">
-                <button class="w-[37px] h-[37px]">
-                  <img :src="iconPlus" />
-                </button>
-              </div>
+      <div class="flex justify-center py-4">
+        <div class="avatar">
+          <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
+            <div class="flex justify-center items-center py-8">
+              <button class="w-[37px] h-[37px]">
+                <img :src="iconPlus" />
+              </button>
             </div>
           </div>
         </div>
-        <p
-          class="font-JakartaSans font-medium text-sm flex justify-center items-center"
-        >
-          Foto
-        </p>
+      </div>
+      <p
+        class="font-JakartaSans font-medium text-sm flex justify-center items-center"
+      >
+        Foto
+      </p>
 
-        <form>
-          <div class="mb-6">
-            <label
-              for="name"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Name<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              id="name"
-              placeholder="Employee name"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label
-              for="name"
-              class="block mb-2 font-Poppins font-medium text-sm"
-              >SN<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              id="sn"
-              placeholder="Employee SN"
-              class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label
-              for="gender"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Gender<span class="text-red">*</span></label
-            >
-            <select class="select select-accent w-40" required>
-              <option disabled selected>Select Gender</option>
-              <option>Male</option>
-              <option>Female</option>
-            </select>
-          </div>
-          <div class="mb-6">
-            <label
-              for="name"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Phone Number<span class="text-red">*</span></label
-            >
-            <input
-              type="number"
-              id="phone_number"
-              placeholder="Phone Number"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-              required
-            />
-          </div>
-          <div class="mb-6">
-            <label
-              for="email"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Email<span class="text-red">*</span></label
-            >
-            <input
-              type="email"
-              id="email"
-              placeholder="Email"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-              required
-            />
-          </div>
-        </form>
-      </main>
+      <form>
+        <div class="mb-6">
+          <label
+            for="name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Name<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            id="name"
+            placeholder="Employee name"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label for="name" class="block mb-2 font-Poppins font-medium text-sm"
+            >SN<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            id="sn"
+            placeholder="Employee SN"
+            class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="gender"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Gender<span class="text-red">*</span></label
+          >
+          <select class="select select-accent w-40" required>
+            <option disabled selected>Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </div>
+        <div class="mb-6">
+          <label
+            for="name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Phone Number<span class="text-red">*</span></label
+          >
+          <input
+            type="number"
+            id="phone_number"
+            placeholder="Phone Number"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="email"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Email<span class="text-red">*</span></label
+          >
+          <input
+            type="email"
+            id="email"
+            placeholder="Email"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+      </form>
 
       <div class="sticky bottom-0 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
