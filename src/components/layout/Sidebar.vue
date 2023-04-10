@@ -40,6 +40,7 @@
 //     ],
 //   },
 // ];
+import ABMIcon from '@/assets/abm.png'
 
 </script>
 
@@ -55,6 +56,8 @@
     </div>
   </div> -->
   <div class="flex flex-col w-[260px] h-screen">
-
+    <div class="flex justify-center py-6">
+      <img :src=ABMIcon class="w-20 h-20" alt="">
+    </div>
   </div>
 </template>

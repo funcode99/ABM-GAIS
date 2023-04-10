@@ -7,10 +7,10 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
 <template>
   <div class="">
     <table
-      class="table table-zebra table-compact border w-full border-black rounded-full"
+      class="table table-zebra table-compact border w-full rounded-lg"
     >
 
-      <thead class="bg-white text-center font-Montserrat text-sm font-bold">
+      <thead class="text-center font-Montserrat text-sm font-bold">
         <tr class="">
           <th class="relative">
             <span class="flex justify-center">No</span>
@@ -191,5 +191,13 @@ import arrowicon from "../../assets/navbar/icon_arrow.svg";
 
   tr td {
     text-align: center;
+    white-space: nowrap;
   }
+
+  tr th {
+    background-color: #015289;
+    text-transform: capitalize;
+    color: white;
+  }
+
 </style>
