@@ -6,15 +6,15 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      "Montserrat": ["'Montserrat', sans-serif;"],
-      "Poppins": ["'Poppins', sans-serif;"],
-      "Fira": ["'Fira Sans', sans-serif;"],
-      "Inter": ["'Inter', sans-serif;"],
+      "JakartaSans": ["'Plus Jakarta Sans', sans-serif;"],
     },
     extend: {
       colors: {
         "white": "#FFFFFF",
         "black": "#000000",
+        "green": "#66AD2D",
+        "red": "#F04438",
+        "blue": "#015289",
       }
     },
   },

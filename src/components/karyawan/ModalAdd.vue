@@ -6,7 +6,7 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
 <template>
   <label
     for="my-modal-3"
-    class="btn btn-success bg-[#87C556] border-none hover:bg-none capitalize text-white font-Poppins text-xs"
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add New</label
   >
 
@@ -14,9 +14,9 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
   <div class="modal">
     <div class="modal-box relative">
       <label for="my-modal-3" class="cursor-pointer absolute right-5 top-5">
-        <img :src="iconClose" class="w-[34px] h-[34px]" />
+        <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
       </label>
-      <p class="font-Poppins text-2xl font-semibold">New Karyawan</p>
+      <p class="font-JakartaSans text-2xl font-semibold">New Karyawan</p>
       <div className="divider m-0"></div>
       <div class="flex justify-center py-4">
         <div class="avatar">
@@ -30,67 +30,75 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
         </div>
       </div>
       <p
-        class="font-Poppins font-medium text-sm flex justify-center items-center"
+        class="font-JakartaSans font-medium text-sm flex justify-center items-center"
       >
         Foto
       </p>
 
       <form>
         <div class="mb-6">
-          <label for="name" class="block mb-2 font-Poppins font-medium text-sm"
-            >Nama<span class="text-red-600">*</span></label
+          <label
+            for="name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Name<span class="text-red">*</span></label
           >
           <input
             type="text"
             id="name"
-            placeholder="Nama Karyawan"
-            class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            placeholder="Employee name"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
         </div>
         <div class="mb-6">
           <label for="name" class="block mb-2 font-Poppins font-medium text-sm"
-            >SN<span class="text-red-600">*</span></label
+            >SN<span class="text-red">*</span></label
           >
           <input
             type="text"
             id="sn"
-            placeholder="SN Karyawan"
+            placeholder="Employee SN"
             class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
             required
           />
         </div>
         <div class="mb-6">
-          <label for="sex" class="block mb-2 font-Poppins font-medium text-sm"
-            >Sex<span class="text-red-600">*</span></label
+          <label
+            for="gender"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Gender<span class="text-red">*</span></label
           >
           <select class="select select-accent w-40" required>
-            <option disabled selected>Select Sex</option>
+            <option disabled selected>Select Gender</option>
             <option>Male</option>
             <option>Female</option>
           </select>
         </div>
         <div class="mb-6">
-          <label for="name" class="block mb-2 font-Poppins font-medium text-sm"
-            >Phone Number<span class="text-red-600">*</span></label
+          <label
+            for="name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Phone Number<span class="text-red">*</span></label
           >
           <input
             type="number"
             id="phone_number"
             placeholder="Phone Number"
-            class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
         </div>
         <div class="mb-6">
-          <label for="email" class="block mb-2 font-Poppins font-medium text-sm"
-            >Email<span class="text-red-600">*</span></label
+          <label
+            for="email"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Email<span class="text-red">*</span></label
           >
           <input
             type="email"
             id="email"
             placeholder="Email"
-            class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
         </div>
@@ -99,11 +107,11 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
       <div class="flex justify-end gap-4">
         <label
           for="my-modal-3"
-          class="cursor-pointer btn text-[#1F7793] text-base font-Poppins font-bold capitalize w-[141px] border-[#1F7793] bg-white hover:bg-[#1F7793] hover:border-[#1F7793] hover:text-white"
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
           >Cancel</label
         >
         <button
-          class="btn text-white text-base font-Poppins font-bold capitalize w-[141px] border-[#1F7793] bg-[#1F7793] hover:bg-white hover:text-[#1F7793] hover:border-[#1F7793]"
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
         >
           Save
         </button>
