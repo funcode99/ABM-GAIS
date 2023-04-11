@@ -1,18 +1,23 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableDepartement from "../../components/departement/TableDepartement.vue";
-import Pagination from "../../components/departement/Pagination.vue";
-import ModalAdd from "../../components/departement/ModalAdd.vue";
+import Layout from "@/components/layout/Layout.vue";
+import TableKaryawan from "@/components/karyawan/TableKaryawan.vue";
+import Pagination from "@/components/karyawan/Pagination.vue";
+import ModalAdd from "@/components/karyawan/ModalAdd.vue";
+import Sidebar from '@/components/layout/Sidebar.vue'
 </script>
 
 <template>
-  <Layout />
-  <div class="card card-compact bg-white rounded-lg">
+
+  <div class="flex">
+    <Sidebar class="flex-none" />
+    <div class="dashboard card card-compact w-screen bg-white rounded-lg">
+    <Layout />
+
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
       <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
-        departement
+        karyawan
       </p>
       <ModalAdd />
     </div>
@@ -99,7 +104,7 @@ import ModalAdd from "../../components/departement/ModalAdd.vue";
       </form>
     </div>
 
-    <TableDepartement class="py-2 mx-4" />
+    <TableKaryawan class="py-2 mx-4 overflow-x-auto" />
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <p class="font-Inter text-xs font-normal text-[#888888]">
@@ -107,5 +112,14 @@ import ModalAdd from "../../components/departement/ModalAdd.vue";
       </p>
       <Pagination />
     </div>
+
+    </div>
   </div>
+
 </template>
+
+<style scoped>
+  .dashboard {
+    width: calc(100% - 260px);
+  }
+</style>

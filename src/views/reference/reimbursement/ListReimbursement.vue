@@ -1,8 +1,8 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableReimbursement from "../../components/reimbursement/TableReimbursement.vue";
-import Pagination from "../../components/reimbursement/Pagination.vue";
-import ModalAdd from "../../components/reimbursement/ModalAdd.vue";
+import Layout from "@/components/layout/Layout.vue";
+import TableReimbursement from "@/components/reimbursement/TableReimbursement.vue";
+import Pagination from "@/components/reimbursement/Pagination.vue";
+import ModalAdd from "@/components/reimbursement/ModalAdd.vue";
 </script>
 
 <template>

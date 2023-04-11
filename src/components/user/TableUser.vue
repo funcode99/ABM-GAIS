@@ -21,31 +21,13 @@ import dataDummy from '@/utils/Api/data.js'
             </button>
           </th>
           <th class="relative">
-            <span class="flex justify-center">SN</span>
+            <span class="flex justify-center">Username</span>
             <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
           <th class="relative">
-            <span class="flex justify-center">Name</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center">Gender</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center"> Email </span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center">Phone Number</span>
+            <span class="flex justify-center">Approval Authorities</span>
             <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
@@ -62,10 +44,6 @@ import dataDummy from '@/utils/Api/data.js'
             1
           </td>
           <td
-          >
-            2382193892
-          </td>
-          <td
             
           >
             John Mane
@@ -74,16 +52,6 @@ import dataDummy from '@/utils/Api/data.js'
             
           >
             Male
-          </td>
-          <td
-            
-          >
-            Johnm@gmail.com
-          </td>
-          <td
-            
-          >
-            08723236283112
           </td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -103,27 +71,12 @@ import dataDummy from '@/utils/Api/data.js'
           <td
             
           >
-            2349893929
-          </td>
-          <td
-            
-          >
             Mae X
           </td>
           <td
             
           >
             Female
-          </td>
-          <td
-            
-          >
-            maex@gmail.com
-          </td>
-          <td
-            
-          >
-            0872323298929
           </td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -143,12 +96,6 @@ import dataDummy from '@/utils/Api/data.js'
             3
           </td>
           <td
-            
-          >
-            2344784787
-          </td>
-          <td
-            
           >
             Nina Max
           </td>
@@ -156,16 +103,6 @@ import dataDummy from '@/utils/Api/data.js'
             
           >
             Female
-          </td>
-          <td
-            
-          >
-            ninam@gmail.com
-          </td>
-          <td
-            
-          >
-            0893283728322
           </td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>

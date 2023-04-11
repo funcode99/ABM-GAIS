@@ -1,12 +1,12 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
+import Layout from "@/components/layout/Layout.vue";
 </script>
 
 <template>
   <Layout />
   <div class="card w-full bg-base-100 shadow-xl">
     <div class="card-body">
-      <p class="font-Poppins font-semibold text-2xl">Economy</p>
+      <p class="font-Poppins font-semibold text-2xl">Train</p>
 
       <div class="card-actions justify-start py-4 gap-4">
         <button
@@ -25,21 +25,21 @@ import Layout from "../../components/layout/Layout.vue";
         <div class="flex flex-wrap justify-between lg:mx-40 md:mx-0">
           <div class="mb-6">
             <label
-              for="class_name"
+              for="name"
               class="block mb-2 font-Poppins font-medium text-sm"
-              >Class Name<span class="text-red-600">*</span></label
+              >Name<span class="text-red-600">*</span></label
             >
             <input
               type="text"
-              id="code"
-              placeholder="Class Name"
+              id="name"
+              placeholder="Name"
               class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
             />
           </div>
 
           <div class="mb-6">
             <label
-              for="parentcompany"
+              for="company"
               class="block mb-2 font-Poppins font-medium text-sm"
               >Company<span class="text-red-600">*</span></label
             >
@@ -47,6 +47,21 @@ import Layout from "../../components/layout/Layout.vue";
               <option disabled selected>Select Company</option>
               <option>Company A</option>
               <option>Company B</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-start lg:px-40 md:px-0">
+          <div class="mb-6">
+            <label
+              for="parenttype"
+              class="block mb-2 font-Poppins font-medium text-sm"
+              >Parent Type<span class="text-red-600">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected>Transportation</option>
+              <option>Train</option>
+              <option>Plane</option>
             </select>
           </div>
         </div>

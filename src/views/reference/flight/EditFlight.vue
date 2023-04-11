@@ -1,5 +1,5 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
+import Layout from "@/components/layout/Layout.vue";
 </script>
 
 <template>
@@ -25,14 +25,14 @@ import Layout from "../../components/layout/Layout.vue";
         <div class="flex flex-wrap justify-between lg:mx-40 md:mx-0">
           <div class="mb-6">
             <label
-              for="max_hotel"
+              for="class_name"
               class="block mb-2 font-Poppins font-medium text-sm"
-              >Max Hotel Fare<span class="text-red-600">*</span></label
+              >Class Name<span class="text-red-600">*</span></label
             >
             <input
               type="text"
-              id="max_hotel"
-              placeholder="Max Hotel Fare"
+              id="code"
+              placeholder="Class Name"
               class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
             />
           </div>

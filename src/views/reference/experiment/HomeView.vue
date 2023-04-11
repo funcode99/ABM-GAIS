@@ -1,6 +1,6 @@
 <script setup>
   import Sidebar from '@/components/Sidebar.vue'
-  import Table from '../../components/Table.vue';
+  import Table from '@/components/Table.vue';
   import Footer from '@/components/Footer.vue'
   const empty = ''
 </script>

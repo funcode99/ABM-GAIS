@@ -1,8 +1,8 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableCompany from "../../components/company/TableCompany.vue";
-import Pagination from "../../components/company/Pagination.vue";
-import ModalAdd from "../../components/company/ModalAdd.vue";
+import Layout from "@/components/layout/Layout.vue";
+import TableDepartement from "@/components/departement/TableDepartement.vue";
+import Pagination from "@/components/departement/Pagination.vue";
+import ModalAdd from "@/components/departement/ModalAdd.vue";
 </script>
 
 <template>
@@ -12,7 +12,7 @@ import ModalAdd from "../../components/company/ModalAdd.vue";
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
       <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
-        company
+        departement
       </p>
       <ModalAdd />
     </div>
@@ -99,7 +99,7 @@ import ModalAdd from "../../components/company/ModalAdd.vue";
       </form>
     </div>
 
-    <TableCompany class="py-2 mx-4" />
+    <TableDepartement class="py-2 mx-4" />
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <p class="font-Inter text-xs font-normal text-[#888888]">

@@ -1,18 +1,22 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableFlight from "../../components/flight/TableFlight.vue";
-import Pagination from "../../components/flight/Pagination.vue";
-import ModalAdd from "../../components/flight/ModalAdd.vue";
+    import Sidebar from '@/components/layout/Sidebar.vue'
+    import Layout from '@/components/layout/Layout.vue'
+    import TableUser from '@/components/user/TableUser.vue'
+    import Pagination from "@/components/karyawan/Pagination.vue";
+    import ModalAdd from "@/components/karyawan/ModalAdd.vue";
 </script>
 
 <template>
-  <Layout />
-  <div class="card card-compact bg-white rounded-lg">
+      <div class="flex">
+    <Sidebar class="flex-none" />
+    <div class="dashboard card card-compact w-screen bg-white rounded-lg">
+    <Layout />
+
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
       <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
-        company
+        USER
       </p>
       <ModalAdd />
     </div>
@@ -99,13 +103,15 @@ import ModalAdd from "../../components/flight/ModalAdd.vue";
       </form>
     </div>
 
-    <TableFlight class="py-2 mx-4" />
+    <TableUser class="py-2 mx-4 overflow-x-auto" />
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <p class="font-Inter text-xs font-normal text-[#888888]">
         Showing 1 to 10 of 50 entries
       </p>
       <Pagination />
+    </div>
+
     </div>
   </div>
 </template>

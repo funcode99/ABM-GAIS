@@ -1,8 +1,8 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableHotel from "../../components/hotel/TableHotel.vue";
-import Pagination from "../../components/hotel/Pagination.vue";
-import ModalAdd from "../../components/hotel/ModalAdd.vue";
+import Layout from "@/components/layout/Layout.vue";
+import TableCompany from "@/components/company/TableCompany.vue";
+import Pagination from "@/components/company/Pagination.vue";
+import ModalAdd from "@/components/company/ModalAdd.vue";
 </script>
 
 <template>
@@ -99,7 +99,7 @@ import ModalAdd from "../../components/hotel/ModalAdd.vue";
       </form>
     </div>
 
-    <TableHotel class="py-2 mx-4" />
+    <TableCompany class="py-2 mx-4" />
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <p class="font-Inter text-xs font-normal text-[#888888]">

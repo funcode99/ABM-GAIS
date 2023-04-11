@@ -1,23 +1,18 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableKaryawan from "../../components/karyawan/TableKaryawan.vue";
-import Pagination from "../../components/karyawan/Pagination.vue";
-import ModalAdd from "../../components/karyawan/ModalAdd.vue";
-import Sidebar from '../../components/layout/Sidebar.vue'
+import Layout from "@/components/layout/Layout.vue";
+import TableFlight from "@/components/flight/TableFlight.vue";
+import Pagination from "@/components/flight/Pagination.vue";
+import ModalAdd from "@/components/flight/ModalAdd.vue";
 </script>
 
 <template>
-
-  <div class="flex">
-    <Sidebar class="flex-none" />
-    <div class="dashboard card card-compact w-screen bg-white rounded-lg">
-    <Layout />
-
+  <Layout />
+  <div class="card card-compact bg-white rounded-lg">
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
       <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
-        karyawan
+        company
       </p>
       <ModalAdd />
     </div>
@@ -104,7 +99,7 @@ import Sidebar from '../../components/layout/Sidebar.vue'
       </form>
     </div>
 
-    <TableKaryawan class="py-2 mx-4 overflow-x-auto" />
+    <TableFlight class="py-2 mx-4" />
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <p class="font-Inter text-xs font-normal text-[#888888]">
@@ -112,13 +107,5 @@ import Sidebar from '../../components/layout/Sidebar.vue'
       </p>
       <Pagination />
     </div>
-
-  </div>
   </div>
 </template>
-
-<style scoped>
-  .dashboard {
-    width: calc(100% - 260px);
-  }
-</style>
