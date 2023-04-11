@@ -1,10 +1,8 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableCompany from "../../components/company/TableCompany.vue";
-import Pagination from "../../components/company/Pagination.vue";
-import ModalAdd from "../../components/company/ModalAdd.vue";
-import icon_filter from "../../assets/icon_filter.svg";
-import icon_reset from "../../assets/icon_reset.svg";
+import Layout from "@/components/layout/Layout.vue";
+import TableReimbursement from "@/components/reimbursement/TableReimbursement.vue";
+import Pagination from "@/components/reimbursement/Pagination.vue";
+import ModalAdd from "@/components/reimbursement/ModalAdd.vue";
 </script>
 
 <template>
@@ -128,7 +126,7 @@ import icon_reset from "../../assets/icon_reset.svg";
       </form>
     </div>
 
-    <TableCompany class="py-2 mx-4 overflow-x-auto" />
+    <TableReimbursement class="py-2 mx-4 overflow-x-auto" />
 
     <div
       class="flex flex-wrap justify-center items-center mx-4 py-4 md:justify-between"

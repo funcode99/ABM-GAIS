@@ -1,34 +1,32 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
+import Layout from "@/components/layout/Layout.vue";
 </script>
 
 <template>
   <Layout />
   <div class="card w-full bg-base-100 shadow-xl">
     <div class="card-body">
-      <p class="font-JakartaSans font-semibold text-2xl">Economy</p>
+      <p class="font-JakartaSans font-semibold text-2xl">Train</p>
 
       <form>
         <div class="flex flex-wrap justify-between lg:mx-40 md:mx-0">
           <div class="mb-6">
             <label
-              for="max_hotel"
-              id="max_hotel"
+              for="name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Max Hotel Fare<span class="text-red">*</span></label
+              >Name<span class="text-red">*</span></label
             >
             <input
               type="text"
-              id="max_hotel"
-              placeholder="Max Hotel Fare"
+              id="name"
+              placeholder="Name"
               class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             />
           </div>
 
           <div class="mb-6">
             <label
-              for="parentcompany"
-              id="parentcompany"
+              for="company"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Company<span class="text-red">*</span></label
             >

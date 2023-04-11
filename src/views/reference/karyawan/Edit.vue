@@ -1,6 +1,6 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import iconUser from "../../assets/navbar/icon_user.svg";
+import Layout from "@/components/layout/Layout.vue";
+import iconUser from "@/assets/navbar/icon_user.svg";
 </script>
 
 <template>

@@ -1,10 +1,8 @@
 <script setup>
-import Layout from "../../components/layout/Layout.vue";
-import TableHotel from "../../components/hotel/TableHotel.vue";
-import Pagination from "../../components/hotel/Pagination.vue";
-import ModalAdd from "../../components/hotel/ModalAdd.vue";
-import icon_filter from "../../assets/icon_filter.svg";
-import icon_reset from "../../assets/icon_reset.svg";
+import Layout from "@/components/layout/Layout.vue";
+import TableCompany from "@/components/company/TableCompany.vue";
+import Pagination from "@/components/company/Pagination.vue";
+import ModalAdd from "@/components/company/ModalAdd.vue";
 </script>
 
 <template>
@@ -128,7 +126,7 @@ import icon_reset from "../../assets/icon_reset.svg";
       </form>
     </div>
 
-    <TableHotel class="py-2 mx-4 overflow-x-auto" />
+    <TableCompany class="py-2 mx-4 overflow-x-auto" />
 
     <div
       class="flex flex-wrap justify-center items-center mx-4 py-4 md:justify-between"
