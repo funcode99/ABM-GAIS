@@ -14,6 +14,7 @@ import EditPagu from "../views/reference/pagu/EditPagu.vue"
 import ListReimbursement from "../views/reference/reimbursement/ListReimbursement.vue"
 import EditReimbursement from "../views/reference/reimbursement/EditReimbursement.vue"
 import ListZona from "../views/reference/zona/ListZona.vue"
+import ListJob from "../views/reference/jobband/ListJob.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 
@@ -94,6 +95,11 @@ const router = createRouter({
       path: '/zona',
       name: 'zona',
       component: ListZona
+    },
+    {
+      path: '/job',
+      name: 'job',
+      component: ListJob
     },
     {
       path: '/user',
