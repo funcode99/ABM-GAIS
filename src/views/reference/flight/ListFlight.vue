@@ -1,8 +1,10 @@
 <script setup>
-import Layout from "@/components/layout/Layout.vue";
-import TableFlight from "@/components/flight/TableFlight.vue";
-import Pagination from "@/components/flight/Pagination.vue";
-import ModalAdd from "@/components/flight/ModalAdd.vue";
+import Layout from "../../../components/layout/Layout.vue";
+import TableFlight from "../../../components/reference/flight/TableFlight.vue";
+import Pagination from "../../../components/reference/flight/Pagination.vue";
+import ModalAdd from "../../../components/reference/flight/ModalAdd.vue";
+import icon_filter from "../../../assets/icon_filter.svg";
+import icon_reset from "../../../assets/icon_reset.svg";
 </script>
 
 <template>

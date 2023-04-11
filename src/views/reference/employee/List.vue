@@ -1,8 +1,11 @@
 <script setup>
-import Layout from "@/components/layout/Layout.vue";
-import TableReimbursement from "@/components/reimbursement/TableReimbursement.vue";
-import Pagination from "@/components/reimbursement/Pagination.vue";
-import ModalAdd from "@/components/reimbursement/ModalAdd.vue";
+import Layout from "../../../components/layout/Layout.vue";
+import TableKaryawan from "../../../components/reference/employee/TableKaryawan.vue";
+import Pagination from "../../../components/reference/employee/Pagination.vue";
+import ModalAdd from "../../../components/reference/employee/ModalAdd.vue";
+import icon_filter from "../../../assets/icon_filter.svg";
+import icon_reset from "../../../assets/icon_reset.svg";
+import icon_received from "../../../assets/icon-received.svg";
 </script>
 
 <template>
@@ -14,9 +17,17 @@ import ModalAdd from "@/components/reimbursement/ModalAdd.vue";
       <p
         class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
       >
-        company
+        employee
       </p>
-      <ModalAdd />
+
+      <div class="flex gap-4">
+        <ModalAdd />
+        <button
+          class="btn btn-md text-white text-sm font-JakartaSans font-bold capitalize border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+        >
+          <img :src="icon_received" class="w-6 h-6" />
+        </button>
+      </div>
     </div>
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
@@ -77,7 +88,7 @@ import ModalAdd from "@/components/reimbursement/ModalAdd.vue";
         </div>
       </div>
 
-      <div class="flex gap-4 mr-80 items-center my-4 md:my-0">
+      <div class="flex gap-4 mr-96 items-center my-4 md:my-0">
         <button
           class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
         >
@@ -126,7 +137,18 @@ import ModalAdd from "@/components/reimbursement/ModalAdd.vue";
       </form>
     </div>
 
-    <TableReimbursement class="py-2 mx-4 overflow-x-auto" />
+    <div
+      class="grid grid-flow-col auto-cols-max justify-start items-center gap-2 px-4 py-2"
+    >
+      <p class="font-JakartaSans font-normal text-xs">Showing</p>
+      <input
+        type="number"
+        value="1"
+        class="input w-14 h-7 rounded-sm p-0 border border-[#015289] font-JakartaSans font-normal text-xs px-2"
+      />
+    </div>
+
+    <TableKaryawan class="py-2 mx-4 overflow-x-auto" />
 
     <div
       class="flex flex-wrap justify-center items-center mx-4 py-4 md:justify-between"

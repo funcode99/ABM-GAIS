@@ -1,8 +1,10 @@
 <script setup>
-import Layout from "@/components/layout/Layout.vue";
-import TableCompany from "@/components/company/TableCompany.vue";
-import Pagination from "@/components/company/Pagination.vue";
-import ModalAdd from "@/components/company/ModalAdd.vue";
+import Layout from "../../../components/layout/Layout.vue";
+import TableCompany from "../../../components/reference/company/TableCompany.vue";
+import Pagination from "../../../components/reference/company/Pagination.vue";
+import ModalAdd from "../../../components/reference/company/ModalAdd.vue";
+import icon_filter from "../../../assets/icon_filter.svg";
+import icon_reset from "../../../assets/icon_reset.svg";
 </script>
 
 <template>

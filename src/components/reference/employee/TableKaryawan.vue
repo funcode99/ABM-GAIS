@@ -13,7 +13,6 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             <label class="flex justify-center">
               <input
                 type="checkbox"
-                checked="checked"
                 class="checkbox bg-transparent border border-white w-[18px] h-[18px] rounded-sm"
               />
             </label>
@@ -64,7 +63,6 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             <label class="flex justify-center">
               <input
                 type="checkbox"
-                checked="checked"
                 class="checkbox bg-transparent w-[18px] h-[18px] rounded-sm border border-[#015289]"
               />
             </label>
@@ -90,7 +88,6 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             <label class="flex justify-center">
               <input
                 type="checkbox"
-                checked="checked"
                 class="checkbox bg-transparent w-[18px] h-[18px] rounded-sm border border-[#015289]"
               />
             </label>
@@ -117,7 +114,6 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             <label class="flex justify-center">
               <input
                 type="checkbox"
-                checked="checked"
                 class="checkbox bg-transparent w-[18px] h-[18px] rounded-sm border border-[#015289]"
               />
             </label>

@@ -1,5 +1,6 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
+// import iconClose from "../../../assets/navbar/icon_close.svg";
+// import iconClose from "../../../assets/navbar/icon_close.svg";
 </script>
 
 <template>
@@ -14,23 +15,26 @@ import iconClose from "@/assets/navbar/icon_close.svg";
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-white py-4">
         <label for="my-modal-3" class="cursor-pointer absolute right-0 top-5">
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+          <!-- <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" /> -->
         </label>
-        <p class="font-JakartaSans text-2xl font-semibold">New Hotel Fare</p>
+        <p class="font-JakartaSans text-2xl font-semibold">
+          New Flight Entitlement
+        </p>
         <div className="divider m-0"></div>
       </nav>
 
       <form>
         <div class="mb-6">
           <label
-            for="maxhotel"
+            for="class_name"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Max Hotel Fare<span class="text-red">*</span></label
+            id="class_name"
+            >Class Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            id="maxhotel"
-            placeholder="Max Hotel Fare"
+            id="class_name"
+            placeholder="Class Name"
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
