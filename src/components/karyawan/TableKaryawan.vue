@@ -7,13 +7,10 @@ import dataDummy from '@/utils/Api/data.js'
 </script>
 
 <template>
-  <div class="">
-    <table
-      class="table table-zebra table-compact border w-full rounded-lg"
-    >
-
-      <thead class="text-center font-Montserrat text-sm font-bold">
-        <tr class="">
+  <div>
+    <table class="table table-zebra table-compact w-full rounded-lg">
+      <thead class="text-center font-JakartaSans text-sm font-bold">
+        <tr>
           <th class="relative">
             <span class="flex justify-center">No</span>
             <button class="absolute right-0 top-0 bottom-0">
@@ -95,36 +92,13 @@ import dataDummy from '@/utils/Api/data.js'
           </td>
         </tr>
 
-        <tr>
-          <td
-          >
-            2
-          </td>
-          <td
-            
-          >
-            2349893929
-          </td>
-          <td
-            
-          >
-            Mae X
-          </td>
-          <td
-            
-          >
-            Female
-          </td>
-          <td
-            
-          >
-            maex@gmail.com
-          </td>
-          <td
-            
-          >
-            0872323298929
-          </td>
+        <tr class="font-JakartaSans font-normal text-sm">
+          <td>2</td>
+          <td>2349893929</td>
+          <td>Mae X</td>
+          <td>Female</td>
+          <td>maex@gmail.com</td>
+          <td>0872323298929</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -136,37 +110,13 @@ import dataDummy from '@/utils/Api/data.js'
           </td>
         </tr>
 
-        <tr>
-          <td
-          
-          >
-            3
-          </td>
-          <td
-            
-          >
-            2344784787
-          </td>
-          <td
-            
-          >
-            Nina Max
-          </td>
-          <td
-            
-          >
-            Female
-          </td>
-          <td
-            
-          >
-            ninam@gmail.com
-          </td>
-          <td
-            
-          >
-            0893283728322
-          </td>
+        <tr class="font-JakartaSans font-normal text-sm">
+          <td>3</td>
+          <td>2344784787</td>
+          <td>Nina Max</td>
+          <td>Female</td>
+          <td>ninam@gmail.com</td>
+          <td>0893283728322</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
@@ -176,34 +126,26 @@ import dataDummy from '@/utils/Api/data.js'
             </button>
           </td>
         </tr>
-
-        <!-- <tr v-for="data in dataDummy" :key="data.blogId">
-          <td>{{ data.title }}</td>
-          <td>{{ data.name }}</td>
-        </tr> -->
-
       </tbody>
-      
     </table>
   </div>
 </template>
 
 <style scoped>
-  th {
-    padding: 2px;
-    text-align: left;
-    position: relative;
-  }
+th {
+  padding: 2px;
+  text-align: left;
+  position: relative;
+}
 
-  tr td {
-    text-align: center;
-    white-space: nowrap;
-  }
+tr td {
+  text-align: center;
+  white-space: nowrap;
+}
 
-  tr th {
-    background-color: #015289;
-    text-transform: capitalize;
-    color: white;
-  }
-
+tr th {
+  background-color: #015289;
+  text-transform: capitalize;
+  color: white;
+}
 </style>

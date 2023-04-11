@@ -1,17 +1,28 @@
 <script setup>
+<<<<<<< HEAD:src/views/reference/flight/ListFlight.vue
 import Layout from "@/components/layout/Layout.vue";
 import TableFlight from "@/components/flight/TableFlight.vue";
 import Pagination from "@/components/flight/Pagination.vue";
 import ModalAdd from "@/components/flight/ModalAdd.vue";
+=======
+import Layout from "../../components/layout/Layout.vue";
+import TableFlight from "../../components/flight/TableFlight.vue";
+import Pagination from "../../components/flight/Pagination.vue";
+import ModalAdd from "../../components/flight/ModalAdd.vue";
+import icon_filter from "../../assets/icon_filter.svg";
+import icon_reset from "../../assets/icon_reset.svg";
+>>>>>>> ea52393df1463f879c73d7743d822622b773e98b:src/views/flight/ListFlight.vue
 </script>
 
 <template>
   <Layout />
-  <div class="card card-compact bg-white rounded-lg">
+  <div class="card card-compact bg-white rounded-lg custom-card">
     <div
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
-      <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
+      <p
+        class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+      >
         company
       </p>
       <ModalAdd />
@@ -19,13 +30,17 @@ import ModalAdd from "@/components/flight/ModalAdd.vue";
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
       <div class="grid grid-flow-col auto-cols-max items-center gap-4">
-        <p class="capitalize font-Fira text-xs text-black font-medium">sort</p>
-        <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
+        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
+          sort
+        </p>
+        <div
+          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
+        >
           <button tabindex="0">
             <div tabindex="0" class="collapse collapse-arrow">
               <div class="collapse-title min-h-max py-3">
                 <p
-                  class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
+                  class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
                 >
                   A to Z
                 </p>
@@ -42,16 +57,18 @@ import ModalAdd from "@/components/flight/ModalAdd.vue";
           </ul>
         </div>
 
-        <p class="capitalize font-Fira text-xs text-black font-medium">
+        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
           company
         </p>
 
-        <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
+        <div
+          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
+        >
           <button tabindex="0">
             <div tabindex="0" class="collapse collapse-arrow">
               <div class="collapse-title min-h-max py-3">
                 <p
-                  class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
+                  class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
                 >
                   company
                 </p>
@@ -69,7 +86,26 @@ import ModalAdd from "@/components/flight/ModalAdd.vue";
         </div>
       </div>
 
-      <form class="py-2 flex justify-center mx-10 md:mx-0">
+      <div class="flex gap-4 mr-80 items-center my-4 md:my-0">
+        <button
+          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+        >
+          <span>
+            <img :src="icon_filter" class="w-5 h-5" />
+          </span>
+          Filter
+        </button>
+        <button
+          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+        >
+          <span>
+            <img :src="icon_reset" class="w-5 h-5" />
+          </span>
+          Reset
+        </button>
+      </div>
+
+      <form class="py-2 flex justify-center md:mx-0">
         <div class="relative">
           <div
             class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -93,19 +129,32 @@ import ModalAdd from "@/components/flight/ModalAdd.vue";
           <input
             type="text"
             placeholder="Search..."
-            class="input input-bordered input-info w-full px-12"
+            class="input input-bordered input-info w-full px-12 font-JakartaSans"
           />
         </div>
       </form>
     </div>
 
-    <TableFlight class="py-2 mx-4" />
+    <TableFlight class="py-2 mx-4 overflow-x-auto" />
 
-    <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-      <p class="font-Inter text-xs font-normal text-[#888888]">
+    <div
+      class="flex flex-wrap justify-center items-center mx-4 py-4 md:justify-between"
+    >
+      <p class="font-Inter text-xs font-normal text-[#888888] py-2">
         Showing 1 to 10 of 50 entries
       </p>
       <Pagination />
     </div>
   </div>
 </template>
+
+<style scoped>
+.dashboard {
+  width: calc(100% - 260px);
+}
+
+.custom-card {
+  box-shadow: 0px -4px #015289;
+  border-radius: 4px;
+}
+</style>

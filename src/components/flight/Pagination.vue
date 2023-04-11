@@ -1,11 +1,11 @@
 <script setup></script>
 
 <template>
-  <div class="btn-group">
-    <button class="btn btn-ghost hover:bg-[#1F7793] hover:text-white">
+  <div class="flex items-center space-x-1">
+    <a href="#" class="flex items-center px-3 py-1 text-[#015289]">
       <svg
         aria-hidden="true"
-        class="w-5 h-5"
+        class="w-6 h-6"
         fill="currentColor"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -16,15 +16,42 @@
           clip-rule="evenodd"
         ></path>
       </svg>
-    </button>
-    <button class="btn btn-ghost hover:bg-[#1F7793] hover:text-white">1</button>
-    <button class="btn btn-ghost hover:bg-[#1F7793] hover:text-white">2</button>
-    <button class="btn btn-ghost hover:bg-[#1F7793] hover:text-white">3</button>
-    <button class="btn btn-ghost hover:bg-[#1F7793] hover:text-white">4</button>
-    <button class="btn btn-ghost hover:bg-[#1F7793] hover:text-white">
+    </a>
+
+    <a
+      href="#"
+      class="px-3 py-1 text-[#015289] bg-white border border-[#015289] rounded hover:text-white hover:bg-[#015289] hover:border-[#015289] hover:border"
+    >
+      1
+    </a>
+    <a
+      href="#"
+      class="px-3 py-1 text-[#015289] bg-white border border-[#015289] rounded hover:text-white hover:bg-[#015289] hover:border-[#015289] hover:border"
+    >
+      2
+    </a>
+    <a
+      href="#"
+      class="px-3 py-1 text-[#015289] bg-white border border-[#015289] rounded hover:text-white hover:bg-[#015289] hover:border-[#015289] hover:border"
+    >
+      ...
+    </a>
+    <a
+      href="#"
+      class="px-3 py-1 text-[#015289] bg-white border border-[#015289] rounded hover:text-white hover:bg-[#015289] hover:border-[#015289] hover:border"
+    >
+      4
+    </a>
+    <a
+      href="#"
+      class="px-3 py-1 text-[#015289] bg-white border border-[#015289] rounded hover:text-white hover:bg-[#015289] hover:border-[#015289] hover:border"
+    >
+      5
+    </a>
+    <a href="#" class="px-3 py-1 text-[#015289]">
       <svg
         aria-hidden="true"
-        class="w-5 h-5"
+        class="w-6 h-6"
         fill="currentColor"
         viewBox="0 0 20 20"
         xmlns="http://www.w3.org/2000/svg"
@@ -35,6 +62,6 @@
           clip-rule="evenodd"
         ></path>
       </svg>
-    </button>
+    </a>
   </div>
 </template>

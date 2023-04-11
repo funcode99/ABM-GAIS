@@ -54,6 +54,7 @@ import iconUser from "@/assets/navbar/icon_user.svg";
           <label
             for="gender"
             class="block mb-2 font-JakartaSans font-medium text-sm"
+            id="gender"
             >Gender<span class="text-red">*</span></label
           >
           <select class="select select-accent w-40">

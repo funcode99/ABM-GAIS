@@ -30,13 +30,13 @@ const router = createRouter({
       component: Dashboard
     },
     {
-      path: '/karyawan',
-      name: 'karyawan',
+      path: '/employee',
+      name: 'employee',
       component: List
     },
     {
-      path: '/editkaryawan',
-      name: 'karyawanedit',
+      path: '/editemployee',
+      name: 'employeeedit',
       component: Edit
     },
     {
