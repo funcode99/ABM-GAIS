@@ -25,9 +25,10 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
         <div class="avatar">
           <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
             <div class="flex justify-center items-center py-8">
-              <button class="w-[37px] h-[37px]">
-                <img :src="iconPlus" />
-              </button>
+              <label for="file-input" class="cursor-pointer">
+                <img :src="iconPlus" class="w-[37px] h-[37px]" />
+              </label>
+              <input type="file" id="file-input" class="hidden" />
             </div>
           </div>
         </div>
@@ -48,8 +49,8 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
           <input
             type="text"
             id="name"
-            placeholder="Employee name"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            placeholder="Employee Name"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base capitalize"
             required
           />
         </div>
@@ -66,6 +67,18 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
           />
         </div>
         <div class="mb-6">
+          <label for="sn" class="block mb-2 font-Poppins font-medium text-sm"
+            >NIK<span class="text-red">*</span></label
+          >
+          <input
+            type="number"
+            id="nik"
+            placeholder="NIK"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+        <div class="mb-6">
           <label
             for="gender"
             class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -73,9 +86,22 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             >Gender<span class="text-red">*</span></label
           >
           <select class="select select-accent w-40" required>
-            <option disabled selected>Select Gender</option>
+            <option disabled selected>Gender</option>
             <option>Male</option>
             <option>Female</option>
+          </select>
+        </div>
+        <div class="mb-6">
+          <label
+            for="departement"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            id="departement"
+            >Departement<span class="text-red">*</span></label
+          >
+          <select class="select select-accent w-40" required>
+            <option disabled selected>Departement</option>
+            <option>Departement A</option>
+            <option>Departement B</option>
           </select>
         </div>
         <div class="mb-6">
@@ -102,6 +128,32 @@ import iconPlus from "../../assets/navbar/icon_plus.svg";
             type="email"
             id="email"
             placeholder="Email"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="begin_date"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Begin Date<span class="text-red">*</span></label
+          >
+          <input
+            type="date"
+            id="begin_date"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+        <div class="mb-6">
+          <label
+            for="end_date"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >End Date<span class="text-red">*</span></label
+          >
+          <input
+            type="date"
+            id="end_date"
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />

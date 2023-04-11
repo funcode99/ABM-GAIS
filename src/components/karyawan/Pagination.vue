@@ -1,7 +1,14 @@
-<script setup></script>
+<script setup>
+import icon_doublearrow_left from "../../assets/icon_doublearrow_left.svg";
+import icon_doublearrow_right from "../../assets/icon_doublearrow_right.svg";
+</script>
 
 <template>
   <div class="flex items-center space-x-1">
+    <a href="#" class="flex items-center text-[#015289]">
+      <img :src="icon_doublearrow_left" />
+    </a>
+
     <a href="#" class="flex items-center px-3 py-1 text-[#015289]">
       <svg
         aria-hidden="true"
@@ -62,6 +69,10 @@
           clip-rule="evenodd"
         ></path>
       </svg>
+    </a>
+
+    <a href="#" class="flex items-center text-[#015289]">
+      <img :src="icon_doublearrow_right" />
     </a>
   </div>
 </template>
