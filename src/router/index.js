@@ -9,6 +9,8 @@ import ListDepartement from "../views/reference/departemen/ListDepartement.vue"
 import EditDepartement from "../views/reference/departemen/EditDepartement.vue"
 import ListFlight from "../views/reference/flight/ListFlight.vue"
 import EditFlight from "../views/reference/flight/EditFlight.vue"
+import ListPagu from "../views/reference/pagu/ListPagu.vue"
+import EditPagu from "../views/reference/pagu/EditPagu.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 
@@ -64,6 +66,16 @@ const router = createRouter({
       path: '/editflight',
       name: 'flightedit',
       component: EditFlight
+    },
+    {
+      path: '/pagu',
+      name: 'pagu',
+      component: ListPagu
+    },
+    {
+      path: '/editpagu',
+      name: 'paguedit',
+      component: EditPagu
     },
     {
       path: '/user',
