@@ -23,61 +23,6 @@ import iconClose from "@/assets/navbar/icon_close.svg";
       <form>
         <div class="mb-6">
           <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Name<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            id="name"
-            placeholder="Name Departement"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="cost_center"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Cost Center<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            id="cost_center"
-            placeholder="Cost Center"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="gl_account"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >GL Account<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            id="gl_account"
-            placeholder="GL Account"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="status"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            id="status"
-            >Status<span class="text-red">*</span></label
-          >
-          <select class="select select-accent w-40" required>
-            <option disabled selected>Status</option>
-            <option>Active</option>
-            <option>Non Active</option>
-          </select>
-        </div>
-        <div class="mb-6">
-          <label
             for="company"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             id="company"
@@ -91,28 +36,104 @@ import iconClose from "@/assets/navbar/icon_close.svg";
         </div>
         <div class="mb-6">
           <label
-            for="division"
+            for="name"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Division<span class="text-red">*</span></label
+            >Name<span class="text-red">*</span></label
           >
-          <select class="select select-accent w-40" required>
-            <option disabled selected>Division</option>
-            <option>Division A</option>
-            <option>Division B</option>
-          </select>
+          <input
+            type="text"
+            id="name"
+            placeholder="Name Departement"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
         </div>
-        <div class="mb-6">
-          <label
-            for="departement_head"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            id="departement_head"
-            >Departemen Head<span class="text-red">*</span></label
-          >
-          <select class="select select-accent w-40" required>
-            <option disabled selected>Name</option>
-            <option>Name A</option>
-            <option>Name B</option>
-          </select>
+
+        <div class="flex flex-wrap justify-between">
+          <div class="mb-6">
+            <label
+              for="cost_center"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="cost_center"
+              >Cost Center<span class="text-red">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected>Cost</option>
+              <option>Cost A</option>
+              <option>Cost B</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label
+              for="status"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="status"
+              >Status<span class="text-red">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected>Status</option>
+              <option>Active</option>
+              <option>Non Active</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-between">
+          <div class="mb-6">
+            <label
+              for="gl_account"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="gl_account"
+              >GL Account<span class="text-red">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected>GL Account</option>
+              <option>GL Account A</option>
+              <option>GL Account B</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label
+              for="profit_center"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="profit_center"
+              >Profit Center<span class="text-red">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected>Profit</option>
+              <option>Profit A</option>
+              <option>Profit B</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap justify-between">
+          <div class="mb-6">
+            <label
+              for="division"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="division"
+              >Division<span class="text-red">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected>Division</option>
+              <option>Division A</option>
+              <option>DivisionB</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label
+              for="dep_head"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="dep_head"
+              >Departement Head<span class="text-red">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected>Departement</option>
+              <option>Departement A</option>
+              <option>Departement B</option>
+            </select>
+          </div>
         </div>
       </form>
 

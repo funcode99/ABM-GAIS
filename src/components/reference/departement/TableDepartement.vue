@@ -10,6 +10,14 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
       <thead class="text-center font-JakartaSans text-sm font-bold">
         <tr>
           <th class="relative">
+            <label class="flex justify-center">
+              <input
+                type="checkbox"
+                class="checkbox bg-transparent border border-white w-[18px] h-[18px] rounded-sm"
+              />
+            </label>
+          </th>
+          <th class="relative">
             <span class="flex justify-center">No</span>
             <button class="absolute right-0 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
@@ -39,12 +47,20 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="justify-center">Actions</th>
+          <th class="flex justify-center">Actions</th>
         </tr>
       </thead>
 
       <tbody class="bg-[#F5F5F5]">
         <tr class="font-JakartaSans font-normal text-sm">
+          <td class="relative">
+            <label class="flex justify-center">
+              <input
+                type="checkbox"
+                class="checkbox bg-transparent w-[18px] h-[18px] rounded-sm border border-[#015289]"
+              />
+            </label>
+          </td>
           <td>1</td>
           <td>Human Resource</td>
           <td>23123</td>
@@ -61,6 +77,14 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
         </tr>
 
         <tr class="font-JakartaSans font-normal text-sm">
+          <td class="relative">
+            <label class="flex justify-center">
+              <input
+                type="checkbox"
+                class="checkbox bg-transparent w-[18px] h-[18px] rounded-sm border border-[#015289]"
+              />
+            </label>
+          </td>
           <td>2</td>
           <td>IT</td>
           <td>32322</td>
@@ -78,6 +102,14 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
         </tr>
 
         <tr class="font-JakartaSans font-normal text-sm">
+          <td class="relative">
+            <label class="flex justify-center">
+              <input
+                type="checkbox"
+                class="checkbox bg-transparent w-[18px] h-[18px] rounded-sm border border-[#015289]"
+              />
+            </label>
+          </td>
           <td>3</td>
           <td>Sales</td>
           <td>02323</td>
