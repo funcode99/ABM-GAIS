@@ -1,6 +1,5 @@
 <script setup>
-// import iconClose from "../../../assets/navbar/icon_close.svg";
-// import iconClose from "../../../assets/navbar/icon_close.svg";
+import iconClose from "../../../assets/navbar/icon_close.svg";
 </script>
 
 <template>
@@ -15,7 +14,7 @@
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-white py-4">
         <label for="my-modal-3" class="cursor-pointer absolute right-0 top-5">
-          <!-- <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" /> -->
+          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold">
           New Flight Entitlement
@@ -38,19 +37,6 @@
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
-        </div>
-        <div class="mb-6">
-          <label
-            for="company"
-            id="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Company<span class="text-red">*</span></label
-          >
-          <select class="select select-accent w-40" required>
-            <option disabled selected>Select Company</option>
-            <option>Company A</option>
-            <option>Company B</option>
-          </select>
         </div>
       </form>
 
