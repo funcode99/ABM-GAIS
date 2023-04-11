@@ -9,13 +9,27 @@ import iconUser from "@/assets/navbar/icon_user.svg";
     <div class="card-body">
       <p class="font-JakartaSans font-semibold text-2xl">John Mane</p>
 
+      <div class="flex justify-start pb-4 gap-4">
+        <button
+          class="btn text-blue text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-white border-blue hover:bg-blue hover:border-blue hover:text-white"
+        >
+          Edit
+        </button>
+        <button
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+        >
+          Save
+        </button>
+      </div>
+
       <div class="flex justify-center py-4">
         <div class="avatar">
           <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
             <div class="flex justify-center items-center py-1">
-              <button>
-                <img :src="iconUser" class="w-[138px] h-[124px]" />
-              </button>
+              <label for="file-input" class="cursor-pointer">
+                <img :src="iconUser" class="w-[37px] h-[37px]" />
+              </label>
+              <input type="file" id="file-input" class="hidden" />
             </div>
           </div>
         </div>
@@ -92,19 +106,6 @@ import iconUser from "@/assets/navbar/icon_user.svg";
           />
         </div>
       </form>
-    </div>
-
-    <div class="flex justify-start pb-4 px-8 gap-4">
-      <button
-        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-      >
-        Cancel
-      </button>
-      <button
-        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-      >
-        Save
-      </button>
     </div>
   </div>
 </template>
