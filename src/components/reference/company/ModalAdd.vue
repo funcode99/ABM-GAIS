@@ -1,5 +1,6 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
+import iconUpload from "../../../assets/icon_upload.svg";
 </script>
 
 <template>
@@ -45,7 +46,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             type="text"
             id="name"
             placeholder="Name Company"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base capitalize"
             required
           />
         </div>
@@ -61,6 +62,34 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             <option>Company A</option>
             <option>Company B</option>
           </select>
+        </div>
+
+        <div class="mb-6">
+          <div
+            for="logo_company"
+            class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
+          >
+            Logo Company
+            <span class="text-red">*</span>
+          </div>
+          <div class="relative border border-accent rounded-lg py-2">
+            <input
+              type="file"
+              id="logo_company"
+              name="logo_company"
+              class="hidden border"
+            />
+            <label for="logo_company">
+              <span
+                class="font-JakartaSans font-medium text-sm cursor-pointer mx-4"
+                >Logo Company
+              </span>
+              <img
+                :src="iconUpload"
+                class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              />
+            </label>
+          </div>
         </div>
       </form>
 

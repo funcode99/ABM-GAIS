@@ -5,6 +5,7 @@ import Pagination from "../../../components/reference/company/Pagination.vue";
 import ModalAdd from "../../../components/reference/company/ModalAdd.vue";
 import icon_filter from "../../../assets/icon_filter.svg";
 import icon_reset from "../../../assets/icon_reset.svg";
+import icon_received from "../../../assets/icon-received.svg";
 </script>
 
 <template>
@@ -18,86 +19,17 @@ import icon_reset from "../../../assets/icon_reset.svg";
       >
         company
       </p>
-      <ModalAdd />
+      <div class="flex gap-4">
+        <ModalAdd />
+        <button
+          class="btn btn-md text-white text-sm font-JakartaSans font-bold capitalize border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+        >
+          <img :src="icon_received" class="w-6 h-6" />
+        </button>
+      </div>
     </div>
 
-    <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-      <div class="grid grid-flow-col auto-cols-max items-center gap-4">
-        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
-          sort
-        </p>
-        <div
-          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
-        >
-          <button tabindex="0">
-            <div tabindex="0" class="collapse collapse-arrow">
-              <div class="collapse-title min-h-max py-3">
-                <p
-                  class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
-                >
-                  A to Z
-                </p>
-              </div>
-            </div>
-          </button>
-          <ul
-            tabindex="0"
-            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-          >
-            <li><a>A</a></li>
-            <li><a>B</a></li>
-            <li><a>C</a></li>
-          </ul>
-        </div>
-
-        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
-          company
-        </p>
-
-        <div
-          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
-        >
-          <button tabindex="0">
-            <div tabindex="0" class="collapse collapse-arrow">
-              <div class="collapse-title min-h-max py-3">
-                <p
-                  class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
-                >
-                  company
-                </p>
-              </div>
-            </div>
-          </button>
-          <ul
-            tabindex="0"
-            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-          >
-            <li><a>company A</a></li>
-            <li><a>company B</a></li>
-            <li><a>company C</a></li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="flex gap-4 mr-80 items-center my-4 md:my-0">
-        <button
-          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
-        >
-          <span>
-            <img :src="icon_filter" class="w-5 h-5" />
-          </span>
-          Filter
-        </button>
-        <button
-          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
-        >
-          <span>
-            <img :src="icon_reset" class="w-5 h-5" />
-          </span>
-          Reset
-        </button>
-      </div>
-
+    <div class="flex flex-wrap justify-start items-center mx-4 py-2">
       <form class="py-2 flex justify-center md:mx-0">
         <div class="relative">
           <div
@@ -126,6 +58,17 @@ import icon_reset from "../../../assets/icon_reset.svg";
           />
         </div>
       </form>
+    </div>
+
+    <div
+      class="grid grid-flow-col auto-cols-max justify-start items-center gap-2 px-4 py-2"
+    >
+      <p class="font-JakartaSans font-normal text-xs">Showing</p>
+      <input
+        type="number"
+        value="1"
+        class="input w-14 h-7 rounded-sm p-0 border border-[#015289] font-JakartaSans font-normal text-xs px-2"
+      />
     </div>
 
     <TableCompany class="py-2 mx-4 overflow-x-auto" />
