@@ -11,6 +11,8 @@ import ListFlight from "../views/reference/flight/ListFlight.vue"
 import EditFlight from "../views/reference/flight/EditFlight.vue"
 import ListPagu from "../views/reference/pagu/ListPagu.vue"
 import EditPagu from "../views/reference/pagu/EditPagu.vue"
+import ListReimbursement from "../views/reference/reimbursement/ListReimbursement.vue"
+import EditReimbursement from "../views/reference/reimbursement/EditReimbursement.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 
@@ -76,6 +78,16 @@ const router = createRouter({
       path: '/editpagu',
       name: 'paguedit',
       component: EditPagu
+    },
+    {
+      path: '/reimbursement',
+      name: 'reimbursement',
+      component: ListReimbursement
+    },
+    {
+      path: '/editreimbursement',
+      name: 'reimbursementedit',
+      component: EditReimbursement
     },
     {
       path: '/user',
