@@ -1,17 +1,8 @@
 <script setup>
-<<<<<<< HEAD:src/views/reference/departemen/ListDepartement.vue
 import Layout from "@/components/layout/Layout.vue";
 import TableDepartement from "@/components/departement/TableDepartement.vue";
 import Pagination from "@/components/departement/Pagination.vue";
 import ModalAdd from "@/components/departement/ModalAdd.vue";
-=======
-import Layout from "../../components/layout/Layout.vue";
-import TableDepartement from "../../components/departement/TableDepartement.vue";
-import Pagination from "../../components/departement/Pagination.vue";
-import ModalAdd from "../../components/departement/ModalAdd.vue";
-import icon_filter from "../../assets/icon_filter.svg";
-import icon_reset from "../../assets/icon_reset.svg";
->>>>>>> ea52393df1463f879c73d7743d822622b773e98b:src/views/departemen/ListDepartement.vue
 </script>
 
 <template>

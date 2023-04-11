@@ -1,17 +1,8 @@
 <script setup>
-<<<<<<< HEAD:src/views/reference/hotel/ListHotel.vue
 import Layout from "@/components/layout/Layout.vue";
 import TableHotel from "@/components/hotel/TableHotel.vue";
 import Pagination from "@/components/hotel/Pagination.vue";
 import ModalAdd from "@/components/hotel/ModalAdd.vue";
-=======
-import Layout from "../../components/layout/Layout.vue";
-import TableHotel from "../../components/hotel/TableHotel.vue";
-import Pagination from "../../components/hotel/Pagination.vue";
-import ModalAdd from "../../components/hotel/ModalAdd.vue";
-import icon_filter from "../../assets/icon_filter.svg";
-import icon_reset from "../../assets/icon_reset.svg";
->>>>>>> ea52393df1463f879c73d7743d822622b773e98b:src/views/hotel/ListHotel.vue
 </script>
 
 <template>

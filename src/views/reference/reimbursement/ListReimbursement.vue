@@ -1,17 +1,8 @@
 <script setup>
-<<<<<<< HEAD:src/views/reference/reimbursement/ListReimbursement.vue
 import Layout from "@/components/layout/Layout.vue";
 import TableReimbursement from "@/components/reimbursement/TableReimbursement.vue";
 import Pagination from "@/components/reimbursement/Pagination.vue";
 import ModalAdd from "@/components/reimbursement/ModalAdd.vue";
-=======
-import Layout from "../../components/layout/Layout.vue";
-import TableReimbursement from "../../components/reimbursement/TableReimbursement.vue";
-import Pagination from "../../components/reimbursement/Pagination.vue";
-import ModalAdd from "../../components/reimbursement/ModalAdd.vue";
-import icon_filter from "../../assets/icon_filter.svg";
-import icon_reset from "../../assets/icon_reset.svg";
->>>>>>> ea52393df1463f879c73d7743d822622b773e98b:src/views/reimbursement/ListReimbursement.vue
 </script>
 
 <template>

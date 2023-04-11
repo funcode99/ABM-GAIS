@@ -1,17 +1,8 @@
 <script setup>
-<<<<<<< HEAD:src/views/reference/company/ListCompany.vue
 import Layout from "@/components/layout/Layout.vue";
 import TableCompany from "@/components/company/TableCompany.vue";
 import Pagination from "@/components/company/Pagination.vue";
 import ModalAdd from "@/components/company/ModalAdd.vue";
-=======
-import Layout from "../../components/layout/Layout.vue";
-import TableCompany from "../../components/company/TableCompany.vue";
-import Pagination from "../../components/company/Pagination.vue";
-import ModalAdd from "../../components/company/ModalAdd.vue";
-import icon_filter from "../../assets/icon_filter.svg";
-import icon_reset from "../../assets/icon_reset.svg";
->>>>>>> ea52393df1463f879c73d7743d822622b773e98b:src/views/company/ListCompany.vue
 </script>
 
 <template>

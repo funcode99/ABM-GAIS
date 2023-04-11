@@ -1,17 +1,8 @@
 <script setup>
-<<<<<<< HEAD:src/views/reference/flight/ListFlight.vue
 import Layout from "@/components/layout/Layout.vue";
 import TableFlight from "@/components/flight/TableFlight.vue";
 import Pagination from "@/components/flight/Pagination.vue";
 import ModalAdd from "@/components/flight/ModalAdd.vue";
-=======
-import Layout from "../../components/layout/Layout.vue";
-import TableFlight from "../../components/flight/TableFlight.vue";
-import Pagination from "../../components/flight/Pagination.vue";
-import ModalAdd from "../../components/flight/ModalAdd.vue";
-import icon_filter from "../../assets/icon_filter.svg";
-import icon_reset from "../../assets/icon_reset.svg";
->>>>>>> ea52393df1463f879c73d7743d822622b773e98b:src/views/flight/ListFlight.vue
 </script>
 
 <template>
