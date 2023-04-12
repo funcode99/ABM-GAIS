@@ -17,6 +17,7 @@ import ListReimbursement from "@/views/reference/reimbursement/ListReimbursement
 import EditReimbursement from "@/views/reference/reimbursement/EditReimbursement.vue"
 import ListZona from "@/views/reference/zona/ListZona.vue"
 import ListJob from "@/views/reference/jobband/ListJob.vue"
+import ListSite from "@/views/reference/sites/ListSite.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import EditUser from '@/views/system-configuration/user/EditUser.vue'
@@ -99,8 +100,6 @@ const router = createRouter({
       name: 'reimbursementedit',
       component: EditReimbursement
     },
-
-
     {
       path: '/zona',
       name: 'zona',
@@ -111,6 +110,11 @@ const router = createRouter({
       name: 'job',
       component: ListJob
     },
+    {
+      path: '/site',
+      name: 'site',
+      component: ListSite
+    },
 
 
 
@@ -118,7 +122,7 @@ const router = createRouter({
     {
       path: '/user',
       name: 'listUser',
-      component: ListUser      
+      component: ListUser
     },
     {
       path: '/edituser',
