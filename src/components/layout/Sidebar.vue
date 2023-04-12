@@ -63,10 +63,10 @@ const isOpenReference = ref(false)
       </ul>
     </div>
   </div> -->
-  <div class="flex flex-col w-[260px] h-screen overflow-y-scroll">
+  <div class="flex flex-col w-[260px] h-screen">
 
-    <div class="flex justify-center py-6">
-      <img :src=ABMIcon class="w-20 h-20" alt="">
+    <div class="flex justify-center h-32 py-2">
+      <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
     </div>
     
       <div class="flex items-center px-4">
@@ -89,9 +89,11 @@ const isOpenReference = ref(false)
       <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center p-4">System Configuration <img :src=expandArrow class="w-5 h-5"></button>
       <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 flex flex-col">
           <ul class="flex flex-col gap-4 pt-4 px-2">
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Meeting Room <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">ATK Request <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Document Delivery <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Menu <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Approval <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Sequence <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
           </ul>
       </div>
 
