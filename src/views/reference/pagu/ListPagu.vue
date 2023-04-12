@@ -1,8 +1,8 @@
 <script setup>
 import Layout from "../../../components/layout/Layout.vue";
-import TableReimbursement from "../../../components/reference/reimbursement/TableReimbursement.vue";
-import Pagination from "../../../components/reference/reimbursement/Pagination.vue";
-import ModalAdd from "../../../components/reference/reimbursement/ModalAdd.vue";
+import TablePagu from "../../../components/reference/pagu/TablePagu.vue";
+import Pagination from "../../../components/reference/pagu/Pagination.vue";
+import ModalAdd from "../../../components/reference/pagu/ModalAdd.vue";
 import icon_filter from "../../../assets/icon_filter.svg";
 import icon_reset from "../../../assets/icon_reset.svg";
 import icon_received from "../../../assets/icon-received.svg";
@@ -148,7 +148,7 @@ import icon_received from "../../../assets/icon-received.svg";
       />
     </div>
 
-    <TableReimbursement class="py-2 mx-4 overflow-x-auto" />
+    <TablePagu class="py-2 mx-4 overflow-x-auto" />
 
     <div
       class="flex flex-wrap justify-center items-center mx-4 py-4 md:justify-between"

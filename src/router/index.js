@@ -1,18 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from "../views/Login.vue"
 import Dashboard from "../views/Dashboard.vue"
-import List from "../views/reference/karyawan/List.vue"
-import Edit from "../views/reference/karyawan/Edit.vue"
+import List from "../views/reference/employee/List.vue"
+import Edit from "../views/reference/employee/Edit.vue"
 import ListCompany from "../views/reference/company/ListCompany.vue"
 import EditCompany from "../views/reference/company/EditCompany.vue"
 import ListDepartement from "../views/reference/departemen/ListDepartement.vue"
 import EditDepartement from "../views/reference/departemen/EditDepartement.vue"
 import ListFlight from "../views/reference/flight/ListFlight.vue"
 import EditFlight from "../views/reference/flight/EditFlight.vue"
-import ListHotel from "../views/reference/hotel/ListHotel.vue"
-import EditHotel from "../views/reference/hotel/EditHotel.vue"
+import ListPagu from "../views/reference/pagu/ListPagu.vue"
+import EditPagu from "../views/reference/pagu/EditPagu.vue"
 import ListReimbursement from "../views/reference/reimbursement/ListReimbursement.vue"
 import EditReimbursement from "../views/reference/reimbursement/EditReimbursement.vue"
+import ListZona from "../views/reference/zona/ListZona.vue"
+import ListJob from "../views/reference/jobband/ListJob.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import EditUser from '@/views/system-configuration/user/EditUser.vue'
@@ -74,14 +76,14 @@ const router = createRouter({
       component: EditFlight
     },
     {
-      path: '/hotel',
-      name: 'hotel',
-      component: ListHotel
+      path: '/pagu',
+      name: 'pagu',
+      component: ListPagu
     },
     {
-      path: '/edithotel',
-      name: 'hoteltedit',
-      component: EditHotel
+      path: '/editpagu',
+      name: 'paguedit',
+      component: EditPagu
     },
     {
       path: '/reimbursement',
@@ -95,6 +97,16 @@ const router = createRouter({
     },
 
     // system-configuration page
+    {
+      path: '/zona',
+      name: 'zona',
+      component: ListZona
+    },
+    {
+      path: '/job',
+      name: 'job',
+      component: ListJob
+    },
     {
       path: '/user',
       name: 'listUser',

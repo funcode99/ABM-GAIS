@@ -8,6 +8,19 @@ import Layout from "@/components/layout/Layout.vue";
     <div class="card-body">
       <p class="font-Poppins font-semibold text-2xl">IT</p>
 
+      <div class="flex justify-start pb-4 gap-4">
+        <button
+          class="btn text-blue text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-white border-blue hover:bg-blue hover:border-blue hover:text-white"
+        >
+          Edit
+        </button>
+        <button
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+        >
+          Save
+        </button>
+      </div>
+
       <form>
         <div class="flex flex-wrap justify-between lg:px-[220px] md:px-0">
           <div class="mb-6">
@@ -116,19 +129,6 @@ import Layout from "@/components/layout/Layout.vue";
           </div>
         </div>
       </form>
-    </div>
-
-    <div class="flex justify-start pb-4 px-8 gap-4">
-      <button
-        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-      >
-        Cancel
-      </button>
-      <button
-        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-      >
-        Save
-      </button>
     </div>
   </div>
 </template>

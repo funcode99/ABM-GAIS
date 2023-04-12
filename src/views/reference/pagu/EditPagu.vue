@@ -6,7 +6,7 @@ import Layout from "@/components/layout/Layout.vue";
   <Layout />
   <div class="card w-full bg-base-100 shadow-xl">
     <div class="card-body">
-      <p class="font-JakartaSans font-semibold text-2xl">Economy</p>
+      <p class="font-JakartaSans font-semibold text-2xl">1.000.000</p>
 
       <div class="flex justify-start pb-4 gap-4">
         <button
@@ -25,15 +25,15 @@ import Layout from "@/components/layout/Layout.vue";
         <div class="flex flex-wrap justify-between lg:mx-40 md:mx-0">
           <div class="mb-6">
             <label
-              for="class_name"
-              id="class_name"
+              for="max_fare"
+              id="max_fare"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Class Name<span class="text-red">*</span></label
+              >Max Fare<span class="text-red">*</span></label
             >
             <input
               type="text"
-              id="class_name"
-              placeholder="Class Name"
+              id="cmax_fare"
+              placeholder="Max Fare"
               class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             />
           </div>

@@ -8,6 +8,19 @@ import Layout from "@/components/layout/Layout.vue";
     <div class="card-body">
       <p class="font-JakartaSans font-semibold text-2xl">PT Tunas Inti Abadi</p>
 
+      <div class="flex justify-start pb-4 gap-4">
+        <button
+          class="btn text-blue text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-white border-blue hover:bg-blue hover:border-blue hover:text-white"
+        >
+          Edit
+        </button>
+        <button
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+        >
+          Save
+        </button>
+      </div>
+
       <form class="py-4">
         <div class="flex flex-wrap justify-between lg:mx-40 md:mx-0">
           <div class="mb-6">
@@ -50,24 +63,11 @@ import Layout from "@/components/layout/Layout.vue";
               type="text"
               id="sn"
               placeholder="Name Company"
-              class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base"
+              class="input input-bordered input-accent w-full font-Montserrat font-semibold text-base capitalize"
             />
           </div>
         </div>
       </form>
-
-      <div class="flex justify-start pb-4 px-8 gap-4">
-        <button
-          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-        >
-          Cancel
-        </button>
-        <button
-          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[75px] h-[30px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-        >
-          Save
-        </button>
-      </div>
     </div>
   </div>
 </template>

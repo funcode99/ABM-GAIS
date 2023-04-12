@@ -1,8 +1,8 @@
 <script setup>
 import Layout from "../../../components/layout/Layout.vue";
-import TableReimbursement from "../../../components/reference/reimbursement/TableReimbursement.vue";
-import Pagination from "../../../components/reference/reimbursement/Pagination.vue";
-import ModalAdd from "../../../components/reference/reimbursement/ModalAdd.vue";
+import TableZona from "../../../components/reference/zona/TableZona.vue";
+import Pagination from "../../../components/reference/zona/Pagination.vue";
+import ModalAdd from "../../../components/reference/zona/ModalAdd.vue";
 import icon_filter from "../../../assets/icon_filter.svg";
 import icon_reset from "../../../assets/icon_reset.svg";
 import icon_received from "../../../assets/icon-received.svg";
@@ -15,9 +15,9 @@ import icon_received from "../../../assets/icon-received.svg";
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
       <p
-        class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+        class="font-JakartaSans text-xs lg:text-base capitalize text-[#0A0A0A] font-semibold"
       >
-        Pagu
+        Zona / Tunjangan Lokasi Kerja
       </p>
 
       <div class="flex gap-4">
@@ -148,7 +148,7 @@ import icon_received from "../../../assets/icon-received.svg";
       />
     </div>
 
-    <TableReimbursement class="py-2 mx-4 overflow-x-auto" />
+    <TableZona class="py-2 mx-4 overflow-x-auto" />
 
     <div
       class="flex flex-wrap justify-center items-center mx-4 py-4 md:justify-between"

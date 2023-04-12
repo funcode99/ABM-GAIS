@@ -1,8 +1,11 @@
 <script setup>
-import Layout from "@/components/layout/Layout.vue";
-import TableFlight from "@/components/flight/TableFlight.vue";
-import Pagination from "@/components/flight/Pagination.vue";
-import ModalAdd from "@/components/flight/ModalAdd.vue";
+import Layout from "../../../components/layout/Layout.vue";
+import TableFlight from "../../../components/reference/flight/TableFlight.vue";
+import Pagination from "../../../components/reference/flight/Pagination.vue";
+import ModalAdd from "../../../components/reference/flight/ModalAdd.vue";
+import icon_filter from "../../../assets/icon_filter.svg";
+import icon_reset from "../../../assets/icon_reset.svg";
+import icon_received from "../../../assets/icon-received.svg";
 </script>
 
 <template>
@@ -16,7 +19,15 @@ import ModalAdd from "@/components/flight/ModalAdd.vue";
       >
         company
       </p>
-      <ModalAdd />
+
+      <div class="flex gap-4">
+        <ModalAdd />
+        <button
+          class="btn btn-md text-white text-sm font-JakartaSans font-bold capitalize border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+        >
+          <img :src="icon_received" class="w-6 h-6" />
+        </button>
+      </div>
     </div>
 
     <div class="flex flex-wrap justify-between items-center mx-4 py-2">
@@ -124,6 +135,17 @@ import ModalAdd from "@/components/flight/ModalAdd.vue";
           />
         </div>
       </form>
+    </div>
+
+    <div
+      class="grid grid-flow-col auto-cols-max justify-start items-center gap-2 px-4 py-2"
+    >
+      <p class="font-JakartaSans font-normal text-xs">Showing</p>
+      <input
+        type="number"
+        value="1"
+        class="input w-14 h-7 rounded-sm p-0 border border-[#015289] font-JakartaSans font-normal text-xs px-2"
+      />
     </div>
 
     <TableFlight class="py-2 mx-4 overflow-x-auto" />
