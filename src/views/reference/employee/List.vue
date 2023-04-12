@@ -79,7 +79,6 @@ import icon_receive from "@/assets/icon-receive.svg";
 
       <form class="py-2 flex md:mx-0">
         <label class="relative block">
-          <span class="sr-only">Search</span>
           <span class="absolute inset-y-0 left-0 flex items-center pl-2">
             <svg
               aria-hidden="true"
