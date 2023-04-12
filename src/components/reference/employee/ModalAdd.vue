@@ -13,156 +13,203 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
-      <nav class="sticky top-0 z-50 bg-white py-4">
-        <label for="my-modal-3" class="cursor-pointer absolute right-0">
+      <nav class="sticky top-0 z-50 bg-[#015289]">
+        <label for="my-modal-3" class="cursor-pointer absolute right-3 top-3">
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p class="font-JakartaSans text-2xl font-semibold">New Employee</p>
-        <div className="divider m-0"></div>
+        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
+          New Employee
+        </p>
       </nav>
 
-      <div class="flex justify-center py-4">
-        <div class="avatar">
-          <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
-            <div class="flex justify-center items-center py-8">
-              <label for="file-input" class="cursor-pointer">
-                <img :src="iconPlus" class="w-[37px] h-[37px]" />
-              </label>
-              <input type="file" id="file-input" class="hidden" />
+      <main class="modal-box-inner pb-14">
+        <div class="flex justify-center items-center">
+          <div class="avatar">
+            <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
+              <div class="flex justify-center items-center py-8">
+                <label for="file-input" class="cursor-pointer">
+                  <img :src="iconPlus" class="w-[37px] h-[37px]" />
+                </label>
+                <input type="file" id="file-input" class="hidden" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <p
-        class="font-JakartaSans font-medium text-sm flex justify-center items-center"
-      >
-        Foto
-      </p>
+        <p
+          class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4"
+        >
+          Foto
+        </p>
 
-      <form>
-        <div class="mb-6">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Name<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            id="name"
-            placeholder="Employee Name"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base capitalize"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label for="sn" class="block mb-2 font-Poppins font-medium text-sm"
-            >SN<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            id="sn"
-            placeholder="Employee SN"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label for="sn" class="block mb-2 font-Poppins font-medium text-sm"
-            >NIK<span class="text-red">*</span></label
-          >
-          <input
-            type="number"
-            id="nik"
-            placeholder="NIK"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="gender"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            id="gender"
-            >Gender<span class="text-red">*</span></label
-          >
-          <select class="select select-accent w-40" required>
-            <option disabled selected>Gender</option>
-            <option>Male</option>
-            <option>Female</option>
-          </select>
-        </div>
-        <div class="mb-6">
-          <label
-            for="departement"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            id="departement"
-            >Departement<span class="text-red">*</span></label
-          >
-          <select class="select select-accent w-40" required>
-            <option disabled selected>Departement</option>
-            <option>Departement A</option>
-            <option>Departement B</option>
-          </select>
-        </div>
-        <div class="mb-6">
-          <label
-            for="phone_number"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Phone Number<span class="text-red">*</span></label
-          >
-          <input
-            type="number"
-            id="phone_number"
-            placeholder="Phone Number"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="email"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Email<span class="text-red">*</span></label
-          >
-          <input
-            type="email"
-            id="email"
-            placeholder="Email"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="begin_date"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Begin Date<span class="text-red">*</span></label
-          >
-          <input
-            type="date"
-            id="begin_date"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            for="end_date"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >End Date<span class="text-red">*</span></label
-          >
-          <input
-            type="date"
-            id="end_date"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-      </form>
+        <form class="py-4">
+          <div class="flex justify-around items-center gap-2">
+            <div class="mb-6">
+              <label
+                for="name"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Name<span class="text-red">*</span></label
+              >
+              <input
+                type="text"
+                name="name"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Employee Name"
+              />
+            </div>
+            <div class="mb-6">
+              <label
+                for="sn"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Phone Number<span class="text-red">*</span></label
+              >
+              <input
+                type="number"
+                name="phone_number"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Phone Number"
+              />
+            </div>
+          </div>
 
-      <div class="sticky bottom-0 bg-white py-4">
-        <div className="divider m-0 pb-4"></div>
-        <div class="flex justify-end gap-4">
+          <div class="flex justify-around items-center gap-2">
+            <div class="mb-6">
+              <label
+                for="SN"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >SN<span class="text-red">*</span></label
+              >
+              <input
+                type="text"
+                name="SN"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="SN"
+              />
+            </div>
+            <div class="mb-6">
+              <label
+                for="email"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Email<span class="text-red">*</span></label
+              >
+              <input
+                type="email"
+                name="email"
+                class="font-JakartaSans block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Email"
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-around items-center gap-2">
+            <div class="mb-6">
+              <label
+                for="NIK"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >NIK<span class="text-red">*</span></label
+              >
+              <input
+                type="number"
+                name="NIK"
+                class="font-JakartaSans capitalize block bg-white w-[180px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="NIK"
+              />
+            </div>
+            <div class="mb-6">
+              <label
+                for="date_start"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Begin Date<span class="text-red">*</span></label
+              >
+              <input
+                type="date"
+                name="date_start"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-around items-center gap-2">
+            <div class="mb-6">
+              <label
+                for="dob"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >DOB<span class="text-red">*</span></label
+              >
+              <input
+                type="date"
+                name="dob"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              />
+            </div>
+            <div class="mb-6">
+              <label
+                for="date_end"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >End Date<span class="text-red">*</span></label
+              >
+              <input
+                type="date"
+                name="date_end"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-around items-center gap-2">
+            <div class="mb-6">
+              <label
+                for="gender"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                id="parent_company"
+                >Gender<span class="text-red">*</span></label
+              >
+              <select
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              >
+                <option disabled selected>Select Gender</option>
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+            <div class="mb-6">
+              <label
+                for="cost_center"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                id="cost_center"
+                >Cost Center<span class="text-red">*</span></label
+              >
+              <select
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              >
+                <option disabled selected>Cost Center</option>
+                <option>Cost Center A</option>
+                <option>Cost Center B</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex justify-start items-center mx-3">
+            <div class="mb-6">
+              <label
+                for="departement"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                id="departement"
+                >Departement<span class="text-red">*</span></label
+              >
+              <select
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 mr-9 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              >
+                <option disabled selected>Departement</option>
+                <option>Departement A</option>
+                <option>Departement B</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </main>
+
+      <div class="sticky bottom-0 bg-white py-2">
+        <div class="flex justify-end gap-4 mr-6">
           <label
             for="my-modal-3"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
@@ -181,29 +228,20 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
 
 <style scoped>
 .modal-box {
-  max-height: calc(100vh - 5em);
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--b1) / var(--tw-bg-opacity));
-  padding-top: 0rem;
-  padding-bottom: 0rem;
-  transition-property: color, background-color, border-color,
-    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
-    backdrop-filter;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  width: 91.666667%;
-  max-width: 32rem /* 512px */;
+  padding: 0;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+}
+
+.modal-box-inner {
+  height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  border-top-left-radius: var(--rounded-box, 1rem);
-  border-top-right-radius: var(--rounded-box, 1rem);
-  border-bottom-left-radius: var(--rounded-box, 1rem);
-  border-bottom-right-radius: var(--rounded-box, 1rem);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 </style>
