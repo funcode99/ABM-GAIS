@@ -15,6 +15,10 @@ import ListReimbursement from "../views/reference/reimbursement/ListReimbursemen
 import EditReimbursement from "../views/reference/reimbursement/EditReimbursement.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
+import EditUser from '@/views/system-configuration/user/EditUser.vue'
+
+import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
+import EditApproval from '@/views/system-configuration/approval/EditApproval.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -89,10 +93,27 @@ const router = createRouter({
       name: 'reimbursementedit',
       component: EditReimbursement
     },
+
+    // system-configuration page
     {
       path: '/user',
       name: 'listUser',
       component: ListUser      
+    },
+    {
+      path: '/edituser',
+      name: 'editUser',
+      component: EditUser
+    },
+    {
+      path: '/approval',
+      name: 'approval',
+      component: ListApproval
+    },
+    {
+      path: '/editapproval',
+      name: 'editApproval',
+      component: EditApproval
     }
   ]
 })
