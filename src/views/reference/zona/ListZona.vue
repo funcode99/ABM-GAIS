@@ -30,41 +30,11 @@ import icon_receive from "@/assets/icon-receive.svg";
       </div>
     </div>
 
-    <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-      <div class="grid grid-flow-col auto-cols-max items-center gap-4">
-        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
-          sort
-        </p>
+    <div class="flex flex-wrap justify-between items-center mx-4 py-2 gap-4">
+      <div class="flex items-center gap-4">
+        <p class="capitalize font-JakartaSans text-xs font-medium">company</p>
         <div
-          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
-        >
-          <button tabindex="0">
-            <div tabindex="0" class="collapse collapse-arrow">
-              <div class="collapse-title min-h-max py-3">
-                <p
-                  class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
-                >
-                  A to Z
-                </p>
-              </div>
-            </div>
-          </button>
-          <ul
-            tabindex="0"
-            class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-          >
-            <li><a>A</a></li>
-            <li><a>B</a></li>
-            <li><a>C</a></li>
-          </ul>
-        </div>
-
-        <p class="capitalize font-JakartaSans text-xs text-black font-medium">
-          company
-        </p>
-
-        <div
-          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-[#015289]"
+          class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-slate-300"
         >
           <button tabindex="0">
             <div tabindex="0" class="collapse collapse-arrow">
@@ -88,9 +58,9 @@ import icon_receive from "@/assets/icon-receive.svg";
         </div>
       </div>
 
-      <div class="flex gap-4 mr-96 items-center my-4 md:my-0">
+      <div class="flex gap-4 items-center mr-[550px]">
         <button
-          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
         >
           <span>
             <img :src="icon_filter" class="w-5 h-5" />
@@ -98,7 +68,7 @@ import icon_receive from "@/assets/icon-receive.svg";
           Filter
         </button>
         <button
-          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+          class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
         >
           <span>
             <img :src="icon_reset" class="w-5 h-5" />
@@ -107,14 +77,12 @@ import icon_receive from "@/assets/icon-receive.svg";
         </button>
       </div>
 
-      <form class="py-2 flex justify-center md:mx-0">
-        <div class="relative">
-          <div
-            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-          >
+      <form class="py-2 flex md:mx-0">
+        <label class="relative block">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-2">
             <svg
               aria-hidden="true"
-              class="w-5 h-5 text-gray-500 dark:text-gray-400"
+              class="w-5 h-5 text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -127,25 +95,45 @@ import icon_receive from "@/assets/icon-receive.svg";
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               ></path>
             </svg>
-          </div>
+          </span>
           <input
-            type="text"
+            class="placeholder:text-slate-400 placeholder:font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Search..."
-            class="input input-bordered input-info w-full px-12 font-JakartaSans"
+            type="text"
+            name="search"
           />
-        </div>
+        </label>
       </form>
     </div>
 
     <div
-      class="grid grid-flow-col auto-cols-max justify-start items-center gap-2 px-4 py-2"
+      class="grid grid-flow-col auto-cols-max justify-start items-center gap-5 px-4 py-2"
     >
       <p class="font-JakartaSans font-normal text-xs">Showing</p>
-      <input
-        type="number"
-        value="1"
-        class="input w-14 h-7 rounded-sm p-0 border border-[#015289] font-JakartaSans font-normal text-xs px-2"
-      />
+      <div
+        class="dropdown dropdown-bottom bg-white rounded-lg h-9 border border-slate-300"
+      >
+        <button tabindex="0">
+          <div tabindex="0" class="collapse collapse-arrow mx-1">
+            <div class="collapse-title min-h-max py-3">
+              <p
+                class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
+              >
+                Showing
+              </p>
+            </div>
+          </div>
+        </button>
+        <ul
+          tabindex="0"
+          class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
+        >
+          <li><a>10</a></li>
+          <li><a>25</a></li>
+          <li><a>75</a></li>
+          <li><a>100</a></li>
+        </ul>
+      </div>
     </div>
 
     <TableZona class="py-2 mx-4 overflow-x-auto" />
