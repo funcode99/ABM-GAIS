@@ -1,6 +1,6 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
-import iconUpload from "../../../assets/icon_upload.svg";
+import iconUpload from "@/assets/icon_upload.svg";
 </script>
 
 <template>

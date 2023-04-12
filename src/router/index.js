@@ -1,26 +1,29 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from "../views/Login.vue"
-import Dashboard from "../views/Dashboard.vue"
-import List from "../views/reference/employee/List.vue"
-import Edit from "../views/reference/employee/Edit.vue"
-import ListCompany from "../views/reference/company/ListCompany.vue"
-import EditCompany from "../views/reference/company/EditCompany.vue"
-import ListDepartement from "../views/reference/departemen/ListDepartement.vue"
-import EditDepartement from "../views/reference/departemen/EditDepartement.vue"
-import ListFlight from "../views/reference/flight/ListFlight.vue"
-import EditFlight from "../views/reference/flight/EditFlight.vue"
-import ListPagu from "../views/reference/pagu/ListPagu.vue"
-import EditPagu from "../views/reference/pagu/EditPagu.vue"
-import ListReimbursement from "../views/reference/reimbursement/ListReimbursement.vue"
-import EditReimbursement from "../views/reference/reimbursement/EditReimbursement.vue"
-import ListZona from "../views/reference/zona/ListZona.vue"
-import ListJob from "../views/reference/jobband/ListJob.vue"
+
+import Login from "@/views/Login.vue"
+import Dashboard from "@/views/Dashboard.vue"
+
+import List from "@/views/reference/employee/List.vue"
+import Edit from "@/views/reference/employee/Edit.vue"
+import ListCompany from "@/views/reference/company/ListCompany.vue"
+import EditCompany from "@/views/reference/company/EditCompany.vue"
+import ListDepartement from "@/views/reference/departemen/ListDepartement.vue"
+import EditDepartement from "@/views/reference/departemen/EditDepartement.vue"
+import ListFlight from "@/views/reference/flight/ListFlight.vue"
+import EditFlight from "@/views/reference/flight/EditFlight.vue"
+import ListPagu from "@/views/reference/pagu/ListPagu.vue"
+import EditPagu from "@/views/reference/pagu/EditPagu.vue"
+import ListReimbursement from "@/views/reference/reimbursement/ListReimbursement.vue"
+import EditReimbursement from "@/views/reference/reimbursement/EditReimbursement.vue"
+import ListZona from "@/views/reference/zona/ListZona.vue"
+import ListJob from "@/views/reference/jobband/ListJob.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import EditUser from '@/views/system-configuration/user/EditUser.vue'
-
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
 import EditApproval from '@/views/system-configuration/approval/EditApproval.vue'
+import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
+import EditSequence from '@/views/system-configuration/sequence/EditSequence.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -96,7 +99,7 @@ const router = createRouter({
       component: EditReimbursement
     },
 
-    // system-configuration page
+
     {
       path: '/zona',
       name: 'zona',
@@ -107,6 +110,10 @@ const router = createRouter({
       name: 'job',
       component: ListJob
     },
+
+
+
+    // system-configuration page  
     {
       path: '/user',
       name: 'listUser',
@@ -126,6 +133,16 @@ const router = createRouter({
       path: '/editapproval',
       name: 'editApproval',
       component: EditApproval
+    },
+    {
+      path: '/sequence',
+      name: 'sequence',
+      component: ListSequence
+    },
+    {
+      path: '/editsequence',
+      name: 'editSequence',
+      component: EditSequence
     }
   ]
 })

@@ -1,16 +1,19 @@
 <script setup>
     import Sidebar from '@/components/layout/Sidebar.vue'
-    import Layout from '@/components/layout/Layout.vue'
-    import Pagination from "@/components/karyawan/Pagination.vue";
+    import Navbar from '@/components/layout/Navbar.vue'
+    import Pagination from "@/components/reference/employee/Pagination.vue";
     import ModalAdd from "@/components/system-configuration/approval/ModalAdd.vue";
     import TableApproval from '@/components/system-configuration/approval/TableApproval.vue';
+
+    import icon_filter from "@/assets/icon_filter.svg";
+    import icon_reset from "@/assets/icon_reset.svg";
 </script>
 
 <template>
     <div class="flex">
       <Sidebar class="flex-none" />
       <div class="dashboard card card-compact w-screen bg-white rounded-lg">
-      <Layout />
+      <Navbar />
 
       <div
         class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -138,3 +141,11 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+
+.input {
+  height: 36px;
+}
+
+</style>

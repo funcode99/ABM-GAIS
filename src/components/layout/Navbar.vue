@@ -1,7 +1,7 @@
 <script setup>
-  import tail from "../../assets/navbar/tail.svg";
-  import highlight from "../../assets/navbar/highlight_logo.svg";
-  import user from "../../assets/navbar/user.svg";
+  import tail from "@/assets/navbar/tail.svg";
+  import highlight from "@/assets/navbar/highlight_logo.svg";
+  import user from "@/assets/navbar/user.svg";
 </script>
 
 <template>
@@ -14,12 +14,12 @@
     </div>
     <div class="navbar-end">
       <div class="grid grid-flow-col auto-cols-max">
-        <div class="flex justify-center items-center">
+        <div class="flex justify-center items-center ">
           <button class="mx-10 hover:scale-125">
-            <div class="indicator">
+            <div class="indicator hover:bg-slate-300 hover:rounded-full p-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
+                class="w-7 h-7"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
