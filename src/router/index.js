@@ -22,8 +22,9 @@ import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import EditUser from '@/views/system-configuration/user/EditUser.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
 import EditApproval from '@/views/system-configuration/approval/EditApproval.vue'
-import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
-import EditSequence from '@/views/system-configuration/sequence/EditSequence.vue'
+
+// import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
+// import EditSequence from '@/views/system-configuration/sequence/EditSequence.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -134,16 +135,16 @@ const router = createRouter({
       name: 'editApproval',
       component: EditApproval
     },
-    {
-      path: '/sequence',
-      name: 'sequence',
-      component: ListSequence
-    },
-    {
-      path: '/editsequence',
-      name: 'editSequence',
-      component: EditSequence
-    }
+    // {
+    //   path: '/sequence',
+    //   name: 'sequence',
+    //   component: ListSequence
+    // },
+    // {
+    //   path: '/editsequence',
+    //   name: 'editSequence',
+    //   component: EditSequence
+    // }
   ]
 })
 
