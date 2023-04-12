@@ -1,9 +1,9 @@
 <script setup>
-    import Sidebar from '@/components/layout/Sidebar.vue'
-    import Layout from '@/components/layout/Layout.vue'
-    import TableUser from '@/components/user/TableUser.vue'
-    import Pagination from "@/components/karyawan/Pagination.vue";
-    import ModalAdd from "@/components/user/ModalAdd.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Layout from "@/components/layout/Layout.vue";
+import TableUser from "@/components/user/TableUser.vue";
+import Pagination from "@/components/reference/employee/Pagination.vue";
+import ModalAdd from "@/components/user/ModalAdd.vue";
 </script>
 
 <template>

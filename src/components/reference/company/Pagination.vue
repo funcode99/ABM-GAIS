@@ -1,6 +1,6 @@
 <script setup>
-import icon_doublearrow_left from "../../../assets/icon_doublearrow_left.svg";
-import icon_doublearrow_right from "../../../assets/icon_doublearrow_right.svg";
+import icon_doublearrow_left from "@/assets/icon_doublearrow_left.svg";
+import icon_doublearrow_right from "@/assets/icon_doublearrow_right.svg";
 </script>
 
 <template>

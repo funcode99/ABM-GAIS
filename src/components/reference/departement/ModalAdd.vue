@@ -118,7 +118,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             <select class="select select-accent w-40" required>
               <option disabled selected>Division</option>
               <option>Division A</option>
-              <option>DivisionB</option>
+              <option>Division B</option>
             </select>
           </div>
           <div class="mb-6">
