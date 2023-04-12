@@ -30,7 +30,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 <label for="file-input" class="cursor-pointer">
                   <img :src="iconPlus" class="w-[37px] h-[37px]" />
                 </label>
-                <input type="file" id="file-input" class="hidden" />
+                <input type="file" id="file-input" class="hidden" required />
               </div>
             </div>
           </div>
@@ -54,6 +54,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 name="name"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Employee Name"
+                required
               />
             </div>
             <div class="mb-6">
@@ -67,6 +68,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 name="phone_number"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Phone Number"
+                required
               />
             </div>
           </div>
@@ -83,6 +85,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 name="SN"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="SN"
+                required
               />
             </div>
             <div class="mb-6">
@@ -96,6 +99,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 name="email"
                 class="font-JakartaSans block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Email"
+                required
               />
             </div>
           </div>
@@ -112,6 +116,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 name="NIK"
                 class="font-JakartaSans capitalize block bg-white w-[180px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="NIK"
+                required
               />
             </div>
             <div class="mb-6">
@@ -123,7 +128,8 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="date"
                 name="date_start"
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
               />
             </div>
           </div>
@@ -138,7 +144,8 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="date"
                 name="dob"
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
               />
             </div>
             <div class="mb-6">
@@ -150,7 +157,8 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="date"
                 name="date_end"
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
               />
             </div>
           </div>
@@ -160,11 +168,11 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <label
                 for="gender"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                id="parent_company"
                 >Gender<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
               >
                 <option disabled selected>Select Gender</option>
                 <option>Male</option>
@@ -175,11 +183,11 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <label
                 for="cost_center"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                id="cost_center"
                 >Cost Center<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
               >
                 <option disabled selected>Cost Center</option>
                 <option>Cost Center A</option>
@@ -193,11 +201,11 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <label
                 for="departement"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                id="departement"
                 >Departement<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 mr-9 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 mr-9 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
               >
                 <option disabled selected>Departement</option>
                 <option>Departement A</option>
