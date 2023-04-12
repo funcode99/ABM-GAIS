@@ -1,11 +1,11 @@
 <script setup>
-import Layout from "../../../components/layout/Layout.vue";
-import TableFlight from "../../../components/reference/flight/TableFlight.vue";
-import Pagination from "../../../components/reference/flight/Pagination.vue";
-import ModalAdd from "../../../components/reference/flight/ModalAdd.vue";
-import icon_filter from "../../../assets/icon_filter.svg";
-import icon_reset from "../../../assets/icon_reset.svg";
-import icon_received from "../../../assets/icon-received.svg";
+import Layout from "@/components/layout/Layout.vue";
+import TableFlight from "@/components/reference/flight/TableFlight.vue";
+import Pagination from "@/components/reference/flight/Pagination.vue";
+import ModalAdd from "@/components/reference/flight/ModalAdd.vue";
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import icon_receive from "@/assets/icon-receive.svg";
 </script>
 
 <template>
@@ -17,15 +17,15 @@ import icon_received from "../../../assets/icon-received.svg";
       <p
         class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
       >
-        company
+        Flight Entitlement
       </p>
 
       <div class="flex gap-4">
         <ModalAdd />
         <button
-          class="btn btn-md text-white text-sm font-JakartaSans font-bold capitalize border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
+          class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
         >
-          <img :src="icon_received" class="w-6 h-6" />
+          <img :src="icon_receive" class="w-6 h-6" />
         </button>
       </div>
     </div>

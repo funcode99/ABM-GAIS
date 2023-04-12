@@ -1,5 +1,5 @@
 <script setup>
-import iconClose from "../../../assets/navbar/icon_close.svg";
+import iconClose from "@/assets/navbar/icon_close.svg";
 </script>
 
 <template>
