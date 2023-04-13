@@ -1,8 +1,8 @@
 <script setup>
 import Layout from "@/components/layout/Layout.vue";
-import TableKaryawan from "@/components/reference/employee/TableKaryawan.vue";
-import Pagination from "@/components/reference/employee/Pagination.vue";
-import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
+import TableSite from "@/components/reference/sites/TableSite.vue";
+import Pagination from "@/components/reference/sites/Pagination.vue";
+import ModalAdd from "@/components/reference/sites/ModalAdd.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -15,9 +15,9 @@ import icon_receive from "@/assets/icon-receive.svg";
       class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
     >
       <p
-        class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+        class="font-JakartaSans text-xs lg:text-base capitalize text-[#0A0A0A] font-semibold"
       >
-        employee
+        Site
       </p>
 
       <div class="flex gap-4">
@@ -136,7 +136,7 @@ import icon_receive from "@/assets/icon-receive.svg";
       </div>
     </div>
 
-    <TableKaryawan class="py-2 mx-4 overflow-x-auto" />
+    <TableSite class="py-2 mx-4 overflow-x-auto" />
 
     <div
       class="flex flex-wrap justify-center items-center mx-4 py-4 md:justify-between"

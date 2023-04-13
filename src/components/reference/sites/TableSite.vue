@@ -24,7 +24,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             </button>
           </th>
           <th class="relative">
-            <span class="flex justify-center">Job Band</span>
+            <span class="flex justify-center">Site</span>
             <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
@@ -50,7 +50,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             </label>
           </td>
           <td>1</td>
-          <td>A</td>
+          <td>Site A</td>
           <td>PT ABM</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -72,7 +72,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             </label>
           </td>
           <td>2</td>
-          <td>B</td>
+          <td>Site B</td>
           <td>PT ABM</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -95,7 +95,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             </label>
           </td>
           <td>3</td>
-          <td>C</td>
+          <td>Site C</td>
           <td>PT ABM</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -117,7 +117,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             </label>
           </td>
           <td>4</td>
-          <td>D</td>
+          <td>Site D</td>
           <td>PT ABM</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
@@ -139,7 +139,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             </label>
           </td>
           <td>5</td>
-          <td>E</td>
+          <td>Site E</td>
           <td>PT ABM</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
