@@ -48,9 +48,9 @@ function removeLastTag(event) {
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-12">
+      <main class="modal-box-inner pb-14">
         <form class="py-4">
-          <div class="flex justify-start items-center mx-3">
+          <div class="w-full px-3">
             <div class="mb-6">
               <label
                 for="company"
@@ -58,7 +58,7 @@ function removeLastTag(event) {
                 >Company<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 mr-9 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Company</option>
@@ -83,7 +83,9 @@ function removeLastTag(event) {
             />
           </div>
 
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between lg:justify-around items-center gap-2 mx-3 lg:mx-0"
+          >
             <div class="mb-6">
               <label
                 for="cost_center"
@@ -91,7 +93,7 @@ function removeLastTag(event) {
                 >Cost Center<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-[175px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Cost Center</option>
@@ -106,7 +108,7 @@ function removeLastTag(event) {
                 >Status<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-[130px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Status</option>
@@ -116,7 +118,9 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between lg:justify-around items-center gap-2 mx-3 lg:mx-0"
+          >
             <div class="mb-6">
               <label
                 for="glaccount"
@@ -124,7 +128,7 @@ function removeLastTag(event) {
                 >GL Account<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-[175px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Account</option>
@@ -139,7 +143,7 @@ function removeLastTag(event) {
                 >Profit Center<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-[130px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Profit Center</option>
@@ -149,31 +153,39 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between lg:justify-around items-start gap-2 mx-3 lg:mx-0"
+          >
             <div class="mb-6">
               <label
-                for="division"
+                for="Division"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Division<span class="text-red">*</span></label
               >
-              <input
-                type="text"
-                placeholder="Division"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                required
-                @keydown="addTag"
-                @keydown.delete="removeLastTag"
-              />
-
-              <div class="fixed border border-slate-300">
+              <div
+                class="block bg-white w-full lg:w-[220px] border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              >
                 <div
                   v-for="(tag, index) in tags"
                   :key="tag"
-                  class="cursor-pointer"
+                  class="h-[30px] bg-[#e4e4e4] my-1 rounded-md text-center items-center font-JakartaSans font-medium text-sm mx-2"
                 >
-                  <span @click="removeTag(index)">x</span>
-                  {{ tag }}
+                  <p class="pt-1">
+                    {{ tag }}
+                    <span
+                      @click="removeTag(index)"
+                      class="items-center cursor-pointer pl-10"
+                      >x</span
+                    >
+                  </p>
                 </div>
+                <input
+                  type="text"
+                  placeholder="Input Division"
+                  class="tag-input__text px-2 text-sm font-medium leading-[38px] font-JakartaSans"
+                  @keydown="addTag"
+                  @keydown.delete="removeLastTag"
+                />
               </div>
             </div>
 
@@ -231,5 +243,12 @@ function removeLastTag(event) {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
+}
+
+.tag-input__text {
+  border: none;
+  outline: none;
+  /* font-size: 0.9em; */
+  /* line-height: 38px; */
 }
 </style>
