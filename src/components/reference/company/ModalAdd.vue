@@ -1,6 +1,33 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconUpload from "@/assets/icon_upload.svg";
+
+//code for tags
+import { ref } from "vue";
+
+const tags = ref([]);
+
+function addTag(event) {
+  if (event.code === "Comma" || event.code === "Enter") {
+    event.preventDefault();
+    var val = event.target.value.trim();
+
+    if (val.length > 0) {
+      tags.value.push(val);
+      event.target.value = "";
+    }
+  }
+}
+
+function removeTag(index) {
+  tags.value.splice(index, 1);
+}
+
+function removeLastTag(event) {
+  if (event.target.value.length === 0) {
+    removeTag(tags.value.length - 1);
+  }
+}
 </script>
 
 <template>
@@ -22,9 +49,9 @@ import iconUpload from "@/assets/icon_upload.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner pb-14">
         <form>
-          <div class="mb-6">
+          <div class="mb-6 mr-6">
             <label
               for="code"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -38,7 +65,7 @@ import iconUpload from "@/assets/icon_upload.svg";
               required
             />
           </div>
-          <div class="mb-6">
+          <div class="mb-6 mr-6">
             <label
               for="name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -68,7 +95,7 @@ import iconUpload from "@/assets/icon_upload.svg";
             </select>
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 mr-6">
             <div
               for="logo_company"
               class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
@@ -93,6 +120,37 @@ import iconUpload from "@/assets/icon_upload.svg";
                   class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                 />
               </label>
+            </div>
+          </div>
+
+          <div class="mb-6 mr-6">
+            <label
+              for="Site"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Site<span class="text-red">*</span></label
+            >
+            <div
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm px-4 font-medium sm:text-sm"
+            >
+              <div
+                v-for="(tag, index) in tags"
+                :key="tag"
+                class="tag-input__tag"
+              >
+                {{ tag }}
+                <span
+                  @click="removeTag(index)"
+                  class="text-xs items-center cursor-pointer"
+                  >x</span
+                >
+              </div>
+              <input
+                type="text"
+                placeholder="Enter a site"
+                class="tag-input__text"
+                @keydown="addTag"
+                @keydown.delete="removeLastTag"
+              />
             </div>
           </div>
         </form>
@@ -124,6 +182,7 @@ import iconUpload from "@/assets/icon_upload.svg";
 }
 
 .modal-box-inner {
+  height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -132,5 +191,24 @@ import iconUpload from "@/assets/icon_upload.svg";
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
+}
+
+.tag-input__tag {
+  height: 30px;
+  float: left;
+  margin-right: 10px;
+  background-color: #e4e4e4;
+  margin-top: 10px;
+  line-height: 30px;
+  padding: 0 5px;
+  border-radius: 5px;
+}
+
+.tag-input__text {
+  border: none;
+  outline: none;
+  font-size: 0.9em;
+  line-height: 50px;
+  background: none;
 }
 </style>
