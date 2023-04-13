@@ -1,19 +1,21 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
+  import iconClose from "@/assets/navbar/icon_close.svg";
 </script>
 
 <template>
-  <label
-    for="my-modal-3"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add New</label
-  >
+  
+    <label
+      for="my-modal-3"
+      class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+      >+ Add New</label
+    >
 
     <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+    
     <div class="modal">
       
       <div class="modal-box relative">
+
         <nav class="sticky top-0 z-50 bg-white py-4">
           <label for="my-modal-3" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
@@ -131,8 +133,11 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
             </button>
           </div>
         </div>
+
       </div>
+
     </div>
+
 </template>
 
 <style scoped>

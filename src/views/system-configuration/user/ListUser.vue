@@ -3,17 +3,20 @@
     import Layout from '@/components/layout/Layout.vue'
     import Pagination from "@/components/reference/employee/Pagination.vue";
     import TableUser from '@/components/system-configuration/user/TableUser.vue'
-    import ModalAdd from "@/components/system-configuration/user/ModalAdd.vue";
+    import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
+
+    import icon_filter from "@/assets/icon_filter.svg";
+    import icon_reset from "@/assets/icon_reset.svg";
 </script>
 
 <template>
   <div class="flex overflow-y-hidden">
     <Sidebar class="flex-none" />
       
-        <div class="dashboard card card-compact w-screen bg-white rounded-lg">
+        <div class="dashboard card card-compact w-full bg-white rounded-lg">
+    
           <Layout />
     
-          
           <div class="bg-slate-300 pt-2 px-2 h-[100%]">
 
             <div class="bg-white rounded-xl">
@@ -26,39 +29,20 @@
                   >
                     USER
                   </p>
-                  <ModalAdd />
+                  <ModalAddUser />
                 </div>
               </div>
       
               <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+
                 <div class="grid grid-flow-col auto-cols-max items-center gap-4">
+
                   <p class="capitalize font-Fira text-xs text-black font-medium">
-                    sort
+                    Sort
                   </p>
-                  <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
-                    <button tabindex="0">
-                      <div tabindex="0" class="collapse collapse-arrow">
-                        <div class="collapse-title min-h-max py-3">
-                          <p
-                            class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
-                          >
-                            A to Z
-                          </p>
-                        </div>
-                      </div>
-                    </button>
-                    <ul
-                      tabindex="0"
-                      class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-                    >
-                      <li><a>A</a></li>
-                      <li><a>B</a></li>
-                      <li><a>C</a></li>
-                    </ul>
-                  </div>
         
                   <p class="capitalize font-Fira text-xs text-black font-medium">
-                    company
+                    Company
                   </p>
         
                   <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
@@ -81,10 +65,31 @@
                       <li><a>company B</a></li>
                       <li><a>company C</a></li>
                     </ul>
+
                   </div>
+
+                  <div class="flex gap-4 items-center">
+                      <button
+                        class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                      >
+                        <span>
+                          <img :src="icon_filter" class="w-5 h-5" />
+                        </span>
+                        Filter
+                      </button>
+                      <button
+                        class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                      >
+                        <span>
+                          <img :src="icon_reset" class="w-5 h-5" />
+                        </span>
+                        Reset
+                      </button>
+                  </div>
+
                 </div>
-        
-                <form class="py-2 flex justify-center mx-10 md:mx-0">
+                
+                <form class="py-2 flex justify-center mx-10 md:mx-0 items-center">
                   <div class="relative">
                     <div
                       class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -108,26 +113,30 @@
                     <input
                       type="text"
                       placeholder="Search..."
-                      class="input input-bordered input-info w-full px-12"
+                      class="input input-bordered input-info w-full px-12 h-9"
                     />
                   </div>
                 </form>
+
+        
+
               </div>
+
               <TableUser class="py-2 mx-4 overflow-x-auto " />
+
               <div class="flex flex-wrap justify-between items-center mx-4 py-2">
                 <p class="font-Inter text-xs font-normal text-[#888888]">
                   Showing 1 to 10 of 50 entries
                 </p>
                 <Pagination />
               </div>
+
             </div>
 
           </div>
     
         </div>
-      
-
-    
 
   </div>
+
 </template>
