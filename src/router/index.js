@@ -20,6 +20,7 @@ import ListJob from "@/views/reference/jobband/ListJob.vue"
 import ListSite from "@/views/reference/sites/ListSite.vue"
 import ListUom from "@/views/reference/uom/ListUom.vue"
 import ListBrand from "@/views/reference/brand/ListBrand.vue"
+import ListWarehouse from "@/views/reference/warehouse/ListWarehouse.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
@@ -125,6 +126,11 @@ const router = createRouter({
       path: '/brand',
       name: 'brand',
       component: ListBrand
+    },
+    {
+      path: '/warehouse',
+      name: 'warehouse',
+      component: ListWarehouse
     },
 
 
