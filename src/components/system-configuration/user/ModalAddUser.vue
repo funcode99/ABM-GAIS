@@ -5,19 +5,18 @@
 <template>
   
     <label
-      for="my-modal-3"
+      for="add-user-modal"
       class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
       >+ Add New</label
     >
 
-    <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+    <input type="checkbox" id="add-user-modal" class="modal-toggle" />
     
     <div class="modal">
-      
       <div class="modal-box relative">
 
         <nav class="sticky top-0 z-50 bg-white py-4">
-          <label for="my-modal-3" class="cursor-pointer absolute right-0">
+          <label for="add-user-modal" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </label>
           <p class="font-JakartaSans text-2xl font-semibold">New User</p>
@@ -118,11 +117,11 @@
 
         </form>
 
-        <div class="sticky bottom-0 bg-white py-4">
+        <div class="fixed bottom-0 left-0 right-0 bg-white px-4 py-4">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
             <label
-              for="my-modal-3"
+              for="add-user-modal"
               class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
               >Cancel</label
             >
@@ -135,7 +134,6 @@
         </div>
 
       </div>
-
     </div>
 
 </template>

@@ -4,10 +4,11 @@ import { ref } from 'vue'
 
 import dashboardIcon from '@/assets/dashboard-icon.png'
 import travelManagementSystemIcon from '@/assets/travel-management-system-icon.png'
-import systemConfigurationIcon from '@/assets/system-configuration-icon.png'
-import referenceIcon from '@/assets/reference-icon.png'
+import systemConfigurationIcon from '@/assets/system-configuration.png'
+import referenceIcon from '@/assets/reference.png'
 
 // import NavItems from "./NavItems.vue";
+
 
 // const navItems = [
 //   { href: "/dashboard", label: "Dashboard", children: [], icon: null },
@@ -47,6 +48,7 @@ import referenceIcon from '@/assets/reference-icon.png'
 //     ],
 //   },
 // ];
+
 import ABMIcon from '@/assets/abm.png'
 import searchIcon from '@/assets/Icons.png'
 import expandArrow from '@/assets/ExpandArrow.png'

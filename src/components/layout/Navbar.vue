@@ -1,5 +1,5 @@
 <script setup>
-  import tail from "@/assets/navbar/tail.svg";
+  import tail from "@/assets/topbar-image.png";
   import highlight from "@/assets/navbar/highlight_logo.svg";
   import user from "@/assets/navbar/user.svg";
 </script>
@@ -40,14 +40,17 @@
           <div
             class="rounded-full bg-[#E4E4E4] grid grid-flow-col auto-cols-max w-[195px] h-[60px]"
           >
+
             <div class="flex justify-center items-center px-3">
+              
               <div class="avatar">
                 <div class="w-10 rounded-full">
-                  <div class="bg-blue-600 w-[42px] h-[42px]">
-                    <img :src="user" class="w-[42px] h-[42px]" />
+                  <div class="w-[42px] h-[42px]">
+                    <img :src="user" class="background w-[42px] h-[42px]" />
                   </div>
                 </div>
               </div>
+
               <div class="dropdown dropdown-end">
                 <button tabindex="0">
                   <div tabindex="0" class="collapse collapse-arrow">
@@ -69,6 +72,7 @@
                   <li><a>Logout</a></li>
                 </ul>
               </div>
+
             </div>
           </div>
         </div>
@@ -76,3 +80,9 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+  .background {
+    background-color: #3e5aed;
+  }
+</style>

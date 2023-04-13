@@ -3,9 +3,9 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
-import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
 
-import dataDummy from '@/utils/Api/userdata.js'
+import dataDummy from '@/utils/Api/data.js'
+
 
 const selectAll = (checkValue) => {
   
@@ -26,14 +26,6 @@ const selectAll = (checkValue) => {
 
 }
 
-const tableHead = [
-  {Id: 1, title: 'No'},
-  {Id: 2, title: 'Username'},
-  {Id: 3, title: 'User Role'},
-  {Id: 4, title: 'Approval Authoritites'},
-  {Id: 5, title: 'Actions'}
-]
-
 </script>
 
 <template>
@@ -48,14 +40,13 @@ const tableHead = [
               <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
             </div>
           </th>
-
-          <th v-for="data in tableHead" :key="data.Id" class="relative">
-            <span class="flex justify-center">{{ data.title }}</span>
+          <th class="relative">
+            <span class="flex justify-center">No</span>
             <button class="absolute right-0 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <!-- <th class="relative">
+          <th class="relative">
             <span class="flex justify-center">Username</span>
             <button class="absolute right-1 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
@@ -69,34 +60,99 @@ const tableHead = [
           </th>
           <th class="relative">
             <span class="flex justify-center">Actions</span>
-          </th> -->
-
+          </th>
         </tr>
       </thead>
 
       <tbody class="bg-[#F5F5F5]">
 
-        <tr v-for="data in dataDummy" :key="data.blogId">
+        <tr>
+          <td>
+            <input type="checkbox" name="chk">
+          </td>
+          <td
+          >
+            1
+          </td>
+          <td
+            
+          >
+            John Mane
+          </td>
+          <td
+            
+          >
+            Male
+          </td>
+          <td class="flex flex-wrap gap-4 justify-center">
+            <!-- <button>
+              <img :src="editicon" class="w-6 h-6" />
+            </button> -->
+            <ModalEditUser/>
+            <button>
+              <img :src="deleteicon" class="w-6 h-6" />
+            </button>
+          </td>
+        </tr>
+
+        <tr>
           <td>
             <input type="checkbox" name="chk">
           </td>
           <td>
-            {{ data.Id }}
+            2
           </td>
-          <td>
-            {{ data.Username }}
+          <td
+            
+          >
+            Mae X
           </td>
-          <td>
-            {{ data.UserRole }}
-          </td>
-          <td>
-            {{ data.ApprovalAuthorities }}
+          <td
+            
+          >
+            Female
           </td>
           <td class="flex flex-wrap gap-4 justify-center">
-            <ModalEditUser/>
-            <ModalDeleteUser/>
+            <button>
+              <img :src="editicon" class="w-6 h-6" />
+            </button>
+
+            <button>
+              <img :src="deleteicon" class="w-6 h-6" />
+            </button>
           </td>
         </tr>
+
+        <tr>
+          <td>
+            <input type="checkbox" name="chk">
+          </td>
+          <td>
+            3
+          </td>
+          <td
+          >
+            Nina Max
+          </td>
+          <td
+            
+          >
+            Female
+          </td>
+          <td class="flex flex-wrap gap-4 justify-center">
+            <button>
+              <ModalEditUser/>
+            </button>
+            <button>
+              <img :src="deleteicon" class="w-6 h-6" />
+            </button>
+          </td>
+        </tr>
+
+        <!-- <tr v-for="data in dataDummy" :key="data.blogId">
+          <td>{{ data.title }}</td>
+          <td>{{ data.name }}</td>
+        </tr> -->
 
       </tbody>
       
