@@ -2,6 +2,11 @@
 
 import { ref } from 'vue'
 
+import dashboardIcon from '@/assets/dashboard-icon.png'
+import travelManagementSystemIcon from '@/assets/travel-management-system-icon.png'
+import systemConfigurationIcon from '@/assets/system-configuration-icon.png'
+import referenceIcon from '@/assets/reference-icon.png'
+
 // import NavItems from "./NavItems.vue";
 
 // const navItems = [
@@ -63,7 +68,8 @@ const isOpenReference = ref(false)
       </ul>
     </div>
   </div> -->
-  <div class="flex flex-col w-[260px] h-screen overflow-y-auto">
+
+  <div class="flex flex-col w-[260px] h-screen overflow-y-auto scroller">
 
     <div class="flex justify-center h-32 py-2">
       <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
@@ -78,15 +84,21 @@ const isOpenReference = ref(false)
     
     <div class="px-4 flex flex-col pt-4">
       
-      <a href="#" class="p-4 rounded-lg anchorMenu">
-        Dashboards
-      </a>
-      
-      <a href="#" class="p-4 rounded-lg anchorMenu">
-        Travel Management System
-      </a>
+        <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
+          <img :src=dashboardIcon class="w-6 h-6" alt="">
+          Dashboards
+        </a>
+          
+        <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
+          <img :src=travelManagementSystemIcon class="w-6 h-6" alt=""> 
+          Travel Management System
+        </a>
     
-      <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center p-4 buttonMenu">System Configuration <img :src=expandArrow class="w-5 h-5"></button>
+      <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center gap-4 text-left p-4 buttonMenu">
+        <img :src=systemConfigurationIcon class="w-6 h-6" alt=""> 
+        System Configuration 
+        <img :src=expandArrow class="w-5 h-5">
+      </button>
       <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 flex flex-col">
           <ul class="flex flex-col gap-4 pt-4 px-2">
             <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
@@ -97,7 +109,13 @@ const isOpenReference = ref(false)
           </ul>
       </div>
 
-      <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex items-center p-4 buttonMenu">Reference <img :src=expandArrow class="w-5 h-5"></button>
+      <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex justify-between p-4 buttonMenu">
+        <div class="flex gap-4">
+          <img :src=referenceIcon class="w-6 h-6 rounded-lg" alt=""> 
+          Reference 
+        </div>
+        <img :src=expandArrow class="w-5 h-5">
+      </button>
       <div v-if="isOpenReference" class="pl-4 pb-4 flex flex-col">
           <ul class="flex flex-col gap-4 pt-4 px-2">
             <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Karyawan <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
@@ -120,25 +138,29 @@ const isOpenReference = ref(false)
 <style scoped>
 
   .anchorMenu:focus {
-    background-color: royalblue;
+    background-color: #015289;
     color: white;
   }
 
   .buttonMenu:focus {
-    background-color: royalblue;
+    background-color: #015289;
     color: white;
   }
   
   .anchorSubMenu:focus {
-      color: royalblue;
+      color: #015289;
   }
 
   .anchorImage img {
       visibility: hidden;
   }
   
-  anchorImage:focus img { 
+  .anchorImage:focus img { 
     visibility: visible;
+  }
+
+  .scroller {
+    scrollbar-width: thin;
   }
 
 </style>

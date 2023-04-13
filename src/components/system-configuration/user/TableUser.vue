@@ -2,6 +2,7 @@
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
 
 import dataDummy from '@/utils/Api/data.js'
 </script>
@@ -9,7 +10,7 @@ import dataDummy from '@/utils/Api/data.js'
 <template>
   <div class="">
     <table
-      class="table table-zebra table-compact border w-full rounded-lg"
+      class="table table-zebra table-compact border w-full rounded-lg overflow-x-scroll"
     >
 
       <thead class="text-center font-Montserrat text-sm font-bold">
@@ -54,9 +55,10 @@ import dataDummy from '@/utils/Api/data.js'
             Male
           </td>
           <td class="flex flex-wrap gap-4 justify-center">
-            <button>
+            <!-- <button>
               <img :src="editicon" class="w-6 h-6" />
-            </button>
+            </button> -->
+            <ModalEditUser/>
             <button>
               <img :src="deleteicon" class="w-6 h-6" />
             </button>
