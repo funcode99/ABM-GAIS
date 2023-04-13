@@ -63,7 +63,7 @@ const isOpenReference = ref(false)
       </ul>
     </div>
   </div> -->
-  <div class="flex flex-col w-[260px] h-screen">
+  <div class="flex flex-col w-[260px] h-screen overflow-y-auto">
 
     <div class="flex justify-center h-32 py-2">
       <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
@@ -78,36 +78,36 @@ const isOpenReference = ref(false)
     
     <div class="px-4 flex flex-col pt-4">
       
-      <a href="#" class="p-4 rounded-lg">
+      <a href="#" class="p-4 rounded-lg anchorMenu">
         Dashboards
       </a>
       
-      <a href="#" class="p-4 rounded-lg">
+      <a href="#" class="p-4 rounded-lg anchorMenu">
         Travel Management System
       </a>
     
-      <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center p-4">System Configuration <img :src=expandArrow class="w-5 h-5"></button>
+      <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center p-4 buttonMenu">System Configuration <img :src=expandArrow class="w-5 h-5"></button>
       <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 flex flex-col">
           <ul class="flex flex-col gap-4 pt-4 px-2">
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Menu <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Approval <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Sequence <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Menu <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Approval <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Sequence <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
           </ul>
       </div>
 
-      <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex items-center p-4">Reference <img :src=expandArrow class="w-5 h-5"></button>
+      <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex items-center p-4 buttonMenu">Reference <img :src=expandArrow class="w-5 h-5"></button>
       <div v-if="isOpenReference" class="pl-4 pb-4 flex flex-col">
           <ul class="flex flex-col gap-4 pt-4 px-2">
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Karyawan <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Company <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Department <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Flight Entitlement <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Hotel Fare <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Reimbursement Type <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Pagu <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between">Job Band <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Karyawan <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Company <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Department <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Flight Entitlement <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Hotel Fare <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Reimbursement Type <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Pagu <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Job Band <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
           </ul>
       </div>
 
@@ -115,30 +115,30 @@ const isOpenReference = ref(false)
 
   </div>
 
-
-
-
-
 </template>
 
 <style scoped>
 
-  a:focus {
+  .anchorMenu:focus {
     background-color: royalblue;
     color: white;
   }
 
-  button:focus {
+  .buttonMenu:focus {
     background-color: royalblue;
     color: white;
   }
-
-  ul li a img {
-    visibility: hidden;
+  
+  .anchorSubMenu:focus {
+      color: royalblue;
   }
 
-  /* .image li:focus a img { 
+  .anchorImage img {
+      visibility: hidden;
+  }
+  
+  anchorImage:focus img { 
     visibility: visible;
-  } */
+  }
 
 </style>
