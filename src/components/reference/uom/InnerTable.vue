@@ -1,6 +1,7 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import addicon from "@/assets/icon_add_square.svg";
 </script>
 
 <template>
@@ -9,16 +10,10 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
       <thead class="text-center font-JakartaSans text-sm font-bold">
         <tr>
           <th class="relative">
-            <span class="flex justify-center">TLK</span>
-            <button class="absolute right-0 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
+            <span class="flex justify-center">Unit of Measure</span>
           </th>
           <th class="relative">
-            <span class="flex justify-center">Cross/Hari</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
+            <span class="flex justify-center">Amount</span>
           </th>
           <th class="flex justify-center">Actions</th>
         </tr>
@@ -26,51 +21,39 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
       <tbody class="bg-[#F5F5F5]">
         <tr class="font-JakartaSans font-normal text-sm">
-          <td>A</td>
-          <td></td>
+          <td>Units</td>
+          <td>1.00</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
+            </button>
+
+            <button>
+              <img :src="deleteicon" class="w-6 h-6" />
             </button>
           </td>
         </tr>
 
         <tr class="font-JakartaSans font-normal text-sm">
-          <td>B</td>
-          <td></td>
+          <td>Dozens</td>
+          <td>12.00</td>
           <td class="flex flex-wrap gap-4 justify-center">
             <button>
               <img :src="editicon" class="w-6 h-6" />
+            </button>
+
+            <button>
+              <img :src="deleteicon" class="w-6 h-6" />
             </button>
           </td>
         </tr>
 
         <tr class="font-JakartaSans font-normal text-sm">
-          <td>C</td>
+          <td></td>
           <td></td>
           <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-
-        <tr class="font-JakartaSans font-normal text-sm">
-          <td>D</td>
-          <td></td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-
-        <tr class="font-JakartaSans font-normal text-sm">
-          <td>E</td>
-          <td></td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
+            <button class="ml-10">
+              <img :src="addicon" class="w-6 h-6" />
             </button>
           </td>
         </tr>

@@ -18,6 +18,7 @@ import EditReimbursement from "@/views/reference/reimbursement/EditReimbursement
 import ListZona from "@/views/reference/zona/ListZona.vue"
 import ListJob from "@/views/reference/jobband/ListJob.vue"
 import ListSite from "@/views/reference/sites/ListSite.vue"
+import ListUom from "@/views/reference/uom/ListUom.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
@@ -113,6 +114,11 @@ const router = createRouter({
       path: '/site',
       name: 'site',
       component: ListSite
+    },
+    {
+      path: '/uom',
+      name: 'uom',
+      component: ListUom
     },
 
 
