@@ -17,9 +17,10 @@
     
           <Layout />
     
-          <div class="bg-slate-300 pt-2 px-2 h-[100%]">
+          <div class="bg-slate-300 pt-5 px-5 h-[100%]">
 
             <div class="bg-white rounded-xl">
+
               <div class="">
                 <div
                   class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -89,6 +90,7 @@
 
                 </div>
                 
+                <!-- searchbar -->
                 <form class="py-2 flex justify-center mx-10 md:mx-0 items-center">
                   <div class="relative">
                     <div
@@ -118,8 +120,17 @@
                   </div>
                 </form>
 
-        
+              </div>
 
+              <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+                <h1 class="text-xs">Showing</h1>
+                <select class="border-2 border-black rounded-lg w-15" name="" id="">
+                  <option value="">10</option>
+                  <option value="">25</option>
+                  <option value="">50</option>
+                  <option value="">75</option>
+                  <option value="">100</option> 
+                </select>
               </div>
 
               <TableUser class="py-2 mx-4 overflow-x-auto " />

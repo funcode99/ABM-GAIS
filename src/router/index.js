@@ -20,7 +20,6 @@ import ListJob from "@/views/reference/jobband/ListJob.vue"
 import ListSite from "@/views/reference/sites/ListSite.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
-import EditUser from '@/views/system-configuration/user/EditUser.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
 import EditApproval from '@/views/system-configuration/approval/EditApproval.vue'
 
@@ -123,11 +122,6 @@ const router = createRouter({
       path: '/user',
       name: 'listUser',
       component: ListUser
-    },
-    {
-      path: '/edituser',
-      name: 'editUser',
-      component: EditUser
     },
     {
       path: '/approval',
