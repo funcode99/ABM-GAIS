@@ -5,8 +5,15 @@
     import TableUser from '@/components/system-configuration/user/TableUser.vue'
     import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
 
+    import Paginate from "vuejs-paginate-next";
+
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
+
+    const clickCallback = (a) => {
+      console.log(a)
+    }
+
 </script>
 
 <template>
@@ -135,12 +142,25 @@
 
               <TableUser class="py-2 mx-4 overflow-x-auto " />
 
-              <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+              <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
                 <p class="font-Inter text-xs font-normal text-[#888888]">
                   Showing 1 to 10 of 50 entries
                 </p>
                 <Pagination />
-              </div>
+              </div> -->
+
+              <paginate
+              class="flex gap-4"
+              :page-count="3"
+              :page-range="5"
+              :margin-pages="2"
+              :click-handler="clickCallback"
+              :prev-text="'Prev'"
+              :next-text="'Next'"
+              :container-class="'pagination'"
+              :page-class="'page-item'"
+              >
+              </paginate>
 
             </div>
 

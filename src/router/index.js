@@ -24,7 +24,8 @@ import ListWarehouse from "@/views/reference/warehouse/ListWarehouse.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
-import EditApproval from '@/views/system-configuration/approval/EditApproval.vue'
+
+import HeroPagination from '@/views/experiment/pagination.vue'
 
 // import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 // import EditSequence from '@/views/system-configuration/sequence/EditSequence.vue'
@@ -146,21 +147,17 @@ const router = createRouter({
       name: 'approval',
       component: ListApproval
     },
-    {
-      path: '/editapproval',
-      name: 'editApproval',
-      component: EditApproval
-    },
     // {
     //   path: '/sequence',
     //   name: 'sequence',
     //   component: ListSequence
     // },
-    // {
-    //   path: '/editsequence',
-    //   name: 'editSequence',
-    //   component: EditSequence
-    // }
+    
+    {
+      path: '/hero',
+      name: 'HeroPagination',
+      component: HeroPagination
+    }
   ]
 })
 
