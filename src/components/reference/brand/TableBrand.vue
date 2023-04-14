@@ -56,13 +56,13 @@ const tableHead = [
       <tbody class="bg-[#F5F5F5]">
         <tr
           class="font-JakartaSans font-normal text-sm"
-          v-for="data in brandData"
-          :key="data.id"
+          v-for="(data, index) in brandData"
+          :key="index"
         >
           <td class="relative">
             <input type="checkbox" name="checks" />
           </td>
-          <td>{{ data.id }}</td>
+          <td>{{ index + 1 }}</td>
           <td>{{ data.brand_name }}</td>
           <td>{{ data.company }}</td>
           <td class="flex flex-wrap gap-4 justify-center">
