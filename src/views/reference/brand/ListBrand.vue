@@ -118,7 +118,7 @@ import icon_receive from "@/assets/icon-receive.svg";
           </div>
 
           <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
-            <h1 class="text-xs">Showing</h1>
+            <h1 class="text-xs font-JakartaSans">Showing</h1>
             <select class="border-2 border-black rounded-lg w-15" name="" id="">
               <option value="">10</option>
               <option value="">25</option>
