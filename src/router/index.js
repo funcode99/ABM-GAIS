@@ -22,6 +22,7 @@ import ListUom from "@/views/reference/uom/ListUom.vue"
 import ListBrand from "@/views/reference/brand/ListBrand.vue"
 import ListWarehouse from "@/views/reference/warehouse/ListWarehouse.vue"
 import ListCurrency from "@/views/reference/currency/ListCurrency.vue"
+import ListCar from "@/views/reference/car/ListCar.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
@@ -138,6 +139,11 @@ const router = createRouter({
       path: '/currency',
       name: 'currency',
       component: ListCurrency
+    },
+    {
+      path: '/car',
+      name: 'car',
+      component: ListCar
     },
 
 
