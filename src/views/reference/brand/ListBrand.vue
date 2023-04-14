@@ -22,7 +22,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
             <p
-              class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
+              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
               Brand
             </p>
@@ -37,8 +37,10 @@ import icon_receive from "@/assets/icon-receive.svg";
           </div>
 
           <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <div class="grid grid-flow-col auto-cols-max items-center gap-4">
-              <p class="capitalize font-Fira text-xs text-black font-medium">
+            <div class="flex flex-wrap items-center gap-4">
+              <p
+                class="capitalize font-JakartaSans text-xs text-black font-medium"
+              >
                 Company
               </p>
 
@@ -49,7 +51,7 @@ import icon_receive from "@/assets/icon-receive.svg";
                   <div tabindex="0" class="collapse collapse-arrow">
                     <div class="collapse-title min-h-max py-3">
                       <p
-                        class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
+                        class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
                       >
                         company
                       </p>
@@ -128,8 +130,10 @@ import icon_receive from "@/assets/icon-receive.svg";
 
           <TableBrand class="py-2 mx-4 overflow-x-auto" />
 
-          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <p class="font-Inter text-xs font-normal text-[#888888]">
+          <div
+            class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+          >
+            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing 1 to 10 of 50 entries
             </p>
             <Pagination />
