@@ -3,6 +3,7 @@
     import Layout from '@/components/layout/Layout.vue'
     import Pagination from "@/components/reference/employee/Pagination.vue";
     import TableUser from '@/components/system-configuration/user/TableUser.vue'
+    import Table from '@/components/Table.vue'
     import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
 
     import Paginate from "vuejs-paginate-next";
@@ -10,164 +11,181 @@
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
 
+    import dataDummy from '@/utils/Api/userdata.js'
+
     const clickCallback = (a) => {
       console.log(a)
     }
 
+    const tableHead = [
+  {Id: 1, title: 'No'},
+  {Id: 2, title: 'Username'},
+  {Id: 3, title: 'User Role'},
+  {Id: 4, title: 'Approval Authoritites'},
+  {Id: 5, title: 'Actions'}
+    ]
+
 </script>
 
 <template>
-  <div class="flex overflow-y-hidden">
-    <Sidebar class="flex-none" />
-      
-        <div class="dashboard card card-compact w-full bg-white rounded-lg">
-    
-          <Layout />
-    
-          <div class="bg-slate-300 pt-5 px-5 h-[100%]">
 
-            <div class="bg-white rounded-xl">
+  <div class="flex flex-col overflow-y-hidden">
 
-              <div class="">
-                <div
-                  class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
-                >
-                  <p
-                    class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
-                  >
-                    USER
-                  </p>
-                  <ModalAddUser />
-                </div>
-              </div>
-      
-              <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+    <Layout />
 
-                <div class="grid grid-flow-col auto-cols-max items-center gap-4">
+    <div class="flex mt-[115px]">
+      <Sidebar class="flex-none" />
+      <div class=" bg-slate-300 ml-[260px] pt-5 px-5 w-[100%] h-[100%]">
+        <div class="bg-white rounded-xl ">
 
-                  <p class="capitalize font-Fira text-xs text-black font-medium">
-                    Sort
-                  </p>
-        
-                  <p class="capitalize font-Fira text-xs text-black font-medium">
-                    Company
-                  </p>
-        
-                  <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
-                    <button tabindex="0">
-                      <div tabindex="0" class="collapse collapse-arrow">
-                        <div class="collapse-title min-h-max py-3">
-                          <p
-                            class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
-                          >
-                            company
-                          </p>
-                        </div>
-                      </div>
-                    </button>
-                    <ul
-                      tabindex="0"
-                      class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-                    >
-                      <li><a>company A</a></li>
-                      <li><a>company B</a></li>
-                      <li><a>company C</a></li>
-                    </ul>
-
-                  </div>
-
-                  <div class="flex gap-4 items-center">
-                      <button
-                        class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                      >
-                        <span>
-                          <img :src="icon_filter" class="w-5 h-5" />
-                        </span>
-                        Filter
-                      </button>
-                      <button
-                        class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                      >
-                        <span>
-                          <img :src="icon_reset" class="w-5 h-5" />
-                        </span>
-                        Reset
-                      </button>
-                  </div>
-
-                </div>
-                
-                <!-- searchbar -->
-                <form class="py-2 flex justify-center mx-10 md:mx-0 items-center">
-                  <div class="relative">
-                    <div
-                      class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Search..."
-                      class="input input-bordered input-info w-full px-12 h-9"
-                    />
-                  </div>
-                </form>
-
-              </div>
-
-              <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
-                <h1 class="text-xs">Showing</h1>
-                <select class="border-2 border-black rounded-lg w-15" name="" id="">
-                  <option value="">10</option>
-                  <option value="">25</option>
-                  <option value="">50</option>
-                  <option value="">75</option>
-                  <option value="">100</option> 
-                </select>
-              </div>
-
-              <TableUser class="py-2 mx-4 overflow-x-auto " />
-
-              <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-                <p class="font-Inter text-xs font-normal text-[#888888]">
-                  Showing 1 to 10 of 50 entries
-                </p>
-                <Pagination />
-              </div> -->
-
-              <paginate
-              class="flex gap-4"
-              :page-count="3"
-              :page-range="5"
-              :margin-pages="2"
-              :click-handler="clickCallback"
-              :prev-text="'Prev'"
-              :next-text="'Next'"
-              :container-class="'pagination'"
-              :page-class="'page-item'"
+          <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
+          <div class="">
+            <div
+              class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
+            >
+              <p
+                class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
               >
-              </paginate>
+                USER
+              </p>
+              <ModalAddUser />
+            </div>
+          </div>
+
+          <!-- SORT & SEARCH -->
+          <div class="flex flex-wrap items-center mx-4 py-2">
+
+            <div class="grid grid-flow-col auto-cols-max items-center gap-4">
+
+              <p class="capitalize font-Fira text-xs text-black font-medium">
+                Sort
+              </p>
+    
+              <p class="capitalize font-Fira text-xs text-black font-medium">
+                Company
+              </p>
+    
+              <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
+                <button tabindex="0">
+                  <div tabindex="0" class="collapse collapse-arrow">
+                    <div class="collapse-title min-h-max py-3">
+                      <p
+                        class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
+                      >
+                        company
+                      </p>
+                    </div>
+                  </div>
+                </button>
+                <ul
+                  tabindex="0"
+                  class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
+                >
+                  <li><a>company A</a></li>
+                  <li><a>company B</a></li>
+                  <li><a>company C</a></li>
+                </ul>
+
+              </div>
+
+              <div class="flex gap-4 items-center">
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  >
+                    <span>
+                      <img :src="icon_filter" class="w-5 h-5" />
+                    </span>
+                    Filter
+                  </button>
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  >
+                    <span>
+                      <img :src="icon_reset" class="w-5 h-5" />
+                    </span>
+                    Reset
+                  </button>
+              </div>
 
             </div>
 
+            <div class="flex-1"></div>
+            
+            <!-- searchbar -->
+            <form class="py-2 flex justify-center mx-10 md:mx-0 items-center">
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  class="input input-bordered input-info w-full px-12 h-9"
+                />
+              </div>
+            </form>
+
           </div>
-    
+
+          <!-- SHOWING -->
+          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+            <h1 class="text-xs">Showing</h1>
+            <select class="border-2 border-black rounded-lg w-15" name="" id="">
+              <option value="">10</option>
+              <option value="">25</option>
+              <option value="">50</option>
+              <option value="">75</option>
+              <option value="">100</option> 
+            </select>
+          </div>
+
+          <TableUser class="py-2 mx-4" />
+
+          <!-- <Table :title="tableHead" :value="dataDummy" /> -->
+
+          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+            <p class="font-Inter text-xs font-normal text-[#888888]">
+              Showing 1 to 10 of 50 entries
+            </p>
+            <Pagination />
+          </div> -->
+
+          <!-- <paginate
+          class="flex gap-4"
+          :page-count="3"
+          :page-range="5"
+          :margin-pages="2"
+          :click-handler="clickCallback"
+          :prev-text="'Prev'"
+          :next-text="'Next'"
+          :container-class="'pagination'"
+          :page-class="'page-item'"
+          >
+          </paginate> -->
+          
         </div>
-
+      </div>
+    </div>
+    
+    <div class="dashboard card card-compact w-full bg-white rounded-lg">
+    </div>
+    
   </div>
-
+  
 </template>

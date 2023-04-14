@@ -37,12 +37,14 @@ const tableHead = [
 </script>
 
 <template>
-  <div class="">
 
-    <table class="table table-zebra table-compact border w-full rounded-lg overflow-x-scroll">
+  <div>
+
+    <table class="table table-zebra table-compact border w-full h-full rounded-lg">
 
       <thead class="text-center font-Montserrat text-sm font-bold h-10">
         <tr class="">
+
           <th class="relative">
             <div class="flex justify-center">
               <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
@@ -51,10 +53,11 @@ const tableHead = [
 
           <th v-for="data in tableHead" :key="data.Id" class="relative">
             <span class="flex justify-center">{{ data.title }}</span>
-            <button class="absolute right-0 top-0 bottom-0">
+            <button class="absolute right-2  top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
+
           <!-- <th class="relative">
             <span class="flex justify-center">Username</span>
             <button class="absolute right-1 top-0 bottom-0">
@@ -74,35 +77,36 @@ const tableHead = [
         </tr>
       </thead>
 
-      <tbody class="bg-[#F5F5F5]">
-
-        <tr v-for="data in dataDummy" :key="data.blogId">
-          <td>
-            <input type="checkbox" name="chk">
-          </td>
-          <td>
-            {{ data.Id }}
-          </td>
-          <td>
-            {{ data.Username }}
-          </td>
-          <td>
-            {{ data.UserRole }}
-          </td>
-          <td>
-            {{ data.ApprovalAuthorities }}
-          </td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <ModalEditUser/>
-            <ModalDeleteUser/>
-          </td>
-        </tr>
-
+      <tbody>
+  
+          <tr v-for="data in dataDummy" :key="data.blogId">
+            <td>
+              <input type="checkbox" name="chk">
+            </td>
+            <td>
+              {{ data.Id }}
+            </td>
+            <td>
+              {{ data.Username }}
+            </td>
+            <td>
+              {{ data.UserRole }}
+            </td>
+            <td>
+              {{ data.ApprovalAuthorities }}
+            </td>
+            <td class="flex flex-wrap gap-4 justify-center">
+              <ModalEditUser/>
+              <ModalDeleteUser/>
+            </td>
+          </tr>
+        
       </tbody>
       
     </table>
 
   </div>
+
 </template>
 
 <style scoped>
@@ -121,6 +125,10 @@ const tableHead = [
     background-color: #015289;
     text-transform: capitalize;
     color: white;
+  }
+
+  .table-zebra tbody tr:hover td {
+    background-color: grey;
   }
 
 </style>

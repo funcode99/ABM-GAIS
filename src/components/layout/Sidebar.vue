@@ -1,13 +1,10 @@
 <script setup>
-
 import { ref } from 'vue'
 
 import dashboardIcon from '@/assets/dashboard-icon.png'
 import travelManagementSystemIcon from '@/assets/travel-management-system-icon.png'
 import systemConfigurationIcon from '@/assets/system-configuration.png'
 import referenceIcon from '@/assets/reference.png'
-
-// import NavItems from "./NavItems.vue";
 
 
 // const navItems = [
@@ -71,69 +68,71 @@ const isOpenReference = ref(false)
     </div>
   </div> -->
 
-  <div class="flex flex-col w-[260px] h-screen overflow-y-auto scroller">
+    <div class="flex flex-col w-[260px] h-screen overflow-y-auto scroller fixed">
 
-    <div class="flex justify-center h-32 py-2">
-      <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
-    </div>
-    
-      <div class="flex items-center px-4">
-        <div class="rounded-l-2xl flex justify-center items-center bg-[#f5f5f5] h-10 pl-1">
-          <img :src=searchIcon alt="" class="w-full h-5">
-        </div>
-        <input type="text" class="rounded-r-2xl bg-[#f5f5f5] h-10 pl-2 outline-none" placeholder="Search...">
-      </div>
-    
-    <div class="px-4 flex flex-col pt-4">
+      <!-- <div class="flex justify-center h-32 py-2">
+        <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
+      </div> -->
       
-        <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
-          <img :src=dashboardIcon class="w-6 h-6" alt="">
-          Dashboards
-        </a>
-          
-        <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
-          <img :src=travelManagementSystemIcon class="w-6 h-6" alt=""> 
-          Travel Management System
-        </a>
-    
-      <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center gap-4 text-left p-4 buttonMenu">
-        <img :src=systemConfigurationIcon class="w-6 h-6" alt=""> 
-        System Configuration 
-        <img :src=expandArrow class="w-5 h-5">
-      </button>
-      <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 flex flex-col">
-          <ul class="flex flex-col gap-4 pt-4 px-2">
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Menu <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Approval <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Sequence <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-          </ul>
-      </div>
-
-      <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex justify-between p-4 buttonMenu">
-        <div class="flex gap-4">
-          <img :src=referenceIcon class="w-6 h-6 rounded-lg" alt=""> 
-          Reference 
+        <div class="flex items-center px-4">
+          <div class="rounded-l-2xl flex justify-center items-center bg-[#f5f5f5] h-10 pl-1">
+            <img :src=searchIcon alt="" class="w-full h-5">
+          </div>
+          <input type="text" class="rounded-r-2xl bg-[#f5f5f5] h-10 pl-2 outline-none" placeholder="Search...">
         </div>
-        <img :src=expandArrow class="w-5 h-5">
-      </button>
-      <div v-if="isOpenReference" class="pl-4 pb-4 flex flex-col">
-          <ul class="flex flex-col gap-4 pt-4 px-2">
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Karyawan <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Company <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Department <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Flight Entitlement <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Hotel Fare <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Reimbursement Type <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Pagu <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-            <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Job Band <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-          </ul>
+      
+      <div class="px-4 flex flex-col pt-4">
+        
+          <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
+            <img :src=dashboardIcon class="w-6 h-6" alt="">
+            Dashboards
+          </a>
+            
+          <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
+            <img :src=travelManagementSystemIcon class="w-6 h-6" alt=""> 
+            Travel Management System
+          </a>
+      
+        <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center gap-4 text-left p-4 buttonMenu">
+          <img :src=systemConfigurationIcon class="w-6 h-6" alt=""> 
+          System Configuration 
+          <img :src=expandArrow class="w-5 h-5">
+        </button>
+        <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 flex flex-col">
+            <ul class="flex flex-col gap-4 pt-4 px-2">
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Menu <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Approval <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Sequence <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+            </ul>
+        </div>
+  
+        <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex justify-between p-4 buttonMenu">
+          <div class="flex gap-4">
+            <img :src=referenceIcon class="w-6 h-6 rounded-lg" alt=""> 
+            Reference 
+          </div>
+          <img :src=expandArrow class="w-5 h-5">
+        </button>
+        <div v-if="isOpenReference" class="pl-4 pb-4 flex flex-col">
+            <ul class="flex flex-col gap-4 pt-4 px-2">
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Karyawan <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Company <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Department <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Flight Entitlement <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Hotel Fare <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Reimbursement Type <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Pagu <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Job Band <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+            </ul>
+        </div>
+  
       </div>
-
+  
     </div>
 
-  </div>
+
 
 </template>
 
@@ -163,6 +162,10 @@ const isOpenReference = ref(false)
 
   .scroller {
     scrollbar-width: thin;
+  }
+
+  .background-white {
+    background-color: white;
   }
 
 </style>

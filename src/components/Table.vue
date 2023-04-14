@@ -3,9 +3,12 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
+import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
 
-import dataDummy from '@/utils/Api/data.js'
-
+const props = defineProps({
+  title: Object,
+  value: Object
+})
 
 const selectAll = (checkValue) => {
   
@@ -40,112 +43,36 @@ const selectAll = (checkValue) => {
               <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
             </div>
           </th>
-          <th class="relative">
-            <span class="flex justify-center">No</span>
+          <th v-for="data in props.title" :key="data.Id" class="relative">
+            <span class="flex justify-center">{{ data.title }}</span>
             <button class="absolute right-0 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center">Username</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center">Approval Authorities</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center">Actions</span>
           </th>
         </tr>
       </thead>
 
       <tbody class="bg-[#F5F5F5]">
 
-        <tr>
+        <tr v-for="data in props.value" :key="data.Id">
           <td>
             <input type="checkbox" name="chk">
           </td>
-          <td
-          >
-            1
+          <td>
+            {{ data.Id }}
           </td>
-          <td
-            
-          >
-            John Mane
+          <td>
+            {{ data.Username }}
           </td>
-          <td
-            
-          >
-            Male
+          <td>
+            {{ data.UserRole }}
+          </td>
+          <td>
+            {{ data.ApprovalAuthorities }}
           </td>
           <td class="flex flex-wrap gap-4 justify-center">
-            <!-- <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button> -->
             <ModalEditUser/>
-            <button>
-              <img :src="deleteicon" class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <input type="checkbox" name="chk">
-          </td>
-          <td>
-            2
-          </td>
-          <td
-            
-          >
-            Mae X
-          </td>
-          <td
-            
-          >
-            Female
-          </td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button>
-
-            <button>
-              <img :src="deleteicon" class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-
-        <tr>
-          <td>
-            <input type="checkbox" name="chk">
-          </td>
-          <td>
-            3
-          </td>
-          <td
-          >
-            Nina Max
-          </td>
-          <td
-            
-          >
-            Female
-          </td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <ModalEditUser/>
-            </button>
-            <button>
-              <img :src="deleteicon" class="w-6 h-6" />
-            </button>
+            <ModalDeleteUser/>
           </td>
         </tr>
 
