@@ -22,7 +22,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-14">
+      <main class="modal-box-inner pb-4 lg:pb-16">
         <div class="flex justify-center items-center">
           <div class="avatar">
             <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
@@ -42,7 +42,9 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
         </p>
 
         <form class="py-4">
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+          >
             <div class="mb-6">
               <label
                 for="name"
@@ -52,7 +54,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="text"
                 name="name"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Employee Name"
                 required
               />
@@ -66,14 +68,16 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="number"
                 name="phone_number"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Phone Number"
                 required
               />
             </div>
           </div>
 
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+          >
             <div class="mb-6">
               <label
                 for="SN"
@@ -83,7 +87,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="text"
                 name="SN"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="SN"
                 required
               />
@@ -97,14 +101,16 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="email"
                 name="email"
-                class="font-JakartaSans block bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Email"
                 required
               />
             </div>
           </div>
 
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+          >
             <div class="mb-6">
               <label
                 for="NIK"
@@ -114,7 +120,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="number"
                 name="NIK"
-                class="font-JakartaSans capitalize block bg-white w-[165px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="NIK"
                 required
               />
@@ -128,13 +134,15 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="date"
                 name="date_start"
-                class="bg-white w-[170px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               />
             </div>
           </div>
 
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+          >
             <div class="mb-6">
               <label
                 for="dob"
@@ -144,7 +152,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="date"
                 name="dob"
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               />
             </div>
@@ -157,13 +165,15 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
               <input
                 type="date"
                 name="date_end"
-                class="bg-white w-[170px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               />
             </div>
           </div>
 
-          <div class="flex justify-around items-center gap-2">
+          <div
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+          >
             <div class="mb-6">
               <label
                 for="gender"
@@ -171,7 +181,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 >Gender<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-[165px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Select Gender</option>
@@ -186,7 +196,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 >Cost Center<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-[170px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Cost Center</option>
@@ -196,7 +206,9 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
             </div>
           </div>
 
-          <div class="flex justify-start items-center mx-0 lg:mx-3">
+          <div
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-between lg:px-4 items-center gap-2"
+          >
             <div class="mb-6">
               <label
                 for="departement"
@@ -204,7 +216,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 >Departement<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 border border-slate-300 rounded-md py-2 px-4 lg:mr-9 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 lg:mr-9 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Departement</option>
