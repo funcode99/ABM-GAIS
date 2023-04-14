@@ -4,8 +4,6 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import TableCurrency from "@/components/reference/currency/TableCurrency.vue";
 import Pagination from "@/components/reference/currency/Pagination.vue";
 import ModalAdd from "@/components/reference/currency/ModalAdd.vue";
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 </script>
 
@@ -22,7 +20,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
             <p
-              class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
+              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
               Currency
             </p>
@@ -66,10 +64,23 @@ import icon_receive from "@/assets/icon-receive.svg";
             </form>
           </div>
 
+          <div class="flex items-center gap-1 px-4 py-2">
+            <h1 class="text-xs font-JakartaSans">Showing</h1>
+            <select class="border-2 border-black rounded-lg w-15" name="" id="">
+              <option value="">10</option>
+              <option value="">25</option>
+              <option value="">50</option>
+              <option value="">75</option>
+              <option value="">100</option>
+            </select>
+          </div>
+
           <TableCurrency class="py-2 mx-4 overflow-x-auto" />
 
-          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <p class="font-Inter text-xs font-normal text-[#888888]">
+          <div
+            class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+          >
+            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing 1 to 10 of 50 entries
             </p>
             <Pagination />
