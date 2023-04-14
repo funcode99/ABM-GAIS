@@ -130,8 +130,10 @@ import icon_receive from "@/assets/icon-receive.svg";
 
           <TableCar class="py-2 mx-4 overflow-x-auto" />
 
-          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <p class="font-JakartaSans text-xs font-normal text-[#888888]">
+          <div
+            class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+          >
+            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing 1 to 10 of 50 entries
             </p>
             <Pagination />
