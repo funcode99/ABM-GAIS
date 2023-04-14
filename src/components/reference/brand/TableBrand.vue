@@ -1,7 +1,32 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+
+import ModalEdit from "./ModalEdit.vue";
+
+import brandData from "@/utils/Api/reference/branddata";
+
+const selectAll = (checkValue) => {
+  const checkList = checkValue;
+  if (checkList == true) {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = true;
+    }
+  } else {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = false;
+    }
+  }
+};
+
+const tableHead = [
+  { Id: 1, title: "No" },
+  { Id: 2, title: "Brand Name" },
+  { Id: 3, title: "Company" },
+  { Id: 4, title: "Actions" },
+];
 </script>
 
 <template>
@@ -10,52 +35,38 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
       <thead class="text-center font-JakartaSans text-sm font-bold">
         <tr>
           <th class="relative">
-            <label class="flex justify-center">
+            <div class="flex justify-center">
               <input
                 type="checkbox"
-                class="checkbox bg-transparent border border-white w-[18px] h-[18px] rounded-sm"
+                name="checked"
+                @click="selectAll((checkList = !checkList))"
               />
-            </label>
+            </div>
           </th>
-          <th class="relative">
-            <span class="flex justify-center">No</span>
-            <button class="absolute right-0 top-0 bottom-0">
+
+          <th v-for="data in tableHead" :key="data.Id" class="relative">
+            <span class="flex justify-center">{{ data.title }}</span>
+            <button class="absolute right-2 top-0 bottom-0">
               <img :src="arrowicon" class="w-[9px] h-3" />
             </button>
           </th>
-          <th class="relative">
-            <span class="flex justify-center">Brand Name</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center">Company</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="flex justify-center">Actions</th>
         </tr>
       </thead>
 
       <tbody class="bg-[#F5F5F5]">
-        <tr class="font-JakartaSans font-normal text-sm">
+        <tr
+          class="font-JakartaSans font-normal text-sm"
+          v-for="data in brandData"
+          :key="data.id"
+        >
           <td class="relative">
-            <label class="flex justify-center">
-              <input
-                type="checkbox"
-                class="checkbox bg-transparent w-[18px] h-[18px] rounded-sm border border-[#015289]"
-              />
-            </label>
+            <input type="checkbox" name="checks" />
           </td>
-          <td>1</td>
-          <td>Faber Castell</td>
-          <td>PT ABM</td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.brand_name }}</td>
+          <td>{{ data.company }}</td>
           <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button>
+            <ModalEdit />
             <button>
               <img :src="deleteicon" class="w-6 h-6" />
             </button>
@@ -82,5 +93,10 @@ tr th {
   background-color: #015289;
   text-transform: capitalize;
   color: white;
+}
+
+.table-zebra tbody tr:hover td {
+  background-color: rgb(193, 192, 192);
+  cursor: pointer;
 }
 </style>

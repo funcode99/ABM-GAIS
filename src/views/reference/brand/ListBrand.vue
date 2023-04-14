@@ -10,14 +10,14 @@ import icon_receive from "@/assets/icon-receive.svg";
 </script>
 
 <template>
-  <div class="flex overflow-y-hidden">
-    <Sidebar class="flex-none" />
+  <div class="flex flex-col overflow-y-hidden">
+    <Layout />
 
-    <div class="card card-compact w-full bg-white rounded-lg">
-      <Layout />
-
-      <div class="bg-slate-300 pt-5 px-5 h-[100%]">
+    <div class="flex mt-[115px]">
+      <Sidebar class="flex-none" />
+      <div class="bg-slate-300 ml-[260px] pt-5 px-5 w-[100%] h-[100%]">
         <div class="bg-white rounded-xl custom-card">
+          <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
@@ -36,6 +36,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             </div>
           </div>
 
+          <!-- SORT & SEARCH -->
           <div class="flex flex-wrap justify-between items-center mx-4 py-2">
             <div class="flex flex-wrap items-center gap-4">
               <p
@@ -117,6 +118,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             </form>
           </div>
 
+          <!-- SHOWING -->
           <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans">Showing</h1>
             <select class="border-2 border-black rounded-lg w-15" name="" id="">
@@ -128,8 +130,10 @@ import icon_receive from "@/assets/icon-receive.svg";
             </select>
           </div>
 
+          <!-- TABLE -->
           <TableBrand class="py-2 mx-4 overflow-x-auto" />
 
+          <!-- PAGINATION -->
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
@@ -141,6 +145,8 @@ import icon_receive from "@/assets/icon-receive.svg";
         </div>
       </div>
     </div>
+
+    <div class="dashboard card card-compact w-full bg-white rounded-lg"></div>
   </div>
 </template>
 
