@@ -3,26 +3,20 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from "@/views/Login.vue"
 import Dashboard from "@/views/Dashboard.vue"
 
-import List from "@/views/reference/employee/List.vue"
-import Edit from "@/views/reference/employee/Edit.vue"
+import ListBrand from "@/views/reference/brand/ListBrand.vue"
+import ListCar from "@/views/reference/car/ListCar.vue"
 import ListCompany from "@/views/reference/company/ListCompany.vue"
-import EditCompany from "@/views/reference/company/EditCompany.vue"
+import ListCurrency from "@/views/reference/currency/ListCurrency.vue"
 import ListDepartement from "@/views/reference/departemen/ListDepartement.vue"
-import EditDepartement from "@/views/reference/departemen/EditDepartement.vue"
+import List from "@/views/reference/employee/List.vue"
 import ListFlight from "@/views/reference/flight/ListFlight.vue"
-import EditFlight from "@/views/reference/flight/EditFlight.vue"
-import ListPagu from "@/views/reference/pagu/ListPagu.vue"
-import EditPagu from "@/views/reference/pagu/EditPagu.vue"
-import ListReimbursement from "@/views/reference/reimbursement/ListReimbursement.vue"
-import EditReimbursement from "@/views/reference/reimbursement/EditReimbursement.vue"
-import ListZona from "@/views/reference/zona/ListZona.vue"
 import ListJob from "@/views/reference/jobband/ListJob.vue"
+import ListPagu from "@/views/reference/pagu/ListPagu.vue"
+import ListReimbursement from "@/views/reference/reimbursement/ListReimbursement.vue"
 import ListSite from "@/views/reference/sites/ListSite.vue"
 import ListUom from "@/views/reference/uom/ListUom.vue"
-import ListBrand from "@/views/reference/brand/ListBrand.vue"
 import ListWarehouse from "@/views/reference/warehouse/ListWarehouse.vue"
-import ListCurrency from "@/views/reference/currency/ListCurrency.vue"
-import ListCar from "@/views/reference/car/ListCar.vue"
+import ListZona from "@/views/reference/zona/ListZona.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
@@ -45,15 +39,17 @@ const router = createRouter({
       name: 'dashboard',
       component: Dashboard
     },
+
+    //reference pages
     {
-      path: '/employee',
-      name: 'employee',
-      component: List
+      path: '/brand',
+      name: 'brand',
+      component: ListBrand
     },
     {
-      path: '/editemployee',
-      name: 'employeeedit',
-      component: Edit
+      path: '/car',
+      name: 'car',
+      component: ListCar
     },
     {
       path: '/company',
@@ -61,9 +57,9 @@ const router = createRouter({
       component: ListCompany
     },
     {
-      path: '/editcompany',
-      name: 'companyedit',
-      component: EditCompany
+      path: '/currency',
+      name: 'currency',
+      component: ListCurrency
     },
     {
       path: '/departement',
@@ -71,9 +67,9 @@ const router = createRouter({
       component: ListDepartement
     },
     {
-      path: '/editdepartement',
-      name: 'departementedit',
-      component: EditDepartement
+      path: '/employee',
+      name: 'employee',
+      component: List
     },
     {
       path: '/flight',
@@ -81,9 +77,9 @@ const router = createRouter({
       component: ListFlight
     },
     {
-      path: '/editflight',
-      name: 'flightedit',
-      component: EditFlight
+      path: '/job',
+      name: 'job',
+      component: ListJob
     },
     {
       path: '/pagu',
@@ -91,29 +87,9 @@ const router = createRouter({
       component: ListPagu
     },
     {
-      path: '/editpagu',
-      name: 'paguedit',
-      component: EditPagu
-    },
-    {
       path: '/reimbursement',
       name: 'reimbursement',
       component: ListReimbursement
-    },
-    {
-      path: '/editreimbursement',
-      name: 'reimbursementedit',
-      component: EditReimbursement
-    },
-    {
-      path: '/zona',
-      name: 'zona',
-      component: ListZona
-    },
-    {
-      path: '/job',
-      name: 'job',
-      component: ListJob
     },
     {
       path: '/site',
@@ -126,24 +102,14 @@ const router = createRouter({
       component: ListUom
     },
     {
-      path: '/brand',
-      name: 'brand',
-      component: ListBrand
-    },
-    {
       path: '/warehouse',
       name: 'warehouse',
       component: ListWarehouse
     },
     {
-      path: '/currency',
-      name: 'currency',
-      component: ListCurrency
-    },
-    {
-      path: '/car',
-      name: 'car',
-      component: ListCar
+      path: '/zona',
+      name: 'zona',
+      component: ListZona
     },
 
 
