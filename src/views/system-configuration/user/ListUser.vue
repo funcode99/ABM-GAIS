@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue'
+    // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Layout from '@/components/layout/Layout.vue'
     import Navbar from '@/components/layout/Navbar.vue'
@@ -8,7 +8,6 @@
     import Table from '@/components/Table.vue'
     import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
 
-    import Paginate from "vuejs-paginate-next";
 
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
@@ -16,22 +15,106 @@
 
     import dataDummy from '@/utils/Api/userdata.js'
 
-    const search = ref('')
+    import DataTable from 'datatables.net-vue3';
+    import DataTablesCore from 'datatables.net';
+
+    // import untuk user table
+    import { ref, onMounted, onBeforeMount, reactive, computed } from 'vue'
+    import editicon from "@/assets/navbar/edit_icon.svg";
+    import deleteicon from "@/assets/navbar/delete_icon.svg";
+    import arrowicon from "@/assets/navbar/icon_arrow.svg";
+    import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
+    import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
+
+ 
+    DataTable.use(DataTablesCore);
+
+    const search = ref('ab')
 
     const clickCallback = (a) => {
       console.log(a)
     }
 
-    const tableHead = [
-  {Id: 1, title: 'No'},
-  {Id: 2, title: 'Username'},
-  {Id: 3, title: 'User Role'},
-  {Id: 4, title: 'Approval Authoritites'},
-  {Id: 5, title: 'Actions'}
-    ]
+  //   const tableHead = [
+  // {Id: 1, title: 'No'},
+  // {Id: 2, title: 'Username'},
+  // {Id: 3, title: 'User Role'},
+  // {Id: 4, title: 'Approval Authoritites'},
+  // {Id: 5, title: 'Actions'}
+  //   ]
 
     const isWide = ref(true)
+    let currentscript = ref(1)
+    let paginatescript = ref(5)
+    let paginate_totalscript = ref(0)
+    let showingValue = ref(0)
 
+
+
+    // import untuk user table
+
+    let sortedData = ref([])
+    let sortedbyASC = true
+
+const selectAll = (checkValue) => { 
+  const checkLead = checkValue
+  if(checkLead == true) {
+    let check = document.getElementsByName('chk')
+    for(let i=0; i<check.length; i++) {  
+        if(check[i].type=='checkbox')  
+        check[i].checked=true;  
+    }
+  } else {
+    let check = document.getElementsByName('chk')
+    for(let i=0; i<check.length; i++) {  
+        if(check[i].type=='checkbox')  
+        check[i].checked=false;  
+    }
+  }
+}
+
+const tableHead = [
+  {Id: 1, title: 'No', jsonData: 'No'},
+  {Id: 2, title: 'Username', jsonData: 'Username'},
+  {Id: 3, title: 'User Role', jsonData: 'UserRole'},
+  {Id: 4, title: 'Approval Authoritites', jsonData: 'ApprovalAuthorities'},
+  {Id: 5, title: 'Actions'}
+]
+
+const sortList = (sortBy) => {
+  if(sortedbyASC) {
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
+  } else {
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
+  }
+}
+
+
+
+// watch(ref, callback)
+
+onBeforeMount(() => {
+  // sortedData.value gak dianggap sebagai array lagi
+  sortedData.value = dataDummy
+})
+
+const filteredItems = (search) => {
+    sortedData.value = dataDummy
+      console.log(search)
+      const filteredR = sortedData.value.filter(item => {
+        // console.log(item.No)
+        console.log(item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1)
+         return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+      })
+      sortedData.value = filteredR
+      console.log(sortedData.value)
+}
+
+
+
+  
 </script>
 
 <template>
@@ -49,7 +132,7 @@
       <!-- w-screen md:w-full -->
       <!-- ml-[100px] md:ml-[260px] -->
       <!-- slate box -->
-      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-screen sm:ml-[100px] md:ml-[260px]">
 
         <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
           >
@@ -167,6 +250,7 @@
                   placeholder="Search..."
                   class="input input-bordered input-info w-36 sm:w-full px-12 h-9"
                   v-model="search"
+                  @keyup="filteredItems(search)"
                 />
               </div>
             </form>
@@ -188,31 +272,103 @@
 
           <!-- <Table :title="tableHead" :value="dataDummy" /> -->
 
-          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
             <p class="font-Inter text-xs font-normal text-[#888888]">
               Showing 1 to 10 of 50 entries
             </p>
-            <Pagination />
-          </div> -->
-
-          <!-- <paginate
-          class="flex gap-4"
-          :page-count="3"
-          :page-range="5"
-          :margin-pages="2"
-          :click-handler="clickCallback"
-          :prev-text="'Prev'"
-          :next-text="'Next'"
-          :container-class="'pagination'"
-          :page-class="'page-item'"
-          >
-          </paginate> -->
+              <div id="pagination" class="bg-red-500">
+                <a href="#" class="btn btn-default" v-for="page_index in paginate_total" @click.prevent="updateCurrent(page_index)" :key="page_index">
+                    {{ page_index }}
+                </a>
+              </div>
+          </div>
           
         </div>
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
-          <TableUser class="py-2 relative overflow-auto" />
+          
+          <!-- <TableUser class="py-2 relative overflow-auto" :searchResult=search /> -->
+
+
+        <div class="relative">
+          <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
+
+            <thead class="text-center font-Montserrat text-sm font-bold h-10">
+              <tr class="">
+
+                <th>
+                  <div class="flex justify-center">
+                    <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                  </div>
+                </th>
+
+                <th v-for="data in tableHead" :key="data.Id" class="overflow-auto cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                  <!-- &#8597; -->
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }} 
+                    <button class="">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </span>
+                </th>
+
+                <!-- <th class="relative">
+                  <span class="flex justify-center">Username</span>
+                  <button class="absolute right-1 top-0 bottom-0">
+                    <img :src="arrowicon" class="w-[9px] h-3" />
+                  </button>
+                </th>
+                <th class="relative">
+                  <span class="flex justify-center">Approval Authorities</span>
+                  <button class="absolute right-1 top-0 bottom-0">
+                    <img :src="arrowicon" class="w-[9px] h-3" />
+                  </button>
+                </th>
+                <th class="relative">
+                  <span class="flex justify-center">Actions</span>
+                </th> -->
+
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <!-- sortir nya harus sama dengan key yang di data dummy -->
+
+                <tr v-for="data in sortedData" :key="data.No">
+                  <td>
+                    <input type="checkbox" name="chk">
+                  </td>
+                  <td>
+                    {{ data.No }} 
+                  </td>
+                  <td>
+                    {{ data.Username }}
+                  </td>
+                  <td>
+                    {{ data.UserRole }}
+                  </td>
+                  <td>
+                    {{ data.ApprovalAuthorities }}
+                  </td>
+                  <td class="flex flex-wrap gap-4 justify-center">
+                    <ModalEditUser/>
+                    <ModalDeleteUser/>
+                  </td>
+                </tr>
+
+            </tbody>
+            
+          </table>
+        </div>
+
+          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+            <p class="font-Inter text-xs font-normal text-[#888888]">
+              Showing 1 to 10 of 20 entries
+            </p>
+          </div> -->
+
         </div>
 
       </div>
@@ -227,4 +383,27 @@
   /* .zInfinite {
     z-index: 9999;
   } */
+
+  th {
+    padding: 2px;
+    text-align: left;
+    position: relative;
+  }
+
+  tr td {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  tr th {
+    background-color: #015289;
+    text-transform: capitalize;
+    color: white;
+  }
+
+  .table-zebra tbody tr:hover td {
+    background-color: grey;
+  }
+
+
 </style>

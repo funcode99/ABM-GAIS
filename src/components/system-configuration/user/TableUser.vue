@@ -16,8 +16,7 @@ import dataDummy from '@/utils/Api/userdata.js'
 let sortedData = ref([])
 let sortedbyASC = true
 
-const selectAll = (checkValue) => {
-  
+const selectAll = (checkValue) => { 
   const checkLead = checkValue
   if(checkLead == true) {
     let check = document.getElementsByName('chk')
@@ -32,7 +31,6 @@ const selectAll = (checkValue) => {
         check[i].checked=false;  
     }
   }
-
 }
 
 const tableHead = [
@@ -53,6 +51,11 @@ const sortList = (sortBy) => {
   }
 }
 
+  const props = defineProps({
+    searchResult: String
+  })
+
+  console.log(props.searchResult)
 
 // watch(ref, callback)
 
@@ -60,6 +63,12 @@ onBeforeMount(() => {
   // sortedData.value gak dianggap sebagai array lagi
   sortedData.value = dataDummy
 })
+
+const filteredItems = () => {
+      sortedData.filter(item => {
+         return item.No.toLowerCase().indexOf(props.search.toLowerCase()) > -1 | item.username.toLowerCase().indexOf(props.search.toLowerCase()) > -1 
+      })
+}
 
 </script>
 

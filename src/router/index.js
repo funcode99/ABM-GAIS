@@ -163,7 +163,6 @@ const router = createRouter({
     //   name: 'sequence',
     //   component: ListSequence
     // },
-
     {
       path: '/hero',
       name: 'HeroPagination',
