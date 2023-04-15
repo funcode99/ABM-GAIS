@@ -94,4 +94,9 @@ tr th {
   text-transform: capitalize;
   color: white;
 }
+
+.table-zebra tbody tr:hover td {
+  background-color: rgb(193, 192, 192);
+  cursor: pointer;
+}
 </style>
