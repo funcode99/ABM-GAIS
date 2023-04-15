@@ -1,21 +1,28 @@
 <script setup>
-import Layout from "@/components/layout/Layout.vue";
+import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import TableCompany from "@/components/reference/company/TableCompany.vue";
 import Pagination from "@/components/reference/company/Pagination.vue";
 import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import icon_receive from "@/assets/icon-receive.svg";
+
+import dataCompany from "@/utils/Api/reference/companydata";
 </script>
 
 <template>
-  <div class="flex overflow-y-hidden">
-    <Sidebar class="flex-none" />
+  <div
+    class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen"
+  >
+    <Navbar />
 
-    <div class="card card-compact w-full bg-white rounded-lg">
-      <Layout />
-
-      <div class="bg-slate-300 pt-5 px-5 h-[100%]">
-        <div class="card card-compact bg-white rounded-lg custom-card">
+    <div class="flex w-screen mt-[115px]">
+      <Sidebar class="flex-none fixed" />
+      <div
+        class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 sm:ml-[100px] md:ml-[280px] w-screen h-full"
+        :class="[dataCompany.length < 10 ? 'h-screen' : 'h-full']"
+      >
+        <div class="bg-white rounded-t-xl custom-card">
+          <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
@@ -34,6 +41,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             </div>
           </div>
 
+          <!-- SEARCH -->
           <div class="flex flex-wrap justify-start items-center mx-4">
             <form class="flex md:mx-0">
               <label class="relative block">
@@ -64,6 +72,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             </form>
           </div>
 
+          <!-- SHOWING -->
           <div class="flex items-center gap-1 px-4 py-2">
             <h1 class="text-xs font-JakartaSans">Showing</h1>
             <select class="border-2 border-black rounded-lg w-15" name="" id="">
@@ -75,8 +84,10 @@ import icon_receive from "@/assets/icon-receive.svg";
             </select>
           </div>
 
+          <!-- TABLE -->
           <TableCompany class="py-2 mx-4 overflow-x-auto" />
 
+          <!-- PAGINATION -->
           <div
             class="flex flex-wrap justify-center items-center mx-4 py-4 lg:justify-between"
           >

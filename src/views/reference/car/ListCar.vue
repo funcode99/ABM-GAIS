@@ -7,6 +7,8 @@ import ModalAdd from "@/components/reference/car/ModalAdd.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
+
+import carData from "@/utils/Api/reference/cardata";
 </script>
 
 <template>
@@ -18,7 +20,8 @@ import icon_receive from "@/assets/icon-receive.svg";
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
       <div
-        class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 w-screen h-full sm:ml-[100px] md:ml-[280px]"
+        class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 sm:ml-[100px] md:ml-[280px] w-screen h-full"
+        :class="[carData.length < 10 ? 'h-screen' : 'h-full']"
       >
         <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
