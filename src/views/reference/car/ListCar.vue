@@ -1,5 +1,5 @@
 <script setup>
-import Layout from "@/components/layout/Layout.vue";
+import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import TableCar from "@/components/reference/car/TableCar.vue";
 import Pagination from "@/components/reference/car/Pagination.vue";
@@ -10,13 +10,17 @@ import icon_receive from "@/assets/icon-receive.svg";
 </script>
 
 <template>
-  <div class="flex flex-col overflow-y-hidden">
-    <Layout />
+  <div
+    class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen"
+  >
+    <Navbar />
 
-    <div class="flex mt-[115px]">
-      <Sidebar class="flex-none" />
-      <div class="bg-slate-300 ml-[260px] pt-5 px-5 w-[100%] h-[100%]">
-        <div class="bg-white rounded-xl custom-card">
+    <div class="flex w-screen mt-[115px]">
+      <Sidebar class="flex-none fixed" />
+      <div
+        class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 w-screen h-full sm:ml-[100px] md:ml-[280px]"
+      >
+        <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
