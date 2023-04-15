@@ -68,37 +68,49 @@ const isOpenReference = ref(false)
     </div>
   </div> -->
 
-    <div class="flex flex-col w-[260px] h-screen overflow-y-auto scroller fixed">
+    <!-- fixed -->
+    <div class="hidden sm:flex sm:flex-col w-[100px] md:w-[260px] h-screen overflow-y-auto scroller  bg-white zInfinite">
 
-      <!-- <div class="flex justify-center h-32 py-2">
+      <!-- <div class="flex justify-center h-32 py-2"> 
         <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
       </div> -->
       
-        <div class="flex items-center px-4">
+      <!-- sidebar search -->
+        <div class="md:flex md:items-center  ml-8 pt-7 hidden">
+
           <div class="rounded-l-2xl flex justify-center items-center bg-[#f5f5f5] h-10 pl-1">
-            <img :src=searchIcon alt="" class="w-full h-5">
+            <img :src=searchIcon alt="search" class="w-5 h-5">
           </div>
           <input type="text" class="rounded-r-2xl bg-[#f5f5f5] h-10 pl-2 outline-none" placeholder="Search...">
+
         </div>
       
-      <div class="px-4 flex flex-col pt-4">
+        <div class="px-4 flex flex-col pt-3">
         
           <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
             <img :src=dashboardIcon class="w-6 h-6" alt="">
-            Dashboards
+            <h3 class="hidden md:block">Dashboards</h3> 
           </a>
             
           <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
             <img :src=travelManagementSystemIcon class="w-6 h-6" alt=""> 
-            Travel Management System
+            <h3 class="hidden md:block">
+              Travel Management System
+            </h3>
           </a>
       
-        <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex items-center gap-4 text-left p-4 buttonMenu">
-          <img :src=systemConfigurationIcon class="w-6 h-6" alt=""> 
-          System Configuration 
-          <img :src=expandArrow class="w-5 h-5">
+        <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex md:justify-between items-center gap-4 text-left p-4 buttonMenu">
+          <div class="flex gap-4">
+            <img :src=systemConfigurationIcon class="w-6 h-6 rounded-lg" alt=""> 
+            <h3 class="hidden md:block">
+              System Configuration 
+            </h3>
+            <div class="hidden md:inline">
+              <img :src=expandArrow class="w-5 h-5">
+            </div>
+          </div>
         </button>
-        <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 flex flex-col">
+        <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 sm:flex sm:flex-col hidden ">
             <ul class="flex flex-col gap-4 pt-4 px-2">
               <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
               <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
@@ -108,14 +120,18 @@ const isOpenReference = ref(false)
             </ul>
         </div>
   
-        <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex justify-between p-4 buttonMenu">
+        <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex md:justify-between p-4 buttonMenu">
           <div class="flex gap-4">
             <img :src=referenceIcon class="w-6 h-6 rounded-lg" alt=""> 
-            Reference 
+            <h3 class="hidden md:block">
+              Reference 
+            </h3>
           </div>
-          <img :src=expandArrow class="w-5 h-5">
+          <div class="hidden md:inline">
+            <img :src=expandArrow class="w-5 h-5">
+          </div>
         </button>
-        <div v-if="isOpenReference" class="pl-4 pb-4 flex flex-col">
+        <div v-if="isOpenReference" class="pl-4 pb-4 sm:flex sm:flex-col hidden">
             <ul class="flex flex-col gap-4 pt-4 px-2">
               <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Karyawan <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
               <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Company <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
@@ -128,11 +144,9 @@ const isOpenReference = ref(false)
             </ul>
         </div>
   
-      </div>
+        </div>
   
     </div>
-
-
 
 </template>
 
@@ -166,6 +180,10 @@ const isOpenReference = ref(false)
 
   .background-white {
     background-color: white;
+  }
+
+  .zInfinite {
+    z-index: 999;
   }
 
 </style>

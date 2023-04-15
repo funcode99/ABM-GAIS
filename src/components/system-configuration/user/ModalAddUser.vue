@@ -165,4 +165,8 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+
+.btn:hover {
+  background-color: white;
+}
 </style>

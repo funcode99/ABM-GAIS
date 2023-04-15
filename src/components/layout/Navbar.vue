@@ -7,23 +7,28 @@
 
 <template>
 
-  <div class="flex fixed w-full bg-white z-infinite top-0">
-    <div class="flex justify-center items-center h-[115px] min-w-[260px]">
-        <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
+  <div class="flex fixed justify-between md:justify-start w-full bg-white zInfinite top-0">
+
+    <div class="flex justify-center items-center h-[115px] min-w-[100px] md:min-w-[260px] z-50">
+        <img :src=ABMIcon class="w-[57px] h-[43px] md:w-[114px] md:h-[86px]" alt="">
     </div>
+    
     <div class="navbar bg-base-100 py-0 px-0 h-[115px]">
   
-      <div class="navbar-start">
+      <div class="navbar-start hidden md:block">
         <img :src="tail" class="w-[285.85px] h-[90.27px]" />
       </div>
   
-      <div class="navbar-center flex justify-center items-center">
+      <div class="hidden navbar-center md:flex justify-center items-center">
         <img :src="highlight" class="w-[120px] h-[79px]" />
       </div>
   
       <div class="navbar-end">
-        <div class="grid grid-flow-col auto-cols-max">
+        
+        <div class="md:grid md:grid-flow-col md:auto-cols-max">
+
             <div class="flex justify-center items-center ">
+             
               <div>
   
                 <div class="dropdown dropdown-end">
@@ -58,7 +63,7 @@
   
               </div>
   
-              <div class="rounded-full bg-[#E4E4E4] grid grid-flow-col auto-cols-max w-[195px] h-[60px]">
+              <div class="rounded-full bg-[#E4E4E4] grid grid-flow-row md:auto-cols-max w-[195px] h-[60px]">
   
                 <div class="flex justify-center items-center px-3">
                   
@@ -97,10 +102,12 @@
               </div>
   
             </div>
+
         </div>
       </div>
   
     </div>
+
   </div>
   
 </template>
@@ -110,7 +117,7 @@
     background-color: #3e5aed;
   }
 
-  .z-infinite {
+  .zInfinite {
     z-index: 999;
   }
 

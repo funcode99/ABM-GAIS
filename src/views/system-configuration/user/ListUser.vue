@@ -1,6 +1,8 @@
 <script setup>
+    import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Layout from '@/components/layout/Layout.vue'
+    import Navbar from '@/components/layout/Navbar.vue'
     import Pagination from "@/components/reference/employee/Pagination.vue";
     import TableUser from '@/components/system-configuration/user/TableUser.vue'
     import Table from '@/components/Table.vue'
@@ -10,8 +12,11 @@
 
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
+    import icon_receive from "@/assets/icon-receive.svg";
 
     import dataDummy from '@/utils/Api/userdata.js'
+
+    const search = ref('')
 
     const clickCallback = (a) => {
       console.log(a)
@@ -25,38 +30,61 @@
   {Id: 5, title: 'Actions'}
     ]
 
+    const isWide = ref(true)
+
 </script>
 
 <template>
 
-  <div class="flex flex-col overflow-y-hidden">
+  <div class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen">
 
-    <Layout />
+    <Navbar/>
+    <!-- <Layout /> -->
+    <!-- mt-[115px] -->
+    <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
+    <div class="flex w-screen mt-[115px]">
 
-    <div class="flex mt-[115px]">
-      <Sidebar class="flex-none" />
-      <div class=" bg-slate-300 ml-[260px] pt-5 px-5 w-[100%] h-[100%]">
-        <div class="bg-white rounded-xl ">
+      <Sidebar class="flex-none fixed" />
+
+      <!-- w-screen md:w-full -->
+      <!-- ml-[100px] md:ml-[260px] -->
+      <!-- slate box -->
+      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+
+        <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
+          >
+        </div> -->
+      
+        <!-- w-screen md:w-full -->
+        <!-- table box -->
+        <div class="bg-white rounded-t-xl pb-3 relative">
 
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div class="">
-            <div
-              class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
+          <div
+            class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
+          >
+            <p
+              class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              <p
-                class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
-              >
-                USER
-              </p>
+              USER
+            </p>
+            <div class="flex gap-4">
               <ModalAddUser />
+              <button
+                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+              >
+                <img :src="icon_receive" class="w-6 h-6" />
+              </button>
             </div>
           </div>
 
           <!-- SORT & SEARCH -->
-          <div class="flex flex-wrap items-center mx-4 py-2">
+          <div class="flex flex-wrap items-center px-4 py-2 gap-y-2">
 
-            <div class="grid grid-flow-col auto-cols-max items-center gap-4">
-
+            <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">
+              
+              <!-- sort company filter -->
+            <div class="flex items-center gap-4">
               <p class="capitalize font-Fira text-xs text-black font-medium">
                 Sort
               </p>
@@ -85,10 +113,11 @@
                   <li><a>company B</a></li>
                   <li><a>company C</a></li>
                 </ul>
-
               </div>
+            </div>
 
-              <div class="flex gap-4 items-center">
+              <!-- filter & reset button -->
+              <div class="flex gap-4 flex-wrap items-center">
                   <button
                     class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   >
@@ -109,10 +138,10 @@
 
             </div>
 
-            <div class="flex-1"></div>
+            <div class="sm:flex-1"></div>
             
             <!-- searchbar -->
-            <form class="py-2 flex justify-center mx-10 md:mx-0 items-center">
+            <form class="py-2 flex justify-center items-center">
               <div class="relative">
                 <div
                   class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -136,10 +165,12 @@
                 <input
                   type="text"
                   placeholder="Search..."
-                  class="input input-bordered input-info w-full px-12 h-9"
+                  class="input input-bordered input-info w-36 sm:w-full px-12 h-9"
+                  v-model="search"
                 />
               </div>
             </form>
+            
 
           </div>
 
@@ -154,8 +185,6 @@
               <option value="">100</option> 
             </select>
           </div>
-
-          <TableUser class="py-2 mx-4" />
 
           <!-- <Table :title="tableHead" :value="dataDummy" /> -->
 
@@ -180,12 +209,22 @@
           </paginate> -->
           
         </div>
+        
+        <!-- actual table -->
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
+          <TableUser class="py-2 relative overflow-auto" />
+        </div>
+
       </div>
-    </div>
-    
-    <div class="dashboard card card-compact w-full bg-white rounded-lg">
-    </div>
+
+    </div>  
     
   </div>
   
 </template>
+
+<style scoped>
+  /* .zInfinite {
+    z-index: 9999;
+  } */
+</style>
