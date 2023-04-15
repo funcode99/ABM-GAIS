@@ -55,6 +55,8 @@
 
     let sortedData = ref([])
     let sortedbyASC = true
+    let filterArray = computed(() => sortedData.value)
+
 
 const selectAll = (checkValue) => { 
   const checkLead = checkValue
@@ -108,12 +110,10 @@ const filteredItems = (search) => {
         console.log(item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1)
          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
+      // filterArray = filteredR
       sortedData.value = filteredR
-      console.log(sortedData.value)
+      // console.log(sortedData.value)
 }
-
-
-
   
 </script>
 
@@ -132,7 +132,7 @@ const filteredItems = (search) => {
       <!-- w-screen md:w-full -->
       <!-- ml-[100px] md:ml-[260px] -->
       <!-- slate box -->
-      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-screen sm:ml-[100px] md:ml-[260px]">
+      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
 
         <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
           >
