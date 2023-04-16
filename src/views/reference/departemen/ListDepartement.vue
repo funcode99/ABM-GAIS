@@ -1,23 +1,57 @@
 <script setup>
-import Layout from "@/components/layout/Layout.vue";
+import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
-import TableDepartement from "@/components/reference/departement/TableDepartement.vue";
 import Pagination from "@/components/reference/departement/Pagination.vue";
 import ModalAdd from "@/components/reference/departement/ModalAdd.vue";
+import ModalEdit from "@/components/reference/departement/ModalEdit.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
+
+import departementdata from "@/utils/Api/reference/departementdata";
+
+//for check & uncheck all
+const selectAll = (checkValue) => {
+  const checkList = checkValue;
+  if (checkList == true) {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = true;
+    }
+  } else {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = false;
+    }
+  }
+};
+
+//for tablehead
+const tableHead = [
+  { Id: 1, title: "No" },
+  { Id: 2, title: "Name" },
+  { Id: 3, title: "Cost Center" },
+  { Id: 4, title: "Status" },
+  { Id: 5, title: "Departement Head" },
+  { Id: 6, title: "Actions" },
+];
 </script>
 
 <template>
-  <div class="flex overflow-y-hidden">
-    <Sidebar class="flex-none" />
+  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+    <Navbar />
 
-    <div class="card card-compact w-full bg-white rounded-lg">
-      <Layout />
+    <div class="flex w-screen mt-[115px]">
+      <Sidebar class="flex-none fixed" />
 
-      <div class="bg-slate-300 pt-5 px-5 h-[100%]">
-        <div class="bg-white rounded-xl custom-card">
+      <div
+        class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 sm:ml-[100px] md:ml-[280px] w-screen h-full"
+        :class="[departementdata.length < 10 ? 'h-screen' : 'h-full']"
+      >
+        <div class="bg-white rounded-t-xl custom-card">
+          <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
@@ -36,6 +70,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             </div>
           </div>
 
+          <!-- SORT & SEARCH -->
           <div class="flex flex-wrap justify-between items-center mx-4 py-2">
             <div class="flex flex-wrap items-center gap-4">
               <p
@@ -117,6 +152,7 @@ import icon_receive from "@/assets/icon-receive.svg";
             </form>
           </div>
 
+          <!-- SHOWING -->
           <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans">Showing</h1>
             <select class="border-2 border-black rounded-lg w-15" name="" id="">
@@ -128,8 +164,64 @@ import icon_receive from "@/assets/icon-receive.svg";
             </select>
           </div>
 
-          <TableDepartement class="py-2 mx-4 overflow-x-auto" />
+          <!-- TABLE -->
+          <div
+            class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
+          >
+            <div class="block overflow-x-auto">
+              <table
+                class="table table-zebra table-compact border w-full rounded-lg"
+              >
+                <thead class="text-center font-JakartaSans text-sm font-bold">
+                  <tr>
+                    <th class="relative">
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+                    </th>
+                    <th
+                      v-for="data in tableHead"
+                      :key="data.Id"
+                      class="relative"
+                    >
+                      <span class="flex justify-center">{{ data.title }}</span>
+                      <button class="absolute right-2 top-0 bottom-0">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
 
+                <tbody class="bg-[#F5F5F5]">
+                  <tr
+                    class="font-JakartaSans font-normal text-sm"
+                    v-for="(data, index) in departementdata"
+                    :key="index"
+                  >
+                    <td class="relative">
+                      <input type="checkbox" name="checks" />
+                    </td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.name_departement }}</td>
+                    <td>{{ data.cost_center }}</td>
+                    <td>{{ data.status }}</td>
+                    <td>{{ data.name_departement_head }}</td>
+                    <td class="flex flex-wrap gap-4 justify-center">
+                      <ModalEdit />
+                      <button>
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PAGINATION -->
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
@@ -148,5 +240,31 @@ import icon_receive from "@/assets/icon-receive.svg";
 .custom-card {
   box-shadow: 0px -4px #015289;
   border-radius: 4px;
+}
+
+th {
+  padding: 2px;
+  text-align: left;
+  position: relative;
+}
+
+tr td {
+  text-align: center;
+  white-space: nowrap;
+}
+
+tr th {
+  background-color: #015289;
+  text-transform: capitalize;
+  color: white;
+}
+
+.table-zebra tbody tr:hover td {
+  background-color: rgb(193, 192, 192);
+  cursor: pointer;
+}
+
+.this {
+  overflow-x: hidden;
 }
 </style>
