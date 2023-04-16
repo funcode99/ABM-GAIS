@@ -1,18 +1,43 @@
 <script setup>
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
-import TableCompany from "@/components/reference/company/TableCompany.vue";
 import Pagination from "@/components/reference/company/Pagination.vue";
 import ModalAdd from "@/components/reference/company/ModalAdd.vue";
+import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import dataCompany from "@/utils/Api/reference/companydata";
+
+//for check & uncheck all
+const selectAll = (checkValue) => {
+  const checkList = checkValue;
+  if (checkList == true) {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = true;
+    }
+  } else {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = false;
+    }
+  }
+};
+
+//for tablehead
+const tableHead = [
+  { Id: 1, title: "No" },
+  { Id: 2, title: "Car" },
+  { Id: 3, title: "Company" },
+  { Id: 4, title: "Site" },
+  { Id: 5, title: "Actions" },
+];
 </script>
 
 <template>
-  <div
-    class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen"
-  >
+  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -85,7 +110,60 @@ import dataCompany from "@/utils/Api/reference/companydata";
           </div>
 
           <!-- TABLE -->
-          <TableCompany class="py-2 mx-4 overflow-x-auto" />
+          <div
+            class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
+          >
+            <div class="block overflow-x-auto">
+              <table
+                class="table table-zebra table-compact border w-full rounded-lg"
+              >
+                <thead class="text-center font-JakartaSans text-sm font-bold">
+                  <tr>
+                    <th class="relative">
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+                    </th>
+                    <th
+                      v-for="data in tableHead"
+                      :key="data.Id"
+                      class="relative"
+                    >
+                      <span class="flex justify-center">{{ data.title }}</span>
+                      <button class="absolute right-2 top-0 bottom-0">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody class="bg-[#F5F5F5]">
+                  <tr
+                    class="font-JakartaSans font-normal text-sm"
+                    v-for="(data, index) in dataCompany"
+                    :key="index"
+                  >
+                    <td class="relative">
+                      <input type="checkbox" name="checks" />
+                    </td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.code }}</td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.parent }}</td>
+                    <td class="flex flex-wrap gap-4 justify-center">
+                      <ModalEdit />
+                      <button>
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
           <!-- PAGINATION -->
           <div
@@ -103,12 +181,34 @@ import dataCompany from "@/utils/Api/reference/companydata";
 </template>
 
 <style scoped>
-.dashboard {
-  width: calc(100% - 260px);
-}
-
 .custom-card {
   box-shadow: 0px -4px #015289;
   border-radius: 4px;
+}
+
+th {
+  padding: 2px;
+  text-align: left;
+  position: relative;
+}
+
+tr td {
+  text-align: center;
+  white-space: nowrap;
+}
+
+tr th {
+  background-color: #015289;
+  text-transform: capitalize;
+  color: white;
+}
+
+.table-zebra tbody tr:hover td {
+  background-color: rgb(193, 192, 192);
+  cursor: pointer;
+}
+
+.this {
+  overflow-x: hidden;
 }
 </style>

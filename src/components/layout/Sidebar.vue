@@ -212,17 +212,17 @@ const changeAccordion = (section) => {
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Car <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
-          <router-link to="/employee" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Karyawan <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
           <router-link to="/company" class="cursor-pointer"
             ><a
               href="#"
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Company <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/employee" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Karyawan <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
           <router-link to="/departement" class="cursor-pointer"
             ><a
