@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Pagination from "@/components/reference/brand/Pagination.vue";
 import ModalAdd from "@/components/reference/brand/ModalAdd.vue";
+import ModalEdit from "@/components/reference/brand/ModalEdit.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -10,8 +11,8 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import brandData from "@/utils/Api/reference/branddata";
-import ModalEdit from "@/components/reference/brand/ModalEdit.vue";
 
+//for check & uncheck all
 const selectAll = (checkValue) => {
   const checkList = checkValue;
   if (checkList == true) {
@@ -27,6 +28,7 @@ const selectAll = (checkValue) => {
   }
 };
 
+//for tablehead
 const tableHead = [
   { Id: 1, title: "No" },
   { Id: 2, title: "Brand Name" },
