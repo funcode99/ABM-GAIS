@@ -2,23 +2,22 @@
     // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
-    import Pagination from "@/components/reference/employee/Pagination.vue";
-    import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
 
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
     import icon_receive from "@/assets/icon-receive.svg";
-
-    import dataDummy from '@/utils/Api/system-configuration/userdata.js'
-
-    // import untuk user table
+    
+    import dataDummy from '@/utils/Api/system-configuration/menudata.js'
+    
+    // import untuk approval table
     import { ref, onMounted, onBeforeMount, reactive, computed } from 'vue'
     import editicon from "@/assets/navbar/edit_icon.svg";
     import deleteicon from "@/assets/navbar/delete_icon.svg";
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
-    import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
-    import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
 
+    import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue";
+    import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
+    import ModalDelete from '@/components/modal/ModalDelete.vue'
 
     const search = ref('')
     const isWide = ref(true)
@@ -27,12 +26,13 @@
     let paginate_totalscript = ref(0)
     let showingValue = ref(0)
 
-
     // import untuk user table
 
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
+    // let filterArray = computed(() => sortedData.value)
+
 
 const selectAll = (checkValue) => { 
   const checkLead = checkValue
@@ -53,9 +53,9 @@ const selectAll = (checkValue) => {
 
 const tableHead = [
   {Id: 1, title: 'No', jsonData: 'No'},
-  {Id: 2, title: 'Username', jsonData: 'Username'},
-  {Id: 3, title: 'User Role', jsonData: 'UserRole'},
-  {Id: 4, title: 'Approval Authoritites', jsonData: 'ApprovalAuthorities'},
+  {Id: 2, title: 'Name', jsonData: 'Name'},
+  {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
+  {Id: 4, title: 'Status', jsonData: 'Status'},
   {Id: 5, title: 'Actions'}
 ]
 
@@ -91,17 +91,14 @@ const filteredItems = (search) => {
   
 </script>
 
-<!-- overflow x bukan disini -->
 <template>
 
-<!-- kenak loh, ternyata disini overflow x nya -->
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen">
 
     <Navbar/>
     <!-- <Layout /> -->
     <!-- mt-[115px] -->
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
-    <!-- overflow x bukan disini -->
     <div class="flex w-screen mt-[115px]">
 
       <Sidebar class="flex-none fixed" />
@@ -109,7 +106,7 @@ const filteredItems = (search) => {
       <!-- w-screen md:w-full -->
       <!-- ml-[100px] md:ml-[260px] -->
       <!-- slate box -->
-      <div class="bg-slate-300 py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
 
         <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
           >
@@ -117,16 +114,19 @@ const filteredItems = (search) => {
       
         <!-- w-screen md:w-full -->
         <!-- table box -->
-        <!-- overflow x bukan disini -->
         <div class="bg-white rounded-t-xl pb-3 relative">
 
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2">
-            <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
-              USER
+          <div
+              class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
+          >
+            <p
+              class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
+            >
+              Menu
             </p>
             <div class="flex gap-4">
-              <ModalAddUser />
+              <ModalAddMenu />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -141,7 +141,7 @@ const filteredItems = (search) => {
             <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">
               
               <!-- sort company filter -->
-              <div class="flex items-center gap-4">
+            <div class="flex items-center gap-4">
               <p class="capitalize font-Fira text-xs text-black font-medium">
                 Sort
               </p>
@@ -171,7 +171,7 @@ const filteredItems = (search) => {
                   <li><a>company C</a></li>
                 </ul>
               </div>
-              </div>
+            </div>
 
               <!-- filter & reset button -->
               <div class="flex gap-4 flex-wrap items-center">
@@ -228,6 +228,7 @@ const filteredItems = (search) => {
                 />
               </div>
             </form>
+            
 
           </div>
 
@@ -246,12 +247,12 @@ const filteredItems = (search) => {
         </div>
         
         <!-- actual table -->
-        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
           
           <!-- <TableUser class="py-2 relative overflow-auto" :searchResult=search /> -->
 
-        <div class="block overflow-x-auto">
-          <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
+        <div class="relative w-full">
+          <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
 
             <thead class="text-center font-Montserrat text-sm font-bold h-10">
               <tr class="">
@@ -287,17 +288,17 @@ const filteredItems = (search) => {
                     {{ data.No }} 
                   </td>
                   <td>
-                    {{ data.Username }}
+                    {{ data.Name }}
                   </td>
                   <td>
-                    {{ data.UserRole }}
+                    {{ data.ParentMenu }}
                   </td>
                   <td>
-                    {{ data.ApprovalAuthorities }}
+                    {{ data.Status }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
-                    <ModalEditUser/>
-                    <ModalDeleteUser/>
+                    <ModalEditMenu />
+                    <ModalDelete />
                   </td>
                 </tr>
 
@@ -346,10 +347,6 @@ const filteredItems = (search) => {
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
-  }
-
-  .this {
-    overflow-x: hidden;
   }
 
 

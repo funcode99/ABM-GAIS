@@ -13,11 +13,11 @@ import brandData from "@/utils/Api/reference/branddata";
 
 <template>
   <div
-    class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen"
+    class="flex flex-col overflow-y-hidden overflow-x-auto basis-full grow-0 shrink-0 w-screen"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen mt-[115px] overflow-x-hidden">
       <Sidebar class="flex-none fixed" />
       <div
         class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 sm:ml-[100px] md:ml-[280px] w-screen h-full"
@@ -152,6 +152,7 @@ import brandData from "@/utils/Api/reference/branddata";
         </div>
       </div>
     </div>
+
   </div>
 </template>
 

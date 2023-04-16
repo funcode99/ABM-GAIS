@@ -19,12 +19,12 @@ import ListWarehouse from "@/views/reference/warehouse/ListWarehouse.vue"
 import ListZona from "@/views/reference/zona/ListZona.vue"
 
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
+import ListRole from '@/views/system-configuration/role/ListRole.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
+import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
+// import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
 import HeroPagination from '@/views/experiment/pagination.vue'
-
-// import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
-// import EditSequence from '@/views/system-configuration/sequence/EditSequence.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -116,13 +116,23 @@ const router = createRouter({
     // system-configuration page  
     {
       path: '/user',
-      name: 'listUser',
+      name: 'user',
       component: ListUser
+    },
+    {
+      path: '/role',
+      name: 'role',
+      component: ListRole
     },
     {
       path: '/approval',
       name: 'approval',
       component: ListApproval
+    },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: ListMenu
     },
     // {
     //   path: '/sequence',

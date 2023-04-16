@@ -30,7 +30,7 @@ const tableHead = [
 </script>
 
 <template>
-  <div>
+  <div class="relative overflow-x-hidden">
     <table class="table table-zebra table-compact border w-full rounded-lg">
       <thead class="text-center font-JakartaSans text-sm font-bold">
         <tr>

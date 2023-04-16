@@ -1,151 +1,351 @@
 <script setup>
+    // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
-    import Pagination from "@/components/reference/employee/Pagination.vue";
-    import ModalAdd from "@/components/system-configuration/approval/ModalAdd.vue";
-    import TableApproval from '@/components/system-configuration/approval/TableApproval.vue';
+
+    import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue";
 
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
+    import icon_receive from "@/assets/icon-receive.svg";
+
+    import dataDummy from '@/utils/Api/system-configuration/approverdata.js'
+
+    // import untuk approval table
+    import { ref, onMounted, onBeforeMount, reactive, computed } from 'vue'
+    import editicon from "@/assets/navbar/edit_icon.svg";
+    import deleteicon from "@/assets/navbar/delete_icon.svg";
+    import arrowicon from "@/assets/navbar/icon_arrow.svg";
+    import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
+    import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
+
+ 
+
+    const search = ref('')
+    const isWide = ref(true)
+    let currentscript = ref(1)
+    let paginatescript = ref(5)
+    let paginate_totalscript = ref(0)
+    let showingValue = ref(0)
+
+    // import untuk user table
+
+    let sortedData = ref([])
+    let sortedbyASC = true
+    let instanceArray = []
+    // let filterArray = computed(() => sortedData.value)
+
+
+const selectAll = (checkValue) => { 
+  const checkLead = checkValue
+  if(checkLead == true) {
+    let check = document.getElementsByName('chk')
+    for(let i=0; i<check.length; i++) {  
+        if(check[i].type=='checkbox')  
+        check[i].checked=true;  
+    }
+  } else {
+    let check = document.getElementsByName('chk')
+    for(let i=0; i<check.length; i++) {  
+        if(check[i].type=='checkbox')  
+        check[i].checked=false;  
+    }
+  }
+}
+
+const tableHead = [
+  {Id: 1, title: 'No', jsonData: 'No'},
+  {Id: 2, title: 'Matrix Name', jsonData: 'MatrixName'},
+  {Id: 3, title: 'Menu', jsonData: 'Menu'},
+  {Id: 4, title: 'Actions'}
+]
+
+const sortList = (sortBy) => {
+  if(sortedbyASC) {
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
+  } else {
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
+  }
+}
+
+
+
+// watch(ref, callback)
+
+onBeforeMount(() => {
+  // sortedData.value gak dianggap sebagai array lagi
+  instanceArray = dataDummy
+  sortedData.value = instanceArray
+})
+
+const filteredItems = (search) => {
+    sortedData.value = instanceArray
+      const filteredR = sortedData.value.filter(item => {
+        // console.log(item.No)
+        console.log(item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1)
+         return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+      })
+      sortedData.value = filteredR
+}
+  
 </script>
 
 <template>
-    <div class="flex">
-      <Sidebar class="flex-none" />
-      <div class="dashboard card card-compact w-screen bg-white rounded-lg">
-      <Navbar />
 
-      <div
-        class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
-      >
-        <p
-          class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
-        >
-          Approval Matrix
-        </p>
-        <ModalAdd />
-      </div>
+  <div class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen">
 
-      <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-        <div class="grid grid-flow-col auto-cols-max items-center gap-4">
-          <p class="capitalize font-Fira text-xs text-black font-medium">
-            Sort
-          </p>
+    <Navbar/>
+    <!-- <Layout /> -->
+    <!-- mt-[115px] -->
+    <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
+    <div class="flex w-screen mt-[115px]">
 
-          <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
-            <button tabindex="0">
-              <div tabindex="0" class="collapse collapse-arrow">
-                <div class="collapse-title min-h-max py-3">
-                  <p
-                    class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
-                  >
-                    A to Z
-                  </p>
-                </div>
+      <Sidebar class="flex-none fixed" />
+
+      <!-- w-screen md:w-full -->
+      <!-- ml-[100px] md:ml-[260px] -->
+      <!-- slate box -->
+      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+
+        <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
+          >
+        </div> -->
+      
+        <!-- w-screen md:w-full -->
+        <!-- table box -->
+        <div class="bg-white rounded-t-xl pb-3 relative">
+
+          <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
+          <div
+              class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
+          >
+            <p
+              class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
+            >
+              Approval Matrix
+            </p>
+            <div class="flex gap-4">
+              <ModalAddApproval />
+              <button
+                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+              >
+                <img :src="icon_receive" class="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+
+          <!-- SORT & SEARCH -->
+          <div class="flex flex-wrap items-center px-4 py-2 gap-y-2">
+
+            <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">
+              
+              <!-- sort company filter -->
+            <div class="flex items-center gap-4">
+              <p class="capitalize font-Fira text-xs text-black font-medium">
+                Sort
+              </p>
+    
+              <p class="capitalize font-Fira text-xs text-black font-medium">
+                Company
+              </p>
+    
+              <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
+                <button tabindex="0">
+                  <div tabindex="0" class="collapse collapse-arrow">
+                    <div class="collapse-title min-h-max py-3">
+                      <p
+                        class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
+                      >
+                        company
+                      </p>
+                    </div>
+                  </div>
+                </button>
+                <ul
+                  tabindex="0"
+                  class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
+                >
+                  <li><a>company A</a></li>
+                  <li><a>company B</a></li>
+                  <li><a>company C</a></li>
+                </ul>
               </div>
-            </button>
-            <ul
-              tabindex="0"
-              class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-            >
-              <li><a>A</a></li>
-              <li><a>B</a></li>
-              <li><a>C</a></li>
-            </ul>
-          </div>
+            </div>
 
-          <p class="capitalize font-Fira text-xs text-black font-medium">
-            company
-          </p>
-
-          <div class="dropdown dropdown-bottom bg-white rounded-lg h-9 border">
-            <button tabindex="0">
-              <div tabindex="0" class="collapse collapse-arrow">
-                <div class="collapse-title min-h-max py-3">
-                  <p
-                    class="flex justify-center items-center capitalize font-Fira text-xs text-black font-medium"
+              <!-- filter & reset button -->
+              <div class="flex gap-4 flex-wrap items-center">
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   >
-                    company
-                  </p>
-                </div>
+                    <span>
+                      <img :src="icon_filter" class="w-5 h-5" />
+                    </span>
+                    Filter
+                  </button>
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  >
+                    <span>
+                      <img :src="icon_reset" class="w-5 h-5" />
+                    </span>
+                    Reset
+                  </button>
               </div>
-            </button>
-            <ul
-              tabindex="0"
-              class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-            >
-              <li><a>company A</a></li>
-              <li><a>company B</a></li>
-              <li><a>company C</a></li>
-            </ul>
+
+            </div>
+
+            <div class="sm:flex-1"></div>
+            
+            <!-- searchbar -->
+            <form class="py-2 flex justify-center items-center">
+              <div class="relative">
+                <div
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                >
+                  <svg
+                    aria-hidden="true"
+                    class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  class="input input-bordered input-info w-36 sm:w-full px-12 h-9"
+                  v-model="search"
+                  @keyup="filteredItems(search)"
+                />
+              </div>
+            </form>
+            
+
           </div>
 
-          <div class="flex gap-4 items-center my-4 md:my-0">
-            <button
-              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
-            >
-              <span>
-                <img :src="icon_filter" class="w-5 h-5" />
-              </span>
-              Filter
-            </button>
-            <button
-              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#015289] hover:text-white hover:border-[#015289]"
-            >
-              <span>
-                <img :src="icon_reset" class="w-5 h-5" />
-              </span>
-              Reset
-            </button>
+          <!-- SHOWING -->
+          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+            <h1 class="text-xs">Showing</h1>
+            <select class="border-2 border-black rounded-lg w-15" name="" id="">
+              <option value="">10</option>
+              <option value="">25</option>
+              <option value="">50</option>
+              <option value="">75</option>
+              <option value="">100</option> 
+            </select>
           </div>
+          
+        </div>
+        
+        <!-- actual table -->
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
+          
+          <!-- <TableUser class="py-2 relative overflow-auto" :searchResult=search /> -->
+
+        <div class="relative w-full">
+          <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
+
+            <thead class="text-center font-Montserrat text-sm font-bold h-10">
+              <tr class="">
+                <th>
+                  <div class="flex justify-center">
+                    <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                  </div>
+                </th>
+
+                <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                  <!-- &#8597; -->
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }} 
+                    <button class="">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </span>
+                </th>
+
+
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <!-- sortir nya harus sama dengan key yang di data dummy -->
+
+                <tr v-for="data in sortedData" :key="data.No">
+                  <td>
+                    <input type="checkbox" name="chk">
+                  </td>
+                  <td>
+                    {{ data.No }} 
+                  </td>
+                  <td>
+                    {{ data.MatrixName }}
+                  </td>
+                  <td>
+                    {{ data.Menu }}
+                  </td>
+                  <td class="flex flex-wrap gap-4 justify-center">
+                    <ModalEditApproval />
+                    <ModalDeleteUser />
+                  </td>
+                </tr>
+
+            </tbody>
+            
+          </table>
         </div>
 
-        <form class="py-2 flex justify-center md:mx-0">
-          <div class="relative">
-            <div
-              class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
-            >
-              <svg
-                aria-hidden="true"
-                class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
-            </div>
-            <input
-              type="text"
-              placeholder="Search..."
-              class="input input-bordered input-info w-full px-12"
-            />
-          </div>
-        </form>
+          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+            <p class="font-Inter text-xs font-normal text-[#888888]">
+              Showing 1 to 10 of 20 entries
+            </p>
+          </div> -->
+
+        </div>
+
       </div>
 
-      <TableApproval class="py-2 mx-4 overflow-x-auto" />
-
-      <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-        <p class="font-Inter text-xs font-normal text-[#888888]">
-          Showing 1 to 10 of 50 entries
-        </p>
-        <Pagination />
-      </div>
-    </div>
+    </div>  
+    
   </div>
+  
 </template>
 
 <style scoped>
+  /* .zInfinite {
+    z-index: 9999;
+  } */
 
-.input {
-  height: 36px;
-}
+  th {
+    padding: 2px;
+    text-align: left;
+    position: relative;
+  }
+
+  tr td {
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  tr th {
+    background-color: #015289;
+    text-transform: capitalize;
+    color: white;
+  }
+
+  .table-zebra tbody tr:hover td {
+    background-color: grey;
+  }
+
 
 </style>

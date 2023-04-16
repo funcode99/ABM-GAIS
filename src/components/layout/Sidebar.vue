@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 
 import dashboardIcon from '@/assets/dashboard-icon.png'
 import travelManagementSystemIcon from '@/assets/travel-management-system-icon.png'
@@ -54,6 +54,25 @@ import groupIcon from '@/assets/Group.png'
 const isOpenSystemConfiguration = ref(false)
 const isOpenReference = ref(false)
 
+const sidebarAccordion = reactive({
+  systemConfiguration: false,
+  reference: false
+})
+
+const changeAccordion = (section) => {
+    if (section == 'reference' && sidebarAccordion.reference == true) {
+    sidebarAccordion.reference = false
+  } else if (section == 'system' && sidebarAccordion.systemConfiguration == true) {
+    sidebarAccordion.systemConfiguration = false
+  } else if (section == 'reference') {
+    sidebarAccordion.systemConfiguration = false
+    sidebarAccordion.reference = true
+  } else if(section == 'system') {
+    sidebarAccordion.systemConfiguration = true
+    sidebarAccordion.reference = false
+  }
+}
+
 </script>
 
 <template>
@@ -87,19 +106,19 @@ const isOpenReference = ref(false)
       
         <div class="px-4 flex flex-col pt-3">
         
-          <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
+          <router-link to="/dashboard" href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
             <img :src=dashboardIcon class="w-6 h-6" alt="">
             <h3 class="hidden md:block">Dashboards</h3> 
-          </a>
+          </router-link>
             
-          <a href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
+          <router-link to="/" href="#" class="flex items-center gap-4 p-4 rounded-lg anchorMenu">
             <img :src=travelManagementSystemIcon class="w-6 h-6" alt=""> 
             <h3 class="hidden md:block">
               Travel Management System
             </h3>
-          </a>
+          </router-link>
       
-        <button @click="isOpenSystemConfiguration = !isOpenSystemConfiguration" class="rounded-lg flex md:justify-between items-center gap-4 text-left p-4 buttonMenu">
+        <button @click="changeAccordion('system')" class="rounded-lg flex md:justify-between items-center gap-4 text-left p-4 buttonMenu">
           <div class="flex gap-4">
             <img :src=systemConfigurationIcon class="w-6 h-6 rounded-lg" alt=""> 
             <h3 class="hidden md:block">
@@ -110,17 +129,17 @@ const isOpenReference = ref(false)
             </div>
           </div>
         </button>
-        <div v-if="isOpenSystemConfiguration" class="pl-4 pb-4 sm:flex sm:flex-col hidden ">
+        <div v-if="sidebarAccordion.systemConfiguration == true" class="pl-4 pb-4 sm:flex sm:flex-col hidden ">
             <ul class="flex flex-col gap-4 pt-4 px-2">
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">User <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Menu <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Approval <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Sequence <img class="w-5 h-5" :src=groupIcon alt=""></a></li>
+              <router-link to="/user" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">User <img class="w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/role" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Role <img class="w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/menu" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Menu <img class="w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/approval" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Approval <img class="w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/sequence" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Sequence <img class="w-5 h-5" :src=groupIcon alt=""></a></router-link>
             </ul>
         </div>
   
-        <button @click="isOpenReference = !isOpenReference" class="rounded-lg flex md:justify-between p-4 buttonMenu">
+        <button @click="changeAccordion('reference')" class="rounded-lg flex md:justify-between p-4 buttonMenu">
           <div class="flex gap-4">
             <img :src=referenceIcon class="w-6 h-6 rounded-lg" alt=""> 
             <h3 class="hidden md:block">
@@ -131,16 +150,16 @@ const isOpenReference = ref(false)
             <img :src=expandArrow class="w-5 h-5">
           </div>
         </button>
-        <div v-if="isOpenReference" class="pl-4 pb-4 sm:flex sm:flex-col hidden">
+        <div v-if="sidebarAccordion.reference == true" class="pl-4 pb-4 sm:flex sm:flex-col hidden">
             <ul class="flex flex-col gap-4 pt-4 px-2">
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Karyawan <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Company <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Department <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Flight Entitlement <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Hotel Fare <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Reimbursement Type <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Pagu <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
-              <li class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Job Band <img class=" w-5 h-5" :src=groupIcon alt=""></a></li>
+              <router-link to="/employee" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Karyawan <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/company" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Company <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/departement" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Department <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/flight" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Flight Entitlement <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Hotel Fare <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/reimbursement" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Reimbursement Type <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/pagu" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Pagu <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
+              <router-link to="/job" class="cursor-pointer"><a href="#" class="flex items-center justify-between anchorImage anchorSubMenu">Job Band <img class=" w-5 h-5" :src=groupIcon alt=""></a></router-link>
             </ul>
         </div>
   

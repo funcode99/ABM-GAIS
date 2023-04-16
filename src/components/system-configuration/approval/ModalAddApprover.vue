@@ -1,20 +1,22 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
 </script>
 
 <template>
   <label
-    for="my-modal-3"
+    for="add-approver-modal"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add New</label
   >
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input type="checkbox" id="add-approver-modal" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-white py-4">
-        <label for="my-modal-3" class="cursor-pointer absolute right-0">
+        <label for="add-approver-modal" class="cursor-pointer absolute right-0">
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold">New Matrix</p>
@@ -158,6 +160,12 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
           </td>
         </tr>
 
+        <tr class='text-center'>
+          <td></td>
+          <td></td>
+          <td class="flex justify-center"><img class="cursor-pointer" :src="iconPlus" alt=""></td>
+        </tr>
+
         <!-- <tr v-for="data in dataDummy" :key="data.blogId">
           <td>{{ data.title }}</td>
           <td>{{ data.name }}</td>
@@ -172,7 +180,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <label
-            for="my-modal-3"
+            for="add-approver-modal"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
             >Cancel</label
           >
