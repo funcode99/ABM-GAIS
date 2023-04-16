@@ -243,11 +243,11 @@ const changeAccordion = (section) => {
               >Flight Entitlement
               <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
-          <router-link to="/" class="cursor-pointer"
+          <router-link to="/job" class="cursor-pointer"
             ><a
               href="#"
               class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Hotel Fare <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              >Job Band <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
           <router-link to="/reimbursement" class="cursor-pointer"
             ><a
@@ -261,12 +261,6 @@ const changeAccordion = (section) => {
               href="#"
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Pagu <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/job" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Job Band <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
         </ul>
       </div>
