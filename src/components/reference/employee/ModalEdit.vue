@@ -1,24 +1,26 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
 </script>
 
 <template>
-  <label
-    for="my-modal-3"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add New</label
-  >
+  <label for="modal-edit-employee" class="cursor-pointer">
+    <img :src="editicon" class="w-6 h-6"
+  /></label>
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input type="checkbox" id="modal-edit-employee" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label for="my-modal-3" class="cursor-pointer absolute right-3 top-3">
+        <label
+          for="modal-edit-employee"
+          class="cursor-pointer absolute right-3 top-3"
+        >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          New Employee
+        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start">
+          Edit Employee
         </p>
       </nav>
 
@@ -45,7 +47,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -59,7 +61,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="sn"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -78,7 +80,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="SN"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -92,7 +94,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="email"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -111,7 +113,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="NIK"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -125,7 +127,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="date_start"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -143,7 +145,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="dob"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -156,7 +158,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="date_end"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -174,7 +176,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="gender"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -189,7 +191,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
                 <option>Female</option>
               </select>
             </div>
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="cost_center"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -207,9 +209,9 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
           </div>
 
           <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-between lg:px-3 items-center gap-2"
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-between lg:px-3 items-center gap-2 "
           >
-            <div class="mb-6">
+            <div class="mb-6 text-start">
               <label
                 for="departement"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -231,7 +233,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
       <div class="sticky bottom-0 bg-white py-2">
         <div class="flex justify-end gap-4 mr-6">
           <label
-            for="my-modal-3"
+            for="modal-edit-employee"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
             >Cancel</label
           >
