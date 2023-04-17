@@ -249,18 +249,18 @@ const changeAccordion = (section) => {
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Job Band <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
+          <router-link to="/pagu" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Pagu <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
           <router-link to="/reimbursement" class="cursor-pointer"
             ><a
               href="#"
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Reimbursement Type
               <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/pagu" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Pagu <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
         </ul>
       </div>
