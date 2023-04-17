@@ -112,7 +112,7 @@ const filteredItems = (search) => {
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >
-                Warehouse
+                Company
               </p>
 
               <div
