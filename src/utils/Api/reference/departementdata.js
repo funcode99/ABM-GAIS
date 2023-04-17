@@ -1,6 +1,7 @@
 const departementData = [
     {
         id: 1,
+        no: 1,
         name_departement: 'Keuangan',
         cost_center: 'CC001',
         status: 'Aktif',
@@ -8,6 +9,7 @@ const departementData = [
     },
     {
         id: 2,
+        no: 2,
         name_departement: 'Pemasaran',
         cost_center: 'CC002',
         status: 'Aktif',
@@ -15,6 +17,7 @@ const departementData = [
     },
     {
         id: 3,
+        no: 3,
         name_departement: 'Teknologi Informasi',
         cost_center: 'CC003',
         status: 'Tidak Aktif',
@@ -22,6 +25,7 @@ const departementData = [
     },
     {
         id: 4,
+        no: 4,
         name_departement: 'Sumber Daya Manusia',
         cost_center: 'CC004',
         status: 'Aktif',
@@ -29,6 +33,7 @@ const departementData = [
     },
     {
         id: 5,
+        no: 5,
         name_departement: 'Pengadaan',
         cost_center: 'CC005',
         status: 'Tidak Aktif',
@@ -36,6 +41,7 @@ const departementData = [
     },
     {
         id: 6,
+        no: 6,
         name_departement: 'Operasional',
         cost_center: 'CC006',
         status: 'Aktif',
@@ -43,6 +49,7 @@ const departementData = [
     },
     {
         id: 7,
+        no: 7,
         name_departement: 'Penjualan',
         cost_center: 'CC007',
         status: 'Aktif',
@@ -50,6 +57,7 @@ const departementData = [
     },
     {
         id: 8,
+        no: 8,
         name_departement: 'Manufaktur',
         cost_center: 'CC008',
         status: 'Tidak Aktif',
@@ -57,6 +65,7 @@ const departementData = [
     },
     {
         id: 9,
+        no: 9,
         name_departement: 'Perencanaan',
         cost_center: 'CC009',
         status: 'Aktif',
@@ -64,6 +73,7 @@ const departementData = [
     },
     {
         id: 10,
+        no: 10,
         name_departement: 'Kualitas',
         cost_center: 'CC010',
         status: 'Aktif',
@@ -71,6 +81,7 @@ const departementData = [
     },
     {
         id: 11,
+        no: 11,
         name_departement: 'Pelayanan Pelanggan',
         cost_center: 'CC011',
         status: 'Tidak Aktif',
@@ -78,6 +89,7 @@ const departementData = [
     },
     {
         id: 12,
+        no: 12,
         name_departement: 'Hubungan Masyarakat',
         cost_center: 'CC012',
         status: 'Aktif',
@@ -85,6 +97,7 @@ const departementData = [
     },
     {
         id: 13,
+        no: 13,
         name_departement: 'Logistik',
         cost_center: 'CC013',
         status: 'Aktif',
@@ -92,6 +105,7 @@ const departementData = [
     },
     {
         id: 14,
+        no: 14,
         name_departement: 'Riset dan Pengembangan',
         cost_center: 'CC014',
         status: 'Tidak Aktif',
@@ -99,6 +113,7 @@ const departementData = [
     },
     {
         id: 15,
+        no: 15,
         name_departement: 'Produksi',
         cost_center: 'CC015',
         status: 'Aktif',
@@ -106,6 +121,7 @@ const departementData = [
     },
     {
         id: 16,
+        no: 16,
         name_departement: 'Pemeliharaan',
         cost_center: 'CC016',
         status: 'Aktif',
@@ -113,6 +129,7 @@ const departementData = [
     },
     {
         id: 17,
+        no: 17,
         name_departement: 'Penjaminan Mutu',
         cost_center: 'CC017',
         status: 'Aktif',
@@ -120,6 +137,7 @@ const departementData = [
     },
     {
         id: 18,
+        no: 18,
         name_departement: 'Pengembangan Produk',
         cost_center: 'CC018',
         status: 'Tidak Aktif',
@@ -127,6 +145,7 @@ const departementData = [
     },
     {
         id: 19,
+        no: 19,
         name_departement: 'Pengawasan Operasional',
         cost_center: 'CC019',
         status: 'Aktif',
@@ -134,6 +153,7 @@ const departementData = [
     },
     {
         id: 20,
+        no: 20,
         name_departement: 'Pengembangan Bisnis',
         cost_center: 'CC020',
         status: 'Aktif',
@@ -141,6 +161,7 @@ const departementData = [
     },
     {
         id: 21,
+        no: 21,
         name_departement: 'Akuntansi',
         cost_center: 'CC021',
         status: 'Tidak Aktif',
@@ -148,6 +169,7 @@ const departementData = [
     },
     {
         id: 22,
+        no: 22,
         name_departement: 'Pengolahan Data',
         cost_center: 'CC022',
         status: 'Aktif',
@@ -155,6 +177,7 @@ const departementData = [
     },
     {
         id: 23,
+        no: 23,
         name_departement: 'Pengembangan Sistem',
         cost_center: 'CC023',
         status: 'Aktif',
@@ -162,6 +185,7 @@ const departementData = [
     },
     {
         id: 24,
+        no: 24,
         name_departement: 'Perizinan',
         cost_center: 'CC024',
         status: 'Tidak Aktif',
@@ -169,6 +193,7 @@ const departementData = [
     },
     {
         id: 25,
+        no: 25,
         name_departement: 'Pengamanan',
         cost_center: 'CC025',
         status: 'Aktif',
