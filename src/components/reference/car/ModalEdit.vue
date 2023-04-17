@@ -63,7 +63,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             <label
               for="car_brand"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Car<span class="text-red">*</span></label
+              >Car Brand<span class="text-red">*</span></label
             >
             <input
               type="text"
