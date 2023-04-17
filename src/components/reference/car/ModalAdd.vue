@@ -59,7 +59,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             <label
               for="car_brand"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Car<span class="text-red">*</span></label
+              >Car Brand<span class="text-red">*</span></label
             >
             <input
               type="text"
