@@ -200,17 +200,11 @@ const changeAccordion = (section) => {
         class="pl-4 pb-4 sm:flex sm:flex-col hidden"
       >
         <ul class="flex flex-col gap-4 pt-4 px-2">
-          <router-link to="/brand" class="cursor-pointer"
+          <router-link to="/employee" class="cursor-pointer"
             ><a
               href="#"
               class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Brand <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/car" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Car <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              >Employee <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
           <router-link to="/company" class="cursor-pointer"
             ><a
@@ -218,23 +212,11 @@ const changeAccordion = (section) => {
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Company <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
-          <router-link to="/currency" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Currency <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
           <router-link to="/departement" class="cursor-pointer"
             ><a
               href="#"
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Departement <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/employee" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Employee <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
           <router-link to="/flight" class="cursor-pointer"
             ><a
@@ -243,17 +225,11 @@ const changeAccordion = (section) => {
               >Flight Entitlement
               <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
-          <router-link to="/job" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Job Band <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
           <router-link to="/pagu" class="cursor-pointer"
             ><a
               href="#"
               class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Pagu <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              >Pagu & Meals<img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
           <router-link to="/reimbursement" class="cursor-pointer"
             ><a
@@ -261,6 +237,54 @@ const changeAccordion = (section) => {
               class="flex items-center justify-between anchorImage anchorSubMenu"
               >Reimbursement Type
               <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/zona" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Zona & TLK <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/job" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Job Band <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/site" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Site <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/brand" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Brand <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/uom" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >UOM <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/warehouse" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Warehouse <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/car" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Car <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+          ></router-link>
+          <router-link to="/currency" class="cursor-pointer"
+            ><a
+              href="#"
+              class="flex items-center justify-between anchorImage anchorSubMenu"
+              >Currency <img class="w-5 h-5" :src="groupIcon" alt="" /></a
           ></router-link>
         </ul>
       </div>
