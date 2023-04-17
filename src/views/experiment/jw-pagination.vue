@@ -1,42 +1,45 @@
 <script setup>
-    // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
-
-    import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue";
+    import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
 
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
     import icon_receive from "@/assets/icon-receive.svg";
 
-    import dataDummy from '@/utils/Api/system-configuration/approverdata.js'
+    import dataDummy from '@/utils/Api/system-configuration/userdata.js'
 
-    // import untuk approval table
+    // import untuk user table
     import { ref, onMounted, onBeforeMount, reactive, computed } from 'vue'
-    import editicon from "@/assets/navbar/edit_icon.svg";
-    import deleteicon from "@/assets/navbar/delete_icon.svg";
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
-    import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
-    import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
-
- 
+    import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
+    import ModalDeleteUser from '@/components/modal/ModalDelete.vue'
 
     const search = ref('')
     const isWide = ref(true)
-    let currentscript = ref(1)
-    let paginatescript = ref(5)
-    let paginate_totalscript = ref(0)
-    let showingValue = ref(0)
+
+    let showingValue = ref(1)
+    let pageMultiplier = ref(10)
+    let paginateIndex = ref(0)
+
+    const onChangePage = (pageOfItem) => {
+      // start dari 1
+        console.log(pageOfItem)
+        paginateIndex.value = pageOfItem-1
+        showingValue.value = pageOfItem
+    }
+
+    const showingNumber = (number) => {
+        pageMultiplier.value = number
+    }
 
     // import untuk user table
 
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
-    // let filterArray = computed(() => sortedData.value)
 
-
-const selectAll = (checkValue) => { 
+    const selectAll = (checkValue) => { 
   const checkLead = checkValue
   if(checkLead == true) {
     let check = document.getElementsByName('chk')
@@ -51,16 +54,17 @@ const selectAll = (checkValue) => {
         check[i].checked=false;  
     }
   }
-}
+    }
 
-const tableHead = [
+    const tableHead = [
   {Id: 1, title: 'No', jsonData: 'No'},
-  {Id: 2, title: 'Matrix Name', jsonData: 'MatrixName'},
-  {Id: 3, title: 'Menu', jsonData: 'Menu'},
-  {Id: 4, title: 'Actions'}
-]
+  {Id: 2, title: 'Username', jsonData: 'Username'},
+  {Id: 3, title: 'User Role', jsonData: 'UserRole'},
+  {Id: 4, title: 'Approval Authoritites', jsonData: 'ApprovalAuthorities'},
+  {Id: 5, title: 'Actions'}
+    ]
 
-const sortList = (sortBy) => {
+    const sortList = (sortBy) => {
   if(sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
     sortedbyASC = false
@@ -68,19 +72,17 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
     sortedbyASC = true
   }
-}
+    }
 
+    // watch(ref, callback)
 
-
-// watch(ref, callback)
-
-onBeforeMount(() => {
+    onBeforeMount(() => {
   // sortedData.value gak dianggap sebagai array lagi
   instanceArray = dataDummy
   sortedData.value = instanceArray
 })
 
-const filteredItems = (search) => {
+    const filteredItems = (search) => {
     sortedData.value = instanceArray
       const filteredR = sortedData.value.filter(item => {
         // console.log(item.No)
@@ -88,46 +90,30 @@ const filteredItems = (search) => {
          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
-}
+    }
   
 </script>
 
+
 <template>
 
-  <div class="flex flex-col this basis-full grow-0 shrink-0 w-screen">
+<!-- kenak loh, ternyata disini overflow x nya -->
+  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
 
-    <Navbar/>
-    <!-- <Layout /> -->
-    <!-- mt-[115px] -->
-    <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen">
 
-      <Sidebar class="flex-none fixed" />
-
-      <!-- w-screen md:w-full -->
-      <!-- ml-[100px] md:ml-[260px] -->
-      <!-- slate box -->
-      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
-
-        <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
-          >
-        </div> -->
+      <div class="bg-slate-300 py-5 px-8 w-screen h-full">
       
-        <!-- w-screen md:w-full -->
         <!-- table box -->
         <div class="bg-white rounded-t-xl pb-3 relative">
 
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div
-              class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
-          >
-            <p
-              class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
-            >
-              Approval Matrix
+          <div class="flex flex-wrap gap-y-2 items-center justify-between mx-4 py-2">
+            <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
+              USER
             </p>
             <div class="flex gap-4">
-              <ModalAddApproval />
+              <ModalAddUser />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -139,10 +125,10 @@ const filteredItems = (search) => {
           <!-- SORT & SEARCH -->
           <div class="flex flex-wrap items-center px-4 py-2 gap-y-2">
 
-            <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">
+            <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-x-2 sm:gap-4 gap-y-4">
               
               <!-- sort company filter -->
-            <div class="flex items-center gap-4">
+              <div class="flex justify-between items-center gap-4">
               <p class="capitalize font-Fira text-xs text-black font-medium">
                 Sort
               </p>
@@ -172,7 +158,7 @@ const filteredItems = (search) => {
                   <li><a>company C</a></li>
                 </ul>
               </div>
-            </div>
+              </div>
 
               <!-- filter & reset button -->
               <div class="flex gap-4 flex-wrap items-center">
@@ -229,7 +215,6 @@ const filteredItems = (search) => {
                 />
               </div>
             </form>
-            
 
           </div>
 
@@ -237,23 +222,22 @@ const filteredItems = (search) => {
           <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
             <h1 class="text-xs">Showing</h1>
             <select class="border-2 border-black rounded-lg w-15" name="" id="">
-              <option value="">10</option>
-              <option value="">25</option>
-              <option value="">50</option>
-              <option value="">75</option>
-              <option value="">100</option> 
+              <option value="" @click="showingNumber(10)">10</option>
+              <option value="" @click="showingNumber(25)">25</option>
+              <option value="" @click="showingNumber(50)">50</option>
+              <option value="" @click="showingNumber(75)">75</option>
+              <option value="" @click="showingNumber(100)">100</option> 
             </select>
           </div>
           
         </div>
         
         <!-- actual table -->
-        <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
-          
-          <!-- <TableUser class="py-2 relative overflow-auto" :searchResult=search /> -->
-
-        <div class="relative w-full">
-          <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
+        <!-- scrollbar horizontal juga ada disini -->
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+    
+        <div class="block overflow-x-auto">
+          <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
 
             <thead class="text-center font-Montserrat text-sm font-bold h-10">
               <tr class="">
@@ -281,7 +265,14 @@ const filteredItems = (search) => {
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                <tr v-for="data in sortedData" :key="data.No">
+              <!-- index * multiplier, (index + 1) * multiplier -->
+              <!-- harus 0 karena index array dimulai dari 0 -->
+              <!-- let paginateIndex = ref(0) -->
+
+              <!-- gak boleh 0 karena digunakan sebagai pengali -->
+              <!-- let pageMultiplier = ref(1) -->
+
+                <tr v-for="data in sortedData.slice(paginateIndex * pageMultiplier, (paginateIndex + 1) * pageMultiplier)" :key="data.No">
                   <td>
                     <input type="checkbox" name="chk">
                   </td>
@@ -289,14 +280,17 @@ const filteredItems = (search) => {
                     {{ data.No }} 
                   </td>
                   <td>
-                    {{ data.MatrixName }}
+                    {{ data.Username }}
                   </td>
                   <td>
-                    {{ data.Menu }}
+                    {{ data.UserRole }}
+                  </td>
+                  <td>
+                    {{ data.ApprovalAuthorities }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
-                    <ModalEditApproval />
-                    <ModalDeleteUser />
+                    <ModalEditUser/>
+                    <ModalDeleteUser/>
                   </td>
                 </tr>
 
@@ -311,20 +305,26 @@ const filteredItems = (search) => {
             </p>
           </div> -->
 
+          <!-- <jw-pagination :items="sortedData" @changePage="onChangePage" ></jw-pagination> -->
+
+          <div class="p-5 ">
+              <vue-awesome-paginate
+                :total-items="sortedData.length"
+                :items-per-page="pageMultiplier"
+                :on-click="onChangePage"
+                v-model="showingValue"
+                :max-pages-shown="2"
+              />
+          </div>
+
         </div>
-
       </div>
-
     </div>  
-    
   </div>
   
 </template>
 
 <style scoped>
-  /* .zInfinite {
-    z-index: 9999;
-  } */
 
   th {
     padding: 2px;
