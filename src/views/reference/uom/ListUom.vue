@@ -55,7 +55,7 @@ const tableHead = [
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Site
+              Unit of Measure Categories
             </p>
 
             <div class="flex gap-4">
