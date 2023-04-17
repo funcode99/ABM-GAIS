@@ -1,6 +1,7 @@
 const currencyData = [
   {
     id: 1,
+    no: 1,
     currency: 'Currency 1',
     symbol: 'Symbol 1',
     code: 'Code 1',
@@ -8,6 +9,7 @@ const currencyData = [
   },
   {
     id: 2,
+    no: 2,
     currency: 'Currency 2',
     symbol: 'Symbol 2',
     code: 'Code 2',
@@ -15,6 +17,7 @@ const currencyData = [
   },
   {
     id: 3,
+    no: 3,
     currency: 'Currency 3',
     symbol: 'Symbol 3',
     code: 'Code 3',
@@ -22,6 +25,7 @@ const currencyData = [
   },
   {
     id: 4,
+    no: 4,
     currency: 'Currency 4',
     symbol: 'Symbol 4',
     code: 'Code 4',
@@ -29,6 +33,7 @@ const currencyData = [
   },
   {
     id: 5,
+    no: 5,
     currency: 'Currency 5',
     symbol: 'Symbol 5',
     code: 'Code 5',
@@ -36,6 +41,7 @@ const currencyData = [
   },
   {
     id: 6,
+    no: 6,
     currency: 'Currency 6',
     symbol: 'Symbol 6',
     code: 'Code 6',
@@ -43,6 +49,7 @@ const currencyData = [
   },
   {
     id: 7,
+    no: 7,
     currency: 'Currency 7',
     symbol: 'Symbol 7',
     code: 'Code 7',
@@ -50,6 +57,7 @@ const currencyData = [
   },
   {
     id: 8,
+    no: 8,
     currency: 'Currency 8',
     symbol: 'Symbol 8',
     code: 'Code 8',
@@ -57,6 +65,7 @@ const currencyData = [
   },
   {
     id: 9,
+    no: 9,
     currency: 'Currency 9',
     symbol: 'Symbol 9',
     code: 'Code 9',
@@ -64,6 +73,7 @@ const currencyData = [
   },
   {
     id: 10,
+    no: 10,
     currency: 'Currency 10',
     symbol: 'Symbol 10',
     code: 'Code 10',
@@ -71,6 +81,7 @@ const currencyData = [
   },
   {
     id: 11,
+    no: 11,
     currency: 'Currency 11',
     symbol: 'Symbol 11',
     code: 'Code 11',
@@ -78,6 +89,7 @@ const currencyData = [
   },
   {
     id: 12,
+    no: 12,
     currency: 'Currency 12',
     symbol: 'Symbol 12',
     code: 'Code 12',
@@ -85,6 +97,7 @@ const currencyData = [
   },
   {
     id: 13,
+    no: 13,
     currency: 'Currency 13',
     symbol: 'Symbol 13',
     code: 'Code 13',
@@ -92,6 +105,7 @@ const currencyData = [
   },
   {
     id: 14,
+    no: 14,
     currency: 'Currency 14',
     symbol: 'Symbol 14',
     code: 'Code 14',
@@ -99,6 +113,7 @@ const currencyData = [
   },
   {
     id: 15,
+    no: 15,
     currency: 'Currency 15',
     symbol: 'Symbol 15',
     code: 'Code 15',
@@ -106,6 +121,7 @@ const currencyData = [
   },
   {
     id: 16,
+    no: 16,
     currency: 'Currency 16',
     symbol: 'Symbol 16',
     code: 'Code 16',
@@ -113,6 +129,7 @@ const currencyData = [
   },
   {
     id: 17,
+    no: 17,
     currency: 'Currency 17',
     symbol: 'Symbol 17',
     code: 'Code 17',
@@ -120,6 +137,7 @@ const currencyData = [
   },
   {
     id: 18,
+    no: 18,
     currency: 'Currency 18',
     symbol: 'Symbol 18',
     code: 'Code 18',
@@ -127,6 +145,7 @@ const currencyData = [
   },
   {
     id: 19,
+    no: 19,
     currency: 'Currency 19',
     symbol: 'Symbol 19',
     code: 'Code 19',
@@ -134,6 +153,7 @@ const currencyData = [
   },
   {
     id: 20,
+    no: 20,
     currency: 'Currency 20',
     symbol: 'Symbol 20',
     code: 'Code 20',
@@ -141,6 +161,7 @@ const currencyData = [
   },
   {
     id: 21,
+    no: 21,
     currency: 'Currency 21',
     symbol: 'Symbol 21',
     code: 'Code 21',
@@ -148,6 +169,7 @@ const currencyData = [
   },
   {
     id: 22,
+    no: 22,
     currency: 'Currency 22',
     symbol: 'Symbol 22',
     code: 'Code 22',
@@ -155,6 +177,7 @@ const currencyData = [
   },
   {
     id: 23,
+    no: 23,
     currency: 'Currency 23',
     symbol: 'Symbol 23',
     code: 'Code 23',
@@ -162,6 +185,7 @@ const currencyData = [
   },
   {
     id: 24,
+    no: 24,
     currency: 'Currency 24',
     symbol: 'Symbol 24',
     code: 'Code 24',
@@ -169,6 +193,7 @@ const currencyData = [
   },
   {
     id: 25,
+    no: 25,
     currency: 'Currency 25',
     symbol: 'Symbol 25',
     code: 'Code 25',
