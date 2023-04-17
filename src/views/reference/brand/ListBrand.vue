@@ -12,6 +12,13 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import brandData from "@/utils/Api/reference/branddata";
 
+import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
+
+const search = ref("");
+let sortedData = ref([]);
+let sortedbyASC = true;
+let instanceArray = [];
+
 //for check & uncheck all
 const selectAll = (checkValue) => {
   const checkList = checkValue;
@@ -30,11 +37,41 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No" },
-  { Id: 2, title: "Brand Name" },
-  { Id: 3, title: "Company" },
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Brand Name", jsonData: "brand_name" },
+  { Id: 3, title: "Company", jsonData: "company" },
   { Id: 4, title: "Actions" },
 ];
+
+//for sort
+const sortList = (sortBy) => {
+  if (sortedbyASC) {
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedbyASC = false;
+  } else {
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedbyASC = true;
+  }
+};
+
+onBeforeMount(() => {
+  instanceArray = brandData;
+  sortedData.value = instanceArray;
+});
+
+//for searching
+const filteredItems = (search) => {
+  sortedData.value = instanceArray;
+  const filteredR = sortedData.value.filter((item) => {
+    (item.brand_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    return (
+      (item.brand_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1)
+    );
+  });
+  sortedData.value = filteredR;
+};
 </script>
 
 <template>
@@ -120,7 +157,7 @@ const tableHead = [
               </div>
             </div>
 
-            <form class="py-2 flex md:mx-0">
+            <div class="py-2 flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -144,9 +181,11 @@ const tableHead = [
                   placeholder="Search..."
                   type="text"
                   name="search"
+                  v-model="search"
+                  @keyup="filteredItems(search)"
                 />
               </label>
-            </form>
+            </div>
           </div>
 
           <!-- SHOWING -->
@@ -185,6 +224,7 @@ const tableHead = [
                       v-for="data in tableHead"
                       :key="data.Id"
                       class="relative"
+                      @click="sortList(`${data.jsonData}`)"
                     >
                       <span class="flex justify-center">{{ data.title }}</span>
                       <button class="absolute right-2 top-0 bottom-0">
@@ -197,13 +237,13 @@ const tableHead = [
                 <tbody class="bg-[#F5F5F5]">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in brandData"
-                    :key="index"
+                    v-for="data in sortedData"
+                    :key="data.no"
                   >
                     <td class="relative">
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.no }}</td>
                     <td>{{ data.brand_name }}</td>
                     <td>{{ data.company }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
