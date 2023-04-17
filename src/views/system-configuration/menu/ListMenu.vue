@@ -93,18 +93,16 @@ const filteredItems = (search) => {
 
 <template>
 
-  <div class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen">
+  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
 
     <Navbar/>
-    <!-- <Layout /> -->
-    <!-- mt-[115px] -->
+
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen mt-[115px]">
 
       <Sidebar class="flex-none fixed" />
 
       <!-- w-screen md:w-full -->
-      <!-- ml-[100px] md:ml-[260px] -->
       <!-- slate box -->
       <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
 
@@ -247,12 +245,10 @@ const filteredItems = (search) => {
         </div>
         
         <!-- actual table -->
-        <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
           
-          <!-- <TableUser class="py-2 relative overflow-auto" :searchResult=search /> -->
-
-        <div class="relative w-full">
-          <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
+        <div class="block overflow-x-auto">
+          <table class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
 
             <thead class="text-center font-Montserrat text-sm font-bold h-10">
               <tr class="">
@@ -349,5 +345,8 @@ const filteredItems = (search) => {
     background-color: grey;
   }
 
+  .this {
+    overflow-x: hidden;
+  }
 
 </style>

@@ -24,7 +24,10 @@ import ListApproval from '@/views/system-configuration/approval/ListApproval.vue
 import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 // import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
+// experiment page
 import HeroPagination from '@/views/experiment/pagination.vue'
+import jwPagination from '@/views/experiment/jw-pagination.vue'
+// import JwPagination from 'jw-vue-pagination'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -143,6 +146,11 @@ const router = createRouter({
       path: '/hero',
       name: 'HeroPagination',
       component: HeroPagination
+    },
+    {
+      path: '/jwPagination',
+      name: 'pagination',
+      component: jwPagination
     }
   ]
 })

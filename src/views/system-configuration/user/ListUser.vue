@@ -1,8 +1,6 @@
 <script setup>
-    // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
-    import Pagination from "@/components/reference/employee/Pagination.vue";
     import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
 
     import icon_filter from "@/assets/icon_filter.svg";
@@ -13,20 +11,13 @@
 
     // import untuk user table
     import { ref, onMounted, onBeforeMount, reactive, computed } from 'vue'
-    import editicon from "@/assets/navbar/edit_icon.svg";
-    import deleteicon from "@/assets/navbar/delete_icon.svg";
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
-    import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
-
+    import ModalDeleteUser from '@/components/modal/ModalDelete.vue'
 
     const search = ref('')
     const isWide = ref(true)
-    let currentscript = ref(1)
-    let paginatescript = ref(5)
-    let paginate_totalscript = ref(0)
-    let showingValue = ref(0)
-
+    let showingValue = ref(10)
 
     // import untuk user table
 
@@ -34,7 +25,7 @@
     let sortedbyASC = true
     let instanceArray = []
 
-const selectAll = (checkValue) => { 
+    const selectAll = (checkValue) => { 
   const checkLead = checkValue
   if(checkLead == true) {
     let check = document.getElementsByName('chk')
@@ -49,17 +40,17 @@ const selectAll = (checkValue) => {
         check[i].checked=false;  
     }
   }
-}
+    }
 
-const tableHead = [
+    const tableHead = [
   {Id: 1, title: 'No', jsonData: 'No'},
   {Id: 2, title: 'Username', jsonData: 'Username'},
   {Id: 3, title: 'User Role', jsonData: 'UserRole'},
   {Id: 4, title: 'Approval Authoritites', jsonData: 'ApprovalAuthorities'},
   {Id: 5, title: 'Actions'}
-]
+    ]
 
-const sortList = (sortBy) => {
+    const sortList = (sortBy) => {
   if(sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
     sortedbyASC = false
@@ -67,19 +58,17 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
     sortedbyASC = true
   }
-}
+    }
 
+    // watch(ref, callback)
 
-
-// watch(ref, callback)
-
-onBeforeMount(() => {
+    onBeforeMount(() => {
   // sortedData.value gak dianggap sebagai array lagi
   instanceArray = dataDummy
   sortedData.value = instanceArray
 })
 
-const filteredItems = (search) => {
+    const filteredItems = (search) => {
     sortedData.value = instanceArray
       const filteredR = sortedData.value.filter(item => {
         // console.log(item.No)
@@ -87,21 +76,19 @@ const filteredItems = (search) => {
          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
-}
+    }
   
 </script>
 
-<!-- overflow x bukan disini -->
+
 <template>
 
 <!-- kenak loh, ternyata disini overflow x nya -->
   <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
 
     <Navbar/>
-    <!-- <Layout /> -->
-    <!-- mt-[115px] -->
+
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
-    <!-- overflow x bukan disini -->
     <div class="flex w-screen mt-[115px]">
 
       <Sidebar class="flex-none fixed" />
@@ -115,13 +102,11 @@ const filteredItems = (search) => {
           >
         </div> -->
       
-        <!-- w-screen md:w-full -->
         <!-- table box -->
-        <!-- overflow x bukan disini -->
         <div class="bg-white rounded-t-xl pb-3 relative">
 
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2">
+          <div class="flex flex-wrap gap-y-2 items-center justify-between mx-4 py-2">
             <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
               USER
             </p>
@@ -138,10 +123,10 @@ const filteredItems = (search) => {
           <!-- SORT & SEARCH -->
           <div class="flex flex-wrap items-center px-4 py-2 gap-y-2">
 
-            <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">
+            <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-x-2 sm:gap-4 gap-y-4">
               
               <!-- sort company filter -->
-              <div class="flex items-center gap-4">
+              <div class="flex justify-between items-center gap-4">
               <p class="capitalize font-Fira text-xs text-black font-medium">
                 Sort
               </p>
@@ -246,10 +231,9 @@ const filteredItems = (search) => {
         </div>
         
         <!-- actual table -->
+        <!-- scrollbar horizontal juga ada disini -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
           
-          <!-- <TableUser class="py-2 relative overflow-auto" :searchResult=search /> -->
-
         <div class="block overflow-x-auto">
           <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
 
@@ -323,9 +307,6 @@ const filteredItems = (search) => {
 </template>
 
 <style scoped>
-  /* .zInfinite {
-    z-index: 9999;
-  } */
 
   th {
     padding: 2px;
@@ -351,6 +332,5 @@ const filteredItems = (search) => {
   .this {
     overflow-x: hidden;
   }
-
 
 </style>
