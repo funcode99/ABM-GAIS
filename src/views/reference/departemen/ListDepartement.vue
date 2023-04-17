@@ -12,6 +12,13 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import departementdata from "@/utils/Api/reference/departementdata";
 
+import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
+
+const search = ref("");
+let sortedData = ref([]);
+let sortedbyASC = true;
+let instanceArray = [];
+
 //for check & uncheck all
 const selectAll = (checkValue) => {
   const checkList = checkValue;
@@ -30,13 +37,45 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No" },
-  { Id: 2, title: "Name" },
-  { Id: 3, title: "Cost Center" },
-  { Id: 4, title: "Status" },
-  { Id: 5, title: "Departement Head" },
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Name", jsonData: "name_departement" },
+  { Id: 3, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 4, title: "Status", jsonData: "status" },
+  { Id: 5, title: "Departement Head", jsonData: "name_departement_head" },
   { Id: 6, title: "Actions" },
 ];
+
+//for sort
+const sortList = (sortBy) => {
+  if (sortedbyASC) {
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedbyASC = false;
+  } else {
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedbyASC = true;
+  }
+};
+
+onBeforeMount(() => {
+  instanceArray = departementdata;
+  sortedData.value = instanceArray;
+});
+
+//for searching
+const filteredItems = (search) => {
+  sortedData.value = instanceArray;
+  const filteredR = sortedData.value.filter((item) => {
+    (item.name_departement.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.name_departement_head.toLowerCase().indexOf(search.toLowerCase()) >
+        -1);
+    return (
+      (item.name_departement.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.name_departement_head.toLowerCase().indexOf(search.toLowerCase()) >
+        -1)
+    );
+  });
+  sortedData.value = filteredR;
+};
 </script>
 
 <template>
@@ -143,10 +182,12 @@ const tableHead = [
                   </svg>
                 </span>
                 <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[11px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search by Name / Dep. Head"
                   type="text"
                   name="search"
+                  v-model="search"
+                  @keyup="filteredItems(search)"
                 />
               </label>
             </form>
@@ -186,6 +227,7 @@ const tableHead = [
                       v-for="data in tableHead"
                       :key="data.Id"
                       class="relative"
+                      @click="sortList(`${data.jsonData}`)"
                     >
                       <span class="flex justify-center">{{ data.title }}</span>
                       <button class="absolute right-2 top-0 bottom-0">
@@ -198,13 +240,13 @@ const tableHead = [
                 <tbody class="bg-[#F5F5F5]">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in departementdata"
-                    :key="index"
+                    v-for="data in sortedData"
+                    :key="data.no"
                   >
                     <td class="relative">
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.no }}</td>
                     <td>{{ data.name_departement }}</td>
                     <td>{{ data.cost_center }}</td>
                     <td>{{ data.status }}</td>
