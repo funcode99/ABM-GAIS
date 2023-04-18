@@ -37,7 +37,7 @@ const router = createRouter({
       name: 'login',
       component: Login,
       meta: {
-        title: "GAIS || Welcome",
+        title: "Welcome",
       }
     },
     {
@@ -45,7 +45,7 @@ const router = createRouter({
       name: 'dashboard',
       component: Dashboard,
       meta: {
-        title: "GAIS || Dashboard",
+        title: "Dashboard",
       }
     },
 
@@ -55,7 +55,7 @@ const router = createRouter({
       name: 'brand',
       component: ListBrand,
       meta: {
-        title: "GAIS || Brand",
+        title: "Brand",
       }
     },
     {
@@ -63,7 +63,7 @@ const router = createRouter({
       name: 'car',
       component: ListCar,
       meta: {
-        title: "GAIS || Car Pool",
+        title: "Car Pool",
       }
     },
     {
@@ -71,7 +71,7 @@ const router = createRouter({
       name: 'company',
       component: ListCompany,
       meta: {
-        title: "GAIS || Company",
+        title: "Company",
       }
     },
     {
@@ -79,7 +79,7 @@ const router = createRouter({
       name: 'currency',
       component: ListCurrency,
       meta: {
-        title: "GAIS || Currency",
+        title: "Currency",
       }
     },
     {
@@ -87,7 +87,7 @@ const router = createRouter({
       name: 'departement',
       component: ListDepartement,
       meta: {
-        title: "GAIS || Departement",
+        title: "Departement",
       }
     },
     {
@@ -95,7 +95,7 @@ const router = createRouter({
       name: 'employee',
       component: List,
       meta: {
-        title: "GAIS || Employee",
+        title: "Employee",
       }
     },
     {
@@ -103,7 +103,7 @@ const router = createRouter({
       name: 'flight',
       component: ListFlight,
       meta: {
-        title: "GAIS || Flight Entitlement",
+        title: "Flight Entitlement",
       }
     },
     {
@@ -111,7 +111,7 @@ const router = createRouter({
       name: 'job',
       component: ListJob,
       meta: {
-        title: "GAIS || Job Band",
+        title: "Job Band",
       }
     },
     {
@@ -119,7 +119,7 @@ const router = createRouter({
       name: 'pagu',
       component: ListPagu,
       meta: {
-        title: "GAIS || Pagu",
+        title: "Pagu",
       }
     },
     {
@@ -127,7 +127,7 @@ const router = createRouter({
       name: 'reimbursement',
       component: ListReimbursement,
       meta: {
-        title: "GAIS || Reimbursement",
+        title: "Reimbursement",
       }
     },
     {
@@ -135,7 +135,7 @@ const router = createRouter({
       name: 'site',
       component: ListSite,
       meta: {
-        title: "GAIS || Site",
+        title: "Site",
       }
     },
     {
@@ -143,7 +143,7 @@ const router = createRouter({
       name: 'uom',
       component: ListUom,
       meta: {
-        title: "GAIS || Unit Of Measure Categories",
+        title: "Unit Of Measure Categories",
       }
     },
     {
@@ -151,7 +151,7 @@ const router = createRouter({
       name: 'warehouse',
       component: ListWarehouse,
       meta: {
-        title: "GAIS || Warehouse",
+        title: "Warehouse",
       }
     },
     {
@@ -159,7 +159,7 @@ const router = createRouter({
       name: 'zona',
       component: ListZona,
       meta: {
-        title: "GAIS || Zona / Tunjangan Lokasi Kerja",
+        title: "Zona / Tunjangan Lokasi Kerja",
       }
     },
 
@@ -170,7 +170,7 @@ const router = createRouter({
       name: 'user',
       component: ListUser,
       meta: {
-        title: "GAIS || User",
+        title: "User",
       }
     },
     {
@@ -178,7 +178,7 @@ const router = createRouter({
       name: 'role',
       component: ListRole,
       meta: {
-        title: "GAIS || Role",
+        title: "Role",
       }
     },
     {
@@ -186,7 +186,7 @@ const router = createRouter({
       name: 'approval',
       component: ListApproval,
       meta: {
-        title: "GAIS || Approval",
+        title: "Approval",
       }
     },
     {
@@ -194,7 +194,7 @@ const router = createRouter({
       name: 'menu',
       component: ListMenu,
       meta: {
-        title: "GAIS || Menu",
+        title: "Menu",
       }
     },
     // {
@@ -216,7 +216,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  document.title = `${to.meta.title}`;
+  document.title = `GAIS || ${to.meta.title}`;
   next();
 })
 
