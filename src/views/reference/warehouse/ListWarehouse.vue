@@ -1,7 +1,6 @@
 <script setup>
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
-import Pagination from "@/components/reference/warehouse/Pagination.vue";
 import ModalAdd from "@/components/reference/warehouse/ModalAdd.vue";
 import ModalEdit from "@/components/reference/warehouse/ModalEdit.vue";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -15,10 +14,29 @@ import warehousedata from "@/utils/Api/reference/warehousedata";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 
+//for sort & search
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+
+//for paginations
+let showingValue = ref(1);
+let pageMultiplier = ref(10);
+let paginateIndex = ref(0);
+
+//for paginations
+const onChangePage = (pageOfItem) => {
+  // start dari 1
+  console.log(pageOfItem);
+  paginateIndex.value = pageOfItem - 1;
+  showingValue.value = pageOfItem;
+};
+
+// for showing
+const showingNumber = (number) => {
+  pageMultiplier.value = number;
+};
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -237,7 +255,10 @@ const filteredItems = (search) => {
                 <tbody class="bg-[#F5F5F5]">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData"
+                    v-for="data in sortedData.slice(
+                      paginateIndex * pageMultiplier,
+                      (paginateIndex + 1) * pageMultiplier
+                    )"
                     :key="data.no"
                   >
                     <td class="relative">
@@ -266,7 +287,13 @@ const filteredItems = (search) => {
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing 1 to 10 of 50 entries
             </p>
-            <Pagination />
+            <vue-awesome-paginate
+              :total-items="sortedData.length"
+              :items-per-page="pageMultiplier"
+              :on-click="onChangePage"
+              v-model="showingValue"
+              :max-pages-shown="2"
+            />
           </div>
         </div>
       </div>
