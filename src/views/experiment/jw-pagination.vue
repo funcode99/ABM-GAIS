@@ -20,6 +20,7 @@
 
     let showingValue = ref(1)
     let pageMultiplier = ref(10)
+    let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let paginateIndex = ref(0)
 
     const onChangePage = (pageOfItem) => {
@@ -30,6 +31,7 @@
     }
 
     const showingNumber = (number) => {
+        console.log(number)
         pageMultiplier.value = number
     }
 
@@ -39,30 +41,30 @@
     let sortedbyASC = true
     let instanceArray = []
 
-    const selectAll = (checkValue) => { 
-  const checkLead = checkValue
-  if(checkLead == true) {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=true;  
+  const selectAll = (checkValue) => { 
+    const checkLead = checkValue
+    if(checkLead == true) {
+      let check = document.getElementsByName('chk')
+      for(let i=0; i<check.length; i++) {  
+          if(check[i].type=='checkbox')  
+          check[i].checked=true;  
+      }
+    } else {
+      let check = document.getElementsByName('chk')
+      for(let i=0; i<check.length; i++) {  
+          if(check[i].type=='checkbox')  
+          check[i].checked=false;  
+      }
     }
-  } else {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=false;  
-    }
-  }
-    }
+}
 
-    const tableHead = [
-  {Id: 1, title: 'No', jsonData: 'No'},
-  {Id: 2, title: 'Username', jsonData: 'Username'},
-  {Id: 3, title: 'User Role', jsonData: 'UserRole'},
-  {Id: 4, title: 'Approval Authoritites', jsonData: 'ApprovalAuthorities'},
-  {Id: 5, title: 'Actions'}
-    ]
+  const tableHead = [
+    {Id: 1, title: 'No', jsonData: 'No'},
+    {Id: 2, title: 'Username', jsonData: 'Username'},
+    {Id: 3, title: 'User Role', jsonData: 'UserRole'},
+    {Id: 4, title: 'Approval Authoritites', jsonData: 'ApprovalAuthorities'},
+    {Id: 5, title: 'Actions'}
+  ]
 
     const sortList = (sortBy) => {
   if(sortedbyASC) {
@@ -74,13 +76,13 @@
   }
     }
 
-    // watch(ref, callback)
+  // watch(ref, callback)
 
     onBeforeMount(() => {
   // sortedData.value gak dianggap sebagai array lagi
   instanceArray = dataDummy
   sortedData.value = instanceArray
-})
+  })
 
     const filteredItems = (search) => {
     sortedData.value = instanceArray
@@ -221,12 +223,12 @@
           <!-- SHOWING -->
           <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
             <h1 class="text-xs">Showing</h1>
-            <select class="border-2 border-black rounded-lg w-15" name="" id="">
-              <option value="" @click="showingNumber(10)">10</option>
-              <option value="" @click="showingNumber(25)">25</option>
-              <option value="" @click="showingNumber(50)">50</option>
-              <option value="" @click="showingNumber(75)">75</option>
-              <option value="" @click="showingNumber(100)">100</option> 
+            <select class="border-2 border-black rounded-lg w-15" v-model="pageMultiplier">
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>75</option>
+              <option>100</option> 
             </select>
           </div>
           
@@ -272,7 +274,7 @@
               <!-- gak boleh 0 karena digunakan sebagai pengali -->
               <!-- let pageMultiplier = ref(1) -->
 
-                <tr v-for="data in sortedData.slice(paginateIndex * pageMultiplier, (paginateIndex + 1) * pageMultiplier)" :key="data.No">
+                <tr v-for="data in sortedData.slice(paginateIndex * pageMultiplierReactive, (paginateIndex + 1) * pageMultiplierReactive)" :key="data.No">
                   <td>
                     <input type="checkbox" name="chk">
                   </td>
@@ -310,7 +312,7 @@
           <div class="p-5 ">
               <vue-awesome-paginate
                 :total-items="sortedData.length"
-                :items-per-page="pageMultiplier"
+                :items-per-page="pageMultiplierReactive"
                 :on-click="onChangePage"
                 v-model="showingValue"
                 :max-pages-shown="2"

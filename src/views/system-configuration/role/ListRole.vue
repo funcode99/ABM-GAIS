@@ -97,7 +97,7 @@ const filteredItems = (search) => {
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen mt-[115px]">
 
-      <Sidebar class="flex-none fixed" />
+        <Sidebar class="flex-none fixed" /> 
 
       <!-- w-screen md:w-full -->
       <!-- ml-[100px] md:ml-[260px] -->

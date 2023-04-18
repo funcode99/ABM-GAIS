@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onBeforeMount } from "vue";
 
 import dashboardIcon from "@/assets/dashboard-icon.png";
 import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png";
@@ -50,8 +50,14 @@ import searchIcon from "@/assets/Icons.png";
 import expandArrow from "@/assets/ExpandArrow.png";
 import groupIcon from "@/assets/Group.png";
 
-const isOpenSystemConfiguration = ref(false);
-const isOpenReference = ref(false);
+
+
+// onBeforeMount(() => {
+//   sidebarAccordion.systemConfiguration = sessionStorage.getItem('system-configuration')
+//   sidebarAccordion.reference = sessionStorage.getItem('reference')
+//   console.log(sidebarAccordion.systemConfiguration)
+//   console.log(sidebarAccordion.reference)
+// })
 
 const sidebarAccordion = reactive({
   systemConfiguration: false,
@@ -61,19 +67,24 @@ const sidebarAccordion = reactive({
 const changeAccordion = (section) => {
   if (section == "reference" && sidebarAccordion.reference == true) {
     sidebarAccordion.reference = false;
+    sessionStorage.setItem('reference', false)
   } else if (
     section == "system" &&
-    sidebarAccordion.systemConfiguration == true
-  ) {
+    sidebarAccordion.systemConfiguration == true) {
     sidebarAccordion.systemConfiguration = false;
+    sessionStorage.setItem('system-configuration', false)
   } else if (section == "reference") {
     sidebarAccordion.systemConfiguration = false;
     sidebarAccordion.reference = true;
+    sessionStorage.setItem('system-configuration', false)
+    sessionStorage.setItem('reference', true)
   } else if (section == "system") {
     sidebarAccordion.systemConfiguration = true;
     sidebarAccordion.reference = false;
+    sessionStorage.setItem('system-configuration', true)
+    sessionStorage.setItem('reference', false)
   }
-};
+}
 </script>
 
 <template>
@@ -145,43 +156,44 @@ const changeAccordion = (section) => {
           </div>
         </div>
       </button>
-      <div
-        v-if="sidebarAccordion.systemConfiguration == true"
-        class="pl-4 pb-4 sm:flex sm:flex-col hidden"
-      >
-        <ul class="flex flex-col gap-4 pt-4 px-2">
-          <router-link to="/user" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >User <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/role" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Role <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/menu" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Menu <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/approval" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Approval <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/sequence" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Sequence <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-        </ul>
-      </div>
+      
+        <div
+          v-if="sidebarAccordion.systemConfiguration == true"
+          class="pl-4 pb-4 sm:flex sm:flex-col hidden"
+        >
+          <ul class="flex flex-col gap-4 pt-4 px-2">
+            <router-link to="/user" class="cursor-pointer"
+              ><a
+                href="#"
+                class="flex items-center justify-between anchorImage anchorSubMenu"
+                >User <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+            ></router-link>
+            <router-link to="/role" class="cursor-pointer"
+              ><a
+                href="#"
+                class="flex items-center justify-between anchorImage anchorSubMenu"
+                >Role <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+            ></router-link>
+            <router-link to="/menu" class="cursor-pointer"
+              ><a
+                href="#"
+                class="flex items-center justify-between anchorImage anchorSubMenu"
+                >Menu <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+            ></router-link>
+            <router-link to="/approval" class="cursor-pointer"
+              ><a
+                href="#"
+                class="flex items-center justify-between anchorImage anchorSubMenu"
+                >Approval <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+            ></router-link>
+            <router-link to="/sequence" class="cursor-pointer"
+              ><a
+                href="#"
+                class="flex items-center justify-between anchorImage anchorSubMenu"
+                >Sequence <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+            ></router-link>
+          </ul>
+        </div>
 
       <button
         @click="changeAccordion('reference')"
