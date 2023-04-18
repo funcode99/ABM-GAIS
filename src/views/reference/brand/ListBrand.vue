@@ -13,28 +13,22 @@ import brandData from "@/utils/Api/reference/branddata";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 
-//for sort & search
+//for sort, search, & filter
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 
-//for paginations
+//for paginations & showing
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  // start dari 1
-  console.log(pageOfItem);
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-// for showing
-const showingNumber = (number) => {
-  pageMultiplier.value = number;
 };
 
 //for check & uncheck all
@@ -131,29 +125,14 @@ const filteredItems = (search) => {
                 Company
               </p>
 
-              <div
-                class="dropdown dropdown-bottom bg-white rounded-lg h-9 border"
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               >
-                <button tabindex="0">
-                  <div tabindex="0" class="collapse collapse-arrow">
-                    <div class="collapse-title min-h-max py-3">
-                      <p
-                        class="flex justify-center items-center capitalize font-JakartaSans text-xs text-black font-medium"
-                      >
-                        company
-                      </p>
-                    </div>
-                  </div>
-                </button>
-                <ul
-                  tabindex="0"
-                  class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 capitalize"
-                >
-                  <li><a>company A</a></li>
-                  <li><a>company B</a></li>
-                  <li><a>company C</a></li>
-                </ul>
-              </div>
+                <option disabled selected>Company</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.company }}
+                </option>
+              </select>
 
               <div class="flex gap-4 items-center">
                 <button
@@ -209,12 +188,15 @@ const filteredItems = (search) => {
           <!-- SHOWING -->
           <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans">Showing</h1>
-            <select class="border-2 border-black rounded-lg w-15" name="" id="">
-              <option value="">10</option>
-              <option value="">25</option>
-              <option value="">50</option>
-              <option value="">75</option>
-              <option value="">100</option>
+            <select
+              class="border-2 border-black rounded-lg w-15"
+              v-model="pageMultiplier"
+            >
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>75</option>
+              <option>100</option>
             </select>
           </div>
 
@@ -256,8 +238,8 @@ const filteredItems = (search) => {
                   <tr
                     class="font-JakartaSans font-normal text-sm"
                     v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplier,
-                      (paginateIndex + 1) * pageMultiplier
+                      paginateIndex * pageMultiplierReactive,
+                      (paginateIndex + 1) * pageMultiplierReactive
                     )"
                     :key="data.no"
                   >
@@ -284,14 +266,18 @@ const filteredItems = (search) => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing 1 to 10 of 50 entries
+              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+              of {{ sortedData.length }} entries
             </p>
             <vue-awesome-paginate
               :total-items="sortedData.length"
-              :items-per-page="pageMultiplier"
+              :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
-              :max-pages-shown="2"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
             />
           </div>
         </div>
