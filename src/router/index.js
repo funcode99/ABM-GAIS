@@ -35,84 +35,132 @@ const router = createRouter({
     {
       path: '/',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: {
+        title: "GAIS || Welcome",
+      }
     },
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: Dashboard
+      component: Dashboard,
+      meta: {
+        title: "GAIS || Dashboard",
+      }
     },
 
     //reference pages
     {
       path: '/brand',
       name: 'brand',
-      component: ListBrand
+      component: ListBrand,
+      meta: {
+        title: "GAIS || Brand",
+      }
     },
     {
       path: '/car',
       name: 'car',
-      component: ListCar
+      component: ListCar,
+      meta: {
+        title: "GAIS || Car Pool",
+      }
     },
     {
       path: '/company',
       name: 'company',
-      component: ListCompany
+      component: ListCompany,
+      meta: {
+        title: "GAIS || Company",
+      }
     },
     {
       path: '/currency',
       name: 'currency',
-      component: ListCurrency
+      component: ListCurrency,
+      meta: {
+        title: "GAIS || Currency",
+      }
     },
     {
       path: '/departement',
       name: 'departement',
-      component: ListDepartement
+      component: ListDepartement,
+      meta: {
+        title: "GAIS || Departement",
+      }
     },
     {
       path: '/employee',
       name: 'employee',
-      component: List
+      component: List,
+      meta: {
+        title: "GAIS || Employee",
+      }
     },
     {
       path: '/flight',
       name: 'flight',
-      component: ListFlight
+      component: ListFlight,
+      meta: {
+        title: "GAIS || Flight Entitlement",
+      }
     },
     {
       path: '/job',
       name: 'job',
-      component: ListJob
+      component: ListJob,
+      meta: {
+        title: "GAIS || Job Band",
+      }
     },
     {
       path: '/pagu',
       name: 'pagu',
-      component: ListPagu
+      component: ListPagu,
+      meta: {
+        title: "GAIS || Pagu",
+      }
     },
     {
       path: '/reimbursement',
       name: 'reimbursement',
-      component: ListReimbursement
+      component: ListReimbursement,
+      meta: {
+        title: "GAIS || Reimbursement",
+      }
     },
     {
       path: '/site',
       name: 'site',
-      component: ListSite
+      component: ListSite,
+      meta: {
+        title: "GAIS || Site",
+      }
     },
     {
       path: '/uom',
       name: 'uom',
-      component: ListUom
+      component: ListUom,
+      meta: {
+        title: "GAIS || Unit Of Measure Categories",
+      }
     },
     {
       path: '/warehouse',
       name: 'warehouse',
-      component: ListWarehouse
+      component: ListWarehouse,
+      meta: {
+        title: "GAIS || Warehouse",
+      }
     },
     {
       path: '/zona',
       name: 'zona',
-      component: ListZona
+      component: ListZona,
+      meta: {
+        title: "GAIS || Zona / Tunjangan Lokasi Kerja",
+      }
     },
 
 
@@ -120,22 +168,34 @@ const router = createRouter({
     {
       path: '/user',
       name: 'user',
-      component: ListUser
+      component: ListUser,
+      meta: {
+        title: "GAIS || User",
+      }
     },
     {
       path: '/role',
       name: 'role',
-      component: ListRole
+      component: ListRole,
+      meta: {
+        title: "GAIS || Role",
+      }
     },
     {
       path: '/approval',
       name: 'approval',
-      component: ListApproval
+      component: ListApproval,
+      meta: {
+        title: "GAIS || Approval",
+      }
     },
     {
       path: '/menu',
       name: 'menu',
-      component: ListMenu
+      component: ListMenu,
+      meta: {
+        title: "GAIS || Menu",
+      }
     },
     // {
     //   path: '/sequence',
@@ -153,6 +213,11 @@ const router = createRouter({
       component: jwPagination
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  document.title = `${to.meta.title}`;
+  next();
 })
 
 export default router
