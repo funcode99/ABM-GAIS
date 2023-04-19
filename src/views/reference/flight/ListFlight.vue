@@ -7,7 +7,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import flightdata from "@/utils/Api/reference/flightdata";
+import flightdata from "@/utils/Api/reference/flightdata.js";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 
@@ -20,19 +20,13 @@ let instanceArray = [];
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  // start dari 1
-  console.log(pageOfItem);
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-// for showing
-const showingNumber = (number) => {
-  pageMultiplier.value = number;
 };
 
 //for check & uncheck all
@@ -154,14 +148,17 @@ const filteredItems = (search) => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 px-4 py-2">
-            <h1 class="text-xs font-JakartaSans">Showing</h1>
-            <select class="border-2 border-black rounded-lg w-15" name="" id="">
-              <option value="">10</option>
-              <option value="">25</option>
-              <option value="">50</option>
-              <option value="">75</option>
-              <option value="">100</option>
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+            <select
+              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              v-model="pageMultiplier"
+            >
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>75</option>
+              <option>100</option>
             </select>
           </div>
 
@@ -171,42 +168,48 @@ const filteredItems = (search) => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-full rounded-lg"
+                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
-                <thead class="text-center font-JakartaSans text-sm font-bold">
+                <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
                   <tr>
-                    <th class="relative">
+                    <th>
                       <div class="flex justify-center">
                         <input
                           type="checkbox"
+                          name="checked"
                           @click="selectAll((checkList = !checkList))"
                         />
                       </div>
                     </th>
+
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
-                      class="relative"
+                      class="overflow-x-hidden cursor-pointer"
                       @click="sortList(`${data.jsonData}`)"
                     >
-                      <span class="flex justify-center">{{ data.title }}</span>
-                      <button class="absolute right-2 top-0 bottom-0">
-                        <img :src="arrowicon" class="w-[9px] h-3" />
-                      </button>
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
                     </th>
                   </tr>
                 </thead>
 
-                <tbody class="bg-[#F5F5F5]">
+                <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
                     v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplier,
-                      (paginateIndex + 1) * pageMultiplier
+                      paginateIndex * pageMultiplierReactive,
+                      (paginateIndex + 1) * pageMultiplierReactive
                     )"
                     :key="data.no"
                   >
-                    <td class="relative">
+                    <td>
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ data.no }}</td>
@@ -228,14 +231,18 @@ const filteredItems = (search) => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing 1 to 10 of 50 entries
+              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+              of {{ sortedData.length }} entries
             </p>
             <vue-awesome-paginate
               :total-items="sortedData.length"
-              :items-per-page="pageMultiplier"
+              :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
-              :max-pages-shown="2"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
             />
           </div>
         </div>
