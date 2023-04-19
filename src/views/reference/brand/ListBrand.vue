@@ -32,6 +32,7 @@ const onChangePage = (pageOfItem) => {
   showingValue.value = pageOfItem;
 };
 
+//for filter & reset button
 const filterDataByCompany = () => {
   if (selectedCompany.value === "") {
     sortedData.value = instanceArray;
@@ -42,9 +43,10 @@ const filterDataByCompany = () => {
   }
 };
 
+//for filter & reset button
 const resetData = () => {
-  selectedCompany.value = "";
-  filterDataByCompany();
+  sortedData.value = instanceArray;
+  selectedCompany.value = "Company";
 };
 
 //for check & uncheck all
@@ -112,7 +114,7 @@ const filteredItems = (search) => {
         class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 sm:ml-[100px] md:ml-[280px] w-screen h-full"
         :class="[brandData.length < 10 ? 'h-screen' : 'h-full']"
       >
-        <div class="bg-white rounded-t-xl custom-card">
+        <div class="bg-white rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -206,9 +208,9 @@ const filteredItems = (search) => {
 
           <!-- SHOWING -->
           <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
-            <h1 class="text-xs font-JakartaSans">Showing</h1>
+            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
-              class="border-2 border-black rounded-lg w-15"
+              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
             >
               <option>10</option>
@@ -225,11 +227,13 @@ const filteredItems = (search) => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-full rounded-lg"
+                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
-                <thead class="text-center font-JakartaSans text-sm font-bold">
+                <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
                   <tr>
-                    <th class="relative">
+                    <th>
                       <div class="flex justify-center">
                         <input
                           type="checkbox"
@@ -242,18 +246,20 @@ const filteredItems = (search) => {
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
-                      class="relative"
+                      class="overflow-x-hidden cursor-pointer"
                       @click="sortList(`${data.jsonData}`)"
                     >
-                      <span class="flex justify-center">{{ data.title }}</span>
-                      <button class="absolute right-2 top-0 bottom-0">
-                        <img :src="arrowicon" class="w-[9px] h-3" />
-                      </button>
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button class="">
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
                     </th>
                   </tr>
                 </thead>
 
-                <tbody class="bg-[#F5F5F5]">
+                <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
                     v-for="data in sortedData.slice(
@@ -262,7 +268,7 @@ const filteredItems = (search) => {
                     )"
                     :key="data.no"
                   >
-                    <td class="relative">
+                    <td>
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ data.no }}</td>
@@ -278,6 +284,12 @@ const filteredItems = (search) => {
                 </tbody>
               </table>
             </div>
+
+            <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+              <p class="font-Inter text-xs font-normal text-[#888888]">
+                Showing 1 to 10 of 20 entries
+              </p>
+            </div> -->
           </div>
 
           <!-- PAGINATION -->
