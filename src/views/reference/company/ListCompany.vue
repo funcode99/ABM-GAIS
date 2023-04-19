@@ -31,11 +31,6 @@ const onChangePage = (pageOfItem) => {
   showingValue.value = pageOfItem;
 };
 
-// for showing
-const showingNumber = (number) => {
-  pageMultiplier.value = number;
-};
-
 //for check & uncheck all
 const selectAll = (checkValue) => {
   const checkList = checkValue;
