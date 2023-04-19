@@ -251,7 +251,7 @@ const filteredItems = (search) => {
                     >
                       <span class="flex justify-center items-center gap-1">
                         {{ data.title }}
-                        <button class="">
+                        <button>
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </span>
@@ -284,12 +284,6 @@ const filteredItems = (search) => {
                 </tbody>
               </table>
             </div>
-
-            <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-              <p class="font-Inter text-xs font-normal text-[#888888]">
-                Showing 1 to 10 of 20 entries
-              </p>
-            </div> -->
           </div>
 
           <!-- PAGINATION -->
