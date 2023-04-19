@@ -6,58 +6,40 @@ import travelManagementSystemIcon from "@/assets/travel-management-system-icon.p
 import systemConfigurationIcon from "@/assets/system-configuration.png";
 import referenceIcon from "@/assets/reference.png";
 
-// const navItems = [
-//   { href: "/dashboard", label: "Dashboard", children: [], icon: null },
-//   { href: "/inbox", label: "Inbox / Notifications", children: [], icon: null },
-//   {
-//     href: "#",
-//     label: "Travel Management System",
-//     children: [
-//       { href: "#", label: "Request Trip", children: [], icon: null },
-//       { href: "#", label: "Settlement", children: [], icon: null },
-//       { href: "#", label: "Claim Reimbusement", children: [], icon: null },
-//       {
-//         href: "#",
-//         label: "Cash Advance",
-//         children: [
-//           { href: "#", label: "Cash Advance Travel", children: [], icon: null },
-//           {
-//             href: "#",
-//             label: "Cash Advance Non Travel",
-//             children: [],
-//             icon: null,
-//           },
-//         ],
-//         icon: null,
-//       },
-//     ],
-//     icon: null,
-//   },
-
-//   {
-//     href: "#",
-//     label: "Facility Service System",
-//     children: [
-//       { href: "#", label: "Meeting Room", children: [], icon: null },
-//       { href: "#", label: "ATK Request", children: [], icon: null },
-//       { href: "#", label: "Document Delivery", children: [], icon: null },
-//     ],
-//   },
-// ];
-
 import ABMIcon from "@/assets/abm.png";
 import searchIcon from "@/assets/Icons.png";
 import expandArrow from "@/assets/ExpandArrow.png";
 import groupIcon from "@/assets/Group.png";
 
+// harus pake ekstensi kalo enggak gak bakal kebaca
+import { useSidebarStore } from '@/stores/sidebar.js'
+
+const sidebar = useSidebarStore()
+const searchSidebarValue = ref('')
+// masukkin params ke actions harus pake variable ga boleh pake primitive data langsung
+let system = 'systemConfiguration'
+let reference = 'reference'
+
+// const searchSidebar = (value) => {
+
+//   let input = document.getElementById("mySearch")
+//   let filter = input.value.toUpperCase()
+//   let filter2 = searchSidebarValue.value.toUpperCase()
+//   let ul = document.getElementById("myMenu")
+//   let li = ul.getElementsByTagName("li")
+
+//   for (let i = 0; i < li.length; i++) {
+//     let a = li[i].getElementsByTagName("a")[0];
+//     if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+//       li[i].style.display = "";
+//     } else {
+//       li[i].style.display = "none";
+//     }
+//   }
 
 
-// onBeforeMount(() => {
-//   sidebarAccordion.systemConfiguration = sessionStorage.getItem('system-configuration')
-//   sidebarAccordion.reference = sessionStorage.getItem('reference')
-//   console.log(sidebarAccordion.systemConfiguration)
-//   console.log(sidebarAccordion.reference)
-// })
+
+// }
 
 const sidebarAccordion = reactive({
   systemConfiguration: false,
@@ -101,49 +83,54 @@ const changeAccordion = (section) => {
 
   <!-- fixed -->
   <div
-    class="hidden sm:flex sm:flex-col w-[100px] md:w-[260px] h-screen overflow-y-auto scroller bg-white zInfinite"
+    class="mt-[115px] hidden sm:flex sm:flex-col w-[100px] md:w-[260px] fixed top-0 bottom-0 overflow-y-auto scroller bg-white zInfinite"
   >
+
     <!-- <div class="flex justify-center h-32 py-2"> 
         <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
       </div> -->
 
     <!-- sidebar search -->
-    <div class="md:flex md:items-center ml-8 pt-7 hidden">
-      <div
-        class="rounded-l-2xl flex justify-center items-center bg-[#f5f5f5] h-10 pl-1"
-      >
+    <div class="md:flex md:items-center ml-6 pt-7 hidden">
+      <div class="rounded-l-2xl flex justify-center items-center bg-[#f5f5f5] h-10 pl-1">
         <img :src="searchIcon" alt="search" class="w-5 h-5" />
       </div>
       <input
         type="text"
         class="rounded-r-2xl bg-[#f5f5f5] h-10 pl-2 outline-none"
         placeholder="Search..."
+        v-model="searchSidebarValue"
+        @keyup="searchSidebar(searchSidebarValue)"
       />
     </div>
 
     <div class="px-4 flex flex-col pt-3">
-      <router-link
+      <ul id="myMenu">
+        <li>
+          <router-link
         to="/dashboard"
         href="#"
         class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
       >
         <img :src="dashboardIcon" class="w-6 h-6" alt="" />
-        <h3 class="hidden md:block">Dashboards</h3>
-      </router-link>
-
-      <router-link
+        <a class="hidden md:block">Dashboards</a>
+          </router-link>
+        </li>
+        <li>
+          <router-link
         to="/"
         href="#"
         class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
       >
         <img :src="travelManagementSystemIcon" class="w-6 h-6" alt="" />
-        <h3 class="hidden md:block">Travel Management System</h3>
-      </router-link>
-
-      <button
-        @click="changeAccordion('system')"
-        class="rounded-lg flex md:justify-between items-center gap-4 text-left p-4 buttonMenu"
-      >
+        <a class="hidden md:block">Travel Management System</a>
+          </router-link>
+        </li>
+        <li>
+          <!-- @click="changeAccordion('system')" -->
+          <button
+          @click= sidebar.increment(system)
+          class="rounded-lg flex md:justify-between items-center gap-4 text-left p-4 buttonMenu" >
         <div class="flex gap-4">
           <img
             :src="systemConfigurationIcon"
@@ -155,25 +142,25 @@ const changeAccordion = (section) => {
             <img :src="expandArrow" class="w-5 h-5" />
           </div>
         </div>
-      </button>
-      
-        <div
-          v-if="sidebarAccordion.systemConfiguration == true"
+          </button>
+            <div
+          v-if="sidebar.reference == true"
           class="pl-4 pb-4 sm:flex sm:flex-col hidden"
         >
           <ul class="flex flex-col gap-4 pt-4 px-2">
             <router-link to="/user" class="cursor-pointer"
-              ><a
-                href="#"
-                class="flex items-center justify-between anchorImage anchorSubMenu"
-                >User <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-            ></router-link>
+              >
+            </router-link>
+            <a href="#currency" class="flex items-center justify-between anchorImage anchorSubMenu" >
+              User <img class="w-5 h-5" :src="groupIcon" alt="" />
+            </a>
             <router-link to="/role" class="cursor-pointer"
               ><a
                 href="#"
                 class="flex items-center justify-between anchorImage anchorSubMenu"
                 >Role <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-            ></router-link>
+            >
+            </router-link>
             <router-link to="/menu" class="cursor-pointer"
               ><a
                 href="#"
@@ -193,10 +180,11 @@ const changeAccordion = (section) => {
                 >Sequence <img class="w-5 h-5" :src="groupIcon" alt="" /></a
             ></router-link>
           </ul>
-        </div>
-
-      <button
-        @click="changeAccordion('reference')"
+            </div>
+        </li>
+        <li>
+          <button
+        @click="sidebar.increment(reference)"
         class="rounded-lg flex md:justify-between p-4 buttonMenu"
       >
         <div class="flex gap-4">
@@ -206,101 +194,109 @@ const changeAccordion = (section) => {
         <div class="hidden md:inline">
           <img :src="expandArrow" class="w-5 h-5" />
         </div>
-      </button>
-      <div
-        v-if="sidebarAccordion.reference == true"
-        class="pl-4 pb-4 sm:flex sm:flex-col hidden"
-      >
-        <ul class="flex flex-col gap-4 pt-4 px-2">
-          <router-link to="/employee" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Employee <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/company" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Company <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/departement" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Departement <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/flight" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Flight Entitlement
-              <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/pagu" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Pagu & Meals<img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/reimbursement" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Reimbursement Type
-              <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/zona" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Zona & TLK <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/job" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Job Band <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/site" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Site <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/brand" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Brand <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/uom" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >UOM <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/warehouse" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Warehouse <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/car" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Car <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-          <router-link to="/currency" class="cursor-pointer"
-            ><a
-              href="#"
-              class="flex items-center justify-between anchorImage anchorSubMenu"
-              >Currency <img class="w-5 h-5" :src="groupIcon" alt="" /></a
-          ></router-link>
-        </ul>
-      </div>
+          </button>
+          <div
+          v-if="sidebar.systemConfiguration == true"
+            class="pl-4 pb-4 sm:flex sm:flex-col hidden overflow-y-auto"
+          >
+            <ul class="flex flex-col gap-4 pt-4 px-2">
+              <router-link to="/employee" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Employee <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/company" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Company <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/departement" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Departement <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/flight" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Flight Entitlement
+                  <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/pagu" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Pagu & Meals<img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/reimbursement" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Reimbursement Type
+                  <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/zona" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Zona & TLK <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/job" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Job Band <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/site" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Site <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/brand" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Brand <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/uom" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >UOM <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/warehouse" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Warehouse <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/car" class="cursor-pointer"
+                ><a
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Car <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+              <router-link to="/currency" class="cursor-pointer"
+                ><a
+                  id="currency"
+                  href="#"
+                  class="flex items-center justify-between anchorImage anchorSubMenu"
+                  >Currency <img class="w-5 h-5" :src="groupIcon" alt="" /></a
+              ></router-link>
+            </ul>
+            </div>
+        </li>
+      </ul>
+      <!-- <ul>
+        <li></li>
+      </ul> -->
+
     </div>
+
   </div>
 </template>
 
