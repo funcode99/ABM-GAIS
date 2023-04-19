@@ -9,7 +9,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import carData from "@/utils/Api/reference/cardata";
+import carData from "@/utils/Api/reference/cardata.js";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 

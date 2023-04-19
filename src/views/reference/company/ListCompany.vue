@@ -7,7 +7,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import dataCompany from "@/utils/Api/reference/companydata";
+import dataCompany from "@/utils/Api/reference/companydata.js";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 

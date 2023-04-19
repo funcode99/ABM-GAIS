@@ -9,7 +9,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import brandData from "@/utils/Api/reference/branddata";
+import brandData from "@/utils/Api/reference/branddata.js";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 

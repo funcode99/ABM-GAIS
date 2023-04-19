@@ -6,6 +6,7 @@ const departementData = [
         cost_center: 'CC001',
         status: 'Aktif',
         name_departement_head: 'Budi',
+        company: "PT. Aneka Jaya",
     },
     {
         id: 2,
@@ -14,6 +15,7 @@ const departementData = [
         cost_center: 'CC002',
         status: 'Aktif',
         name_departement_head: 'Siti',
+        company: "PT. Mega Sentosa",
     },
     {
         id: 3,
@@ -22,6 +24,7 @@ const departementData = [
         cost_center: 'CC003',
         status: 'Tidak Aktif',
         name_departement_head: 'Andi',
+        company: "PT. Sejahtera Abadi",
     },
     {
         id: 4,
@@ -30,6 +33,7 @@ const departementData = [
         cost_center: 'CC004',
         status: 'Aktif',
         name_departement_head: 'Rini',
+        company: "PT. Sukses Mandiri",
     },
     {
         id: 5,
@@ -38,6 +42,7 @@ const departementData = [
         cost_center: 'CC005',
         status: 'Tidak Aktif',
         name_departement_head: 'Dedi',
+        company: "PT. Berkat Jaya",
     },
     {
         id: 6,
@@ -46,6 +51,7 @@ const departementData = [
         cost_center: 'CC006',
         status: 'Aktif',
         name_departement_head: 'Aldi',
+        company: "PT. Cipta Sentosa",
     },
     {
         id: 7,
@@ -54,6 +60,7 @@ const departementData = [
         cost_center: 'CC007',
         status: 'Aktif',
         name_departement_head: 'Wulan',
+        company: "PT. Maju Jaya",
     },
     {
         id: 8,
@@ -62,6 +69,7 @@ const departementData = [
         cost_center: 'CC008',
         status: 'Tidak Aktif',
         name_departement_head: 'Ari',
+        company: "PT. Abadi Sentosa",
     },
     {
         id: 9,
@@ -70,6 +78,7 @@ const departementData = [
         cost_center: 'CC009',
         status: 'Aktif',
         name_departement_head: 'Dian',
+        company: "PT. Makmur Jaya",
     },
     {
         id: 10,
@@ -78,6 +87,7 @@ const departementData = [
         cost_center: 'CC010',
         status: 'Aktif',
         name_departement_head: 'Fahri',
+        company: "PT. Sejahtera Makmur",
     },
     {
         id: 11,
@@ -86,6 +96,7 @@ const departementData = [
         cost_center: 'CC011',
         status: 'Tidak Aktif',
         name_departement_head: 'Bima',
+        company: "PT. Sukses Abadi",
     },
     {
         id: 12,
@@ -94,6 +105,7 @@ const departementData = [
         cost_center: 'CC012',
         status: 'Aktif',
         name_departement_head: 'Sari',
+        company: "PT. Jaya Makmur",
     },
     {
         id: 13,
@@ -102,6 +114,7 @@ const departementData = [
         cost_center: 'CC013',
         status: 'Aktif',
         name_departement_head: 'Eka',
+        company: "PT. Sentosa Abadi",
     },
     {
         id: 14,
@@ -110,6 +123,7 @@ const departementData = [
         cost_center: 'CC014',
         status: 'Tidak Aktif',
         name_departement_head: 'Gita',
+        company: "PT. Maju Makmur",
     },
     {
         id: 15,
@@ -118,6 +132,7 @@ const departementData = [
         cost_center: 'CC015',
         status: 'Aktif',
         name_departement_head: 'Firman',
+        company: "PT. Abadi Jaya",
     },
     {
         id: 16,
@@ -126,6 +141,7 @@ const departementData = [
         cost_center: 'CC016',
         status: 'Aktif',
         name_departement_head: 'Indah',
+        company: "PT. Berkat Sentosa",
     },
     {
         id: 17,
@@ -134,6 +150,7 @@ const departementData = [
         cost_center: 'CC017',
         status: 'Aktif',
         name_departement_head: 'Bella',
+        company: "PT. Cipta Makmur",
     },
     {
         id: 18,
@@ -142,6 +159,7 @@ const departementData = [
         cost_center: 'CC018',
         status: 'Tidak Aktif',
         name_departement_head: 'Cahyo',
+        company: "PT. Sukses Jaya",
     },
     {
         id: 19,
@@ -150,6 +168,7 @@ const departementData = [
         cost_center: 'CC019',
         status: 'Aktif',
         name_departement_head: 'Dinda',
+        company: "PT. Makmur Sentosa",
     },
     {
         id: 20,
@@ -158,6 +177,7 @@ const departementData = [
         cost_center: 'CC020',
         status: 'Aktif',
         name_departement_head: 'Evan',
+        company: "PT. Sejahtera Abadi",
     },
     {
         id: 21,
@@ -166,6 +186,7 @@ const departementData = [
         cost_center: 'CC021',
         status: 'Tidak Aktif',
         name_departement_head: 'Fina',
+        company: "PT. Sukses Makmur",
     },
     {
         id: 22,
@@ -174,6 +195,7 @@ const departementData = [
         cost_center: 'CC022',
         status: 'Aktif',
         name_departement_head: 'Gina',
+        company: "PT. Jalan Bareng Jadian Kaga",
     },
     {
         id: 23,
@@ -182,6 +204,7 @@ const departementData = [
         cost_center: 'CC023',
         status: 'Aktif',
         name_departement_head: 'Hadi',
+        company: "PT. Maju Kena Mundur Kena",
     },
     {
         id: 24,
@@ -190,6 +213,7 @@ const departementData = [
         cost_center: 'CC024',
         status: 'Tidak Aktif',
         name_departement_head: 'Ivan',
+        company: "PT. Angin Ribut",
     },
     {
         id: 25,
@@ -198,6 +222,7 @@ const departementData = [
         cost_center: 'CC025',
         status: 'Aktif',
         name_departement_head: 'Jaka',
+        company: "PT. Pencari Cinta Sejati",
     },
 ]
 
