@@ -176,42 +176,48 @@ const filteredItems = (search) => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-full rounded-lg"
+                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
-                <thead class="text-center font-JakartaSans text-sm font-bold">
+                <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
                   <tr>
-                    <th class="relative">
+                    <th>
                       <div class="flex justify-center">
                         <input
                           type="checkbox"
+                          name="checked"
                           @click="selectAll((checkList = !checkList))"
                         />
                       </div>
                     </th>
+
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
-                      class="relative"
+                      class="overflow-x-hidden cursor-pointer"
                       @click="sortList(`${data.jsonData}`)"
                     >
-                      <span class="flex justify-center">{{ data.title }}</span>
-                      <button class="absolute right-2 top-0 bottom-0">
-                        <img :src="arrowicon" class="w-[9px] h-3" />
-                      </button>
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
                     </th>
                   </tr>
                 </thead>
 
-                <tbody class="bg-[#F5F5F5]">
+                <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
                     v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplier,
-                      (paginateIndex + 1) * pageMultiplier
+                      paginateIndex * pageMultiplierReactive,
+                      (paginateIndex + 1) * pageMultiplierReactive
                     )"
                     :key="data.no"
                   >
-                    <td class="relative">
+                    <td>
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ data.no }}</td>
