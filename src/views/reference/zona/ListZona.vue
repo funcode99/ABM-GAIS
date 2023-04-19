@@ -10,7 +10,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import zonaData from "@/utils/Api/reference/zonaData";
+import zonaData from "@/utils/Api/reference/zonaData.js";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 
