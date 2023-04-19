@@ -7,6 +7,7 @@ const employeeData = [
         gender: "Male",
         email: "johndoe@gmail.com",
         phone_number: "08123456789",
+        company: "PT. Aneka Jaya",
     },
     {
         id: 2,
@@ -16,6 +17,7 @@ const employeeData = [
         gender: "Female",
         email: "janedoe@gmail.com",
         phone_number: "08123456790",
+        company: "PT. Mega Sentosa",
     },
     {
         id: 3,
@@ -25,6 +27,7 @@ const employeeData = [
         gender: "Male",
         email: "david@gmail.com",
         phone_number: "08123456791",
+        company: "PT. Sejahtera Abadi",
     },
     {
         id: 4,
@@ -34,6 +37,7 @@ const employeeData = [
         gender: "Female",
         email: "samantha@gmail.com",
         phone_number: "08123456792",
+        company: "PT. Sukses Mandiri",
     },
     {
         id: 5,
@@ -43,6 +47,7 @@ const employeeData = [
         gender: "Male",
         email: "michael@gmail.com",
         phone_number: "08123456793",
+        company: "PT. Berkat Jaya",
     },
     {
         id: 6,
@@ -52,6 +57,7 @@ const employeeData = [
         gender: "Female",
         email: "sophie@gmail.com",
         phone_number: "08123456794",
+        company: "PT. Cipta Sentosa",
     },
     {
         id: 7,
@@ -61,6 +67,7 @@ const employeeData = [
         gender: "Male",
         email: "adam@gmail.com",
         phone_number: "08123456795",
+        company: "PT. Maju Jaya",
     },
     {
         id: 8,
@@ -70,6 +77,7 @@ const employeeData = [
         gender: "Female",
         email: "emma@gmail.com",
         phone_number: "08123456796",
+        company: "PT. Abadi Sentosa",
     },
     {
         id: 9,
@@ -79,6 +87,7 @@ const employeeData = [
         gender: "Male",
         email: "daniel@gmail.com",
         phone_number: "08123456797",
+        company: "PT. Makmur Jaya",
     },
     {
         id: 10,
@@ -88,6 +97,7 @@ const employeeData = [
         gender: "Female",
         email: "olivia@gmail.com",
         phone_number: "08123456798",
+        company: "PT. Sejahtera Makmur",
     },
     {
         id: 11,
@@ -97,6 +107,7 @@ const employeeData = [
         gender: "Male",
         email: "william@gmail.com",
         phone_number: "08123456799",
+        company: "PT. Sukses Abadi",
     },
     {
         id: 12,
@@ -106,6 +117,7 @@ const employeeData = [
         gender: "Female",
         email: "ava@gmail.com",
         phone_number: "08123456800",
+        company: "PT. Jaya Makmur",
     },
     {
         id: 13,
@@ -115,6 +127,7 @@ const employeeData = [
         gender: "Male",
         email: "joshua@gmail.com",
         phone_number: "08123456801",
+        company: "PT. Sentosa Abadi",
     },
     {
         id: 14,
@@ -124,6 +137,7 @@ const employeeData = [
         gender: "Female",
         email: "isabella@gmail.com",
         phone_number: "08123456802",
+        company: "PT. Maju Makmur",
     },
     {
         id: 15,
@@ -132,7 +146,8 @@ const employeeData = [
         name: "Christopher",
         gender: "Male",
         email: "christopher@gmail.com",
-        phone_number: "08123456803"
+        phone_number: "08123456803",
+        company: "PT. Abadi Jaya",
     },
     {
         id: 16,
@@ -142,6 +157,7 @@ const employeeData = [
         gender: "Female",
         email: "ella@gmail.com",
         phone_number: "08123456803",
+        company: "PT. Berkat Sentosa",
     },
     {
         id: 17,
@@ -151,6 +167,7 @@ const employeeData = [
         gender: "Male",
         email: "andrew@gmail.com",
         phone_number: "08123456804",
+        company: "PT. Cipta Makmur",
     },
     {
         id: 18,
@@ -160,6 +177,7 @@ const employeeData = [
         gender: "Female",
         email: "abigail@gmail.com",
         phone_number: "08123456805",
+        company: "PT. Sukses Jaya",
     },
     {
         id: 19,
@@ -169,6 +187,7 @@ const employeeData = [
         gender: "Male",
         email: "ethan@gmail.com",
         phone_number: "08123456806",
+        company: "PT. Makmur Sentosa",
     },
     {
         id: 20,
@@ -178,6 +197,7 @@ const employeeData = [
         gender: "Female",
         email: "sophia@gmail.com",
         phone_number: "08123456807",
+        company: "PT. Sejahtera Abadi",
     },
     {
         id: 21,
@@ -187,6 +207,7 @@ const employeeData = [
         gender: "Male",
         email: "james@gmail.com",
         phone_number: "08123456808",
+        company: "PT. Sukses Makmur",
     },
     {
         id: 22,
@@ -196,6 +217,7 @@ const employeeData = [
         gender: "Female",
         email: "chloe@gmail.com",
         phone_number: "08123456809",
+        company: "PT. Jalan Bareng Jadian Kaga",
     },
     {
         id: 23,
@@ -205,6 +227,7 @@ const employeeData = [
         gender: "Male",
         email: "joseph@gmail.com",
         phone_number: "08123456810",
+        company: "PT. Maju Kena Mundur Kena",
     },
     {
         id: 24,
@@ -214,6 +237,7 @@ const employeeData = [
         gender: "Female",
         email: "madison@gmail.com",
         phone_number: "08123456811",
+        company: "PT. Angin Ribut",
     },
     {
         id: 25,
@@ -223,6 +247,7 @@ const employeeData = [
         gender: "Male",
         email: "benjamin@gmail.com",
         phone_number: "08123456812",
+        company: "PT. Pencari Cinta Sejati",
     },
 ]
 

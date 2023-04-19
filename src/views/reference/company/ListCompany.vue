@@ -25,8 +25,6 @@ let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  // start dari 1
-  console.log(pageOfItem);
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
