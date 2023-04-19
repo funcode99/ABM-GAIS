@@ -16,6 +16,7 @@ import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 //for sort, search, & filter
 const search = ref("");
 let sortedData = ref([]);
+const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 
@@ -29,6 +30,21 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+};
+
+const filterDataByCompany = () => {
+  if (selectedCompany.value === "") {
+    sortedData.value = instanceArray;
+  } else {
+    sortedData.value = instanceArray.filter(
+      (item) => item.company === selectedCompany.value
+    );
+  }
+};
+
+const resetData = () => {
+  selectedCompany.value = "";
+  filterDataByCompany();
 };
 
 //for check & uncheck all
@@ -127,6 +143,7 @@ const filteredItems = (search) => {
 
               <select
                 class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedCompany"
               >
                 <option disabled selected>Company</option>
                 <option v-for="data in sortedData" :key="data.id">
@@ -137,6 +154,7 @@ const filteredItems = (search) => {
               <div class="flex gap-4 items-center">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  @click="filterDataByCompany"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -145,6 +163,7 @@ const filteredItems = (search) => {
                 </button>
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
                 >
                   <span>
                     <img :src="icon_reset" class="w-5 h-5" />
