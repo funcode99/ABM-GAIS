@@ -20,6 +20,7 @@ let instanceArray = [];
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
 //for paginations
@@ -155,14 +156,17 @@ const filteredItems = (search) => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 px-4 py-2">
-            <h1 class="text-xs font-JakartaSans">Showing</h1>
-            <select class="border-2 border-black rounded-lg w-15" name="" id="">
-              <option value="">10</option>
-              <option value="">25</option>
-              <option value="">50</option>
-              <option value="">75</option>
-              <option value="">100</option>
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+            <select
+              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              v-model="pageMultiplier"
+            >
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>75</option>
+              <option>100</option>
             </select>
           </div>
 
@@ -231,14 +235,18 @@ const filteredItems = (search) => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing 1 to 10 of 50 entries
+              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+              of {{ sortedData.length }} entries
             </p>
             <vue-awesome-paginate
               :total-items="sortedData.length"
-              :items-per-page="pageMultiplier"
+              :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
-              :max-pages-shown="2"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
             />
           </div>
         </div>
