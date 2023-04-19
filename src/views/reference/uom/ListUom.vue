@@ -48,6 +48,7 @@ const resetData = () => {
   sortedData.value = instanceArray;
   selectedCompany.value = "Company";
 };
+
 //for check & uncheck all
 const selectAll = (checkValue) => {
   const checkList = checkValue;
