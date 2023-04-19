@@ -23,7 +23,7 @@ export const useSidebarStore = defineStore ('sidebar', {
             // const result = keys.forEach((key, index) => {
                 // console.log(`${key}: ${this.sidebarMenu[key]} `)
             // })
-
+            
             // console.log(result)
 
             this.sidebarMenu.forEach((key, index) => {
