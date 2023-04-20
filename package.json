@@ -19,6 +19,7 @@
     "vue-awesome-paginate": "^1.1.46",
     "vue-chartjs": "^5.2.0",
     "vue-router": "^4.1.6",
+    "vue-sidebar-menu": "^5.2.6",
     "vuejs-paginate-next": "^1.0.2"
   },
   "devDependencies": {
