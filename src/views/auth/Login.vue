@@ -6,6 +6,7 @@
 </script>
 
 <template>
+  
   <!-- navbar -->
   <div class="flex justify-between bg-base-100">
     <img :src=tailImage alt="" class="w-[285.85px] h-[90.27px]">
@@ -24,24 +25,24 @@
         <div class="hidden sm:block">
             <img :src=loginImage class="w-[544px] h-[373px] object-scale-down" alt="">
         </div>
-        <form class="flex-1 h-full">
+        <div class="flex-1 h-full">
           <div class="mx-auto">
-              <div class="mt-6 text-black">
+            <div class="mt-6 text-black">
                         
-                        <div
+                <div
                           class="mb-5 pb-1border-b-2 text-center font-semibold"
                         >
                           <h1 class="text-3xl">Welcome to GAIS</h1>
-                        </div>
+                </div>
 
-                        <div
+                <div
                           class="text-center font-semibold text-black capitalize mb-20"
                         >
                           please login to your account
-                        </div>
+                </div>
 
-                        <form class="mt-8">
-                          <div class="mx-auto max-w-lg">
+                <form class="mt-8">
+                  <div class="mx-auto max-w-lg">
                             <!-- username -->
                             <div class="py-2">
                               <span class="px-1 font-medium text-sm text-black"
@@ -70,7 +71,9 @@
                                 <input type="checkbox">
                                 <h1>Remember me</h1>
                               </div>
-                              <a class="underline text-[#015289]">Forgot Password?</a>
+                              <router-link to="/forgot">
+                                <a class="underline cursor-pointer text-[#015289]">Forgot Password?</a>
+                              </router-link>
                             </div>
                             <button
                               class="text-lg font-semibold bg-[#015289] w-full text-white rounded-lg px-6 pt-3 pb-3 mt-5 block shadow-xl hover:text-white hover:bg-black"
@@ -83,17 +86,18 @@
                             >
                               Login via Falcon
                             </button>
-                          </div>
-                        </form>
+                  </div>
+                </form>
 
-              </div>
+            </div>
           </div>
-        </form>
+        </div>
       </div>
 
     </div>
   </section>
 
+  <!-- footer -->
   <Footer />
 
 </template>
