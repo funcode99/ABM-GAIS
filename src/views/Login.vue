@@ -2,6 +2,7 @@
   import loginImage from '@/assets/login-frame.png'
   import tailImage from '@/assets/topbar-image.png'
   import abmImage from '@/assets/abm.png'
+  import Footer from '@/components/layout/Footer.vue'
 </script>
 
 <template>
@@ -15,27 +16,26 @@
 
   </div>
 
-  <!-- konten -->
-  <section class="h-full w-full">
-    <div class="w-full h-full flex items-center px-6">
-      <div class=" flex flex-wrap items-center justify-center">
-        <div class="">
-            <img :src=loginImage alt="">
+  <!-- content -->
+  <section class="h-full w-full font-JakartaSans">
+    <div class="flex items-center justify-center py-[30px] bg-[#e4e4e6] w-full h-full">
+
+      <div class="flex flex-wrap items-center justify-center gap-8 bg-white px-[6%] py-[3%] rounded-lg">
+        <div class="hidden sm:block">
+            <img :src=loginImage class="w-[544px] h-[373px] object-scale-down" alt="">
         </div>
-        <form>
-            <div >
-              <div class="font-sans">
-                <div class="mx-auto px-6">
-                  <div class="relative flex flex-wrap">
-                    <div class="w-full relative">
-                      <div class="mt-6">
+        <form class="flex-1 h-full">
+          <div class="mx-auto">
+              <div class="mt-6 text-black">
+                        
                         <div
-                          class="mb-5 pb-1border-b-2 text-center font-base text-gray-700"
+                          class="mb-5 pb-1border-b-2 text-center font-semibold"
                         >
-                          <h1>Welcome to GAIS</h1>
+                          <h1 class="text-3xl">Welcome to GAIS</h1>
                         </div>
+
                         <div
-                          class="text-center font-semibold text-black capitalize"
+                          class="text-center font-semibold text-black capitalize mb-20"
                         >
                           please login to your account
                         </div>
@@ -44,52 +44,56 @@
                           <div class="mx-auto max-w-lg">
                             <!-- username -->
                             <div class="py-2">
-                              <span class="px-1 text-sm text-gray-600"
+                              <span class="px-1 font-medium text-sm text-black"
                                 >Username</span
                               >
                               <input
-                                placeholder="username"
+                                placeholder="Input Username"
                                 type="text"
                                 class="text-md block px-3 py-2 rounded-lg w-full bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
                               />
                             </div>
                             <!-- password -->
                             <div class="py-2">
-                              <span class="px-1 text-sm text-gray-600"
+                              <span class="px-1 font-medium text-sm text-black"
                                 >Password</span
                               >
                               <div class="relative">
                                 <input
-                                  placeholder="password"
+                                  placeholder="Input Passwords"
                                   class="text-md block px-3 py-2 rounded-lg w-full bg-white border-2 border-gray-300 placeholder-gray-600 shadow-md focus:placeholder-gray-500 focus:bg-white focus:border-gray-600 focus:outline-none"
                                 />
                               </div>
                             </div>
-                            <div class="flex justify-center">
-                              <p>Forgot Your Password?</p>
+                            <div class="flex justify-between text-sm">
+                              <div class="flex gap-2 items-center">
+                                <input type="checkbox">
+                                <h1>Remember me</h1>
+                              </div>
+                              <a class="underline text-[#015289]">Forgot Password?</a>
                             </div>
                             <button
-                              class="mt-3 text-lg font-semibold bg-gray-800 w-full text-white rounded-lg px-6 py-3 block shadow-xl hover:text-white hover:bg-black"
+                              class="text-lg font-semibold bg-[#015289] w-full text-white rounded-lg px-6 pt-3 pb-3 mt-5 block shadow-xl hover:text-white hover:bg-black"
                             >
                               Login
                             </button>
+                            <h1 class="text-center py-5 font-bold">OR</h1>
+                            <button
+                              class="text-lg font-semibold bg-[#015289] w-full text-white rounded-lg px-6 py-3 block shadow-xl hover:text-white hover:bg-black"
+                            >
+                              Login via Falcon
+                            </button>
                           </div>
                         </form>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+
               </div>
-            </div>
+          </div>
         </form>
       </div>
+
     </div>
   </section>
 
-  <!-- footer -->
-  <footer class="p-4 bg-base-100 w-full flex justify-center text-center fixed bottom-0">
-      <div class="text-[#9e9e9e] relative">
-        <p class="text-center">© PT SINERGI INFORMATIKA SEMEN INDONESIA - 2023</p>
-      </div>
-  </footer>
+  <Footer />
+
 </template>
