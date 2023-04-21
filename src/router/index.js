@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Login from "@/views/auth/Login.vue"
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
+import Profile from '@/views/auth/Profile.vue'
 
 import Dashboard from "@/views/Dashboard.vue"
 
@@ -26,14 +27,16 @@ import ListApproval from '@/views/system-configuration/approval/ListApproval.vue
 import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 // import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
+import RequestTrip from '@/views/request-trip/ListRequest.vue'
+
 // experiment page
-import HeroPagination from '@/views/experiment/pagination.vue'
-import jwPagination from '@/views/experiment/jw-pagination.vue'
-// import JwPagination from 'jw-vue-pagination'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
+    // auth pages
     {
       path: '/',
       name: 'login',
@@ -48,6 +51,14 @@ const router = createRouter({
       component: ForgotPassword,
       meta: {
         title: 'Forgot Password'
+      }
+    },
+    {
+      path: '/profile',
+      name: 'profileDetails',
+      component: Profile,
+      meta: {
+        title: 'Profile'
       }
     },
     {
@@ -212,16 +223,17 @@ const router = createRouter({
     //   name: 'sequence',
     //   component: ListSequence
     // },
+
+    // request-trip page
     {
-      path: '/hero',
-      name: 'HeroPagination',
-      component: HeroPagination
+      path: '/request',
+      name: 'request trip',
+      component: RequestTrip,
+      meta: {
+        title: 'Request Trip'
+      }
     },
-    {
-      path: '/jwPagination',
-      name: 'pagination',
-      component: jwPagination
-    }
+
   ]
 })
 

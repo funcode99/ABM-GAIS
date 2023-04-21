@@ -3,11 +3,13 @@ import { ref, reactive, onBeforeMount } from "vue";
 
 import dashboardIcon from "@/assets/dashboard-icon.png";
 import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png"
+import travelManagementSystemSelected from '@/assets/travel-management-system-selected.png'
 import systemConfigurationIcon from "@/assets/system-configuration-not-selected.png"
 import systemConfigurationIconSelected from '@/assets/system-configuration-selected.png'
 import referenceIcon from "@/assets/reference.png";
 import referenceIconSelected from '@/assets/reference-selected.png'
 import submenuLine from '@/assets/submenu-line.png'
+import submenuInner from '@/assets/inner-sub-menu.png'
 
 import ABMIcon from "@/assets/abm.png";
 import searchIcon from "@/assets/Icons.png";
@@ -23,6 +25,7 @@ const searchSidebarValue = ref('')
 // masukkin params ke actions harus pake variable ga boleh pake primitive data langsung
 let system = 'systemConfiguration'
 let reference = 'reference'
+let travel = 'travelManagementSystem'
 
 </script>
 
@@ -33,7 +36,6 @@ let reference = 'reference'
     <div class="drawer-side">
       <label for="my-drawer-2" class="drawer-overlay"></label>
       <ul class="menu p-4 w-80 h-full bg-base-100 text-base-content border">
-        <NavItems :item="item" v-for="item in navItems" :key="item.label" />
       </ul>
     </div>
   </div> -->
@@ -67,23 +69,99 @@ let reference = 'reference'
         
         <li>
           <router-link
-        to="/dashboard"
-        href="#"
-        class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
-      >
+            to="/dashboard"
+            href="#"
+            class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
+          >
             <img :src="dashboardIcon" class="w-6 h-6" alt="" />
             <a class="hidden sm:block">Dashboards</a>
           </router-link>
         </li>
+
         <li>
-          <router-link
-        to="/"
-        href="#"
-        class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
-      >
-        <img :src="travelManagementSystemIcon" class="w-6 h-6" alt="" />
-        <a class="hidden sm:block">Travel Management System</a>
-          </router-link>
+          
+          <button @click= sidebar.increment(travel) class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
+          :class="sidebar.sidebarMenu.travelManagementSystem == true ? 'text-white bg-[#015289]' : ''"
+          >
+            <div class="flex justify-between w-full items-center">
+              
+              <div class="flex gap-4 items-center">
+                <img
+              :src="travelManagementSystemIcon"
+              class="w-6 h-6 rounded-lg"
+              :class="sidebar.sidebarMenu.travelManagementSystem === true ? 'hidden' : 'block'"
+              alt=""
+                />
+                <img
+              :src="travelManagementSystemSelected"
+              class="w-6 h-6 rounded-lg"
+              :class="sidebar.sidebarMenu.travelManagementSystem === false ? 'hidden' : 'block'"
+              alt=""
+                />
+                <h3 class="hidden sm:block text-left">Travel Management System</h3>
+              </div>
+
+              <div class="hidden sm:block">
+                <img :src="expandArrow" class="w-5 h-5" />
+              </div>
+
+            </div>
+
+          </button>
+         
+          <div
+            v-if="sidebar.sidebarMenu.travelManagementSystem === true"
+            class="pl-4 pb-4 sm:flex sm:flex-col hidden">
+            <ul class="flex flex-col gap-4 pt-4 px-2">
+
+              <router-link to="/request" class="cursor-pointer"
+                >
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img class="h-[2px] w-2" :src=submenuLine alt="">
+                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
+                    Request Trip <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+
+              <router-link to="/role" class="cursor-pointer"
+                >
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img class="h-[2px] w-2" :src=submenuLine alt="">
+                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
+                    Settlement <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+
+              <router-link to="/menu" class="cursor-pointer">
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img class="h-[2px] w-2" :src=submenuLine alt="">
+                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
+                    Claim Reimbursement <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+
+              <button class="cursor-pointer text-left"
+                >
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img class="h-[2px] w-2" :src=submenuLine alt="">
+                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
+                    Cash Advance <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+                <div class="ml-5 mt-[10px]">
+                  <ul class="flex flex-col gap-[10px] text-base font-normal">
+                    <li class="flex gap-[10px] items-center"><img :src=submenuInner alt="" class="w-2 h-2"> Travel</li>
+                    <li class="flex gap-[10px] items-center"><img :src=submenuInner alt="" class="w-2 h-2"> Non Travel</li>
+                  </ul>
+                </div>
+              </button>
+
+            </ul>
+          </div>
+
         </li>
 
         <li>
@@ -91,7 +169,8 @@ let reference = 'reference'
           <button @click= sidebar.increment(system) class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
           :class="sidebar.sidebarMenu.systemConfiguration == true ? 'text-white bg-[#015289]' : ''"
           >
-            <div class="flex gap-4">
+          <div class="flex justify-between w-full items-center">
+            <div class="flex gap-4 items-center">
               <img
             :src="systemConfigurationIcon"
             class="w-6 h-6 rounded-lg"
@@ -105,10 +184,11 @@ let reference = 'reference'
             alt=""
               />
               <h3 class="hidden sm:block">System Configuration</h3>
-              <div class="hidden sm:block">
-                <img :src="expandArrow" class="w-5 h-5" />
-              </div>
             </div>  
+            <div class="hidden sm:block">
+              <img :src="expandArrow" class="w-5 h-5" />
+            </div>
+          </div>
           </button>
          
           <div
@@ -173,7 +253,6 @@ let reference = 'reference'
                 <img :src="referenceIconSelected" :class="sidebar.sidebarMenu.reference == false ? 'hidden' : 'block'" alt="" class="w-6 h-6 rounded-lg" />
                 <img :src="referenceIcon" class="w-6 h-6 rounded-lg" :class="sidebar.sidebarMenu.reference == true ? 'hidden' : 'block'" alt="" />
                 <h3 class="hidden sm:block">Reference</h3>
-
               </div>
               <div class="hidden sm:block">
                 <img :src="expandArrow" class="w-5 h-5" />

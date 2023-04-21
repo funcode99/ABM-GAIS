@@ -96,7 +96,7 @@
       <!-- w-screen md:w-full -->
       <!-- ml-[100px] md:ml-[260px] -->
       <!-- slate box -->
-      <div class="bg-slate-300 py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+      <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]">
 
         <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
           >
