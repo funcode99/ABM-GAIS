@@ -2,6 +2,7 @@
   import loginImage from '@/assets/login-frame.png'
   import tailImage from '@/assets/topbar-image.png'
   import abmImage from '@/assets/abm.png'
+  import Footer from '@/components/layout/Footer.vue'
 </script>
 
 <template>
@@ -16,16 +17,15 @@
   </div>
 
   <!-- konten -->
-  <section class="h-full w-full">
-    <div class="w-full h-full flex items-center px-6">
-      <div class=" flex flex-wrap items-center justify-center">
+  <section class="w-screen h-screen font-JakartaSans">
+    <div class="w-screen h-screen flex items-center justify-center px-[13%] py-[57px] bg-[#e4e4e6]">
+      <div class="flex flex-wrap items-center justify-evenly gap-4 bg-white w-full h-full">
         <div class="">
-            <img :src=loginImage alt="">
+            <img :src=loginImage alt="" class="w-[544px] h-[373px]">
         </div>
         <form>
-            <div >
-              <div class="font-sans">
-                <div class="mx-auto px-6">
+          <div>
+            <div class="mx-auto px-6">
                   <div class="relative flex flex-wrap">
                     <div class="w-full relative">
                       <div class="mt-6">
@@ -78,18 +78,13 @@
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
             </div>
+          </div>
         </form>
       </div>
     </div>
   </section>
 
-  <!-- footer -->
-  <footer class="p-4 bg-base-100 w-full flex justify-center text-center fixed bottom-0">
-      <div class="text-[#9e9e9e] relative">
-        <p class="text-center">© PT SINERGI INFORMATIKA SEMEN INDONESIA - 2023</p>
-      </div>
-  </footer>
+  <Footer />
+  
 </template>
