@@ -2,20 +2,21 @@
   import loginImage from '@/assets/login-frame.png'
   import tailImage from '@/assets/topbar-image.png'
   import abmImage from '@/assets/abm.png'
+  import NavbarLogin from '@/components/layout/NavbarLogin.vue'
   import Footer from '@/components/layout/Footer.vue'
 </script>
 
 <template>
   
   <!-- navbar -->
-  <div class="flex justify-between bg-base-100">
+  <!-- <div class="flex justify-between bg-base-100">
     <img :src=tailImage alt="" class="w-[285.85px] h-[90.27px]">
     <img :src=abmImage alt="" class="w-[57px] h-[43px] md:w-[114px] md:h-[86px]">
     <img src="" alt="">
-    <div class="">
-  </div>
+    <div class=""></div>
+  </div> -->
 
-  </div>
+  <NavbarLogin />
 
   <!-- content -->
   <section class="h-full w-full font-JakartaSans">
