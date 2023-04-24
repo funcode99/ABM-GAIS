@@ -201,7 +201,7 @@ let travel = 'travelManagementSystem'
               <div class="flex gap-[10px] items-center cursor-pointer">
                 <img class="h-[2px] w-2" :src=submenuLine alt="">
                 <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  User <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  User <img class="w-5 h-5" :src="groupIcon" alt=""  />
                 </a>
               </div>
             </router-link>
@@ -418,6 +418,7 @@ let travel = 'travelManagementSystem'
 .anchorSubMenu:focus {
   color: #015289;
 }
+
 
 .anchorImage img {
   visibility: hidden;
