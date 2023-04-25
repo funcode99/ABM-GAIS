@@ -7,7 +7,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 
 <template>
   
-    <label for="add-role-modal" class="btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green border-2 hover:border-green height">
+    <label for="add-role-modal" class="btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green border-2 hover:border-green heightButton">
         + Add New
     </label>
 
@@ -102,7 +102,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
   overscroll-behavior: contain;
 }
 
- .height {
+ .heightButton {
     height: 36px;
     display: flex;
     justify-content: center;

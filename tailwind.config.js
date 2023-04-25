@@ -14,6 +14,7 @@ module.exports = {
         "black": "#000000",
         "green": "#66AD2D",
         "red": "#F04438",
+        "red-star": "#F5333F",
         "blue": "#015289",
       }
     },

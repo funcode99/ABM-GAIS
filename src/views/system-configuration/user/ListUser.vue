@@ -24,6 +24,7 @@
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
+    let lengthCounter = 0
 
     const selectAll = (checkValue) => { 
   const checkLead = checkValue
@@ -66,16 +67,17 @@
   // sortedData.value gak dianggap sebagai array lagi
   instanceArray = dataDummy
   sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
 })
 
     const filteredItems = (search) => {
     sortedData.value = instanceArray
       const filteredR = sortedData.value.filter(item => {
-        // console.log(item.No)
-        console.log(item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1)
          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
+      lengthCounter = sortedData.value.length
+      console.log(lengthCounter)
     }
   
 </script>
@@ -93,10 +95,9 @@
 
         <Sidebar class="flex-none fixed" />     
 
-      <!-- w-screen md:w-full -->
-      <!-- ml-[100px] md:ml-[260px] -->
-      <!-- slate box -->
-      <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+        <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]" 
+        :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']"
+      >
 
         <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
           >
@@ -127,9 +128,6 @@
               
               <!-- sort company filter -->
               <div class="flex justify-between items-center gap-4">
-              <p class="capitalize font-Fira text-xs text-black font-medium">
-                Sort
-              </p>
     
               <p class="capitalize font-Fira text-xs text-black font-medium">
                 Company
@@ -298,7 +296,7 @@
 
         </div>
 
-      </div>
+        </div>
 
     </div>  
     
@@ -331,6 +329,10 @@
 
   .this {
     overflow-x: hidden;
+  }
+
+  .backgroundHeight {
+    min-height: calc(100vh - 115px);
   }
 
 </style>

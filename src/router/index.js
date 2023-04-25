@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+// auth
 import Login from "@/views/auth/Login.vue"
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import Profile from '@/views/auth/Profile.vue'
@@ -28,6 +29,7 @@ import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 // import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
 import RequestTrip from '@/views/request-trip/ListRequest.vue'
+import FormView from '@/views/request-trip/FormView.vue'
 
 // experiment page
 
@@ -231,6 +233,14 @@ const router = createRouter({
       component: RequestTrip,
       meta: {
         title: 'Request Trip'
+      }
+    },
+    {
+      path: '/view-request',
+      name: 'form view request trip',
+      component: FormView,
+      meta : {
+        title : 'View Request Trip'
       }
     },
   ]

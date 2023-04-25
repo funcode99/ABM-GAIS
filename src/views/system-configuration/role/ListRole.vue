@@ -7,10 +7,6 @@
     import ModalEditRole from '@/components/system-configuration/role/ModalEditRole.vue'
     import ModalMenuAccessRole from '@/components/system-configuration/role/ModalMenuAccessRole.vue'
 
-    import icon_filter from "@/assets/icon_filter.svg";
-    import icon_reset from "@/assets/icon_reset.svg";
-    import icon_receive from "@/assets/icon-receive.svg";
-
     import dataDummy from '@/utils/Api/system-configuration/roledata.js'
 
     // import untuk approval table
@@ -24,32 +20,13 @@
 
     const search = ref('')
     const isWide = ref(true)
-    let currentscript = ref(1)
-    let paginatescript = ref(5)
-    let paginate_totalscript = ref(0)
     let showingValue = ref(0)
 
     // import untuk table
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
-
-const selectAll = (checkValue) => { 
-  const checkLead = checkValue
-  if(checkLead == true) {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=true;  
-    }
-  } else {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=false;  
-    }
-  }
-}
+    let lengthCounter = 0
 
 const tableHead = [
     {Id: 1, title: 'No', jsonData: 'No'},
@@ -73,6 +50,7 @@ onBeforeMount(() => {
   // sortedData.value gak dianggap sebagai array lagi
   instanceArray = dataDummy
   sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
 })
 
 const filteredItems = (search) => {
@@ -83,6 +61,7 @@ const filteredItems = (search) => {
          return item.No.toString().indexOf(search.toLowerCase()) > -1 | item.UserRole.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
+      lengthCounter = sortedData.value.length
 }
   
 </script>
@@ -102,7 +81,9 @@ const filteredItems = (search) => {
       <!-- w-screen md:w-full -->
       <!-- ml-[100px] md:ml-[260px] -->
       <!-- slate box -->
-      <div class="bg-slate-300 py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+      <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen sm:ml-[100px] md:ml-[260px]"
+      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']"
+      >
 
         <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
           >
@@ -242,6 +223,10 @@ const filteredItems = (search) => {
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
+  }
+
+  .backgroundHeight {
+    min-height: calc(100vh - 115px);
   }
 
 

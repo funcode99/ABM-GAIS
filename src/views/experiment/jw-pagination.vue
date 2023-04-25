@@ -131,9 +131,7 @@
               
               <!-- sort company filter -->
               <div class="flex justify-between items-center gap-4">
-              <p class="capitalize font-Fira text-xs text-black font-medium">
-                Sort
-              </p>
+          
     
               <p class="capitalize font-Fira text-xs text-black font-medium">
                 Company
