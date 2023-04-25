@@ -124,6 +124,11 @@
 }
 
 .fade-enter-from,
+.fade-leave-from
+{
+    opacity: 1;
+}
+.fade-enter-to,
 .fade-leave-to {
   opacity: 0;
 }
