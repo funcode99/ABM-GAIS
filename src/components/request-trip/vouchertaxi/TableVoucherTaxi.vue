@@ -1,5 +1,6 @@
 <script setup>
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import taxivoucherdata from "@/utils/Api/request-trip/taxivoucherdata.js";
 
@@ -33,7 +34,7 @@ const tableHead = [
 
 <template>
   <div
-    class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
+    class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden w-[1050px]"
   >
     <div class="block overflow-x-auto">
       <table
@@ -83,7 +84,9 @@ const tableHead = [
             <td>{{ data.PurposeOfTrip }}</td>
             <td>{{ data.Status }}</td>
             <td class="flex flex-wrap gap-4 justify-center">
-              <!-- <ModalEdit /> -->
+              <button>
+                <img :src="editicon" class="w-6 h-6" />
+              </button>
               <button>
                 <img :src="deleteicon" class="w-6 h-6" />
               </button>

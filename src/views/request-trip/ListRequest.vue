@@ -15,7 +15,7 @@ let requestTripType = ref("Company Business");
 
 <template>
   <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this font-JakartaSans"
+    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this font-JakartaSans overflow-y-hidden"
   >
     <Navbar />
     <div class="flex w-screen mt-[115px]">
@@ -143,7 +143,7 @@ let requestTripType = ref("Company Business");
 
           <!-- table -->
           <table v-if="requestTripType === 'Taxi Voucher Only'">
-            <TableVoucherTaxiVue />
+            <TableVoucherTaxiVue/>
           </table>
         </div>
       </div>
