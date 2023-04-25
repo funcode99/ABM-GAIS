@@ -8,6 +8,7 @@ import icon_reset from "@/assets/icon_reset.svg";
 
 import CompanyBusinessRequestTripModal from "@/components/request-trip/CompanyBusinessRequestTripModal.vue";
 import TableVoucherTaxiVue from "@/components/request-trip/vouchertaxi/TableVoucherTaxi.vue";
+import TableFieldBreak from "@/components/request-trip/fieldbreak/TableFieldBreak.vue";
 
 import { ref } from "vue";
 let requestTripType = ref("Company Business");
@@ -15,12 +16,12 @@ let requestTripType = ref("Company Business");
 
 <template>
   <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this font-JakartaSans overflow-y-hidden"
+    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
   >
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <div class="bg-[#e4e4e6] flex-1 py-5 px-[2%] h-screen width ml-[260px]">
+      <div class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px]">
         <div class="bg-white rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -43,9 +44,7 @@ let requestTripType = ref("Company Business");
           </div>
 
           <!-- SORT, DATE & SEARCH -->
-          <div
-            class="flex flex-wrap items-center px-4 gap-2"
-          >
+          <div class="flex flex-wrap items-center px-4 gap-2">
             <div class="flex flex-wrap items-center gap-2">
               <!-- SORT -->
               <p
@@ -143,7 +142,11 @@ let requestTripType = ref("Company Business");
 
           <!-- table -->
           <table v-if="requestTripType === 'Taxi Voucher Only'">
-            <TableVoucherTaxiVue/>
+            <TableVoucherTaxiVue />
+          </table>
+
+          <table v-if="requestTripType === 'Field Break'">
+            <TableFieldBreak />
           </table>
         </div>
       </div>
