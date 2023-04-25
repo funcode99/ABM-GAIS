@@ -31,63 +31,57 @@
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
-    // let filterArray = computed(() => sortedData.value)
 
-
-const selectAll = (checkValue) => { 
-  const checkLead = checkValue
-  if(checkLead == true) {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=true;  
+    const selectAll = (checkValue) => { 
+      const checkLead = checkValue
+      if(checkLead == true) {
+        let check = document.getElementsByName('chk')
+        for(let i=0; i<check.length; i++) {  
+            if(check[i].type=='checkbox')  
+            check[i].checked=true;  
+        }
+      } else {
+        let check = document.getElementsByName('chk')
+        for(let i=0; i<check.length; i++) {  
+            if(check[i].type=='checkbox')  
+            check[i].checked=false;  
+        }
+      }
     }
-  } else {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=false;  
+
+    const tableHead = [
+      {Id: 1, title: 'No', jsonData: 'No'},
+      {Id: 2, title: 'Name', jsonData: 'Name'},
+      {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
+      {Id: 4, title: 'Status', jsonData: 'Status'},
+      {Id: 5, title: 'Actions'}
+    ]
+
+    const sortList = (sortBy) => {
+      if(sortedbyASC) {
+        sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+        sortedbyASC = false
+      } else {
+        sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+        sortedbyASC = true
+      }
     }
-  }
-}
 
-const tableHead = [
-  {Id: 1, title: 'No', jsonData: 'No'},
-  {Id: 2, title: 'Name', jsonData: 'Name'},
-  {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
-  {Id: 4, title: 'Status', jsonData: 'Status'},
-  {Id: 5, title: 'Actions'}
-]
+    // watch(ref, callback)
 
-const sortList = (sortBy) => {
-  if(sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
-    sortedbyASC = false
-  } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
-    sortedbyASC = true
-  }
-}
+    onBeforeMount(() => {
+      // sortedData.value gak dianggap sebagai array lagi
+      instanceArray = dataDummy
+      sortedData.value = instanceArray
+    })
 
-
-
-// watch(ref, callback)
-
-onBeforeMount(() => {
-  // sortedData.value gak dianggap sebagai array lagi
-  instanceArray = dataDummy
-  sortedData.value = instanceArray
-})
-
-const filteredItems = (search) => {
-    sortedData.value = instanceArray
-      const filteredR = sortedData.value.filter(item => {
-        // console.log(item.No)
-        console.log(item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1)
-         return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
-      })
-      sortedData.value = filteredR
-}
+    const filteredItems = (search) => {
+        sortedData.value = instanceArray
+          const filteredR = sortedData.value.filter(item => {
+            return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+          })
+        sortedData.value = filteredR
+    }
   
 </script>
 
@@ -123,7 +117,7 @@ const filteredItems = (search) => {
             >
               Menu
             </p>
-            <div class="flex gap-4">
+            <div class="flex items-center gap-4">
               <ModalAddMenu />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -140,9 +134,7 @@ const filteredItems = (search) => {
               
               <!-- sort company filter -->
             <div class="flex items-center gap-4">
-              <p class="capitalize font-Fira text-xs text-black font-medium">
-                Sort
-              </p>
+         
     
               <p class="capitalize font-Fira text-xs text-black font-medium">
                 Company
@@ -259,7 +251,6 @@ const filteredItems = (search) => {
                 </th>
 
                 <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                  <!-- &#8597; -->
                   <span class="flex justify-center items-center gap-1">
                     {{ data.title }} 
                     <button class="">

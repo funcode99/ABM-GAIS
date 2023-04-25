@@ -16,7 +16,7 @@
     <div class="navbar bg-base-100 py-0 px-0 h-[115px]">
   
       <div class="navbar-start hidden md:block">
-        <img :src="tail" class="w-[285.85px] h-[90.27px]" />
+        <img :src="tail" class="w-[365px] h-[115px]" />
       </div>
   
       <div class="hidden navbar-center md:flex justify-center items-center">
