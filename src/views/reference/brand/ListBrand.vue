@@ -107,7 +107,7 @@ const filteredItems = (search) => {
 
 <template>
   <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this font-JakartaSans overflow-y-hidden"
+    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this overflow-y-hidden"
   >
     <Navbar />
 
