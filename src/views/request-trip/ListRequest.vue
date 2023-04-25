@@ -1,6 +1,13 @@
 <script setup>
     import { ref } from 'vue'
 
+    // masih dipakai di table
+    import editicon from "@/assets/navbar/edit_icon.svg"
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import icon_filter from "@/assets/icon_filter.svg";
+    import icon_reset from "@/assets/icon_reset.svg";
+    import icon_receive from "@/assets/icon-receive.svg";
+
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Footer from '@/components/layout/Footer.vue'

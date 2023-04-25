@@ -2,9 +2,12 @@
 import { ref } from 'vue'
 
 import iconClose from "@/assets/navbar/icon_close.svg"
-import iconPlus from "@/assets/navbar/icon_plus.svg"
+
+// masih dipakai di table
 import editicon from "@/assets/navbar/edit_icon.svg"
 import deleteicon from "@/assets/navbar/delete_icon.svg"
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
 
 import arrow from '@/assets/arrow-multi-step-form.png'
 
@@ -168,8 +171,6 @@ const airlinesDummy = [
           + Add Guest
       </label> -->
 
-
-      <!-- step 3 sub-form -->
       <!-- <input type="checkbox" id="traveller-modal" class="modal-toggle" />
 
       <div class="modal">
@@ -271,11 +272,10 @@ const airlinesDummy = [
 
 
       </div> -->
-
       <!-- </form> -->
 
       <!-- step 4 form -->
-      <form class="mb-3 mt-12 relative">
+      <!-- <form class="mb-3 mt-12 relative">
 
         <label for="airlines-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
           + Add Airlines
@@ -346,15 +346,7 @@ const airlinesDummy = [
                     </option>
                   </select>
                 </div>
-      
-                <!-- <div class="flex flex-col">
-                  <span>Departure <span class="text-[#f5333f]">*</span></span>
-                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
-                    <option hidden selected disabled value="">
-                      City
-                    </option>
-                  </select>
-                </div> -->
+    
               </div>
 
               <div class="flex justify-center text-white">
@@ -367,55 +359,6 @@ const airlinesDummy = [
             
             <h1 class="text-center mt-[10px]">Flight Schedule</h1>
             <hr class="border-2 border-black w-full">
-
-            <table class="border w-full rounded-lg table-fixed">
-              
-              <!-- ajg lah, laptop pake nge blink segala lagi -->
-              <!-- biang kerok nya disini ajg -->
-              <thead class="flex flex-row w-full table-auto">
-                <tr v-for="data in tableHeadAirlines" :key="data.id">
-                  <th class="capitalize w-full" >
-                    {{ data.title }}
-                  </th>
-                </tr>
-              </thead>
-
-              <div class="flex flex-row w-full">
-              </div>
-
-              <tbody>
-                <tr v-for="data in airlinesDummy" :key="data.id">
-                  <!-- lebar tabel akan mengikuti lebar gambar asli -->
-                  <td>
-                    <img :src=data.Airline alt="" class="w-[97px] h-[21px]">
-                  </td>
-                  <td>
-                    {{ data.flightNo }}
-                  </td>
-                  <td>
-                    {{ data.Depart }}
-                  </td>
-                  <td>
-                    {{ data.Arrival }}
-                  </td>
-                  <td>
-                    {{ data.Stops }}
-                  </td>
-                  <td>
-                    {{ data.Class }}
-                  </td>
-                  <td>
-                    {{ data.Price }}
-                  </td>
-                  <td>
-                    <button class="bg-[#87c556] px-4 py-3 text-white rounded-lg font-bold">
-                      SELECT
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-
-            </table>
 
             <div class="bg-white py-4 max-w-[100%]">
               <div class="flex justify-end gap-4">
@@ -436,28 +379,471 @@ const airlinesDummy = [
 
           </div>
 
+
         </div>
 
 
 
-      </form>
+      </form> -->
 
-      <!-- step 4 sub-form -->
+      <!-- step 5 form -->
+      <!-- <form class="mb-3 mt-12 relative">
 
-      <div class="bg-white py-4">
-        <div class="flex justify-between gap-4">
-          <label
-            for="traveller-modal"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Next
-          </button>
+        <label for="taxi-voucher-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+          + Add Taxi Voucher
+        </label>
+
+        <input type="checkbox" id="taxi-voucher-modal" class="modal-toggle" />
+
+        <div class="modal p-8">
+
+          <div class="modal-box h-[476px]">
+
+            <nav for="taxi-voucher-modal" class=" top-0 py-4">
+              <label for="taxi-voucher-modal" class="cursor-pointer absolute right-4">
+                <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+              </label>
+              <p class="font-JakartaSans text-2xl font-semibold">Taxi Voucher</p>
+            </nav>
+
+
+            <div class="flex flex-col gap-y-6">
+    
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Name <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Name
+                    </option>
+                  </select>
+                </div>
+      
+                <div class="flex flex-col max-w-[80%]">
+                  <span>Departure <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      City
+                    </option>
+                  </select>
+                </div>
+              </div>
+    
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Date <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Date
+                    </option>
+                  </select>
+                </div>
+      
+                <div class="flex flex-col max-w-[80%]">
+                  <span>Arrival <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      City
+                    </option>
+                  </select>
+                </div>
+              </div>
+    
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Amount <span class="text-[#f5333f]">*</span></span>
+                  <input type="text" placeholder="Notes" class="border-[#e0e0e0] border px-4 py-3 rounded-lg">
+                </div>
+
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Remarks</span>
+                  <input type="text" placeholder="Remarks" class="border-[#e0e0e0] border px-4 py-3 rounded-lg">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Voucher</span>
+                  <input type="text" placeholder="Voucher" class="border-[#e0e0e0] border px-4 py-3 rounded-lg">
+                </div>
+              </div>
+
+
+              
+            </div>
+            
+            <h1 class="text-center mt-[10px]">Flight Schedule</h1>
+            <hr class="border-2 border-black w-full">
+
+            <div class="bg-white py-4 max-w-[100%]">
+              <div class="flex justify-end gap-4">
+                <label
+                  for="taxi-voucher-modal"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                  >
+                  Cancel
+                </label
+                >
+                <button
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+
+        </div>
+
+      </form> -->
+
+      <!-- step 6 form -->
+      <!-- <form class="mb-3 mt-12 relative">
+
+        <label for="other-transportation-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+          + Add
+        </label>
+
+        <input type="checkbox" id="other-transportation-modal" class="modal-toggle" />
+
+        <div class="modal p-8">
+          <div class="modal-box h-[476px]">
+
+            <nav for="other-transportation-modal" class=" top-0 py-4">
+              <label for="other-transportation-modal" class="cursor-pointer absolute right-4">
+                <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+              </label>
+              <p class="font-JakartaSans text-2xl font-semibold">Other Transportation</p>
+            </nav>
+
+            <div class="flex flex-col gap-y-6">
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Traveller <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Name
+                    </option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col max-w-[80%]">
+                  <span>City <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      City
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Type of transportation <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Type
+                    </option>
+                  </select>
+                </div>
+
+
+                <div class="flex flex-col max-w-[80%]">
+                  <span>Quantity <span class="text-[#f5333f]">*</span></span>
+                  <input type="text" placeholder="Quantity" class="border-[#e0e0e0] border px-4 py-3 rounded-lg">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>From Date <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Date
+                    </option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col max-w-[80%]">
+                  <span>Remarks</span>
+                  <input type="text" placeholder="Remarks" class="border-[#e0e0e0] border px-4 py-3 rounded-lg">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>To Date <span class="text-[#f5333f]">*</span></span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Date
+                    </option>
+                  </select>
+                </div>
+              </div>
+              
+            </div>
+
+            <div class="bg-white py-4 max-w-[100%]">
+              <div class="flex justify-end gap-4">
+                <label
+                  for="other-transportation-modal"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                  >
+                  Cancel
+                </label
+                >
+                <button
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </form> -->
+
+      <!-- step 7 form -->
+      <!-- <form class="mb-3 mt-12 relative">
+
+        <label for="other-transportation-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+          + Add Accomodation
+        </label>
+
+        <input type="checkbox" id="other-transportation-modal" class="modal-toggle" />
+
+        <div class="modal p-8">
+          <div class="modal-box h-[476px]">
+
+            <nav for="other-transportation-modal" class=" top-0 py-4">
+              <label for="other-transportation-modal" class="cursor-pointer absolute right-4">
+                <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+              </label>
+              <p class="font-JakartaSans text-2xl font-semibold">Accomodation</p>
+            </nav>
+
+            <div class="flex flex-col gap-y-6">
+
+              <div class="grid grid-cols-2 gap-2 items-center">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Traveller</span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Name
+                    </option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col max-w-[80%]">
+                  <span>Gender</span>
+                  <input type="text" placeholder="Gender" class="border-2 border-[#e0e0e0] rounded-lg mt-2 px-4 py-2">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 items-center">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Hotel Fare</span>
+                  <input type="text" placeholder="Fare" class="border-2 border-[#e0e0e0] rounded-lg mt-2 px-4 py-2">
+                </div>
+              </div>
+
+              <div>
+                <h1 class="text-center mt-[10px] font-bold text-sm">Requested Accomodation</h1>
+                <hr class="border-2 border-black w-full">
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Check In</span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Date
+                    </option>
+                  </select>
+                </div>
+
+
+                <div class="flex flex-col max-w-[80%]">
+                  <span>Remarks</span>
+                  <input type="text" placeholder="Remarks" class="border-[#e0e0e0] border px-4 py-3 rounded-lg">
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Check Out</span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Date
+                    </option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col max-w-[80%]">
+                  <div class="flex gap-2">
+                    <input type="checkbox">
+                    <span>Sharing with</span>
+                  </div>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Name
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2 items-center">
+                <div class="pl-[10%] flex flex-col max-w-[80%]">
+                  <span>Accomodation Type</span>
+                  <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                    <option hidden selected disabled value="">
+                      Type
+                    </option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <Label>Create GL?</Label>
+                  <div class="flex gap-2">
+                    <input type="checkbox">
+                    <h1>Yes</h1>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h1 class="text-center mt-[10px] font-bold text-sm">Accomodation Availability</h1>
+                <hr class="border-2 border-black w-full">
+              </div>
+              
+            </div>
+
+            <div class="bg-white py-4 max-w-[100%]">
+              <div class="flex justify-end gap-4">
+                <label
+                  for="other-transportation-modal"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                  >
+                  Cancel
+                </label
+                >
+                <button
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </form> -->
+
+      <!-- step 8 form -->
+      <!-- <form class="mb-3 mt-12 relative">
+
+      <label for="cash-advance-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+        + Add
+      </label>
+
+      <input type="checkbox" id="cash-advance-modal" class="modal-toggle" />
+
+      <div class="modal p-8">
+        <div class="modal-box h-[476px]">
+
+          <nav for="cash-advance-modal" class=" top-0 py-4">
+            <label for="cash-advance-modal" class="cursor-pointer absolute right-4">
+              <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+            </label>
+            <p class="font-JakartaSans text-2xl font-semibold">Cash Advance</p>
+          </nav>
+
+          <div class="flex flex-col gap-y-6">
+
+            <div class="grid grid-cols-2 gap-2 items-center">
+              <div class="pl-[10%] flex flex-col max-w-[80%]">
+                <span>Traveller <span class="text-[#f5333f]">*</span></span>
+                <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                  <option hidden selected disabled value="">
+                    Name
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col max-w-[80%]">
+                <span>Nominal <span class="text-[#f5333f]">*</span></span>
+                <input type="text" placeholder="Nominal" class="border-2 border-[#e0e0e0] rounded-lg mt-2 px-4 py-2">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 items-center">
+              <div class="pl-[10%] flex flex-col max-w-[80%]">
+                <span>Item <span class="text-[#f5333f]">*</span></span>
+                <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                  <option hidden selected disabled value="">
+                    Item
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col max-w-[80%]">
+                <span>Total</span>
+                <input type="text" placeholder="Total" class="border-2 border-[#e0e0e0] rounded-lg mt-2 px-4 py-2">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 items-center">
+              <div class="pl-[10%] flex flex-col max-w-[80%]">
+                <span>Frequency <span class="text-[#f5333f]">*</span></span>
+                <input type="text" placeholder="Frequency" class="border-2 border-[#e0e0e0] rounded-lg mt-2 px-4 py-2">
+              </div>
+
+              <div class="flex flex-col max-w-[80%]">
+                <span>Remarks</span>
+                <input type="text" placeholder="Remarks" class="border-2 border-[#e0e0e0] rounded-lg mt-2 px-4 py-2">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 items-center">
+              <div class="pl-[10%] flex flex-col max-w-[80%]">
+                <span>Currency <span class="text-[#f5333f]">*</span></span>
+                <select class="border-2 border-black rounded-lg mt-2 px-4 py-2">
+                  <option hidden selected disabled value="">
+                    Currency
+                  </option>
+                </select>
+              </div>
+            </div>
+            
+          </div>
+
+          <div class="bg-white py-4 max-w-[100%]">
+            <div class="flex justify-end gap-4">
+              <label
+                for="cash-advance-modal"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >
+                Cancel
+              </label
+              >
+              <button
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
+
+      </form> -->
 
     </div>
     
@@ -494,11 +880,12 @@ const airlinesDummy = [
   overscroll-behavior: contain;
 }
 
-.display {
-  display: flex;
+.width {
+  max-width: 97px;
 }
 
-#display {
-  display: flex;
+#width {
+  max-width: 97px;
 }
+
 </style>

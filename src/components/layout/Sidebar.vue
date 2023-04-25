@@ -9,6 +9,7 @@ import systemConfigurationIconSelected from '@/assets/system-configuration-selec
 import referenceIcon from "@/assets/reference.png";
 import referenceIconSelected from '@/assets/reference-selected.png'
 import submenuLine from '@/assets/submenu-line.png'
+import submenuLineSelected from '@/assets/submenu-line-selected.png'
 import submenuInner from '@/assets/inner-sub-menu.png'
 
 import ABMIcon from "@/assets/abm.png";
@@ -42,7 +43,7 @@ let travel = 'travelManagementSystem'
 
   <!-- fixed -->
   <div
-    class="mt-[115px] hidden sm:flex sm:flex-col w-[100px] sm:w-[260px] fixed top-0 bottom-0 overflow-y-auto scroller bg-white zInfinite"
+    class="mt-[115px] hidden sm:flex sm:flex-col w-[100px] sm:w-[260px] fixed top-0 bottom-0 overflow-y-auto scroller bg-white zInfinite font-JakartaSans"
   >
 
     <!-- <div class="flex justify-center h-32 py-2"> 
@@ -117,9 +118,12 @@ let travel = 'travelManagementSystem'
               <router-link to="/request" class="cursor-pointer"
                 >
                 <div class="flex gap-[10px] items-center cursor-pointer">
-                  <img class="h-[2px] w-2" :src=submenuLine alt="">
-                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                    Request Trip <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  <img class="h-[2px] w-2" :class="[$route.path == '/request' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                  <img class="h-[2px] w-2" :class="[$route.path == '/request' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                  <a href='#' class="flex items-center w-full justify-between"
+                    :class="[$route.path == '/request' ? `anchorImage anchorSubMenu` : '']" 
+                  >
+                    Request Trip <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                   </a>
                 </div>
               </router-link>
@@ -127,18 +131,24 @@ let travel = 'travelManagementSystem'
               <router-link to="/role" class="cursor-pointer"
                 >
                 <div class="flex gap-[10px] items-center cursor-pointer">
-                  <img class="h-[2px] w-2" :src=submenuLine alt="">
-                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                    Settlement <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  <img class="h-[2px] w-2" :class="[$route.path == '/role' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                  <img class="h-[2px] w-2" :class="[$route.path == '/role' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                  <a href='#' class="flex items-center w-full justify-between"
+                  :class="[$route.path == '/role' ? `anchorImage anchorSubMenu` : '']"
+                  >
+                    Settlement <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                   </a>
                 </div>
               </router-link>
 
               <router-link to="/menu" class="cursor-pointer">
                 <div class="flex gap-[10px] items-center cursor-pointer">
-                  <img class="h-[2px] w-2" :src=submenuLine alt="">
-                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                    Claim Reimbursement <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  <img class="h-[2px] w-2" :class="[$route.path == '/menu' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                  <img class="h-[2px] w-2" :class="[$route.path == '/menu' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                  <a href='#' class="flex items-center w-full justify-between" 
+                  :class="[$route.path == '/menu' ? `anchorImage anchorSubMenu` : '']"
+                  >
+                    Claim Reimbursement <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                   </a>
                 </div>
               </router-link>
@@ -146,9 +156,12 @@ let travel = 'travelManagementSystem'
               <button class="cursor-pointer text-left"
                 >
                 <div class="flex gap-[10px] items-center cursor-pointer">
-                  <img class="h-[2px] w-2" :src=submenuLine alt="">
-                  <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                    Cash Advance <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  <!-- <img class="h-[2px] w-2" :class="[$route.path == '/request' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                  <img class="h-[2px] w-2" :class="[$route.path == '/request' ? 'inline' : 'hidden']" :src=submenuLineSelected alt=""> -->
+                  <a href='#' class="flex items-center w-full justify-between" 
+                  :class="[$route.path == '/cash' ? `anchorImage anchorSubMenu` : '']"
+                  >
+                    Cash Advance <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                   </a>
                 </div>
                 <div class="ml-5 mt-[10px]">
@@ -199,45 +212,60 @@ let travel = 'travelManagementSystem'
             <router-link to="/user" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  User <img class="w-5 h-5" :src="groupIcon" alt=""  />
+                <img class="h-[2px] w-2" :class="[$route.path == '/user' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/user' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between" 
+                :class="[$route.path == '/user' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  User <img class="w-5 h-5 invisible" :src="groupIcon" alt=""  />
                 </a>
               </div>
             </router-link>
             <router-link to="/role" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Role <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/role' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/role' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between" 
+                :class="[$route.path == '/role' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Role <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
             <router-link to="/menu" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Menu <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/menu' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/menu' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between" 
+                :class="[$route.path == '/menu' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Menu <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
             <router-link to="/approval" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Approval <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/approval' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/approval' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between" 
+                :class="[$route.path == '/approval' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Approval <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
             <router-link to="/sequence" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Sequence <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/sequence' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/sequence' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between" 
+                :class="[$route.path == '/sequence' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Sequence <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
@@ -269,133 +297,173 @@ let travel = 'travelManagementSystem'
               <router-link to="/employee" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Employee <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/employee' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/employee' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between" 
+                :class="[$route.path == '/employee' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Employee <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/company" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Company <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/company' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/company' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/company' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Company <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/departement" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Department <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/departement' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/departement' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/departement' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Department <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/flight" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Flight <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/flight' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/flight' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between" 
+                :class="[$route.path == '/flight' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Flight <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/pagu" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Pagu <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/pagu' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/pagu' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/pagu' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Pagu <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/reimbursement" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Reimbursement <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/reimbursement' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/reimbursement' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/reimbursement' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Reimbursement <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/zona" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Zona <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/zona' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/zona' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/zona' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Zona <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/job" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Job <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/job' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/job' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/job' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Job <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/site" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Site <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/site' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/site' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/site' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Site <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/brand" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Brand <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/brand' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/brand' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/brand' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Brand <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/uom" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  UOM <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/uom' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/uom' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/uom' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  UOM <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/warehouse" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Warehouse <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/warehouse' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/warehouse' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/warehouse' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Warehouse <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/car" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Car <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/car' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/car' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/car' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Car <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
               <router-link to="/currency" class="cursor-pointer"
               >
               <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :src=submenuLine alt="">
-                <a href='#' class="flex items-center w-full justify-between anchorImage anchorSubMenu" >
-                  Currency <img class="w-5 h-5" :src="groupIcon" alt="" />
+                <img class="h-[2px] w-2" :class="[$route.path == '/currency' ? 'hidden' : 'inline']" :src=submenuLine alt="">
+                <img class="h-[2px] w-2" :class="[$route.path == '/currency' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
+                <a href='#' class="flex items-center w-full justify-between"
+                :class="[$route.path == '/currency' ? `anchorImage anchorSubMenu` : '']"
+                >
+                  Currency <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
             </ul>
           </div>
-
-        
 
       </ul>
 
@@ -410,22 +478,12 @@ let travel = 'travelManagementSystem'
   color: white;
 }
 
-/* .buttonMenu:focus {
-  background-color: #015289;
-  color: white;
-} */
-
-.anchorSubMenu:focus {
-  color: #015289;
-}
-
-
 .anchorImage img {
-  visibility: hidden;
+  visibility: visible;
 }
 
-.anchorImage:focus img {
-  visibility: visible;
+.anchorSubMenu {
+  color: #015289;
 }
 
 .scroller {
