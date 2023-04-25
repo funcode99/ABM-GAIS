@@ -233,7 +233,6 @@ const router = createRouter({
         title: 'Request Trip'
       }
     },
-
   ]
 })
 
