@@ -1,6 +1,7 @@
 <script setup>
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -86,13 +87,15 @@ const filteredItems = (search) => {
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div
+    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this overflow-y-hidden"
+  >
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
       <div
-        class="bg-slate-300 py-5 pl-5 pr-5 lg:pr-10 sm:ml-[100px] md:ml-[280px] w-screen h-full"
+        class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px]"
         :class="[dataCompany.length < 10 ? 'h-screen' : 'h-full']"
       >
         <div class="bg-white rounded-t-xl custom-card">
@@ -250,6 +253,7 @@ const filteredItems = (search) => {
           </div>
         </div>
       </div>
+      <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
   </div>
 </template>

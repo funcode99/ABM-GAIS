@@ -26,13 +26,9 @@ import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import ListRole from '@/views/system-configuration/role/ListRole.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
 import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
-// import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
 import RequestTrip from '@/views/request-trip/ListRequest.vue'
 import FormView from '@/views/request-trip/FormView.vue'
-
-// experiment page
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -220,11 +216,6 @@ const router = createRouter({
         title: "Menu",
       }
     },
-    // {
-    //   path: '/sequence',
-    //   name: 'sequence',
-    //   component: ListSequence
-    // },
 
     // request-trip page
     {
@@ -243,7 +234,6 @@ const router = createRouter({
         title : 'View Request Trip'
       }
     },
-
   ]
 })
 
