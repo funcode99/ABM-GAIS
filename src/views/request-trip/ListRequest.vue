@@ -43,90 +43,86 @@ let requestTripType = ref("Company Business");
           </div>
 
           <!-- SORT, DATE & SEARCH -->
-          <div class="flex flex-wrap items-center px-4">
-            <div
-              class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-x-2 sm:gap-4 gap-y-4"
-            >
-              <div class="flex justify-between items-center gap-2">
-                <!-- SORT -->
-                <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+          <div
+            class="flex flex-wrap items-center px-4 gap-2"
+          >
+            <div class="flex flex-wrap items-center gap-2">
+              <!-- SORT -->
+              <p
+                class="capitalize font-JakartaSans text-xs text-black font-medium"
+              >
+                Purpose of Trip
+              </p>
+
+              <select
+                v-model="requestTripType"
+                class="font-JakartaSans capitalize block bg-white w-[200px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              >
+                <option>Company Business</option>
+                <option>Site Visit</option>
+                <option>Field Break</option>
+                <option>Taxi Voucher Only</option>
+              </select>
+
+              <!-- DATE -->
+              <p class="capitalize font-Fira text-xs text-black font-medium">
+                Date
+              </p>
+
+              <input
+                type="date"
+                class="border border-slate-300 h-[40px] rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+              />
+
+              <!-- FILTER -->
+              <div class="flex gap-4 flex-wrap items-center">
+                <button
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                 >
-                  Purpose of Trip
-                </p>
-
-                <select
-                  v-model="requestTripType"
-                  class="font-JakartaSans capitalize block bg-white w-[200px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  <span>
+                    <img :src="icon_filter" class="w-5 h-5" />
+                  </span>
+                  Filter
+                </button>
+                <button
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
                 >
-                  <option>Company Business</option>
-                  <option>Site Visit</option>
-                  <option>Field Break</option>
-                  <option>Taxi Voucher Only</option>
-                </select>
+                  <span>
+                    <img :src="icon_reset" class="w-5 h-5" />
+                  </span>
+                  Reset
+                </button>
+              </div>
 
-                <!-- DATE -->
-                <p class="capitalize font-Fira text-xs text-black font-medium">
-                  Date
-                </p>
-
-                <input
-                  type="date"
-                  class="border border-slate-300 h-[40px] rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                />
-
-                <!-- FILTER -->
-                <div class="flex gap-4 flex-wrap items-center">
-                  <button
-                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+              <!-- SEARCH -->
+              <div class="py-2">
+                <label class="relative block">
+                  <span
+                    class="absolute inset-y-0 left-0 flex items-center pl-2"
                   >
-                    <span>
-                      <img :src="icon_filter" class="w-5 h-5" />
-                    </span>
-                    Filter
-                  </button>
-                  <button
-                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                  >
-                    <span>
-                      <img :src="icon_reset" class="w-5 h-5" />
-                    </span>
-                    Reset
-                  </button>
-                </div>
-
-                <!-- SEARCH -->
-                <div class="ml-11">
-                  <div class="py-2 flex md:mx-0">
-                    <label class="relative block">
-                      <span
-                        class="absolute inset-y-0 left-0 flex items-center pl-2"
-                      >
-                        <svg
-                          aria-hidden="true"
-                          class="w-5 h-5 text-gray-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                          ></path>
-                        </svg>
-                      </span>
-                      <input
-                        class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                        placeholder="Search..."
-                        type="text"
-                        name="search"
-                      />
-                    </label>
-                  </div>
-                </div>
+                    <svg
+                      aria-hidden="true"
+                      class="w-5 h-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      ></path>
+                    </svg>
+                  </span>
+                  <input
+                    class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full xl:w-[165px] border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                    placeholder="Search..."
+                    type="text"
+                    name="search"
+                  />
+                </label>
               </div>
             </div>
           </div>
