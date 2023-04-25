@@ -1,5 +1,10 @@
 <script setup>
-    import { ref } from 'vue'
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import icon_receive from "@/assets/icon-receive.svg";
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
 
 import CompanyBusinessRequestTripModal from "@/components/request-trip/CompanyBusinessRequestTripModal.vue";
 import TableVoucherTaxiVue from "@/components/request-trip/vouchertaxi/TableVoucherTaxi.vue";
