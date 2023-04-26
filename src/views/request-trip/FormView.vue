@@ -3,6 +3,8 @@
     import expandArrow from '@/assets/ExpandArrow.png'
 
     let tab = ref('details')
+    let showTravel = ref(true)
+    let showAirlines = ref(true)
 
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
@@ -52,43 +54,87 @@
                                 TLK Info
                             </button>
                     </div>
-                    <Transition name="fade" appear>
+                   
                         <div v-if="tab == 'details'">
-                            <div class="flex items-center ">
+
+                            <div class="flex items-center cursor-pointer z-50" @click="showTravel = !showTravel">
                                 <h1>Traveller</h1>
                                 <img :src=expandArrow class="w-5 h-5" alt="">
                             </div>
-                            <hr class="border-2 border-black">
-                            <table class="mt-2 w-full">
-                                <thead>
-                                    <tr class="bg-blue text-white h-8">
-                                        <th class="border-2 border-[#8b8b8b]">Name</th>
-                                        <th class="border-2 border-[#8b8b8b]">SN</th>
-                                        <th class="border-2 border-[#8b8b8b]">Gender</th>
-                                        <th class="border-2 border-[#8b8b8b]">Contact No</th>
-                                        <th class="border-2 border-[#8b8b8b]">Department</th>
-                                        <th class="border-2 border-[#8b8b8b]">Company</th>
-                                        <th class="border-2 border-[#8b8b8b]">Type</th>
-                                        <th class="border-2 border-[#8b8b8b]">Max Hotel Fare</th>
-                                        <th class="border-2 border-[#8b8b8b]">Flight Entitlement</th>
-                                        <th class="border-2 border-[#8b8b8b]">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="h-16">
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                        <td class="border-2 border-[#8b8b8b]"></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <hr class="border-2 border-black z-50">
+                            
+                            <Transition name="fade">
+                                <table v-if="showTravel" class="mt-4 w-full z-3">
+                                    <thead>
+                                        <tr class="bg-blue text-white h-8">
+                                            <th class="border-2 border-[#8b8b8b]">Name</th>
+                                            <th class="border-2 border-[#8b8b8b]">SN</th>
+                                            <th class="border-2 border-[#8b8b8b]">Gender</th>
+                                            <th class="border-2 border-[#8b8b8b]">Contact No</th>
+                                            <th class="border-2 border-[#8b8b8b]">Department</th>
+                                            <th class="border-2 border-[#8b8b8b]">Company</th>
+                                            <th class="border-2 border-[#8b8b8b]">Type</th>
+                                            <th class="border-2 border-[#8b8b8b]">Max Hotel Fare</th>
+                                            <th class="border-2 border-[#8b8b8b]">Flight Entitlement</th>
+                                            <th class="border-2 border-[#8b8b8b]">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="h-16">
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </Transition>
+
+                            <div class="flex items-center cursor-pointer z-50" @click="showAirlines = !showAirlines">
+                                <h1>Airlines</h1>
+                                <img :src=expandArrow class="w-5 h-5" alt="">
+                            </div>
+                            <hr class="border-2 border-black z-50">
+                            
+                            <Transition name="fade">
+                                <table v-if="showAirlines" class="mt-4 w-full z-3">
+                                    <thead>
+                                        <tr class="bg-blue text-white h-8">
+                                            <th class="border-2 border-[#8b8b8b]">Name</th>
+                                            <th class="border-2 border-[#8b8b8b]">SN</th>
+                                            <th class="border-2 border-[#8b8b8b]">Gender</th>
+                                            <th class="border-2 border-[#8b8b8b]">Contact No</th>
+                                            <th class="border-2 border-[#8b8b8b]">Department</th>
+                                            <th class="border-2 border-[#8b8b8b]">Company</th>
+                                            <th class="border-2 border-[#8b8b8b]">Type</th>
+                                            <th class="border-2 border-[#8b8b8b]">Max Hotel Fare</th>
+                                            <th class="border-2 border-[#8b8b8b]">Flight Entitlement</th>
+                                            <th class="border-2 border-[#8b8b8b]">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="h-16">
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                            <td class="border-2 border-[#8b8b8b]"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </Transition>
+                           
                         </div>
                         <div v-else-if="tab == 'tlk'">
                             <h1>TLK</h1>
@@ -110,7 +156,7 @@
                                 <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="569.000" disabled>
                             </div>
                         </div>
-                    </Transition>
+                 
                 </div>
             </div>
         </div>
@@ -118,18 +164,32 @@
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s ease;
+.fade-enter-active
+{
+  transition: transform .5s ease;
 }
 
-.fade-enter-from,
-.fade-leave-from
+/* .fade-leave-active
 {
-    opacity: 1;
+  transition: transform .3s ease-out;
+} */
+
+.fade-enter-from
+{   
+    transform: translateY(-10px);
 }
-.fade-enter-to,
-.fade-leave-to {
-  opacity: 0;
+.fade-enter-to
+{
+   transform: translateY(0px);
 }
+
+/* .fade-leave-from
+{
+   transform: translateY(0px);
+}
+
+.fade-leave-to
+{   
+    transform: translateY(-10px);
+} */
 </style>

@@ -104,7 +104,7 @@
         </div> -->
       
         <!-- table box -->
-        <div class="bg-white rounded-t-xl pb-3 relative">
+        <div class="bg-white rounded-t-xl pb-3 relative custom-card">
 
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap gap-y-2 items-center justify-between mx-4 py-2">
@@ -333,6 +333,11 @@
 
   .backgroundHeight {
     min-height: calc(100vh - 115px);
+  }
+
+  .custom-card {
+  box-shadow: 0px -4px #015289;
+  border-radius: 4px;
   }
 
 </style>

@@ -34,11 +34,11 @@ const tableHead = [
 
 <template>
   <div
-    class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden w-[1050px]"
+    class="px-4 py-2 rounded-b-xl box-border block"
   >
     <div class="block overflow-x-auto">
       <table
-        class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+        class="table table-zebra table-compact border w-screen h-full rounded-lg"
       >
         <thead class="text-center font-JakartaSans text-sm font-bold h-10">
           <tr>

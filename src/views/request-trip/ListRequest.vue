@@ -22,7 +22,7 @@ let requestTripType = ref("Company Business");
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
       <div class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px]">
-        <div class="bg-white rounded-t-xl pb-3 relative custom-card">
+        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="flex flex-wrap gap-y-2 items-center justify-between mx-4 py-2"
@@ -146,7 +146,7 @@ let requestTripType = ref("Company Business");
           </table>
 
           <table v-if="requestTripType === 'Field Break'">
-            <TableFieldBreak />
+            <TableFieldBreak class="" />
           </table>
         </div>
       </div>

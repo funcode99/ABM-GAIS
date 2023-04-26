@@ -1,5 +1,4 @@
 <script setup>
-    // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
 
@@ -8,6 +7,9 @@
     import icon_receive from "@/assets/icon-receive.svg";
     
     import dataDummy from '@/utils/Api/system-configuration/menudata.js'
+
+    import Api from '@/utils/Api';
+    import router from '@/router';
     
     // import untuk approval table
     import { ref, onMounted, onBeforeMount, reactive, computed } from 'vue'
@@ -21,9 +23,6 @@
 
     const search = ref('')
     const isWide = ref(true)
-    let currentscript = ref(1)
-    let paginatescript = ref(5)
-    let paginate_totalscript = ref(0)
     let showingValue = ref(0)
 
     // import untuk user table
@@ -70,6 +69,7 @@
     // watch(ref, callback)
 
     onBeforeMount(() => {
+      fetch()
       // sortedData.value gak dianggap sebagai array lagi
       instanceArray = dataDummy
       sortedData.value = instanceArray
@@ -81,6 +81,14 @@
             return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
           })
         sortedData.value = filteredR
+    }
+
+    const fetch = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    // Set authorization for api
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/menu')
+    console.log(api)
     }
   
 </script>
@@ -311,9 +319,6 @@
 </template>
 
 <style scoped>
-  /* .zInfinite {
-    z-index: 9999;
-  } */
 
   th {
     padding: 2px;

@@ -41,6 +41,16 @@ const router = createRouter({
       component: Login,
       meta: {
         title: "Welcome",
+      },
+      beforeEnter: (to, from, next) => {
+        const user = localStorage.getItem('user');
+        const token = localStorage.getItem('token');
+  
+        if (user && token) {
+          return next('/user')
+        }
+  
+        return next()
       }
     },
     {
