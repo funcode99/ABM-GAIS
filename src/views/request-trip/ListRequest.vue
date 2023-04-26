@@ -146,7 +146,7 @@ let requestTripType = ref("Company Business");
           </table>
 
           <table v-if="requestTripType === 'Field Break'">
-            <TableFieldBreak class="" />
+            <TableFieldBreak />
           </table>
         </div>
       </div>
