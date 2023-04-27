@@ -4,9 +4,11 @@
     import icon_receive from "@/assets/icon-receive.svg";
     import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue"
 
-    import { ref } from 'vue'
+    import { ref, computed } from 'vue'
 
     let search = ref('')
+    let pageMultiplier = ref(10)
+    let pageMultiplierReactive = computed(() => pageMultiplier.value)
 
     const props = defineProps({
         title: String
@@ -134,12 +136,12 @@
 <!-- SHOWING -->
 <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
   <h1 class="text-xs">Showing</h1>
-  <select class="border-2 border-black rounded-lg w-15" name="" id="">
-    <option value="">10</option>
-    <option value="">25</option>
-    <option value="">50</option>
-    <option value="">75</option>
-    <option value="">100</option> 
+  <select class="border-2 border-black rounded-lg w-15" name="" id="" v-model="pageMultiplier" @change="$emit('changeShowing', pageMultiplierReactive)">
+    <option>10</option>
+    <option>25</option>
+    <option>50</option>
+    <option>75</option>
+    <option>100</option> 
   </select>
 </div>
 

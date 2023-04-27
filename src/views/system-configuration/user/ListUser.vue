@@ -1,7 +1,6 @@
 <script setup>
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
-    import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue"
     import TableTopBar from '@/components/layout/TableTopBar.vue'
 
     import icon_filter from "@/assets/icon_filter.svg";
@@ -11,18 +10,30 @@
     import dataDummy from '@/utils/Api/system-configuration/userdata.js'
 
     // import untuk user table
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
-    const search = ref('')
     const isWide = ref(true)
-
+    
+    const search = ref('')
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
     let lengthCounter = 0
+
+    //for paginations
+    let showingValue = ref(1);
+    let pageMultiplier = ref(10);
+    let pageMultiplierReactive = computed(() => pageMultiplier.value);
+    let paginateIndex = ref(0);
+
+    //for paginations
+    const onChangePage = (pageOfItem) => {
+      paginateIndex.value = pageOfItem - 1;
+      showingValue.value = pageOfItem;
+    };
 
     const selectAll = (checkValue) => { 
       const checkLead = checkValue
@@ -77,6 +88,11 @@
       lengthCounter = sortedData.value.length
       console.log(lengthCounter)
     }
+
+    const fillPageMultiplier = (value) => {
+      // ref harus pake .value biar ngaruh sama reactive :')
+      pageMultiplier.value = value
+    }
   
 </script>
 
@@ -93,84 +109,104 @@
 
         <Sidebar class="flex-none fixed" />     
 
-        <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]" 
-        :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']"
-      >
+      <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]" 
+        :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']">
 
-        <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
-          >
-        </div> -->
-
-        <TableTopBar :title="'User'" />
-        
-        <!-- actual table -->
-        <!-- scrollbar horizontal juga ada disini -->
-        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
-          
-        <div class="block overflow-x-auto">
-          <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
-
-            <thead class="text-center font-Montserrat text-sm font-bold h-10">
-              <tr class="">
-                <th>
-                  <div class="flex justify-center">
-                    <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-                  </div>
-                </th>
-
-                <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }} 
-                    <button class="">
-                      <img :src="arrowicon" class="w-[9px] h-3" />
-                    </button>
-                  </span>
-                </th>
-
-
-              </tr>
-            </thead>
-
-            <tbody>
-
-              <!-- sortir nya harus sama dengan key yang di data dummy -->
-
-                <tr v-for="data in sortedData" :key="data.No">
-                  <td>
-                    <input type="checkbox" name="chk">
-                  </td>
-                  <td>
-                    {{ data.No }} 
-                  </td>
-                  <td>
-                    {{ data.Username }}
-                  </td>
-                  <td>
-                    {{ data.UserRole }}
-                  </td>
-                  <td>
-                    {{ data.ApprovalAuthorities }}
-                  </td>
-                  <td class="flex flex-wrap gap-4 justify-center">
-                    <ModalEditUser/>
-                    <ModalDelete/>
-                  </td>
-                </tr>
-
-            </tbody>
-            
-          </table>
-        </div>
-
-          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <p class="font-Inter text-xs font-normal text-[#888888]">
-              Showing 1 to 10 of 20 entries
-            </p>
+          <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
+            >
           </div> -->
 
-        </div>
+          <TableTopBar :title="'User'" @change-showing="fillPageMultiplier" />
+          
+          <!-- actual table -->
+          <!-- scrollbar horizontal juga ada disini -->
+          <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+            
+          <div class="block overflow-x-auto">
+            <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
 
-        </div>
+              <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                <tr class="">
+                  <th>
+                    <div class="flex justify-center">
+                      <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                    </div>
+                  </th>
+
+                  <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }} 
+                      <button class="">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </span>
+                  </th>
+
+
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <!-- sortir nya harus sama dengan key yang di data dummy -->
+
+                  <tr v-for="data in sortedData.slice(
+                      paginateIndex * pageMultiplierReactive,
+                      (paginateIndex + 1) * pageMultiplierReactive
+                    )" :key="data.No">
+                    <td>
+                      <input type="checkbox" name="chk">
+                    </td>
+                    <td>
+                      {{ data.No }} 
+                    </td>
+                    <td>
+                      {{ data.Username }}
+                    </td>
+                    <td>
+                      {{ data.UserRole }}
+                    </td>
+                    <td>
+                      {{ data.ApprovalAuthorities }}
+                    </td>
+                    <td class="flex flex-wrap gap-4 justify-center">
+                      <ModalEditUser/>
+                      <ModalDelete/>
+                    </td>
+                  </tr>
+
+              </tbody>
+              
+            </table>
+          </div>
+
+            <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+              <p class="font-Inter text-xs font-normal text-[#888888]">
+                Showing 1 to 10 of 20 entries
+              </p>
+            </div> -->
+
+          </div>
+
+          <!-- PAGINATION -->
+          <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
+            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+              of {{ sortedData.length }} entries
+            </p>
+            <vue-awesome-paginate
+              :total-items="sortedData.length"
+              :items-per-page="parseInt(pageMultiplierReactive)"
+              :on-click="onChangePage"
+              v-model="showingValue"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
+            />
+          </div>
+
+      </div>
 
     </div>  
     

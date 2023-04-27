@@ -1,9 +1,12 @@
 <script setup>
+// for component
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
 import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
+
+// for asset
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -12,7 +15,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import employeedata from "@/utils/Api/reference/employeedata.js";
 
-import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 
 //for sort & search
 const search = ref("");
@@ -106,6 +109,7 @@ const filteredItems = (search) => {
   });
   sortedData.value = filteredR;
 };
+
 </script>
 
 <template>
@@ -314,6 +318,7 @@ const filteredItems = (search) => {
               :show-jump-buttons="true"
             />
           </div>
+          
         </div>
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />
