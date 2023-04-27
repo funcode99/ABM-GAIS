@@ -29,6 +29,7 @@ import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 
 import RequestTrip from '@/views/request-trip/ListRequest.vue'
 import FormView from '@/views/request-trip/FormView.vue'
+import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -227,7 +228,7 @@ const router = createRouter({
       }
     },
 
-    // request-trip page
+    // travel management systme
     {
       path: '/request',
       name: 'request trip',
@@ -242,6 +243,14 @@ const router = createRouter({
       component: FormView,
       meta : {
         title : 'View Request Trip'
+      }
+    },
+    {
+      path: '/cashadvancetravel',
+      name: 'cash advance travel',
+      component: TravelList,
+      meta: {
+        title: 'CA Travel'
       }
     },
   ]
