@@ -119,7 +119,9 @@ const filteredItems = (search) => {
           </div>
 
           <!-- SORT, DATE & SEARCH -->
-          <div class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between">
+          <div
+            class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
+          >
             <div class="flex flex-wrap items-center gap-4">
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
@@ -257,9 +259,11 @@ const filteredItems = (search) => {
                     <td>{{ data.total }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <button>
-                        <img :src="editicon" class="w-6 h-6" />
-                      </button>
+                      <router-link to="/viewcashadvancetravel">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                      </router-link>
                     </td>
                   </tr>
                 </tbody>

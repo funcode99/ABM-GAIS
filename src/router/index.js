@@ -30,6 +30,7 @@ import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 import RequestTrip from '@/views/request-trip/ListRequest.vue'
 import FormView from '@/views/request-trip/FormView.vue'
 import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
+import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,11 +47,11 @@ const router = createRouter({
       beforeEnter: (to, from, next) => {
         const user = localStorage.getItem('user');
         const token = localStorage.getItem('token');
-  
+
         if (user && token) {
           return next('/user')
         }
-  
+
         return next()
       }
     },
@@ -241,8 +242,8 @@ const router = createRouter({
       path: '/view-request',
       name: 'form view request trip',
       component: FormView,
-      meta : {
-        title : 'View Request Trip'
+      meta: {
+        title: 'View Request Trip'
       }
     },
     {
@@ -251,6 +252,14 @@ const router = createRouter({
       component: TravelList,
       meta: {
         title: 'CA Travel'
+      }
+    },
+    {
+      path: '/viewcashadvancetravel',
+      name: 'view cash advance travel',
+      component: TravelView,
+      meta: {
+        title: 'View CA Travel'
       }
     },
   ]
