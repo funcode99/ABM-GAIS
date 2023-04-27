@@ -1,6 +1,22 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
+
+import { ref } from "vue";
+
+const imageUrl = ref(null);
+
+//for change image
+function onFileChange(event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    imageUrl.value = e.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
 </script>
 
 <template>
@@ -26,11 +42,22 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
         <div class="flex justify-center items-center">
           <div class="avatar">
             <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
-              <div class="flex justify-center items-center py-8">
+              <div class="flex justify-center items-center">
                 <label for="file-input" class="cursor-pointer">
-                  <img :src="iconPlus" class="w-[37px] h-[37px]" />
+                  <img
+                    v-if="!imageUrl"
+                    :src="iconPlus"
+                    class="w-[37px] h-[37px] py-8"
+                  />
+                  <img v-if="imageUrl" :src="imageUrl" class="" />
                 </label>
-                <input type="file" id="file-input" class="hidden" required />
+                <input
+                  type="file"
+                  id="file-input"
+                  class="hidden"
+                  required
+                  @change="onFileChange"
+                />
               </div>
             </div>
           </div>
