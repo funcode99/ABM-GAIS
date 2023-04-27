@@ -1,8 +1,15 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import roleIcon from '@/assets/menu-access-role.png'
+  import iconClose from "@/assets/navbar/icon_close.svg"
+  import iconPlus from "@/assets/navbar/icon_plus.svg"
+  import deleteicon from "@/assets/navbar/delete_icon.svg"
+  import roleIcon from '@/assets/menu-access-role.png'
+
+  import { ref } from 'vue'
+  import { Modal } from 'usemodal-vue3'
+
+  let isVisible = ref(false)
+  let type = '' 
+  let modalPaddingHeight = 50
 
 const menuHeadTable = [
   {Id: 1, title: 'Create'},
@@ -23,23 +30,23 @@ const menuBodyTable = [
 
 </script>
 
-<template>
+<template class="font-JakartaSans">
  
-<label for="menu-access-role-modal" class="cursor-pointer"><img :src="roleIcon" class="w-6 h-6" /></label>
+  <button @click="isVisible = !isVisible">
+    <img :src=roleIcon class="w-[27px] h-[27px]" alt="">
+  </button>
 
-  <input type="checkbox" id="menu-access-role-modal" class="modal-toggle" />
-  <div class="modal">
-    <div class="modal-box relative">
+  <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
         
-      <nav class="sticky top-0 z-50 bg-white py-4">
-        <label for="menu-access-role-modal" class="cursor-pointer absolute right-0">
+    <nav class="sticky top-0 z-50 bg-white py-4">
+        <button @click="isVisible = false" for="menu-access-role-modal" class="cursor-pointer absolute right-0">
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
+        </button>
         <p class="font-JakartaSans text-2xl font-semibold text-left">Menu Access</p>
         <div className="divider m-0"></div>
-      </nav>
+    </nav>
 
-      <div class="mb-3 block overflow-x-auto">
+    <div class="mb-3 block overflow-x-auto">
         <table class="table">
           
           <thead>
@@ -81,15 +88,15 @@ const menuBodyTable = [
               </tr>
           </tbody>
         </table>
-      </div>
+    </div>
 
-      <div class="sticky bottom-0 bg-white py-4">
+    <div class="fixed right-4 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
-          <label
-            for="menu-access-role-modal"
+          <button
+            @click="isVisible = false"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
+            >Cancel</button
           >
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -97,10 +104,10 @@ const menuBodyTable = [
             Save
           </button>
         </div>
-      </div>
-
     </div>
-  </div>
+
+  </Modal>
+
 </template>
 
 <style scoped>

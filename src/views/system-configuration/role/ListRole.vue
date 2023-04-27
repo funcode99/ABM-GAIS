@@ -1,5 +1,4 @@
 <script setup>
-    // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
 
@@ -7,16 +6,16 @@
     import ModalEditRole from '@/components/system-configuration/role/ModalEditRole.vue'
     import ModalMenuAccessRole from '@/components/system-configuration/role/ModalMenuAccessRole.vue'
 
-    import dataDummy from '@/utils/Api/system-configuration/roledata.js'
+    import { ref, onBeforeMount } from 'vue'
+    import Api from '@/utils/Api';
+    import router from '@/router';
 
-    // import untuk approval table
-    import { ref, onMounted, onBeforeMount, reactive, computed } from 'vue'
     import editicon from "@/assets/navbar/edit_icon.svg";
     import deleteicon from "@/assets/navbar/delete_icon.svg";
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import menuIcon from '@/assets/menu-access-role.png'
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
-    import ModalDeleteUser from '@/components/system-configuration/user/ModalDeleteUser.vue'
+    import ModalDelete from '@/components/modal/ModalDelete.vue'
 
     const search = ref('')
     const isWide = ref(true)
@@ -44,13 +43,22 @@ const sortList = (sortBy) => {
   }
 }
 
+const fetch = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    
+    // Set authorization for api
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/role')
+    instanceArray = api.data.data
+    sortedData.value = instanceArray
+    lengthCounter = sortedData.value.length
+}
+
 // watch(ref, callback)
 
 onBeforeMount(() => {
   // sortedData.value gak dianggap sebagai array lagi
-  instanceArray = dataDummy
-  sortedData.value = instanceArray
-  lengthCounter = sortedData.value.length
+  fetch()
 })
 
 const filteredItems = (search) => {
@@ -58,7 +66,7 @@ const filteredItems = (search) => {
       const filteredR = sortedData.value.filter(item => {
         // console.log(item.No)
         // harus diganti nama json nya
-         return item.No.toString().indexOf(search.toLowerCase()) > -1 | item.UserRole.toLowerCase().indexOf(search.toLowerCase()) > -1
+         return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
@@ -77,9 +85,7 @@ const filteredItems = (search) => {
     <div class="flex w-screen mt-[115px]">
 
         <Sidebar class="flex-none fixed" /> 
-
-      <!-- w-screen md:w-full -->
-      <!-- ml-[100px] md:ml-[260px] -->
+        
       <!-- slate box -->
       <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen sm:ml-[100px] md:ml-[260px]"
       :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']"
@@ -164,17 +170,17 @@ const filteredItems = (search) => {
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                <tr v-for="data in sortedData" :key="data.No">
+                <tr v-for="data in sortedData" :key="data.id">
                   <td>
-                    {{ data.No }} 
+                    {{ data.id }} 
                   </td>
                   <td>
-                    {{ data.UserRole }}
+                    {{ data.role }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
                     <ModalMenuAccessRole />
                     <ModalEditRole />
-                    <ModalDeleteUser />
+                    <ModalDelete/>
                   </td>
                 </tr>
 

@@ -1,25 +1,29 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+  import iconClose from "@/assets/navbar/icon_close.svg"
+  import editIcon from "@/assets/navbar/edit_icon.svg"
+
+  import { ref } from 'vue'
+  import { Modal } from 'usemodal-vue3'
+
+  let isVisible = ref(false)
+  let type = '' 
+  let modalPaddingHeight = 50
+
 </script>
 
-<template>
-  <label
-    for="edit-role-modal"
-    class="cursor-pointer"
-    ><img :src="editicon" class="w-6 h-6" /></label
-  >
-
-  <input type="checkbox" id="edit-role-modal" class="modal-toggle" />
-  <div class="modal">
-    <div class="modal-box relative">
+<template class="font-JakartaSans">
       
+  <button @click="isVisible = !isVisible">
+    <img :src=editIcon alt="">
+  </button>
+
+  <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+
+
         <nav class="sticky top-0 z-50 bg-white py-4">
-            <label for="edit-role-modal" class="cursor-pointer absolute right-0">
+            <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-            </label>
+            </button>
             <p class="font-JakartaSans text-2xl font-semibold">Edit Role</p>
             <div className="divider m-0"></div>
         </nav>
@@ -27,10 +31,13 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
       <form class="mb-3">
         
         <div class="mb-3">
-          <label
-            for="name"
+          <span
+            
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-            >Role<span class="text-red">*</span></label>
+            >
+            Role
+            <span class="text-red">*</span>
+          </span>
           <input
             type="text"
             id="name"
@@ -42,17 +49,13 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 
       </form>
 
-
-
-
-
       <div class="sticky bottom-0 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
-          <label
-            for="edit-role-modal"
+          <button
+            @click="isVisible = false"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
+            >Cancel</button
           >
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -61,8 +64,9 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
           </button>
         </div>
       </div>
-    </div>
-  </div>
+
+  </Modal>
+
 </template>
 
 <style scoped>

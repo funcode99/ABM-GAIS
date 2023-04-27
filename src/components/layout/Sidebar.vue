@@ -123,7 +123,7 @@ let travel = 'travelManagementSystem'
                   <a href='#' class="flex items-center w-full justify-between"
                     :class="[$route.path == '/request' ? `anchorImage anchorSubMenu` : '']" 
                   >
-                    Request Trip <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                    Request Trip <img class="w-5 h-5" :src="groupIcon" alt="" />
                   </a>
                 </div>
               </router-link>
@@ -136,7 +136,7 @@ let travel = 'travelManagementSystem'
                   <a href='#' class="flex items-center w-full justify-between"
                   :class="[$route.path == '/role' ? `anchorImage anchorSubMenu` : '']"
                   >
-                    Settlement <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                    Settlement <img class="w-5 h-5" :src="groupIcon" alt="" />
                   </a>
                 </div>
               </router-link>
@@ -148,7 +148,7 @@ let travel = 'travelManagementSystem'
                   <a href='#' class="flex items-center w-full justify-between" 
                   :class="[$route.path == '/menu' ? `anchorImage anchorSubMenu` : '']"
                   >
-                    Claim Reimbursement <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                    Claim Reimbursement <img class="w-5 h-5" :src="groupIcon" alt="" />
                   </a>
                 </div>
               </router-link>
@@ -161,7 +161,7 @@ let travel = 'travelManagementSystem'
                   <a href='#' class="flex items-center w-full justify-between" 
                   :class="[$route.path == '/cash' ? `anchorImage anchorSubMenu` : '']"
                   >
-                    Cash Advance <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                    Cash Advance <img class="w-5 h-5" :src="groupIcon" alt="" />
                   </a>
                 </div>
                 <div class="ml-5 mt-[10px]">
@@ -217,7 +217,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between" 
                 :class="[$route.path == '/user' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  User <img class="w-5 h-5 invisible" :src="groupIcon" alt=""  />
+                  User <img class="w-5 h-5" :src="groupIcon" alt=""  />
                 </a>
               </div>
             </router-link>
@@ -229,7 +229,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between" 
                 :class="[$route.path == '/role' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Role <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Role <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
@@ -241,7 +241,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between" 
                 :class="[$route.path == '/menu' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Menu <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Menu <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
@@ -253,7 +253,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between" 
                 :class="[$route.path == '/approval' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Approval <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Approval <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
@@ -265,7 +265,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between" 
                 :class="[$route.path == '/sequence' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Sequence <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Sequence <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
@@ -302,7 +302,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between" 
                 :class="[$route.path == '/employee' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Employee <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Employee <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -314,7 +314,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/company' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Company <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Company <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -326,7 +326,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/departement' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Department <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Department <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -338,7 +338,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between" 
                 :class="[$route.path == '/flight' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Flight <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Flight <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -350,7 +350,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/pagu' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Pagu <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Pagu <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -362,7 +362,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/reimbursement' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Reimbursement <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Reimbursement <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -374,7 +374,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/zona' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Zona <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Zona <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -386,7 +386,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/job' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Job <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Job <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -398,7 +398,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/site' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Site <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Site <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -410,7 +410,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/brand' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Brand <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Brand <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -422,7 +422,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/uom' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  UOM <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  UOM <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -434,7 +434,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/warehouse' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Warehouse <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Warehouse <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -446,7 +446,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/car' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Car <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Car <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>
@@ -458,7 +458,7 @@ let travel = 'travelManagementSystem'
                 <a href='#' class="flex items-center w-full justify-between"
                 :class="[$route.path == '/currency' ? `anchorImage anchorSubMenu` : '']"
                 >
-                  Currency <img class="w-5 h-5 invisible" :src="groupIcon" alt="" />
+                  Currency <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
               </router-link>

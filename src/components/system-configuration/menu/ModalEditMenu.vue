@@ -1,28 +1,31 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+  import iconClose from "@/assets/navbar/icon_close.svg";
+  import editIcon from "@/assets/navbar/edit_icon.svg";
+
+  import { ref } from 'vue'
+  import { Modal } from 'usemodal-vue3'
+
+  let isVisible = ref(false)
+  let type = '' 
+  let modalPaddingHeight = 50
 </script>
 
 <!-- komponen ini mendapat warisan styling dari komponen parent nya (listMenu) -->
-<template>
-  
-    <label for="edit-menu-modal" class="cursor-pointer">
-        <img :src="editicon" alt="">
-    </label>
+<template class="font-JakartaSans">
 
-  <input type="checkbox" id="edit-menu-modal" class="modal-toggle" />
-  <div class="modal">
-    <div class="modal-box relative">
+  <button @click="isVisible = !isVisible">
+    <img :src=editIcon alt="">
+  </button>
       
-        <nav class="sticky top-0 z-50 bg-white py-4">
-            <label for="edit-menu-modal" class="cursor-pointer absolute right-0">
+  <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+
+      <nav class="sticky top-0 z-50 bg-white py-4">
+            <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-            </label>
+            </button>
             <p class="font-JakartaSans text-2xl font-semibold">Edit Menu</p>
             <div className="divider m-0"></div>
-        </nav>
+      </nav>
 
       <form class="mb-3">
         
@@ -90,11 +93,11 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
       <div class="sticky bottom-0 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
-          <label
-            for="edit-menu-modal"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
+          <button
+          @click="isVisible = false"
+            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">
+            Cancel
+          </button>
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
           >
@@ -102,8 +105,9 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
           </button>
         </div>
       </div>
-    </div>
-  </div>
+
+  </Modal>
+  
 </template>
 
 <style scoped>

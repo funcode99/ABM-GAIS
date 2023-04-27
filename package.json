@@ -16,6 +16,7 @@
     "dotenv": "^16.0.3",
     "jw-vue-pagination": "^1.0.3",
     "pinia": "^2.0.32",
+    "usemodal-vue3": "^0.3.7",
     "vue": "^3.2.47",
     "vue-awesome-paginate": "^1.1.46",
     "vue-chartjs": "^5.2.0",

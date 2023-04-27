@@ -36,3 +36,19 @@
   background-color: #015289;
   border-color: #015289;
 }
+
+.modal-vue3-body {
+  padding: 32px 32px !important;
+  max-height: 80vh !important;
+}
+
+.modal-vue3-header,
+.modal-vue3-footer {
+  display: none !important;
+}
+
+.modal-vue3-content {
+  width: 85vw !important;
+  max-width: 500px !important;
+  border-radius: 16px !important;
+}

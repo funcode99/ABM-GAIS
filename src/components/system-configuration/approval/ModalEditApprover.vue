@@ -1,198 +1,208 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+  import iconClose from "@/assets/navbar/icon_close.svg";
+  import iconPlus from "@/assets/navbar/icon_plus.svg";
+  import editIcon from "@/assets/navbar/edit_icon.svg";
+  import deleteIcon from "@/assets/navbar/delete_icon.svg";
+
+  import { ref } from 'vue'
+  import { Modal } from 'usemodal-vue3'
+
+  let isVisible = ref(false)
+  let type = ''
+  let modalPaddingHeight = 50
+
 </script>
 
 <template>
-  <label
-    for="edit-approver-modal"
-    class="cursor-pointer"
-    ><img :src="editicon" class="w-6 h-6" /></label
-  >
+  
+  <button @click="isVisible = !isVisible">
+    <img :src=editIcon alt="">
+  </button>
 
-  <input type="checkbox" id="edit-approver-modal" class="modal-toggle" />
-  <div class="modal">
-    <div class="modal-box relative">
+  <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight"> 
+  
       <nav class="sticky top-0 z-50 bg-white py-4">
-        <label for="edit-approver-modal" class="cursor-pointer absolute right-0">
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-left">Edit Matrix</p>
-        <div className="divider m-0"></div>
-      </nav>
-
-      <form class="mb-3">
-        
-        <div class="mb-3 text-left">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Nama Matrix<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            id="name"
-            placeholder="Nama Matrix"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
-
-       <div class="mb-3 flex items-center text-left">
-          <div class="flex flex-col">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm">Menu<span class="text-red">*</span></label>
-            <select name="" id="" class="input input-bordered input-accent w-[163px] font-JakartaSans font-semibold text-base">
-              <option disabled selected hidden value="">
-                Menu
-              </option>
-              <option value="">
-                Settlement
-              </option>
-            </select>
-          </div>
-       </div>
-
-       <div class="mb-3 flex items-center text-left">
-          <div class="flex flex-col">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm">Company<span class="text-red">*</span></label>
-            <select name="" id="" class="input input-bordered input-accent w-[163px] font-JakartaSans font-semibold text-base">
-              <option disabled selected hidden value="">
-                Company
-              </option>
-              <option value="">
-                PT ABM
-              </option>
-            </select>
-          </div>
-       </div>
-
-      </form>
-
-      <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
-      <hr class="border border-black">
-
-    <table
-      class="table table-zebra table-compact border w-full rounded-lg"
-    >
-
-      <thead class="text-center font-Montserrat text-sm font-bold">
-        <tr class="">
-          <th class="relative">
-            <span class="flex justify-center">Level</span>
-            <button class="absolute right-0 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="relative">
-            <span class="flex justify-center">Approver Name</span>
-            <button class="absolute right-1 top-0 bottom-0">
-              <img :src="arrowicon" class="w-[9px] h-3" />
-            </button>
-          </th>
-          <th class="flex justify-center">Actions</th>
-        </tr>
-      </thead>
-
-      <tbody class="bg-[#F5F5F5]">
-
-        <tr class="text-center">
-          
-          <td
-          >
-            1
-          </td>
-          <td
-            
-          >
-            John Mane
-          </td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button>
-            <button>
-              <img :src="deleteicon" class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-
-        <tr class="text-center">
-         
-          <td
-          >
-            2
-          </td>
-          <td
-            
-          >
-            Mae X
-          </td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button>
-
-            <button>
-              <img :src="deleteicon" class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-
-        <tr class="text-center">
-        
-          <td
-          >
-            3
-          </td>
-          <td
-          >
-            Nina Max
-          </td>
-          <td class="flex flex-wrap gap-4 justify-center">
-            <button>
-              <img :src="editicon" class="w-6 h-6" />
-            </button>
-            <button>
-              <img :src="deleteicon" class="w-6 h-6" />
-            </button>
-          </td>
-        </tr>
-
-        <tr class='text-center'>
-          <td></td>
-          <td></td>
-          <td class="flex justify-center"><img class="cursor-pointer" :src="iconPlus" alt=""></td>
-        </tr>
-
-        <!-- <tr v-for="data in dataDummy" :key="data.blogId">
-          <td>{{ data.title }}</td>
-          <td>{{ data.name }}</td>
-        </tr> -->
-
-      </tbody>
-      
-    </table>
-
-
-      <div class="sticky bottom-0 bg-white py-4">
-        <div className="divider m-0 pb-4"></div>
-        <div class="flex justify-end gap-4">
-          <label
-            for="edit-approver-modal"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
+          <button @click="isVisible = false" class="cursor-pointer absolute right-0">
+            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </button>
+          <p class="font-JakartaSans text-2xl font-semibold text-left">Edit Matrix</p>
+          <div className="divider m-0"></div>
+        </nav>
+  
+        <form class="mb-3">
+          
+          <div class="mb-3 text-left">
+            <label
+              for="name"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Nama Matrix<span class="text-red">*</span></label
+            >
+            <input
+              type="text"
+              id="name"
+              placeholder="Nama Matrix"
+              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              required
+            />
+          </div>
+  
+         <div class="mb-3 flex items-center text-left">
+            <div class="flex flex-col">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">Menu<span class="text-red">*</span></label>
+              <select name="" id="" class="input input-bordered input-accent w-[163px] font-JakartaSans font-semibold text-base">
+                <option disabled selected hidden value="">
+                  Menu
+                </option>
+                <option value="">
+                  Settlement
+                </option>
+              </select>
+            </div>
+         </div>
+  
+         <div class="mb-3 flex items-center text-left">
+            <div class="flex flex-col">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">Company<span class="text-red">*</span></label>
+              <select name="" id="" class="input input-bordered input-accent w-[163px] font-JakartaSans font-semibold text-base">
+                <option disabled selected hidden value="">
+                  Company
+                </option>
+                <option value="">
+                  PT ABM
+                </option>
+              </select>
+            </div>
+         </div>
+  
+        </form>
+  
+        <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
+        <hr class="border border-black">
+  
+        <table
+          class="table table-zebra table-compact border w-full rounded-lg"
+        >
+  
+          <thead class="text-center font-Montserrat text-sm font-bold">
+            <tr class="">
+              <th class="relative">
+                <span class="flex justify-center">Level</span>
+                <button class="absolute right-0 top-0 bottom-0">
+                  <img :src="arrowicon" class="w-[9px] h-3" />
+                </button>
+              </th>
+              <th class="relative">
+                <span class="flex justify-center">Approver Name</span>
+                <button class="absolute right-1 top-0 bottom-0">
+                  <img :src="arrowicon" class="w-[9px] h-3" />
+                </button>
+              </th>
+              <th class="flex justify-center">Actions</th>
+            </tr>
+          </thead>
+  
+          <tbody class="bg-[#F5F5F5]">
+  
+            <tr class="text-center">
+              
+              <td
+              >
+                1
+              </td>
+              <td
+                
+              >
+                John Mane
+              </td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editIcon" class="w-6 h-6" />
+                </button>
+                <button>
+                  <img :src="deleteIcon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+  
+            <tr class="text-center">
+            
+              <td
+              >
+                2
+              </td>
+              <td
+                
+              >
+                Mae X
+              </td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editIcon" class="w-6 h-6" />
+                </button>
+  
+                <button>
+                  <img :src="deleteIcon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+  
+            <tr class="text-center">
+            
+              <td
+              >
+                3
+              </td>
+              <td
+              >
+                Nina Max
+              </td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editIcon" class="w-6 h-6" />
+                </button>
+                <button>
+                  <img :src="deleteIcon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+  
+            <tr class='text-center'>
+              <td></td>
+              <td></td>
+              <td class="flex justify-center"><img class="cursor-pointer" :src="iconPlus" alt=""></td>
+            </tr>
+  
+            <!-- <tr v-for="data in dataDummy" :key="data.blogId">
+              <td>{{ data.title }}</td>
+              <td>{{ data.name }}</td>
+            </tr> -->
+  
+          </tbody>
+          
+        </table>
+  
+        <div class="sticky bottom-0 bg-white py-4">
+          <div className="divider m-0 pb-4"></div>
+          <div class="flex justify-end gap-4">
+            <button
+            @click="isVisible = false"
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+              >
+              Cancel
+            </button>
+            <button
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            >
+              Save
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
-  </div>
+  
+  </Modal>
+
+
+
+
 </template>
 
 <style scoped>
