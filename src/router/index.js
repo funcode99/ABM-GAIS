@@ -31,6 +31,7 @@ import RequestTrip from '@/views/request-trip/ListRequest.vue'
 import FormView from '@/views/request-trip/FormView.vue'
 import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
+import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -260,6 +261,14 @@ const router = createRouter({
       component: TravelView,
       meta: {
         title: 'View CA Travel'
+      }
+    },
+    {
+      path: '/cashadvancenontravel',
+      name: 'cash advance non travel',
+      component: NonTravelList,
+      meta: {
+        title: 'CA Non Travel'
       }
     },
   ]

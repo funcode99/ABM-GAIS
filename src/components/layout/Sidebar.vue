@@ -231,10 +231,15 @@ let travel = "travelManagementSystem";
                         Travel
                       </li>
                     </router-link>
-                    <li class="flex gap-[10px] items-center">
-                      <img :src="submenuInner" alt="" class="w-2 h-2" /> Non
-                      Travel
-                    </li>
+                    <router-link
+                      to="/cashadvancenontravel"
+                      class="cursor-pointer"
+                    >
+                      <li class="flex gap-[10px] items-center">
+                        <img :src="submenuInner" alt="" class="w-2 h-2" />
+                        Non Travel
+                      </li>
+                    </router-link>
                   </ul>
                 </div>
               </button>

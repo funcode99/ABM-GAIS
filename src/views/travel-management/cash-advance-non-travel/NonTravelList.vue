@@ -2,14 +2,16 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+// import ModalAddCA from "@/components/travel-management/cash-advance/ModalAddCA.vue"
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import datatravel from "@/utils/Api/travel-cash-advance/datatravel.js";
+import datanontravel from "@/utils/Api/cash-advance-non-travel/datanontravel.js";
 
 import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 
@@ -53,8 +55,8 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
   { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Name", jsonData: "name" },
-  { Id: 5, title: "Total", jsonData: "total" },
+  { Id: 4, title: "Event", jsonData: "event" },
+  { Id: 5, title: "Cost Center", jsonData: "cost_center" },
   { Id: 6, title: "Status", jsonData: "status" },
   { Id: 7, title: "Actions" },
 ];
@@ -71,7 +73,7 @@ const sortList = (sortBy) => {
 };
 
 onBeforeMount(() => {
-  instanceArray = datatravel;
+  instanceArray = datanontravel;
   sortedData.value = instanceArray;
 });
 
@@ -80,10 +82,10 @@ const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
     (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
       (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -106,9 +108,10 @@ const filteredItems = (search) => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Cash Advance Travel
+              Cash Advance Non Travel
             </p>
             <div class="flex gap-4">
+              <!-- <ModalAddCA /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -176,7 +179,7 @@ const filteredItems = (search) => {
                 </span>
                 <input
                   class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[11px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search By CA No / Name"
+                  placeholder="Search By CA No / Event"
                   type="text"
                   name="search"
                   v-model="search"
@@ -254,15 +257,16 @@ const filteredItems = (search) => {
                     <td>{{ data.no }}</td>
                     <td>{{ data.created_date }}</td>
                     <td>{{ data.ca_no }}</td>
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.total }}</td>
+                    <td>{{ data.event }}</td>
+                    <td>{{ data.cost_center }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewcashadvancetravel">
-                        <button>
-                          <img :src="editicon" class="w-6 h-6" />
-                        </button>
-                      </router-link>
+                      <button>
+                        <img :src="editicon" class="w-6 h-6" />
+                      </button>
+                      <button>
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
                     </td>
                   </tr>
                 </tbody>
