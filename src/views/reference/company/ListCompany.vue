@@ -4,6 +4,8 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
+import ModalView from "@/components/reference/company/ModalView.vue";
+
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
@@ -119,7 +121,21 @@ const filteredItems = (search) => {
           </div>
 
           <!-- SEARCH -->
-          <div class="flex flex-wrap justify-start items-center mx-4">
+          <div class="flex flex-wrap justify-between items-center mx-4">
+            <div class="flex flex-wrap gap-2">
+              <h1 class="text-xs font-JakartaSans font-normal flex justify-center items-center">Showing</h1>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="pageMultiplier"
+              >
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>75</option>
+                <option>100</option>
+              </select>
+            </div>
+
             <div class="flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -152,7 +168,7 @@ const filteredItems = (search) => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+          <!-- <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
@@ -164,7 +180,7 @@ const filteredItems = (search) => {
               <option>75</option>
               <option>100</option>
             </select>
-          </div>
+          </div> -->
 
           <!-- TABLE -->
           <div
@@ -221,6 +237,7 @@ const filteredItems = (search) => {
                     <td>{{ data.name }}</td>
                     <td>{{ data.parent }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
+                      <ModalView />
                       <ModalEdit />
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
