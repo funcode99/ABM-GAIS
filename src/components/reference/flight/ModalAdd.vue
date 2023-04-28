@@ -17,7 +17,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-sm lg:text-2xl font-semibold text-white mx-4 py-2">
-          New Flight Entitlement
+          New Flight Class
         </p>
       </nav>
 

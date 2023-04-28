@@ -495,7 +495,7 @@ let travel = "travelManagementSystem";
                     $route.path == '/flight' ? `anchorImage anchorSubMenu` : '',
                   ]"
                 >
-                  Flight <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  Flight Class<img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>

@@ -105,7 +105,7 @@ const filteredItems = (search) => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              flight entitlement
+              flight class
             </p>
             <div class="flex gap-4">
               <ModalAdd />
@@ -117,8 +117,22 @@ const filteredItems = (search) => {
             </div>
           </div>
 
-          <!-- SEARCH -->
-          <div class="flex flex-wrap justify-start items-center mx-4">
+          <!-- SEARCH & SHOWING -->
+          <div class="flex flex-wrap justify-between items-center mx-4">
+            <div class="flex items-center gap-1 pt-6 pb-4 h-4">
+              <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="pageMultiplier"
+              >
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>75</option>
+                <option>100</option>
+              </select>
+            </div>
+
             <div class="flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
@@ -148,21 +162,6 @@ const filteredItems = (search) => {
                 />
               </label>
             </div>
-          </div>
-
-          <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
-            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
-            <select
-              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              v-model="pageMultiplier"
-            >
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>75</option>
-              <option>100</option>
-            </select>
           </div>
 
           <!-- TABLE -->
