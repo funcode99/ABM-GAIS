@@ -199,7 +199,8 @@ let travel = "travelManagementSystem";
                       $route.path == '/menu' ? `anchorImage anchorSubMenu` : '',
                     ]"
                   >
-                    Claim Reimbursement <img class="w-5 h-5" :src="groupIcon" alt="" />
+                    Claim Reimbursement
+                    <img class="w-5 h-5" :src="groupIcon" alt="" />
                   </a>
                 </div>
               </router-link>
@@ -283,71 +284,140 @@ let travel = "travelManagementSystem";
           </button>
 
           <div
-          v-if="sidebar.sidebarMenu.systemConfiguration == true"
-          class="pl-4 pb-4 sm:flex sm:flex-col hidden"
-        >
-          <ul class="flex flex-col gap-4 pt-4 px-2">
-            <router-link to="/user" class="cursor-pointer"
-              >
-              <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :class="[$route.path == '/user' ? 'hidden' : 'inline']" :src=submenuLine alt="">
-                <img class="h-[2px] w-2" :class="[$route.path == '/user' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
-                <a href='#' class="flex items-center w-full justify-between" 
-                :class="[$route.path == '/user' ? `anchorImage anchorSubMenu` : '']"
-                >
-                  User <img class="w-5 h-5" :src="groupIcon" alt=""  />
-                </a>
-              </div>
-            </router-link>
-            <router-link to="/role" class="cursor-pointer"
-              >
-              <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :class="[$route.path == '/role' ? 'hidden' : 'inline']" :src=submenuLine alt="">
-                <img class="h-[2px] w-2" :class="[$route.path == '/role' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
-                <a href='#' class="flex items-center w-full justify-between" 
-                :class="[$route.path == '/role' ? `anchorImage anchorSubMenu` : '']"
-                >
-                  Role <img class="w-5 h-5" :src="groupIcon" alt="" />
-                </a>
-              </div>
-            </router-link>
-            <router-link to="/menu" class="cursor-pointer"
-              >
-              <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :class="[$route.path == '/menu' ? 'hidden' : 'inline']" :src=submenuLine alt="">
-                <img class="h-[2px] w-2" :class="[$route.path == '/menu' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
-                <a href='#' class="flex items-center w-full justify-between" 
-                :class="[$route.path == '/menu' ? `anchorImage anchorSubMenu` : '']"
-                >
-                  Menu <img class="w-5 h-5" :src="groupIcon" alt="" />
-                </a>
-              </div>
-            </router-link>
-            <router-link to="/approval" class="cursor-pointer"
-              >
-              <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :class="[$route.path == '/approval' ? 'hidden' : 'inline']" :src=submenuLine alt="">
-                <img class="h-[2px] w-2" :class="[$route.path == '/approval' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
-                <a href='#' class="flex items-center w-full justify-between" 
-                :class="[$route.path == '/approval' ? `anchorImage anchorSubMenu` : '']"
-                >
-                  Approval <img class="w-5 h-5" :src="groupIcon" alt="" />
-                </a>
-              </div>
-            </router-link>
-            <router-link to="/sequence" class="cursor-pointer"
-              >
-              <div class="flex gap-[10px] items-center cursor-pointer">
-                <img class="h-[2px] w-2" :class="[$route.path == '/sequence' ? 'hidden' : 'inline']" :src=submenuLine alt="">
-                <img class="h-[2px] w-2" :class="[$route.path == '/sequence' ? 'inline' : 'hidden']" :src=submenuLineSelected alt="">
-                <a href='#' class="flex items-center w-full justify-between" 
-                :class="[$route.path == '/sequence' ? `anchorImage anchorSubMenu` : '']"
-                >
-                  Sequence <img class="w-5 h-5" :src="groupIcon" alt="" />
-                </a>
-              </div>
-            </router-link>
-          </ul>
+            v-if="sidebar.sidebarMenu.systemConfiguration == true"
+            class="pl-4 pb-4 sm:flex sm:flex-col hidden"
+          >
+            <ul class="flex flex-col gap-4 pt-4 px-2">
+              <router-link to="/user" class="cursor-pointer">
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/user' ? 'hidden' : 'inline']"
+                    :src="submenuLine"
+                    alt=""
+                  />
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/user' ? 'inline' : 'hidden']"
+                    :src="submenuLineSelected"
+                    alt=""
+                  />
+                  <a
+                    href="#"
+                    class="flex items-center w-full justify-between"
+                    :class="[
+                      $route.path == '/user' ? `anchorImage anchorSubMenu` : '',
+                    ]"
+                  >
+                    User <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+              <router-link to="/role" class="cursor-pointer">
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/role' ? 'hidden' : 'inline']"
+                    :src="submenuLine"
+                    alt=""
+                  />
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/role' ? 'inline' : 'hidden']"
+                    :src="submenuLineSelected"
+                    alt=""
+                  />
+                  <a
+                    href="#"
+                    class="flex items-center w-full justify-between"
+                    :class="[
+                      $route.path == '/role' ? `anchorImage anchorSubMenu` : '',
+                    ]"
+                  >
+                    Role <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+              <router-link to="/menu" class="cursor-pointer">
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/menu' ? 'hidden' : 'inline']"
+                    :src="submenuLine"
+                    alt=""
+                  />
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/menu' ? 'inline' : 'hidden']"
+                    :src="submenuLineSelected"
+                    alt=""
+                  />
+                  <a
+                    href="#"
+                    class="flex items-center w-full justify-between"
+                    :class="[
+                      $route.path == '/menu' ? `anchorImage anchorSubMenu` : '',
+                    ]"
+                  >
+                    Menu <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+              <router-link to="/approval" class="cursor-pointer">
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/approval' ? 'hidden' : 'inline']"
+                    :src="submenuLine"
+                    alt=""
+                  />
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/approval' ? 'inline' : 'hidden']"
+                    :src="submenuLineSelected"
+                    alt=""
+                  />
+                  <a
+                    href="#"
+                    class="flex items-center w-full justify-between"
+                    :class="[
+                      $route.path == '/approval'
+                        ? `anchorImage anchorSubMenu`
+                        : '',
+                    ]"
+                  >
+                    Approval <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+              <router-link to="/sequence" class="cursor-pointer">
+                <div class="flex gap-[10px] items-center cursor-pointer">
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/sequence' ? 'hidden' : 'inline']"
+                    :src="submenuLine"
+                    alt=""
+                  />
+                  <img
+                    class="h-[2px] w-2"
+                    :class="[$route.path == '/sequence' ? 'inline' : 'hidden']"
+                    :src="submenuLineSelected"
+                    alt=""
+                  />
+                  <a
+                    href="#"
+                    class="flex items-center w-full justify-between"
+                    :class="[
+                      $route.path == '/sequence'
+                        ? `anchorImage anchorSubMenu`
+                        : '',
+                    ]"
+                  >
+                    Sequence <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  </a>
+                </div>
+              </router-link>
+            </ul>
           </div>
         </li>
 
@@ -496,6 +566,33 @@ let travel = "travelManagementSystem";
                   ]"
                 >
                   Flight Class<img class="w-5 h-5" :src="groupIcon" alt="" />
+                </a>
+              </div>
+            </router-link>
+            <router-link to="/currency" class="cursor-pointer">
+              <div class="flex gap-[10px] items-center cursor-pointer">
+                <img
+                  class="h-[2px] w-2"
+                  :class="[$route.path == '/currency' ? 'hidden' : 'inline']"
+                  :src="submenuLine"
+                  alt=""
+                />
+                <img
+                  class="h-[2px] w-2"
+                  :class="[$route.path == '/currency' ? 'inline' : 'hidden']"
+                  :src="submenuLineSelected"
+                  alt=""
+                />
+                <a
+                  href="#"
+                  class="flex items-center w-full justify-between"
+                  :class="[
+                    $route.path == '/currency'
+                      ? `anchorImage anchorSubMenu`
+                      : '',
+                  ]"
+                >
+                  Currency <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
@@ -729,33 +826,6 @@ let travel = "travelManagementSystem";
                   ]"
                 >
                   Car <img class="w-5 h-5" :src="groupIcon" alt="" />
-                </a>
-              </div>
-            </router-link>
-            <router-link to="/currency" class="cursor-pointer">
-              <div class="flex gap-[10px] items-center cursor-pointer">
-                <img
-                  class="h-[2px] w-2"
-                  :class="[$route.path == '/currency' ? 'hidden' : 'inline']"
-                  :src="submenuLine"
-                  alt=""
-                />
-                <img
-                  class="h-[2px] w-2"
-                  :class="[$route.path == '/currency' ? 'inline' : 'hidden']"
-                  :src="submenuLineSelected"
-                  alt=""
-                />
-                <a
-                  href="#"
-                  class="flex items-center w-full justify-between"
-                  :class="[
-                    $route.path == '/currency'
-                      ? `anchorImage anchorSubMenu`
-                      : '',
-                  ]"
-                >
-                  Currency <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
