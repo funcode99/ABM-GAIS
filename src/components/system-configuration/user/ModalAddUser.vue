@@ -1,5 +1,23 @@
 <script setup>
-  import iconClose from "@/assets/navbar/icon_close.svg";
+  import { ref } from 'vue'
+  import iconClose from "@/assets/navbar/icon_close.svg"
+
+  let companyTags = ref([])
+  let siteTags = ref([])
+
+  // let tagNoRef = []
+
+  const handleChangeCompanyTag = (newTag) => {
+    // akan memasukkan nilai primitive
+    companyTags.value = newTag
+    // akan memasukkan array dalam array
+    // tagNoRef.push(newTag)
+  }
+
+  const handleChangeSiteTag = (newTag) => {
+    siteTags.value = newTag
+  }
+
 </script>
 
 <template>
@@ -120,6 +138,16 @@
           </div>
 
           <div class="mb-6">
+            <span>Company <span class="text-red-star">*</span></span>
+            <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" />
+          </div>
+
+          <div class="mb-6">
+            <span>Site <span class="text-red-star">*</span></span>
+            <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" />
+          </div>
+
+          <div class="mb-6">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Email<span class="text-red">*</span></label
@@ -187,4 +215,5 @@
 .btn:hover {
   background-color: white;
 }
+
 </style>

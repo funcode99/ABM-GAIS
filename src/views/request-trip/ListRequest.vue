@@ -2,7 +2,8 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import CompanyBusinessRequestTripModal from "@/components/request-trip/CompanyBusinessRequestTripModal.vue";
+
+import RequestTripModal from "@/components/request-trip/company-business/RequestTripModal.vue"
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -63,7 +64,7 @@ const tableHeadVoucherTaxi = [
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <div class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px]">
+      <div class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px] h-screen">
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -75,7 +76,7 @@ const tableHeadVoucherTaxi = [
               Request Trip
             </p>
             <div class="flex gap-4">
-              <CompanyBusinessRequestTripModal />
+              <RequestTripModal />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -181,6 +182,10 @@ const tableHeadVoucherTaxi = [
               <option>100</option>
             </select>
           </div>
+
+          <!-- TABLE Company Business -->
+
+          <!-- TABLE Site Visit -->
 
           <!-- TABLE Field Break -->
           <table v-if="requestTripType === 'Field Break'">

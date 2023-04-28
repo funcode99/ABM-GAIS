@@ -7,7 +7,7 @@
     import router from '@/router';
     
     // import untuk approval table
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, onBeforeMount, Suspense } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
@@ -72,27 +72,35 @@
     // watch(ref, callback)
 
     const fetch = async () => {
+      
       const token = JSON.parse(localStorage.getItem('token'))
       // Set authorization for api
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/menu')
+      const api = await Api.get('/menu')      
       instanceArray = api.data.data
-      // console.log(instanceArray)
       sortedData.value = instanceArray
       lengthCounter = sortedData.value.length
+      
+      // setTimeout(fetch, 3000)
+      // clearTimeout mencegat berjalan nya fungsi yang sudah dibuat setTimeout
+      // clearTimeout(fetch)
     }
 
+    fetch()
+
+    // setTimeout(fetch, 5000)
+
     onBeforeMount(() => {
-        fetch()
+        // fetch()
     })
 
     const filteredItems = (search) => {
-        sortedData.value = instanceArray
-          const filteredR = sortedData.value.filter(item => {
-            return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
-          })
-        sortedData.value = filteredR
-        lengthCounter = sortedData.value.length
+      sortedData.value = instanceArray
+        const filteredR = sortedData.value.filter(item => {
+          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+      })
+      sortedData.value = filteredR
+      lengthCounter = sortedData.value.length
     }
 
 </script>
@@ -119,84 +127,92 @@
         </div> -->
 
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
-        <TableTopBar title="Menu" @do-search="filteredItems" />
+        <TableTopBar title="Menu" @do-search="filteredItems" modalAddType="menu" />
         
         <!-- actual table -->
-        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
-          
-        <div class="block overflow-x-auto">
-          <table v-if="sortedData.length > 0"  class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
-
-            <thead class="text-center font-Montserrat text-sm font-bold h-10">
-              <tr class="">
-                <th>
-                  <div class="flex justify-center">
-                    <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-                  </div>
-                </th>
-
-                <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }} 
-                    <button class="">
-                      <img :src="arrowicon" class="w-[9px] h-3" />
-                    </button>
-                  </span>
-                </th>
-
-
-              </tr>
-            </thead>
-
-            <tbody>
-
-              <!-- sortir nya harus sama dengan key yang di data dummy -->
-
-              
-                  <tr v-for="(data, key) in sortedData" :key="data.id">
-                    <td>
-                      <input type="checkbox" name="">
-                    </td>
-                    <td>
-                      {{ data.id }} 
-                    </td>
-                    <td>
-                      {{ data.menu_name }}
-                    </td>
-                    <td v-if="data.parent_name !== null">
-                      {{ data.parent_name }}
-                    </td>
-                    <td v-else>
-                      Parent
-                    </td>
-                    <td>
-                      {{ data.status }}
-                    </td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditMenu />
-                      <ModalDelete @confirm-delete="deleteData(data.id)" />
-                    </td>
+        <Suspense>
+          <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+            
+            <div class="block overflow-x-auto">
+              <table v-if="sortedData.length > 0"  class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
+    
+                <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                  <tr class="">
+                    <th>
+                      <div class="flex justify-center">
+                        <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                      </div>
+                    </th>
+    
+                    <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }} 
+                        <button class="">
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+    
+    
                   </tr>
- 
-                  <!-- tr gak boleh di dalam div ternyata, kalo enggak hasil nya bakal berantakan -->
+                </thead>
+    
+                <tbody>
+    
+                  <!-- sortir nya harus sama dengan key yang di data dummy -->
+    
                   
-                </tbody>
-                
-              </table>
-
-              <div v-else class="h-[100px] border-t border-t-black flex items-center justify-center">
-                <h1 class="text-center">Data tidak ditemukan!</h1>
-              </div>
-
-        </div>
-
-          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <p class="font-Inter text-xs font-normal text-[#888888]">
-              Showing 1 to 10 of 20 entries
-            </p>
-          </div> -->
-
-        </div>
+                      <tr v-for="(data, key) in sortedData" :key="data.id">
+                        <td>
+                          <input type="checkbox" name="">
+                        </td>
+                        <td>
+                          {{ data.id }} 
+                        </td>
+                        <td>
+                          {{ data.menu_name }}
+                        </td>
+                        <td v-if="data.parent_name !== null">
+                          {{ data.parent_name }}
+                        </td>
+                        <td v-else>
+                          Parent
+                        </td>
+                        <td>
+                          {{ data.status }}
+                        </td>
+                        <td class="flex flex-wrap gap-4 justify-center">
+                          <ModalEditMenu />
+                          <ModalDelete @confirm-delete="deleteData(data.id)" />
+                        </td>
+                      </tr>
+    
+                      <!-- tr gak boleh di dalam div ternyata, kalo enggak hasil nya bakal berantakan -->
+                      
+                    </tbody>
+                    
+                  </table>
+    
+                  <div v-else class="h-[100px] border-t border-t-black flex items-center justify-center">
+                    <!-- text nya yang spin dong kalo pake animate-spin wkwk -->
+                    <h1 class="text-center">Data tidak ditemukan!</h1>
+                  </div>
+    
+            </div>
+  
+            <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+              <p class="font-Inter text-xs font-normal text-[#888888]">
+                Showing 1 to 10 of 20 entries
+              </p>
+            </div> -->
+  
+          </div>
+          <!-- <template #fallback>
+            <div class="w-screen h-screen bg-amber-600">
+              <h1 text-[100px] font-black>SILAHKAN DITUNGGU YA</h1>
+            </div>
+          </template> -->
+        </Suspense>
 
       </div>
 

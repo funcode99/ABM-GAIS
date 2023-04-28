@@ -116,7 +116,7 @@
             >
           </div> -->
 
-          <TableTopBar :title="'User'" @change-showing="fillPageMultiplier" />
+          <TableTopBar :title="'User'" @change-showing="fillPageMultiplier" modalAddType="user" />
           
           <!-- actual table -->
           <!-- scrollbar horizontal juga ada disini -->

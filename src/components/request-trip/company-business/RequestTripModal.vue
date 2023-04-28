@@ -14,6 +14,8 @@ import arrow from '@/assets/arrow-multi-step-form.png'
 import Airline1 from '@/assets/airlines-1.png'
 import Airline2 from '@/assets/airlines-2.png'
 
+let formStep = ref(0)
+
 const tableHeadAirlines = [
   {id: 1, title: 'Airline'},
   {id: 2, title: 'Flight No'},
@@ -122,33 +124,49 @@ const airlinesDummy = [
       </div>
 
       <!-- step 1 form -->
-      <form class="mb-3 mt-10 relative hidden">
-        <div class="grid grid-cols-2 gap-y-6">
-          <div class="flex flex-col">
-            <span>Requestor <span class="text-[#f5333f]">*</span></span>
-            <select class="max-w-[50%] border-2 border-black rounded-lg mt-2 px-4 py-2">
-              <option hidden selected disabled value="">
-                Name
-              </option>
-            </select>
+      <form class="mb-3 mt-10 relative text-left" :class="formStep == 0 ? 'block' : 'hidden'">
+        
+        <div class="grid grid-cols-2 gap-x-4 sm:gap-x-0 gap-y-6 self-center justify-self-center">
+       
+          <div class="flex flex-col items-center">
+            <div class="sm:w-[65%]">
+              <span>Requestor <span class="text-[#f5333f]">*</span></span>
+              <select class="w-[100%] border-2 border-black rounded-lg mt-2 px-4 py-2">
+                <option hidden selected disabled value="">
+                  Name
+                </option>
+              </select>
+            </div>
           </div>
-          <div class="flex flex-col">
-            <span>Location <span class="text-[#f5333f]">*</span></span>
-            <input type="text" class="max-w-[70%] border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Location">
+       
+     
+          <div class="flex flex-col items-center">
+            <div>
+              <span class="block">Location <span class="text-[#f5333f]">*</span></span>
+              <input type="text" class="w-full border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Location">
+            </div>
           </div>
-          <div class="flex flex-col">
-            <span>SN <span class="text-[#f5333f]">*</span></span>
-            <input type="text" class="max-w-[70%] border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="SN">
+
+          <div class="flex flex-col items-center">
+            <div>
+              <span class="block">SN <span class="text-[#f5333f]">*</span></span>
+              <input type="text" class="w-full border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="SN">
+            </div>
           </div>
-          <div class="flex flex-col">
-            <span>Telephone <span class="text-[#f5333f]">*</span></span>
-            <input type="text" class="max-w-[70%] border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Telephone">
+
+          <div class="flex flex-col items-center">
+            <div>
+              <span class="block">Telephone <span class="text-[#f5333f]">*</span></span>
+              <input type="text" class="w-full border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Telephone">
+            </div>
           </div>
+
         </div>
+
       </form>
 
       <!-- step 2 form -->
-      <form class="mb-3 mt-10 relative hidden">
+      <form class="mb-3 mt-10 relative text-left" :class="formStep == 1 ? 'block' : 'hidden'">
       
           <div class="flex flex-col">
             <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
@@ -167,7 +185,7 @@ const airlinesDummy = [
       </form>
 
       <!-- step 3 form -->
-      <form class="mb-3 mt-10 relative hidden">
+      <form class="mb-3 mt-10 relative" :class="formStep == 2 ? 'block' : 'hidden'">
       
         <label for="traveller-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
             + Add Guest
@@ -278,7 +296,7 @@ const airlinesDummy = [
       </form>
 
       <!-- step 4 form -->
-      <form class="mb-3 mt-12 relative hidden">
+      <form class="mb-3 mt-12 relative" :class="formStep == 3 ? 'block' : 'hidden'">
 
         <label for="airlines-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
           + Add Airlines
@@ -388,7 +406,7 @@ const airlinesDummy = [
       </form>
 
       <!-- step 5 form -->
-      <form class="mb-3 mt-12 relative hidden">
+      <form class="mb-3 mt-12 relative" :class="formStep == 4 ? 'block' : 'hidden'">
 
         <label for="taxi-voucher-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
           + Add Taxi Voucher
@@ -501,10 +519,10 @@ const airlinesDummy = [
       </form>
 
       <!-- step 6 form -->
-      <form class="mb-3 mt-12 relative hidden">
+      <form class="mb-3 mt-12 relative" :class="formStep == 5 ? 'block' : 'hidden'">
 
         <label for="other-transportation-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-          + Add
+          + Add Other Transportation
         </label>
 
         <input type="checkbox" id="other-transportation-modal" class="modal-toggle" />
@@ -610,19 +628,19 @@ const airlinesDummy = [
       </form>
 
       <!-- step 7 form -->
-      <form class="mb-3 mt-12 relative hidden">
+      <form class="mb-3 mt-12 relative" :class="formStep == 6 ? 'block' : 'hidden'">
 
-        <label for="other-transportation-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+        <label for="accomodation-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
           + Add Accomodation
         </label>
 
-        <input type="checkbox" id="other-transportation-modal" class="modal-toggle" />
+        <input type="checkbox" id="accomodation-modal" class="modal-toggle" />
 
         <div class="modal p-8">
           <div class="modal-box h-[476px]">
 
-            <nav for="other-transportation-modal" class=" top-0 py-4">
-              <label for="other-transportation-modal" class="cursor-pointer absolute right-4">
+            <nav for="accomodation-modal" class=" top-0 py-4">
+              <label for="accomodation-modal" class="cursor-pointer absolute right-4">
                 <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
               </label>
               <p class="font-JakartaSans text-2xl font-semibold">Accomodation</p>
@@ -727,7 +745,7 @@ const airlinesDummy = [
             <div class="bg-white py-4 max-w-[100%]">
               <div class="flex justify-end gap-4">
                 <label
-                  for="other-transportation-modal"
+                  for="accomodation-modal"
                   class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                   >
                   Cancel
@@ -747,7 +765,7 @@ const airlinesDummy = [
       </form>
 
       <!-- step 8 form -->
-      <form class="mb-3 mt-12 relative hidden">
+      <form class="mb-3 mt-12 relative" :class="formStep == 7 ? 'block' : 'hidden'">
 
       <label for="cash-advance-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
         + Add
@@ -845,6 +863,28 @@ const airlinesDummy = [
       </div>
 
       </form>
+
+      <div class="fixed bottom-8 left-8 right-8">
+        <div class="flex justify-between font-bold">
+
+          <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
+            Cancel
+          </button>
+          <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+            Cancel
+          </button>
+
+          <button v-if="formStep < 7" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+            Next
+          </button>
+
+          <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+            Next
+          </button>
+
+
+        </div>
+      </div>
 
     </div>
     

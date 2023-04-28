@@ -2,7 +2,11 @@
     import icon_filter from "@/assets/icon_filter.svg";
     import icon_reset from "@/assets/icon_reset.svg";
     import icon_receive from "@/assets/icon-receive.svg";
+
     import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue"
+    import ModalAddApproval from '@/components/system-configuration/approval/ModalAddApprover.vue'
+    import ModalAddRole from '@/components/system-configuration/role/ModalAddRole.vue'
+    import ModalAddUser from '@/components/system-configuration/user/ModalAddUser.vue'
 
     import { ref, computed } from 'vue'
 
@@ -11,7 +15,8 @@
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
 
     const props = defineProps({
-        title: String
+        title: String,
+        modalAddType: String
     })
 
 </script>
@@ -20,22 +25,23 @@
     <div class="bg-white rounded-t-xl pb-3 relative custom-card">
 
 <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-<div
-    class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
->
-  <p
-    class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold"
-  >
+<div class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2">
+  <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
     {{ props.title }}
   </p>
+
   <div class="flex items-center gap-4">
-    <ModalAddMenu />
-    <button
-      class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-    >
+    
+    <!-- modal add ini perlu di segregasi -->
+    <ModalAddMenu v-if="props.modalAddType === 'menu'" />
+    <ModalAddUser v-if="props.modalAddType === 'user'" />
+
+    <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
       <img :src="icon_receive" class="w-6 h-6" />
     </button>
+
   </div>
+
 </div>
 
 <!-- SORT & SEARCH -->
@@ -45,7 +51,6 @@
     
     <!-- sort company filter -->
   <div class="flex items-center gap-4">
-
 
     <p class="capitalize font-Fira text-xs text-black font-medium">
       Company
