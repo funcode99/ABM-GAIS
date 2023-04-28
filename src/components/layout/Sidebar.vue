@@ -596,7 +596,7 @@ let travel = "travelManagementSystem";
                 </a>
               </div>
             </router-link>
-            <router-link to="/pagu" class="cursor-pointer">
+            <router-link to="/city" class="cursor-pointer">
               <div class="flex gap-[10px] items-center cursor-pointer">
                 <img
                   class="h-[2px] w-2"
@@ -617,7 +617,7 @@ let travel = "travelManagementSystem";
                     $route.path == '/pagu' ? `anchorImage anchorSubMenu` : '',
                   ]"
                 >
-                  Pagu <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  City <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>

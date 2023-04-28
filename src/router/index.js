@@ -16,7 +16,7 @@ import ListDepartement from "@/views/reference/departemen/ListDepartement.vue"
 import List from "@/views/reference/employee/List.vue"
 import ListFlight from "@/views/reference/flight/ListFlight.vue"
 import ListJob from "@/views/reference/jobband/ListJob.vue"
-import ListPagu from "@/views/reference/pagu/ListPagu.vue"
+import ListCity from "@/views/reference/city/ListCity.vue"
 import ListReimbursement from "@/views/reference/reimbursement/ListReimbursement.vue"
 import ListSite from "@/views/reference/sites/ListSite.vue"
 import ListUom from "@/views/reference/uom/ListUom.vue"
@@ -160,11 +160,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/pagu',
-      name: 'pagu',
-      component: ListPagu,
+      path: '/city',
+      name: 'city',
+      component: ListCity,
       meta: {
-        title: "Pagu",
+        title: "City",
       }
     },
     {
