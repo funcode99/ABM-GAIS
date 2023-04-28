@@ -57,22 +57,6 @@ import editicon from "@/assets/navbar/edit_icon.svg";
               <option>Type B</option>
             </select>
           </div>
-
-          <div class="mb-6 text-start">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
-            >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
-            </select>
-          </div>
         </form>
       </main>
 

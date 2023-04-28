@@ -648,7 +648,7 @@ let travel = "travelManagementSystem";
                       : '',
                   ]"
                 >
-                  Reimbursement <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  Reimbursement Type<img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>
