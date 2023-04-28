@@ -135,7 +135,7 @@ import iconview from "@/assets/view_icon.svg";
             <div
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm px-4 font-medium sm:text-sm"
             >
-              <div
+              <!-- <div
                 v-for="(tag, index) in tags"
                 :key="tag"
                 class="tag-input__tag"
@@ -146,15 +146,15 @@ import iconview from "@/assets/view_icon.svg";
                   class="text-xs items-center cursor-pointer"
                   >x</span
                 >
-              </div>
+              </div> -->
               <input
                 type="text"
                 placeholder="Enter a site"
                 class="tag-input__text"
-                @keydown="addTag"
-                @keydown.delete="removeLastTag"
                 disabled
               />
+              <!-- @keydown="addTag"
+                @keydown.delete="removeLastTag" -->
             </div>
           </div>
         </form>
@@ -182,7 +182,7 @@ import iconview from "@/assets/view_icon.svg";
   overscroll-behavior-y: contain;
 }
 
-.tag-input__tag {
+/* .tag-input__tag {
   height: 30px;
   float: left;
   margin-right: 10px;
@@ -191,7 +191,7 @@ import iconview from "@/assets/view_icon.svg";
   line-height: 30px;
   padding: 0 5px;
   border-radius: 5px;
-}
+} */
 
 .tag-input__text {
   border: none;
