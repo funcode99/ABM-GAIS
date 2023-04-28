@@ -153,40 +153,40 @@ const date = ref();
               Add
             </button>
           </div>
-
-          <!-- TABLE -->
-          <table class="mt-6 w-full overflow-auto">
-            <thead class="font-JakartaSans font-bold text-xs">
-              <tr class="bg-blue text-white h-8">
-                <th class="border border-[#B9B9B9]">Item</th>
-                <th class="border border-[#B9B9B9]">Cost Center</th>
-                <th class="border border-[#B9B9B9]">Nominal</th>
-                <th class="border border-[#B9B9B9]">Attachment</th>
-                <th class="border border-[#B9B9B9]">Remarks</th>
-                <th class="border border-[#B9B9B9]">Action</th>
-              </tr>
-            </thead>
-            <tbody class="font-JakartaSans font-normal text-xs">
-              <tr class="h-16">
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]">
-                  <div class="flex justify-center items-center">
-                    <button>
-                      <img :src="editicon" class="w-6 h-6" />
-                    </button>
-                    <button>
-                      <img :src="deleteicon" class="w-6 h-6" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </form>
+
+        <!-- TABLE -->
+        <table class="mt-6 w-full overflow-auto">
+          <thead class="font-JakartaSans font-bold text-xs">
+            <tr class="bg-blue text-white h-8">
+              <th class="border border-[#B9B9B9]">Item</th>
+              <th class="border border-[#B9B9B9]">Cost Center</th>
+              <th class="border border-[#B9B9B9]">Nominal</th>
+              <th class="border border-[#B9B9B9]">Attachment</th>
+              <th class="border border-[#B9B9B9]">Remarks</th>
+              <th class="border border-[#B9B9B9]">Action</th>
+            </tr>
+          </thead>
+          <tbody class="font-JakartaSans font-normal text-xs">
+            <tr class="h-16">
+              <td class="border border-[#B9B9B9]"></td>
+              <td class="border border-[#B9B9B9]"></td>
+              <td class="border border-[#B9B9B9]"></td>
+              <td class="border border-[#B9B9B9]"></td>
+              <td class="border border-[#B9B9B9]"></td>
+              <td class="border border-[#B9B9B9]">
+                <div class="flex justify-center items-center">
+                  <button>
+                    <img :src="editicon" class="w-6 h-6" />
+                  </button>
+                  <button>
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </main>
 
       <div class="sticky bottom-0 bg-white py-2">
