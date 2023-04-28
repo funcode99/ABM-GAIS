@@ -12,10 +12,12 @@
   let modalPaddingHeight = 50
 
 const menuHeadTable = [
-  {Id: 1, title: 'Create'},
-  {Id: 2, title: 'Read'},
-  {Id: 3, title: 'Update'},
-  {Id: 4, title: 'Delete'}
+  // {Id: 1, title: 'Create'},
+  // {Id: 2, title: 'Read'},
+  // {Id: 3, title: 'Update'},
+  // {Id: 4, title: 'Delete'}
+  {Id: 1, title: 'Write'},
+  {Id: 2, title: 'Delete'},
 ]
 
 const menuBodyTable = [
@@ -47,7 +49,7 @@ const menuBodyTable = [
     </nav>
 
     <div class="mb-3 block overflow-x-auto">
-        <table class="table">
+        <table class="table w-full">
           
           <thead>
             <tr class="table-layout">
@@ -57,6 +59,7 @@ const menuBodyTable = [
               </th>
             </tr>
           </thead>
+
           <thead>
             <tr>
               <th class="text-[12px]">
@@ -68,21 +71,16 @@ const menuBodyTable = [
               <th></th>
             </tr>
           </thead>
+
           <tbody>
               <tr v-for="data in menuBodyTable" :key="data.Id">
                 <th>
                   {{ data.list }}
                 </th>
-                <th>
+                <th class="text-center">
                   <input type="checkbox">
                 </th>
-                <th>
-                  <input type="checkbox">
-                </th>
-                <th>
-                  <input type="checkbox">
-                </th>
-                <th>
+                <th class="text-center">
                   <input type="checkbox">
                 </th>
               </tr>
@@ -90,13 +88,15 @@ const menuBodyTable = [
         </table>
     </div>
 
-    <div class="fixed right-4 bg-white py-4">
+    <div class="fixed right-4 bg-white pt-2 pb-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <button
             @click="isVisible = false"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</button
+            >
+            Cancel
+          </button
           >
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"

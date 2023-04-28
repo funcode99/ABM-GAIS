@@ -24,13 +24,13 @@
             <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
-            <p class="font-JakartaSans text-2xl font-semibold">Edit Role</p>
+            <p class="font-JakartaSans text-2xl font-semibold text-left">Edit Role</p>
             <div className="divider m-0"></div>
         </nav>
 
       <form class="mb-3">
         
-        <div class="mb-3">
+        <div>
           <span
             
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
@@ -41,7 +41,7 @@
           <input
             type="text"
             id="name"
-            placeholder="Nama Matrix"
+            placeholder="Role"
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
@@ -50,7 +50,6 @@
       </form>
 
       <div class="sticky bottom-0 bg-white py-4">
-        <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <button
             @click="isVisible = false"

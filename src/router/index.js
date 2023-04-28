@@ -6,6 +6,7 @@ import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import Profile from '@/views/auth/Profile.vue'
 
 import Dashboard from "@/views/Dashboard.vue"
+import NotFound from '@/views/NotFoundPage.vue'
 
 import ListBrand from "@/views/reference/brand/ListBrand.vue"
 import ListCar from "@/views/reference/car/ListCar.vue"
@@ -37,6 +38,16 @@ import NonTravelList from '@/views/travel-management/cash-advance-non-travel/Non
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
+    // Not found Page
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Not Found Page',
+      component: NotFound,
+      meta: {
+        title: 'Not Found X('
+      }
+    },
 
     // auth pages
     {

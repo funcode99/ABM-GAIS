@@ -1,34 +1,38 @@
 <script setup>
-  import tail from "@/assets/topbar-image.png";
-  import highlight from "@/assets/navbar/highlight_logo.svg";
-  import user from "@/assets/navbar/user.svg";
+  import tail from "@/assets/topbar-image.png"
+  import highlight from "@/assets/mvc-logo.png"
+  import arrow from '@/assets/arrow-navbar.png'
+  import user from "@/assets/navbar/user.svg"
   import ABMIcon from '@/assets/abm.png'
+
+  import { ref } from 'vue'
+  let isOpen = ref(false)
+
 </script>
 
 <template>
 
-  <div class="flex fixed justify-between md:justify-start w-full bg-white zInfinite top-0">
-
+  <div class="flex gap-2 fixed w-full bg-white zInfinite top-0">
+    
     <div class="flex justify-center items-center h-[115px] min-w-[100px] md:min-w-[260px] z-50">
         <img :src=ABMIcon class="w-[57px] h-[43px] md:w-[114px] md:h-[86px]" alt="">
     </div>
-    
-    <div class="navbar bg-base-100 py-0 px-0 h-[115px]">
-  
-      <div class="navbar-start hidden md:block">
-        <img :src="tail" class="w-[365px] h-[115px]" />
-      </div>
-  
-      <div class="hidden navbar-center md:flex justify-center items-center">
-        <img :src="highlight" class="w-[120px] h-[79px]" />
-      </div>
-  
-      <div class="navbar-end">
-        
-        <div class="md:grid md:grid-flow-col md:auto-cols-max">
 
-            <div class="flex justify-center items-center ">
+    <div class="flex w-full justify-between items-center bg-base-100 py-0 px-0 h-[115px]">
+  
+      <div class="hidden md:block">
+        <img :src="tail" class="max-w-[285px] h-[115px]" />
+      </div>
+  
+      <div class="hidden md:flex justify-center items-center">
+        <img :src="highlight" class="max-w-[120px] max-h-[79px]" />
+      </div>
+  
+      <div class="pr-4">
+
+        <div class="flex justify-center items-center ">
              
+          <!-- notification -->
               <div>
   
                 <div class="dropdown dropdown-end">
@@ -63,47 +67,44 @@
   
               </div>
   
-              <div class="rounded-full bg-[#E4E4E4] grid grid-flow-row md:auto-cols-max w-[195px] h-[60px]">
-  
-                <div class="flex justify-center items-center px-3">
-                  
-                  <div class="avatar">
-                    <div class="w-10 rounded-full">
-                      <div class="w-[42px] h-[42px]">
-                        <img :src="user" class="background w-[42px] h-[42px]" />
-                      </div>
+          <!-- profile -->
+          <div class="relative">
+
+            <div class="rounded-full flex items-center bg-[#E4E4E4] w-[195px] h-[60px]">
+
+              <div class="flex gap-2 items-center px-3 w-full">
+                
+                <div>
+                  <div class="w-10 ">
+                    <div class="w-[42px] h-[42px]">
+                      <img :src="user" class="background rounded-full w-[42px] h-[42px]" />
                     </div>
                   </div>
-  
-                  <div class="dropdown dropdown-end">
-                    <button tabindex="0">
-                      <div tabindex="0" class="collapse collapse-arrow">
-                        <div class="collapse-title min-h-max py-3">
-                          <p
-                            class="font-Montserrat text-sm justify-center items-center"
-                          >
-                            Halo, User
-                          </p>
-                        </div>
-                      </div>
-                    </button>
-                    <ul
-                      tabindex="0"
-                      class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-                    >
-                      <li><a>Profile</a></li>
-                      <li><a>Settings</a></li>
-                      <li><a>Logout</a></li>
-                    </ul>
-                  </div>
-  
                 </div>
-  
+
+                <div class="cursor-pointer w-full" @click="isOpen = !isOpen">
+                  <div class="min-h-max py-3 flex items-center justify-evenly w-full">
+                    <p class="font-JakartaSans font-medium text-base justify-center items-center">
+                      Halo, User
+                    </p>
+                    <img class="w-[18px] h-[18px]" :src="arrow" alt="">
+                  </div>
+                </div>
+
               </div>
-  
+
             </div>
 
+            <ul v-if="isOpen" class="mt-3 p-2 shadow bg-base-100 rounded-box w-52 absolute">
+              <li><a>Profile</a></li>
+              <li><a>Settings</a></li>
+              <li><a>Logout</a></li>
+            </ul>
+   
+          </div>
+  
         </div>
+
       </div>
   
     </div>
