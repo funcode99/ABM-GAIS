@@ -17,7 +17,6 @@ import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 //for sort & search
 const search = ref("");
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 
@@ -31,23 +30,6 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-//for filter & reset button
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
-    );
-  }
-};
-
-//for filter & reset button
-const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedCompany.value = "Company";
 };
 
 //for check & uncheck all

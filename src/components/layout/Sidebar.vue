@@ -600,13 +600,13 @@ let travel = "travelManagementSystem";
               <div class="flex gap-[10px] items-center cursor-pointer">
                 <img
                   class="h-[2px] w-2"
-                  :class="[$route.path == '/pagu' ? 'hidden' : 'inline']"
+                  :class="[$route.path == '/city' ? 'hidden' : 'inline']"
                   :src="submenuLine"
                   alt=""
                 />
                 <img
                   class="h-[2px] w-2"
-                  :class="[$route.path == '/pagu' ? 'inline' : 'hidden']"
+                  :class="[$route.path == '/city' ? 'inline' : 'hidden']"
                   :src="submenuLineSelected"
                   alt=""
                 />
@@ -614,7 +614,7 @@ let travel = "travelManagementSystem";
                   href="#"
                   class="flex items-center w-full justify-between"
                   :class="[
-                    $route.path == '/pagu' ? `anchorImage anchorSubMenu` : '',
+                    $route.path == '/city' ? `anchorImage anchorSubMenu` : '',
                   ]"
                 >
                   City <img class="w-5 h-5" :src="groupIcon" alt="" />
@@ -648,7 +648,11 @@ let travel = "travelManagementSystem";
                       : '',
                   ]"
                 >
-                  Reimbursement Type<img class="w-5 h-5" :src="groupIcon" alt="" />
+                  Reimbursement Type<img
+                    class="w-5 h-5"
+                    :src="groupIcon"
+                    alt=""
+                  />
                 </a>
               </div>
             </router-link>
@@ -804,17 +808,17 @@ let travel = "travelManagementSystem";
                 </a>
               </div>
             </router-link>
-            <router-link to="/car" class="cursor-pointer">
+            <router-link to="/glaccount" class="cursor-pointer">
               <div class="flex gap-[10px] items-center cursor-pointer">
                 <img
                   class="h-[2px] w-2"
-                  :class="[$route.path == '/car' ? 'hidden' : 'inline']"
+                  :class="[$route.path == '/glaccount' ? 'hidden' : 'inline']"
                   :src="submenuLine"
                   alt=""
                 />
                 <img
                   class="h-[2px] w-2"
-                  :class="[$route.path == '/car' ? 'inline' : 'hidden']"
+                  :class="[$route.path == '/glaccount' ? 'inline' : 'hidden']"
                   :src="submenuLineSelected"
                   alt=""
                 />
@@ -822,10 +826,12 @@ let travel = "travelManagementSystem";
                   href="#"
                   class="flex items-center w-full justify-between"
                   :class="[
-                    $route.path == '/car' ? `anchorImage anchorSubMenu` : '',
+                    $route.path == '/glaccount'
+                      ? `anchorImage anchorSubMenu`
+                      : '',
                   ]"
                 >
-                  Car <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  GL Account <img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>

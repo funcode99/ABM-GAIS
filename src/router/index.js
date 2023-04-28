@@ -9,7 +9,7 @@ import Dashboard from "@/views/Dashboard.vue"
 import NotFound from '@/views/NotFoundPage.vue'
 
 import ListBrand from "@/views/reference/brand/ListBrand.vue"
-import ListCar from "@/views/reference/car/ListCar.vue"
+import ListGl from "@/views/reference/gl-account/ListGl.vue"
 import ListCompany from "@/views/reference/company/ListCompany.vue"
 import ListCurrency from "@/views/reference/currency/ListCurrency.vue"
 import ListDepartement from "@/views/reference/departemen/ListDepartement.vue"
@@ -104,11 +104,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/car',
-      name: 'car',
-      component: ListCar,
+      path: '/glaccount',
+      name: 'gl account',
+      component: ListGl,
       meta: {
-        title: "Car Pool",
+        title: "GL Account",
       }
     },
     {

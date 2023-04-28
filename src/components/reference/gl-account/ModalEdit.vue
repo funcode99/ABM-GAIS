@@ -21,86 +21,39 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         <p
           class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
         >
-          Edit Car
+          Edit GL Account
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-14">
+      <main class="modal-box-inner">
         <form>
-          <div class="mb-6 text-start">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-xs"
-              >Company<span class="text-red">*</span></label
-            >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
-            </select>
-          </div>
-
-          <div class="mb-6 text-start">
-            <label
-              for="site"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Site<span class="text-red">*</span></label
-            >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>Site</option>
-              <option>Site A</option>
-              <option>Site B</option>
-            </select>
-          </div>
-
           <div class="mb-6 mr-6 text-start">
             <label
-              for="car_brand"
+              for="gl_account"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Car Brand<span class="text-red">*</span></label
+              >GL Account<span class="text-red">*</span></label
             >
             <input
               type="text"
-              name="code"
+              name="gl_account"
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Car"
+              placeholder="GL Account"
               required
             />
           </div>
           <div class="mb-6 mr-6 text-start">
             <label
-              for="plate"
+              for="gl_name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Plate<span class="text-red">*</span></label
+              >GL Name<span class="text-red">*</span></label
             >
             <input
               type="text"
-              name="plate"
+              name="gl_name"
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Plate"
+              placeholder="GL Name"
               required
             />
-          </div>
-          <div class="mb-6 text-start">
-            <label
-              for="car_type"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Car Type<span class="text-red">*</span></label
-            >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>Type</option>
-              <option>Type A</option>
-              <option>Type B</option>
-            </select>
           </div>
         </form>
       </main>
@@ -131,7 +84,6 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 }
 
 .modal-box-inner {
-  height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

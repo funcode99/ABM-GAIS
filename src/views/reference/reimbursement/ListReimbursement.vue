@@ -17,7 +17,6 @@ import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 //for sort & search
 const search = ref("");
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 
