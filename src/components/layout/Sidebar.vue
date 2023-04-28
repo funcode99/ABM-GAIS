@@ -698,7 +698,7 @@ let travel = "travelManagementSystem";
                     $route.path == '/job' ? `anchorImage anchorSubMenu` : '',
                   ]"
                 >
-                  Job <img class="w-5 h-5" :src="groupIcon" alt="" />
+                  Job Band<img class="w-5 h-5" :src="groupIcon" alt="" />
                 </a>
               </div>
             </router-link>

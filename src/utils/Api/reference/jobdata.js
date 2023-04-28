@@ -2,153 +2,178 @@ const JobData = [
     {
         id: 1,
         no: 1,
-        job_band: 'Entry Level',
-        company: 'ABC Corporation'
+        jobband: "A",
+        hotel_fare: 1000000,
+        meals_rate: 50000
     },
     {
         id: 2,
         no: 2,
-        job_band: 'Junior Level',
-        company: 'XYZ Inc.'
+        jobband: "B",
+        hotel_fare: 800000,
+        meals_rate: 45000
     },
     {
         id: 3,
         no: 3,
-        job_band: 'Mid Level',
-        company: '123 Corporation'
+        jobband: "C",
+        hotel_fare: 1200000,
+        meals_rate: 60000
     },
     {
         id: 4,
         no: 4,
-        job_band: 'Senior Level',
-        company: 'DEF Inc.'
+        jobband: "D",
+        hotel_fare: 950000,
+        meals_rate: 40000
     },
     {
         id: 5,
         no: 5,
-        job_band: 'Executive Level',
-        company: '456 Corporation'
+        jobband: "E",
+        hotel_fare: 1100000,
+        meals_rate: 55000
     },
     {
         id: 6,
         no: 6,
-        job_band: 'Entry Level',
-        company: 'GHI Inc.'
+        jobband: "F",
+        hotel_fare: 750000,
+        meals_rate: 35000
     },
     {
         id: 7,
         no: 7,
-        job_band: 'Junior Level',
-        company: '789 Corporation'
+        jobband: "G",
+        hotel_fare: 900000,
+        meals_rate: 50000
     },
     {
         id: 8,
         no: 8,
-        job_band: 'Mid Level',
-        company: 'JKL Inc.'
+        jobband: "H",
+        hotel_fare: 1300000,
+        meals_rate: 70000
     },
     {
         id: 9,
         no: 9,
-        job_band: 'Senior Level',
-        company: '012 Corporation'
+        jobband: "I",
+        hotel_fare: 850000,
+        meals_rate: 40000
     },
     {
         id: 10,
         no: 10,
-        job_band: 'Executive Level',
-        company: 'MNO Inc.'
+        jobband: "J",
+        hotel_fare: 1150000,
+        meals_rate: 60000
     },
     {
         id: 11,
         no: 11,
-        job_band: 'Entry Level',
-        company: 'PQR Corporation'
+        jobband: "K",
+        hotel_fare: 950000,
+        meals_rate: 50000
     },
     {
         id: 12,
         no: 12,
-        job_band: 'Junior Level',
-        company: 'STU Inc.'
+        jobband: "L",
+        hotel_fare: 1050000,
+        meals_rate: 55000
     },
     {
         id: 13,
         no: 13,
-        job_band: 'Mid Level',
-        company: '345 Corporation'
+        jobband: "M",
+        hotel_fare: 800000,
+        meals_rate: 40000
     },
     {
         id: 14,
         no: 14,
-        job_band: 'Senior Level',
-        company: 'VWX Inc.'
+        jobband: "N",
+        hotel_fare: 1250000,
+        meals_rate: 65000
     },
     {
         id: 15,
         no: 15,
-        job_band: 'Executive Level',
-        company: '678 Corporation'
+        jobband: "O",
+        hotel_fare: 700000,
+        meals_rate: 35000
     },
     {
         id: 16,
         no: 16,
-        job_band: 'Entry Level',
-        company: 'YZA Inc.'
+        jobband: "P",
+        hotel_fare: 950000,
+        meals_rate: 45000
     },
     {
         id: 17,
         no: 17,
-        job_band: 'Junior Level',
-        company: 'BCD Corporation'
+        jobband: "Q",
+        hotel_fare: 1200000,
+        meals_rate: 60000
     },
     {
         id: 18,
         no: 18,
-        job_band: 'Mid Level',
-        company: 'EFG Inc.'
+        jobband: "S",
+        hotel_fare: 1100000,
+        meals_rate: 55000
     },
     {
         id: 19,
         no: 19,
-        job_band: 'Senior Level',
-        company: 'HIJ Corporation'
+        jobband: "T",
+        hotel_fare: 750000,
+        meals_rate: 40000
     },
     {
         id: 20,
         no: 20,
-        job_band: 'Executive Level',
-        company: 'KLM Inc.'
+        jobband: "U",
+        hotel_fare: 1300000,
+        meals_rate: 65000
     },
     {
         id: 21,
         no: 21,
-        job_band: 'Entry Level',
-        company: 'NOP Corporation'
+        jobband: "V",
+        hotel_fare: 900000,
+        meals_rate: 45000
     },
     {
         id: 22,
         no: 22,
-        job_band: 'Junior Level',
-        company: 'QRS Inc.'
+        jobband: "W",
+        hotel_fare: 1000000,
+        meals_rate: 50000
     },
     {
         id: 23,
         no: 23,
-        job_band: 'Mid Level',
-        company: 'TUV Corporation'
+        jobband: "X",
+        hotel_fare: 850000,
+        meals_rate: 40000
     },
     {
         id: 24,
         no: 24,
-        job_band: 'Senior Level',
-        company: 'WXY Inc.'
+        jobband: "Y",
+        hotel_fare: 1150000,
+        meals_rate: 55000
     },
     {
         id: 25,
         no: 25,
-        job_band: 'Executive Level',
-        company: 'ZAB Corporation'
-    },
+        jobband: "Z",
+        hotel_fare: 950000,
+        meals_rate: 45000
+    }
 ]
 
 export default JobData
