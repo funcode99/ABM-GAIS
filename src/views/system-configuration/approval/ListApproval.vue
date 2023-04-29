@@ -2,13 +2,8 @@
     // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
-
-    import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue"
     import TableTopBar from '@/components/layout/TableTopBar.vue'
-
-    import icon_filter from "@/assets/icon_filter.svg";
-    import icon_reset from "@/assets/icon_reset.svg";
-    import icon_receive from "@/assets/icon-receive.svg";
+    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import dataDummy from '@/utils/Api/system-configuration/approverdata.js'
 
@@ -20,8 +15,10 @@
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import { useSidebarStore } from "@/stores/sidebar.js"
+    const sidebar = useSidebarStore()
+
     const search = ref('')
-    const isWide = ref(true)
     let showingValue = ref(0)
 
     let sortedData = ref([])
@@ -86,7 +83,7 @@ const filteredItems = (search) => {
 
 <template>
 
-  <div class="flex flex-col this basis-full grow-0 shrink-0 w-screen">
+  <div class="flex flex-col basis-full grow-0 shrink-0 w-screen this">
 
     <Navbar/>
     <!-- <Layout /> -->
@@ -94,18 +91,15 @@ const filteredItems = (search) => {
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen mt-[115px]">
 
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="flex-none" />
 
-      <!-- w-screen md:w-full -->
-      <!-- ml-[100px] md:ml-[260px] -->
-      <!-- slate box -->
-      <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]">
+      <ExpandButton />
 
-        <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
-          >
-        </div> -->
+      <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen h-full clean-margin"
+          :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
+      >
       
-        <TableTopBar :title="'Approval'" />
+        <TableTopBar :title="'Approval'" @change-showing="fillPageMultiplier" modalAddType="approval" />
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
@@ -124,7 +118,6 @@ const filteredItems = (search) => {
                 </th>
 
                 <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                  <!-- &#8597; -->
                   <span class="flex justify-center items-center gap-1">
                     {{ data.title }} 
                     <button class="">

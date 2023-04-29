@@ -5,8 +5,8 @@
 
     import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue"
     import ModalAddApproval from '@/components/system-configuration/approval/ModalAddApprover.vue'
-    import ModalAddRole from '@/components/system-configuration/role/ModalAddRole.vue'
     import ModalAddUser from '@/components/system-configuration/user/ModalAddUser.vue'
+    // buat modal add buat sequence
 
     import { ref, computed } from 'vue'
 
@@ -35,6 +35,7 @@
     <!-- modal add ini perlu di segregasi -->
     <ModalAddMenu v-if="props.modalAddType === 'menu'" />
     <ModalAddUser v-if="props.modalAddType === 'user'" />
+    <ModalAddApproval v-if="props.modalAddType === 'approval'" />
 
     <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
       <img :src="icon_receive" class="w-6 h-6" />

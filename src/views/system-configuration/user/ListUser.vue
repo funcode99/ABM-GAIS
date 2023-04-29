@@ -2,10 +2,7 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
-
-    import icon_filter from "@/assets/icon_filter.svg";
-    import icon_reset from "@/assets/icon_reset.svg";
-    import icon_receive from "@/assets/icon-receive.svg";
+    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import dataDummy from '@/utils/Api/system-configuration/userdata.js'
 
@@ -15,7 +12,8 @@
     import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
-    const isWide = ref(true)
+    import { useSidebarStore } from "@/stores/sidebar.js"
+    const sidebar = useSidebarStore()
     
     const search = ref('')
     let sortedData = ref([])
@@ -107,14 +105,12 @@
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen mt-[115px]">
 
-        <Sidebar class="flex-none fixed" />     
+        <Sidebar class="flex-none" />    
+        
+        <ExpandButton />
 
-      <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full sm:ml-[100px] md:ml-[260px]" 
-        :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']">
-
-          <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
-            >
-          </div> -->
+      <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full clean-margin" 
+        :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
           <TableTopBar :title="'User'" @change-showing="fillPageMultiplier" modalAddType="user" />
           

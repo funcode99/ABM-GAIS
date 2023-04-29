@@ -1,4 +1,3 @@
-import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 // sidebarMenu.name
@@ -11,13 +10,12 @@ export const useSidebarStore = defineStore ('sidebar', {
                 travelManagementSystem: false,
                 systemConfiguration: false,
                 reference: false,
-            }
+            },
+            isWide: true
         }
     },
     actions: {
         increment(state) {
-            // console.log('ini isi state ' + {state})
-            // harus pake this buat akses state
 
             if(state === 'reference') {
                 this.sidebarMenu.reference = !this.sidebarMenu.reference
@@ -33,7 +31,9 @@ export const useSidebarStore = defineStore ('sidebar', {
                 this.sidebarMenu.reference = false
             }
 
-
         },
+        changeWide() {
+            this.isWide = !this.isWide
+        }
     },
 })

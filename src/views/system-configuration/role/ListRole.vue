@@ -1,24 +1,23 @@
 <script setup>
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
+    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue";
     import ModalEditRole from '@/components/system-configuration/role/ModalEditRole.vue'
     import ModalMenuAccessRole from '@/components/system-configuration/role/ModalMenuAccessRole.vue'
 
     import { ref, onBeforeMount } from 'vue'
-    import Api from '@/utils/Api';
-    import router from '@/router';
+    import Api from '@/utils/Api'
+    import router from '@/router'
 
-    import editicon from "@/assets/navbar/edit_icon.svg";
-    import deleteicon from "@/assets/navbar/delete_icon.svg";
-    import arrowicon from "@/assets/navbar/icon_arrow.svg";
-    import menuIcon from '@/assets/menu-access-role.png'
-    import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
+    import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import { useSidebarStore } from "@/stores/sidebar.js"
+    const sidebar = useSidebarStore()
+
     const search = ref('')
-    const isWide = ref(true)
     let showingValue = ref(0)
 
     // import untuk table
@@ -61,16 +60,16 @@ onBeforeMount(() => {
   fetch()
 })
 
-const filteredItems = (search) => {
+  const filteredItems = (search) => {
     sortedData.value = instanceArray
       const filteredR = sortedData.value.filter(item => {
         // console.log(item.No)
         // harus diganti nama json nya
-         return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role.toLowerCase().indexOf(search.toLowerCase()) > -1
+        return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
-      sortedData.value = filteredR
-      lengthCounter = sortedData.value.length
-}
+    sortedData.value = filteredR
+    lengthCounter = sortedData.value.length
+  }
   
 </script>
 
@@ -84,20 +83,18 @@ const filteredItems = (search) => {
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen mt-[115px]">
 
-        <Sidebar class="flex-none fixed" /> 
+        <Sidebar class="flex-none" /> 
+
+        <ExpandButton />
         
       <!-- slate box -->
-      <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen sm:ml-[100px] md:ml-[260px]"
-      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']"
+      <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen clean-margin"
+      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
-
-        <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
-          >
-        </div> -->
       
-        <!-- w-screen md:w-full -->
         <!-- table box -->
-        <div class="bg-white rounded-t-xl pb-3 relative">
+        <!-- role gak perlu import karena model nya beda sendiri -->
+        <div class="bg-white rounded-t-xl pb-3 relative custom-card">
 
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -143,6 +140,7 @@ const filteredItems = (search) => {
           </div>
           
         </div>
+
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
@@ -154,7 +152,6 @@ const filteredItems = (search) => {
               <tr class="">
 
                 <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                  <!-- &#8597; -->
                   <span class="flex justify-center items-center gap-1">
                     {{ data.title }} 
                     <button class="">
@@ -233,6 +230,11 @@ const filteredItems = (search) => {
 
   .backgroundHeight {
     min-height: calc(100vh - 115px);
+  }
+
+  .custom-card {
+    box-shadow: 0px -4px #015289;
+    border-radius: 4px;
   }
 
 

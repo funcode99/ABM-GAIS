@@ -4,8 +4,10 @@
   import arrow from '@/assets/arrow-navbar.png'
   import user from "@/assets/navbar/user.svg"
   import ABMIcon from '@/assets/abm.png'
-
   import { ref } from 'vue'
+  import { useSidebarStore } from "@/stores/sidebar.js"
+  
+  const sidebar = useSidebarStore()
   let isOpen = ref(false)
 
 </script>
@@ -14,8 +16,12 @@
 
   <div class="flex gap-2 fixed w-full bg-white zInfinite top-0">
     
-    <div class="flex justify-center items-center h-[115px] min-w-[100px] md:min-w-[260px] z-50">
-        <img :src=ABMIcon class="w-[57px] h-[43px] md:w-[114px] md:h-[86px]" alt="">
+    <div class="flex justify-center items-center h-[115px]  md: z-50"
+        :class="sidebar.isWide === true ? 'min-w-[260px]' : 'min-w-[100px]'"  
+    >
+        <img :src=ABMIcon 
+        :class="sidebar.isWide === true ? 'w-[114px] h-[86px]' : 'w-[57px] h-[43px]'"
+        alt="abm_icon">
     </div>
 
     <div class="flex w-full justify-between items-center bg-base-100 py-0 px-0 h-[115px]">
