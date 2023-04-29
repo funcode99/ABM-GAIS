@@ -16,7 +16,7 @@
 
   <div class="flex gap-2 fixed w-full bg-white zInfinite top-0">
     
-    <div class="flex justify-center items-center h-[115px]  md: z-50"
+    <div class="flex justify-center items-center h-[115px] z-50 ease-in-out duration-500"
         :class="sidebar.isWide === true ? 'min-w-[260px]' : 'min-w-[100px]'"  
     >
         <img :src=ABMIcon 
