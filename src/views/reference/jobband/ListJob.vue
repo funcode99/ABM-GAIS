@@ -17,7 +17,6 @@ import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
 //for sort & search
 const search = ref("");
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 
@@ -31,23 +30,6 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-//for filter & reset button
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
-    );
-  }
-};
-
-//for filter & reset button
-const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedCompany.value = "Company";
 };
 
 //for check & uncheck all
@@ -69,9 +51,10 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Job Band", jsonData: "job_band" },
-  { Id: 3, title: "Company", jsonData: "company" },
-  { Id: 4, title: "Actions" },
+  { Id: 2, title: "Job Band", jsonData: "jobband" },
+  { Id: 3, title: "Hotel fare", jsonData: "hotel_fare" },
+  { Id: 4, title: "Meals Rate", jsonData: "meals_rate" },
+  { Id: 5, title: "Actions" },
 ];
 
 //for sort
@@ -94,11 +77,13 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.job_band.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.jobband.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.hotel_fare.toString().toLowerCase().indexOf(search.toLowerCase()) >
+        -1);
     return (
-      (item.job_band.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.jobband.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.hotel_fare.toString().toLowerCase().indexOf(search.toLowerCase()) >
+        -1)
     );
   });
   sortedData.value = filteredR;
@@ -138,48 +123,23 @@ const filteredItems = (search) => {
             </div>
           </div>
 
-          <!-- SORT & SEARCH -->
-          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <div class="flex flex-wrap items-center gap-4">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Company
-              </p>
-
+          <!-- SEARCH & SHOWING -->
+          <div class="flex flex-wrap justify-between items-center mx-4">
+            <div class="flex items-center gap-1 pt-6 pb-4 h-4">
+              <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
               <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedCompany"
+                class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="pageMultiplier"
               >
-                <option disabled selected>Company</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.company }}
-                </option>
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>75</option>
+                <option>100</option>
               </select>
-
-              <div class="flex flex-wrap gap-4 items-center">
-                <button
-                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByCompany"
-                >
-                  <span>
-                    <img :src="icon_filter" class="w-5 h-5" />
-                  </span>
-                  Filter
-                </button>
-                <button
-                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                  @click="resetData"
-                >
-                  <span>
-                    <img :src="icon_reset" class="w-5 h-5" />
-                  </span>
-                  Reset
-                </button>
-              </div>
             </div>
 
-            <div class="py-2 flex md:mx-0">
+            <div class="flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -199,8 +159,8 @@ const filteredItems = (search) => {
                   </svg>
                 </span>
                 <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[10px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search by Job Band / Company"
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[11px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search by Job Band"
                   type="text"
                   name="search"
                   v-model="search"
@@ -208,21 +168,6 @@ const filteredItems = (search) => {
                 />
               </label>
             </div>
-          </div>
-
-          <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
-            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
-            <select
-              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              v-model="pageMultiplier"
-            >
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>75</option>
-              <option>100</option>
-            </select>
           </div>
 
           <!-- TABLE -->
@@ -276,8 +221,9 @@ const filteredItems = (search) => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ data.no }}</td>
-                    <td>{{ data.job_band }}</td>
-                    <td>{{ data.company }}</td>
+                    <td>{{ data.jobband }}</td>
+                    <td>{{ data.hotel_fare }}</td>
+                    <td>{{ data.meals_rate }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit />
                       <button>

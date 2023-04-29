@@ -9,14 +9,14 @@ import Dashboard from "@/views/Dashboard.vue"
 import NotFound from '@/views/NotFoundPage.vue'
 
 import ListBrand from "@/views/reference/brand/ListBrand.vue"
-import ListCar from "@/views/reference/car/ListCar.vue"
+import ListGl from "@/views/reference/gl-account/ListGl.vue"
 import ListCompany from "@/views/reference/company/ListCompany.vue"
 import ListCurrency from "@/views/reference/currency/ListCurrency.vue"
 import ListDepartement from "@/views/reference/departemen/ListDepartement.vue"
 import List from "@/views/reference/employee/List.vue"
 import ListFlight from "@/views/reference/flight/ListFlight.vue"
 import ListJob from "@/views/reference/jobband/ListJob.vue"
-import ListPagu from "@/views/reference/pagu/ListPagu.vue"
+import ListCity from "@/views/reference/city/ListCity.vue"
 import ListReimbursement from "@/views/reference/reimbursement/ListReimbursement.vue"
 import ListSite from "@/views/reference/sites/ListSite.vue"
 import ListUom from "@/views/reference/uom/ListUom.vue"
@@ -34,6 +34,7 @@ import FormView from '@/views/request-trip/FormView.vue'
 import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
+import NonTravelView from '@/views/travel-management/cash-advance-non-travel/NonTravelView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -103,11 +104,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/car',
-      name: 'car',
-      component: ListCar,
+      path: '/glaccount',
+      name: 'gl account',
+      component: ListGl,
       meta: {
-        title: "Car Pool",
+        title: "GL Account",
       }
     },
     {
@@ -159,11 +160,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/pagu',
-      name: 'pagu',
-      component: ListPagu,
+      path: '/city',
+      name: 'city',
+      component: ListCity,
       meta: {
-        title: "Pagu",
+        title: "City",
       }
     },
     {
@@ -250,7 +251,7 @@ const router = createRouter({
       }
     },
 
-    // travel management systme
+    // travel management system
     {
       path: '/request',
       name: 'request trip',
@@ -289,6 +290,14 @@ const router = createRouter({
       component: NonTravelList,
       meta: {
         title: 'CA Non Travel'
+      }
+    },
+    {
+      path: '/viewcashadvancenontravel',
+      name: 'view cash advance non travel',
+      component: NonTravelView,
+      meta: {
+        title: 'View CA Non Travel'
       }
     },
   ]

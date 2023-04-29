@@ -43,113 +43,109 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             />
           </div>
 
-          <div class="mb-6 text-start">
+          <div class="mb-6 mr-6 text-start">
             <label
-              for="company"
+              for="hotel"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
+              >Hotel Fare<span class="text-red">*</span></label
             >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+            <input
+              type="text"
+              name="hotel"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Hotel Fare"
               required
-            >
-              <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
-            </select>
+            />
           </div>
 
-          <div class="mb-6 text-start">
+          <div class="mb-6 mr-6 text-start">
             <label
-              for="pagu"
+              for="meal"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Pagu<span class="text-red">*</span></label
+              >Meals Rate<span class="text-red">*</span></label
             >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+            <input
+              type="text"
+              name="meal"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Meals Rate"
               required
-            >
-              <option disabled selected>Pagu</option>
-              <option>Pagu A</option>
-              <option>Pagu B</option>
-            </select>
+            />
           </div>
-
-          <!-- INNER TABLE -->
-          <table
-            class="table table-zebra table-compact border w-full rounded-lg"
-          >
-            <thead class="text-center font-JakartaSans text-sm font-bold">
-              <tr>
-                <th class="relative">
-                  <span class="flex justify-center">TLK</span>
-                  <button class="absolute right-0 top-0 bottom-0">
-                    <img :src="arrowicon" class="w-[9px] h-3" />
-                  </button>
-                </th>
-                <th class="relative">
-                  <span class="flex justify-center">Cross/Hari</span>
-                  <button class="absolute right-1 top-0 bottom-0">
-                    <img :src="arrowicon" class="w-[9px] h-3" />
-                  </button>
-                </th>
-                <th class="flex justify-center">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody class="bg-[#F5F5F5]">
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>A</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>B</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>C</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>D</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>E</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </form>
+
+        <!-- INNER TABLE -->
+        <table class="table table-zebra table-compact border w-full rounded-lg">
+          <thead class="text-center font-JakartaSans text-sm font-bold">
+            <tr>
+              <th class="relative">
+                <span class="flex justify-center">TLK</span>
+                <button class="absolute right-0 top-0 bottom-0">
+                  <img :src="arrowicon" class="w-[9px] h-3" />
+                </button>
+              </th>
+              <th class="relative">
+                <span class="flex justify-center">Cross/Hari</span>
+                <button class="absolute right-1 top-0 bottom-0">
+                  <img :src="arrowicon" class="w-[9px] h-3" />
+                </button>
+              </th>
+              <th class="flex justify-center">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody class="bg-[#F5F5F5]">
+            <tr class="font-JakartaSans font-normal text-sm">
+              <td>A</td>
+              <td>241.000</td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+
+            <tr class="font-JakartaSans font-normal text-sm">
+              <td>B</td>
+              <td>219.000</td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+
+            <tr class="font-JakartaSans font-normal text-sm">
+              <td>C</td>
+              <td>219.000</td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+
+            <tr class="font-JakartaSans font-normal text-sm">
+              <td>D</td>
+              <td>153.000</td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+
+            <tr class="font-JakartaSans font-normal text-sm">
+              <td>E</td>
+              <td>128.000</td>
+              <td class="flex flex-wrap gap-4 justify-center">
+                <button>
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </main>
 
       <div class="sticky bottom-0 bg-white py-2">

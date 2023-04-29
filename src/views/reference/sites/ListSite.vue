@@ -4,6 +4,8 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/sites/ModalAdd.vue";
 import ModalEdit from "@/components/reference/sites/ModalEdit.vue";
+import ModalView from "@/components/reference/sites/ModalView.vue";
+
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -278,6 +280,7 @@ const filteredItems = (search) => {
                     <td>{{ data.site }}</td>
                     <td>{{ data.company }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
+                      <ModalView />
                       <ModalEdit />
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />

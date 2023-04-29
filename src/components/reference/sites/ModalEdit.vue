@@ -45,6 +45,21 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 
           <div class="mb-6 mr-6 text-start">
             <label
+              for="sitecode"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Site Code<span class="text-red">*</span></label
+            >
+            <input
+              type="text"
+              name="sitecode"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Site Code"
+              required
+            />
+          </div>
+
+          <div class="mb-6 mr-6 text-start">
+            <label
               for="site"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Site Name<span class="text-red">*</span></label

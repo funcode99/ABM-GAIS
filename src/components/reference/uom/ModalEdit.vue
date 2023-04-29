@@ -27,117 +27,22 @@ import addicon from "@/assets/icon_add_square.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-14">
+      <main class="modal-box-inner">
         <form class="pt-4">
-          <div class="mb-6 text-start">
+          <div class="mb-6 mr-6 text-start">
             <label
-              for="company"
+              for="uom"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
+              >UOM Name<span class="text-red">*</span></label
             >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+            <input
+              type="text"
+              name="uom"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="UOM Name"
               required
-            >
-              <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
-            </select>
+            />
           </div>
-
-          <div class="mb-6 text-start">
-            <label
-              for="site"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Site<span class="text-red">*</span></label
-            >
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>Site</option>
-              <option>Site A</option>
-              <option>Site B</option>
-            </select>
-          </div>
-
-          <div class="mb-6 text-start">
-            <label
-              for="category"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >UOM Category<span class="text-red">*</span></label
-            >
-            <select
-              class="bg-white w-[320px] lg:w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>UOM Category</option>
-              <option>Category A</option>
-              <option>Category B</option>
-            </select>
-          </div>
-
-          <!-- INNER TABEL -->
-          <label
-            for="category"
-            class="block mb-2 font-JakartaSans font-medium text-sm text-start"
-            >Unit Of Measure<span class="text-red">*</span></label
-          >
-          <table
-            class="table table-zebra table-compact border w-full rounded-lg"
-          >
-            <thead class="text-center font-JakartaSans text-sm font-bold">
-              <tr>
-                <th class="relative">
-                  <span class="flex justify-center">Unit of Measure</span>
-                </th>
-                <th class="relative">
-                  <span class="flex justify-center">Amount</span>
-                </th>
-                <th class="flex justify-center">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody class="bg-[#F5F5F5]">
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>Units</td>
-                <td>1.00</td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-
-                  <button>
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>Dozens</td>
-                <td>12.00</td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-
-                  <button>
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td></td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button class="ml-10">
-                    <img :src="addicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
         </form>
       </main>
 
@@ -167,7 +72,6 @@ import addicon from "@/assets/icon_add_square.svg";
 }
 
 .modal-box-inner {
-  height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

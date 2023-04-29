@@ -2,7 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-// import ModalAddCA from "@/components/travel-management/cash-advance/ModalAddCA.vue"
+import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -111,7 +111,7 @@ const filteredItems = (search) => {
               Cash Advance Non Travel
             </p>
             <div class="flex gap-4">
-              <!-- <ModalAddCA /> -->
+              <ModalAddCaNonTravelVue />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -261,9 +261,11 @@ const filteredItems = (search) => {
                     <td>{{ data.cost_center }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <button>
-                        <img :src="editicon" class="w-6 h-6" />
-                      </button>
+                      <router-link to="/viewcashadvancenontravel">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                      </router-link>
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>

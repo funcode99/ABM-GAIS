@@ -21,7 +21,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         <p
           class="font-JakartaSans text-sm lg:text-2xl font-semibold text-white mx-4 py-2 text-start"
         >
-          Edit Flight Entitlement
+          Edit Flight Class
         </p>
       </nav>
 

@@ -48,7 +48,7 @@ function removeLastTag(event) {
         <p
           class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
         >
-          Edit TLK
+          Edit Zona
         </p>
       </nav>
 
@@ -56,24 +56,24 @@ function removeLastTag(event) {
         <form class="pt-4">
           <div class="mb-6 mr-6 text-start">
             <label
-              for="tlk"
+              for="zona"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >TLK<span class="text-red">*</span></label
+              >Zona<span class="text-red">*</span></label
             >
             <input
               type="text"
-              name="tlk"
+              name="zona"
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="TLK"
+              placeholder="Zona"
               required
             />
           </div>
 
           <div class="mb-6 mr-6 text-start">
             <label
-              for="location"
+              for="city"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Location<span class="text-red">*</span></label
+              >City<span class="text-red">*</span></label
             >
             <div
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm px-4 font-medium sm:text-sm"
@@ -92,28 +92,12 @@ function removeLastTag(event) {
               </div>
               <input
                 type="text"
-                placeholder="Enter a site"
+                placeholder="Enter a city"
                 class="tag-input__text"
                 @keydown="addTag"
                 @keydown.delete="removeLastTag"
               />
             </div>
-          </div>
-
-          <div class="mb-6 text-start">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
-            >
-            <select
-              class="bg-white w-[335px] lg:w-[490px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
-            </select>
           </div>
         </form>
       </main>
