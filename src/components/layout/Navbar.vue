@@ -16,13 +16,16 @@
 
   <div class="flex gap-2 fixed w-full bg-white zInfinite top-0">
     
-    <div class="flex justify-center items-center h-[115px] z-50 ease-in-out duration-500"
-        :class="sidebar.isWide === true ? 'min-w-[260px]' : 'min-w-[100px]'"  
-    >
-        <img :src=ABMIcon 
-        :class="sidebar.isWide === true ? 'w-[114px] h-[86px]' : 'w-[57px] h-[43px]'"
-        alt="abm_icon">
-    </div>
+    <router-link to="/dashboard">
+      <div class="flex justify-center items-center h-[115px] z-50 ease-in-out duration-500"
+          :class="sidebar.isWide === true ? 'min-w-[260px]' : 'min-w-[100px]'"  
+      >
+          <img :src=ABMIcon 
+          class="ease-in-out duration-500"
+          :class="sidebar.isWide === true ? 'w-[114px] h-[86px]' : 'w-[57px] h-[43px]'"
+          alt="abm_icon">
+      </div>
+    </router-link>
 
     <div class="flex w-full justify-between items-center bg-base-100 py-0 px-0 h-[115px]">
   

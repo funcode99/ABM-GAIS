@@ -2,6 +2,7 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
+    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import Api from '@/utils/Api';
     import router from '@/router';
@@ -13,8 +14,10 @@
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import { useSidebarStore } from "@/stores/sidebar.js"
+    const sidebar = useSidebarStore()
+
     // const search = ref('')
-    const isWide = ref(true)
 
     // import untuk user table
 
@@ -114,12 +117,14 @@
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen mt-[115px]">
 
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="flex-none" />
+
+      <ExpandButton />
 
       <!-- slate box -->
       <div 
-      class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen h-full sm:ml-[100px] md:ml-[260px]"
-      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full']"
+      class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen h-full clean-margin ease-in-out duration-500"
+      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
 
         <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
@@ -191,12 +196,12 @@
                       
                     </tbody>
                     
-                  </table>
+              </table>
     
-                  <div v-else class="h-[100px] border-t border-t-black flex items-center justify-center">
+              <div v-else class="h-[100px] border-t border-t-black flex items-center justify-center">
                     <!-- text nya yang spin dong kalo pake animate-spin wkwk -->
                     <h1 class="text-center">Data tidak ditemukan!</h1>
-                  </div>
+              </div>
     
             </div>
   

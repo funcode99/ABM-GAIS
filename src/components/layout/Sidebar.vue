@@ -58,7 +58,7 @@ let travel = "travelManagementSystem";
   
       <!-- sm:flex sm:items-center -->
       <!-- sidebar search -->
-      <div class=" ml-6 pt-7 hidden">
+      <div class=" ml-6 pt-7 flex" :class="sidebar.isWide === true ? '': 'hidden'">
         
         <div
           class="rounded-l-2xl flex justify-center items-center bg-[#f5f5f5] h-10 pl-1"
@@ -68,6 +68,7 @@ let travel = "travelManagementSystem";
         
         <input
           type="text"
+          
           class="rounded-r-2xl bg-[#f5f5f5] h-10 pl-2 outline-none"
           placeholder="Search..."
           v-model="searchSidebarValue"
@@ -75,10 +76,18 @@ let travel = "travelManagementSystem";
         />
 
       </div>
+
+
   
       <div class="px-4 flex flex-col items-center pt-3">
 
         <ul id="myMenu">
+
+          <li class="p-4">
+            <div class="flex justify-center items-center cursor-pointer" :class="sidebar.isWide === true ? 'hidden': ''">
+              <img :src="searchIcon" alt="search" class="w-6 h-6" />
+            </div>
+          </li>
 
           <!-- dashboard -->
           <li>
@@ -88,6 +97,7 @@ let travel = "travelManagementSystem";
               class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
             >
               <img :src="dashboardIcon" class="w-6 h-6" alt="" />
+              <!-- transition ga berlaku untuk teks / ngilangin objek -->
               <a :class="sidebar.isWide === true ? '' : 'hidden'">Dashboards</a>
             </router-link>
           </li>
@@ -137,7 +147,7 @@ let travel = "travelManagementSystem";
               </div>
             </button>
   
-            <div class="hidden">
+            <div :class="sidebar.isWide === true ? '' : 'hidden'">
               <div
                 v-if="sidebar.sidebarMenu.travelManagementSystem === true"
                 class="pl-4 pb-4 sm:flex sm:flex-col hidden"
@@ -305,11 +315,10 @@ let travel = "travelManagementSystem";
               </div>
             </button>
   
-            <div class="hidden">
+            <div :class="sidebar.isWide === true ? '' : 'hidden'">
               <div
             v-if="sidebar.sidebarMenu.systemConfiguration == true"
-            class="pl-4 pb-4 sm:flex sm:flex-col hidden"
-          >
+            class="pl-4 pb-4 sm:flex sm:flex-col hidden">
             <ul class="flex flex-col gap-4 pt-4 px-2">
               <router-link to="/user" class="cursor-pointer"
                 >
@@ -416,10 +425,11 @@ let travel = "travelManagementSystem";
           </li>
 
           <!-- reference sub menu new -->
-          <div class="hidden">
+          <div :class="sidebar.isWide === true ? '' : 'hidden'">
+            <!-- hidden ga ngaruh disini -->
             <div
             v-if="sidebar.sidebarMenu.reference == true"
-            class="pl-4 pb-4 sm:flex sm:flex-col hidden overflow-y-auto"
+            class="pl-4 pb-4 sm:flex sm:flex-col overflow-y-auto ease-in-out duration-500"
           >
             <ul class="flex flex-col gap-4 pt-4 px-2">
               <router-link to="/employee" class="cursor-pointer">
