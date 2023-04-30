@@ -19,14 +19,23 @@ export const useSidebarStore = defineStore ('sidebar', {
 
             if(state === 'reference') {
                 this.sidebarMenu.reference = !this.sidebarMenu.reference
+
+                this.sidebarMenu.reference === true ? sessionStorage.setItem('isOpen', state) : sessionStorage.setItem('isOpen', '')
+
                 this.sidebarMenu.systemConfiguration = false
                 this.sidebarMenu.travelManagementSystem = false
             } else if (state === 'systemConfiguration') {
                 this.sidebarMenu.systemConfiguration = !this.sidebarMenu.systemConfiguration
+
+                this.sidebarMenu.systemConfiguration === true ? sessionStorage.setItem('isOpen', state) : sessionStorage.setItem('isOpen', '')
+
                 this.sidebarMenu.reference = false
                 this.sidebarMenu.travelManagementSystem = false
             } else if (state === 'travelManagementSystem') {
                 this.sidebarMenu.travelManagementSystem = !this.sidebarMenu.travelManagementSystem
+
+                this.sidebarMenu.travelManagementSystem === true ? sessionStorage.setItem('isOpen', state) : sessionStorage.setItem('isOpen', '')
+
                 this.sidebarMenu.systemConfiguration = false
                 this.sidebarMenu.reference = false
             }

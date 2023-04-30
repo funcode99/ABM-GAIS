@@ -4,8 +4,8 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import ExpandButton from '@/components/layout/ExpandButton.vue'
 
-    import Api from '@/utils/Api';
-    import router from '@/router';
+    import Api from '@/utils/Api'
+    import router from '@/router'
     
     // import untuk approval table
     import { ref, onBeforeMount, Suspense } from 'vue'
@@ -89,12 +89,17 @@
       // clearTimeout(fetch)
     }
 
-    fetch()
+    // fetch()
 
     // setTimeout(fetch, 5000)
 
+    const getSessionForSidebar = () => {
+      sidebar.increment(sessionStorage.getItem('isOpen'))
+    }
+
     onBeforeMount(() => {
-        // fetch()
+        getSessionForSidebar()
+        fetch()
     })
 
     const filteredItems = (search) => {
