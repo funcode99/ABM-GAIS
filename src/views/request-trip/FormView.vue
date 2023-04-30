@@ -136,6 +136,7 @@
                             </Transition>
                            
                         </div>
+                        
                         <div v-else-if="tab == 'tlk'">
                             <h1>TLK</h1>
                             <hr class="border-black border-2">
@@ -164,10 +165,6 @@
 </template>
 
 <style scoped>
-.fade-enter-active
-{
-  transition: transform .5s ease;
-}
 
 /* .fade-leave-active
 {
@@ -178,6 +175,12 @@
 {   
     transform: translateY(-10px);
 }
+
+.fade-enter-active
+{
+  transition: transform .5s ease;
+}
+
 .fade-enter-to
 {
    transform: translateY(0px);

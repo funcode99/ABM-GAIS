@@ -9,6 +9,7 @@
   
   const sidebar = useSidebarStore()
   let isOpen = ref(false)
+  let isNotificationOpen = ref(false)
 
 </script>
 
@@ -36,44 +37,46 @@
       <div class="hidden md:flex justify-center items-center">
         <img :src="highlight" class="max-w-[120px] max-h-[79px]" />
       </div>
+
+      <div class="md:hidden"></div>
   
       <div class="pr-4">
 
         <div class="flex justify-center items-center ">
              
           <!-- notification -->
-              <div>
-  
-                <div class="dropdown dropdown-end">
-                  <button class="mx-10 hover:scale-125" tabindex="0">
-                    <div class="indicator hover:bg-slate-300 hover:rounded-full p-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="w-7 h-7"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-                        />
-                      </svg>
-                      <span
-                        class="badge badge-sm bg-[#F04438] border-none indicator-item"
-                        >8</span
-                      >
-                    </div>
-                  </button>
-                  <ul tabindex="0" class="border-black border-2 dropdown-content menu p-3 shadow bg-base-100 rounded-box w-52">
-                    <li><a>Contoh kalimat panjang 1, apakah yang akan terjadi</a></li>
-                    <li><a>Notifikasi 2</a></li>
-                    <li><a>Notifikasi 3</a></li>
+          <!-- harus pake v-if kalo mau transition -->
+          <!-- tabindex nya dihapus tapi dropdown nya masih muncul -->
+              <div class="relative">
+                <button @click="isNotificationOpen = !isNotificationOpen" class=" mx-10 hover:scale-125">
+                      <div class="indicator hover:bg-slate-300 hover:rounded-full p-1">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-7 h-7"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                          />
+                        </svg>
+                        <span
+                          class="badge badge-sm bg-[#F04438] border-none indicator-item"
+                          >8</span
+                        >
+                      </div>
+                </button>
+                <Transition name="slide">
+                  <ul v-if="isNotificationOpen" class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content menu p-3 shadow bg-base-100 rounded-box w-52 top-[50px]">
+                        <li><a>Contoh kalimat panjang 1, apakah yang akan terjadi</a></li>
+                        <li><a>Notifikasi 2</a></li>
+                        <li><a>Notifikasi 3</a></li>
                   </ul>
-                </div>
-  
+                </Transition>
               </div>
   
           <!-- profile -->
@@ -105,9 +108,9 @@
             </div>
 
             <ul v-if="isOpen" class="mt-3 p-2 shadow bg-base-100 rounded-box w-52 absolute">
-              <li><a>Profile</a></li>
-              <li><a>Settings</a></li>
-              <li><a>Logout</a></li>
+              <li class="py-2 border-b-2"><a>Profile</a></li>
+              <li class="py-2 border-b-2"><a>Settings</a></li>
+              <li class="py-2 border-b-2"><a>Logout</a></li>
             </ul>
    
           </div>
@@ -130,5 +133,22 @@
   .zInfinite {
     z-index: 999;
   }
+
+  .slide-enter-from
+{   
+    /* transform: translateY(-10px); */
+    top: 70px;
+}
+
+.slide-enter-active
+{
+  transition: top .5s ease;
+}
+
+.slide-enter-to
+{
+   /* transform: translateY(0px); */
+   top: 50px;
+}
 
 </style>

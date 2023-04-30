@@ -55,10 +55,11 @@ const fetch = async () => {
 
 // watch(ref, callback)
 
-onBeforeMount(() => {
+  onBeforeMount(() => {
+  getSessionForSidebar()
   // sortedData.value gak dianggap sebagai array lagi
   fetch()
-})
+  })
 
   const filteredItems = (search) => {
     sortedData.value = instanceArray
@@ -69,6 +70,10 @@ onBeforeMount(() => {
       })
     sortedData.value = filteredR
     lengthCounter = sortedData.value.length
+  }
+
+  const getSessionForSidebar = () => {
+      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
   }
   
 </script>

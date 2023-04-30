@@ -72,6 +72,7 @@
     // watch(ref, callback)
 
     onBeforeMount(() => {
+      getSessionForSidebar()
       // sortedData.value gak dianggap sebagai array lagi
       instanceArray = dataDummy
       sortedData.value = instanceArray
@@ -91,6 +92,10 @@
     const fillPageMultiplier = (value) => {
       // ref harus pake .value biar ngaruh sama reactive :')
       pageMultiplier.value = value
+    }
+
+    const getSessionForSidebar = () => {
+      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
   
 </script>

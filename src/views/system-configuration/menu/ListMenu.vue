@@ -94,7 +94,7 @@
     // setTimeout(fetch, 5000)
 
     const getSessionForSidebar = () => {
-      sidebar.increment(sessionStorage.getItem('isOpen'))
+      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
     onBeforeMount(() => {

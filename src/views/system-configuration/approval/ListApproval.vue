@@ -64,6 +64,7 @@ const sortList = (sortBy) => {
 // watch(ref, callback)
 
 onBeforeMount(() => {
+  getSessionForSidebar()
   // sortedData.value gak dianggap sebagai array lagi
   instanceArray = dataDummy
   sortedData.value = instanceArray
@@ -78,6 +79,10 @@ const filteredItems = (search) => {
       })
       sortedData.value = filteredR
 }
+
+const getSessionForSidebar = () => {
+      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
+  }
   
 </script>
 

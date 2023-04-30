@@ -6,7 +6,7 @@
     import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue"
     import ModalAddApproval from '@/components/system-configuration/approval/ModalAddApprover.vue'
     import ModalAddUser from '@/components/system-configuration/user/ModalAddUser.vue'
-    // buat modal add buat sequence
+    import ModalAddSequence from '@/components/system-configuration/sequence/ModalAddSequence.vue'
 
     import { ref, computed } from 'vue'
 
@@ -36,6 +36,7 @@
     <ModalAddMenu v-if="props.modalAddType === 'menu'" />
     <ModalAddUser v-if="props.modalAddType === 'user'" />
     <ModalAddApproval v-if="props.modalAddType === 'approval'" />
+    <ModalAddSequence v-if="props.modalAddType === 'sequence'" />
 
     <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
       <img :src="icon_receive" class="w-6 h-6" />
@@ -48,10 +49,10 @@
 <!-- SORT & SEARCH -->
 <div class="flex flex-wrap items-center px-4 py-2 gap-y-2">
 
-  <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">
+    <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">
     
     <!-- sort company filter -->
-  <div class="flex items-center gap-4">
+    <div class="flex items-center gap-4">
 
     <p class="capitalize font-Fira text-xs text-black font-medium">
       Company
@@ -78,7 +79,7 @@
         <li><a>company C</a></li>
       </ul>
     </div>
-  </div>
+    </div>
 
     <!-- filter & reset button -->
     <div class="flex gap-4 flex-wrap items-center">
@@ -100,7 +101,7 @@
         </button>
     </div>
 
-  </div>
+</div>
 
   <div class="sm:flex-1"></div>
   
