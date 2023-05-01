@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import ModalView from "@/components/reference/company/ModalView.vue";
+import ExpandButton from "@/components/layout/ExpandButton.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
@@ -12,13 +13,17 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import dataCompany from "@/utils/Api/reference/companydata.js";
 
-import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
+
+import { useSidebarStore } from "@/stores/sidebar.js";
+const sidebar = useSidebarStore();
 
 //for sort & search
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let lengthCounter = 0;
 
 //for paginations
 let showingValue = ref(1);
@@ -69,8 +74,10 @@ const sortList = (sortBy) => {
 };
 
 onBeforeMount(() => {
+  getSessionForSidebar();
   instanceArray = dataCompany;
   sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
 });
 
 //for searching
@@ -86,19 +93,25 @@ const filteredItems = (search) => {
   });
   sortedData.value = filteredR;
 };
+
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
 </script>
 
 <template>
-  <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this overflow-y-hidden"
-  >
+  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
+      <ExpandButton />
       <div
-        class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px]"
-        :class="[dataCompany.length < 10 ? 'h-screen' : 'h-full']"
+        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+        :class="[
+          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
+          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
+        ]"
       >
         <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
