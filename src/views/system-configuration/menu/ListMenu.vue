@@ -109,6 +109,7 @@
       })
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
+      onChangePage(1)
     }
 
 </script>

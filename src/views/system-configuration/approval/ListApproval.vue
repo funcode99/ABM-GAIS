@@ -78,6 +78,7 @@ const filteredItems = (search) => {
          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
+      onChangePage(1)
 }
 
 const getSessionForSidebar = () => {

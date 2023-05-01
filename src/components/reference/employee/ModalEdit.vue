@@ -24,7 +24,8 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-4 lg:pb-16">
+      <div class="modal-box-inner pb-4 lg:pb-16">
+        
         <div class="flex justify-center items-center">
           <div class="avatar">
             <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
@@ -37,6 +38,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             </div>
           </div>
         </div>
+        
         <p
           class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4"
         >
@@ -228,7 +230,8 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             </div>
           </div>
         </form>
-      </main>
+      
+      </div>
 
       <div class="sticky bottom-0 bg-white py-2">
         <div class="flex justify-end gap-4 mr-6">
@@ -244,6 +247,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           </button>
         </div>
       </div>
+
     </div>
   </div>
 </template>

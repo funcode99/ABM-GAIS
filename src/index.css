@@ -39,7 +39,7 @@
 
 .modal-vue3-body {
   padding: 32px 32px !important;
-  max-height: 80vh !important;
+  max-height: 85vh !important;
 }
 
 .modal-vue3-header,
@@ -75,9 +75,27 @@
   height: 18px !important;
 }
 
+.modal-box-inner {
+  height: 100%;
+  --tw-scale-x: 0.9;
+  --tw-scale-y: 0.9;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* overscroll-behavior-y: contain; */
+}
+
 /* apply effect until 639px width */
 @media screen and (max-width:640px) {
   .clean-margin {
     margin-left: 0px;
   }
+}
+
+input, select {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }

@@ -25,75 +25,67 @@
     <label
       for="add-user-modal"
       class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-      >+ Add New</label
-    >
+      >
+      + Add New
+      </label>
 
     <input type="checkbox" id="add-user-modal" class="modal-toggle" />
     
     <div class="modal">
+
       <div class="modal-box relative">
 
         <nav class="sticky top-0 z-50 bg-white py-4">
           <label for="add-user-modal" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </label>
-          <p class="font-JakartaSans text-2xl font-semibold">New User</p>
+          <p class="font-JakartaSans text-2xl font-semibold">New Sequence</p>
           <div className="divider m-0"></div>
         </nav>
 
         <form>
 
-          <div class="mb-6">
-            <span>Employee?<span class="text-red-star">*</span></span>
-            <div class="flex gap-2 pt-2">
-              <div class="flex gap-1">
-                <!-- fill the same name value for individual select -->
-                <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-                <label for="">Yes</label>
-              </div>
-              <div class="flex gap-1">
-                <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-                <label for="">No</label>
-              </div>
-            </div>
-          </div>
-
-          <div class="mb-6">
+          <div class="flex">
+            <div class="mb-6">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Username<span class="text-red">*</span></label
+              >Nama<span class="text-red">*</span></label
             >
             <input
               type="text"
-              placeholder="Username"
+              placeholder="Nama Sequence"
               class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               required
             />
-          </div>
+            </div>
 
-          <div class="mb-6">
+            <div class="flex-1"></div>
+
+            <div class="mb-6">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Passwords<span class="text-red">*</span></label
+              >Next Value<span class="text-red">*</span></label
             >
             <input
-              type="password"
+              type="text"
               id="name"
-              placeholder="Passwords"
+              placeholder="Next Value"
               class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               required
             />
-          </div>    
+            </div>   
+          </div>
 
-          <div class="mb-6">
+          <div class="flex">
+            <div class="mb-6">
             <label
               for="company"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               id="company"
-              >User Role<span class="text-red">*</span></label
+              >Menu<span class="text-red">*</span></label
             >
             <select class="select select-accent w-40" required>
-              <option disabled selected hidden>Role</option>
+              <option disabled selected hidden>Menu</option>
               <option>Administrator</option>
               <option>Super Admin</option>
               <option>Admin</option>
@@ -101,69 +93,84 @@
               <option>Employee</option>
               <option>Driver</option>
             </select>
-          </div>
+            </div>
 
-          <div class="mb-6">
-            <label
-                for="name"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Approval Authorities<span class="text-red">*</span></label
-              >
-              <div class="flex justify-between text-[12px] gap-2">
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="PM" id="">
-                    <label for="">PM</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="GA" id="">
-                    <label for="">GA</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="HR" id="">
-                    <label for="">HR</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Treasury" id="">
-                    <label class="" for="">Treasury</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Finance / Accounting" id="">
-                    <label class="" for="">Finance / Accounting</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Atasan Langsung" id="">
-                    <label class="" for="">Atasan Langsung</label>
-                </div>
-              </div>
-          </div>
+            <div class="flex-1"></div>
 
-          <div class="mb-6">
-            <span>Company <span class="text-red-star">*</span></span>
-            <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" />
-          </div>
-
-          <div class="mb-6">
-            <span>Site <span class="text-red-star">*</span></span>
-            <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" />
-          </div>
-
-          <div class="mb-6">
+            <div class="mb-6">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Email<span class="text-red">*</span></label
+              >Sequence Size<span class="text-red">*</span></label
             >
             <input
               type="text"
-              id="name"
-              placeholder="Email"
+              placeholder="Sequence Size"
               class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               required
             />
+            </div>
           </div>
+
+          <div class="flex">
+            
+            <div class="mb-6">
+            <label
+              for="company"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="company"
+              >Recycle by<span class="text-red">*</span></label
+            >
+            <select class="select select-accent w-40" required>
+              <option disabled selected hidden>Month</option>
+              <option>Administrator</option>
+              <option>Super Admin</option>
+              <option>Admin</option>
+              <option>Receptionist</option>
+              <option>Employee</option>
+              <option>Driver</option>
+            </select>
+            </div>
+
+            <div class="flex-1"></div>
+            
+            <div class="mb-6">
+            <label
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Prefix<span class="text-red">*</span></label
+            >
+            <input
+              type="text"
+              placeholder="Prefix"
+              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              required
+            />
+            </div>
+
+          </div>
+  
+          <div class="flex">
+            <div class="mb-6">
+              <label
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Suffix<span class="text-red">*</span></label
+              >
+              <input
+                type="text"
+                id="name"
+                placeholder="Suffix"
+                class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                required
+              />
+            </div>
+            <div>
+
+            </div>
+          </div>
+
 
         </form>
 
-        <div class="fixed left-0 right-0 bg-white px-4 py-4">
+        <div class="sticky left-0 right-0 bottom-0 z-50 bg-white px-4 py-4">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
             <label
@@ -180,6 +187,7 @@
         </div>
 
       </div>
+
     </div>
 
 </template>
