@@ -1,24 +1,31 @@
 <script setup>
     import { ref } from 'vue'
     import expandArrow from '@/assets/ExpandArrow.png'
-
-    let tab = ref('details')
-    let showTravel = ref(true)
-    let showAirlines = ref(true)
+    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
     import arrow from '@/assets/request-trip-view-arrow.png'
+
+    import { useSidebarStore } from "@/stores/sidebar.js"
+    const sidebar = useSidebarStore()
+
+    let tab = ref('details')
+    let showTravel = ref(true)
+    let showAirlines = ref(true)
 </script>
 
 <template>
     <div class="flex flex-col basis-full grow-0 shrink-0 w-full h-full this font-JakartaSans">
         <Navbar />
         <div class="flex w-screen mt-[115px]">
-            <Sidebar class="flex-none fixed" />
-            <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-screen sm:ml-[100px] md:ml-[260px]">
+            <Sidebar class="flex-none" />
+            <ExpandButton />
+            <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full duration-500 ease-in-out"
+            :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
+            >
                 <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
                     <div class="flex items-center gap-2">
                         <img :src="arrow" class="w-3 h-3" alt="">

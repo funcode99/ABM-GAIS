@@ -86,6 +86,7 @@
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
       console.log(lengthCounter)
+      onChangePage(1)
     }
 
     const fillPageMultiplier = (value) => {
@@ -117,7 +118,7 @@
       <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full clean-margin ease-in-out duration-500" 
         :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
-          <TableTopBar :title="'User'" @change-showing="fillPageMultiplier" modalAddType="user" />
+          <TableTopBar :title="'User'" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
           
           <!-- actual table -->
           <!-- scrollbar horizontal juga ada disini -->

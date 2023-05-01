@@ -1,9 +1,8 @@
 <script setup>
-    import editIcon from "@/assets/navbar/edit_icon.svg";
-    import iconClose from "@/assets/navbar/icon_close.svg";
-
     import { ref } from 'vue'
     import { Modal } from 'usemodal-vue3'
+    import iconClose from "@/assets/navbar/icon_close.svg"
+    import editIcon from "@/assets/navbar/edit_icon.svg"
 
     let isVisible = ref(false)
     let type = '' 
@@ -16,7 +15,7 @@
         <img :src="editIcon" class="w-6 h-6" />
     </button>
 
-    <Modal  v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+    <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
         <nav class="sticky w-full top-0 z-50 bg-white py-4 flex justify-between">
             <p class="font-JakartaSans text-2xl font-semibold">Edit User</p>
@@ -24,7 +23,6 @@
                 <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
         </nav>
-        <!-- <div className="divider m-0 pt-[-8px]"></div> -->
 
         <form class="px-3 text-left">
 
@@ -127,7 +125,7 @@
 
         </form>
 
-        <div class="bg-white py-4">
+        <div class="sticky bottom-0 bg-white py-4">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
             <button

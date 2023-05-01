@@ -8,8 +8,8 @@
 
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
-    import arrowicon from "@/assets/navbar/icon_arrow.svg";
-    import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
+    import arrowicon from "@/assets/navbar/icon_arrow.svg"
+    import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
@@ -86,7 +86,7 @@
       })
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
-      console.log(lengthCounter)
+      onChangePage(1)
     }
 
     const fillPageMultiplier = (value) => {
@@ -176,7 +176,7 @@
                         {{ data.SequenceSize }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditUser/>
+                        <ModalEditSequence/>
                         <ModalDelete/>
                       </td>
                     </tr>
@@ -185,12 +185,6 @@
                 
               </table>
             </div>
-  
-              <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-                <p class="font-Inter text-xs font-normal text-[#888888]">
-                  Showing 1 to 10 of 20 entries
-                </p>
-              </div> -->
   
             </div>
   
