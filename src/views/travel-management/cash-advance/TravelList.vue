@@ -87,6 +87,7 @@ const filteredItems = (search) => {
     );
   });
   sortedData.value = filteredR;
+  onChangePage(1)
 };
 </script>
 
