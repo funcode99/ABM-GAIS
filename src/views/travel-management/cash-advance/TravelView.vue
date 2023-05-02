@@ -39,19 +39,28 @@ const getSessionForSidebar = () => {
       >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
-          <router-link
-            to="/cashadvancetravel"
-            class="flex items-center gap-2 py-4 mx-4"
-          >
-            <img :src="arrow" class="w-3 h-3" alt="" />
-            <h1 class="text-blue font-semibold font-JakartaSans">
-              Cash Advance Travel<span
-                class="text-[#0a0a0a] font-semibold font-JakartaSans"
+          <div class="flex justify-between">
+            <router-link
+              to="/cashadvancetravel"
+              class="flex items-center gap-2 py-4 mx-4"
+            >
+              <img :src="arrow" class="w-3 h-3" alt="" />
+              <h1 class="text-blue font-semibold font-JakartaSans">
+                Cash Advance Travel<span
+                  class="text-[#0a0a0a] font-semibold font-JakartaSans"
+                >
+                  / TCA-ABM/1309/12.05
+                </span>
+              </h1>
+            </router-link>
+            <div class="py-4">
+              <button
+                class="btn btn-sm bg-[#2970FF] border-none mx-4 capitalize hover:bg-[#004EEB]"
               >
-                / TCA-ABM/1309/12.05
-              </span>
-            </h1>
-          </router-link>
+                Status
+              </button>
+            </div>
+          </div>
 
           <!-- FORM READ ONLY-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
