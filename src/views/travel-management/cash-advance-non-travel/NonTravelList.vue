@@ -61,7 +61,7 @@ const tableHead = [
   { Id: 2, title: "Created Date", jsonData: "created_date" },
   { Id: 3, title: "CA No", jsonData: "ca_no" },
   { Id: 4, title: "Event", jsonData: "event" },
-  { Id: 5, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 5, title: "Total", jsonData: "nominal" },
   { Id: 6, title: "Status", jsonData: "status" },
   { Id: 7, title: "Actions" },
 ];
@@ -277,7 +277,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.created_date }}</td>
                     <td>{{ data.ca_no }}</td>
                     <td>{{ data.event }}</td>
-                    <td>{{ data.cost_center }}</td>
+                    <td>{{ data.nominal }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <router-link to="/viewcashadvancenontravel">

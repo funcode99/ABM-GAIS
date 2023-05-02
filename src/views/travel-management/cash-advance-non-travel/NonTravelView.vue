@@ -42,19 +42,41 @@ const getSessionForSidebar = () => {
       >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
-          <router-link
-            to="/cashadvancenontravel"
-            class="flex items-center gap-2 py-4 mx-4"
-          >
-            <img :src="arrow" class="w-3 h-3" alt="" />
-            <h1 class="text-blue font-semibold font-JakartaSans">
-              Cash Advance Non Travel<span
-                class="text-[#0a0a0a] font-semibold font-JakartaSans"
+          <div class="flex justify-between">
+            <router-link
+              to="/cashadvancenontravel"
+              class="flex items-center gap-2 py-4 mx-4"
+            >
+              <img :src="arrow" class="w-3 h-3" alt="" />
+              <h1 class="text-blue font-semibold font-JakartaSans">
+                Cash Advance Non Travel<span
+                  class="text-[#0a0a0a] font-semibold font-JakartaSans"
+                >
+                  / CA-ABM/1232/23.04
+                </span>
+              </h1>
+            </router-link>
+            <div class="py-4">
+              <button
+                class="btn btn-sm bg-[#2970FF] border-none mx-4 capitalize hover:bg-[#004EEB]"
               >
-                / CA-ABM/1232/23.04
-              </span>
-            </h1>
-          </router-link>
+                Status
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-start gap-4 mx-4">
+            <button
+              class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+            >
+              Edit
+            </button>
+            <button
+              class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            >
+              Submit
+            </button>
+          </div>
 
           <!-- FORM READ ONLY-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
@@ -89,9 +111,18 @@ const getSessionForSidebar = () => {
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Total</span>
+              <input
+                type="text"
+                disabled
+                value="462.000"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
           </div>
 
-          <!-- TAB -->
+          <!-- TAB & TABLE-->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]">
             <div
               class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
@@ -101,65 +132,88 @@ const getSessionForSidebar = () => {
               ></div>
               <p class="font-JakartaSans font-normal text-sm mx-8">Details</p>
             </div>
-          </div>
-
-          <div class="mx-[70px]">
-            <table class="mt-4 w-full">
-              <thead class="font-JakartaSans font-bold text-xs">
-                <tr class="bg-blue text-white h-8">
-                  <th class="border border-[#B9B9B9]">Item</th>
-                  <th class="border border-[#B9B9B9]">Date</th>
-                  <th class="border border-[#B9B9B9]">Cost Center</th>
-                  <th class="border border-[#B9B9B9]">Nominal</th>
-                  <th class="border border-[#B9B9B9]">Remarks</th>
-                  <th class="border border-[#B9B9B9]">Action</th>
-                </tr>
-              </thead>
-              <tbody class="font-JakartaSans font-normal text-xs">
-                <tr class="h-16">
-                  <td class="border border-[#B9B9B9]">Sewa Lapangan</td>
-                  <td class="border border-[#B9B9B9]">13/04/23</td>
-                  <td class="border border-[#B9B9B9]">13222</td>
-                  <td class="border border-[#B9B9B9]">231.000</td>
-                  <td class="border border-[#B9B9B9]">Tanding</td>
-                  <td class="border border-[#B9B9B9]">
-                    <div class="flex justify-center items-center">
-                      <button>
-                        <img :src="editicon" class="w-6 h-6" />
-                      </button>
-                      <button>
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="h-16">
-                  <td class="border border-[#B9B9B9]">Minuman</td>
-                  <td class="border border-[#B9B9B9]">13/04/23</td>
-                  <td class="border border-[#B9B9B9]">13222</td>
-                  <td class="border border-[#B9B9B9]">231.000</td>
-                  <td class="border border-[#B9B9B9]">Tanding</td>
-                  <td class="border border-[#B9B9B9]">
-                    <div class="flex justify-center items-center">
-                      <button>
-                        <img :src="editicon" class="w-6 h-6" />
-                      </button>
-                      <button>
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr class="h-16">
-                  <td class="border border-[#B9B9B9]">Total</td>
-                  <td class="border border-[#B9B9B9]"></td>
-                  <td class="border border-[#B9B9B9]"></td>
-                  <td class="border border-[#B9B9B9]">462.000</td>
-                  <td class="border border-[#B9B9B9]"></td>
-                  <td class="border border-[#B9B9B9]"></td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="overflow-x-auto">
+              <table class="table table-compact w-full">
+                <thead class="font-JakartaSans font-bold text-xs">
+                  <tr class="bg-blue text-white h-8">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Item
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Date
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Cost Center
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Nominal
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Remarks
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="font-JakartaSans font-normal text-xs">
+                  <tr class="h-16">
+                    <td class="border border-[#B9B9B9]">Sewa Lapangan</td>
+                    <td class="border border-[#B9B9B9]">13/04/23</td>
+                    <td class="border border-[#B9B9B9]">13222</td>
+                    <td class="border border-[#B9B9B9]">231.000</td>
+                    <td class="border border-[#B9B9B9]">Tanding</td>
+                    <td class="border border-[#B9B9B9]">
+                      <div class="flex justify-center items-center">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                        <button>
+                          <img :src="deleteicon" class="w-6 h-6" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="h-16">
+                    <td class="border border-[#B9B9B9]">Minuman</td>
+                    <td class="border border-[#B9B9B9]">13/04/23</td>
+                    <td class="border border-[#B9B9B9]">13222</td>
+                    <td class="border border-[#B9B9B9]">231.000</td>
+                    <td class="border border-[#B9B9B9]">Tanding</td>
+                    <td class="border border-[#B9B9B9]">
+                      <div class="flex justify-center items-center">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                        <button>
+                          <img :src="deleteicon" class="w-6 h-6" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="h-16">
+                    <td class="border border-[#B9B9B9]">Total</td>
+                    <td class="border border-[#B9B9B9]"></td>
+                    <td class="border border-[#B9B9B9]"></td>
+                    <td class="border border-[#B9B9B9]">462.000</td>
+                    <td class="border border-[#B9B9B9]"></td>
+                    <td class="border border-[#B9B9B9]"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
