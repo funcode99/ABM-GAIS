@@ -2,6 +2,8 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import ExpandButton from "@/components/layout/ExpandButton.vue";
+
 import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
@@ -13,7 +15,9 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import datanontravel from "@/utils/Api/cash-advance-non-travel/datanontravel.js";
 
-import { ref, onMounted, onBeforeMount, reactive, computed } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js";
+const sidebar = useSidebarStore();
 
 //for sort, search, & filter
 const date = ref();
@@ -21,6 +25,7 @@ const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let lengthCounter = 0;
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -73,8 +78,10 @@ const sortList = (sortBy) => {
 };
 
 onBeforeMount(() => {
+  getSessionForSidebar();
   instanceArray = datanontravel;
   sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
 });
 
 //for searching
@@ -89,18 +96,29 @@ const filteredItems = (search) => {
     );
   });
   sortedData.value = filteredR;
-  onChangePage(1)
+  lengthCounter = sortedData.value.length;
+  onChangePage(1);
+};
+
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 </script>
 
 <template>
-  <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
-  >
+  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <div class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px]">
+      <ExpandButton />
+
+      <div
+        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+        :class="[
+          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
+          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
+        ]"
+      >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div

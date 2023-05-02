@@ -4,27 +4,30 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ExpandButton from "@/components/layout/ExpandButton.vue";
 
-import icon_receive from "@/assets/icon-receive.svg";
+import ModalRejectShortcut from "@/components/approval/cash-advance-travel/ModalRejectShortcut.vue";
+
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
+import icon_ceklis from "@/assets/icon_ceklis.svg";
+import icon_close from "@/assets/navbar/icon_close.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import datatravel from "@/utils/Api/travel-cash-advance/datatravel.js";
+import cadata from "@/utils/Api/approval/cash-advance-travel/cadata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
+
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
-//for sort, search, & filter
-const date = ref();
+//for sort & search
 const search = ref("");
 let sortedData = ref([]);
+const selectedType = ref("Type");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 
-//for paginations & showing
+//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
@@ -34,6 +37,23 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+};
+
+//for filter & reset button
+const filterDataByType = () => {
+  if (selectedType.value === "") {
+    sortedData.value = instanceArray;
+  } else {
+    sortedData.value = instanceArray.filter(
+      (item) => item.type === selectedType.value
+    );
+  }
+};
+
+//for filter & reset button
+const resetData = () => {
+  sortedData.value = instanceArray;
+  selectedType.value = "Type";
 };
 
 //for check & uncheck all
@@ -57,10 +77,11 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
   { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Requestor", jsonData: "name" },
-  { Id: 5, title: "Total", jsonData: "total" },
-  { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
+  { Id: 4, title: "Name", jsonData: "name" },
+  { Id: 5, title: "Type", jsonData: "type" },
+  { Id: 6, title: "Total", jsonData: "total" },
+  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 8, title: "Actions" },
 ];
 
 //for sort
@@ -76,7 +97,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = datatravel;
+  instanceArray = cadata;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -105,6 +126,7 @@ const getSessionForSidebar = () => {
 <template>
   <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
     <Navbar />
+
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
       <ExpandButton />
@@ -116,7 +138,7 @@ const getSessionForSidebar = () => {
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
         ]"
       >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
+        <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -126,36 +148,30 @@ const getSessionForSidebar = () => {
             >
               Cash Advance Travel
             </p>
-            <div class="flex gap-4">
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-              >
-                <img :src="icon_receive" class="w-6 h-6" />
-              </button>
-            </div>
           </div>
 
-          <!-- SORT, DATE & SEARCH -->
-          <div
-            class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
-          >
+          <!-- SORT & SEARCH -->
+          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
             <div class="flex flex-wrap items-center gap-4">
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >
-                Date
+                Name Type
               </p>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedType"
+              >
+                <option disabled selected>Type</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.type }}
+                </option>
+              </select>
 
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
-
-              <div class="flex gap-4 items-center">
+              <div class="flex flex-wrap gap-4 items-center">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  @click="filterDataByType"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -164,6 +180,7 @@ const getSessionForSidebar = () => {
                 </button>
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
                 >
                   <span>
                     <img :src="icon_reset" class="w-5 h-5" />
@@ -193,8 +210,8 @@ const getSessionForSidebar = () => {
                   </svg>
                 </span>
                 <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[11px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search By CA No / Name"
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search by CA No / Name"
                   type="text"
                   name="search"
                   v-model="search"
@@ -273,14 +290,19 @@ const getSessionForSidebar = () => {
                     <td>{{ data.created_date }}</td>
                     <td>{{ data.ca_no }}</td>
                     <td>{{ data.name }}</td>
+                    <td>{{ data.type }}</td>
                     <td>{{ data.total }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewcashadvancetravel">
+                      <router-link to="/viewapprovalcatravel">
                         <button>
-                          <img :src="editicon" class="w-6 h-6" />
+                          <img :src="icon_ceklis" class="w-6 h-6" />
                         </button>
                       </router-link>
+                      <!-- <button>
+                        <img :src="icon_close" class="w-6 h-6" />
+                      </button> -->
+                      <ModalRejectShortcut />
                     </td>
                   </tr>
                 </tbody>
@@ -344,9 +366,5 @@ tr th {
 
 .this {
   overflow-x: hidden;
-}
-
-.my-date {
-  width: 260px !important;
 }
 </style>

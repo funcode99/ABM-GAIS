@@ -6,6 +6,23 @@ import Footer from "@/components/layout/Footer.vue";
 import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+
+import ExpandButton from "@/components/layout/ExpandButton.vue";
+
+import { onBeforeMount } from "vue";
+
+import { useSidebarStore } from "@/stores/sidebar.js";
+const sidebar = useSidebarStore();
+
+let lengthCounter = 0;
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+});
+
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
 </script>
 
 <template>
@@ -15,7 +32,14 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <div class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px]">
+      <ExpandButton />
+      <div
+        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+        :class="[
+          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
+          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
+        ]"
+      >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
           <router-link
