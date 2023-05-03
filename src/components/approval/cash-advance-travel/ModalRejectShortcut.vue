@@ -4,7 +4,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 
 <template>
   <label for="my-modal-reject" class="cursor-pointer">
-    <img :src="iconClose" class="w-5 h-5" />
+    <img :src="iconClose" class="w-5 h-5 mt-[2px]" />
   </label>
 
   <input type="checkbox" id="my-modal-reject" class="modal-toggle" />
@@ -17,12 +17,14 @@ import iconClose from "@/assets/navbar/icon_close.svg";
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
+        <p
+          class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
+        >
           Reject Reason
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner-reject-shortcut">
         <form class="pt-4">
           <div class="flex flex-wrap justify-start gap-2">
             <div class="form-control">
@@ -94,7 +96,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-reject-shortcut {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
