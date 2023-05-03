@@ -16,6 +16,7 @@ module.exports = {
         "red": "#F04438",
         "red-star": "#F5333F",
         "blue": "#015289",
+        "blue-button": '#1F7793'
       }
     },
   },
