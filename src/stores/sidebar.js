@@ -3,13 +3,14 @@ import { defineStore } from 'pinia'
 // sidebarMenu.name
 // sidebarMenu.condition
 
-export const useSidebarStore = defineStore ('sidebar', {
+export const useSidebarStore = defineStore('sidebar', {
     state: () => {
         return {
             sidebarMenu: {
                 travelManagementSystem: false,
                 systemConfiguration: false,
                 reference: false,
+                approval: false,
             },
             isWide: true
         }
@@ -17,13 +18,14 @@ export const useSidebarStore = defineStore ('sidebar', {
     actions: {
         increment(state) {
 
-            if(state === 'reference') {
-                
+            if (state === 'reference') {
+
                 this.sidebarMenu.reference = !this.sidebarMenu.reference
                 this.sidebarMenu.reference ? sessionStorage.setItem('isOpen', state) : sessionStorage.setItem('isOpen', '')
 
                 this.sidebarMenu.systemConfiguration = false
                 this.sidebarMenu.travelManagementSystem = false
+                this.sidebarMenu.approval = false
 
             } else if (state === 'systemConfiguration') {
 
@@ -32,6 +34,8 @@ export const useSidebarStore = defineStore ('sidebar', {
 
                 this.sidebarMenu.reference = false
                 this.sidebarMenu.travelManagementSystem = false
+                this.sidebarMenu.approval = false
+
             } else if (state === 'travelManagementSystem') {
 
                 this.sidebarMenu.travelManagementSystem = !this.sidebarMenu.travelManagementSystem
@@ -39,8 +43,17 @@ export const useSidebarStore = defineStore ('sidebar', {
 
                 this.sidebarMenu.systemConfiguration = false
                 this.sidebarMenu.reference = false
-            }
+                this.sidebarMenu.approval = false
 
+            } else if (state === 'approval') {
+
+                this.sidebarMenu.approval = !this.sidebarMenu.approval
+                this.sidebarMenu.approval ? sessionStorage.setItem('isOpen', state) : sessionStorage.setItem('isOpen', '')
+
+                this.sidebarMenu.reference = false
+                this.sidebarMenu.systemConfiguration = false
+                this.sidebarMenu.travelManagementSystem = false
+            }
         },
         changeWide() {
             this.isWide = !this.isWide
@@ -48,17 +61,18 @@ export const useSidebarStore = defineStore ('sidebar', {
         setSidebarRefresh(state) {
             // ke 3 state sudah false
 
-            if(this.sidebarMenu.reference === false && this.sidebarMenu.systemConfiguration === false && this.sidebarMenu.travelManagementSystem === false) {
-                if(state === 'reference') {
+            if (this.sidebarMenu.reference === false && this.sidebarMenu.systemConfiguration === false && this.sidebarMenu.travelManagementSystem === false) {
+                if (state === 'reference') {
                     this.sidebarMenu.reference = true
                 } else if (state === 'systemConfiguration') {
-                    console.log('masuk ke sini')
+                    // console.log('masuk ke sini')
                     this.sidebarMenu.systemConfiguration = true
                 } else if (state === 'travelManagementSystem') {
                     this.sidebarMenu.travelManagementSystem = true
+                } else if (state === 'approval') {
+                    this.sidebarMenu.approval = true
                 }
             }
-
         }
     },
 })
