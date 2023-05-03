@@ -16,7 +16,18 @@ function onFileChange(event) {
   };
 
   reader.readAsDataURL(file);
+
 }
+
+    let dtToday = new Date()
+    let month = dtToday.getMonth() + 1;
+    let day = dtToday.getDate();
+    let year = dtToday.getFullYear();
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+    let minDate = year + '-' + month + '-' + day 
 </script>
 
 <template>
@@ -158,9 +169,11 @@ function onFileChange(event) {
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Begin Date<span class="text-red">*</span></label
               >
+              <!-- id="date_start" -->
               <input
                 type="date"
                 name="date_start"
+                :min="minDate"
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               />

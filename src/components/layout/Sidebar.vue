@@ -869,4 +869,16 @@ let travel = "travelManagementSystem";
   transform: translateY(0px);
 }
 
+.slideDown-leave-from {
+  transform: translateY(0px);
+}
+
+.slideDown-leave-active {
+  transition: all .5s ease;
+}
+
+.slideDown-leave-to {
+  transform: translateY(-10px);
+}
+
 </style>

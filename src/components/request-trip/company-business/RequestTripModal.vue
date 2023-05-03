@@ -8,6 +8,11 @@ import arrow from '@/assets/arrow-multi-step-form.png'
 import Airline1 from '@/assets/airlines-1.png'
 import Airline2 from '@/assets/airlines-2.png'
 
+import { Modal } from 'usemodal-vue3'
+let isVisible = ref(false)
+let type = '' 
+let modalPaddingHeight = 50
+
 let formStep = ref(0)
 
 const tableHeadAirlines = [
@@ -50,9 +55,139 @@ const airlinesDummy = [
 
 <template>
 
+    <!-- Modal step 3 form -->
+    <Modal type="clean" v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
+      <!-- sticky top-0 -->
+      <nav class="z-50 bg-white py-4 px-2 flex justify-between scale">
+          <p class="font-JakartaSans text-2xl font-semibold">Edit User</p>
+          <button @click="isVisible = false" class="cursor-pointer">
+              <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+          </button>
+      </nav>
 
-<!-- button to open modal -->
+      <!-- pb-28 -->
+      <div class="px-3 text-left modal-box-inner">
+
+      <div class="mb-6">
+      <span>Employee?<span class="text-red-star">*</span></span>
+      <div class="flex gap-2 pt-2">
+          <div class="flex gap-1">
+          <!-- fill the same name value for individual select -->
+          <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+          <label for="">Yes</label>
+          </div>
+          <div class="flex gap-1">
+          <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+          <label for="">No</label>
+          </div>
+      </div>
+      </div>
+
+      <div class="mb-6">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                  Username<span class="text-red">*</span>
+          </label>
+          <input
+              type="text"
+              placeholder="Username"
+              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              required
+          />
+      </div>
+
+      <div class="mb-6">
+      <label
+          class="block mb-2 font-JakartaSans font-medium text-sm"
+          >Passwords<span class="text-red">*</span></label
+      >
+      <input
+          type="password"
+          placeholder="Passwords"
+          class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+          required
+      />
+      </div>
+
+      <div class="mb-6 flex flex-col text-left justify-start">
+      <span
+          for="company"
+          class="block mb-2 font-JakartaSans font-medium text-sm"
+          id="company"
+          >User Role<span class="text-red">*</span></span
+      >
+      <select class="select select-accent w-full" required>
+          <option disabled selected hidden>Role</option>
+          <option>Administrator</option>
+          <option>Super Admin</option>
+          <option>Admin</option>
+          <option>Receptionist</option>
+          <option>Employee</option>
+          <option>Driver</option>
+      </select>
+      </div>
+
+      <div class="mb-6">
+              <label
+                  for="name"
+                  class="block mb-2 font-JakartaSans font-medium text-sm text-left"
+                  >Approval Authorities<span class="text-red">*</span></label
+              >
+              <div class="flex justify-between">
+                  <div class="flex items-center gap-2">
+                      <input type="checkbox" name="PM" id="">
+                      <label for="">PM</label>
+                  </div>
+                  <div class="flex items-center gap-2">
+                      <input type="checkbox" name="GA" id="">
+                      <label for="">GA</label>
+                  </div>
+                  <div class="flex items-center gap-2">
+                      <input type="checkbox" name="HR" id="">
+                      <label for="">HR</label>
+                  </div>
+                  <div class="flex items-center gap-2">                
+                      <input type="checkbox" name="Finance / Accounting" id="">
+                      <label class="" for="">Finance / Accounting</label>
+                  </div>
+              </div>
+      </div>
+
+      <div class="mb-6">
+      <label
+          class="block mb-2 font-JakartaSans font-medium text-sm"
+          >Email<span class="text-red">*</span></label
+      >
+      <input
+          type="text"
+          placeholder="Email"
+          class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+          required
+      />
+      </div>
+
+      </div>
+
+      <!-- fixed bottom-0 left-6 right-6 -->
+      <nav class="bg-white py-4 px-2 z-50 fixed left-0 right-0 bottom-3 scale">
+          <div className="divider m-0 pb-4"></div>
+          <div class="flex justify-end gap-4">
+              <button
+                  @click="isVisible = false"
+                  class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
+              >Cancel</button
+              >
+              <button
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+              >
+              Save
+              </button>
+          </div>
+      </nav>
+
+    </Modal>
+
+  <!-- trigger button to open modal -->
   <label
     for="company-business-trip-request-modal"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
@@ -61,10 +196,12 @@ const airlinesDummy = [
 
   <input type="checkbox" id="company-business-trip-request-modal" class="modal-toggle" />
 
+  <!-- modal trip request -->
   <div class="modal font-JakartaSans">
     
-    <div class="modal-box h-[85vh] relative">
+    <div class="modal-box min-h-[500px] relative">
 
+      <!-- modal title -->
       <nav class="sticky p-4 top-0 z-50 bg-[#015289]">
         <label for="company-business-trip-request-modal" class="cursor-pointer absolute right-4">
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
@@ -73,7 +210,7 @@ const airlinesDummy = [
       </nav>
 
       <!-- step circle -->
-      <div class="step-circle-indicator flex justify-center gap-x-[19px] p-4 modal-inner">
+      <div class="flex justify-center pt-3 gap-x-[19px] modal-inner">
 
 <!-- step 1 circle -->
 <div class="rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative">
@@ -119,20 +256,20 @@ const airlinesDummy = [
 
       </div>
 
-      <div class="modal-box-inner">
+      <!-- modal body -->
+      <!-- mt-[30px] -->
+      <div class="modal-box-inner mt-[30px]">
 
           <!-- step 1 form -->
-          <form class="text-left" :class="formStep == 0 ? 'block' : 'hidden'">
+          <div class="text-left" :class="formStep == 0 ? 'block' : 'hidden'">
 
-          <div class="grid grid-cols-2 gap-x-4 sm:gap-x-0 gap-y-6">
+          <div class="flex justify-between mx-4 items-center gap-2 my-6">
 
+            <div class="flex flex-col items-center flex-1">
 
-
-            <div class="flex flex-col items-center">
-
-              <div>
+              <div class="w-full">
                 <span>Requestor <span class="text-[#f5333f]">*</span></span>
-                <select class="w-full border-2 border-black rounded-lg mt-2 px-4 py-2">
+                <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer">
                   <option hidden selected disabled value="">
                     Name
                   </option>
@@ -141,210 +278,136 @@ const airlinesDummy = [
 
             </div>
 
-            <div class="flex flex-col items-center">
+            <div class="flex flex-col items-center flex-1">
 
               <div>
                 <span class="block">Location <span class="text-[#f5333f]">*</span></span>
-                <input type="text" class="w-full border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Location">
+                <input type="text" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer" placeholder="Location">
               </div>
 
             </div>
 
+          </div>
+
+          <div class="flex justify-between mx-4 items-center gap-2">
+
             <div class="flex flex-col items-center">
               <div>
                 <span class="block">SN <span class="text-[#f5333f]">*</span></span>
-                <input type="text" class="w-full border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="SN">
+                <input type="text" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer" placeholder="SN">
               </div>
             </div>
 
             <div class="flex flex-col items-center">
               <div>
                 <span class="block">Telephone <span class="text-[#f5333f]">*</span></span>
-                <input type="text" class="w-full border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Telephone">
+                <input type="text" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer" placeholder="Telephone">
               </div>
             </div>
 
           </div>
 
-          </form>
+          </div>
 
           <!-- step 2 form -->
-          <form class="text-left px-2 flex flex-col gap-6 pb-[220px]" :class="formStep == 1 ? 'block' : 'hidden'">
+          <div class="text-left px-4 pb-[60px] flex flex-col gap-6" :class="formStep == 1 ? 'block' : 'hidden'">
 
-            <div class="flex flex-col">
+            <div class="flex flex-col mx-4">
               <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-              <select class="max-w-[40%] border-2 border-black rounded-lg mt-2 px-4 py-2">
+              <select class="w-full border border-slate-300 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer rounded-lg mt-2 px-4 py-3">
                 <option hidden selected disabled value="">
                   Company Business
                 </option>
               </select>
             </div>
 
-            <div class="flex flex-col">
+            <div class="flex flex-col mx-4">
               <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-              <input type="text" class="max-w-[100%] border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Notes">
+              <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-3" placeholder="Notes">
             </div>
 
-            <h1>Itinerary</h1>
+            <h1 class="mx-4">Itinerary</h1>
+            
+            <div class="flex justify-between mx-4 items-center gap-2">
 
-            <!-- city -->
-            <div>
-              <select class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer">
-                <option hidden selected disable>City</option>
-              </select>
+              <!-- From -->
+              <div class="flex flex-col w-full">
+                <span>From<span class="text-red-star">*</span></span>
+                <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="From">
+                  <option hidden disabled selected>
+                    City
+                  </option>
+                </select>
+              </div>
+
+              <!-- Zona -->
+              <div class="flex flex-col w-full">
+                <span>TLK/Day<span class="text-red-star">*</span></span>
+                <input type="text" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Zona">
+              </div>
+
             </div>
 
+            <div class="flex justify-between mx-4 items-center gap-2">
 
+              <!-- To -->
+              <div class="flex flex-col w-full">
+                <span>To<span class="text-red-star">*</span></span>
+                <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="City">
+                  <option hidden disabled selected>
+                    City
+                  </option>
+                </select>
+              </div>
+              
+              <!-- TLK/Day -->
+              <div class="flex flex-col w-full">
+                <span>TLK/Day<span class="text-red-star">*</span></span>
+                <input type="text" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="TLK/Day">
+              </div>
 
-
-
-
-
-
-
-
-            <div class="flex flex-col">
-              <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-              <select class="max-w-[40%] border-2 border-black rounded-lg mt-2 px-4 py-2">
-                <option hidden selected disabled value="">
-                  Company Business
-                </option>
-              </select>
             </div>
 
-            <div class="flex flex-col">
-              <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-              <input type="text" class="max-w-[100%] border-2 border-black rounded-lg mt-2 px-4 py-2" placeholder="Notes">
+            <div class="flex justify-between mx-4 items-center gap-2">
+              
+              <!-- Date Departure -->
+              <div class="flex flex-col w-[49%]">
+                <span>Date Departure<span class="text-red-star">*</span></span>
+                <input type="date" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Date">
+              </div>
+
+                <!-- Total TLK -->
+                <div class="flex flex-col w-full">
+                  <span class="">Total TLK<span class="text-red-star">*</span></span>
+                  <input type="text" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Total">
+                </div>
+
+
+
             </div>
 
-            <h1>Itinerary</h1>
-
-            <!-- city -->
-            <div>
-              <select class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer">
-                <option hidden selected disable>City</option>
-              </select>
+            <div class="flex justify-between mx-4 items-center gap-2">
+              <!-- Return date -->
+               <div class="flex flex-col w-full">
+                  <span class="">Return Date<span class="text-red-star">*</span></span>
+                  <input type="date" class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Date">
+              </div>
             </div>
 
-
-
-
-
-          </form>
+            
+          </div>
 
           <!-- step 3 form -->
-          <form class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
+          <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
 
-            <label for="traveller-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Guest
-            </label>
+            <button @click="isVisible = !isVisible" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+              + Add 
+            </button>
 
-            <input type="checkbox" id="traveller-modal" class="modal-toggle" />
-
-            <div class="modal">
-
-<div class="modal-box h-[476px]">
-
-  <nav for="traveller-modal" class=" top-0 py-4">
-    <label for="traveller-modal" class="cursor-pointer absolute right-0">
-      <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-    </label>
-    <p class="font-JakartaSans text-2xl font-semibold">Traveller as Guest</p>
-  </nav>
-
-  <div class="grid grid-cols-2 gap-y-6">
-    <div class="flex flex-col max-w-[50%]">
-      <span>Type of Traveller <span class="text-[#f5333f]">*</span></span>
-      <select class="border border-black mt-2 px-4 py-2 rounded-lg">
-        <option selected disabled hidden value="">
-          Type
-        </option>
-      </select>
-    </div>
-    <div class="flex flex-col max-w-[70%]">
-      <span>Department <span class="text-[#f5333f]">*</span></span>
-      <input type="text" placeholder="Department" class="border border-black mt-2 px-4 py-2 rounded-lg">
-    </div>
-    <div class="flex flex-col max-w-[50%]">
-      <span>Name <span class="text-[#f5333f]">*</span></span>
-      <select class="border border-black mt-2 px-4 py-2 rounded-lg">
-        <option selected disabled hidden value="">
-          Name
-        </option>
-      </select>
-    </div>
-    <div class="flex flex-col max-w-[50%]">
-      <span>Company <span class="text-[#f5333f]">*</span></span>
-      <select class="border border-black mt-2 px-4 py-2 rounded-lg">
-        <option selected disabled hidden value="">
-          Company
-        </option>
-      </select>
-    </div>
-    <div class="flex flex-col max-w-[50%]">
-      <span>Gender <span class="text-[#f5333f]">*</span></span>
-      <select class="border border-black mt-2 px-4 py-2 rounded-lg">
-        <option selected disabled hidden value="">
-          Male
-        </option>
-      </select>
-    </div>
-    <div class="flex flex-col max-w-[50%]">
-      <span>Hotel Fare <span class="text-[#f5333f]">*</span></span>
-      <select class="border border-black mt-2 px-4 py-2 rounded-lg">
-        <option selected disabled hidden value="">
-          Fare
-        </option>
-      </select>
-    </div>
-    <div class="flex flex-col max-w-[70%]">
-      <span>SN <span class="text-[#f5333f]">*</span></span>
-      <input type="text" placeholder="SN" class="border border-black mt-2 px-4 py-2 rounded-lg">
-    </div>
-    <div class="flex flex-col max-w-[50%]">
-      <span>Flight Entitlement <span class="text-[#f5333f]">*</span></span>
-      <select class="border border-black mt-2 px-4 py-2 rounded-lg">
-        <option selected disabled hidden value="">
-          Flight Entitlement
-        </option>
-      </select>
-    </div>
-    <div class="flex flex-col max-w-[70%]">
-      <span>Contact No <span class="text-[#f5333f]">*</span></span>
-      <input type="text" placeholder="Contact No" class="border border-black mt-2 px-4 py-2 rounded-lg">
-    </div>
-    <div class="flex flex-col max-w-[70%]">
-      <span>Notes <span class="text-[#f5333f]">*</span></span>
-      <input type="text" placeholder="Notes" class="border border-black mt-2 px-4 py-2 rounded-lg">
-    </div>
-  </div>
-
-  <div class="bg-white py-4 max-w-[100%]">
-    <div class="flex justify-end gap-4">
-      <label
-        for="traveller-modal"
-        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-        >
-        Cancel
-      </label
-      >
-      <button
-        class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-      >
-        Next
-      </button>
-    </div>
-  </div>
-
-</div>
-
-
-            </div>
-
-          </form>
+          </div>
 
           <!-- step 4 form -->
-          <form class="px-2 py-4 lg:py-16" :class="formStep == 3 ? 'block' : 'hidden'">
+          <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
 
           <label for="airlines-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
             + Add Airlines
@@ -451,10 +514,10 @@ const airlinesDummy = [
 
           </div>
 
-          </form>
+        </div>
 
           <!-- step 5 form -->
-          <form class="px-2 py-4 lg:py-16" :class="formStep == 4 ? 'block' : 'hidden'">
+          <form class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
 
           <label for="taxi-voucher-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
             + Add Taxi Voucher
@@ -567,7 +630,7 @@ const airlinesDummy = [
           </form>
 
           <!-- step 6 form -->
-          <form class="px-2 py-4 lg:py-16" :class="formStep == 5 ? 'block' : 'hidden'">
+          <form class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
 
           <label for="other-transportation-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
             + Add Other Transportation
@@ -676,7 +739,7 @@ const airlinesDummy = [
           </form>
 
           <!-- step 7 form -->
-          <form class="px-2 py-4 lg:py-16" :class="formStep == 6 ? 'block' : 'hidden'">
+          <form class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
 
           <label for="accomodation-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
             + Add Accomodation
@@ -813,7 +876,7 @@ const airlinesDummy = [
           </form>
 
           <!-- step 8 form -->
-          <form class="px-2 py-4 lg:py-16" :class="formStep == 7 ? 'block' : 'hidden'">
+          <form class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
 
           <label for="cash-advance-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
           + Add
@@ -914,7 +977,8 @@ const airlinesDummy = [
 
       </div>
 
-      <div class="sticky bg-white bottom-0 px-5 py-2">
+      <!-- change step button -->
+      <div class="fixed left-0 right-0 bg-white bottom-0 px-5 py-2">
           <div class="flex justify-between font-bold">
 
             <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
@@ -934,7 +998,6 @@ const airlinesDummy = [
 
           </div>
       </div>
-
 
     </div>
     

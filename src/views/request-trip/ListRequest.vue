@@ -1,22 +1,27 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import ExpandButton from "@/components/layout/ExpandButton.vue"
 
 import RequestTripModal from "@/components/request-trip/company-business/RequestTripModal.vue"
 
-import icon_receive from "@/assets/icon-receive.svg";
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icon_receive from "@/assets/icon-receive.svg"
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
-import fieldbreakdata from "@/utils/Api/request-trip/fieldbreakdata.js";
-import taxivoucherdata from "@/utils/Api/request-trip/taxivoucherdata.js";
+import fieldbreakdata from "@/utils/Api/request-trip/fieldbreakdata.js"
+import taxivoucherdata from "@/utils/Api/request-trip/taxivoucherdata.js"
 
-import { ref } from "vue";
-let requestTripType = ref("Company Business");
+import { ref } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+
+let lengthCounter = 0
+const sidebar = useSidebarStore()
+let requestTripType = ref("Company Business")
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -32,7 +37,7 @@ const selectAll = (checkValue) => {
       if (check[i].type == "checkbox") check[i].checked = false;
     }
   }
-};
+}
 
 //for tableHeadFieldBreak
 const tableHeadFieldBreak = [
@@ -43,7 +48,7 @@ const tableHeadFieldBreak = [
   { Id: 5, title: "Purpose of Trip", jsonData: "purpose_of_trip" },
   { Id: 6, title: "Status", jsonData: "Status" },
   { Id: 7, title: "Actions" },
-];
+]
 
 //for tableHeadVoucherTaxi
 const tableHeadVoucherTaxi = [
@@ -54,18 +59,28 @@ const tableHeadVoucherTaxi = [
   { Id: 5, title: "Purpose of Trip", jsonData: "PurposeOfTrip" },
   { Id: 6, title: "Status", jsonData: "Status" },
   { Id: 7, title: "Actions" },
-];
+]
+
 </script>
 
 <template>
   <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
+    class="flex flex-col basis-full grow-0 shrink-0 w-full this"
   >
     <Navbar />
     <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
-      <div class="bg-[#e4e4e6] flex-1 pt-5 pb-16 pl-4 pr-8 ml-[260px] h-screen">
+
+      <Sidebar class="flex-none" />
+
+      <ExpandButton />
+      
+      <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
+      >
+
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
+
+          <!-- TableTopBar -->
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="flex flex-wrap gap-y-2 items-center justify-between mx-4 py-2"
@@ -184,21 +199,22 @@ const tableHeadVoucherTaxi = [
               <option>75</option>
               <option>100</option>
             </select>
-          </div>
+          </div>      
+
+        </div>
 
           <!-- TABLE Company Business -->
-
           <!-- TABLE Site Visit -->
 
           <!-- TABLE Field Break -->
-          <table v-if="requestTripType === 'Field Break'">
-            <div
-              class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden w-[1050px]"
-            >
+          <div v-if="requestTripType === 'Field Break'">
+            <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+              
               <div class="block overflow-x-auto">
-                <table
-                  class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                
+                <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
                 >
+
                   <thead
                     class="text-center font-JakartaSans text-sm font-bold h-10"
                   >
@@ -254,15 +270,18 @@ const tableHeadVoucherTaxi = [
                       </td>
                     </tr>
                   </tbody>
+
                 </table>
+
               </div>
+
             </div>
-          </table>
+          </div>
 
           <!-- TABLE Taxi Voucher Only -->
-          <table v-if="requestTripType === 'Taxi Voucher Only'">
+          <div v-if="requestTripType === 'Taxi Voucher Only'">
             <div
-              class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden w-[1050px]"
+              class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden w-full"
             >
               <div class="block overflow-x-auto">
                 <table
@@ -326,10 +345,12 @@ const tableHeadVoucherTaxi = [
                 </table>
               </div>
             </div>
-          </table>
-        </div>
+          </div>
+
       </div>
+
       <Footer class="fixed bottom-0 left-0 right-0" />
+
     </div>
   </div>
 </template>
@@ -361,4 +382,13 @@ tr th {
   background-color: rgb(193, 192, 192);
   cursor: pointer;
 }
+
+.backgroundHeight {
+    min-height: calc(100vh - 115px);
+}
+
+.this {
+    overflow-x: hidden;
+  }
+
 </style>

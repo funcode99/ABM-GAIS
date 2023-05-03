@@ -10,6 +10,11 @@
   const sidebar = useSidebarStore()
   let isOpen = ref(false)
   let isNotificationOpen = ref(false)
+  
+  const changeViewStatus = () => {
+    console.log('masuk ke fungsi')
+    isOpen.value = false
+  }
 
 </script>
 
@@ -80,9 +85,9 @@
               </div>
   
           <!-- profile -->
-          <div class="relative">
+          <div class="relative cursor-pointer">
 
-            <div class="rounded-full flex items-center bg-[#E4E4E4] w-[195px] h-[60px]">
+            <div class="rounded-full flex items-center bg-[#E4E4E4] w-[195px] h-[60px]" @click="isOpen = !isOpen">
 
               <div class="flex gap-2 items-center px-3 w-full">
                 
@@ -94,7 +99,7 @@
                   </div>
                 </div>
 
-                <div class="cursor-pointer w-full" @click="isOpen = !isOpen">
+                <div class="cursor-pointer w-full" v-click-outside="changeViewStatus">
                   <div class="min-h-max py-3 flex items-center justify-evenly w-full">
                     <p class="font-JakartaSans font-medium text-base justify-center items-center">
                       Halo, User
