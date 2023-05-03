@@ -390,10 +390,7 @@ let approval = "approval";
                               <p class="mr-[70px]">Settlement Report</p>
                             </li>
                           </router-link>
-                          <router-link
-                            to="/cashadvancenontravel"
-                            class="cursor-pointer"
-                          >
+                          <router-link to="#" class="cursor-pointer">
                             <li
                               class="flex gap-[10px] items-center justify-between"
                             >
@@ -1320,17 +1317,13 @@ let approval = "approval";
                       <div class="flex gap-[10px] items-center cursor-pointer">
                         <img
                           class="h-[2px] w-2"
-                          :class="[
-                            $route.path == '/request' ? 'hidden' : 'inline',
-                          ]"
+                          :class="[$route.path == '#' ? 'hidden' : 'inline']"
                           :src="submenuLine"
                           alt=""
                         />
                         <img
                           class="h-[2px] w-2"
-                          :class="[
-                            $route.path == '/request' ? 'inline' : 'hidden',
-                          ]"
+                          :class="[$route.path == '#' ? 'inline' : 'hidden']"
                           :src="submenuLineSelected"
                           alt=""
                         />
