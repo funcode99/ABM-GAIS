@@ -153,26 +153,8 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
         </div>
 
         <div :class="[formStep > 4 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Taxi Voucher</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 4 ? 'block' : 'hidden'">
-        </div>
-
-        <div :class="[formStep > 5 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
           <h1 class="mt-11 font-medium text-[10px]">Other Transportation</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 5 ? 'block' : 'hidden'">
-        </div>
-
-        <div :class="[formStep > 6 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 font-medium text-[10px]">Accomodation</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 6 ? 'block' : 'hidden'">
-        </div>
-
-        <div class="rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Cash Advance</h1>
-          <!-- <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt=""> -->
+          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 4 ? 'block' : 'hidden'">
         </div>
 
         </div>
@@ -229,20 +211,42 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
             <!-- step 2 form -->
             <div class="text-left px-4 pb-[60px] flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'">
 
-              <div :class="columnClass + ' mx-4'">
+              <div :class="columnClass + ' mx-4 mb-3'">
         
-                  <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                  <span :class="labelStylingClass">Purpose of Trip <span class="text-[#f5333f]">*</span></span>
                   <select :class="inputStylingWithoutWidthClass">
-                    <option hidden selected disabled value="">
+                    <option selected value="">
                       Company Business
+                    </option>
+                    <option>
+                      Site Visit
+                    </option>
+                    <option>
+                      Field Break
+                    </option>
+                    <option>
+                      Taxi Voucher Only
                     </option>
                   </select>
             
               </div>
 
               <div :class="columnClass + ' mx-4 my-3'">
-                <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                <span :class="labelStylingClass">Site <span class="text-red-star">*</span></span>
+                <select class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2">
+                  <option>
+                    Site
+                  </option>
+                </select>
+              </div>
+
+              <div :class="columnClass + ' mx-4 my-3'">
+                <span :class="labelStylingClass">Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
                 <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes">
+              </div>
+
+              <div :class="columnClass + ' mx-4 my-3'">
+                <span :class="labelStylingClass">File Attachment <span class="text-[#f5333f]">*</span></span>
               </div>
 
               <h1 class="mx-4 mt-6">Itinerary</h1>
@@ -310,7 +314,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               <div :class="rowClass">
                 <!-- Return date -->
                 <div :class="columnClass">
-                    <span class="">Return Date<span class="text-red-star">*</span></span>
+                    <span class="">Date Arrival<span class="text-red-star">*</span></span>
                     <input type="date" :class="inputStylingClass" placeholder="Date">
                 </div>
                 <div :class="columnClass">
@@ -319,15 +323,6 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               </div>
 
               
-            </div>
-
-            <!-- step 3 form Traveller -->
-            <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
-
-              <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Guest
-              </button>
-
             </div>
 
             <!-- step 4 form Airlines -->
@@ -339,38 +334,12 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
 
             </div>
 
-            <!-- step 5 form Taxi Voucher -->
+
+            <!-- step 5 form Other Transportation -->
             <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
-
-              <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Taxi Voucher
-              </button>
-
-            </div>
-
-            <!-- step 6 form Other Transportation -->
-            <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
 
               <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
                 + Add Other Transportation
-              </button>
-
-            </div>
-
-            <!-- step 7 form Accomodation -->
-            <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
-
-              <button @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Accomodation
-              </button>
-
-            </div>
-
-            <!-- step 8 form -->
-            <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
-
-              <button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Cash Advance
               </button>
 
             </div>
@@ -388,11 +357,10 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
                 Back
               </button>
 
-              <button v-if="formStep < 7" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+              <button v-if="formStep < 4" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                 Next
               </button>
-
-              <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+              <button v-else disabled class="cursor-disabled bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                 Next
               </button>
 
@@ -730,120 +698,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
 
     </Modal>
 
-    <!-- Modal step 5 form modal Add Taxi Voucher -->
-    <Modal type="clean" v-model:visible="isVisibleTaxiVoucher" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
-
-    <modalHeader @close-click="isVisibleTaxiVoucher = false" :title="'Taxi Voucher'" />
-
-    <!-- pb-28 -->
-    <div class="px-3 text-left modal-box-inner pb-4">
-
-      <div :class="rowClass">
-
-        <div :class="columnClass">
-          <div class="w-full">
-              <label :class="labelStylingClass">
-                  Name<span class="text-red-star">*</span>
-              </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Name
-                </option>
-              </select>
-          </div>
-        </div>
-
-        <div :class="columnClass">
-          <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Date<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Date
-                </option>
-              </select>
-          </div>
-        </div>
-
-      </div>
-
-      <div :class="rowClass">
-
-        <div :class="columnClass">
-          <div class="w-full">
-              <label :class="labelStylingClass">
-                   Arrival<span class="text-red-star">*</span>
-              </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
-                </option>
-              </select>
-          </div>
-        </div>
-
-        <div :class="columnClass">
-          <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Arrival<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
-                </option>
-              </select>
-          </div>
-        </div>
-
-      </div>
-
-      <div :class="rowClass">
-
-        <div :class="columnClass">
-          <div class="w-full">
-              <label :class="labelStylingClass">
-                  Amount<span class="text-red-star">*</span>
-              </label>
-              <input type="text" :class='inputStylingClass' placeholder="Amount">
-          </div>
-        </div>
-
-        <div :class="columnClass">
-          <div class="w-full">
-              <label :class="labelStylingClass">
-                  <span>Remarks</span>
-              </label>
-              <input type="text" :class='inputStylingClass' placeholder="Remarks">
-          </div>
-        </div>
-
-      </div>
-
-      <div :class="rowClass">
-
-      <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-                <span>Account Name</span>
-            </label>
-            <input type="text" :class='inputStylingClass' placeholder="Account Name">
-        </div>
-      </div>
-
-      </div>
-
-
-
-    </div>
-
-    <confirmationButton @cancel-click="isVisibleTaxiVoucher = false" />
-
-    </Modal>
-
-    <!-- Modal step 6 form modal Add Other Transportation -->
+    <!-- Modal step 5 form modal Add Other Transportation -->
     <Modal type="clean" v-model:visible="isVisibleOtherTransportation" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
     <modalHeader @close-click="isVisibleOtherTransportation = false" :title="'Other Transportation'" />
@@ -946,7 +801,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
     <div class="w-full">
       <label
           class="block mb-2 font-JakartaSans font-medium text-sm"
-          >Remarks<span class="text-red-star">*</span></label
+          >Remarks</label
       >
       <input type="text" placeholder="Remarks" :class=inputStylingClass>
     </div>
@@ -977,316 +832,6 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
 
     </Modal>
 
-    <!-- Modal step 7 form modal Add Accomodation -->
-    <Modal type="clean" v-model:visible="isVisibleAccomodation" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
-
-      <modalHeader @close-click="isVisibleAccomodation = false" :title="'Accomodation'" />
-
-      <div class="px-3 text-left modal-box-inner pb-4">
-
-        <div :class="rowClass">
-
-          <div :class="columnClass">
-            <div class="w-full">
-                <label :class="labelStylingClass">
-                    Traveller<span class="text-red-star">*</span>
-                </label>
-                <select :class="inputStylingClass">
-                  <option selected hidden disabled>
-                    Name
-                  </option>
-                </select>
-            </div>
-          </div>
-
-          <div :class="columnClass">
-            <div class="w-full">
-              <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Gender</label
-              >
-              <input type="text" placeholder="Gender" :class="inputStylingClass">
-            </div>
-          </div>
-
-        </div>
-
-        <div :class="rowClass">
-
-          <div :class="columnClass">
-            <div class="w-full">
-              <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Hotel Fare</label
-              >
-              <input type="text" placeholder="Max Fare" :class="inputStylingClass">
-            </div>
-          </div>
-
-        </div>
-
-        <h1 class="mt-2 font-bold text-center">Requested Accomodation</h1>
-        <hr class="border border-black">
-
-        <div :class="rowClass">
-
-          <div :class="columnClass">
-            <div class="w-full">
-              <label :class="labelStylingClass">City</label>
-              <select :class="inputStylingClass">
-                <option hidden selected disabled>
-                  City
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div :class="columnClass">
-            <div class="w-full">
-              <label :class="labelStylingClass">Remarks</label>
-              <input :class="inputStylingClass" placeholder="Remarks">
-            </div>
-          </div>
-
-        </div>
-
-        <div :class="rowClass">
-
-          <div :class="columnClass">
-            <div class="w-full">
-              <label :class="labelStylingClass">
-                Check In
-              </label>
-              <select :class="inputStylingClass">
-                <option hidden selected disabled>
-                  Date
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div :class="columnClass">
-            <div class="w-full ">
-              <div class="flex gap-2 items-center ml-2 mb-2">
-                <input type="checkbox" class="w-5 h-5 rounded-2xl">
-                <label>Sharing with</label>
-              </div>
-              <select :class="inputStylingClass">
-                <option hidden selected disabled>
-                  Name
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div :class="rowClass">
-
-          <div :class="columnClass">
-            <div class="w-full">
-              <label :class="labelStylingClass">
-                Check Out
-              </label>
-              <select :class="inputStylingClass">
-                <option hidden selected disabled>
-                  Date
-                </option>
-              </select>
-            </div>
-          </div>
-
-          <div :class="columnClass">
-            <div class="flex flex-col gap-2">
-              <span :class="labelStylingClass">Create GL?</span>
-              <div>
-                <input type="checkbox" class="w-5 h-5 rounded-2xl ml-2 mb-2">
-                <label class="ml-2">Yes</label>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="flex justify-between mx-4 items-start gap-2 my-6">
-
-          <div :class="columnClass">
-            <label :class="labelStylingClass">
-              Accomodation Type
-            </label>
-            <select :class="inputStylingClass">
-              <option selected hidden disabled>
-                Type
-              </option>
-            </select>
-          </div>
-
-          <div :class="columnClass">
-          <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Vendor<span class="text-red-star">*</span></label
-            >
-            <div class="pb-3 flex items-center">
-              <input class="w-6 h-6" type="radio" name="vendor">
-              <label class="ml-4">Antavaya</label>
-            </div>
-            <div class="flex items-center">
-              <input class="w-6 h-6" type="radio" name="vendor">
-              <label class="ml-4">Aerowisata</label>
-            </div>
-          </div>
-          </div>
-
-        </div>
-
-        <checkButton />
-
-        <h1 class="mt-2 font-bold text-center">Accomodation Availability</h1>
-        <hr class="border border-black">
-
-        <div class="overflow-x-auto block">
-          <table class="table">
-            <thead>
-              <tr>
-                <th v-for="data in tableHeadAccomodation" :key=data.id>
-                  {{ data.title }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="data in accomodationDummy" :key=data.id>
-                <td>
-                  {{ data.HotelName }}
-                </td>
-                <td>
-                  {{ data.Location }}
-                </td>
-                <td>
-                  {{ data.HotelRating }}
-                </td>
-                <td>
-                  {{ data.RoomType }}
-                </td>
-                <td>
-                  {{ data.Price }}
-                </td>
-                <td>
-                  <button class="bg-green text-white rounded-lg px-4 py-3 font-bold">
-                    Select
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
-      <confirmationButton @cancel-click="isVisibleAccomodation = false" />
-
-    </Modal>
-
-    <!-- Modal step 8 form modal Add Cash Advance -->
-    <Modal type="clean" v-model:visible="isVisibleCashAdvance" v-model:title="type" v-model:offsetTop="modalPaddingHeight">
-
-      <modalHeader @close-click="isVisibleCashAdvance = false" :title="'Cash Advance'" />
-
-      <div class="px-3 text-left modal-box-inner pb-4">
-          
-          <div :class="rowClass">
-
-            <div :class="columnClass">
-              <div class="w-full">
-                <label :class="labelStylingClass">
-                  Traveller <span class="text-red-star">*</span>
-                </label>
-                <select :class="inputStylingClass">
-                  <option selected hidden disabled>
-                    Name
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div :class="columnClass">
-              <div class="w-full">  
-                <label :class=labelStylingClass>
-                  Nominal <span class="text-red-star">*</span>
-                </label>
-                <input type="text" placeholder="Nominal" :class="inputStylingClass">
-              </div>
-            </div>
-
-          </div>
-
-          <div :class="rowClass">
-
-            <div :class="columnClass">
-              <div class="w-full">
-                <label :class="labelStylingClass">
-                  Item <span class="text-red-star">*</span>
-                </label>
-                <select :class="inputStylingClass">
-                  <option selected hidden disabled>
-                    Item
-                  </option>
-                </select>
-              </div>
-            </div>
-
-            <div :class="columnClass">
-              <div class="w-full">  
-                <label :class=labelStylingClass>
-                  Total
-                </label>
-                <input type="text" placeholder="Total" :class="inputStylingClass">
-              </div>
-            </div>
-
-          </div>
-
-          <div :class="rowClass">
-
-            <div :class="columnClass">
-              <div class="w-full">
-                <label :class="labelStylingClass">
-                  Frequency <span class="text-red-star">*</span>
-                </label>
-                <input type="text" placeholder="Frequency" :class="inputStylingClass">
-              </div>
-            </div>
-
-            <div :class="columnClass">
-              <div class="w-full">  
-                <label :class=labelStylingClass>
-                  Remarks
-                </label>
-                <input type="text" placeholder="Remarks" :class="inputStylingClass">
-              </div>
-            </div>
-
-          </div>
-
-          <div :class="rowClass">
-            <div :class="columnClass">
-              <div class="w-full">
-                <label :class="labelStylingClass">
-                  Currency <span class="text-red-star">*</span>
-                </label>
-                <select :class="inputStylingClass">
-                  <option>
-                    Currency
-                  </option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-      </div>
-
-      <confirmationButton @cancel-click="isVisibleCashAdvance = false" />
-
-    </Modal>
 
 </template>
 
