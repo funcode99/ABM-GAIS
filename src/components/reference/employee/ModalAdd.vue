@@ -149,7 +149,8 @@ function onFileChange(event) {
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+          <!-- tambahkan w-full agar ukuran sesuai -->
+            <div class="mb-6 w-full">
               <label
                 for="NIK"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -163,7 +164,7 @@ function onFileChange(event) {
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="date_start"
                 class="block mb-2 font-JakartaSans font-medium text-sm"

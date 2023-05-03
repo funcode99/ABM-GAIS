@@ -2,36 +2,36 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/brand/ModalAdd.vue";
-import ModalEdit from "@/components/reference/brand/ModalEdit.vue";
 import ExpandButton from "@/components/layout/ExpandButton.vue";
+
+import ModalRejectShortcut from "@/components/approval/cash-advance-travel/ModalRejectShortcut.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+import icon_ceklis from "@/assets/icon_ceklis.svg";
+import icon_close from "@/assets/navbar/icon_close.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import brandData from "@/utils/Api/reference/branddata.js";
+import cadata from "@/utils/Api/approval/cash-advance-travel/cadata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
-//for sort, search, & filter
+//for sort & search
 const search = ref("");
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
+const selectedType = ref("Type");
 let sortedbyASC = true;
 let instanceArray = [];
+let lengthCounter = 0;
 
-//for paginations & showing
+//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
-let lengthCounter = 0;
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -40,12 +40,12 @@ const onChangePage = (pageOfItem) => {
 };
 
 //for filter & reset button
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
+const filterDataByType = () => {
+  if (selectedType.value === "") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
+      (item) => item.type === selectedType.value
     );
   }
 };
@@ -53,7 +53,7 @@ const filterDataByCompany = () => {
 //for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
-  selectedCompany.value = "Company";
+  selectedType.value = "Type";
 };
 
 //for check & uncheck all
@@ -75,9 +75,13 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Brand Name", jsonData: "brand_name" },
-  { Id: 3, title: "Company", jsonData: "company" },
-  { Id: 4, title: "Actions" },
+  { Id: 2, title: "Created Date", jsonData: "created_date" },
+  { Id: 3, title: "CA No", jsonData: "ca_no" },
+  { Id: 4, title: "Name", jsonData: "name" },
+  { Id: 5, title: "Type", jsonData: "type" },
+  { Id: 6, title: "Total", jsonData: "total" },
+  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 8, title: "Actions" },
 ];
 
 //for sort
@@ -93,7 +97,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = brandData;
+  instanceArray = cadata;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -102,16 +106,16 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.brand_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.brand_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
-  onChangePage(1)
+  onChangePage(1);
 };
 
 const getSessionForSidebar = () => {
@@ -134,7 +138,7 @@ const getSessionForSidebar = () => {
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
         ]"
       >
-        <div class="bg-white rounded-t-xl pb-3 relative custom-card">
+        <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -142,16 +146,8 @@ const getSessionForSidebar = () => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Brand
+              Cash Advance Travel
             </p>
-            <div class="flex gap-4">
-              <ModalAdd />
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-              >
-                <img :src="icon_receive" class="w-6 h-6" />
-              </button>
-            </div>
           </div>
 
           <!-- SORT & SEARCH -->
@@ -160,23 +156,22 @@ const getSessionForSidebar = () => {
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >
-                Company
+                Name Type
               </p>
-
               <select
                 class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedCompany"
+                v-model="selectedType"
               >
-                <option disabled selected>Company</option>
+                <option disabled selected>Type</option>
                 <option v-for="data in sortedData" :key="data.id">
-                  {{ data.company }}
+                  {{ data.type }}
                 </option>
               </select>
 
-              <div class="flex gap-4 items-center">
+              <div class="flex flex-wrap gap-4 items-center">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByCompany"
+                  @click="filterDataByType"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -215,8 +210,8 @@ const getSessionForSidebar = () => {
                   </svg>
                 </span>
                 <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[11px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search by Brand / Company"
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search by CA No / Name"
                   type="text"
                   name="search"
                   v-model="search"
@@ -292,13 +287,22 @@ const getSessionForSidebar = () => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ data.no }}</td>
-                    <td>{{ data.brand_name }}</td>
-                    <td>{{ data.company }}</td>
+                    <td>{{ data.created_date }}</td>
+                    <td>{{ data.ca_no }}</td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.type }}</td>
+                    <td>{{ data.total }}</td>
+                    <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit />
-                      <button>
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
+                      <router-link to="/viewapprovalcatravel">
+                        <button>
+                          <img :src="icon_ceklis" class="w-6 h-6" />
+                        </button>
+                      </router-link>
+                      <!-- <button>
+                        <img :src="icon_close" class="w-6 h-6" />
+                      </button> -->
+                      <ModalRejectShortcut />
                     </td>
                   </tr>
                 </tbody>

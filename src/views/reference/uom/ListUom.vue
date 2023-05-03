@@ -90,6 +90,7 @@ const filteredItems = (search) => {
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
+  onChangePage(1)
 };
 
 const getSessionForSidebar = () => {

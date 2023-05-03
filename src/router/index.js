@@ -5,9 +5,11 @@ import Login from "@/views/auth/Login.vue"
 import ForgotPassword from '@/views/auth/ForgotPassword.vue'
 import Profile from '@/views/auth/Profile.vue'
 
+//dashboard
 import Dashboard from "@/views/Dashboard.vue"
 import NotFound from '@/views/NotFoundPage.vue'
 
+//reference
 import ListBrand from "@/views/reference/brand/ListBrand.vue"
 import ListGl from "@/views/reference/gl-account/ListGl.vue"
 import ListCompany from "@/views/reference/company/ListCompany.vue"
@@ -23,18 +25,24 @@ import ListUom from "@/views/reference/uom/ListUom.vue"
 import ListWarehouse from "@/views/reference/warehouse/ListWarehouse.vue"
 import ListZona from "@/views/reference/zona/ListZona.vue"
 
+//system configuration
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
 import ListRole from '@/views/system-configuration/role/ListRole.vue'
 import ListApproval from '@/views/system-configuration/approval/ListApproval.vue'
 import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
+//travel management system
 import RequestTrip from '@/views/request-trip/ListRequest.vue'
 import FormView from '@/views/request-trip/FormView.vue'
 import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
 import NonTravelView from '@/views/travel-management/cash-advance-non-travel/NonTravelView.vue'
+
+//approval
+import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
+import CaTravelView from "@/views/approval/cash-advance-travel/CaTravelView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -298,6 +306,24 @@ const router = createRouter({
       component: NonTravelView,
       meta: {
         title: 'View CA Non Travel'
+      }
+    },
+
+    //approval page
+    {
+      path: '/approvalcatravel',
+      name: 'approval cash advance travel',
+      component: CaTravelList,
+      meta: {
+        title: 'Approval CA Travel'
+      }
+    },
+    {
+      path: '/viewapprovalcatravel',
+      name: 'view approval cash advance travel',
+      component: CaTravelView,
+      meta: {
+        title: 'View Approval CA Travel'
       }
     },
   ]
