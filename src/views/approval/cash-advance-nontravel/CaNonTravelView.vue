@@ -4,8 +4,8 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ExpandButton from "@/components/layout/ExpandButton.vue";
 
-import ModalApprove from "@/components/approval/cash-advance-travel/ModalApprove.vue";
-import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
+import ModalApproveNonTravel from "@/components/approval/cash-advance-non-travel/ModalApproveNonTravel.vue";
+import ModalRejectNonTravel from "@/components/approval/cash-advance-non-travel/ModalRejectNonTravel.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 
@@ -43,18 +43,18 @@ const getSessionForSidebar = () => {
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
           <router-link
-            to="/approvalcatravel"
+            to="/approvalcanontravel"
             class="flex items-center gap-2 py-4 mx-4"
           >
             <img :src="arrow" class="w-3 h-3" alt="" />
             <h1 class="text-black font-semibold font-JakartaSans">
-              TCA-ABM/1309/12.05
+              NCA-ABM/1232/23.04
             </h1>
           </router-link>
 
-          <div class="flex flex-wrap justify-start gap-4 px-[70px] ">
-            <ModalApprove />
-            <ModalReject />
+          <div class="flex flex-wrap justify-start gap-4 px-[70px]">
+            <ModalApproveNonTravel />
+            <ModalRejectNonTravel />
           </div>
 
           <!-- FORM READ ONLY-->
@@ -66,7 +66,7 @@ const getSessionForSidebar = () => {
               <input
                 type="text"
                 disabled
-                value="23/2/2023"
+                value="23/4/2023"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -103,22 +103,17 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Name
+                      Event
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Item Type
+                      Date
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Frequency
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Currrency
+                      Cost Center
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -128,7 +123,7 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Total
+                      Remarks
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -145,12 +140,11 @@ const getSessionForSidebar = () => {
                 <tbody class="font-JakartaSans font-normal text-xs">
                   <tr class="h-16">
                     <td class="border border-[#B9B9B9]">Jack H</td>
-                    <td class="border border-[#B9B9B9]">Meals</td>
-                    <td class="border border-[#B9B9B9]">2</td>
-                    <td class="border border-[#B9B9B9]">Rupiah</td>
-                    <td class="border border-[#B9B9B9]">120.000</td>
-                    <td class="border border-[#B9B9B9]">300.000</td>
-                    <td class="border border-[#B9B9B9]">Pending</td>
+                    <td class="border border-[#B9B9B9]">13/04/23</td>
+                    <td class="border border-[#B9B9B9]">13222</td>
+                    <td class="border border-[#B9B9B9]">231000</td>
+                    <td class="border border-[#B9B9B9]">Tanding</td>
+                    <td class="border border-[#B9B9B9]">Panding</td>
                     <td class="border border-[#B9B9B9]"></td>
                   </tr>
                 </tbody>

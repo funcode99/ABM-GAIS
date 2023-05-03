@@ -29,7 +29,7 @@ import icon_done from "@/assets/icon_done.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner-approval">
         <p class="font-JakartaSans font-medium text-sm py-2">
           Are you sure want to approve this document?
         </p>
@@ -110,7 +110,7 @@ import icon_done from "@/assets/icon_done.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-approval {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

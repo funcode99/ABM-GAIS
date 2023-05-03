@@ -16,18 +16,15 @@ function onFileChange(event) {
   };
 
   reader.readAsDataURL(file);
-
 }
 
-    let dtToday = new Date()
-    let month = dtToday.getMonth() + 1;
-    let day = dtToday.getDate();
-    let year = dtToday.getFullYear();
-    if(month < 10)
-        month = '0' + month.toString();
-    if(day < 10)
-        day = '0' + day.toString();
-    let minDate = year + '-' + month + '-' + day 
+let dtToday = new Date();
+let month = dtToday.getMonth() + 1;
+let day = dtToday.getDate();
+let year = dtToday.getFullYear();
+if (month < 10) month = "0" + month.toString();
+if (day < 10) day = "0" + day.toString();
+let minDate = year + "-" + month + "-" + day;
 </script>
 
 <template>
@@ -149,8 +146,8 @@ function onFileChange(event) {
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-          <!-- tambahkan w-full agar ukuran sesuai -->
-            <div class="mb-6 w-full">
+            <!-- tambahkan w-full agar ukuran sesuai -->
+            <div class="mb-6">
               <label
                 for="NIK"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -164,7 +161,7 @@ function onFileChange(event) {
                 required
               />
             </div>
-            <div class="mb-6 w-full">
+            <div class="mb-6">
               <label
                 for="date_start"
                 class="block mb-2 font-JakartaSans font-medium text-sm"

@@ -4,14 +4,14 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ExpandButton from "@/components/layout/ExpandButton.vue";
 
-import ModalRejectShortcut from "@/components/approval/cash-advance-travel/ModalRejectShortcut.vue";
+import ModalRejectShortcutnonTravel from "@/components/approval/cash-advance-non-travel/ModalRejectShortcutnonTravel.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_ceklis from "@/assets/icon_ceklis.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import cadata from "@/utils/Api/approval/cash-advance-travel/cadata.js";
+import canontraveldata from "@/utils/Api/approval/cash-advance-nontravel/canontraveldata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -22,7 +22,7 @@ const sidebar = useSidebarStore();
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
-const selectedType = ref("Type");
+// const selectedType = ref("Type");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
@@ -40,21 +40,21 @@ const onChangePage = (pageOfItem) => {
 };
 
 //for filter & reset button
-const filterDataByType = () => {
-  if (selectedType.value === "") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
-    );
-  }
-};
+// const filterDataByType = () => {
+//   if (selectedType.value === "") {
+//     sortedData.value = instanceArray;
+//   } else {
+//     sortedData.value = instanceArray.filter(
+//       (item) => item.type === selectedType.value
+//     );
+//   }
+// };
 
 //for filter & reset button
-const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedType.value = "Type";
-};
+// const resetData = () => {
+//   sortedData.value = instanceArray;
+//   selectedType.value = "Type";
+// };
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -77,9 +77,9 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
   { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Name", jsonData: "name" },
-  { Id: 5, title: "Type", jsonData: "type" },
-  { Id: 6, title: "Total", jsonData: "total" },
+  { Id: 4, title: "Event", jsonData: "event" },
+  { Id: 5, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 6, title: "Nominal", jsonData: "nominal" },
   { Id: 7, title: "Status", jsonData: "status" },
   { Id: 8, title: "Actions" },
 ];
@@ -97,7 +97,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = cadata;
+  instanceArray = canontraveldata;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -107,10 +107,10 @@ const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
     (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
       (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -146,28 +146,13 @@ const getSessionForSidebar = () => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Cash Advance Travel
+              Cash Advance Non Travel
             </p>
           </div>
 
           <!-- SORT & SEARCH -->
-          <div class="flex flex-wrap items-center mx-4 py-2">
-            <div class="flex flex-wrap items-center gap-2">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Item Type
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedType"
-              >
-                <option disabled selected>Type</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.type }}
-                </option>
-              </select>
-
+          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+            <div class="flex flex-wrap items-center gap-4">
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >
@@ -181,7 +166,7 @@ const getSessionForSidebar = () => {
                 class="my-date"
               />
 
-              <div class="flex flex-wrap gap-2 items-center">
+              <div class="flex flex-wrap gap-4 items-center">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   @click="filterDataByType"
@@ -203,7 +188,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="py-2 pl-8">
+            <div class="py-2 flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -224,7 +209,7 @@ const getSessionForSidebar = () => {
                 </span>
                 <input
                   class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search by CA No / Name"
+                  placeholder="Search by CA No / Event"
                   type="text"
                   name="search"
                   v-model="search"
@@ -302,17 +287,17 @@ const getSessionForSidebar = () => {
                     <td>{{ data.no }}</td>
                     <td>{{ data.created_date }}</td>
                     <td>{{ data.ca_no }}</td>
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.type }}</td>
-                    <td>{{ data.total }}</td>
+                    <td>{{ data.event }}</td>
+                    <td>{{ data.cost_center }}</td>
+                    <td>{{ data.nominal }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewapprovalcatravel">
+                      <router-link to="/viewapprovalcanontravel">
                         <button>
                           <img :src="icon_ceklis" class="w-6 h-6" />
                         </button>
                       </router-link>
-                      <ModalRejectShortcut />
+                      <ModalRejectShortcutnonTravel />
                     </td>
                   </tr>
                 </tbody>

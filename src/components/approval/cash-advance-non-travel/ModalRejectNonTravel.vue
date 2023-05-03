@@ -4,7 +4,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 
 <template>
   <label
-    for="my-modal-reject"
+    for="my-modal-reject-non-travel"
     class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white"
   >
     <span>
@@ -13,12 +13,12 @@ import iconClose from "@/assets/navbar/icon_close.svg";
     Reject
   </label>
 
-  <input type="checkbox" id="my-modal-reject" class="modal-toggle" />
+  <input type="checkbox" id="my-modal-reject-non-travel" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          for="my-modal-reject"
+          for="my-modal-reject-non-travel"
           class="cursor-pointer absolute right-3 top-3"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
@@ -78,7 +78,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
       <div class="sticky bottom-0 bg-white py-2">
         <div class="flex justify-end gap-4 mr-6">
           <label
-            for="my-modal-reject"
+            for="my-modal-reject-non-travel"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
             >Cancel</label
           >
