@@ -64,8 +64,6 @@
   left: 0;
   right: 0px; 
 
-  /* Increase/Decrease this value for cross-browser compatibility */
-  /* overflow-y: scroll; */
 }
 
 .modal-vue3-header,
@@ -127,6 +125,7 @@ input, select {
 
 ::-webkit-scrollbar {
   width: 5px;
+  height: 5px;
   background: #b3b3b3;
 }
 
@@ -138,4 +137,16 @@ input, select {
 ::selection {
   background-color: royalblue;
   color: black;
+}
+
+input[type=radio] {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid black;
+}
+
+input[type=radio]:checked {
+  background: #1f7793;
 }

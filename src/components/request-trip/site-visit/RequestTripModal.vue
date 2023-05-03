@@ -229,20 +229,42 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
             <!-- step 2 form -->
             <div class="text-left px-4 pb-[60px] flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'">
 
-              <div :class="columnClass + ' mx-4'">
+              <div :class="columnClass + ' mx-4 mb-3'">
         
-                  <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                  <span :class="labelStylingClass">Purpose of Trip <span class="text-[#f5333f]">*</span></span>
                   <select :class="inputStylingWithoutWidthClass">
-                    <option hidden selected disabled value="">
+                    <option selected value="">
                       Company Business
+                    </option>
+                    <option>
+                      Site Visit
+                    </option>
+                    <option>
+                      Field Break
+                    </option>
+                    <option>
+                      Taxi Voucher Only
                     </option>
                   </select>
             
               </div>
 
               <div :class="columnClass + ' mx-4 my-3'">
-                <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                <span :class="labelStylingClass">Site <span class="text-red-star">*</span></span>
+                <select class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2">
+                  <option>
+                    Site
+                  </option>
+                </select>
+              </div>
+
+              <div :class="columnClass + ' mx-4 my-3'">
+                <span :class="labelStylingClass">Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
                 <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes">
+              </div>
+
+              <div :class="columnClass + ' mx-4 my-3'">
+                <span :class="labelStylingClass">File Attachment <span class="text-[#f5333f]">*</span></span>
               </div>
 
               <h1 class="mx-4 mt-6">Itinerary</h1>
@@ -310,7 +332,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               <div :class="rowClass">
                 <!-- Return date -->
                 <div :class="columnClass">
-                    <span class="">Return Date<span class="text-red-star">*</span></span>
+                    <span class="">Date Arrival<span class="text-red-star">*</span></span>
                     <input type="date" :class="inputStylingClass" placeholder="Date">
                 </div>
                 <div :class="columnClass">
@@ -827,7 +849,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
       <div :class="columnClass">
         <div class="w-full">
             <label :class="labelStylingClass">
-                <span>Account Name</span>
+                <span>Account Name <span class="text-red-star">*</span></span>
             </label>
             <input type="text" :class='inputStylingClass' placeholder="Account Name">
         </div>
@@ -946,7 +968,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
     <div class="w-full">
       <label
           class="block mb-2 font-JakartaSans font-medium text-sm"
-          >Remarks<span class="text-red-star">*</span></label
+          >Remarks</label
       >
       <input type="text" placeholder="Remarks" :class=inputStylingClass>
     </div>
@@ -1141,7 +1163,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
 
         <checkButton />
 
-        <h1 class="mt-2 font-bold text-center">Accomodation Availability</h1>
+        <h1 class="mt-6 font-bold text-center">Accomodation Availability</h1>
         <hr class="border border-black">
 
         <div class="overflow-x-auto block">
@@ -1198,13 +1220,9 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
             <div :class="columnClass">
               <div class="w-full">
                 <label :class="labelStylingClass">
-                  Traveller <span class="text-red-star">*</span>
+                  Requestor <span class="text-red-star">*</span>
                 </label>
-                <select :class="inputStylingClass">
-                  <option selected hidden disabled>
-                    Name
-                  </option>
-                </select>
+                <input type="text" placeholder="name" :class="inputStylingClass">
               </div>
             </div>
 

@@ -5,6 +5,9 @@ import Footer from "@/components/layout/Footer.vue"
 import ExpandButton from "@/components/layout/ExpandButton.vue"
 
 import RequestTripModal from "@/components/request-trip/company-business/RequestTripModal.vue"
+import RequestTripSiteVisit from '@/components/request-trip/site-visit/RequestTripModal.vue'
+import RequestTripFieldBreak from '@/components/request-trip/field-break/RequestTripModal.vue'
+import RequestTripTaxiVoucherOnly from '@/components/request-trip/taxi-voucher-only/RequestTripModal.vue'
 
 import icon_receive from "@/assets/icon-receive.svg"
 import icon_filter from "@/assets/icon_filter.svg"
@@ -90,18 +93,20 @@ const tableHeadVoucherTaxi = [
             >
               Request Trip
             </p>
+
             <div class="flex gap-4">
-              <!-- v-if purposeOfTrip == 'Company Business' -->
-              <RequestTripModal />
-              <!-- <RequestTripSiteVisit  -->
-              <!-- <RequestTripFieldBreak  -->
-              <!-- <RequestTripTaxiVoucherOnly  -->
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-              >
+
+              <RequestTripModal v-if="requestTripType == 'Company Business'" />
+              <RequestTripSiteVisit v-if="requestTripType == 'Site Visit'" />
+              <RequestTripFieldBreak v-if="requestTripType == 'Field Break'" />
+              <RequestTripTaxiVoucherOnly v-if="requestTripType == 'Taxi Voucher Only'" />
+
+              <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
+
             </div>
+
           </div>
 
           <!-- SORT, DATE & SEARCH -->
