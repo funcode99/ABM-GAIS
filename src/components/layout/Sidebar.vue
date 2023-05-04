@@ -22,7 +22,7 @@ import chevronIcon from "@/assets/chevron-white-medium.png";
 // harus pake ekstensi kalo enggak gak bakal kebaca
 import { useSidebarStore } from "@/stores/sidebar.js";
 
-let sidebarScrollY = ref(0)
+// let sidebarScrollY = ref(0)
 
 const sidebar = useSidebarStore();
 const searchSidebarValue = ref("");
@@ -54,7 +54,7 @@ let approval = "approval";
         :class="sidebar.isWide === true ? 'w-[260px]' : 'w-[100px]'" >
 
 
-        <h1 class="text-center">nilai scroll Y di sidebar {{  sidebarScrollY  }}</h1>
+        <!-- <h1 class="text-center">nilai scroll Y di sidebar {{  sidebarScrollY  }}</h1> -->
 
       <!-- gaperlu pake absolute lagi -->
       <!-- absolute top-10 right-[-16px] -->
@@ -826,6 +826,276 @@ let approval = "approval";
                     </div>
                   </Transition>
                 </div>
+
+                <!-- approval menu -->
+                <li>
+            <button
+              @click="sidebar.increment(approval)"
+              class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4 w-full"
+              :class="
+                sidebar.sidebarMenu.approval == true
+                  ? 'text-white bg-[#015289]'
+                  : ''
+              "
+            >
+              <div class="flex justify-between w-full items-center">
+                <div class="flex gap-4 items-center">
+                  <img
+                    :src="approvalIcon"
+                    class="w-6 h-6 rounded-lg"
+                    :class="
+                      sidebar.sidebarMenu.approval === true ? 'hidden' : 'block'
+                    "
+                    alt=""
+                  />
+                  <img
+                    :src="approvalSelected"
+                    class="w-6 h-6 rounded-lg"
+                    :class="
+                      sidebar.sidebarMenu.approval === false
+                        ? 'hidden'
+                        : 'block'
+                    "
+                    alt=""
+                  />
+                  <h3
+                    class="text-left"
+                    :class="sidebar.isWide === true ? '' : 'hidden'"
+                  >
+                    Approval
+                  </h3>
+                </div>
+
+                <div class="hidden">
+                  <img :src="expandArrow" class="w-5 h-5" />
+                </div>
+              </div>
+            </button>
+
+            <div v-if="sidebar.isWide">
+              <Transition name="slideDown">
+                <div
+                  v-if="sidebar.sidebarMenu.approval === true"
+                  class="pl-4 pb-4 sm:flex sm:flex-col hidden"
+                >
+                  <ul class="flex flex-col gap-4 pt-4 px-2">
+                    <router-link to="#" class="cursor-pointer">
+                      <div class="flex gap-[10px] items-center cursor-pointer">
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                          :src="submenuLine"
+                          alt=""
+                        />
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                          :src="submenuLineSelected"
+                          alt=""
+                        />
+                        <a
+                          href="#"
+                          class="flex items-center w-full justify-between"
+                          :class="[
+                            $route.path == '#'
+                              ? `anchorImage anchorSubMenu`
+                              : '',
+                          ]"
+                        >
+                          Request Trip
+                          <img class="w-5 h-5" :src="groupIcon" alt="" />
+                        </a>
+                      </div>
+                    </router-link>
+
+                    <router-link to="#" class="cursor-pointer">
+                      <div class="flex gap-[10px] items-center cursor-pointer">
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                          :src="submenuLine"
+                          alt=""
+                        />
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                          :src="submenuLineSelected"
+                          alt=""
+                        />
+                        <a
+                          href="#"
+                          class="flex items-center w-full justify-between"
+                          :class="[
+                            $route.path == '#'
+                              ? `anchorImage anchorSubMenu`
+                              : '',
+                          ]"
+                        >
+                          Settlement
+                          <img class="w-5 h-5" :src="groupIcon" alt="" />
+                        </a>
+                      </div>
+                    </router-link>
+
+                    <router-link to="#" class="cursor-pointer">
+                      <div class="flex gap-[10px] items-center cursor-pointer">
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                          :src="submenuLine"
+                          alt=""
+                        />
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                          :src="submenuLineSelected"
+                          alt=""
+                        />
+                        <a
+                          href="#"
+                          class="flex items-center w-full justify-between"
+                          :class="[
+                            $route.path == '#'
+                              ? `anchorImage anchorSubMenu`
+                              : '',
+                          ]"
+                        >
+                          Claim Reimbursement
+                          <img class="w-5 h-5" :src="groupIcon" alt="" />
+                        </a>
+                      </div>
+                    </router-link>
+
+                    <router-link to="/approvalcatravel" class="cursor-pointer">
+                      <div class="flex gap-[10px] items-center cursor-pointer">
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/approvalcatravel'
+                              ? 'hidden'
+                              : 'inline',
+                          ]"
+                          :src="submenuLine"
+                          alt=""
+                        />
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/approvalcatravel'
+                              ? 'inline'
+                              : 'hidden',
+                          ]"
+                          :src="submenuLineSelected"
+                          alt=""
+                        />
+                        <a
+                          href="#"
+                          class="flex items-center w-full justify-between"
+                          :class="[
+                            $route.path == '/approvalcatravel'
+                              ? `anchorImage anchorSubMenu`
+                              : '',
+                          ]"
+                        >
+                          Cash Advance Travel
+                          <img class="w-5 h-5" :src="groupIcon" alt="" />
+                        </a>
+                      </div>
+                    </router-link>
+
+                    <router-link
+                      to="/approvalcanontravel"
+                      class="cursor-pointer"
+                    >
+                      <div class="flex gap-[10px] items-center cursor-pointer">
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/approvalcanontravel'
+                              ? 'hidden'
+                              : 'inline',
+                          ]"
+                          :src="submenuLine"
+                          alt=""
+                        />
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/approvalcanontravel'
+                              ? 'inline'
+                              : 'hidden',
+                          ]"
+                          :src="submenuLineSelected"
+                          alt=""
+                        />
+                        <a
+                          href="#"
+                          class="flex items-center w-full justify-between"
+                          :class="[
+                            $route.path == '/approvalcanontravel'
+                              ? `anchorImage anchorSubMenu`
+                              : '',
+                          ]"
+                        >
+                          Cash Advance Non Travel
+                          <img class="w-5 h-5" :src="groupIcon" alt="" />
+                        </a>
+                      </div>
+                    </router-link>
+
+                    <button class="cursor-pointer text-left">
+                      <div class="flex gap-[10px] items-center cursor-pointer">
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/request' ? 'hidden' : 'inline',
+                          ]"
+                          :src="submenuLine"
+                          alt=""
+                        />
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/request' ? 'inline' : 'hidden',
+                          ]"
+                          :src="submenuLineSelected"
+                          alt=""
+                        />
+                        <a
+                          href="#"
+                          class="flex items-center w-full justify-between"
+                          :class="[
+                            $route.path == '#'
+                              ? `anchorImage anchorSubMenu`
+                              : '',
+                          ]"
+                        >
+                          ATK Supplies
+                          <img class="w-5 h-5" :src="groupIcon" alt="" />
+                        </a>
+                      </div>
+                      <div class="ml-5 mt-[10px]">
+                        <ul
+                          class="flex flex-col gap-[10px] text-base font-normal"
+                        >
+                          <router-link to="#" class="cursor-pointer">
+                            <li
+                              class="flex gap-[10px] items-center justify-between"
+                            >
+                              <img :src="submenuInner" alt="" class="w-2 h-2" />
+                              ATK Request
+                              <img class="w-5 h-5" :src="groupIcon" alt="" />
+                            </li>
+                          </router-link>
+                        </ul>
+                      </div>
+                    </button>
+                  </ul>
+                </div>
+              </Transition>
+            </div>
+          </li>
+
               
               </ul>
               
