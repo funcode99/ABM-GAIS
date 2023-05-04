@@ -48,9 +48,6 @@ let travel = "travelManagementSystem";
       class="mt-[115px] hidden sm:flex sm:flex-col fixed top-0 bottom-0 overflow-y-auto scroller bg-white zInfinite font-JakartaSans this ease-in-out duration-500"
       :class="sidebar.isWide === true ? 'w-[260px]' : 'w-[100px]'"
     >
-      <!-- <div class="flex justify-center h-32 py-2"> 
-          <img :src=ABMIcon class="w-[114px] h-[86px]" alt="">
-        </div> -->
         
       <div 
         class="absolute top-10 right-[-16px] w-[32px] h-[32px] bg-blue rounded-full sm:flex justify-center items-center hidden cursor-pointer" 
@@ -78,9 +75,8 @@ let travel = "travelManagementSystem";
         />
 
       </div>
-
-
   
+      <!-- menu -->
       <div class="px-4 flex flex-col items-center pt-3">
 
         <ul id="myMenu">
