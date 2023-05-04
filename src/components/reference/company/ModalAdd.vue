@@ -22,7 +22,7 @@ import iconUpload from "@/assets/icon_upload.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner-company">
         <form>
           <div class="mb-6 mr-6">
             <label
@@ -59,7 +59,7 @@ import iconUpload from "@/assets/icon_upload.svg";
               >Parent Company<span class="text-red">*</span></label
             >
             <select
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
             >
               <option disabled selected>Company</option>
@@ -103,7 +103,7 @@ import iconUpload from "@/assets/icon_upload.svg";
               >Vendor Airlines<span class="text-red">*</span></label
             >
             <select
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
             >
               <option disabled selected>Vendor</option>
@@ -139,7 +139,8 @@ import iconUpload from "@/assets/icon_upload.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-company {
+  height: 400px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

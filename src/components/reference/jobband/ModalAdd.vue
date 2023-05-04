@@ -28,7 +28,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-14">
+      <main class="modal-box-inner-jobband pb-14">
         <form class="pt-4">
           <div class="mb-6 mr-6">
             <label
@@ -92,6 +92,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
         </form>
 
         <!-- INNER TABLE -->
+        <h1 class="text-base font-JakartaSans font-bold py-2">TLK</h1>
         <table class="table table-zebra table-compact border w-full rounded-lg">
           <thead class="text-center font-JakartaSans text-sm font-bold">
             <tr>
@@ -190,7 +191,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-jobband {
   height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;

@@ -23,7 +23,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 
       <main class="modal-box-inner-flight">
         <form class="pt-4">
-          <div class="mb-6 mr-6">
+          <div class="mb-6">
             <label
               for="flight"
               class="block mb-2 font-JakartaSans font-medium text-sm"

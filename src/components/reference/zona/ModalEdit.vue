@@ -52,7 +52,7 @@ function removeLastTag(event) {
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner-zona">
         <form class="pt-4">
           <div class="mb-6 mr-6 text-start">
             <label
@@ -127,7 +127,7 @@ function removeLastTag(event) {
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-zona {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

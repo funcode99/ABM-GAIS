@@ -46,7 +46,7 @@ let minDate = year + "-" + month + "-" + day;
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-4 lg:pb-16">
+      <main class="modal-box-inner-employee pb-4 lg:pb-16">
         <div class="flex justify-center items-center">
           <div class="avatar">
             <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
@@ -80,7 +80,7 @@ let minDate = year + "-" + month + "-" + day;
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -94,7 +94,7 @@ let minDate = year + "-" + month + "-" + day;
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="sn"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -113,7 +113,7 @@ let minDate = year + "-" + month + "-" + day;
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="SN"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -127,7 +127,7 @@ let minDate = year + "-" + month + "-" + day;
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="email"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -146,7 +146,7 @@ let minDate = year + "-" + month + "-" + day;
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="NIK"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -160,7 +160,7 @@ let minDate = year + "-" + month + "-" + day;
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="date_start"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -179,7 +179,7 @@ let minDate = year + "-" + month + "-" + day;
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="dob"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -192,7 +192,7 @@ let minDate = year + "-" + month + "-" + day;
                 required
               />
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="date_end"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -210,7 +210,7 @@ let minDate = year + "-" + month + "-" + day;
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="gender"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -225,7 +225,7 @@ let minDate = year + "-" + month + "-" + day;
                 <option>Female</option>
               </select>
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -245,7 +245,7 @@ let minDate = year + "-" + month + "-" + day;
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="departement"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -260,7 +260,7 @@ let minDate = year + "-" + month + "-" + day;
                 <option>Departement B</option>
               </select>
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="site"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -304,7 +304,7 @@ let minDate = year + "-" + month + "-" + day;
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-employee {
   height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;

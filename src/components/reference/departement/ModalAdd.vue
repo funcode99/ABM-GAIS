@@ -48,10 +48,10 @@ function removeLastTag(event) {
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-14">
+      <main class="modal-box-inner-departement pb-14">
         <form class="py-4">
-          <div class="w-full px-3">
-            <div class="mb-6">
+          <div class="w-full">
+            <div class="mb-6 mr-6">
               <label
                 for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -68,7 +68,7 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div class="mb-6 mx-3">
+          <div class="mb-6 mr-6">
             <label
               for="name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -83,17 +83,15 @@ function removeLastTag(event) {
             />
           </div>
 
-          <div
-            class="flex justify-between lg:justify-around items-center gap-2 mx-3 lg:mx-0"
-          >
-            <div class="mb-6">
+          <div class="flex justify-between items-center gap-2">
+            <div class="mb-6 w-full">
               <label
                 for="cost_center"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Cost Center<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-[175px] lg:w-56 md:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Cost Center</option>
@@ -101,14 +99,14 @@ function removeLastTag(event) {
                 <option>Cost Center B</option>
               </select>
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="status"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Status<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-[130px] lg:w-56 md:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Status</option>
@@ -118,17 +116,15 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div
-            class="flex justify-between lg:justify-around items-center gap-2 mx-3 lg:mx-0"
-          >
-            <div class="mb-6">
+          <div class="flex justify-between items-center gap-2">
+            <div class="mb-6 w-full">
               <label
                 for="glaccount"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >GL Account<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-[175px] lg:w-56 md:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Account</option>
@@ -136,14 +132,14 @@ function removeLastTag(event) {
                 <option>Account B</option>
               </select>
             </div>
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="profit"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Profit Center<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-[130px] lg:w-56 md:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Profit Center</option>
@@ -153,10 +149,8 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div
-            class="flex justify-between lg:justify-around items-start gap-2 mx-3 lg:mx-0"
-          >
-            <div class="mb-6">
+          <div class="flex justify-between lg:justify-around items-start gap-2">
+            <div class="mb-6 w-full">
               <label
                 for="Division"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -189,14 +183,14 @@ function removeLastTag(event) {
               </div>
             </div>
 
-            <div class="mb-6">
+            <div class="mb-6 w-full">
               <label
                 for="departementhead"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Departemen Head<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 md:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Nama</option>
@@ -233,7 +227,7 @@ function removeLastTag(event) {
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-departement {
   height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;

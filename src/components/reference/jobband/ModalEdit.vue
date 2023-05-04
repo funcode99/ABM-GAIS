@@ -26,7 +26,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-14">
+      <main class="modal-box-inner-jobband pb-14">
         <form class="pt-4">
           <div class="mb-6 mr-6 text-start">
             <label
@@ -72,9 +72,26 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
               required
             />
           </div>
+          <div class="mb-6 mr-6 text-start">
+            <label
+              for="flight"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Flight Class<span class="text-red">*</span></label
+            >
+            <input
+              type="text"
+              name="flight"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Flight Class"
+              required
+            />
+          </div>
         </form>
 
         <!-- INNER TABLE -->
+        <h1 class="text-base font-JakartaSans font-bold py-2 text-start">
+          TLK
+        </h1>
         <table class="table table-zebra table-compact border w-full rounded-lg">
           <thead class="text-center font-JakartaSans text-sm font-bold">
             <tr>
@@ -173,7 +190,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-jobband {
   height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;

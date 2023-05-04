@@ -6,7 +6,6 @@ import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import ModalView from "@/components/reference/company/ModalView.vue";
 
-
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
@@ -107,7 +106,7 @@ const getSessionForSidebar = () => {
 
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <ExpandButton />
+
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[
