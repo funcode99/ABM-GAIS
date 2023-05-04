@@ -12,12 +12,12 @@ export const useSidebarStore = defineStore('sidebar', {
                 reference: false,
                 approval: false,
             },
-            isWide: true
+            isWide: true,
+            scrollValue: 0
         }
     },
     actions: {
         increment(state) {
-
             if (state === 'reference') {
 
                 this.sidebarMenu.reference = !this.sidebarMenu.reference

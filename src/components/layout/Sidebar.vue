@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 
 import dashboardIcon from "@/assets/dashboard-icon.png";
 import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png";
@@ -22,6 +22,8 @@ import chevronIcon from "@/assets/chevron-white-medium.png";
 // harus pake ekstensi kalo enggak gak bakal kebaca
 import { useSidebarStore } from "@/stores/sidebar.js";
 
+let sidebarScrollY = ref(0)
+
 const sidebar = useSidebarStore();
 const searchSidebarValue = ref("");
 
@@ -30,6 +32,18 @@ let system = "systemConfiguration";
 let reference = "reference";
 let travel = "travelManagementSystem";
 let approval = "approval";
+
+  onMounted(() => {
+      let scroller = window.document.querySelector(".scroller");
+      scroller.scrollTop = sidebar.scrollValue
+      scroller.addEventListener("scroll", () => {
+        sidebar.scrollValue = Math.round(scroller.scrollTop)
+    })
+})
+
+
+
+
 </script>
 
 <template>
@@ -38,6 +52,9 @@ let approval = "approval";
       <div
         class="mt-[115px] hidden sm:flex sm:flex-col fixed top-0 bottom-0 overflow-y-auto bg-white zInfinite font-JakartaSans this ease-in-out duration-500"
         :class="sidebar.isWide === true ? 'w-[260px]' : 'w-[100px]'" >
+
+
+        <h1 class="text-center">nilai scroll Y di sidebar {{  sidebarScrollY  }}</h1>
 
       <!-- gaperlu pake absolute lagi -->
       <!-- absolute top-10 right-[-16px] -->
@@ -72,7 +89,7 @@ let approval = "approval";
     
         <!-- menu -->
         <div class="sidebar-wrapper mt-3">
-          <div class="sidebar">
+          <div class="sidebar scroller">
             <div class="px-4 flex flex-col items-center">
       
               <ul id="myMenu">
