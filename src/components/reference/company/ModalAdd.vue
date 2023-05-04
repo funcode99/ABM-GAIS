@@ -52,14 +52,14 @@ import iconUpload from "@/assets/icon_upload.svg";
               required
             />
           </div>
-          <div class="mb-6">
+          <div class="mb-6 mr-6">
             <label
               for="parent_company"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Parent Company<span class="text-red">*</span></label
             >
             <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
             >
               <option disabled selected>Company</option>
@@ -94,6 +94,22 @@ import iconUpload from "@/assets/icon_upload.svg";
                 />
               </label>
             </div>
+          </div>
+
+          <div class="mb-6 mr-6">
+            <label
+              for="vendor"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Vendor Airlines<span class="text-red">*</span></label
+            >
+            <select
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              required
+            >
+              <option disabled selected>Vendor</option>
+              <option>Vendor A</option>
+              <option>Vendor B</option>
+            </select>
           </div>
         </form>
       </main>
