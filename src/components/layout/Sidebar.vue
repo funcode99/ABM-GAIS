@@ -8,6 +8,8 @@ import systemConfigurationIcon from "@/assets/system-configuration-not-selected.
 import systemConfigurationIconSelected from "@/assets/system-configuration-selected.png";
 import referenceIcon from "@/assets/reference.png";
 import referenceIconSelected from "@/assets/reference-selected.png";
+import approvalIcon from "@/assets/approval.png";
+import approvalSelected from "@/assets/approval-selected.png";
 import submenuLine from "@/assets/submenu-line.png";
 import submenuLineSelected from "@/assets/submenu-line-selected.png";
 import submenuInner from "@/assets/inner-sub-menu.png";
@@ -15,7 +17,7 @@ import submenuInner from "@/assets/inner-sub-menu.png";
 import searchIcon from "@/assets/Icons.png";
 import expandArrow from "@/assets/ExpandArrow.png";
 import groupIcon from "@/assets/Group.png";
-import chevronIcon from '@/assets/chevron-white-medium.png'
+import chevronIcon from "@/assets/chevron-white-medium.png";
 
 // harus pake ekstensi kalo enggak gak bakal kebaca
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -27,6 +29,7 @@ const searchSidebarValue = ref("");
 let system = "systemConfiguration";
 let reference = "reference";
 let travel = "travelManagementSystem";
+let approval = "approval";
 </script>
 
 <template>
@@ -840,7 +843,7 @@ let travel = "travelManagementSystem";
 }
 
 .this {
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 .slideDown-enter-from {
@@ -848,7 +851,7 @@ let travel = "travelManagementSystem";
 }
 
 .slideDown-enter-active {
-  transition: all .5s ease;
+  transition: all 0.5s ease;
 }
 
 .slideDown-enter-to {
@@ -860,7 +863,7 @@ let travel = "travelManagementSystem";
 }
 
 .slideDown-leave-active {
-  transition: all .5s ease;
+  transition: all 0.5s ease;
 }
 
 .slideDown-leave-to {
