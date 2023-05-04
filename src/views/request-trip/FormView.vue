@@ -1,7 +1,6 @@
 <script setup>
     import { ref } from 'vue'
     import expandArrow from '@/assets/ExpandArrow.png'
-    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'

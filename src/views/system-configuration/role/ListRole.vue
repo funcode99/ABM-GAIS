@@ -1,7 +1,6 @@
 <script setup>
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
-    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue";
     import ModalEditRole from '@/components/system-configuration/role/ModalEditRole.vue'

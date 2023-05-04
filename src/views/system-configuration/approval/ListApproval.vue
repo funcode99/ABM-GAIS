@@ -3,7 +3,6 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
-    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import dataDummy from '@/utils/Api/system-configuration/approverdata.js'
 

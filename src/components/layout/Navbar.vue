@@ -12,7 +12,7 @@
   let isNotificationOpen = ref(false)
   
   const changeViewStatus = () => {
-    console.log('masuk ke fungsi')
+    // console.log('masuk ke fungsi')
     isOpen.value = false
   }
 

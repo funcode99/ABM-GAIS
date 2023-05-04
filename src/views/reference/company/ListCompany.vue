@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import ModalView from "@/components/reference/company/ModalView.vue";
-import ExpandButton from "@/components/layout/ExpandButton.vue";
+
 
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";

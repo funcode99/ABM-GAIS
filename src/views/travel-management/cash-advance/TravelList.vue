@@ -2,7 +2,6 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ExpandButton from "@/components/layout/ExpandButton.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";

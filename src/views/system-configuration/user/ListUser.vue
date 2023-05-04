@@ -2,7 +2,6 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
-    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import dataDummy from '@/utils/Api/system-configuration/userdata.js'
 
@@ -113,7 +112,7 @@
 
         <Sidebar class="flex-none" />    
         
-        <ExpandButton />
+        <!-- <ExpandButton /> -->
 
       <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full clean-margin ease-in-out duration-500" 
         :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">

@@ -2,7 +2,6 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
-    import ExpandButton from '@/components/layout/ExpandButton.vue'
 
     import Api from '@/utils/Api'
     import router from '@/router'

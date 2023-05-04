@@ -7,8 +7,6 @@ import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 
-import ExpandButton from "@/components/layout/ExpandButton.vue";
-
 import { onBeforeMount } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";

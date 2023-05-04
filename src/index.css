@@ -112,17 +112,6 @@
   }
 }
 
-input, select {
-  -webkit-box-sizing: border-box;
-     -moz-box-sizing: border-box;
-          box-sizing: border-box;
-}
-
-.scale {
-  --tw-scale-x: 0.99;
-  --tw-scale-y: 0.99;
-}
-
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;

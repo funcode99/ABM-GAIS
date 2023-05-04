@@ -1,7 +1,10 @@
+<script setup>
+
+</script>
+
 <template>
-  <div class="font-JakartaSans">
-    <RouterView />
-  </div>
+    <div class="font-JakartaSans">
+      <RouterView />
+    </div>
 </template>
 
-<script setup></script>
