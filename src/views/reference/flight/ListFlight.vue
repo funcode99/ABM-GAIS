@@ -104,8 +104,6 @@ const getSessionForSidebar = () => {
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
-      <ExpandButton />
-
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[

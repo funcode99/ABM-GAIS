@@ -25,9 +25,9 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner-currency">
         <form class="pt-4">
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="currency"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -42,7 +42,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             />
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="symbol"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -57,7 +57,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             />
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="code"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -99,7 +99,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-currency {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

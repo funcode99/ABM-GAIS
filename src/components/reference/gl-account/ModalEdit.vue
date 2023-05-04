@@ -25,9 +25,9 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner-gl">
         <form>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="gl_account"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -41,7 +41,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
               required
             />
           </div>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="gl_name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -83,7 +83,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-gl {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

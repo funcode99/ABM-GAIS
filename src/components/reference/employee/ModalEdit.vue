@@ -26,7 +26,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         </p>
       </nav>
 
-      <div class="modal-box-inner pb-4 lg:pb-16">
+      <div class="modal-box-inner-employee pb-4 lg:pb-16">
         <div class="flex justify-center items-center">
           <div class="avatar">
             <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
@@ -50,7 +50,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -64,7 +64,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 required
               />
             </div>
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="sn"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -83,7 +83,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="SN"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -97,7 +97,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 required
               />
             </div>
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="email"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -116,7 +116,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="NIK"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -130,7 +130,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 required
               />
             </div>
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="date_start"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -148,7 +148,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="dob"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -161,7 +161,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 required
               />
             </div>
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="date_end"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -179,7 +179,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="gender"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -194,7 +194,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 <option>Female</option>
               </select>
             </div>
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -214,7 +214,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           <div
             class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="departement"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -229,7 +229,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 <option>Departement B</option>
               </select>
             </div>
-            <div class="mb-6 text-start">
+            <div class="mb-6 text-start w-full">
               <label
                 for="site"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -273,7 +273,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-employee {
   height: 500px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;

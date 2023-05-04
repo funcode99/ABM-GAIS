@@ -1,12 +1,10 @@
 <script setup>
-// for component
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
 import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
 
-// for asset
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -129,7 +127,6 @@ const getSessionForSidebar = () => {
 
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <ExpandButton />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"

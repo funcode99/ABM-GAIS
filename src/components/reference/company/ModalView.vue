@@ -51,9 +51,9 @@ import iconview from "@/assets/view_icon.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner pb-14">
+      <main class="modal-box-inner-company">
         <form>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="code"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -67,7 +67,7 @@ import iconview from "@/assets/view_icon.svg";
               disabled
             />
           </div>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -81,7 +81,7 @@ import iconview from "@/assets/view_icon.svg";
               disabled
             />
           </div>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="parent_company"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -97,7 +97,7 @@ import iconview from "@/assets/view_icon.svg";
             </select>
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <div
               for="logo_company"
               class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
@@ -126,14 +126,14 @@ import iconview from "@/assets/view_icon.svg";
             </div>
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start">
             <label
               for="Site"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Site<span class="text-red">*</span></label
             >
             <div
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm px-4 font-medium sm:text-sm"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm px-4 font-medium sm:text-sm cursor-default"
             >
               <!-- <div
                 v-for="(tag, index) in tags"
@@ -170,8 +170,8 @@ import iconview from "@/assets/view_icon.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
-  height: 500px;
+.modal-box-inner-company {
+  height: 470px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

@@ -25,7 +25,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner">
+      <main class="modal-box-inner-reimbursement">
         <form class="pt-4">
           <div class="mb-6 mr-6 text-start">
             <label
@@ -49,12 +49,28 @@ import editicon from "@/assets/navbar/edit_icon.svg";
               >Parent Type<span class="text-red">*</span></label
             >
             <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
             >
               <option disabled selected>Type</option>
               <option>Type A</option>
               <option>Type B</option>
+            </select>
+          </div>
+
+          <div class="mb-6 text-start">
+            <label
+              for="job_band"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Job Band<span class="text-red">*</span></label
+            >
+            <select
+              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              required
+            >
+              <option disabled selected>Job Band</option>
+              <option>Job Band A</option>
+              <option>Job Band B</option>
             </select>
           </div>
         </form>
@@ -85,7 +101,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner {
+.modal-box-inner-reimbursement {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
