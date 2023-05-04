@@ -19,13 +19,14 @@ import editicon from "@/assets/navbar/edit_icon.svg";
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start">
+        <p
+          class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
+        >
           Edit Employee
         </p>
       </nav>
 
       <div class="modal-box-inner pb-4 lg:pb-16">
-        
         <div class="flex justify-center items-center">
           <div class="avatar">
             <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
@@ -38,7 +39,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             </div>
           </div>
         </div>
-        
+
         <p
           class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4"
         >
@@ -195,23 +196,23 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             </div>
             <div class="mb-6 text-start">
               <label
-                for="cost_center"
+                for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Cost Center<span class="text-red">*</span></label
+                >Company<span class="text-red">*</span></label
               >
               <select
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
-                <option disabled selected>Cost Center</option>
-                <option>Cost Center A</option>
-                <option>Cost Center B</option>
+                <option disabled selected>Company</option>
+                <option>Company A</option>
+                <option>Company B</option>
               </select>
             </div>
           </div>
 
           <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-between lg:px-3 items-center gap-2 "
+            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
           >
             <div class="mb-6 text-start">
               <label
@@ -220,7 +221,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 >Departement<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 lg:mr-9 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
                 <option disabled selected>Departement</option>
@@ -228,9 +229,23 @@ import editicon from "@/assets/navbar/edit_icon.svg";
                 <option>Departement B</option>
               </select>
             </div>
+            <div class="mb-6 text-start">
+              <label
+                for="site"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Site<span class="text-red">*</span></label
+              >
+              <select
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
+              >
+                <option disabled selected>Site</option>
+                <option>Site A</option>
+                <option>Site B</option>
+              </select>
+            </div>
           </div>
         </form>
-      
       </div>
 
       <div class="sticky bottom-0 bg-white py-2">
@@ -247,7 +262,6 @@ import editicon from "@/assets/navbar/edit_icon.svg";
           </button>
         </div>
       </div>
-
     </div>
   </div>
 </template>
