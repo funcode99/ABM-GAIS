@@ -19,6 +19,8 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
 //for sort, search, & filter
+const selectedStatus = ref("Status");
+const selectedCatype = ref("Type");
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
@@ -142,7 +144,37 @@ const getSessionForSidebar = () => {
           <div
             class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
-            <div class="flex flex-wrap items-center gap-4">
+            <div class="flex flex-wrap items-center gap-1">
+              <p
+                class="capitalize font-JakartaSans text-xs text-black font-medium"
+              >
+                Status
+              </p>
+              <select
+                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedStatus"
+              >
+                <option disabled selected>Status</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.status }}
+                </option>
+              </select>
+
+              <p
+                class="capitalize font-JakartaSans text-xs text-black font-medium"
+              >
+                CA Type
+              </p>
+              <select
+                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedCatype"
+              >
+                <option disabled selected>Type</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.ca_type }}
+                </option>
+              </select>
+
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >
@@ -175,8 +207,7 @@ const getSessionForSidebar = () => {
                 </button>
               </div>
             </div>
-
-            <div class="py-2 flex md:mx-0">
+            <div class="py-2">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -354,6 +385,6 @@ tr th {
 }
 
 .my-date {
-  width: 260px !important;
+  width: 220px !important;
 }
 </style>

@@ -7,7 +7,8 @@ const settlementdata = [
         requestor: "John Doe",
         ca: "TCA-ABM/1232/23.04",
         total: 1000000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Travel"
     },
     {
         id: 2,
@@ -17,7 +18,8 @@ const settlementdata = [
         requestor: "Jane Doe",
         ca: "TCA-ABM/1232/23.04",
         total: 500000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Travel"
     },
     {
         id: 3,
@@ -27,7 +29,8 @@ const settlementdata = [
         requestor: "Bob Smith",
         ca: "TCA-ABM/1232/23.04",
         total: 750000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Travel"
     },
     {
         id: 4,
@@ -37,7 +40,8 @@ const settlementdata = [
         requestor: "Alice Johnson",
         ca: "TCA-ABM/1232/23.04",
         total: 250000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Travel"
     },
     {
         id: 5,
@@ -47,7 +51,8 @@ const settlementdata = [
         requestor: "Chris Lee",
         ca: "TCA-ABM/1232/23.04",
         total: 1250000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Travel"
     },
     {
         id: 6,
@@ -57,7 +62,8 @@ const settlementdata = [
         requestor: "David Wang",
         ca: "TCA-ABM/1232/23.04",
         total: 500000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Non Travel"
     },
     {
         id: 7,
@@ -67,7 +73,8 @@ const settlementdata = [
         requestor: "Samantha Chan",
         ca: "TCA-ABM/1232/23.04",
         total: 100000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Non Travel"
     },
     {
         id: 8,
@@ -77,7 +84,8 @@ const settlementdata = [
         requestor: "Tommy Ng",
         ca: "TCA-ABM/1232/23.04",
         total: 200000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Non Travel"
     },
     {
         id: 9,
@@ -87,7 +95,8 @@ const settlementdata = [
         requestor: "Lisa Wong",
         ca: "TCA-ABM/1232/23.04",
         total: 300000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Non Travel"
     },
     {
         id: 10,
@@ -97,7 +106,8 @@ const settlementdata = [
         requestor: "Michael Yuen",
         ca: "TCA-ABM/1232/23.04",
         total: 150000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Non Travel"
     },
     {
         id: 11,
@@ -107,7 +117,8 @@ const settlementdata = [
         requestor: "Tina Lam",
         ca: "TCA-ABM/1232/23.04",
         total: 400000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Travel"
     },
     {
         id: 12,
@@ -117,7 +128,8 @@ const settlementdata = [
         requestor: "Kevin Chan",
         ca: "TCA-ABM/1232/23.04",
         total: 800000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Non Travel"
     },
     {
         id: 13,
@@ -127,7 +139,8 @@ const settlementdata = [
         requestor: "Amy Wong",
         ca: "TCA-ABM/1232/23.04",
         total: 1500000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Non Travel"
     },
     {
         id: 14,
@@ -137,7 +150,8 @@ const settlementdata = [
         requestor: "Steven Lee",
         ca: "TCA-ABM/1232/23.04",
         total: 100000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Travel"
     },
     {
         id: 15,
@@ -147,7 +161,8 @@ const settlementdata = [
         requestor: "Emily Chu",
         ca: "TCA-ABM/1232/23.04",
         total: 500000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Travel"
     },
     {
         id: 16,
@@ -157,7 +172,8 @@ const settlementdata = [
         requestor: "David Wong",
         ca: "TCA-ABM/1232/23.04",
         total: 750000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Non Travel"
     },
     {
         id: 17,
@@ -167,7 +183,8 @@ const settlementdata = [
         requestor: "Brenda Ng",
         ca: "TCA-ABM/1232/23.04",
         total: 200000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Non Travel"
     },
     {
         id: 18,
@@ -177,7 +194,8 @@ const settlementdata = [
         requestor: "Frankie Chan",
         ca: "TCA-ABM/1232/23.04",
         total: 300000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Non Travel"
     },
     {
         id: 19,
@@ -187,7 +205,8 @@ const settlementdata = [
         requestor: "Catherine Wong",
         ca: "TCA-ABM/1232/23.04",
         total: 1000000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Travel"
     },
     {
         id: 20,
@@ -197,7 +216,8 @@ const settlementdata = [
         requestor: "Tony Leung",
         ca: "TCA-ABM/1232/23.04",
         total: 500000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Travel"
     },
     {
         id: 21,
@@ -207,7 +227,8 @@ const settlementdata = [
         requestor: "Angela Lee",
         ca: "TCA-ABM/1232/23.04",
         total: 250000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Travel"
     },
     {
         id: 22,
@@ -217,7 +238,8 @@ const settlementdata = [
         requestor: "Michael Chan",
         ca: "TCA-ABM/1232/23.04",
         total: 600000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Travel"
     },
     {
         id: 23,
@@ -227,7 +249,8 @@ const settlementdata = [
         requestor: "Eddie Ng",
         ca: "TCA-ABM/1232/23.04",
         total: 1200000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Travel"
     },
     {
         id: 24,
@@ -237,7 +260,8 @@ const settlementdata = [
         requestor: "Grace Wong",
         ca: "TCA-ABM/1232/23.04",
         total: 200000,
-        status: "Paid"
+        status: "Paid",
+        ca_type: "Non Travel"
     },
     {
         id: 25,
@@ -247,7 +271,8 @@ const settlementdata = [
         requestor: "Tommy Lee",
         ca: "TCA-ABM/1232/23.04",
         total: 400000,
-        status: "Pending"
+        status: "Pending",
+        ca_type: "Non Travel"
     },
 ]
 
