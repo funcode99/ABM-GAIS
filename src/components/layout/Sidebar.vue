@@ -257,14 +257,19 @@ onMounted(() => {
                         </div>
                       </router-link>
 
-                      <router-link to="/claimreimbursement" class="cursor-pointer">
+                      <router-link
+                        to="/claimreimbursement"
+                        class="cursor-pointer"
+                      >
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
                         >
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/claimreimbursement' ? 'hidden' : 'inline',
+                              $route.path == '/claimreimbursement'
+                                ? 'hidden'
+                                : 'inline',
                             ]"
                             :src="submenuLine"
                             alt=""
@@ -272,7 +277,9 @@ onMounted(() => {
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/claimreimbursement' ? 'inline' : 'hidden',
+                              $route.path == '/claimreimbursement'
+                                ? 'inline'
+                                : 'hidden',
                             ]"
                             :src="submenuLineSelected"
                             alt=""
@@ -345,7 +352,10 @@ onMounted(() => {
                                 <img class="w-5 h-5" :src="groupIcon" alt="" />
                               </li>
                             </router-link>
-                            <router-link to="/cashadvancenontravel" class="cursor-pointer">
+                            <router-link
+                              to="/cashadvancenontravel"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1307,19 +1317,30 @@ onMounted(() => {
                     class="pl-4 pb-4 sm:flex sm:flex-col hidden"
                   >
                     <ul class="flex flex-col gap-4 pt-4 px-2">
-                      <router-link to="#" class="cursor-pointer">
+                      <router-link
+                        to="/approvalrequesttrip"
+                        class="cursor-pointer"
+                      >
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
                         >
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :class="[
+                              $route.path == '/approvalrequesttrip'
+                                ? 'hidden'
+                                : 'inline',
+                            ]"
                             :src="submenuLine"
                             alt=""
                           />
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :class="[
+                              $route.path == '/approvalrequesttrip'
+                                ? 'inline'
+                                : 'hidden',
+                            ]"
                             :src="submenuLineSelected"
                             alt=""
                           />
@@ -1327,7 +1348,7 @@ onMounted(() => {
                             href="#"
                             class="flex items-center w-full justify-between"
                             :class="[
-                              $route.path == '#'
+                              $route.path == '/approvalrequesttrip'
                                 ? `anchorImage anchorSubMenu`
                                 : '',
                             ]"

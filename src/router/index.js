@@ -49,6 +49,8 @@ import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
 import CaTravelView from "@/views/approval/cash-advance-travel/CaTravelView.vue"
 import CaNonTravelList from "@/views/approval/cash-advance-nontravel/CaNonTravelList.vue"
 import CaNonTravelView from "@/views/approval/cash-advance-nontravel/CaNonTravelView.vue"
+import RequestTripList from "@/views/approval/request-trip/RequestTripList.vue"
+import RequestTripView from "@/views/approval/request-trip/RequestTripView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -372,6 +374,24 @@ const router = createRouter({
         title: 'View Approval CA Non Travel'
       }
     },
+    {
+      path: '/approvalrequesttrip',
+      name: 'approval request trip',
+      component: RequestTripList,
+      meta: {
+        title: 'Approval Request Trip'
+      }
+    },
+    {
+      path: '/viewapprovalrequesttrip',
+      name: 'view approval request trip',
+      component: RequestTripView,
+      meta: {
+        title: 'View Approval Request Trip'
+      }
+    },
+
+
   ]
 })
 
