@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-// import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
+import ModalAdd from "@/components/tms-claim-reimbursement/ModalAdd.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -115,7 +115,7 @@ const getSessionForSidebar = () => {
               Claim Reimbursement
             </p>
             <div class="flex gap-4">
-              <!-- <ModalAddCaNonTravelVue /> -->
+              <ModalAdd />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -263,7 +263,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.type }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="#">
+                      <router-link to="/viewclaimreimbursement">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
                         </button>

@@ -41,7 +41,8 @@ import NonTravelList from '@/views/travel-management/cash-advance-non-travel/Non
 import NonTravelView from '@/views/travel-management/cash-advance-non-travel/NonTravelView.vue'
 import SettlementList from "@/views/travel-management/settlement/SettlementList.vue"
 
-import ClaimReimbursementList from "../views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
+import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
+import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue"
 
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
@@ -329,7 +330,14 @@ const router = createRouter({
         title: 'Claim Reimbursement'
       }
     },
-
+    {
+      path: '/viewclaimreimbursement',
+      name: 'View Claim Reimbursement',
+      component: ClaimReimbursementView,
+      meta: {
+        title: 'View Claim Reimbursement'
+      }
+    },
 
     //approval page
     {
