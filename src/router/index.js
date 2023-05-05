@@ -39,6 +39,7 @@ import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
 import NonTravelView from '@/views/travel-management/cash-advance-non-travel/NonTravelView.vue'
+import SettlementList from "@/views/travel-management/settlement/SettlementList.vue"
 
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
@@ -308,6 +309,14 @@ const router = createRouter({
       component: NonTravelView,
       meta: {
         title: 'View CA Non Travel'
+      }
+    },
+    {
+      path: '/settlement',
+      name: 'Settlement',
+      component: SettlementList,
+      meta: {
+        title: 'Settlement'
       }
     },
 
