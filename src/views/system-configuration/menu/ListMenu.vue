@@ -2,6 +2,7 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
+    import Footer from '@/components/layout/Footer.vue'
 
     import Api from '@/utils/Api'
     import router from '@/router'
@@ -82,15 +83,7 @@
       instanceArray = api.data.data
       sortedData.value = instanceArray
       lengthCounter = sortedData.value.length
-      
-      // setTimeout(fetch, 3000)
-      // clearTimeout mencegat berjalan nya fungsi yang sudah dibuat setTimeout
-      // clearTimeout(fetch)
     }
-
-    // fetch()
-
-    // setTimeout(fetch, 5000)
 
     const getSessionForSidebar = () => {
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
@@ -131,10 +124,6 @@
       class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen h-full clean-margin ease-in-out duration-500"
       :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
-
-        <!-- <div class="h-full w-3 bg-[#97b3c6] flex items-center text-white cursor-pointer absolute left-0" @click="isWide = !isWide">
-          >
-        </div> -->
 
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
         <TableTopBar title="Menu" @do-search="filteredItems" modalAddType="menu" />
@@ -226,7 +215,9 @@
 
       </div>
 
-    </div>  
+    </div>
+
+    <Footer/>
     
   </div>
   

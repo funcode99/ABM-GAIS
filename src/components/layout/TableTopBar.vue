@@ -7,6 +7,7 @@
     import ModalAddApproval from '@/components/system-configuration/approval/ModalAddApprover.vue'
     import ModalAddUser from '@/components/system-configuration/user/ModalAddUser.vue'
     import ModalAddSequence from '@/components/system-configuration/sequence/ModalAddSequence.vue'
+    import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue"
 
     import { ref, computed } from 'vue'
 
@@ -37,6 +38,7 @@
     <ModalAddUser v-if="props.modalAddType === 'user'" />
     <ModalAddApproval v-if="props.modalAddType === 'approval'" />
     <ModalAddSequence v-if="props.modalAddType === 'sequence'" />
+    <ModalAddRole v-if="props.modalAddType === 'role'" />
 
     <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
       <img :src="icon_receive" class="w-6 h-6" />
@@ -101,19 +103,18 @@
         </button>
     </div>
 
-</div>
+    </div>
 
   <div class="sm:flex-1"></div>
   
   <!-- searchbar -->
-  <form class="py-2 flex justify-center items-center">
-    <div class="relative">
-      <div
-        class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+  <div class="py-2 flex md:mx-0">
+    <div class="relative block">
+      <span class="absolute inset-y-0 left-0 flex items-center pl-2"
       >
         <svg
           aria-hidden="true"
-          class="w-5 h-5 text-gray-500 dark:text-gray-400"
+          class="w-5 h-5 text-gray-500"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -126,16 +127,16 @@
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           ></path>
         </svg>
-      </div>
+      </span>
       <input
         type="text"
         placeholder="Search..."
-        class="input input-bordered input-info w-36 sm:w-full px-12 h-9"
+        class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
         v-model="search"
         @keyup="$emit('doSearch', search)"
       />
     </div>
-  </form>
+  </div>
   
 
 </div>

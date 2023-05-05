@@ -3,13 +3,12 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
+    import Footer from '@/components/layout/Footer.vue'
 
     import dataDummy from '@/utils/Api/system-configuration/approverdata.js'
 
     // import untuk approval table
     import { ref, onBeforeMount } from 'vue'
-    import editicon from "@/assets/navbar/edit_icon.svg";
-    import deleteicon from "@/assets/navbar/delete_icon.svg";
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
@@ -57,8 +56,6 @@ const sortList = (sortBy) => {
     sortedbyASC = true
   }
 }
-
-
 
 // watch(ref, callback)
 
@@ -173,16 +170,15 @@ const getSessionForSidebar = () => {
 
       </div>
 
-    </div>  
+    </div>
+
+    <Footer/>
     
   </div>
   
 </template>
 
 <style scoped>
-  /* .zInfinite {
-    z-index: 9999;
-  } */
 
   th {
     padding: 2px;

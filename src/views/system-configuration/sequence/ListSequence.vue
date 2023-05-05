@@ -2,6 +2,7 @@
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
+    import Footer from '@/components/layout/Footer.vue'
 
     import dataDummy from '@/utils/Api/system-configuration/sequencedata.js'
 
@@ -208,6 +209,8 @@
         </div>
 
     </div>  
+
+    <Footer />
     
   </div>
   
