@@ -257,14 +257,14 @@ onMounted(() => {
                         </div>
                       </router-link>
 
-                      <router-link to="/menu" class="cursor-pointer">
+                      <router-link to="/claimreimbursement" class="cursor-pointer">
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
                         >
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/menu' ? 'hidden' : 'inline',
+                              $route.path == '/claimreimbursement' ? 'hidden' : 'inline',
                             ]"
                             :src="submenuLine"
                             alt=""
@@ -272,7 +272,7 @@ onMounted(() => {
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/menu' ? 'inline' : 'hidden',
+                              $route.path == '/claimreimbursement' ? 'inline' : 'hidden',
                             ]"
                             :src="submenuLineSelected"
                             alt=""
@@ -281,7 +281,7 @@ onMounted(() => {
                             href="#"
                             class="flex items-center w-full justify-between"
                             :class="[
-                              $route.path == '/menu'
+                              $route.path == '/claimreimbursement'
                                 ? `anchorImage anchorSubMenu`
                                 : '',
                             ]"
