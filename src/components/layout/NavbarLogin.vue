@@ -6,7 +6,7 @@
 <template>
 
     <div class="flex justify-between bg-base-100">
-        <img :src=tailImage alt="" class="w-[285.85px] h-[90.27px]">
+        <img :src=tailImage alt="" class="w-[285px] h-[90px]">
         <img :src=abmImage alt="" class="w-[57px] h-[43px] md:w-[114px] md:h-[86px]">
         <img src="" alt="">
         <div></div>
