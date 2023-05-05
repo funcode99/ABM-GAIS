@@ -60,7 +60,7 @@
     <!-- content -->
     <section class="font-JakartaSans">
 
-      <div class="flex items-center justify-center py-[10px] 2xl:py-[30px] bg-[#e4e4e6]">
+      <div class="flex items-center justify-center py-[20px] 2xl:py-[30px] bg-[#e4e4e6]">
   
         <div class="flex flex-wrap items-center justify-center gap-8 bg-white px-[2%] 2xl:px-[6%] py-[1%] 2xl:py-[3%] rounded-lg">
           
@@ -120,7 +120,7 @@
                         <button class="text-sm 2xl:text-lg font-semibold bg-[#015289] w-full text-white rounded-lg  px-4 2xl:px-6 py-2 2xl:py-3 mt-5 block shadow-xl hover:text-white hover:bg-black" @click="submit">
                             Login
                         </button>
-                        <h1 class="text-center py-5 font-bold">OR</h1>
+                        <h1 class="text-center py-2 2xl:py-5 font-bold">OR</h1>
                         <!-- login via falcon button -->
                         <button class="text-sm 2xl:text-lg font-semibold bg-[#015289] w-full text-white rounded-lg px-4 2xl:px-6 py-2 2xl:py-3 block shadow-xl hover:text-white hover:bg-black">
                                 Login via Falcon
