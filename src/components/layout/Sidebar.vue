@@ -1401,19 +1401,30 @@ onMounted(() => {
                         </div>
                       </router-link>
 
-                      <router-link to="#" class="cursor-pointer">
+                      <router-link
+                        to="/approvalreimbursement"
+                        class="cursor-pointer"
+                      >
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
                         >
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :class="[
+                              $route.path == '/approvalreimbursement'
+                                ? 'hidden'
+                                : 'inline',
+                            ]"
                             :src="submenuLine"
                             alt=""
                           />
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :class="[
+                              $route.path == '/approvalreimbursement'
+                                ? 'inline'
+                                : 'hidden',
+                            ]"
                             :src="submenuLineSelected"
                             alt=""
                           />
@@ -1421,7 +1432,7 @@ onMounted(() => {
                             href="#"
                             class="flex items-center w-full justify-between"
                             :class="[
-                              $route.path == '#'
+                              $route.path == '/approvalreimbursement'
                                 ? `anchorImage anchorSubMenu`
                                 : '',
                             ]"

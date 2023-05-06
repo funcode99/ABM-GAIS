@@ -53,6 +53,8 @@ import RequestTripList from "@/views/approval/request-trip/RequestTripList.vue"
 import RequestTripView from "@/views/approval/request-trip/RequestTripView.vue"
 import ApprovalSettlementList from "@/views/approval/settlement/SettlementList.vue"
 import ApprovalSettlementView from "@/views/approval/settlement/SettlementView.vue"
+import ApporvalReimbursementList from "@/views/approval/reimbursement/ReimbursementList.vue"
+import ApporvalReimbursementView from "@/views/approval/reimbursement/ReimbursementView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -408,7 +410,24 @@ const router = createRouter({
         title: 'View Approval Settlement'
       }
     },
-    // 
+    {
+      path: '/approvalreimbursement',
+      name: 'approval reimbursement',
+      component: ApporvalReimbursementList,
+      meta: {
+        title: 'Approval Reimbursement'
+      }
+    },
+    {
+      path: '/viewapprovalreimbursement',
+      name: 'view approval reimbursement',
+      component: ApporvalReimbursementView,
+      meta: {
+        title: 'View Approval Reimbursement'
+      }
+    },
+
+
   ]
 })
 
