@@ -3,11 +3,12 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-
 import ModalApproveNonTravel from "@/components/approval/cash-advance-non-travel/ModalApproveNonTravel.vue";
 import ModalRejectNonTravel from "@/components/approval/cash-advance-non-travel/ModalRejectNonTravel.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
 
 import { onBeforeMount } from "vue";
 
@@ -32,7 +33,6 @@ const getSessionForSidebar = () => {
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <ExpandButton />
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[
@@ -58,7 +58,7 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- FORM READ ONLY-->
-          <div class="grid grid-cols-1 pl-[71px] gap-y-3 mb-7 pt-7">
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created Date</span
@@ -71,6 +71,17 @@ const getSessionForSidebar = () => {
               />
             </div>
             <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Event</span>
+              <input
+                type="text"
+                disabled
+                value="Sport"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
+            <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created By</span
               >
@@ -81,11 +92,20 @@ const getSessionForSidebar = () => {
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Total</span>
+              <input
+                type="text"
+                disabled
+                value="462.000"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
           </div>
 
           <!-- TAB & TABLE-->
           <div
-            class="bbg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
+            class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
           >
             <div
               class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
@@ -103,7 +123,7 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Event
+                      Item
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -128,24 +148,51 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Status
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
                       Action
                     </th>
                   </tr>
                 </thead>
                 <tbody class="font-JakartaSans font-normal text-xs">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">Jack H</td>
+                    <td class="border border-[#B9B9B9]">Sewa Lapangan</td>
                     <td class="border border-[#B9B9B9]">13/04/23</td>
                     <td class="border border-[#B9B9B9]">13222</td>
                     <td class="border border-[#B9B9B9]">231000</td>
                     <td class="border border-[#B9B9B9]">Tanding</td>
-                    <td class="border border-[#B9B9B9]">Panding</td>
-                    <td class="border border-[#B9B9B9]"></td>
+                    <td class="border border-[#B9B9B9]">
+                      <div class="flex flex-wrap gap-4 justify-center">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                        <button>
+                          <img :src="deleteicon" class="w-6 h-6" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="h-16">
+                    <td class="border border-[#B9B9B9]">Minuman</td>
+                    <td class="border border-[#B9B9B9]">13/04/23</td>
+                    <td class="border border-[#B9B9B9]">13222</td>
+                    <td class="border border-[#B9B9B9]">231000</td>
+                    <td class="border border-[#B9B9B9]">Tanding</td>
+                    <td class="border border-[#B9B9B9]">
+                      <div class="flex flex-wrap gap-4 justify-center">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                        <button>
+                          <img :src="deleteicon" class="w-6 h-6" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="3" class="border border-[#B9B9B9] text-center">
+                      Total
+                    </td>
+                    <td colspan="1" class="border border-[#B9B9B9]">462000</td>
+                    <td colspan="2" class="border border-[#B9B9B9]"></td>
                   </tr>
                 </tbody>
               </table>

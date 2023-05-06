@@ -88,7 +88,7 @@ const getSessionForSidebar = () => {
 
           <!-- TAB & TABLE-->
           <div
-            class="bbg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
+            class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
           >
             <div
               class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
