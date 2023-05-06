@@ -28,7 +28,6 @@ const getSessionForSidebar = () => {
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
-      <ExpandButton />
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[
@@ -44,9 +43,9 @@ const getSessionForSidebar = () => {
               class="flex items-center gap-2 py-4 mx-4"
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
-              <h1 class="text-blue font-semibold font-JakartaSans">
+              <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
                 Cash Advance Travel<span
-                  class="text-[#0a0a0a] font-semibold font-JakartaSans"
+                  class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
                 >
                   / TCA-ABM/1309/12.05
                 </span>
