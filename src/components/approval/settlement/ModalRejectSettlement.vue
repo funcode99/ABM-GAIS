@@ -3,28 +3,32 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 </script>
 
 <template>
-  <label for="my-modal-reject-trip" class="cursor-pointer">
-    <img :src="iconClose" class="w-5 h-5 mt-[2px]" />
+  <label
+    for="my-modal-reject-settlement"
+    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white"
+  >
+    <span>
+      <img :src="iconClose" class="w-5 h-5" />
+    </span>
+    Reject
   </label>
 
-  <input type="checkbox" id="my-modal-reject-trip" class="modal-toggle" />
+  <input type="checkbox" id="my-modal-reject-settlement" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          for="my-modal-reject-trip"
+          for="my-modal-reject-settlement"
           class="cursor-pointer absolute right-3 top-3"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p
-          class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
-        >
+        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
           Reject Reason
         </p>
       </nav>
 
-      <main class="modal-box-inner-reject-shortcut-trip">
+      <main class="modal-box-inner-reject-settlement">
         <form class="pt-4">
           <div class="flex flex-wrap justify-start gap-2">
             <div class="form-control">
@@ -58,7 +62,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             </div>
           </div>
 
-          <p class="font-JakartaSans font-medium text-sm py-2 text-start">
+          <p class="font-JakartaSans font-medium text-sm py-2">
             Notes<span class="text-red">*</span>
           </p>
           <input
@@ -74,7 +78,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
       <div class="sticky bottom-0 bg-white py-2">
         <div class="flex justify-end gap-4 mr-6">
           <label
-            for="my-modal-reject-trip"
+            for="my-modal-reject-settlement"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
             >Cancel</label
           >
@@ -96,7 +100,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner-reject-shortcut-trip {
+.modal-box-inner-reject-settlement {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

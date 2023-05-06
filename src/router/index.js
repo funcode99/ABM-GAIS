@@ -51,6 +51,8 @@ import CaNonTravelList from "@/views/approval/cash-advance-nontravel/CaNonTravel
 import CaNonTravelView from "@/views/approval/cash-advance-nontravel/CaNonTravelView.vue"
 import RequestTripList from "@/views/approval/request-trip/RequestTripList.vue"
 import RequestTripView from "@/views/approval/request-trip/RequestTripView.vue"
+import ApprovalSettlementList from "@/views/approval/settlement/SettlementList.vue"
+import ApprovalSettlementView from "@/views/approval/settlement/SettlementView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -390,8 +392,23 @@ const router = createRouter({
         title: 'View Approval Request Trip'
       }
     },
-
-
+    {
+      path: '/approvalsettlement',
+      name: 'approval settlemet',
+      component: ApprovalSettlementList,
+      meta: {
+        title: 'Approval Settlement'
+      }
+    },
+    {
+      path: '/viewapprovalsettlement',
+      name: 'view approval settlement',
+      component: ApprovalSettlementView,
+      meta: {
+        title: 'View Approval Settlement'
+      }
+    },
+    // 
   ]
 })
 

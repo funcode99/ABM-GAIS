@@ -1,30 +1,42 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
+import icon_done from "@/assets/icon_done.svg";
 </script>
 
 <template>
-  <label for="my-modal-reject-trip" class="cursor-pointer">
-    <img :src="iconClose" class="w-5 h-5 mt-[2px]" />
+  <label
+    for="my-modal-approve-settlement"
+    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+  >
+    <span>
+      <img :src="icon_done" class="w-5 h-5" />
+    </span>
+    Approve
   </label>
 
-  <input type="checkbox" id="my-modal-reject-trip" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="my-modal-approve-settlement"
+    class="modal-toggle"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          for="my-modal-reject-trip"
+          for="my-modal-approve-settlement"
           class="cursor-pointer absolute right-3 top-3"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p
-          class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
-        >
-          Reject Reason
+        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
+          Approval Confirmation
         </p>
       </nav>
 
-      <main class="modal-box-inner-reject-shortcut-trip">
+      <main class="modal-box-inner-approval-settlement">
+        <p class="font-JakartaSans font-medium text-sm py-2">
+          Are you sure want to approve this document?
+        </p>
         <form class="pt-4">
           <div class="flex flex-wrap justify-start gap-2">
             <div class="form-control">
@@ -36,13 +48,21 @@ import iconClose from "@/assets/navbar/icon_close.svg";
                   checked
                 />
                 <span class="font-JakartaSans font-medium text-xs"
-                  >Rejected With Noted</span
+                  >Approval On Behave</span
                 >
               </label>
             </div>
+            <select
+              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              required
+            >
+              <option disabled selected>Name</option>
+              <option>Name A</option>
+              <option>Name B</option>
+            </select>
           </div>
 
-          <div class="flex flex-wrap justify-start gap-2">
+          <div class="flex flex-wrap justify-start">
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
@@ -52,15 +72,13 @@ import iconClose from "@/assets/navbar/icon_close.svg";
                   checked
                 />
                 <span class="font-JakartaSans font-medium text-xs"
-                  >Fully Rejected</span
+                  >Fully Approve</span
                 >
               </label>
             </div>
           </div>
 
-          <p class="font-JakartaSans font-medium text-sm py-2 text-start">
-            Notes<span class="text-red">*</span>
-          </p>
+          <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
           <input
             type="text"
             name="notes"
@@ -74,14 +92,14 @@ import iconClose from "@/assets/navbar/icon_close.svg";
       <div class="sticky bottom-0 bg-white py-2">
         <div class="flex justify-end gap-4 mr-6">
           <label
-            for="my-modal-reject-trip"
+            for="my-modal-approve-settlement"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
             >Cancel</label
           >
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
           >
-            Confirm
+            Approve
           </button>
         </div>
       </div>
@@ -96,7 +114,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
   overscroll-behavior: contain;
 }
 
-.modal-box-inner-reject-shortcut-trip {
+.modal-box-inner-approval-settlement {
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
