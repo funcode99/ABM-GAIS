@@ -1534,7 +1534,9 @@ onMounted(() => {
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/request' ? 'hidden' : 'inline',
+                              $route.path == '/approvalatkrrequest'
+                                ? 'hidden'
+                                : 'inline',
                             ]"
                             :src="submenuLine"
                             alt=""
@@ -1542,7 +1544,9 @@ onMounted(() => {
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/request' ? 'inline' : 'hidden',
+                              $route.path == '/approvalatkrrequest'
+                                ? 'inline'
+                                : 'hidden',
                             ]"
                             :src="submenuLineSelected"
                             alt=""
@@ -1551,7 +1555,7 @@ onMounted(() => {
                             href="#"
                             class="flex items-center w-full justify-between"
                             :class="[
-                              $route.path == '#'
+                              $route.path == '/approvalatkrrequest'
                                 ? `anchorImage anchorSubMenu`
                                 : '',
                             ]"
@@ -1564,7 +1568,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="#" class="cursor-pointer">
+                            <router-link
+                              to="/approvalatkrrequest"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
