@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onBeforeMount, onMounted, ref } from "vue";
 
 import CollapseTransition from '@ivanv/vue-collapse-transition/src/CollapseTransition.vue'
 
@@ -35,10 +35,10 @@ let travel = "travelManagementSystem";
 let approval = "approval";
 
   onMounted(() => {
-      let scroller = window.document.querySelector(".scroller");
+    let scroller = window.document.querySelector(".scroller");
       scroller.scrollTop = sidebar.scrollValue
       scroller.addEventListener("scroll", () => {
-        sidebar.scrollValue = Math.round(scroller.scrollTop)
+      sidebar.scrollValue = Math.round(scroller.scrollTop)
     })
 })
 

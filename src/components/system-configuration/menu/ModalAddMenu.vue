@@ -1,8 +1,28 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+// cuma gara2 lupa import ref sidebar gua error terus anjing
+import { ref } from 'vue'
+import Api from '@/utils/Api'
+
+let menuName = ref('')
+let idStatusMenu = ref('Active')
+
+const submit = async () => {
+  // salah di front-end berarti wkwk string gabisa diubah jadi number
+      if(idStatusMenu === 'Active') {
+        idStatusMenu.value = 1
+        console.log(idStatusMenu.value)
+      }
+      // console.log(idStatusMenu)
+      const token = JSON.parse(localStorage.getItem('token'))
+      // Set authorization for api
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.post('/menu/store', {
+        menu_name: menuName.value,
+        id_status_menu: 1
+      })
+    }
+
 </script>
 
 <template>
@@ -33,6 +53,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
             >Menu Name<span class="text-red">*</span></label>
           <input
+          v-model="menuName"
             type="text"
             id="name"
             placeholder="Nama Menu"
@@ -51,9 +72,9 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 
         <div class="mb-3 text-left">
             <h1>Status</h1>
-            <select class="border-black border-2 rounded-lg p-2">
-                <option selected hidden disabled value="">Active</option>
-                <option value="">Option A</option>
+            <select class="border-black border-2 rounded-lg p-2" v-model="idStatusMenu">
+                <option>Active</option>
+                <option>Option A</option>
             </select>
         </div>
 
@@ -62,7 +83,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
             <h1>Use Sequence</h1>
         </div>
 
-        <div class="text-left mb-3">
+        <!-- <div class="text-left mb-3">
             <h1>Permission <span>*</span></h1>
             <table class="text-center table">
                 <thead>
@@ -84,7 +105,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </div> -->
 
         </form>
 
@@ -97,6 +118,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
             >Cancel</label
           >
           <button
+          @click="submit"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
           >
             Save

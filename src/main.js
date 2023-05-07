@@ -9,6 +9,7 @@ import VueAwesomePaginate from 'vue-awesome-paginate'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import Vue3TagsInput from 'vue3-tags-input';
 import vClickOutside from "click-outside-vue3"
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 const app = createApp(App)
@@ -20,5 +21,8 @@ app.use(Vue3TagsInput)
 app.use(vClickOutside)
 app.component('VueDatePicker', VueDatePicker);
 app.mount('#app')
+
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
 
 $cookies.config('7d', '', '', true)

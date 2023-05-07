@@ -144,7 +144,7 @@
 <!-- SHOWING -->
 <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
   <h1 class="text-xs">Showing</h1>
-  <select class="border-2 border-black rounded-lg w-15" name="" id="" v-model="pageMultiplier" @change="$emit('changeShowing', pageMultiplierReactive)">
+  <select class="border-2 border-[#808080] rounded-lg w-15" name="" id="" v-model="pageMultiplier" @change="$emit('changeShowing', pageMultiplierReactive)">
     <option>10</option>
     <option>25</option>
     <option>50</option>

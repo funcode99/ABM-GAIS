@@ -7,6 +7,9 @@
     let isVisible = ref(false)
     let type = '' 
     let modalPaddingHeight = 50
+
+    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template>
@@ -17,14 +20,14 @@
 
     <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
-        <nav class="sticky w-full top-0 z-50 bg-white py-4 flex justify-between">
+        <div class="sticky w-full top-0 z-50 bg-white px-8 pb-4 pt-8 flex justify-between">
             <p class="font-JakartaSans text-2xl font-semibold">Edit User</p>
             <button @click="isVisible = false" class="cursor-pointer">
                 <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
-        </nav>
+        </div>
 
-        <form class="px-3 text-left">
+        <div class="px-8 text-left modal-box-inner">
 
             <div class="mb-6">
             <span>Employee?<span class="text-red-star">*</span></span>
@@ -48,7 +51,7 @@
                 <input
                     type="text"
                     placeholder="Username"
-                    class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                    :class=inputStylingClass
                     required
                 />
             </div>
@@ -61,7 +64,7 @@
             <input
               type="password"
               placeholder="Passwords"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              :class=inputStylingClass
               required
             />
             </div>
@@ -73,7 +76,7 @@
               id="company"
               >User Role<span class="text-red">*</span></span
             >
-            <select class="select select-accent w-full" required>
+            <select :class=inputStylingClass required>
               <option disabled selected hidden>Role</option>
               <option>Administrator</option>
               <option>Super Admin</option>
@@ -111,6 +114,17 @@
             </div>
 
             <div class="mb-6">
+            <span>Company <span class="text-red-star">*</span></span>
+            <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" />
+          </div>
+
+          <div class="mb-6">
+            <span>Site <span class="text-red-star">*</span></span>
+            <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" />
+          </div>
+
+
+            <div class="mb-6">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Email<span class="text-red">*</span></label
@@ -118,14 +132,14 @@
             <input
               type="text"
               placeholder="Email"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              :class=inputStylingClass
               required
             />
             </div>
 
-        </form>
+        </div>
 
-        <div class="sticky bottom-0 bg-white py-4">
+        <div class="sticky bottom-0 bg-white px-4">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
             <button

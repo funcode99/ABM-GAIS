@@ -35,15 +35,15 @@
 
       <div class="modal-box relative">
 
-        <nav class="sticky top-0 z-50 bg-white py-4">
+        <div class="sticky top-0 z-50 bg-white py-4">
           <label for="add-user-modal" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </label>
           <p class="font-JakartaSans text-2xl font-semibold">New Sequence</p>
           <div className="divider m-0"></div>
-        </nav>
+        </div>
 
-        <form>
+        <div>
 
           <div class="flex">
             <div class="mb-6">
@@ -77,6 +77,7 @@
           </div>
 
           <div class="flex">
+
             <div class="mb-6">
             <label
               for="company"
@@ -109,6 +110,7 @@
               required
             />
             </div>
+
           </div>
 
           <div class="flex">
@@ -149,6 +151,7 @@
           </div>
   
           <div class="flex">
+
             <div class="mb-6">
               <label
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -162,13 +165,15 @@
                 required
               />
             </div>
+
             <div>
 
             </div>
+            
           </div>
 
 
-        </form>
+        </div>
 
         <div class="sticky left-0 right-0 bottom-0 z-50 bg-white px-4 py-4">
           <div className="divider m-0 pb-4"></div>

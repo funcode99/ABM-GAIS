@@ -1,8 +1,5 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
 </script>
 
 <template>
@@ -39,7 +36,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
           />
         </div>
 
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <label
             for="name"
             class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -51,7 +48,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
             required
           />
-        </div>
+        </div> -->
 
       </form>
 

@@ -5,8 +5,6 @@
   let companyTags = ref([])
   let siteTags = ref([])
 
-  // let tagNoRef = []
-
   const handleChangeCompanyTag = (newTag) => {
     // akan memasukkan nilai primitive
     companyTags.value = newTag
@@ -18,10 +16,16 @@
     siteTags.value = newTag
   }
 
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template>
-  
+
+  <div class="py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base">
+
+  </div>
+
     <label
       for="add-user-modal"
       class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
@@ -33,137 +37,127 @@
     <div class="modal">
       <div class="modal-box relative">
 
-        <nav class="sticky top-0 z-50 bg-white py-4">
+        <div class="sticky top-0 w-full z-50 bg-white py-4">
           <label for="add-user-modal" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </label>
           <p class="font-JakartaSans text-2xl font-semibold">New User</p>
           <div className="divider m-0"></div>
-        </nav>
+        </div>
 
-        <form>
+        <div class="px-8 text-left modal-box-inner">
+  
+  <div class="mb-6">
+  <span>Employee?<span class="text-red-star">*</span></span>
+  <div class="flex gap-2 pt-2">
+    <div class="flex gap-1">
+      <!-- fill the same name value for individual select -->
+      <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+      <label for="">Yes</label>
+    </div>
+    <div class="flex gap-1">
+      <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+      <label for="">No</label>
+    </div>
+  </div>
+  </div>
 
-          <div class="mb-6">
-            <span>Employee?<span class="text-red-star">*</span></span>
-            <div class="flex gap-2 pt-2">
-              <div class="flex gap-1">
-                <!-- fill the same name value for individual select -->
-                <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-                <label for="">Yes</label>
+  <div class="mb-6">
+      <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Username<span class="text-red">*</span>
+      </label>
+      <input
+          type="text"
+          placeholder="Username"
+          :class="inputStylingClass"
+          required
+      />
+  </div>
+
+  <div class="mb-6">
+  <label
+    class="block mb-2 font-JakartaSans font-medium text-sm"
+    >Passwords<span class="text-red">*</span></label
+  >
+  <input
+    type="password"
+    placeholder="Passwords"
+    :class="inputStylingClass"
+    required
+  />
+  </div>
+
+  <div class="mb-6 flex flex-col text-left justify-start">
+  <span
+    for="company"
+    class="block mb-2 font-JakartaSans font-medium text-sm"
+    id="company"
+    >User Role<span class="text-red">*</span></span
+  >
+  <select :class="inputStylingClass" required>
+    <option disabled selected hidden>Role</option>
+    <option>Administrator</option>
+    <option>Super Admin</option>
+    <option>Admin</option>
+    <option>Receptionist</option>
+    <option>Employee</option>
+    <option>Driver</option>
+  </select>
+  </div>
+
+  <div class="mb-6">
+          <label
+              for="name"
+              class="block mb-2 font-JakartaSans font-medium text-sm text-left"
+              >Approval Authorities<span class="text-red">*</span></label
+          >
+          <div class="flex justify-between">
+              <div class="flex items-center gap-2">
+                  <input type="checkbox" name="PM" id="">
+                  <label for="">PM</label>
               </div>
-              <div class="flex gap-1">
-                <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-                <label for="">No</label>
+              <div class="flex items-center gap-2">
+                  <input type="checkbox" name="GA" id="">
+                  <label for="">GA</label>
               </div>
-            </div>
-          </div>
-
-          <div class="mb-6">
-            <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Username<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              placeholder="Username"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-              required
-            />
-          </div>
-
-          <div class="mb-6">
-            <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Passwords<span class="text-red">*</span></label
-            >
-            <input
-              type="password"
-              id="name"
-              placeholder="Passwords"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-              required
-            />
-          </div>    
-
-          <div class="mb-6">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              id="company"
-              >User Role<span class="text-red">*</span></label
-            >
-            <select class="select select-accent w-40" required>
-              <option disabled selected hidden>Role</option>
-              <option>Administrator</option>
-              <option>Super Admin</option>
-              <option>Admin</option>
-              <option>Receptionist</option>
-              <option>Employee</option>
-              <option>Driver</option>
-            </select>
-          </div>
-
-          <div class="mb-6">
-            <label
-                for="name"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Approval Authorities<span class="text-red">*</span></label
-              >
-              <div class="flex justify-between text-[12px] gap-2">
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="PM" id="">
-                    <label for="">PM</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="GA" id="">
-                    <label for="">GA</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="HR" id="">
-                    <label for="">HR</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Treasury" id="">
-                    <label class="" for="">Treasury</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Finance / Accounting" id="">
-                    <label class="" for="">Finance / Accounting</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Atasan Langsung" id="">
-                    <label class="" for="">Atasan Langsung</label>
-                </div>
+              <div class="flex items-center gap-2">
+                  <input type="checkbox" name="HR" id="">
+                  <label for="">HR</label>
+              </div>
+              <div class="flex items-center gap-2">                
+                  <input type="checkbox" name="Finance / Accounting" id="">
+                  <label class="" for="">Finance / Accounting</label>
               </div>
           </div>
+  </div>
 
           <div class="mb-6">
-            <span>Company <span class="text-red-star">*</span></span>
+            <span class="text-sm">Company <span class="text-red-star">*</span></span>
             <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" />
           </div>
 
           <div class="mb-6">
-            <span>Site <span class="text-red-star">*</span></span>
+            <span class="text-sm">Site <span class="text-red-star">*</span></span>
             <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" />
           </div>
 
-          <div class="mb-6">
-            <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Email<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              id="name"
-              placeholder="Email"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-              required
-            />
-          </div>
 
-        </form>
+        <div class="mb-6">
+          <label
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Email<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            placeholder="Email"
+            :class=inputStylingClass
+            required
+          />
+        </div>
 
-        <div class="fixed left-0 right-0 bg-white px-4 py-4">
+        </div>
+
+        <div class="sticky bottom-0 bg-white px-4 py-8">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
             <label

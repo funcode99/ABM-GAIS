@@ -8,7 +8,7 @@
     import router from '@/router'
     
     // import untuk approval table
-    import { ref, onBeforeMount, Suspense } from 'vue'
+    import { ref, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
@@ -17,10 +17,7 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
 
-    // const search = ref('')
-
     // import untuk user table
-
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
@@ -57,7 +54,7 @@
     const tableHead = [
       {Id: 1, title: 'No', jsonData: 'No'},
       {Id: 2, title: 'Name', jsonData: 'Name'},
-      {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
+      // {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
       {Id: 4, title: 'Status', jsonData: 'Status'},
       {Id: 5, title: 'Actions'}
     ]
@@ -75,7 +72,6 @@
     // watch(ref, callback)
 
     const fetch = async () => {
-      
       const token = JSON.parse(localStorage.getItem('token'))
       // Set authorization for api
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -85,13 +81,9 @@
       lengthCounter = sortedData.value.length
     }
 
-    const getSessionForSidebar = () => {
-      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
-    }
-
     onBeforeMount(() => {
-        getSessionForSidebar()
-        fetch()
+      getSessionForSidebar()
+      fetch()
     })
 
     const filteredItems = (search) => {
@@ -102,6 +94,10 @@
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
       onChangePage(1)
+    }
+
+    const getSessionForSidebar = () => {
+      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
 </script>
@@ -117,8 +113,6 @@
 
       <Sidebar class="flex-none" />
 
-      <ExpandButton />
-
       <!-- slate box -->
       <div 
       class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen h-full clean-margin ease-in-out duration-500"
@@ -129,11 +123,10 @@
         <TableTopBar title="Menu" @do-search="filteredItems" modalAddType="menu" />
         
         <!-- actual table -->
-        <Suspense>
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
             <div class="block overflow-x-auto">
-              <table v-if="sortedData.length > 0"  class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
+              <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
     
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
                   <tr class="">
@@ -171,14 +164,14 @@
                         <td>
                           {{ data.menu_name }}
                         </td>
-                        <td v-if="data.parent_name !== null">
+                        <!-- <td v-if="data.parent_name !== null">
                           {{ data.parent_name }}
-                        </td>
-                        <td v-else>
+                        </td> -->
+                        <!-- <td v-else>
                           Parent
-                        </td>
+                        </td> -->
                         <td>
-                          {{ data.status }}
+                          {{ data.id_status_menu }}
                         </td>
                         <td class="flex flex-wrap gap-4 justify-center">
                           <ModalEditMenu />
@@ -195,23 +188,12 @@
               <div v-else class="h-[100px] border-t border-t-black flex items-center justify-center">
                     <!-- text nya yang spin dong kalo pake animate-spin wkwk -->
                     <h1 class="text-center">Data tidak ditemukan!</h1>
+                    <!-- <h1> {{ sortedData.length }} </h1> -->
               </div>
     
             </div>
   
-            <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-              <p class="font-Inter text-xs font-normal text-[#888888]">
-                Showing 1 to 10 of 20 entries
-              </p>
-            </div> -->
-  
           </div>
-          <!-- <template #fallback>
-            <div class="w-screen h-screen bg-amber-600">
-              <h1 text-[100px] font-black>SILAHKAN DITUNGGU YA</h1>
-            </div>
-          </template> -->
-        </Suspense>
 
       </div>
 

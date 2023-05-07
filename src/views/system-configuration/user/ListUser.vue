@@ -113,8 +113,6 @@
 
         <Sidebar class="flex-none" />    
         
-        <!-- <ExpandButton /> -->
-
       <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full clean-margin ease-in-out duration-500" 
         :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 

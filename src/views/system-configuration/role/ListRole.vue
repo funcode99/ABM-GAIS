@@ -16,14 +16,23 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
 
-    const search = ref('')
-    let showingValue = ref(0)
-
     // import untuk table
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
     let lengthCounter = 0
+
+    const deleteData = (event) => {
+      Api.delete(`/role/delete_data/${event}`)
+      // console.log('ini adalah id ke ' + event)
+      // console.log(sortedData.value.length)
+      if (sortedData.value.length == 1) {
+        router.go()
+      } else {
+        fetch()
+      }
+    }
+
 
 const tableHead = [
     {Id: 1, title: 'No', jsonData: 'No'},
@@ -134,7 +143,7 @@ const fetch = async () => {
                   <td class="flex flex-wrap gap-4 justify-center">
                     <ModalMenuAccessRole />
                     <ModalEditRole />
-                    <ModalDelete/>
+                    <ModalDelete @confirm-delete="deleteData(data.id)" />
                   </td>
                 </tr>
 
