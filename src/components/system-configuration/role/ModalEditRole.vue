@@ -6,8 +6,15 @@
   import { Modal } from 'usemodal-vue3'
 
   let isVisible = ref(false)
-  let type = '' 
+  let type = ''
   let modalPaddingHeight = 50
+
+  const props = defineProps({
+    identity: Array
+  })
+
+  let role = ref(props.identity[1])
+  let description = ref(props.identity[2])
 
 </script>
 
@@ -19,80 +26,57 @@
 
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
+    <div class="px-5 py-5 flex flex-col h-[100%]">
 
-        <nav class="sticky top-0 z-50 bg-white py-4">
+      <div class="sticky top-0 z-50 bg-white">
             <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
             <p class="font-JakartaSans text-2xl font-semibold text-left">Edit Role</p>
             <div className="divider m-0"></div>
-        </nav>
-
-      <form class="mb-3">
-        
-        <div>
-          <span
-            
-            class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-            >
-            Role
-            <span class="text-red">*</span>
-          </span>
-          <input
-            type="text"
-            id="name"
-            placeholder="Role"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
         </div>
 
-      </form>
+      <div class="mb-3 content flex flex-col gap-5 justify-center">
+        
+        <div>
+          <span class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+            Role <span class="text-red">*</span>
+          </span>
+          <input v-model="role" type="text" id="name" placeholder="Role" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+        </div>
 
-      <div class="sticky bottom-0 bg-white py-4">
+        <div>
+          <span class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+            Description <span class="text-red-star">*</span>
+          </span>
+          <input v-model="description" type="text" id="name" placeholder="Description" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+        </div>
+
+      </div>
+
+      <div class="sticky bottom-0 bg-white">
         <div class="flex justify-end gap-4">
           <button
             @click="isVisible = false"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</button
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
+            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">
+            Cancel
+          </button>
+          <button @click="$emit('changeRole', [props.identity[0], role, description])" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green">
             Save
           </button>
         </div>
       </div>
+
+    </div>
 
   </Modal>
 
 </template>
 
 <style scoped>
-.modal-box {
-  max-height: calc(100vh - 5em);
-  --tw-bg-opacity: 1;
-  background-color: hsl(var(--b1) / var(--tw-bg-opacity));
-  padding-top: 0rem;
-  padding-bottom: 0rem;
-  transition-property: color, background-color, border-color,
-    text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter,
-    backdrop-filter;
-  transition-duration: 200ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  width: 91.666667%;
-  max-width: 32rem /* 512px */;
-  --tw-scale-x: 0.9;
-  --tw-scale-y: 0.9;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  border-top-left-radius: var(--rounded-box, 1rem);
-  border-top-right-radius: var(--rounded-box, 1rem);
-  border-bottom-left-radius: var(--rounded-box, 1rem);
-  border-bottom-right-radius: var(--rounded-box, 1rem);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  overflow-y: auto;
-  overscroll-behavior: contain;
+
+.content {
+    flex: 1 1 auto !important;
 }
+
 </style>

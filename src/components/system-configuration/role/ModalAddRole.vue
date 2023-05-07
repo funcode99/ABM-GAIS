@@ -1,5 +1,21 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
+import { ref } from 'vue'
+import Api from '@/utils/Api'
+import iconClose from "@/assets/navbar/icon_close.svg"
+
+let newRole = ref('')
+
+const addRole = async () => {
+      
+        const token = JSON.parse(localStorage.getItem('token'))
+        // Set authorization for api
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        await Api.post(`/role/store`, {
+          role: newRole.value,
+          description: 'Negara'
+        })
+  }
+
 </script>
 
 <template>
@@ -28,6 +44,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Role<span class="text-red">*</span></label>
           <input
+            v-model="newRole"
             type="text"
             id="name"
             placeholder="Role"
@@ -61,6 +78,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             >Cancel</label
           >
           <button
+            @click="addRole"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
           >
             Save

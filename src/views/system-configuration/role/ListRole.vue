@@ -33,57 +33,67 @@
       }
     }
 
-
-const tableHead = [
-    {Id: 1, title: 'No', jsonData: 'No'},
-    {Id: 2, title: 'User Role', jsonData: 'UserRole'},
-    {Id: 3, title: 'Actions'}
-]
-
-const sortList = (sortBy) => {
-  if(sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
-    sortedbyASC = false
-  } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
-    sortedbyASC = true
-  }
-}
-
-const fetch = async () => {
-    const token = JSON.parse(localStorage.getItem('token'))
-    
-    // Set authorization for api
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.get('/role')
-    instanceArray = api.data.data
-    sortedData.value = instanceArray
-    lengthCounter = sortedData.value.length
-}
-
-// watch(ref, callback)
-
-  onBeforeMount(() => {
-  getSessionForSidebar()
-  // sortedData.value gak dianggap sebagai array lagi
-  fetch()
-  })
-
-  const filteredItems = (search) => {
-    sortedData.value = instanceArray
-      const filteredR = sortedData.value.filter(item => {
-        // console.log(item.No)
-        // harus diganti nama json nya
-        return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role.toLowerCase().indexOf(search.toLowerCase()) > -1
-      })
-    sortedData.value = filteredR
-    lengthCounter = sortedData.value.length
-    onChangePage(1)
+    const editRole = async (data) => {
+      console.log(data)
+        const token = JSON.parse(localStorage.getItem('token'))
+        // Set authorization for api
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        await Api.post(`/role/update_data/${data[0]}`, {
+          role: data[1],
+          description: data[2]
+        })
   }
 
-  const getSessionForSidebar = () => {
-      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
-  }
+    const tableHead = [
+        {Id: 1, title: 'No', jsonData: 'No'},
+        {Id: 2, title: 'User Role', jsonData: 'UserRole'},
+        {Id: 3, title: 'Actions'}
+    ]
+
+    const sortList = (sortBy) => {
+      if(sortedbyASC) {
+        sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+        sortedbyASC = false
+      } else {
+        sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+        sortedbyASC = true
+      }
+    }
+
+    const fetch = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        
+        // Set authorization for api
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/role')
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
+        lengthCounter = sortedData.value.length
+    }
+
+    // watch(ref, callback)
+
+    onBeforeMount(() => {
+    getSessionForSidebar()
+    // sortedData.value gak dianggap sebagai array lagi
+    fetch()
+    })
+
+    const filteredItems = (search) => {
+      sortedData.value = instanceArray
+        const filteredR = sortedData.value.filter(item => {
+          // console.log(item.No)
+          // harus diganti nama json nya
+          return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role.toLowerCase().indexOf(search.toLowerCase()) > -1
+        })
+      sortedData.value = filteredR
+      lengthCounter = sortedData.value.length
+      onChangePage(1)
+    }
+
+    const getSessionForSidebar = () => {
+        sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
+    }
   
 </script>
 
@@ -142,7 +152,7 @@ const fetch = async () => {
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
                     <ModalMenuAccessRole />
-                    <ModalEditRole />
+                    <ModalEditRole @change-role="editRole" :identity="[data.id, data.role, data.description]" />
                     <ModalDelete @confirm-delete="deleteData(data.id)" />
                   </td>
                 </tr>

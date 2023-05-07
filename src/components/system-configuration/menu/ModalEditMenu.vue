@@ -8,6 +8,14 @@
   let isVisible = ref(false)
   let type = '' 
   let modalPaddingHeight = 50
+
+  const props = defineProps({
+    identity: Array
+  })
+
+  let menu = ref(props.identity[1])
+  let idStatusMenu = ref(props.identity[2])
+
 </script>
 
 <!-- komponen ini mendapat warisan styling dari komponen parent nya (listMenu) -->
@@ -24,6 +32,7 @@
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
             <p class="font-JakartaSans text-2xl font-semibold">Edit Menu</p>
+            <h1>{{ idStatusMenu }}</h1>
             <div className="divider m-0"></div>
       </nav>
 
@@ -31,10 +40,12 @@
         
         <div class="mb-3">
           <label
+       
             for="name"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
             >Menu Name<span class="text-red">*</span></label>
           <input
+          v-model="menu"
             type="text"
             id="name"
             placeholder="Nama Menu"
@@ -53,7 +64,7 @@
 
         <div class="mb-3 text-left">
             <h1>Status</h1>
-            <select class="border-black border-2 rounded-lg p-2">
+            <select v-model="idStatusMenu" class="border-black border-2 rounded-lg p-2">
                 <option selected hidden disabled value="">Active</option>
                 <option value="">Option A</option>
             </select>
@@ -64,7 +75,7 @@
             <h1>Use Sequence</h1>
         </div>
 
-        <div class="text-left mb-3">
+        <!-- <div class="text-left mb-3">
             <h1>Permission <span>*</span></h1>
             <table class="text-center">
                 <thead>
@@ -86,7 +97,7 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </div> -->
 
       </form>
 
@@ -99,6 +110,7 @@
             Cancel
           </button>
           <button
+          @click="$emit('changeMenu', [props.identity[0], menu, idStatusMenu])"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
           >
             Save

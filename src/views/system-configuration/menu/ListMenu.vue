@@ -34,6 +34,18 @@
       }
     }
 
+    const editMenu = async (data) => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      // Set authorization for api
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.post(`/menu/update_data/${data[0]}`, {
+        menu_name: data[1],
+        id_status_menu: data[2],
+        parent: '0',
+        is_parent: '0'
+      })
+    }
+
     const selectAll = (checkValue) => { 
       const checkLead = checkValue
       if(checkLead == true) {
@@ -174,7 +186,7 @@
                           {{ data.id_status_menu }}
                         </td>
                         <td class="flex flex-wrap gap-4 justify-center">
-                          <ModalEditMenu />
+                          <ModalEditMenu @change-menu="editMenu" :identity="[data.id, data.menu_name, data.id_status_menu]" />
                           <ModalDelete @confirm-delete="deleteData(data.id)" />
                         </td>
                       </tr>
