@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
+// import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -12,13 +12,15 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import datanontravel from "@/utils/Api/cash-advance-non-travel/datanontravel.js";
+import settlementdata from "@/utils/Api/tms-settlement/settlementdata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
 //for sort, search, & filter
+const selectedStatus = ref("Status");
+const selectedCatype = ref("Type");
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
@@ -58,11 +60,12 @@ const selectAll = (checkValue) => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Event", jsonData: "event" },
-  { Id: 5, title: "Total", jsonData: "nominal" },
-  { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
+  { Id: 3, title: "Settlement No", jsonData: "settlement_no" },
+  { Id: 4, title: "Requestor", jsonData: "requestor" },
+  { Id: 5, title: "CA", jsonData: "ca" },
+  { Id: 6, title: "Total", jsonData: "total" },
+  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 8, title: "Actions" },
 ];
 
 //for sort
@@ -78,7 +81,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = datanontravel;
+  instanceArray = settlementdata;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -87,11 +90,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.settlement_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.settlement_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -125,10 +128,10 @@ const getSessionForSidebar = () => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Cash Advance Non Travel
+              Settlement
             </p>
             <div class="flex gap-4">
-              <ModalAddCaNonTravelVue />
+              <!-- <ModalAddCaNonTravelVue /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -141,7 +144,37 @@ const getSessionForSidebar = () => {
           <div
             class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
-            <div class="flex flex-wrap items-center gap-4">
+            <div class="flex flex-wrap items-center gap-1">
+              <p
+                class="capitalize font-JakartaSans text-xs text-black font-medium"
+              >
+                Status
+              </p>
+              <select
+                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedStatus"
+              >
+                <option disabled selected>Status</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.status }}
+                </option>
+              </select>
+
+              <p
+                class="capitalize font-JakartaSans text-xs text-black font-medium"
+              >
+                CA Type
+              </p>
+              <select
+                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedCatype"
+              >
+                <option disabled selected>Type</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.ca_type }}
+                </option>
+              </select>
+
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >
@@ -174,8 +207,7 @@ const getSessionForSidebar = () => {
                 </button>
               </div>
             </div>
-
-            <div class="py-2 flex md:mx-0">
+            <div class="py-2">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -195,8 +227,8 @@ const getSessionForSidebar = () => {
                   </svg>
                 </span>
                 <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[11px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search By CA No / Event"
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search..."
                   type="text"
                   name="search"
                   v-model="search"
@@ -273,12 +305,13 @@ const getSessionForSidebar = () => {
                     </td>
                     <td>{{ data.no }}</td>
                     <td>{{ data.created_date }}</td>
-                    <td>{{ data.ca_no }}</td>
-                    <td>{{ data.event }}</td>
-                    <td>{{ data.nominal }}</td>
+                    <td>{{ data.settlement_no }}</td>
+                    <td>{{ data.requestor }}</td>
+                    <td>{{ data.ca }}</td>
+                    <td>{{ data.total }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewcashadvancenontravel">
+                      <router-link to="#">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
@@ -352,6 +385,6 @@ tr th {
 }
 
 .my-date {
-  width: 260px !important;
+  width: 220px !important;
 }
 </style>

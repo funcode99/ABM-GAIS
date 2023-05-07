@@ -129,7 +129,6 @@ const getSessionForSidebar = () => {
 
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <ExpandButton />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -209,7 +208,7 @@ const getSessionForSidebar = () => {
                 </span>
                 <input
                   class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search by CA No / Event"
+                  placeholder="Search..."
                   type="text"
                   name="search"
                   v-model="search"

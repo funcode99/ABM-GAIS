@@ -39,12 +39,24 @@ import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
 import NonTravelView from '@/views/travel-management/cash-advance-non-travel/NonTravelView.vue'
+import SettlementList from "@/views/travel-management/settlement/SettlementList.vue"
+
+import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
+import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue"
 
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
 import CaTravelView from "@/views/approval/cash-advance-travel/CaTravelView.vue"
 import CaNonTravelList from "@/views/approval/cash-advance-nontravel/CaNonTravelList.vue"
 import CaNonTravelView from "@/views/approval/cash-advance-nontravel/CaNonTravelView.vue"
+import RequestTripList from "@/views/approval/request-trip/RequestTripList.vue"
+import RequestTripView from "@/views/approval/request-trip/RequestTripView.vue"
+import ApprovalSettlementList from "@/views/approval/settlement/SettlementList.vue"
+import ApprovalSettlementView from "@/views/approval/settlement/SettlementView.vue"
+import ApporvalReimbursementList from "@/views/approval/reimbursement/ReimbursementList.vue"
+import ApporvalReimbursementView from "@/views/approval/reimbursement/ReimbursementView.vue"
+import ApprovalAtkRequestList from "@/views/approval/atk-request/AtkRequestList.vue"
+import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -310,6 +322,30 @@ const router = createRouter({
         title: 'View CA Non Travel'
       }
     },
+    {
+      path: '/settlement',
+      name: 'Settlement',
+      component: SettlementList,
+      meta: {
+        title: 'Settlement'
+      }
+    },
+    {
+      path: '/claimreimbursement',
+      name: 'Claim Reimbursement',
+      component: ClaimReimbursementList,
+      meta: {
+        title: 'Claim Reimbursement'
+      }
+    },
+    {
+      path: '/viewclaimreimbursement',
+      name: 'View Claim Reimbursement',
+      component: ClaimReimbursementView,
+      meta: {
+        title: 'View Claim Reimbursement'
+      }
+    },
 
     //approval page
     {
@@ -342,6 +378,70 @@ const router = createRouter({
       component: CaNonTravelView,
       meta: {
         title: 'View Approval CA Non Travel'
+      }
+    },
+    {
+      path: '/approvalrequesttrip',
+      name: 'approval request trip',
+      component: RequestTripList,
+      meta: {
+        title: 'Approval Request Trip'
+      }
+    },
+    {
+      path: '/viewapprovalrequesttrip',
+      name: 'view approval request trip',
+      component: RequestTripView,
+      meta: {
+        title: 'View Approval Request Trip'
+      }
+    },
+    {
+      path: '/approvalsettlement',
+      name: 'approval settlemet',
+      component: ApprovalSettlementList,
+      meta: {
+        title: 'Approval Settlement'
+      }
+    },
+    {
+      path: '/viewapprovalsettlement',
+      name: 'view approval settlement',
+      component: ApprovalSettlementView,
+      meta: {
+        title: 'View Approval Settlement'
+      }
+    },
+    {
+      path: '/approvalreimbursement',
+      name: 'approval reimbursement',
+      component: ApporvalReimbursementList,
+      meta: {
+        title: 'Approval Reimbursement'
+      }
+    },
+    {
+      path: '/viewapprovalreimbursement',
+      name: 'view approval reimbursement',
+      component: ApporvalReimbursementView,
+      meta: {
+        title: 'View Approval Reimbursement'
+      }
+    },
+    {
+      path: '/approvalatkrrequest',
+      name: 'approval atk request',
+      component: ApprovalAtkRequestList,
+      meta: {
+        title: 'Approval ATK Request'
+      }
+    },
+    {
+      path: '/viewapprovalatkrrequest',
+      name: 'view approval atk request',
+      component: ApprovalAtkRequestView,
+      meta: {
+        title: 'View Approval ATK Request'
       }
     },
   ]

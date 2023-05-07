@@ -3,9 +3,11 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
+import ModalApproveAtk from "@/components/approval/atk-request/ModalApproveAtk.vue";
+import ModalRejectAtk from "@/components/approval/atk-request/ModalRejectAtk.vue";
+
 import arrow from "@/assets/request-trip-view-arrow.png";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+import icon_receive from "@/assets/icon-receive.svg";
 
 import { onBeforeMount } from "vue";
 
@@ -30,7 +32,6 @@ const getSessionForSidebar = () => {
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[
@@ -40,39 +41,23 @@ const getSessionForSidebar = () => {
       >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
-          <div class="flex justify-between">
-            <router-link
-              to="/cashadvancenontravel"
-              class="flex items-center gap-2 py-4 mx-4"
-            >
-              <img :src="arrow" class="w-3 h-3" alt="" />
-              <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
-                Cash Advance Non Travel<span
-                  class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
-                >
-                  / CA-ABM/1232/23.04
-                </span>
-              </h1>
-            </router-link>
-            <div class="py-4">
-              <button
-                class="btn btn-sm bg-[#2970FF] border-none mx-4 capitalize hover:bg-[#004EEB]"
-              >
-                Status
-              </button>
-            </div>
-          </div>
+          <router-link
+            to="/approvalatkrrequest"
+            class="flex items-center gap-2 py-4 mx-4"
+          >
+            <img :src="arrow" class="w-3 h-3" alt="" />
+            <h1 class="text-black text-4xl font-semibold font-JakartaSans">
+              Request No. 1232312
+            </h1>
+          </router-link>
 
-          <div class="flex justify-start gap-4 mx-10">
+          <div class="flex flex-wrap justify-start gap-4 px-[70px]">
+            <ModalApproveAtk />
+            <ModalRejectAtk />
             <button
-              class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+              class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
             >
-              Edit
-            </button>
-            <button
-              class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-            >
-              Submit
+              <img :src="icon_receive" class="w-6 h-6" />
             </button>
           </div>
 
@@ -90,15 +75,6 @@ const getSessionForSidebar = () => {
               />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm">Event</span>
-              <input
-                type="text"
-                disabled
-                value="Sport"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created By</span
               >
@@ -109,19 +85,12 @@ const getSessionForSidebar = () => {
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm">Total</span>
-              <input
-                type="text"
-                disabled
-                value="462.000"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
           </div>
 
           <!-- TAB & TABLE-->
-          <div class="bg-blue rounded-lg pt-2 mx-[70px]">
+          <div
+            class="bbg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
+          >
             <div
               class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
             >
@@ -130,6 +99,7 @@ const getSessionForSidebar = () => {
               ></div>
               <p class="font-JakartaSans font-normal text-sm mx-8">Details</p>
             </div>
+
             <div class="overflow-x-auto">
               <table class="table table-compact w-full">
                 <thead class="font-JakartaSans font-bold text-xs">
@@ -137,27 +107,27 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Item
+                      ID Item
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Date
+                      Name Item
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Cost Center
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Nominal
+                      Quantity
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Remarks
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Status
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -168,44 +138,10 @@ const getSessionForSidebar = () => {
                 </thead>
                 <tbody class="font-JakartaSans font-normal text-xs">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">Sewa Lapangan</td>
-                    <td class="border border-[#B9B9B9]">13/04/23</td>
-                    <td class="border border-[#B9B9B9]">13222</td>
-                    <td class="border border-[#B9B9B9]">231.000</td>
-                    <td class="border border-[#B9B9B9]">Tanding</td>
-                    <td class="border border-[#B9B9B9]">
-                      <div class="flex justify-center items-center">
-                        <button>
-                          <img :src="editicon" class="w-6 h-6" />
-                        </button>
-                        <button>
-                          <img :src="deleteicon" class="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">Minuman</td>
-                    <td class="border border-[#B9B9B9]">13/04/23</td>
-                    <td class="border border-[#B9B9B9]">13222</td>
-                    <td class="border border-[#B9B9B9]">231.000</td>
-                    <td class="border border-[#B9B9B9]">Tanding</td>
-                    <td class="border border-[#B9B9B9]">
-                      <div class="flex justify-center items-center">
-                        <button>
-                          <img :src="editicon" class="w-6 h-6" />
-                        </button>
-                        <button>
-                          <img :src="deleteicon" class="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">Total</td>
                     <td class="border border-[#B9B9B9]"></td>
                     <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]">462.000</td>
+                    <td class="border border-[#B9B9B9]"></td>
+                    <td class="border border-[#B9B9B9]"></td>
                     <td class="border border-[#B9B9B9]"></td>
                     <td class="border border-[#B9B9B9]"></td>
                   </tr>

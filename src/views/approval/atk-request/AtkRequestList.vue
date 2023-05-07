@@ -3,30 +3,31 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
+import ModalRejectShortcutAtk from "@/components/approval/atk-request/ModalRejectShortcutAtk.vue";
 
-import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+import icon_ceklis from "@/assets/icon_ceklis.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icon_receive from "@/assets/icon-receive.svg";
 
-import datanontravel from "@/utils/Api/cash-advance-non-travel/datanontravel.js";
+import atkrequestdata from "../../../utils/Api/approval/atk-request/atkrequestdata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
+
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
-//for sort, search, & filter
+//for sort & search
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
+const selectedType = ref("Item");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 
-//for paginations & showing
+//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
@@ -36,6 +37,23 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+};
+
+//for filter & reset button
+const filterDataByType = () => {
+  if (selectedType.value === "") {
+    sortedData.value = instanceArray;
+  } else {
+    sortedData.value = instanceArray.filter(
+      (item) => item.type === selectedType.value
+    );
+  }
+};
+
+//for filter & reset button
+const resetData = () => {
+  sortedData.value = instanceArray;
+  selectedType.value = "Type";
 };
 
 //for check & uncheck all
@@ -56,13 +74,14 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Event", jsonData: "event" },
-  { Id: 5, title: "Total", jsonData: "nominal" },
-  { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
+  { Id: 1, title: "Created Date", jsonData: "created_date" },
+  { Id: 2, title: "Request No", jsonData: "request_no" },
+  { Id: 3, title: "Requestor", jsonData: "requestor" },
+  { Id: 4, title: "ID Item", jsonData: "id_item" },
+  { Id: 5, title: "Nama Item", jsonData: "quantity" },
+  { Id: 6, title: "Quantity", jsonData: "status" },
+  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 8, title: "Actions" },
 ];
 
 //for sort
@@ -78,7 +97,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = datanontravel;
+  instanceArray = atkrequestdata;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -87,11 +106,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.id_item.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.request_no.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.id_item.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.request_no.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -107,6 +126,7 @@ const getSessionForSidebar = () => {
 <template>
   <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
     <Navbar />
+
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
@@ -117,47 +137,60 @@ const getSessionForSidebar = () => {
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
         ]"
       >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
+        <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div
-            class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
-          >
-            <p
-              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
-            >
-              Cash Advance Non Travel
+          <div class="flex flex-wrap items-center justify-between mx-4 py-2">
+            <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
+              ATK Request
             </p>
-            <div class="flex gap-4">
-              <ModalAddCaNonTravelVue />
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-              >
-                <img :src="icon_receive" class="w-6 h-6" />
-              </button>
-            </div>
+
+            <button
+              class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+            >
+              <img :src="icon_receive" class="w-6 h-6" />
+            </button>
           </div>
 
           <!-- SORT, DATE & SEARCH -->
+
           <div
-            class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
+            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >
-                Date
+                Item
               </p>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedType"
+              >
+                <option disabled selected>Item</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.name_item }}
+                </option>
+              </select>
 
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
+              <div class="flex flex-wrap gap-4 items-center">
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                >
+                  Date
+                </p>
 
-              <div class="flex gap-4 items-center">
+                <VueDatePicker
+                  v-model="date"
+                  range
+                  :enable-time-picker="false"
+                  class="my-date lg:w-10"
+                />
+              </div>
+
+              <div class="flex flex-wrap gap-4 items-center">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  @click="filterDataByType"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -166,6 +199,7 @@ const getSessionForSidebar = () => {
                 </button>
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
                 >
                   <span>
                     <img :src="icon_reset" class="w-5 h-5" />
@@ -175,7 +209,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="py-2 flex md:mx-0">
+            <div class="py-2 pl-8">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -195,8 +229,8 @@ const getSessionForSidebar = () => {
                   </svg>
                 </span>
                 <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-[11px] capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search By CA No / Event"
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search..."
                   type="text"
                   name="search"
                   v-model="search"
@@ -246,7 +280,7 @@ const getSessionForSidebar = () => {
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer"
+                      class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-xs"
                       @click="sortList(`${data.jsonData}`)"
                     >
                       <span class="flex justify-center items-center gap-1">
@@ -271,21 +305,34 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.ca_no }}</td>
-                    <td>{{ data.event }}</td>
-                    <td>{{ data.nominal }}</td>
-                    <td>{{ data.status }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewcashadvancenontravel">
+                    <td class="font-JakartaSans font-normal text-xs">
+                      {{ data.created_date }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-xs">
+                      {{ data.request_no }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-xs">
+                      {{ data.requestor }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-xs">
+                      {{ data.id_item }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-xs">
+                      {{ data.name_item }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-xs">
+                      {{ data.quantity }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-xs">
+                      {{ data.status }}
+                    </td>
+                    <td class="flex flex-nowrap gap-1 justify-center">
+                      <router-link to="/viewapprovalatkrrequest">
                         <button>
-                          <img :src="editicon" class="w-6 h-6" />
+                          <img :src="icon_ceklis" class="w-6 h-6" />
                         </button>
                       </router-link>
-                      <button>
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
+                      <ModalRejectShortcutAtk />
                     </td>
                   </tr>
                 </tbody>
