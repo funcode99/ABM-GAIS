@@ -157,7 +157,7 @@ function removeLastTag(event) {
                 >Division<span class="text-red">*</span></label
               >
               <div
-                class="block bg-white w-full lg:w-[220px] md:w-56 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="block bg-white w-full lg:w-[220px] md:w-56 border border-slate-300 rounded-md shadow-sm sm:text-sm"
               >
                 <div
                   v-for="(tag, index) in tags"
@@ -176,7 +176,7 @@ function removeLastTag(event) {
                 <input
                   type="text"
                   placeholder="Input Division"
-                  class="tag-input__text px-2 text-sm font-medium leading-[38px] font-JakartaSans"
+                  class="tag-input__text w-full px-2 text-sm font-medium leading-[38px] font-JakartaSans focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                   @keydown="addTag"
                   @keydown.delete="removeLastTag"
                 />

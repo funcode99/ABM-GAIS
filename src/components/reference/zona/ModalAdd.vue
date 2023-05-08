@@ -72,7 +72,7 @@ function removeLastTag(event) {
               >City<span class="text-red">*</span></label
             >
             <div
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm px-4 font-medium sm:text-sm"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm "
             >
               <div
                 v-for="(tag, index) in tags"
@@ -89,7 +89,7 @@ function removeLastTag(event) {
               <input
                 type="text"
                 placeholder="Enter a city"
-                class="tag-input__text"
+                class="tag-input__text px-4 text-sm font-medium w-full font-JakartaSans focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                 @keydown="addTag"
                 @keydown.delete="removeLastTag"
               />
