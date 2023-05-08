@@ -106,8 +106,6 @@
     <div class="flex w-screen mt-[115px]">
 
         <Sidebar class="flex-none" /> 
-
-        <ExpandButton />
         
       <!-- slate box -->
       <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"

@@ -23,11 +23,13 @@ const submit = async () => {
       })
     }
 
+    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template>
   
-    <label for="add-menu-modal" class="btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green border-2 hover:border-green heightButton cursor-pointer">
+    <label for="add-menu-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
         + Add New
     </label>
 
@@ -37,51 +39,45 @@ const submit = async () => {
 
     <div class="modal-box relative">
       
-        <nav class="sticky top-0 z-50 bg-white py-4">
+        <div class="sticky top-0 z-50 bg-white py-4">
             <label for="add-menu-modal" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </label>
             <p class="font-JakartaSans text-2xl font-semibold">New Menu</p>
             <div className="divider m-0"></div>
-        </nav>
+        </div>
 
-        <form class="mb-3">
-        
         <div class="mb-3">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-            >Menu Name<span class="text-red">*</span></label>
-          <input
-          v-model="menuName"
-            type="text"
-            id="name"
-            placeholder="Nama Menu"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
-        </div>
+        
+          <div class="mb-3">
+            <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              Menu Name<span class="text-red-star">*</span>
+            </label>
+            <input
+            :class="inputStylingClass"
+            v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+          </div>
 
-        <div class="mb-3 text-left">
-            <h1>Parent Menu</h1>
-            <select name="" id="" class="border-black border-2 rounded-lg p-2">
-                <option selected hidden disabled value="">Travel Management System</option>
-                <option value="">Option A</option>
-            </select>
-        </div>
+          <div class="mb-3 text-left">
+              <h1>Parent Menu</h1>
+              <select :class="inputStylingClass">
+                  <option selected hidden disabled value="">Travel Management System</option>
+                  <option value="">Option A</option>
+              </select>
+          </div>
 
-        <div class="mb-3 text-left">
-            <h1>Status</h1>
-            <select class="border-black border-2 rounded-lg p-2" v-model="idStatusMenu">
-                <option>Active</option>
-                <option>Option A</option>
-            </select>
-        </div>
+          <div class="mb-3 text-left">
+              <h1>Status</h1>
+              <select :class="inputStylingClass" v-model="idStatusMenu">
+                  <option>Active</option>
+                  <option>Option A</option>
+              </select>
+          </div>
 
-        <div class="flex gap-2 mb-3">
-            <input type="checkbox">
-            <h1>Use Sequence</h1>
-        </div>
+          <div class="flex gap-2 mb-3">
+              <input type="checkbox">
+              <h1>Use Sequence</h1>
+          </div>
 
         <!-- <div class="text-left mb-3">
             <h1>Permission <span>*</span></h1>
@@ -107,20 +103,19 @@ const submit = async () => {
             </table>
         </div> -->
 
-        </form>
+        </div>
 
         <div class="sticky bottom-0 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <label
             for="add-menu-modal"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+            class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
             >Cancel</label
           >
           <button
           @click="submit"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
             Save
           </button>
         </div>
@@ -159,12 +154,4 @@ const submit = async () => {
   overscroll-behavior: contain;
 }
 
- .heightButton {
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    padding: 4px 8px;
-}
 </style>

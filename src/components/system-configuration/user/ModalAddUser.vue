@@ -22,15 +22,11 @@
 
 <template>
 
-  <div class="py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base">
-
-  </div>
-
     <label
       for="add-user-modal"
-      class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-      >+ Add New</label
-    >
+      class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+      + Add New
+    </label>
 
     <input type="checkbox" id="add-user-modal" class="modal-toggle" />
     

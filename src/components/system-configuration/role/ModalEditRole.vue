@@ -54,17 +54,22 @@
 
       </div>
 
-      <div class="sticky bottom-0 bg-white">
-        <div class="flex justify-end gap-4">
-          <button
-            @click="isVisible = false"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">
-            Cancel
-          </button>
-          <button @click="$emit('changeRole', [props.identity[0], role, description])" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green">
-            Save
-          </button>
-        </div>
+      <div class="sticky bottom-0 bg-white py-8">
+          <div className="divider m-0 pb-4 w-full"></div>
+          <div class="flex justify-end gap-4">
+            <label
+              @click="isVisible = !isVisible"
+              for="add-user-modal"
+              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
+              >Cancel</label
+            >
+            <button
+            @click="$emit('changeRole', [props.identity[0], role, description])"
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+            >
+              Save
+            </button>
+          </div>
       </div>
 
     </div>

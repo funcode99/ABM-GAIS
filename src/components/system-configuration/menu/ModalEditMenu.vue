@@ -16,6 +16,8 @@
   let menu = ref(props.identity[1])
   let idStatusMenu = ref(props.identity[2])
 
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <!-- komponen ini mendapat warisan styling dari komponen parent nya (listMenu) -->
@@ -27,20 +29,20 @@
       
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
+
+    <div class="px-8">
       <nav class="sticky top-0 z-50 bg-white py-4">
             <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
             <p class="font-JakartaSans text-2xl font-semibold">Edit Menu</p>
-            <h1>{{ idStatusMenu }}</h1>
             <div className="divider m-0"></div>
       </nav>
-
-      <form class="mb-3">
+  
+      <div class="mb-3">
         
         <div class="mb-3">
           <label
-       
             for="name"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
             >Menu Name<span class="text-red">*</span></label>
@@ -49,32 +51,32 @@
             type="text"
             id="name"
             placeholder="Nama Menu"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            :class="inputStylingClass"
             required
           />
         </div>
-
+  
         <div class="mb-3 text-left">
             <h1>Parent Menu</h1>
-            <select name="" id="" class="border-black border-2 rounded-lg p-2">
+            <select :class="inputStylingClass">
                 <option selected hidden disabled value="">Travel Management System</option>
                 <option value="">Option A</option>
             </select>
         </div>
-
+  
         <div class="mb-3 text-left">
             <h1>Status</h1>
-            <select v-model="idStatusMenu" class="border-black border-2 rounded-lg p-2">
+            <select v-model="idStatusMenu" :class="inputStylingClass">
                 <option selected hidden disabled value="">Active</option>
                 <option value="">Option A</option>
             </select>
         </div>
-
+  
         <div class="flex gap-2 mb-3">
             <input type="checkbox">
             <h1>Use Sequence</h1>
         </div>
-
+  
         <!-- <div class="text-left mb-3">
             <h1>Permission <span>*</span></h1>
             <table class="text-center">
@@ -98,10 +100,10 @@
                 </tbody>
             </table>
         </div> -->
-
-      </form>
-
-      <div class="sticky bottom-0 bg-white py-4">
+  
+      </div>
+  
+      <!-- <div class="sticky bottom-0 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <button
@@ -116,7 +118,24 @@
             Save
           </button>
         </div>
+      </div> -->
+
+      <div class="sticky bottom-0 bg-white py-8">
+          <div className="divider m-0 pb-4 w-full"></div>
+          <div class="flex justify-end gap-4">
+            <label @click="isVisible = !isVisible" class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
+              Cancel
+            </label>
+            <button
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+            >
+              Save
+            </button>
+          </div>
       </div>
+
+    </div>
+
 
   </Modal>
   

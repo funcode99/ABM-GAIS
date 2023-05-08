@@ -172,9 +172,9 @@ const getSessionForSidebar = () => {
 
     </div>
 
-    <Footer/>
-    
   </div>
+  
+  <Footer/>
   
 </template>
 

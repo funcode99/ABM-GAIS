@@ -6,7 +6,6 @@ import iconClose from "@/assets/navbar/icon_close.svg"
 let newRole = ref('')
 
 const addRole = async () => {
-      
         const token = JSON.parse(localStorage.getItem('token'))
         // Set authorization for api
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -16,11 +15,13 @@ const addRole = async () => {
         })
   }
 
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template>
   
-    <label for="add-role-modal" class="btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green border-2 hover:border-green heightButton">
+    <label for="add-role-modal" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
         + Add New
     </label>
 
@@ -36,7 +37,7 @@ const addRole = async () => {
             <div className="divider m-0"></div>
         </nav>
 
-      <form class="mb-3">
+      <div class="mb-3">
         
         <div class="mb-3">
           <label
@@ -48,7 +49,7 @@ const addRole = async () => {
             type="text"
             id="name"
             placeholder="Role"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            :class="inputStylingClass"
             required
           />
         </div>
@@ -67,9 +68,9 @@ const addRole = async () => {
           />
         </div> -->
 
-      </form>
+      </div>
 
-      <div class="sticky bottom-0 bg-white py-4">
+      <!-- <div class="sticky bottom-0 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <label
@@ -84,7 +85,24 @@ const addRole = async () => {
             Save
           </button>
         </div>
+      </div> -->
+
+      <div class="sticky bottom-0 bg-white py-8">
+          <div className="divider m-0 pb-4 w-full"></div>
+          <div class="flex justify-end gap-4">
+            <label
+              for="add-role-modal"
+              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
+              >Cancel</label
+            >
+            <button
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+            >
+              Save
+            </button>
+          </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -117,12 +135,12 @@ const addRole = async () => {
   overscroll-behavior: contain;
 }
 
- .heightButton {
-    height: 36px;
+ /* .heightButton {
+    height: 48px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 8px;
     padding: 4px 8px;
-}
+} */
 </style>

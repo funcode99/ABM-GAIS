@@ -111,9 +111,9 @@
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen mt-[115px]">
 
-        <Sidebar class="flex-none" />    
+      <Sidebar class="flex-none" />    
         
-      <div class="bg-[#e4e4e6] py-5 px-8 w-screen h-full clean-margin ease-in-out duration-500" 
+      <div class="bg-[#e4e4e6] py-5 px-8 w-screen clean-margin ease-in-out duration-500" 
         :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
           <TableTopBar :title="'User'" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
@@ -122,63 +122,63 @@
           <!-- scrollbar horizontal juga ada disini -->
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
-          <div class="block overflow-x-auto">
-            <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
+            <div class="block overflow-x-auto">
+              <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
 
-              <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                <tr class="">
-                  <th>
-                    <div class="flex justify-center">
-                      <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-                    </div>
-                  </th>
+                <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                  <tr class="">
+                    <th>
+                      <div class="flex justify-center">
+                        <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                      </div>
+                    </th>
 
-                  <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                    <span class="flex justify-center items-center gap-1">
-                      {{ data.title }} 
-                      <button class="">
-                        <img :src="arrowicon" class="w-[9px] h-3" />
-                      </button>
-                    </span>
-                  </th>
+                    <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }} 
+                        <button class="">
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
 
 
-                </tr>
-              </thead>
-
-              <tbody>
-
-                <!-- sortir nya harus sama dengan key yang di data dummy -->
-
-                  <tr v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )" :key="data.No">
-                    <td>
-                      <input type="checkbox" name="chk">
-                    </td>
-                    <td>
-                      {{ data.No }} 
-                    </td>
-                    <td>
-                      {{ data.Username }}
-                    </td>
-                    <td>
-                      {{ data.UserRole }}
-                    </td>
-                    <td>
-                      {{ data.ApprovalAuthorities }}
-                    </td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditUser/>
-                      <ModalDelete/>
-                    </td>
                   </tr>
+                </thead>
 
-              </tbody>
-              
-            </table>
-          </div>
+                <tbody>
+
+                  <!-- sortir nya harus sama dengan key yang di data dummy -->
+
+                    <tr v-for="data in sortedData.slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )" :key="data.No">
+                      <td>
+                        <input type="checkbox" name="chk">
+                      </td>
+                      <td>
+                        {{ data.No }} 
+                      </td>
+                      <td>
+                        {{ data.Username }}
+                      </td>
+                      <td>
+                        {{ data.UserRole }}
+                      </td>
+                      <td>
+                        {{ data.ApprovalAuthorities }}
+                      </td>
+                      <td class="flex flex-wrap gap-4 justify-center">
+                        <ModalEditUser/>
+                        <ModalDelete/>
+                      </td>
+                    </tr>
+
+                </tbody>
+                
+              </table>
+            </div>
 
           </div>
 
@@ -203,10 +203,10 @@
       </div>
 
     </div>
-
-    <Footer />
     
   </div>
+  
+  <Footer />
   
 </template>
 
