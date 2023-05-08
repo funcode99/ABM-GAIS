@@ -76,29 +76,30 @@
             </div>   
           </div>
 
-          <div class="flex">
+          <div class="flex gap-2">
 
-            <div class="mb-6">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              id="company"
-              >Menu<span class="text-red">*</span></label
-            >
-            <select class="select select-accent w-40" required>
-              <option disabled selected hidden>Menu</option>
-              <option>Administrator</option>
-              <option>Super Admin</option>
-              <option>Admin</option>
-              <option>Receptionist</option>
-              <option>Employee</option>
-              <option>Driver</option>
-            </select>
+            <div class="mb-6 flex-1">
+              <div class="w-full">
+                <label
+                  for="company"
+                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                  id="company"
+                  >Menu<span class="text-red">*</span></label
+                >
+                <select class="select select-accent w-full" required>
+                  <option disabled selected hidden>Menu</option>
+                  <option>Administrator</option>
+                  <option>Super Admin</option>
+                  <option>Admin</option>
+                  <option>Receptionist</option>
+                  <option>Employee</option>
+                  <option>Driver</option>
+                </select>
+              </div>
             </div>
 
-            <div class="flex-1"></div>
 
-            <div class="mb-6">
+            <div class="mb-6 w-full flex-1">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Sequence Size<span class="text-red">*</span></label
@@ -113,33 +114,33 @@
 
           </div>
 
-          <div class="flex">
+          <div class="flex gap-2">
             
-            <div class="mb-6">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              id="company"
-              >Recycle by<span class="text-red">*</span></label
-            >
-            <select class="select select-accent w-40" required>
-              <option disabled selected hidden>Month</option>
-              <option>Administrator</option>
-              <option>Super Admin</option>
-              <option>Admin</option>
-              <option>Receptionist</option>
-              <option>Employee</option>
-              <option>Driver</option>
-            </select>
+            <div class="mb-6 flex-1">
+              <div>
+                <label
+                  for="company"
+                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                  id="company"
+                  >Recycle by<span class="text-red">*</span></label
+                >
+                <select class="select select-accent w-full" required>
+                  <option disabled selected hidden>Month</option>
+                  <option>Administrator</option>
+                  <option>Super Admin</option>
+                  <option>Admin</option>
+                  <option>Receptionist</option>
+                  <option>Employee</option>
+                  <option>Driver</option>
+                </select>
+              </div>
             </div>
-
-            <div class="flex-1"></div>
             
             <div class="mb-6">
             <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Prefix<span class="text-red">*</span></label
-            >
+              class="block mb-2 font-JakartaSans font-medium text-sm">
+              Prefix<span class="text-red">*</span>
+            </label>
             <input
               type="text"
               placeholder="Prefix"

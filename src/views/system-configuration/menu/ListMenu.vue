@@ -116,20 +116,20 @@
 
 <template>
 
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div class="flex flex-col w-full this h-[100vh]">
 
     <Navbar/>
 
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
 
       <Sidebar class="flex-none" />
 
       <!-- slate box -->
+      <!-- lengthCounter < 6 ? 'backgroundHeight' : '',  -->
       <div 
-      class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen h-full clean-margin ease-in-out duration-500"
-      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
-      >
+      class="bg-[#e4e4e6] pb-20 pt-10 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"
+      :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
         <TableTopBar title="Menu" @do-search="filteredItems" modalAddType="menu" />
@@ -210,10 +210,10 @@
       </div>
 
     </div>
-
-    <Footer/>
     
   </div>
+
+  <Footer/>
   
 </template>
 

@@ -11,6 +11,8 @@
   let type = ''
   let modalPaddingHeight = 50
 
+  const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template>
@@ -21,35 +23,34 @@
 
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight"> 
   
-      <nav class="sticky top-0 z-50 bg-white py-4">
+    <div class="px-5">
+      <div class="sticky top-0 z-50 bg-white py-4">
           <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </button>
           <p class="font-JakartaSans text-2xl font-semibold text-left">Edit Matrix</p>
           <div className="divider m-0"></div>
-        </nav>
+      </div>
   
-        <form class="mb-3">
+      <div class="mb-3 px-8 modal-box-inner">
           
-          <div class="mb-3 text-left">
+        <div class="mb-3 text-left">
             <label
-              for="name"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
               >Nama Matrix<span class="text-red">*</span></label
             >
             <input
               type="text"
-              id="name"
               placeholder="Nama Matrix"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              :class="inputStylingClass"
               required
             />
-          </div>
+        </div>
   
-         <div class="mb-3 flex items-center text-left">
-            <div class="flex flex-col">
+        <div class="mb-3 flex items-center text-left">
+            <div class="flex flex-col w-full">
               <label class="block mb-2 font-JakartaSans font-medium text-sm">Menu<span class="text-red">*</span></label>
-              <select name="" id="" class="input input-bordered input-accent w-[163px] font-JakartaSans font-semibold text-base">
+              <select :class="inputStylingClass">
                 <option disabled selected hidden value="">
                   Menu
                 </option>
@@ -58,12 +59,14 @@
                 </option>
               </select>
             </div>
-         </div>
+        </div>
   
-         <div class="mb-3 flex items-center text-left">
-            <div class="flex flex-col">
-              <label class="block mb-2 font-JakartaSans font-medium text-sm">Company<span class="text-red">*</span></label>
-              <select name="" id="" class="input input-bordered input-accent w-[163px] font-JakartaSans font-semibold text-base">
+        <div class="mb-3 flex items-center text-left">
+            <div class="flex flex-col w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Company<span class="text-red">*</span>
+              </label>
+              <select :class="inputStylingClass">
                 <option disabled selected hidden value="">
                   Company
                 </option>
@@ -72,9 +75,7 @@
                 </option>
               </select>
             </div>
-         </div>
-  
-        </form>
+        </div>
   
         <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
         <hr class="border border-black">
@@ -180,23 +181,27 @@
           </tbody>
           
         </table>
+        
+      </div>
   
-        <div class="sticky bottom-0 bg-white py-4">
+      <div class="sticky bottom-0 bg-white py-4">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
             <button
             @click="isVisible = false"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
               >
               Cancel
             </button>
             <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
             >
               Save
             </button>
           </div>
-        </div>
+      </div>
+    </div>
+
   
   </Modal>
 

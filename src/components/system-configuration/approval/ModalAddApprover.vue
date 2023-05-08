@@ -9,11 +9,12 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
 </script>
 
 <template>
+
   <label
     for="add-approver-modal"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add New</label
-  >
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+    + Add New
+  </label>
 
   <input type="checkbox" id="add-approver-modal" class="modal-toggle" />
 
@@ -183,8 +184,6 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
 
       </div>
 
-
-
       <div class="sticky bottom-0 bg-white py-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
@@ -198,6 +197,8 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
           </button>
         </div>
       </div>
+
+
     </div>
   </div>
 </template>

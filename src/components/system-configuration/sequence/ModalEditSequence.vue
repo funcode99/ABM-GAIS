@@ -19,123 +19,123 @@
 
     <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
-          <nav class="sticky left-0 right-0 top-0 z-50 bg-white py-4">
+          <div class="sticky left-0 right-0 top-0 z-50 bg-white py-4">
             <label for="edit-sequence-modal" class="cursor-pointer absolute right-0">
               <img @click="isVisible = false" :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </label>
             <p class="font-JakartaSans text-2xl font-semibold">Edit Sequence</p>
             <div className="divider m-0"></div>
-          </nav>
+          </div>
   
-          <div>
+          <div class="modal-box-inner px-4 text-left">
   
-            <div class="flex gap-[2%]">
+            <div class="flex gap-2">
   
-              <div class="mb-6">
-              <label
-                class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-                >Nama<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                placeholder="Nama Sequence"
-                class="max-w-[100%] input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-                required
-              />
+              <div class="mb-6 flex-1">
+                <label
+                  class="block mb-2 font-JakartaSans font-medium text-sm text-left"
+                  >Nama<span class="text-red">*</span></label
+                >
+                <input
+                  type="text"
+                  placeholder="Nama Sequence"
+                  class="max-w-[100%] input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  required
+                />
               </div>
   
-              <div class="flex-1"></div>
-  
-              <div class="mb-6">
-              <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Next Value<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                id="name"
-                placeholder="Next Value"
-                class="max-w-[100%] input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-                required
-              />
+              <div class="mb-6 flex-1">
+                <label
+                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >Next Value<span class="text-red">*</span></label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Next Value"
+                  class="max-w-[100%] input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  required
+                />
               </div>
   
             </div>
   
-            <div class="flex">
-              <div class="mb-6">
-              <label
-                for="company"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                id="company"
-                >Menu<span class="text-red">*</span></label
-              >
-              <select class="select select-accent w-40" required>
-                <option disabled selected hidden>Menu</option>
-                <option>Administrator</option>
-                <option>Super Admin</option>
-                <option>Admin</option>
-                <option>Receptionist</option>
-                <option>Employee</option>
-                <option>Driver</option>
-              </select>
+            <div class="flex gap-2">
+
+              <div class="mb-6 flex-1">
+                <div class="w-full">
+                  <label
+                    for="company"
+                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                    id="company"
+                    >Menu<span class="text-red">*</span></label
+                  >
+                  <select class="select select-accent w-full" required>
+                    <option disabled selected hidden>Menu</option>
+                    <option>Administrator</option>
+                    <option>Super Admin</option>
+                    <option>Admin</option>
+                    <option>Receptionist</option>
+                    <option>Employee</option>
+                    <option>Driver</option>
+                  </select>
+                </div>
               </div>
   
-              <div class="flex-1"></div>
-  
-              <div class="mb-6">
-              <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Sequence Size<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                placeholder="Sequence Size"
-                class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-                required
-              />
+              <div class="mb-6 flex-1">
+                <label
+                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >Sequence Size<span class="text-red">*</span></label
+                >
+                <input
+                  type="text"
+                  placeholder="Sequence Size"
+                  class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  required
+                />
               </div>
             </div>
   
-            <div class="flex">
+            <div class="flex gap-2">
               
-              <div class="mb-6">
-              <label
-                for="company"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                id="company"
-                >Recycle by<span class="text-red">*</span></label
-              >
-              <select class="select select-accent w-40" required>
-                <option disabled selected hidden>Month</option>
-                <option>Administrator</option>
-                <option>Super Admin</option>
-                <option>Admin</option>
-                <option>Receptionist</option>
-                <option>Employee</option>
-                <option>Driver</option>
-              </select>
+              <div class="mb-6 flex-1">
+                <div class="w-full">
+                  <label
+                    for="company"
+                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                    id="company"
+                    >Recycle by<span class="text-red">*</span></label
+                  >
+                  <select class="select select-accent w-full" required>
+                    <option disabled selected hidden>Month</option>
+                    <option>Administrator</option>
+                    <option>Super Admin</option>
+                    <option>Admin</option>
+                    <option>Receptionist</option>
+                    <option>Employee</option>
+                    <option>Driver</option>
+                  </select>
+                </div>
               </div>
-  
-              <div class="flex-1"></div>
               
-              <div class="mb-6">
-              <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Prefix<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                placeholder="Prefix"
-                class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-                required
-              />
+              <div class="mb-6 flex-1">
+                <label
+                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >Prefix<span class="text-red">*</span></label
+                >
+                <input
+                  type="text"
+                  placeholder="Prefix"
+                  class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  required
+                />
               </div>
   
             </div>
     
-            <div class="flex">
-              <div class="mb-6">
+            <div class="flex gap-2">
+              
+              <div class="mb-6 flex-1">
                 <label
                   class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Suffix<span class="text-red">*</span></label
@@ -148,11 +148,11 @@
                   required
                 />
               </div>
-              <div>
-  
+
+              <div class="w-full flex-1">
               </div>
+
             </div>
-  
   
           </div>
           
@@ -174,8 +174,6 @@
         
 
     </Modal>
-
-
 
 </template>
 

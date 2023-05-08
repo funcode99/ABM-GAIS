@@ -99,17 +99,18 @@
 
 <template>
 
-  <div class="flex flex-col overflow-y-hidden overflow-x-hidden basis-full grow-0 shrink-0 w-screen">
+  <div class="flex flex-col w-full this h-[100vh]">
 
     <Navbar/>
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
 
         <Sidebar class="flex-none" /> 
         
       <!-- slate box -->
-      <div class="bg-[#e4e4e6] py-5 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"
-      :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
+      <!-- lengthCounter < 6 ? 'backgroundHeight' : '',  -->
+      <div class="bg-[#e4e4e6] pt-10 pb-20 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"
+      :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
       
         <!-- table box -->
@@ -172,10 +173,11 @@
 
     </div>
 
-    <Footer/>
     
   </div>
   
+  <Footer/>
+
 </template>
 
 <style scoped>

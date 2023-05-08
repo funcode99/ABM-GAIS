@@ -104,17 +104,18 @@
 <template>
 
 <!-- kenak loh, ternyata disini overflow x nya -->
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div class="flex flex-col w-full this h-[100vh]">
 
     <Navbar/>
 
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
 
       <Sidebar class="flex-none" />    
         
-      <div class="bg-[#e4e4e6] py-5 px-8 w-screen clean-margin ease-in-out duration-500" 
-        :class="[lengthCounter < 6 ? 'backgroundHeight' : 'h-full', sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
+      <!-- lengthCounter > 6 ? 'backgroundHeight' : '',  -->
+      <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin ease-in-out duration-500" 
+        :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
           <TableTopBar :title="'User'" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
           
