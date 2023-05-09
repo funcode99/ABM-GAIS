@@ -26,9 +26,9 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
         </p>
       </nav>
 
-      <main class="modal-box-inner-jobband pb-14">
-        <form class="pt-4">
-          <div class="mb-6 mr-6 text-start">
+      <main class="modal-box-inner-jobband">
+        <form>
+          <div class="mb-6 text-start w-full px-4">
             <label
               for="jobband"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -43,7 +43,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             />
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start w-full px-4">
             <label
               for="hotel"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -58,7 +58,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
             />
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start w-full px-4">
             <label
               for="meal"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -72,7 +72,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
               required
             />
           </div>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start w-full px-4">
             <label
               for="flight"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -86,99 +86,104 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
               required
             />
           </div>
+
+          <!-- INNER TABLE -->
+          <h1 class="text-base font-JakartaSans font-bold py-2 text-start px-4">
+            TLK
+          </h1>
+
+          <div class="px-4 pb-10">
+            <table
+              class="table table-zebra table-compact border w-full rounded-lg"
+            >
+              <thead class="text-center font-JakartaSans text-sm font-bold">
+                <tr>
+                  <th class="relative">
+                    <span class="flex justify-center">TLK</span>
+                    <button class="absolute right-0 top-0 bottom-0">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </th>
+                  <th class="relative">
+                    <span class="flex justify-center">Cross/Hari</span>
+                    <button class="absolute right-1 top-0 bottom-0">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </th>
+                  <th class="flex justify-center">Actions</th>
+                </tr>
+              </thead>
+
+              <tbody class="bg-[#F5F5F5]">
+                <tr class="font-JakartaSans font-normal text-sm">
+                  <td>A</td>
+                  <td>241.000</td>
+                  <td class="flex flex-wrap gap-4 justify-center">
+                    <button>
+                      <img :src="editicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="font-JakartaSans font-normal text-sm">
+                  <td>B</td>
+                  <td>219.000</td>
+                  <td class="flex flex-wrap gap-4 justify-center">
+                    <button>
+                      <img :src="editicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="font-JakartaSans font-normal text-sm">
+                  <td>C</td>
+                  <td>219.000</td>
+                  <td class="flex flex-wrap gap-4 justify-center">
+                    <button>
+                      <img :src="editicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="font-JakartaSans font-normal text-sm">
+                  <td>D</td>
+                  <td>153.000</td>
+                  <td class="flex flex-wrap gap-4 justify-center">
+                    <button>
+                      <img :src="editicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="font-JakartaSans font-normal text-sm">
+                  <td>E</td>
+                  <td>128.000</td>
+                  <td class="flex flex-wrap gap-4 justify-center">
+                    <button>
+                      <img :src="editicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="sticky bottom-0 bg-white">
+            <div class="flex justify-end gap-4 mr-6">
+              <label
+                for="modal-edit-job"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >Cancel</label
+              >
+              <button
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </form>
-
-        <!-- INNER TABLE -->
-        <h1 class="text-base font-JakartaSans font-bold py-2 text-start">
-          TLK
-        </h1>
-        <table class="table table-zebra table-compact border w-full rounded-lg">
-          <thead class="text-center font-JakartaSans text-sm font-bold">
-            <tr>
-              <th class="relative">
-                <span class="flex justify-center">TLK</span>
-                <button class="absolute right-0 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
-                </button>
-              </th>
-              <th class="relative">
-                <span class="flex justify-center">Cross/Hari</span>
-                <button class="absolute right-1 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
-                </button>
-              </th>
-              <th class="flex justify-center">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody class="bg-[#F5F5F5]">
-            <tr class="font-JakartaSans font-normal text-sm">
-              <td>A</td>
-              <td>241.000</td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-
-            <tr class="font-JakartaSans font-normal text-sm">
-              <td>B</td>
-              <td>219.000</td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-
-            <tr class="font-JakartaSans font-normal text-sm">
-              <td>C</td>
-              <td>219.000</td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-
-            <tr class="font-JakartaSans font-normal text-sm">
-              <td>D</td>
-              <td>153.000</td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-
-            <tr class="font-JakartaSans font-normal text-sm">
-              <td>E</td>
-              <td>128.000</td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </main>
-
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-end gap-4 mr-6">
-          <label
-            for="modal-edit-job"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -192,7 +197,7 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 .modal-box-inner-jobband {
   height: 500px;
-  --tw-scale-x: 0.9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))

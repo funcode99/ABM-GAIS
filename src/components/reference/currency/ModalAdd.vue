@@ -23,7 +23,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 
       <main class="modal-box-inner-currency">
         <form class="pt-4">
-          <div class="mb-6">
+          <div class="mb-6 px-4 w-full">
             <label
               for="currency"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -38,7 +38,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             />
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 px-4 w-full">
             <label
               for="symbol"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -53,7 +53,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             />
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 px-4 w-full">
             <label
               for="code"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -67,23 +67,23 @@ import iconClose from "@/assets/navbar/icon_close.svg";
               required
             />
           </div>
+
+          <div class="sticky bottom-0 bg-white">
+            <div class="flex justify-end gap-4 mr-6">
+              <label
+                for="my-modal-3"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >Cancel</label
+              >
+              <button
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </form>
       </main>
-
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-end gap-4 mr-6">
-          <label
-            for="my-modal-3"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -96,7 +96,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 }
 
 .modal-box-inner-currency {
-  --tw-scale-x: 0.9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))

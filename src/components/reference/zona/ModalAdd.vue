@@ -50,7 +50,7 @@ function removeLastTag(event) {
 
       <main class="modal-box-inner-zona">
         <form class="pt-4">
-          <div class="mb-6 mr-6">
+          <div class="mb-6 w-full px-4">
             <label
               for="zona"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -65,14 +65,14 @@ function removeLastTag(event) {
             />
           </div>
 
-          <div class="mb-6 mr-6">
+          <div class="mb-6 w-full px-4">
             <label
               for="city"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >City<span class="text-red">*</span></label
             >
             <div
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm "
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
             >
               <div
                 v-for="(tag, index) in tags"
@@ -95,23 +95,23 @@ function removeLastTag(event) {
               />
             </div>
           </div>
+
+          <div class="sticky bottom-0 bg-white">
+            <div class="flex justify-end gap-4 mr-6">
+              <label
+                for="my-modal-3"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >Cancel</label
+              >
+              <button
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </form>
       </main>
-
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-end gap-4 mr-6">
-          <label
-            for="my-modal-3"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -124,7 +124,7 @@ function removeLastTag(event) {
 }
 
 .modal-box-inner-zona {
-  --tw-scale-x: 0.9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
