@@ -201,13 +201,12 @@ const getSessionForSidebar = () => {
                       </div>
                     </td>
                   </tr>
-                  <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">Total</td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]">462.000</td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
+                  <tr>
+                    <td colspan="3" class="border border-[#B9B9B9] text-center">
+                      Total
+                    </td>
+                    <td colspan="1" class="border border-[#B9B9B9]">462000</td>
+                    <td colspan="2" class="border border-[#B9B9B9]"></td>
                   </tr>
                 </tbody>
               </table>

@@ -1,7 +1,7 @@
 const datatravel = [
     {
         id: 1,
-        no: '2023-00001',
+        no: 1,
         created_date: '2023-04-27',
         ca_no: 'CA-001',
         name: 'John Doe',
@@ -10,7 +10,7 @@ const datatravel = [
     },
     {
         id: 2,
-        no: '2023-00002',
+        no: 2,
         created_date: '2023-04-27',
         ca_no: 'CA-002',
         name: 'Jane Smith',
@@ -19,7 +19,7 @@ const datatravel = [
     },
     {
         id: 3,
-        no: '2023-00003',
+        no: 3,
         created_date: '2023-04-27',
         ca_no: 'CA-003',
         name: 'Bob Johnson',
@@ -28,7 +28,7 @@ const datatravel = [
     },
     {
         id: 4,
-        no: '2023-00004',
+        no: 4,
         created_date: '2023-04-26',
         ca_no: 'CA-004',
         name: 'Alice Lee',
@@ -37,7 +37,7 @@ const datatravel = [
     },
     {
         id: 5,
-        no: '2023-00005',
+        no: 5,
         created_date: '2023-04-26',
         ca_no: 'CA-005',
         name: 'David Brown',
@@ -46,7 +46,7 @@ const datatravel = [
     },
     {
         id: 6,
-        no: '2023-00006',
+        no: 6,
         created_date: '2023-04-26',
         ca_no: 'CA-006',
         name: 'Samantha Johnson',
@@ -55,7 +55,7 @@ const datatravel = [
     },
     {
         id: 7,
-        no: '2023-00007',
+        no: 7,
         created_date: '2023-04-25',
         ca_no: 'CA-007',
         name: 'Chris Green',
@@ -64,7 +64,7 @@ const datatravel = [
     },
     {
         id: 8,
-        no: '2023-00008',
+        no: 8,
         created_date: '2023-04-25',
         ca_no: 'CA-008',
         name: 'Tom Wilson',
@@ -73,7 +73,7 @@ const datatravel = [
     },
     {
         id: 9,
-        no: '2023-00009',
+        no: 9,
         created_date: '2023-04-25',
         ca_no: 'CA-009',
         name: 'Emily Davis',
@@ -82,7 +82,7 @@ const datatravel = [
     },
     {
         id: 10,
-        no: '2023-00010',
+        no: 10,
         created_date: '2023-04-24',
         ca_no: 'CA-010',
         name: 'William Adams',
@@ -91,7 +91,7 @@ const datatravel = [
     },
     {
         id: 11,
-        no: '2023-00011',
+        no: 11,
         created_date: '2023-04-24',
         ca_no: 'CA-011',
         name: 'Linda Jackson',
@@ -100,7 +100,7 @@ const datatravel = [
     },
     {
         id: 12,
-        no: '2023-00012',
+        no: 12,
         created_date: '2023-04-24',
         ca_no: 'CA-012',
         name: 'Samuel Hernandez',
@@ -109,7 +109,7 @@ const datatravel = [
     },
     {
         id: 13,
-        no: '2023-00013',
+        no: 13,
         created_date: '2023-04-23',
         ca_no: 'CA-013',
         name: 'Olivia Perez',
@@ -118,7 +118,7 @@ const datatravel = [
     },
     {
         id: 14,
-        no: '2023-00014',
+        no: 14,
         created_date: '2023-04-23',
         ca_no: 'CA-014',
         name: 'Daniel Kim',
@@ -127,7 +127,7 @@ const datatravel = [
     },
     {
         id: 15,
-        no: '2023-00015',
+        no: 15,
         created_date: '2023-04-23',
         ca_no: 'CA-015',
         name: 'Megan Chen',
@@ -136,7 +136,7 @@ const datatravel = [
     },
     {
         id: 16,
-        no: '2023-00016',
+        no: 16,
         created_date: '2023-04-22',
         ca_no: 'CA-016',
         name: 'Benjamin Garcia',
@@ -145,7 +145,7 @@ const datatravel = [
     },
     {
         id: 17,
-        no: '2023-00017',
+        no: 17,
         created_date: '2023-04-22',
         ca_no: 'CA-017',
         name: 'Sophia Kim',
@@ -154,7 +154,7 @@ const datatravel = [
     },
     {
         id: 18,
-        no: '2023-00018',
+        no: 18,
         created_date: '2023-04-22',
         ca_no: 'CA-018',
         name: 'Christopher Lee',
@@ -163,7 +163,7 @@ const datatravel = [
     },
     {
         id: 19,
-        no: '2023-00019',
+        no: 19,
         created_date: '2023-04-21',
         ca_no: 'CA-019',
         name: 'Isabella Hernandez',
@@ -172,7 +172,7 @@ const datatravel = [
     },
     {
         id: 20,
-        no: '2023-00020',
+        no: 20,
         created_date: '2023-04-21',
         ca_no: 'CA-020',
         name: 'Ethan Johnson',
@@ -181,7 +181,7 @@ const datatravel = [
     },
     {
         id: 21,
-        no: '2023-00021',
+        no: 21,
         created_date: '2023-04-21',
         ca_no: 'CA-021',
         name: 'Madison Davis',
@@ -190,7 +190,7 @@ const datatravel = [
     },
     {
         id: 22,
-        no: '2023-00022',
+        no: 22,
         created_date: '2023-04-20',
         ca_no: 'CA-022',
         name: 'Alexander Brown',
@@ -199,7 +199,7 @@ const datatravel = [
     },
     {
         id: 23,
-        no: '2023-00023',
+        no: 23,
         created_date: '2023-04-20',
         ca_no: 'CA-023',
         name: 'Ava Jackson',
@@ -208,7 +208,7 @@ const datatravel = [
     },
     {
         id: 24,
-        no: '2023-00024',
+        no: 24,
         created_date: '2023-04-20',
         ca_no: 'CA-023',
         name: 'Braitwaite',
@@ -217,7 +217,7 @@ const datatravel = [
     },
     {
         id: 25,
-        no: '2023-00025',
+        no: 25,
         created_date: '2023-04-20',
         ca_no: 'CA-023',
         name: 'Steven G',

@@ -18,6 +18,7 @@ const sidebar = useSidebarStore();
 //for sort, search, & filter
 const date = ref();
 const search = ref("");
+const selectedType = ref("Status");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
@@ -138,6 +139,20 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
             <div class="flex flex-wrap items-center gap-4">
+              <p
+                class="capitalize font-JakartaSans text-xs text-black font-medium"
+              >
+                Status
+              </p>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="selectedType"
+              >
+                <option disabled selected>status</option>
+                <option v-for="data in sortedData" :key="data.id">
+                  {{ data.status }}
+                </option>
+              </select>
               <p
                 class="capitalize font-JakartaSans text-xs text-black font-medium"
               >

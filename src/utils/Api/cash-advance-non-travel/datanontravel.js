@@ -1,7 +1,7 @@
 const datanontravel = [
     {
         id: 1,
-        no: '001',
+        no: 1,
         created_date: '2022-01-01',
         ca_no: 'CA-001',
         event: 'Event A',
@@ -11,7 +11,7 @@ const datanontravel = [
     },
     {
         id: 2,
-        no: '002',
+        no: 2,
         created_date: '2022-01-02',
         ca_no: 'CA-002',
         event: 'Event B',
@@ -21,7 +21,7 @@ const datanontravel = [
     },
     {
         id: 3,
-        no: '003',
+        no: 3,
         created_date: '2022-01-03',
         ca_no: 'CA-003',
         event: 'Event C',
@@ -31,7 +31,7 @@ const datanontravel = [
     },
     {
         id: 4,
-        no: '004',
+        no: 4,
         created_date: '2022-01-04',
         ca_no: 'CA-004',
         event: 'Event D',
@@ -41,7 +41,7 @@ const datanontravel = [
     },
     {
         id: 5,
-        no: '005',
+        no: 5,
         created_date: '2022-01-05',
         ca_no: 'CA-005',
         event: 'Event E',
@@ -51,7 +51,7 @@ const datanontravel = [
     },
     {
         id: 6,
-        no: '006',
+        no: 6,
         created_date: '2022-01-06',
         ca_no: 'CA-006',
         event: 'Event F',
@@ -61,7 +61,7 @@ const datanontravel = [
     },
     {
         id: 7,
-        no: '007',
+        no: 7,
         created_date: '2022-01-07',
         ca_no: 'CA-007',
         event: 'Event G',
@@ -71,7 +71,7 @@ const datanontravel = [
     },
     {
         id: 8,
-        no: '008',
+        no: 8,
         created_date: '2022-01-08',
         ca_no: 'CA-008',
         event: 'Event H',
@@ -81,7 +81,7 @@ const datanontravel = [
     },
     {
         id: 9,
-        no: '009',
+        no: 9,
         created_date: '2022-01-09',
         ca_no: 'CA-009',
         event: 'Event I',
@@ -91,7 +91,7 @@ const datanontravel = [
     },
     {
         id: 10,
-        no: '010',
+        no: 10,
         created_date: '2022-01-10',
         ca_no: 'CA-010',
         event: 'Event J',
@@ -101,7 +101,7 @@ const datanontravel = [
     },
     {
         id: 11,
-        no: '011',
+        no: 11,
         created_date: '2022-01-11',
         ca_no: 'CA-011',
         event: 'Event K',
@@ -111,7 +111,7 @@ const datanontravel = [
     },
     {
         id: 12,
-        no: '012',
+        no: 12,
         created_date: '2022-01-12',
         ca_no: 'CA-012',
         event: 'Event L',
@@ -121,7 +121,7 @@ const datanontravel = [
     },
     {
         id: 13,
-        no: '013',
+        no: 13,
         created_date: '2022-01-13',
         ca_no: 'CA-013',
         event: 'Event M',
@@ -131,7 +131,7 @@ const datanontravel = [
     },
     {
         id: 14,
-        no: '014',
+        no: 14,
         created_date: '2022-01-14',
         ca_no: 'CA-014',
         event: 'Event N',
@@ -141,7 +141,7 @@ const datanontravel = [
     },
     {
         id: 15,
-        no: '015',
+        no: 15,
         created_date: '2022-01-15',
         ca_no: 'CA-015',
         event: 'Event O',
@@ -151,7 +151,7 @@ const datanontravel = [
     },
     {
         id: 16,
-        no: '016',
+        no: 16,
         created_date: '2022-01-16',
         ca_no: 'CA-016',
         event: 'Event P',
@@ -161,7 +161,7 @@ const datanontravel = [
     },
     {
         id: 17,
-        no: '017',
+        no: 17,
         created_date: '2022-01-17',
         ca_no: 'CA-017',
         event: 'Event Q',
@@ -171,7 +171,7 @@ const datanontravel = [
     },
     {
         id: 18,
-        no: '018',
+        no: 18,
         created_date: '2022-01-18',
         ca_no: 'CA-018',
         event: 'Event R',
@@ -181,7 +181,7 @@ const datanontravel = [
     },
     {
         id: 19,
-        no: '019',
+        no: 19,
         created_date: '2022-01-19',
         ca_no: 'CA-019',
         event: 'Event S',
@@ -191,7 +191,7 @@ const datanontravel = [
     },
     {
         id: 20,
-        no: '020',
+        no: 20,
         created_date: '2022-01-20',
         ca_no: 'CA-020',
         event: 'Event T',
@@ -201,7 +201,7 @@ const datanontravel = [
     },
     {
         id: 21,
-        no: '021',
+        no: 21,
         created_date: '2022-01-21',
         ca_no: 'CA-021',
         event: 'Event U',
@@ -211,18 +211,17 @@ const datanontravel = [
     },
     {
         id: 22,
-        no: '022',
+        no: 22,
         created_date: '2022-01-22',
         ca_no: 'CA-022',
         event: 'Event V',
         cost_center: 'CC-022',
-        nominal:
-            22000000,
+        nominal: 22000000,
         status: 'Open'
     },
     {
         id: 23,
-        no: '023',
+        no: 23,
         created_date: '2022-01-23',
         ca_no: 'CA-023',
         event: 'Event W',
@@ -232,7 +231,7 @@ const datanontravel = [
     },
     {
         id: 24,
-        no: '024',
+        no: 24,
         created_date: '2022-01-24',
         ca_no: 'CA-024',
         event: 'Event X',
@@ -242,7 +241,7 @@ const datanontravel = [
     },
     {
         id: 25,
-        no: '025',
+        no: 25,
         created_date: '2022-01-25',
         ca_no: 'CA-025',
         event: 'Event Y',

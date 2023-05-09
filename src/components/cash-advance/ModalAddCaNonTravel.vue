@@ -24,17 +24,6 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
       </nav>
 
       <main class="modal-box-inner pb-4 lg:pb-16">
-        <div class="flex justify-center items-center">
-          <div
-            class="w-[44px] h-[44px] rounded-full bg-[#9E9E9E] border-[1px] border-black"
-          ></div>
-        </div>
-        <p
-          class="font-JakartaSans font-medium text-xs flex justify-center items-center pt-4"
-        >
-          Details
-        </p>
-
         <form class="py-4">
           <div
             class="flex justify-between mx-2 lg:mx-0 lg:justify-around items-center gap-2"
@@ -63,6 +52,23 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
                 type="date"
                 name="date_start"
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="flex justify-start lg:justify-start items-center px-3">
+            <div class="mb-6">
+              <label
+                for="event"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Total<span class="text-red">*</span></label
+              >
+              <input
+                type="text"
+                name="event"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Total"
                 required
               />
             </div>
