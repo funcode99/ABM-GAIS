@@ -148,7 +148,7 @@ const getSessionForSidebar = () => {
               Employee
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -300,7 +300,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.email }}</td>
                     <td>{{ data.phone_number }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+                      <ModalEdit @unlockScrollbar="lockScrollbar = !lockScrollbar" />
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
