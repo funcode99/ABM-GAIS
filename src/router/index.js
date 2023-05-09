@@ -33,8 +33,8 @@ import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
 //travel management system
-import RequestTripList from '@/views/travel-management/request-trip/RequestTripList.vue'
-import RequestTripView from '@/views/travel-management/request-trip/RequestTripView.vue'
+import RequestTripListTMS from '@/views/travel-management/request-trip/RequestTripList.vue'
+import RequestTripViewTMS from '@/views/travel-management/request-trip/RequestTripView.vue'
 import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
@@ -277,15 +277,15 @@ const router = createRouter({
     {
       path: '/request',
       name: 'request trip',
-      component: RequestTripList,
+      component: RequestTripListTMS,
       meta: {
         title: 'Request Trip'
       }
     },
     {
-      path: '/view-request',
+      path: '/request-view',
       name: 'form view request trip',
-      component: RequestTripView,
+      component: RequestTripViewTMS,
       meta: {
         title: 'View Request Trip'
       }

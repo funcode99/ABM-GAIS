@@ -2,6 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+
 import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
 import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
 
@@ -25,6 +26,7 @@ const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
+let lockScrollbar = ref(false)
 
 //for paginations
 let showingValue = ref(1);
@@ -122,12 +124,7 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-<<<<<<< HEAD
-  <div class="flex flex-col w-full this">
-
-=======
-  <div class="flex flex-col w-full this fixed">
->>>>>>> 5a89b2ac203ea381ad5444990ec92a13bf845d2f
+  <div class="flex flex-col w-full this" :class="lockScrollbar === true ? 'fixed' : ''">
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -151,7 +148,7 @@ const getSessionForSidebar = () => {
               Employee
             </p>
             <div class="flex gap-4">
-              <ModalAdd />
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -303,7 +300,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.email }}</td>
                     <td>{{ data.phone_number }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit />
+                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
