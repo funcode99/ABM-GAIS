@@ -48,10 +48,10 @@ function removeLastTag(event) {
         </p>
       </nav>
 
-      <main class="modal-box-inner-departement pb-14">
-        <form class="py-4">
+      <main class="modal-box-inner-departement">
+        <form>
           <div class="w-full">
-            <div class="mb-6 mr-6">
+            <div class="mb-6 w-full px-4">
               <label
                 for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -68,7 +68,7 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div class="mb-6 mr-6">
+          <div class="mb-6 w-full px-4">
             <label
               for="name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -83,7 +83,7 @@ function removeLastTag(event) {
             />
           </div>
 
-          <div class="flex justify-between items-center gap-2">
+          <div class="flex justify-between px-4 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="cost_center"
@@ -99,7 +99,7 @@ function removeLastTag(event) {
                 <option>Cost Center B</option>
               </select>
             </div>
-            <div class="mb-6 w-full">
+            <div class="mb-6 w-full ml-6">
               <label
                 for="status"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -116,7 +116,7 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div class="flex justify-between items-center gap-2">
+          <div class="flex justify-between px-4 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="glaccount"
@@ -132,7 +132,7 @@ function removeLastTag(event) {
                 <option>Account B</option>
               </select>
             </div>
-            <div class="mb-6 w-full">
+            <div class="mb-6 w-full ml-6">
               <label
                 for="profit"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -149,15 +149,15 @@ function removeLastTag(event) {
             </div>
           </div>
 
-          <div class="flex justify-between lg:justify-around items-start gap-2">
-            <div class="mb-6 w-full">
+          <div class="flex justify-between items-start gap-2 px-4">
+            <div class="mb-6 w-full text-start">
               <label
                 for="Division"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Division<span class="text-red">*</span></label
               >
               <div
-                class="block bg-white w-full lg:w-[220px] md:w-56 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="block bg-white w-full lg:w-[220px] md:w-56 border border-slate-300 rounded-md shadow-sm"
               >
                 <div
                   v-for="(tag, index) in tags"
@@ -176,14 +176,14 @@ function removeLastTag(event) {
                 <input
                   type="text"
                   placeholder="Input Division"
-                  class="tag-input__text px-2 text-sm font-medium leading-[38px] font-JakartaSans"
+                  class="tag-input__text w-full px-2 text-sm font-medium leading-[38px] font-JakartaSans focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                   @keydown="addTag"
                   @keydown.delete="removeLastTag"
                 />
               </div>
             </div>
 
-            <div class="mb-6 w-full">
+            <div class="mb-6 w-full text-start ml-6">
               <label
                 for="departementhead"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -199,23 +199,23 @@ function removeLastTag(event) {
               </select>
             </div>
           </div>
+
+          <div class="sticky bottom-0 bg-white">
+            <div class="flex justify-end gap-4 mr-6">
+              <label
+                for="my-modal-3"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >Cancel</label
+              >
+              <button
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </form>
       </main>
-
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-end gap-4 mr-6">
-          <label
-            for="my-modal-3"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -229,7 +229,7 @@ function removeLastTag(event) {
 
 .modal-box-inner-departement {
   height: 500px;
-  --tw-scale-x: 0.9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))

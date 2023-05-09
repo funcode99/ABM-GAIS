@@ -46,40 +46,38 @@ let minDate = year + "-" + month + "-" + day;
         </p>
       </nav>
 
-      <main class="modal-box-inner-employee pb-4 lg:pb-16">
-        <div class="flex justify-center items-center">
-          <div class="avatar">
-            <div class="w-[104px] h-[100px] rounded-full bg-[#D9D9D9]">
-              <div class="flex justify-center items-center">
-                <label for="file-input" class="cursor-pointer">
-                  <img
-                    v-if="!imageUrl"
-                    :src="iconPlus"
-                    class="w-[37px] h-[37px] py-8"
+      <main class="modal-box-inner-employee">
+        <form>
+          <div class="flex justify-center items-center">
+            <div class="avatar">
+              <div class="w-[100px] h-[100px] rounded-full bg-[#D9D9D9]">
+                <div class="flex justify-center items-center">
+                  <label for="file-input" class="cursor-pointer">
+                    <img
+                      v-if="!imageUrl"
+                      :src="iconPlus"
+                      class="w-[37px] h-[37px] py-8"
+                    />
+                    <img v-if="imageUrl" :src="imageUrl" class="" />
+                  </label>
+                  <input
+                    type="file"
+                    id="file-input"
+                    class="hidden"
+                    required
+                    @change="onFileChange"
                   />
-                  <img v-if="imageUrl" :src="imageUrl" class="" />
-                </label>
-                <input
-                  type="file"
-                  id="file-input"
-                  class="hidden"
-                  required
-                  @change="onFileChange"
-                />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <p
-          class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4"
-        >
-          Foto
-        </p>
-
-        <form class="py-4">
-          <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+          <p
+            class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4 mb-6"
           >
+            Foto
+          </p>
+
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="name"
@@ -110,9 +108,7 @@ let minDate = year + "-" + month + "-" + day;
             </div>
           </div>
 
-          <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
-          >
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="SN"
@@ -143,9 +139,7 @@ let minDate = year + "-" + month + "-" + day;
             </div>
           </div>
 
-          <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
-          >
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="NIK"
@@ -176,9 +170,7 @@ let minDate = year + "-" + month + "-" + day;
             </div>
           </div>
 
-          <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
-          >
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="dob"
@@ -207,9 +199,7 @@ let minDate = year + "-" + month + "-" + day;
             </div>
           </div>
 
-          <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
-          >
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="gender"
@@ -242,9 +232,7 @@ let minDate = year + "-" + month + "-" + day;
             </div>
           </div>
 
-          <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
-          >
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="departement"
@@ -276,23 +264,23 @@ let minDate = year + "-" + month + "-" + day;
               </select>
             </div>
           </div>
+
+          <div class="sticky bottom-0 bg-white">
+            <div class="flex justify-end gap-4 mr-6">
+              <label
+                for="my-modal-3"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >Cancel</label
+              >
+              <button
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </form>
       </main>
-
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-end gap-4 mr-6">
-          <label
-            for="my-modal-3"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -306,7 +294,7 @@ let minDate = year + "-" + month + "-" + day;
 
 .modal-box-inner-employee {
   height: 500px;
-  --tw-scale-x: 0.9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))

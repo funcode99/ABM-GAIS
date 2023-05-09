@@ -146,6 +146,11 @@ const getSessionForSidebar = () => {
                     >
                       Total
                     </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Remarks
+                    </th>
                   </tr>
                 </thead>
                 <tbody class="font-JakartaSans font-normal text-xs">
@@ -155,6 +160,7 @@ const getSessionForSidebar = () => {
                     <td class="border border-[#B9B9B9]">Rupiah</td>
                     <td class="border border-[#B9B9B9]">120.000</td>
                     <td class="border border-[#B9B9B9]">240.000</td>
+                    <td class="border border-[#B9B9B9]">-</td>
                   </tr>
                   <tr class="h-16">
                     <td class="border border-[#B9B9B9]">Transport</td>
@@ -162,6 +168,7 @@ const getSessionForSidebar = () => {
                     <td class="border border-[#B9B9B9]">Rupiah</td>
                     <td class="border border-[#B9B9B9]">150.000</td>
                     <td class="border border-[#B9B9B9]">300.000</td>
+                    <td class="border border-[#B9B9B9]">-</td>
                   </tr>
                 </tbody>
               </table>

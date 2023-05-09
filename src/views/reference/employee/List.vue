@@ -122,8 +122,12 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
+<<<<<<< HEAD
   <div class="flex flex-col w-full this">
 
+=======
+  <div class="flex flex-col w-full this fixed">
+>>>>>>> 5a89b2ac203ea381ad5444990ec92a13bf845d2f
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">

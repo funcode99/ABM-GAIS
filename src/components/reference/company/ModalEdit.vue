@@ -28,7 +28,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 
       <main class="modal-box-inner-company">
         <form>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start px-4 w-full">
             <label
               for="code"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -42,7 +42,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
               required
             />
           </div>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start px-4 w-full">
             <label
               for="name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -56,7 +56,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
               required
             />
           </div>
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start px-4 w-full">
             <label
               for="parent_company"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -72,7 +72,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             </select>
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start px-4 w-full">
             <div
               for="logo_company"
               class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
@@ -100,7 +100,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
             </div>
           </div>
 
-          <div class="mb-6 mr-6 text-start">
+          <div class="mb-6 text-start px-4 w-full">
             <label
               for="vendor"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -115,23 +115,23 @@ import editicon from "@/assets/navbar/edit_icon.svg";
               <option>Vendor B</option>
             </select>
           </div>
+
+          <div class="sticky bottom-0 bg-white">
+            <div class="flex justify-end gap-4 mr-6">
+              <label
+                for="modal-edit-company"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >Cancel</label
+              >
+              <button
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+          </div>
         </form>
       </main>
-
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-end gap-4 mr-6">
-          <label
-            for="modal-edit-company"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -141,11 +141,12 @@ import editicon from "@/assets/navbar/edit_icon.svg";
   padding: 0;
   overflow-y: hidden;
   overscroll-behavior: contain;
+  max-height: calc(83vh - 5em);
 }
 
 .modal-box-inner-company {
   height: 400px;
-  --tw-scale-x: 0.9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
