@@ -1,9 +1,12 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
+
+const emits = defineEmits(["unlockScrollbar"]);
 </script>
 
 <template>
   <label
+    @click="this.$emit('unlockScrollbar')"
     for="my-modal-3"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add New</label
@@ -14,6 +17,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
+          @click="this.$emit('unlockScrollbar')"
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-0 lg:top-3"
         >
@@ -46,6 +50,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
           <div class="sticky bottom-0 bg-white py-2">
             <div class="flex justify-end gap-4 mr-6">
               <label
+                @click="this.$emit('unlockScrollbar')"
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label

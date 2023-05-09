@@ -1,6 +1,8 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 
+const emits = defineEmits(["unlockScrollbar"]);
+
 //code for tags
 import { ref } from "vue";
 
@@ -31,6 +33,7 @@ function removeLastTag(event) {
 
 <template>
   <label
+    @click="this.$emit('unlockScrollbar')"
     for="my-modal-3"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add New</label
@@ -40,7 +43,11 @@ function removeLastTag(event) {
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label for="my-modal-3" class="cursor-pointer absolute right-3 top-3">
+        <label
+          @click="this.$emit('unlockScrollbar')"
+          for="my-modal-3"
+          class="cursor-pointer absolute right-3 top-3"
+        >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
@@ -203,6 +210,7 @@ function removeLastTag(event) {
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
               <label
+                @click="this.$emit('unlockScrollbar')"
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label

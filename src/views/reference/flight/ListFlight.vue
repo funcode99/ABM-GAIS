@@ -22,6 +22,7 @@ let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
+let lockScrollbar = ref(false);
 
 //for paginations
 let showingValue = ref(1);
@@ -98,7 +99,10 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full this fixed">
+  <div
+    class="flex flex-col w-full this"
+    :class="lockScrollbar === true ? 'fixed' : ''"
+  >
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -122,7 +126,7 @@ const getSessionForSidebar = () => {
               flight class
             </p>
             <div class="flex gap-4">
-              <ModalAdd />
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -231,7 +235,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.no }}</td>
                     <td>{{ data.flight_class }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit />
+                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>

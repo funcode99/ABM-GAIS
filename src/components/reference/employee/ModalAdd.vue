@@ -4,6 +4,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
 
 import { ref } from "vue";
 
+const emits = defineEmits(["unlockScrollbar"]);
 const imageUrl = ref(null);
 
 //for change image
@@ -28,10 +29,8 @@ let minDate = year + "-" + month + "-" + day;
 </script>
 
 <template>
-  
-  <!-- sudah betul trigger nya di label -->
   <label
-  @click="$emit('unlockScrollbar')"
+    @click="this.$emit('unlockScrollbar')"
     for="my-modal-3"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add New</label
@@ -40,9 +39,12 @@ let minDate = year + "-" + month + "-" + day;
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
-
       <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label @click="$emit('unlockScrollbar')" for="my-modal-3" class="cursor-pointer absolute right-3 top-3">
+        <label
+          @click="this.$emit('unlockScrollbar')"
+          for="my-modal-3"
+          class="cursor-pointer absolute right-3 top-3"
+        >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
@@ -271,13 +273,12 @@ let minDate = year + "-" + month + "-" + day;
 
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
-            
-                <label  
-                  @click="$emit('unlockScrollbar')"
-                  for="my-modal-3"
-                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                  >Cancel</label
-                >
+              <label
+                @click="this.$emit('unlockScrollbar')"
+                for="my-modal-3"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                >Cancel</label
+              >
               <button
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
