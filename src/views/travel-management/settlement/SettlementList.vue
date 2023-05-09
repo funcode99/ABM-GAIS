@@ -1,22 +1,23 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
 
-// import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
+import TableTopBar from '@/components/layout/TableTopBar.vue'
+import ModalAddSettlement from '@/components/travel-management/settlement/ModalAddSettlement.vue'
 
-import icon_receive from "@/assets/icon-receive.svg";
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icon_receive from "@/assets/icon-receive.svg"
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
-import settlementdata from "@/utils/Api/tms-settlement/settlementdata.js";
+import settlementdata from "@/utils/Api/tms-settlement/settlementdata.js"
 
-import { ref, onBeforeMount, computed } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
-const sidebar = useSidebarStore();
+import { ref, onBeforeMount, computed } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+const sidebar = useSidebarStore()
 
 //for sort, search, & filter
 const selectedStatus = ref("Status");
@@ -108,10 +109,14 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+
+  <div class="flex flex-col w-full this">
+
     <Navbar />
+
     <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+  
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -120,7 +125,9 @@ const getSessionForSidebar = () => {
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
         ]"
       >
+
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
+          
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -131,7 +138,7 @@ const getSessionForSidebar = () => {
               Settlement
             </p>
             <div class="flex gap-4">
-              <!-- <ModalAddCaNonTravelVue /> -->
+              <ModalAddSettlement />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -345,11 +352,18 @@ const getSessionForSidebar = () => {
               :show-jump-buttons="true"
             />
           </div>
+
         </div>
+
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+
+
     </div>
+    
   </div>
+  
+  <Footer class="fixed bottom-0 left-0 right-0" />
+
 </template>
 
 <style scoped>

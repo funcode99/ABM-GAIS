@@ -93,10 +93,6 @@
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
 }
 
-.v3ti-new-tag:focus {
-
-}
-
 .v3ti-tag {
   background-color: #e4e4e4 !important;
   font-size: 16px !important;

@@ -88,6 +88,101 @@ const accomodationDummy = [
   }
 ]
 
+const tableHeadAirlinesRequestTrip = [
+  {id: 1, title: 'Name'},
+  {id: 2, title: 'Departure'},
+  {id: 3, title: 'Arrival'},
+  {id: 4, title: 'Flight Number'},
+  {id: 5, title: 'Domestic/International'},
+  {id: 6, title: 'Status'},
+  {id: 7, title: 'Action'}
+]
+
+const tableBodyAirlinesRequestTrip = [
+  {
+    id: 1,
+    name: 'Gavin McFarland',
+    departure: 'Jakarta',
+    arrival: 'Surabaya',
+    flightNumber: 'CL-212',
+    flightRegion: 'Domestic',
+    status: 'Pending'
+  },
+  {
+    id: 2,
+    name: 'Evelyn Reid',
+    departure: 'Jakarta',
+    arrival: 'Surabaya',
+    flightNumber: 'CL-212',
+    flightRegion: 'Domestic',
+    status: 'Pending'
+  },
+]
+
+const tableHeadOtherTransportation = [
+  {id: 1, title: 'Name'},
+  {id: 2, title: 'Type'},
+  {id: 3, title: 'From Date'},
+  {id: 4, title: 'To Date'},
+  {id: 5, title: 'Quantity'},
+  {id: 6, title: 'City'},
+  {id: 7, title: 'Status'},
+  {id: 8, title: 'Action'},
+]
+
+const tableBodyOtherTransportation = [
+  {
+    id: 1,
+    name: 'Gavin McFarland',
+    type: 'Rent Car',
+    fromDate: '23/4/23',
+    toDate: '24/4/23',
+    quantity: '1',
+    city: 'Surabaya',
+    status: 'Pending'
+  }  
+]
+
+const tableHeadTravellers = [
+ {id: 1, title: 'Name'},
+ {id: 2, title: 'SN'},
+ {id: 3, title: 'Gender'},
+ {id: 4, title: 'Contact No'},
+ {id: 5, title: 'Department'},
+ {id: 6, title: 'Company'},
+ {id: 7, title: 'Type'},
+ {id: 8, title: 'Max Hotel Fare'},
+ {id: 9, title: 'Flight Class'},
+ {id: 10, title: 'Action'}
+]
+
+const tableBodyTravellers = [
+  {
+    id: 1,
+    name: 'Gavin McFarland',
+    sn: '212123',
+    gender: 'Male',
+    contactNo: '(820)340234-3294',
+    department: 'IT',
+    company: 'PT ABM',
+    type: 'requestor',
+    maxHotelFare: '700.000',
+    flightClass: 'Economy'
+  },
+  {
+    id: 2,
+    name: 'Evelyn Reid',
+    sn: '322232',
+    gender: 'Female',
+    contactNo: '(260)360274-3514',
+    department: 'Sales',
+    company: 'PT ABC',
+    type: 'employee',
+    maxHotelFare: '700.000',
+    flightClass: 'Economy'
+  },
+]
+
 const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
 const columnClass = 'flex flex-col flex-1'
 
@@ -325,12 +420,102 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               
             </div>
 
+            <!-- step 3 form Traveller -->
+            <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
+
+<button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Guest
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadTravellers" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyTravellers" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.sn }}
+        </td>
+        <td>
+          {{ data.gender }}
+        </td>
+        <td>
+          {{ data.contactNo }}
+        </td>
+        <td>
+          {{ data.department }}
+        </td>
+        <td>
+          {{ data.company }}
+        </td>
+        <td>
+          {{ data.type }}
+        </td>
+        <td>
+          {{ data.maxHotelFare }}
+        </td>
+        <td>
+          {{ data.flightClass }}
+        </td>
+        <td>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+            </div>
+
             <!-- step 4 form Airlines -->
             <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
 
               <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
                 + Add Airlines
               </button>
+
+              <div class="overflow-x-auto mt-5">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
+                        {{ data.title }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+                      <td>
+                        {{ data.name }}
+                      </td>
+                      <td>
+                        {{ data.departure }}
+                      </td>
+                      <td>
+                        {{ data.arrival }}
+                      </td>
+                      <td>
+                        {{ data.flightNumber }}
+                      </td>
+                      <td>
+                        {{ data.flightRegion }}
+                      </td>
+                      <td>
+                        {{ data.status }}
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
             </div>
 
@@ -341,6 +526,41 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
                 + Add Other Transportation
               </button>
+
+              <div class="overflow-x-auto mt-5">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
+                        {{ data.title }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+                      <td>
+                        {{ data.name }}
+                      </td>
+                      <td>
+                        {{ data.departure }}
+                      </td>
+                      <td>
+                        {{ data.arrival }}
+                      </td>
+                      <td>
+                        {{ data.flightNumber }}
+                      </td>
+                      <td>
+                        {{ data.flightRegion }}
+                      </td>
+                      <td>
+                        {{ data.status }}
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
             </div>
 
@@ -353,6 +573,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
                 Back
               </button>
+
               <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                 Back
               </button>
@@ -360,6 +581,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               <button v-if="formStep < 4" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                 Next
               </button>
+
               <button v-else disabled class="cursor-disabled bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                 Next
               </button>
@@ -832,7 +1054,6 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
 
     </Modal>
 
-
 </template>
 
 <style scoped>
@@ -842,6 +1063,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
   overflow-y: hidden;
   overscroll-behavior: contain;
 }
+
 .modal-inner {
   --tw-scale-x: 0.90;
   --tw-scale-y: 0.90;
@@ -849,8 +1071,17 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
-/* .table th {
-  background: royalblue !important;
-} */
+
+.table th {
+  background: #015289 !important;
+  border-color: #b9b9b9 !important;
+  border-width: 2px;
+  color: white;
+}
+
+.table td {
+  border-color: #b9b9b9 !important;
+  border-width: 2px;
+}
 
 </style>

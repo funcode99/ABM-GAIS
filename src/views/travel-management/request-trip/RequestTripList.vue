@@ -113,8 +113,7 @@ const tableHeadVoucherTaxi = [
             <div class="flex flex-wrap items-center gap-2">
               <!-- SORT -->
               <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
+                class="capitalize font-JakartaSans text-xs text-black font-medium">
                 Purpose of Trip
               </p>
 
@@ -141,16 +140,14 @@ const tableHeadVoucherTaxi = [
               <!-- FILTER -->
               <div class="flex gap-4 flex-wrap items-center">
                 <button
-                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                >
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]">
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
                   </span>
                   Filter
                 </button>
                 <button
-                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                >
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]">
                   <span>
                     <img :src="icon_reset" class="w-5 h-5" />
                   </span>

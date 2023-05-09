@@ -122,7 +122,8 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div class="flex flex-col w-full this">
+
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -366,4 +367,5 @@ tr th {
 .this {
   overflow-x: hidden;
 }
+
 </style>

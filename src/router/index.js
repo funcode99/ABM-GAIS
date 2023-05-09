@@ -33,8 +33,8 @@ import ListMenu from '@/views/system-configuration/menu/ListMenu.vue'
 import ListSequence from '@/views/system-configuration/sequence/ListSequence.vue'
 
 //travel management system
-import RequestTrip from '@/views/request-trip/ListRequest.vue'
-import FormView from '@/views/request-trip/FormView.vue'
+import RequestTripList from '@/views/travel-management/request-trip/RequestTripList.vue'
+import RequestTripView from '@/views/travel-management/request-trip/RequestTripView.vue'
 import TravelList from '@/views/travel-management/cash-advance/TravelList.vue'
 import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
@@ -47,10 +47,10 @@ import ClaimReimbursementView from "@/views/travel-management/claim-reimbursemen
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
 import CaTravelView from "@/views/approval/cash-advance-travel/CaTravelView.vue"
-import CaNonTravelList from "@/views/approval/cash-advance-nontravel/CaNonTravelList.vue"
-import CaNonTravelView from "@/views/approval/cash-advance-nontravel/CaNonTravelView.vue"
 import RequestTripList from "@/views/approval/request-trip/RequestTripList.vue"
 import RequestTripView from "@/views/approval/request-trip/RequestTripView.vue"
+import CaNonTravelList from "@/views/approval/cash-advance-nontravel/CaNonTravelList.vue"
+import CaNonTravelView from "@/views/approval/cash-advance-nontravel/CaNonTravelView.vue"
 import ApprovalSettlementList from "@/views/approval/settlement/SettlementList.vue"
 import ApprovalSettlementView from "@/views/approval/settlement/SettlementView.vue"
 import ApporvalReimbursementList from "@/views/approval/reimbursement/ReimbursementList.vue"
@@ -277,7 +277,7 @@ const router = createRouter({
     {
       path: '/request',
       name: 'request trip',
-      component: RequestTrip,
+      component: RequestTripList,
       meta: {
         title: 'Request Trip'
       }
@@ -285,7 +285,7 @@ const router = createRouter({
     {
       path: '/view-request',
       name: 'form view request trip',
-      component: FormView,
+      component: RequestTripView,
       meta: {
         title: 'View Request Trip'
       }

@@ -37,6 +37,7 @@ const tableHeadAirlines = [
   {id: 7, title: 'Price'},
   {id: 8, title: 'Confirm'},
 ]
+
 const airlinesDummy = [
   {
     id: 1,
@@ -61,6 +62,7 @@ const airlinesDummy = [
     Price: '832.000'
   }
 ]
+
 const tableHeadAccomodation = [
   {id: 1, title: 'Hotel Name'},
   {id: 2, title: 'Location'},
@@ -69,6 +71,7 @@ const tableHeadAccomodation = [
   {id: 5, title: 'Price'},
   {id: 6, title: 'Confirm'}
 ]
+
 const accomodationDummy = [
 {
     id: 1,
@@ -86,6 +89,72 @@ const accomodationDummy = [
     RoomType: 'Surabaya',
     Price: '1.104.000',
   }
+]
+
+const tableHeadTravellers = [
+ {id: 1, title: 'Name'},
+ {id: 2, title: 'SN'},
+ {id: 3, title: 'Gender'},
+ {id: 4, title: 'Contact No'},
+ {id: 5, title: 'Department'},
+ {id: 6, title: 'Company'},
+ {id: 7, title: 'Type'},
+ {id: 8, title: 'Max Hotel Fare'},
+ {id: 9, title: 'Flight Class'},
+ {id: 10, title: 'Action'}
+]
+
+const tableBodyTravellers = [
+  {
+    id: 1,
+    name: 'Gavin McFarland',
+    sn: '212123',
+    gender: 'Male',
+    contactNo: '(820)340234-3294',
+    department: 'IT',
+    company: 'PT ABM',
+    type: 'requestor',
+    maxHotelFare: '700.000',
+    flightClass: 'Economy'
+  },
+  {
+    id: 2,
+    name: 'Evelyn Reid',
+    sn: '322232',
+    gender: 'Female',
+    contactNo: '(260)360274-3514',
+    department: 'Sales',
+    company: 'PT ABC',
+    type: 'employee',
+    maxHotelFare: '700.000',
+    flightClass: 'Economy'
+  },
+]
+
+const tableHeadTaxiVoucher = [
+  {id: 1, title: 'Name'},
+  {id: 2, title: 'Date'},
+  {id: 3, title: 'Departure'},
+  {id: 4, title: 'Arrival'},
+  {id: 5, title: 'Amount'},
+  {id: 6, title: 'Account Name'},
+  {id: 7, title: 'Remarks'},
+  {id: 8, title: 'Status'},
+  {id: 9, title: 'Action'},
+]
+
+const tableBodyTaxiVoucher = [
+  {
+    id: 1,
+    name: 'Gavin McFarland',
+    date: '223/12/23',
+    departure: 'Airport Sub',
+    arrival: 'Site A',
+    amount: '120.000',
+    accountName: '',
+    remarks: '',
+    status: ''
+  },
 ]
 
 const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
@@ -115,12 +184,12 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
       <div class="modal-box min-h-[500px] relative">
 
         <!-- modal title -->
-        <nav class="sticky p-4 top-0 z-50 bg-[#015289]">
+        <div class="sticky p-4 top-0 z-50 bg-[#015289]">
           <label for="company-business-trip-request-modal" class="cursor-pointer absolute right-4">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </label>
           <p class="font-JakartaSans text-2xl font-semibold text-white">New Request Trip</p>
-        </nav>
+        </div>
 
         <!-- step circle -->
         <div class="flex justify-center pt-3 gap-x-[19px] modal-inner">
@@ -239,6 +308,52 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
                 + Add Guest
               </button>
 
+              <div class="overflow-x-auto mt-5">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th v-for="data in tableHeadTravellers" :key="data.id">
+                        {{ data.title }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="data in tableBodyTravellers" :key="data.id">
+                      <td>
+                        {{ data.name }}
+                      </td>
+                      <td>
+                        {{ data.sn }}
+                      </td>
+                      <td>
+                        {{ data.gender }}
+                      </td>
+                      <td>
+                        {{ data.contactNo }}
+                      </td>
+                      <td>
+                        {{ data.department }}
+                      </td>
+                      <td>
+                        {{ data.company }}
+                      </td>
+                      <td>
+                        {{ data.type }}
+                      </td>
+                      <td>
+                        {{ data.maxHotelFare }}
+                      </td>
+                      <td>
+                        {{ data.flightClass }}
+                      </td>
+                      <td>
+
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
             </div>
 
             <!-- step 4 form Taxi Voucher -->
@@ -247,6 +362,46 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
                 + Add Taxi Voucher
               </button>
+
+              <div class="overflow-x-auto mt-5">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
+                        {{ data.title }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
+                        <td>
+                          {{ data.name }}
+                        </td>
+                        <td>
+                          {{ data.date }}
+                        </td>
+                        <td>
+                          {{ data.departure }}
+                        </td>
+                        <td>
+                          {{ data.arrival }}
+                        </td>
+                        <td>
+                          {{ data.amount }}
+                        </td>
+                        <td>
+                          {{ data.accountName }}
+                        </td>
+                        <td>
+                          {{ data.remarks }}
+                        </td>
+                        <td>
+                          {{ data.status }}
+                        </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
             </div>
 
@@ -562,6 +717,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
   overflow-y: hidden;
   overscroll-behavior: contain;
 }
+
 .modal-inner {
   --tw-scale-x: 0.90;
   --tw-scale-y: 0.90;
@@ -569,8 +725,17 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
-/* .table th {
-  background: royalblue !important;
-} */
+
+.table th {
+  background: #015289 !important;
+  border-color: #b9b9b9 !important;
+  border-width: 2px;
+  color: white;
+}
+
+.table td {
+  border-color: #b9b9b9 !important;
+  border-width: 2px;
+}
 
 </style>
