@@ -67,7 +67,7 @@
           <div class="flex flex-wrap items-center justify-center gap-8 bg-white px-[2%] lg:px-[6%] py-[1%] lg:py-[3%] rounded-lg">
             
             <div class="hidden sm:block">
-                <img :src=loginImage class="w-[292px] h-[200px] md:w-[408px] md:h-[280px] lg:w-[544px] lg:h-[373px] object-scale-down" alt="">
+                <img :src=loginImage class="w-[292px] h-[200px] md:w-[408px] md:h-[280px] 2xl:w-[544px] 2xl:h-[373px] object-scale-down" alt="">
             </div>
        
             <div class="mx-auto">

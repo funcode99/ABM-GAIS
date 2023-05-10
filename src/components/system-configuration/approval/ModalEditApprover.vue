@@ -10,8 +10,35 @@
   let isVisible = ref(false)
   let type = ''
   let modalPaddingHeight = 50
+  let authorities = ref('PM')
 
   const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
+
+  const tableBodyApprover = [
+    {
+
+    },
+  ]
+
+  const requestApproverLines = [
+    {
+      approverId: 20,
+      approverName: 'orang',
+      level: '2',
+      authorities: 'GA',
+    }
+  ]
+
+    const responseExample = [
+      {
+        id_role: 1,
+        role_name: 'Admin',
+        write_menu : ['Request Trip', 'Settlement', 'Cash Advance Travel', 'Cash Advance Non Travel', 'Claim/Reimbursement', 'Pool Car Management', 'List Pool Car'],
+        delete_menu : ['Cash Advance Non Travel', 'Claim/Reimbursement', 'Pool Car Management', 'List Pool Car'],
+      }
+    ]
+
 
 </script>
 
@@ -93,6 +120,12 @@
                 </button>
               </th>
               <th class="relative">
+                <span class="flex justify-center">Authorities</span>
+                <button class="absolute right-0 top-0 bottom-0">
+                  <img :src="arrowicon" class="w-[9px] h-3" />
+                </button>
+              </th>
+              <th class="relative">
                 <span class="flex justify-center">Approver Name</span>
                 <button class="absolute right-1 top-0 bottom-0">
                   <img :src="arrowicon" class="w-[9px] h-3" />
@@ -106,56 +139,37 @@
   
             <tr class="text-center">
               
-              <td
-              >
+              <td v-if="authorities === 'PM'">
                 1
               </td>
-              <td
-                
-              >
-                John Mane
-              </td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editIcon" class="w-6 h-6" />
-                </button>
-                <button>
-                  <img :src="deleteIcon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-  
-            <tr class="text-center">
-            
-              <td
-              >
+              <td v-if="authorities === 'GA'">
                 2
               </td>
-              <td
-                
-              >
-                Mae X
-              </td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editIcon" class="w-6 h-6" />
-                </button>
-  
-                <button>
-                  <img :src="deleteIcon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-  
-            <tr class="text-center">
-            
-              <td
-              >
+              <td v-if="authorities === 'HR'">
                 3
               </td>
-              <td
-              >
-                Nina Max
+              <td v-if="authorities === 'Atasan Langsung'">
+                4
+              </td>
+              <td v-if="authorities === 'Accounting'">
+                5
+              </td>
+              <td v-if="authorities === 'Treasury'">
+                6
+              </td>
+
+              <td>
+                <select v-model="authorities">
+                  <option>PM</option>
+                  <option>GA</option>
+                  <option>HR</option>
+                  <option>Atasan Langsung</option>
+                  <option>Accounting</option>
+                  <option>Treasury</option>
+                </select>
+              </td>
+              <td>
+                John Mane
               </td>
               <td class="flex flex-wrap gap-4 justify-center">
                 <button>
@@ -170,13 +184,9 @@
             <tr class='text-center'>
               <td></td>
               <td></td>
+              <td></td>
               <td class="flex justify-center"><img class="cursor-pointer" :src="iconPlus" alt=""></td>
             </tr>
-  
-            <!-- <tr v-for="data in dataDummy" :key="data.blogId">
-              <td>{{ data.title }}</td>
-              <td>{{ data.name }}</td>
-            </tr> -->
   
           </tbody>
           
@@ -236,5 +246,9 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   overflow-y: auto;
   overscroll-behavior: contain;
+}
+
+th span {
+    text-transform: capitalize;
 }
 </style>

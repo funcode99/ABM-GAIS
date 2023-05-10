@@ -126,7 +126,6 @@
       <Sidebar class="flex-none" />
 
       <!-- slate box -->
-      <!-- lengthCounter < 6 ? 'backgroundHeight' : '',  -->
       <div 
       class="bg-[#e4e4e6] pb-20 pt-10 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"
       :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">

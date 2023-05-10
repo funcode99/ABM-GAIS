@@ -14,6 +14,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg"
 import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
 import settlementdata from "@/utils/Api/tms-settlement/settlementdata.js"
+import Api from '@/utils/Api'
 
 import { ref, onBeforeMount, computed } from "vue"
 import { useSidebarStore } from "@/stores/sidebar.js"
@@ -80,12 +81,7 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = settlementdata;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+
 
 //for searching
 const filteredItems = (search) => {
@@ -106,6 +102,27 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+
+const fetch = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      // Set authorization for api
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/settlement')      
+      instanceArray = api.data.data
+      console.log(instanceArray)
+      sortedData.value = instanceArray
+      lengthCounter = sortedData.value.length
+}
+
+onBeforeMount(() => {
+  fetch()
+  getSessionForSidebar();
+  // instanceArray = settlementdata;
+  // sortedData.value = instanceArray;
+  // lengthCounter = sortedData.value.length;
+});
+
 </script>
 
 <template>
@@ -148,52 +165,58 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SORT, DATE & SEARCH -->
-          <div
-            class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
-          >
-            <div class="flex flex-wrap items-center gap-1">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Status
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedStatus"
-              >
-                <option disabled selected>Status</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.status }}
-                </option>
-              </select>
+          <div class="flex gap-2 px-4 pb-2 justify-between">
 
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                CA Type
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedCatype"
-              >
-                <option disabled selected>Type</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.ca_type }}
-                </option>
-              </select>
+            <div class="flex gap-6">
 
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Date
-              </p>
+              <div class="flex flex-col">
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                >
+                  Status
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedStatus"
+                >
+                  <option disabled selected>Status</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.status }}
+                  </option>
+                </select>
+              </div>
 
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
+              <div class="flex flex-col">
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                >
+                  CA Type
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCatype"
+                >
+                  <option disabled selected>Type</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.ca_type }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col mb-[14px]">
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                >
+                  Date
+                </p>
+                <VueDatePicker
+                  v-model="date"
+                  range
+                  :enable-time-picker="false"
+                  class="my-date"
+                />
+              </div>
+
 
               <div class="flex gap-4 items-center">
                 <button
@@ -214,7 +237,8 @@ const getSessionForSidebar = () => {
                 </button>
               </div>
             </div>
-            <div class="py-2">
+
+            <div class="flex py-2">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -243,6 +267,7 @@ const getSessionForSidebar = () => {
                 />
               </label>
             </div>
+
           </div>
 
           <!-- SHOWING -->
@@ -266,7 +291,7 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg"
               >
                 <thead
                   class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -301,7 +326,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -310,13 +335,13 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.settlement_no }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.created_at.slice(0,10) }}</td>
+                    <td>{{ data.no_settlement }}</td>
                     <td>{{ data.requestor }}</td>
-                    <td>{{ data.ca }}</td>
-                    <td>{{ data.total }}</td>
-                    <td>{{ data.status }}</td>
+                    <td>{{ data.no_ca }}</td>
+                    <td>{{ data.nominal_ca }}</td>
+                    <td>{{ data.code_status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <router-link to="#">
                         <button>
