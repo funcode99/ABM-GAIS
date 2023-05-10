@@ -5,8 +5,6 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/reimbursement/ModalAdd.vue";
 import ModalEdit from "@/components/reference/reimbursement/ModalEdit.vue";
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
@@ -24,6 +22,7 @@ let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
+let lockScrollbar = ref(false);
 
 //for paginations
 let showingValue = ref(1);
@@ -102,7 +101,10 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full this fixed">
+  <div
+    class="flex flex-col w-full this"
+    :class="lockScrollbar === true ? 'fixed' : ''"
+  >
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
@@ -126,7 +128,7 @@ const getSessionForSidebar = () => {
             </p>
 
             <div class="flex gap-4">
-              <ModalAdd />
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -236,7 +238,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.reimbursement_type }}</td>
                     <td>{{ data.parent_type }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit />
+                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>

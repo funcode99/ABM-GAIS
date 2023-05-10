@@ -3,10 +3,13 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import iconUpload from "@/assets/icon_upload.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+
+const emits = defineEmits(["unlockScrollbar"]);
 </script>
 
 <template>
   <label
+  @click="this.$emit('unlockScrollbar')"
     for="my-modal-claim"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add New</label
@@ -17,6 +20,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
+        @click="this.$emit('unlockScrollbar')"
           for="my-modal-claim"
           class="cursor-pointer absolute right-3 top-0 lg:top-3"
         >
@@ -30,9 +34,9 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
       </nav>
 
       <main class="modal-box-inner-claim pb-8">
-        <form class="pt-4">
+        <form>
           <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+            class="flex justify-between px-6 items-center gap-2"
           >
             <div class="mb-6 w-full">
               <label
@@ -57,7 +61,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
                 <span class="text-red">*</span>
               </div>
               <div
-                class="relative border border-slate-300 rounded-lg py-2 mr-6"
+                class="relative border border-slate-300 rounded-lg py-[6px]"
               >
                 <input
                   type="file"
@@ -80,7 +84,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
           </div>
 
           <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+            class="flex justify-between px-6 items-center gap-2"
           >
             <div class="mb-6 w-full">
               <label
@@ -115,7 +119,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
           </div>
 
           <div
-            class="flex justify-between mx-4 lg:mx-0 lg:justify-around items-center gap-2"
+            class="flex justify-between px-6 items-center gap-2"
           >
             <div class="mb-6 w-full">
               <label
@@ -158,7 +162,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
         </form>
 
         <!-- INNER TABLE -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto px-6">
           <table class="table table-compact w-full">
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
@@ -244,7 +248,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 
 .modal-box-inner-claim {
   height: 450px;
-  --tw-scale-x: 0.9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))

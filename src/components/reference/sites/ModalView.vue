@@ -28,10 +28,15 @@ import iconview from "@/assets/view_icon.svg";
 //     removeTag(tags.value.length - 1);
 //   }
 // }
+
+const emits = defineEmits(["unlockScrollbar"]);
 </script>
 
 <template>
-  <label for="modal-view-site" class="cursor-pointer"
+  <label
+    @click="this.$emit('unlockScrollbar')"
+    for="modal-view-site"
+    class="cursor-pointer"
     ><img :src="iconview" class="w-6 h-6"
   /></label>
 
@@ -40,6 +45,7 @@ import iconview from "@/assets/view_icon.svg";
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
+          @click="this.$emit('unlockScrollbar')"
           for="modal-view-site"
           class="cursor-pointer absolute right-3 top-3"
         >

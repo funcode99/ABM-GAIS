@@ -12,7 +12,6 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-// import settlementdata from "@/utils/Api/tms-settlement/settlementdata.js";
 import claimdata from "@/utils/Api/tms-claim-reimbursement/claimdata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
@@ -28,6 +27,7 @@ let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
+let lockScrollbar = ref(false);
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -86,13 +86,32 @@ onBeforeMount(() => {
   lengthCounter = sortedData.value.length;
 });
 
+//for searching
+const filteredItems = (search) => {
+  sortedData.value = instanceArray;
+  const filteredR = sortedData.value.filter((item) => {
+    (item.claim_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    return (
+      (item.claim_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1)
+    );
+  });
+  sortedData.value = filteredR;
+  lengthCounter = sortedData.value.length;
+  onChangePage(1);
+};
+
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div
+    class="flex flex-col w-full this"
+    :class="lockScrollbar === true ? 'fixed' : ''"
+  >
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
@@ -115,7 +134,7 @@ const getSessionForSidebar = () => {
               Claim Reimbursement
             </p>
             <div class="flex gap-4">
-              <ModalAdd />
+              <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar"/>
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -125,52 +144,60 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SORT & DATE -->
-          <div class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-4">
+          <div
+            class="grid grid-flow-col auto-cols-max justify-between gap-2 px-4 pb-4"
+          >
             <div class="flex flex-wrap items-center gap-4">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Status
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedStatus"
-              >
-                <option disabled selected>Status</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.type_status }}
-                </option>
-              </select>
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Status
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedStatus"
+                >
+                  <option disabled selected>Status</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.type_status }}
+                  </option>
+                </select>
+              </div>
 
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Item Type
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedCatype"
-              >
-                <option disabled selected>Type</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.type }}
-                </option>
-              </select>
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Item Type
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCatype"
+                >
+                  <option disabled selected>Type</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.type }}
+                  </option>
+                </select>
+              </div>
 
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Date
-              </p>
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Date
+                </p>
 
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
+                <VueDatePicker
+                  v-model="date"
+                  range
+                  :enable-time-picker="false"
+                  class="my-date"
+                />
+              </div>
 
-              <div class="flex gap-4 items-center">
+              <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                 >
@@ -188,6 +215,36 @@ const getSessionForSidebar = () => {
                   Reset
                 </button>
               </div>
+            </div>
+
+            <div class="pt-6 flex md:mx-0">
+              <label class="relative block">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                  <svg
+                    aria-hidden="true"
+                    class="w-5 h-5 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                </span>
+                <input
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search..."
+                  type="text"
+                  name="search"
+                  v-model="search"
+                  @keyup="filteredItems(search)"
+                />
+              </label>
             </div>
           </div>
 

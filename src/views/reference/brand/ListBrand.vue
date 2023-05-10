@@ -24,6 +24,7 @@ let sortedData = ref([]);
 const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
+let lockScrollbar = ref(false);
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -119,7 +120,10 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col w-full this fixed">
+  <div
+    class="flex flex-col w-full this"
+    :class="lockScrollbar === true ? 'fixed' : ''"
+  >
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -143,7 +147,7 @@ const getSessionForSidebar = () => {
               Brand
             </p>
             <div class="flex gap-4">
-              <ModalAdd />
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -153,25 +157,29 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SORT & SEARCH -->
-          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+          <div
+            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4"
+          >
             <div class="flex flex-wrap items-center gap-4">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Company
-              </p>
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Company
+                </p>
 
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedCompany"
-              >
-                <option disabled selected>Company</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.company }}
-                </option>
-              </select>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCompany"
+                >
+                  <option disabled selected>Company</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.company }}
+                  </option>
+                </select>
+              </div>
 
-              <div class="flex gap-4 items-center">
+              <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   @click="filterDataByCompany"
@@ -193,7 +201,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="py-2 flex md:mx-0">
+            <div class="pt-6 flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -225,7 +233,7 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
@@ -293,7 +301,9 @@ const getSessionForSidebar = () => {
                     <td>{{ data.brand_name }}</td>
                     <td>{{ data.company }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit />
+                      <ModalEdit
+                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                      />
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>

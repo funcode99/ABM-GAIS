@@ -139,34 +139,39 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
             <div class="flex flex-wrap items-center gap-4">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Status
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedType"
-              >
-                <option disabled selected>status</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.status }}
-                </option>
-              </select>
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Date
-              </p>
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Status
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedType"
+                >
+                  <option disabled selected>status</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.status }}
+                  </option>
+                </select>
+              </div>
 
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Date
+                </p>
 
-              <div class="flex gap-4 items-center">
+                <VueDatePicker
+                  v-model="date"
+                  range
+                  :enable-time-picker="false"
+                  class="my-date"
+                />
+              </div>
+
+              <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                 >
@@ -186,7 +191,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="py-2 flex md:mx-0">
+            <div class="pt-6 flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -218,7 +223,7 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"

@@ -2,11 +2,11 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import ModalJurnal from "@/components/tms-claim-reimbursement/ModalJurnal.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
-import icon_jurnal from "@/assets/icon_jurnal.svg";
 
 import { onBeforeMount } from "vue";
 
@@ -88,12 +88,7 @@ const getSessionForSidebar = () => {
             </div>
 
             <div class="flex">
-              <button
-                class="btn btn-sm bg-[#2970FF] border-none mx-4 capitalize hover:bg-[#004EEB]"
-              >
-                <img :src="icon_jurnal" class="w-6 h-6" />
-                <span>Jurnal</span>
-              </button>
+              <ModalJurnal />
             </div>
           </div>
 

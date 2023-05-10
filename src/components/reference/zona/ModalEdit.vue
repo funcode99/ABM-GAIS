@@ -2,6 +2,7 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
+const emits = defineEmits(["unlockScrollbar"]);
 //code for tags
 import { ref } from "vue";
 
@@ -31,7 +32,10 @@ function removeLastTag(event) {
 </script>
 
 <template>
-  <label for="modal-edit-zona" class="cursor-pointer"
+  <label
+    @click="this.$emit('unlockScrollbar')"
+    for="modal-edit-zona"
+    class="cursor-pointer"
     ><img :src="editicon" class="w-6 h-6"
   /></label>
 
@@ -40,6 +44,7 @@ function removeLastTag(event) {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
+          @click="this.$emit('unlockScrollbar')"
           for="modal-edit-zona"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -103,6 +108,7 @@ function removeLastTag(event) {
           <div class="sticky bottom-0 bg-white py-2">
             <div class="flex justify-end gap-4 mr-6">
               <label
+                @click="this.$emit('unlockScrollbar')"
                 for="modal-edit-zona"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
