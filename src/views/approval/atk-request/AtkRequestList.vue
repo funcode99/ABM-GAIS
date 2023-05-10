@@ -74,14 +74,13 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "Created Date", jsonData: "created_date" },
-  { Id: 2, title: "Request No", jsonData: "request_no" },
-  { Id: 3, title: "Requestor", jsonData: "requestor" },
-  { Id: 4, title: "ID Item", jsonData: "id_item" },
-  { Id: 5, title: "Nama Item", jsonData: "quantity" },
-  { Id: 6, title: "Quantity", jsonData: "status" },
-  { Id: 7, title: "Status", jsonData: "status" },
-  { Id: 8, title: "Actions" },
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Created Date", jsonData: "created_date" },
+  { Id: 3, title: "Request No", jsonData: "request_no" },
+  { Id: 4, title: "Requestor", jsonData: "requestor" },
+  { Id: 5, title: "Quantity", jsonData: "status" },
+  { Id: 6, title: "Status", jsonData: "status" },
+  { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -124,7 +123,7 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div class="flex flex-col w-full this">
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -157,37 +156,41 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Item
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedType"
-              >
-                <option disabled selected>Item</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.name_item }}
-                </option>
-              </select>
-
-              <div class="flex flex-wrap gap-4 items-center">
+              <div>
                 <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
-                  Date
+                  Item
                 </p>
-
-                <VueDatePicker
-                  v-model="date"
-                  range
-                  :enable-time-picker="false"
-                  class="my-date lg:w-10"
-                />
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedType"
+                >
+                  <option disabled selected>Item</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.name_item }}
+                  </option>
+                </select>
               </div>
 
               <div class="flex flex-wrap gap-4 items-center">
+                <div>
+                  <p
+                    class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                  >
+                    Date
+                  </p>
+
+                  <VueDatePicker
+                    v-model="date"
+                    range
+                    :enable-time-picker="false"
+                    class="my-date lg:w-10"
+                  />
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   @click="filterDataByType"
@@ -209,7 +212,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="py-2 pl-8">
+            <div class="pt-6 w-full">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -241,7 +244,7 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
@@ -280,7 +283,7 @@ const getSessionForSidebar = () => {
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-xs"
+                      class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-sm"
                       @click="sortList(`${data.jsonData}`)"
                     >
                       <span class="flex justify-center items-center gap-1">
@@ -302,29 +305,26 @@ const getSessionForSidebar = () => {
                     )"
                     :key="data.no"
                   >
-                    <td>
+                    <td class="p-0">
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td class="font-JakartaSans font-normal text-xs">
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.no }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.created_date }}
                     </td>
-                    <td class="font-JakartaSans font-normal text-xs">
+                    <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.request_no }}
                     </td>
-                    <td class="font-JakartaSans font-normal text-xs">
+                    <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.requestor }}
                     </td>
-                    <td class="font-JakartaSans font-normal text-xs">
-                      {{ data.id_item }}
-                    </td>
-                    <td class="font-JakartaSans font-normal text-xs">
-                      {{ data.name_item }}
-                    </td>
-                    <td class="font-JakartaSans font-normal text-xs">
+                    <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.quantity }}
                     </td>
-                    <td class="font-JakartaSans font-normal text-xs">
-                      {{ data.status }}
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.status_type }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link to="/viewapprovalatkrrequest">

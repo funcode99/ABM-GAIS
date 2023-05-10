@@ -210,7 +210,7 @@ const datatravel = [
         id: 24,
         no: 24,
         created_date: '2023-04-20',
-        ca_no: 'CA-023',
+        ca_no: 'CA-024',
         name: 'Braitwaite',
         total: 300000,
         status: 'Rejected'
@@ -219,7 +219,7 @@ const datatravel = [
         id: 25,
         no: 25,
         created_date: '2023-04-20',
-        ca_no: 'CA-023',
+        ca_no: 'CA-025',
         name: 'Steven G',
         total: 300000,
         status: 'Rejected'
