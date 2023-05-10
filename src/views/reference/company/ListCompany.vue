@@ -12,6 +12,8 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import dataCompany from "@/utils/Api/reference/companydata.js";
 
+import Api from "@/utils/Api";
+
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -75,6 +77,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
+  fetch();
   instanceArray = dataCompany;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -98,6 +101,17 @@ const filteredItems = (search) => {
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+//get all company
+const fetch = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/");
+  // console.log(res.data.data);
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
 };
 </script>
 
@@ -129,7 +143,7 @@ const getSessionForSidebar = () => {
               company
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -230,22 +244,26 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="index"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.code }}</td>
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.parent }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.company_code }}</td>
+                    <td>{{ data.company_name }}</td>
+                    <td>{{ data.parent_company }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalView @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
-                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
+                      <ModalView
+                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                      />
+                      <ModalEdit
+                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                      />
                       <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
