@@ -115,39 +115,6 @@ const fetch = async () => {
   lengthCounter = sortedData.value.length;
 };
 
-//delete company
-// const deleteCompany = async (id) => {
-//   Swal.fire({
-//     title: "Are you sure?",
-//     text: "You won't be able to revert this!",
-//     icon: "warning",
-//     showCancelButton: true,
-//     confirmButtonColor: "#3085d6",
-//     cancelButtonColor: "#d33",
-//     confirmButtonText: "Yes, delete it!",
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-//       Api.delete(`/company/delete_data/${id}`, {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//       }).then((res) => {
-//         Swal.fire({
-//           title: "Successfully",
-//           text: "Users has been deleted.",
-//           icon: "success",
-//           showCancelButton: false,
-//           confirmButtonColor: "#3085d6",
-//           confirmButtonText: "Ok",
-//         });
-//         // dispatch(fetchAllUsers());
-//       });
-//     } else {
-//       return;
-//     }
-//   });
-// };
-
 const deleteCompany = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;

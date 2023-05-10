@@ -2,7 +2,32 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconUpload from "@/assets/icon_upload.svg";
 
+import Api from "@/utils/Api";
+
+import { ref, onMounted } from "vue";
+
 const emits = defineEmits(["unlockScrollbar"]);
+
+let sortedData = ref([]);
+const selectedImage = ref(null);
+let selectedCompany = ref("Company");
+let selectedVendor = ref("Vendor");
+
+//for get company in select
+const fetch = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/");
+  sortedData.value = res.data.data;
+};
+
+onMounted(fetch);
+
+//for image logo
+const onFileSelected = (event) => {
+  const file = event.target.files[0];
+  selectedImage.value = file ? file.name : null;
+};
 </script>
 
 <template>
@@ -68,10 +93,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedCompany"
             >
               <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
+              <option v-for="company in sortedData" :value="company.id">
+                {{ company.parent_company }}
+              </option>
             </select>
           </div>
 
@@ -89,11 +116,13 @@ const emits = defineEmits(["unlockScrollbar"]);
                 name="logo_company"
                 id="logo_company"
                 class="hidden border"
+                accept="image/*"
+                @change="onFileSelected"
               />
               <label for="logo_company">
                 <span
                   class="font-JakartaSans font-medium text-sm cursor-pointer mx-4"
-                  >Logo Company</span
+                  >{{ selectedImage || "Logo Company" }}</span
                 >
                 <img
                   :src="iconUpload"
@@ -112,10 +141,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedVendor"
             >
               <option disabled selected>Vendor</option>
-              <option>Vendor A</option>
-              <option>Vendor B</option>
+              <option v-for="vendor in sortedData" :value="vendor.id">
+                {{ vendor.id_vendor }}
+              </option>
             </select>
           </div>
 
