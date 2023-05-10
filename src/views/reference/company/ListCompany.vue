@@ -10,7 +10,8 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import dataCompany from "@/utils/Api/reference/companydata.js";
+// import dataCompany from "@/utils/Api/reference/companydata.js";
+import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
@@ -78,7 +79,7 @@ const sortList = (sortBy) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
-  instanceArray = dataCompany;
+  // instanceArray = dataCompany;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -112,6 +113,70 @@ const fetch = async () => {
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+};
+
+//delete company
+// const deleteCompany = async (id) => {
+//   Swal.fire({
+//     title: "Are you sure?",
+//     text: "You won't be able to revert this!",
+//     icon: "warning",
+//     showCancelButton: true,
+//     confirmButtonColor: "#3085d6",
+//     cancelButtonColor: "#d33",
+//     confirmButtonText: "Yes, delete it!",
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       Api.delete(`/company/delete_data/${id}`, {
+//         headers: {
+//           Authorization: `Bearer ${token}`,
+//         },
+//       }).then((res) => {
+//         Swal.fire({
+//           title: "Successfully",
+//           text: "Users has been deleted.",
+//           icon: "success",
+//           showCancelButton: false,
+//           confirmButtonColor: "#3085d6",
+//           confirmButtonText: "Ok",
+//         });
+//         // dispatch(fetchAllUsers());
+//       });
+//     } else {
+//       return;
+//     }
+//   });
+// };
+
+const deleteCompany = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/company/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Company has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetch();
+      });
+    } else {
+      return;
+    }
+  });
 };
 </script>
 
@@ -264,7 +329,7 @@ const fetch = async () => {
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       />
-                      <button>
+                      <button @click="deleteCompany(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
