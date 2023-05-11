@@ -107,9 +107,7 @@
         <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
         <hr class="border border-black">
   
-        <table
-          class="table table-zebra table-compact border w-full rounded-lg"
-        >
+        <table class="table table-zebra table-compact border w-full rounded-lg">
   
           <thead class="text-center font-Montserrat text-sm font-bold">
             <tr class="">
@@ -168,6 +166,7 @@
                   <option>Treasury</option>
                 </select>
               </td>
+              
               <td>
                 John Mane
               </td>
@@ -210,6 +209,7 @@
             </button>
           </div>
       </div>
+
     </div>
 
   
@@ -251,4 +251,5 @@
 th span {
     text-transform: capitalize;
 }
+
 </style>
