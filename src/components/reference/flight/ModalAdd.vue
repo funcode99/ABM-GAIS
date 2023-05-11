@@ -1,7 +1,39 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
+
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+let newFlightClass = ref("");
+
 const emits = defineEmits(["unlockScrollbar"]);
+
+const saveFlightClass = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  try {
+    await Api.post(`/flight/store`, {
+      flight_name: newFlightClass.value,
+    });
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    router.replace({ path: "/flight" });
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
@@ -31,7 +63,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-flight">
-        <form class="pt-4">
+        <form class="pt-4" @submit.prevent="saveFlightClass">
           <div class="mb-6 px-4 w-full">
             <label
               for="flight"
@@ -44,6 +76,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Flight Class"
               required
+              v-model="newFlightClass"
             />
           </div>
 
@@ -56,6 +89,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Cancel</label
               >
               <button
+                type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Save
