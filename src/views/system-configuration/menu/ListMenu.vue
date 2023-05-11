@@ -78,7 +78,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-      const api = await Api.post(`/menu/update_data/${editDataId}`, {
+      const api = await Api.post(`/menu/update_data/${editDataId.value}`, {
         menu: formEditState.menu.menuName,
         description: 'kosong',
         url: formEditState.menu.url,
