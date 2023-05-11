@@ -8,25 +8,28 @@
     import router from '@/router'
     
     // import untuk approval table
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, onBeforeMount, computed } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
+    import { useFormEditStore } from '@/stores/edit-modal.js'
+    import { useFormAddStore } from '@/stores/add-modal.js'
+    let formState = useFormAddStore()
+    let formEditState = useFormEditStore()
     const sidebar = useSidebarStore()
 
-    // import untuk user table
     let sortedData = ref([])
+    let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
     let lengthCounter = 0
+    let editDataId = ref(0)
 
-    const deleteData = (event) => {
-      Api.delete(`/menu/delete_data/${event}`)
-      // console.log('ini adalah id ke ' + event)
-      // console.log(sortedData.value.length)
+    const deleteData = async (event) => {
+     await Api.delete(`/menu/delete_data/${event}`)
       if (sortedData.value.length == 1) {
         router.go()
       } else {
@@ -34,16 +37,63 @@
       }
     }
 
-    const editMenu = async (data) => {
+    const addNewMenu = async () => {
+      // state nya butuh waktu
+      console.log(formState.menu.menuName)
+      setTimeout(callApi, 500)
+    }
+
+    const callApi = async () => {
+
       const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.post(`/menu/update_data/${data[0]}`, {
-        menu_name: data[1],
-        id_status_menu: data[2],
-        parent: '0',
-        is_parent: '0'
+      const api = await Api.post('/menu/store', 
+      {
+        menu: formState.menu.menuName,
+        sort: formState.menu.sort,
+        parent_id: 1,
+        id_status_menu: 1,
+        use_sequence: formState.menu.sequence,
+        description: 'kosong',
+        url: formState.menu.url,
+        icon: formState.menu.icon
       })
+      fetch()
+    }
+
+    const editMenu = async (data) => {
+
+      editDataId.value = data
+      // masukin argumen membuat nya jadi lama
+      setTimeout(callEditApi, 1000)
+    }
+
+    const callEditApi = async () => {
+
+      console.log(formEditState.menu.menuName)
+      console.log(formEditState.menu.url)
+      console.log(formEditState.menu.icon)
+      
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+      const api = await Api.post(`/menu/update_data/${editDataId.value}`, {
+        menu: formEditState.menu.menuName,
+        description: 'kosong',
+        url: formEditState.menu.url,
+        icon: formEditState.menu.icon,
+        sort: 1,
+        parent_id: 1,
+        use_sequence: 1,
+        id_status_menu: 1,
+      })
+      console.log(api)
+      fetch()        
+      } catch (error) {
+        console.log(error)
+      }
+
     }
 
     const selectAll = (checkValue) => { 
@@ -66,7 +116,7 @@
     const tableHead = [
       {Id: 1, title: 'No', jsonData: 'No'},
       {Id: 2, title: 'Name', jsonData: 'Name'},
-      // {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
+      {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
       {Id: 4, title: 'Status', jsonData: 'Status'},
       {Id: 5, title: 'Actions'}
     ]
@@ -87,7 +137,7 @@
       const token = JSON.parse(localStorage.getItem('token'))
       // Set authorization for api
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/menu')      
+      const api = await Api.get('/menu/get')      
       instanceArray = api.data.data
       sortedData.value = instanceArray
       lengthCounter = sortedData.value.length
@@ -131,7 +181,7 @@
       :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
-        <TableTopBar title="Menu" @do-search="filteredItems" modalAddType="menu" />
+        <TableTopBar title="Menu" @increase-menu="addNewMenu " @do-search="filteredItems" modalAddType="menu" />
         
         <!-- actual table -->
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
@@ -163,9 +213,8 @@
                 <tbody>
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
-    
-                  
-                      <tr v-for="(data, key) in sortedData" :key="data.id">
+              
+                      <tr @confirm-delete="hiddenRow = true" :class="hiddenRow ? 'hidden' : ''" v-for="(data, key) in sortedDataReactive" :key="data.id">
                         <td>
                           <input type="checkbox" name="">
                         </td>
@@ -173,19 +222,17 @@
                           {{ data.id }} 
                         </td>
                         <td>
-                          {{ data.menu_name }}
+                          {{ data.menu }}
+                          <!-- <img class="w-2 h-2" :src="`http://103.165.130.157:8086/` + data.icon_path" /> -->
                         </td>
-                        <!-- <td v-if="data.parent_name !== null">
-                          {{ data.parent_name }}
-                        </td> -->
-                        <!-- <td v-else>
-                          Parent
-                        </td> -->
+                        <td>
+                          {{ data.parent_id }}
+                        </td>
                         <td>
                           {{ data.id_status_menu }}
                         </td>
                         <td class="flex flex-wrap gap-4 justify-center">
-                          <ModalEditMenu @change-menu="editMenu" :identity="[data.id, data.menu_name, data.id_status_menu]" />
+                          <ModalEditMenu @change-menu="editMenu(data.id)" :identity="[data.id, data.menu_name, data.id_status_menu]" />
                           <ModalDelete @confirm-delete="deleteData(data.id)" />
                         </td>
                       </tr>

@@ -2,8 +2,38 @@
   import iconClose from "@/assets/navbar/icon_close.svg";
   import editIcon from "@/assets/navbar/edit_icon.svg";
 
-  import { ref } from 'vue'
+  import { ref, onBeforeMount } from 'vue'
   import { Modal } from 'usemodal-vue3'
+  import Api from '@/utils/Api'
+
+  import { useFormEditStore } from '@/stores/edit-modal.js'
+
+  let formState = useFormEditStore()
+
+  const updatePhoto = (event) => {
+  file.value = event.target.files[0]
+}
+
+  const submitEdit = () => {
+    try {     
+        
+        if(sequence) {
+          sequence.value = 1
+        } else {
+          sequence.value = 0
+        }
+
+        formState.menu.menuName = menuName.value
+        formState.menu.sort = sort.value
+        formState.menu.sequence = sequence.value
+        formState.menu.url = url.value
+        formState.menu.icon = file.value
+
+    } catch (error) {
+        console.error(error)
+    }
+
+}
 
   let isVisible = ref(false)
   let type = '' 
@@ -13,8 +43,26 @@
     identity: Array
   })
 
-  let menu = ref(props.identity[1])
-  let idStatusMenu = ref(props.identity[2])
+  // let menu = ref(props.identity[1])
+  // let idStatusMenu = ref(props.identity[2])
+
+  onBeforeMount(() => {
+    getMenuStatus()
+  })
+
+  const getMenuStatus = async () => {
+      const status = await Api.get('/menu/get_status/status')
+      let getStatus = status.data.data
+      statusMenu.value = getStatus
+  }
+
+let menuName = ref('')
+let url = ref('')
+let idStatusMenu = ref(12)
+let sort = ref(1)
+let sequence = ref(true)
+let statusMenu = ref(null)
+const file = ref({})
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -29,32 +77,43 @@
       
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
-
     <div class="px-8">
-      <nav class="sticky top-0 z-50 bg-white py-4">
+      <div class="sticky top-0 z-50 bg-white py-4">
             <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
             <p class="font-JakartaSans text-2xl font-semibold">Edit Menu</p>
             <div className="divider m-0"></div>
-      </nav>
+      </div>
   
-      <div class="mb-3">
+      <div class="mb-3 modal-box-inner px-4">
         
         <div class="mb-3">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-            >Menu Name<span class="text-red">*</span></label>
-          <input
-          v-model="menu"
-            type="text"
-            id="name"
-            placeholder="Nama Menu"
+            <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              Menu Name<span class="text-red-star">*</span>
+            </label>
+            <input
             :class="inputStylingClass"
-            required
-          />
+            v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
         </div>
+
+        <div class="mb-3">
+            <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              URL<span class="text-red-star">*</span>
+            </label>
+            <input
+            :class="inputStylingClass"
+            v-model="url" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+        </div>
+
+          <div class="mb-3">
+            <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              Icon<span class="text-red-star">*</span>
+            </label>
+            <input
+            :class="inputStylingClass"
+            @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+          </div>
   
         <div class="mb-3 text-left">
             <h1>Parent Menu</h1>
@@ -65,60 +124,30 @@
         </div>
   
         <div class="mb-3 text-left">
-            <h1>Status</h1>
-            <select v-model="idStatusMenu" :class="inputStylingClass">
-                <option selected hidden disabled value="">Active</option>
-                <option value="">Option A</option>
-            </select>
+              <h1>Status</h1>
+              <select :class="inputStylingClass" v-model="idStatusMenu">
+                  <option v-for="data in statusMenu" :key="data.code">
+                    {{ data.status }}
+                  </option>
+              </select>
+          </div>
+
+        <div class="mb-3 text-left">
+              <h1>Sort</h1>
+              <select :class="inputStylingClass" v-model="sort">
+                  <option>1</option>
+                  <option>2</option>
+              </select>
         </div>
   
-        <div class="flex gap-2 mb-3">
-            <input type="checkbox">
-            <h1>Use Sequence</h1>
-        </div>
-  
-        <!-- <div class="text-left mb-3">
-            <h1>Permission <span>*</span></h1>
-            <table class="text-center">
-                <thead>
-                    <tr class="text-center">
-                        <th></th>
-                        <th>Create</th>
-                        <th>Read</th>
-                        <th>Update</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="text-center">
-                        <td>Permission</td>
-                        <td><input type="checkbox"></td>
-                        <td><input type="checkbox"></td>
-                        <td><input type="checkbox"></td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> -->
+        <div class="flex gap-2 mb-2">
+              <input type="checkbox" v-model="sequence">
+              <h1>Use Sequence</h1>
+              <h1>{{ sequence }}</h1>
+          </div>
   
       </div>
   
-      <!-- <div class="sticky bottom-0 bg-white py-4">
-        <div className="divider m-0 pb-4"></div>
-        <div class="flex justify-end gap-4">
-          <button
-          @click="isVisible = false"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">
-            Cancel
-          </button>
-          <button
-          @click="$emit('changeMenu', [props.identity[0], menu, idStatusMenu])"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div> -->
 
       <div class="sticky bottom-0 bg-white py-8">
           <div className="divider m-0 pb-4 w-full"></div>
@@ -126,10 +155,13 @@
             <label @click="isVisible = !isVisible" class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
               Cancel
             </label>
-            <button
+            <button @click="submitEdit">
+              <button 
+              @click="$emit('changeMenu')"
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-            >
-              Save
+              >
+                Save
+              </button>
             </button>
           </div>
       </div>

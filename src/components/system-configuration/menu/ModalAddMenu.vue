@@ -1,29 +1,53 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 // cuma gara2 lupa import ref sidebar gua error terus anjing
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import Api from '@/utils/Api'
 
+import { useFormAddStore } from '@/stores/add-modal.js'
+let formState = useFormAddStore()
+
 let menuName = ref('')
+let url = ref('')
 let idStatusMenu = ref('Active')
+let sort = ref(1)
+let sequence = ref(0)
+let statusMenu = ref(null)
+const file = ref({})
 
-const submit = async () => {
-  // salah di front-end berarti wkwk string gabisa diubah jadi number
-      if(idStatusMenu === 'Active') {
-        idStatusMenu.value = 1
-        console.log(idStatusMenu.value)
+const updatePhoto = (event) => {
+  file.value = event.target.files[0]
+}
+
+const submit = () => {
+
+  try {     
+      if(sequence) {
+        sequence.value = 1
+      } else {
+        sequence.value = 0
       }
-      // console.log(idStatusMenu)
-      const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.post('/menu/store', {
-        menu_name: menuName.value,
-        id_status_menu: 1
-      })
-    }
+      formState.menu.menuName = menuName.value
+      formState.menu.sort = sort.value
+      formState.menu.sequence = sequence.value
+      formState.menu.url = url.value
+      formState.menu.icon = file.value
+  } catch (error) {
+      console.error(error)
+  }
+}
 
-    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  onBeforeMount(() => {
+    getMenuStatus()
+  })
+
+const getMenuStatus = async () => {
+      const status = await Api.get('/menu/get_status/status')
+      let getStatus = status.data.data
+      statusMenu.value = getStatus
+}
+
+const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -58,6 +82,24 @@ const submit = async () => {
             v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
           </div>
 
+          <div class="mb-3">
+            <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              URL<span class="text-red-star">*</span>
+            </label>
+            <input
+            :class="inputStylingClass"
+            v-model="url" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+          </div>
+
+          <div class="mb-3">
+            <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              Icon<span class="text-red-star">*</span>
+            </label>
+            <input
+            :class="inputStylingClass"
+            @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+          </div>
+
           <div class="mb-3 text-left">
               <h1>Parent Menu</h1>
               <select :class="inputStylingClass">
@@ -69,39 +111,25 @@ const submit = async () => {
           <div class="mb-3 text-left">
               <h1>Status</h1>
               <select :class="inputStylingClass" v-model="idStatusMenu">
-                  <option>Active</option>
-                  <option>Option A</option>
+                  <option v-for="data in statusMenu" :key="data.code">
+                    {{ data.status }}
+                  </option>
+              </select>
+          </div>
+
+          <div class="mb-3 text-left">
+              <h1>Sort</h1>
+              <select :class="inputStylingClass" v-model="sort">
+                  <option>1</option>
+                  <option>2</option>
               </select>
           </div>
 
           <div class="flex gap-2 mb-3">
-              <input type="checkbox">
+              <input type="checkbox" v-model="sequence">
               <h1>Use Sequence</h1>
+              <h1>{{ sequence }}</h1>
           </div>
-
-        <!-- <div class="text-left mb-3">
-            <h1>Permission <span>*</span></h1>
-            <table class="text-center table">
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Create</th>
-                        <th>Read</th>
-                        <th>Update</th>
-                        <th>Delete</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="text-center">
-                        <td>Permission</td>
-                        <td><input type="checkbox"></td>
-                        <td><input type="checkbox"></td>
-                        <td><input type="checkbox"></td>
-                        <td><input type="checkbox"></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div> -->
 
         </div>
 
@@ -110,14 +138,18 @@ const submit = async () => {
         <div class="flex justify-end gap-4">
           <label
             for="add-menu-modal"
-            class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-            >Cancel</label
-          >
-          <button
-          @click="submit"
-          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-            Save
+            class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
+            Cancel
+            </label>
+          <button @click="submit">
+            <button
+            @click="$emit('addMenu')"
+            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
+              Save
+            </button>
           </button>
+
+
         </div>
         </div>
 

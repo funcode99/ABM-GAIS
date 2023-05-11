@@ -34,7 +34,7 @@
   <div class="flex items-center gap-4">
     
     <!-- modal add ini perlu di segregasi -->
-    <ModalAddMenu v-if="props.modalAddType === 'menu'" />
+    <ModalAddMenu @add-menu="$emit('increaseMenu')" v-if="props.modalAddType === 'menu'" />
     <ModalAddUser v-if="props.modalAddType === 'user'" />
     <ModalAddApproval v-if="props.modalAddType === 'approval'" />
     <ModalAddSequence v-if="props.modalAddType === 'sequence'" />

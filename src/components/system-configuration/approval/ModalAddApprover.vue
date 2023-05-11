@@ -3,7 +3,10 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
-
+ 
+// tiap kali scrollTop error pasti itu karena ref nya belum di import
+import { ref } from 'vue'
+let authorities = ref('PM')
 const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
 </script>
@@ -93,6 +96,12 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
                 </button>
               </th>
               <th class="relative">
+                <span class="flex justify-center">Authorities</span>
+                <button class="absolute right-0 top-0 bottom-0">
+                  <img :src="arrowicon" class="w-[9px] h-3" />
+                </button>
+              </th>
+              <th class="relative">
                 <span class="flex justify-center">Approver Name</span>
                 <button class="absolute right-1 top-0 bottom-0">
                   <img :src="arrowicon" class="w-[9px] h-3" />
@@ -106,57 +115,43 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
 
             <tr class="text-center">
               
-              <td
-              >
+
+              <td v-if="authorities === 'PM'">
                 1
               </td>
+              <td v-if="authorities === 'GA'">
+                2
+              </td>
+              <td v-if="authorities === 'HR'">
+                3
+              </td>
+              <td v-if="authorities === 'Atasan Langsung'">
+                4
+              </td>
+              <td v-if="authorities === 'Accounting'">
+                5
+              </td>
+              <td v-if="authorities === 'Treasury'">
+                6
+              </td>
+
+              <td>
+                <select v-model="authorities">
+                  <option>PM</option>
+                  <option>GA</option>
+                  <option>HR</option>
+                  <option>Atasan Langsung</option>
+                  <option>Accounting</option>
+                  <option>Treasury</option>
+                </select>
+              </td>
+
               <td
                 
               >
                 John Mane
               </td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-                <button>
-                  <img :src="deleteicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
 
-            <tr class="text-center">
-            
-              <td
-              >
-                2
-              </td>
-              <td
-                
-              >
-                Mae X
-              </td>
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-
-                <button>
-                  <img :src="deleteicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-
-            <tr class="text-center">
-            
-              <td
-              >
-                3
-              </td>
-              <td
-              >
-                Nina Max
-              </td>
               <td class="flex flex-wrap gap-4 justify-center">
                 <button>
                   <img :src="editicon" class="w-6 h-6" />
@@ -170,13 +165,9 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
             <tr class='text-center'>
               <td></td>
               <td></td>
+              <td></td>
               <td class="flex justify-center"><img class="cursor-pointer" :src="iconPlus" alt=""></td>
             </tr>
-
-            <!-- <tr v-for="data in dataDummy" :key="data.blogId">
-              <td>{{ data.title }}</td>
-              <td>{{ data.name }}</td>
-            </tr> -->
 
           </tbody>
           
@@ -231,4 +222,9 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+
+th span {
+    text-transform: capitalize;
+}
+
 </style>
