@@ -34,14 +34,13 @@ let reference = "reference";
 let travel = "travelManagementSystem";
 let approval = "approval";
 
-  onMounted(() => {
-    let scroller = window.document.querySelector(".scroller");
-      scroller.scrollTop = sidebar.scrollValue
-      scroller.addEventListener("scroll", () => {
-      sidebar.scrollValue = Math.round(scroller.scrollTop)
-    })
-})
-
+onMounted(() => {
+  let scroller = window.document.querySelector(".scroller");
+  scroller.scrollTop = sidebar.scrollValue;
+  scroller.addEventListener("scroll", () => {
+    sidebar.scrollValue = Math.round(scroller.scrollTop);
+  });
+});
 </script>
 
 <template>
@@ -1234,6 +1233,38 @@ let approval = "approval";
                           ]"
                         >
                           GL Account
+                          <img class="w-5 h-5" :src="groupIcon" alt="" />
+                        </a>
+                      </div>
+                    </router-link>
+                    <router-link to="/hotel" class="cursor-pointer">
+                      <div class="flex gap-[10px] items-center cursor-pointer">
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/hotel' ? 'hidden' : 'inline',
+                          ]"
+                          :src="submenuLine"
+                          alt=""
+                        />
+                        <img
+                          class="h-[2px] w-2"
+                          :class="[
+                            $route.path == '/hotel' ? 'inline' : 'hidden',
+                          ]"
+                          :src="submenuLineSelected"
+                          alt=""
+                        />
+                        <a
+                          href="#"
+                          class="flex items-center w-full justify-between"
+                          :class="[
+                            $route.path == '/hotel'
+                              ? `anchorImage anchorSubMenu`
+                              : '',
+                          ]"
+                        >
+                          Hotel
                           <img class="w-5 h-5" :src="groupIcon" alt="" />
                         </a>
                       </div>
