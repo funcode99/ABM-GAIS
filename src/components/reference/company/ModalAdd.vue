@@ -21,7 +21,20 @@ const fetch = async () => {
   sortedData.value = res.data.data;
 };
 
-onMounted(fetch);
+//for get vendor in select
+const fetchVendor = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/flight_trip/get_vendor");
+  sortedData.value = res.data.data;
+  // console.log(res.data.data);
+};
+
+// onMounted(fetch);
+onMounted(() => {
+  fetch();
+  fetchVendor();
+});
 
 //for image logo
 const onFileSelected = (event) => {
@@ -145,7 +158,7 @@ const onFileSelected = (event) => {
             >
               <option disabled selected>Vendor</option>
               <option v-for="vendor in sortedData" :value="vendor.id">
-                {{ vendor.id_vendor }}
+                {{ vendor.vendor }}
               </option>
             </select>
           </div>
