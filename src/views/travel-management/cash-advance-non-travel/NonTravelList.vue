@@ -26,6 +26,7 @@ let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
+let lockScrollbar = ref(false);
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -106,7 +107,10 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div
+    class="flex flex-col w-full this"
+    :class="lockScrollbar === true ? 'fixed' : ''"
+  >
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
@@ -129,7 +133,9 @@ const getSessionForSidebar = () => {
               Cash Advance Non Travel
             </p>
             <div class="flex gap-4">
-              <ModalAddCaNonTravelVue />
+              <ModalAddCaNonTravelVue
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -144,36 +150,36 @@ const getSessionForSidebar = () => {
           >
             <div class="flex flex-wrap items-center gap-4">
               <div>
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-              >
-                Status
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedType"
-              >
-                <option disabled selected>status</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.status }}
-                </option>
-              </select>
-            </div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Status
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedType"
+                >
+                  <option disabled selected>status</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.status }}
+                  </option>
+                </select>
+              </div>
 
-            <div>
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-              >
-                Date
-              </p>
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Date
+                </p>
 
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
-            </div>
+                <VueDatePicker
+                  v-model="date"
+                  range
+                  :enable-time-picker="false"
+                  class="my-date"
+                />
+              </div>
 
               <div class="flex gap-4 items-center pt-6">
                 <button

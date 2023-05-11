@@ -75,13 +75,36 @@ const getSessionForSidebar = () => {
               />
             </div>
             <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Site</span>
+              <input
+                type="text"
+                disabled
+                value="Site A"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
+            <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
-                >Created By</span
+                >Requestor</span
               >
               <input
                 type="text"
                 disabled
-                value="Jack H"
+                value="Lalisa Manoban"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Warehouse</span
+              >
+              <input
+                type="text"
+                disabled
+                value="WH A"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -117,33 +140,57 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
+                      Brand
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Quantity
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Uom
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Remarks
                     </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Status
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Action
-                    </th>
                   </tr>
                 </thead>
                 <tbody class="font-JakartaSans font-normal text-xs">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
+                    <td
+                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
+                    >
+                      2321
+                    </td>
+                    <td
+                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
+                    >
+                      Pen
+                    </td>
+                    <td
+                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
+                    >
+                      Pilot
+                    </td>
+                    <td
+                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
+                    >
+                      2
+                    </td>
+                    <td
+                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
+                    >
+                      Pcs
+                    </td>
+                    <td
+                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
+                    >
+                      -
+                    </td>
                   </tr>
                 </tbody>
               </table>

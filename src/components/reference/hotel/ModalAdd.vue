@@ -1,152 +1,143 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
-import iconUpload from "@/assets/icon_upload.svg";
-
-import Api from "@/utils/Api";
-
-import { ref, onMounted } from "vue";
 
 const emits = defineEmits(["unlockScrollbar"]);
-
-let sortedData = ref([]);
-const selectedImage = ref(null);
-let selectedCompany = ref("Company");
-let selectedVendor = ref("Vendor");
-
-//for get company in select
-const fetch = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/");
-  sortedData.value = res.data.data;
-};
-
-onMounted(fetch);
-
-//for image logo
-const onFileSelected = (event) => {
-  const file = event.target.files[0];
-  selectedImage.value = file ? file.name : null;
-};
 </script>
 
 <template>
   <label
     @click="this.$emit('unlockScrollbar')"
-    for="my-modal-3"
+    for="my-modal-hotel"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add New</label
   >
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input type="checkbox" id="my-modal-hotel" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
-          for="my-modal-3"
+          for="my-modal-hotel"
           class="cursor-pointer absolute right-3 top-3"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          New Company
+          New Hotel
         </p>
       </nav>
 
-      <main class="modal-box-inner-company">
-        <form>
-          <div class="mb-6 w-full px-4">
+      <main class="modal-box-inner-hotel">
+        <form class="pt-4">
+          <div class="mb-6 px-4 w-full">
             <label
-              for="code"
+              for="hotel_name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Code<span class="text-red">*</span></label
+              >Hotel Name<span class="text-red">*</span></label
             >
             <input
               type="text"
-              name="code"
+              name="hotel_name"
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Code"
+              placeholder="Hotel Name"
               required
             />
           </div>
-          <div class="mb-6 w-full px-4">
+
+          <div class="mb-6 px-4 w-full">
             <label
-              for="name"
+              for="address"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Name<span class="text-red">*</span></label
+              >Address<span class="text-red">*</span></label
             >
             <input
               type="text"
-              name="name"
+              name="address"
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Name Company"
+              placeholder="Address"
               required
             />
           </div>
+
           <div class="mb-6 w-full px-4">
             <label
-              for="parent_company"
+              for="type"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Parent Company<span class="text-red">*</span></label
+              >Type<span class="text-red">*</span></label
             >
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
-              v-model="selectedCompany"
             >
-              <option disabled selected>Company</option>
-              <option v-for="company in sortedData" :value="company.id">
-                {{ company.parent_company }}
-              </option>
+              <option disabled selected>Type</option>
+              <option>Type A</option>
+              <option>Type B</option>
             </select>
           </div>
 
           <div class="mb-6 w-full px-4">
-            <div
-              for="logo_company"
-              class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
-            >
-              Logo Company
-              <span class="text-red">*</span>
-            </div>
-            <div class="relative border border-slate-300 rounded-lg py-2">
-              <input
-                type="file"
-                name="logo_company"
-                id="logo_company"
-                class="hidden border"
-                accept="image/*"
-                @change="onFileSelected"
-              />
-              <label for="logo_company">
-                <span
-                  class="font-JakartaSans font-medium text-sm cursor-pointer mx-4"
-                  >{{ selectedImage || "Logo Company" }}</span
-                >
-                <img
-                  :src="iconUpload"
-                  class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                />
-              </label>
-            </div>
-          </div>
-
-          <div class="mb-6 w-full px-4">
             <label
-              for="vendor"
+              for="city"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Vendor Airlines<span class="text-red">*</span></label
+              >City<span class="text-red">*</span></label
             >
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
-              v-model="selectedVendor"
             >
-              <option disabled selected>Vendor</option>
-              <option v-for="vendor in sortedData" :value="vendor.id">
-                {{ vendor.id_vendor }}
-              </option>
+              <option disabled selected>City</option>
+              <option>City A</option>
+              <option>City B</option>
+            </select>
+          </div>
+
+          <div class="mb-6 px-4 w-full">
+            <label
+              for="email"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Email<span class="text-red">*</span></label
+            >
+            <input
+              type="email"
+              name="email"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Email"
+              required
+            />
+          </div>
+
+          <div class="mb-6 px-4 w-full">
+            <label
+              for="phone_number"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Phone Number<span class="text-red">*</span></label
+            >
+            <input
+              type="number"
+              name="phone"
+              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Phone Number"
+              required
+            />
+          </div>
+
+          <div class="mb-6 w-full px-4">
+            <label
+              for="rating"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Rating<span class="text-red">*</span></label
+            >
+            <select
+              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              required
+            >
+              <option disabled selected>Rating</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+              <option>5</option>
             </select>
           </div>
 
@@ -154,7 +145,7 @@ const onFileSelected = (event) => {
             <div class="flex justify-end gap-4 mr-6">
               <label
                 @click="this.$emit('unlockScrollbar')"
-                for="my-modal-3"
+                for="my-modal-hotel"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
@@ -176,11 +167,10 @@ const onFileSelected = (event) => {
   padding: 0;
   overflow-y: hidden;
   overscroll-behavior: contain;
-  max-height: calc(84vh - 5em);
 }
 
-.modal-box-inner-company {
-  height: 400px;
+.modal-box-inner-hotel {
+  height: 500px;
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

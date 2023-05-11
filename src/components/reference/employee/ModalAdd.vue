@@ -100,15 +100,15 @@ let minDate = year + "-" + month + "-" + day;
             </div>
             <div class="mb-6 w-full">
               <label
-                for="sn"
+                for="email"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Phone Number<span class="text-red">*</span></label
+                >Email<span class="text-red">*</span></label
               >
               <input
-                type="number"
-                name="phone_number"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Phone Number"
+                type="email"
+                name="email"
+                class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Email"
                 required
               />
             </div>
@@ -131,15 +131,15 @@ let minDate = year + "-" + month + "-" + day;
             </div>
             <div class="mb-6 w-full">
               <label
-                for="email"
+                for="date_start"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Email<span class="text-red">*</span></label
+                >Begin Date<span class="text-red">*</span></label
               >
               <input
-                type="email"
-                name="email"
-                class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Email"
+                type="date"
+                name="date_start"
+                :min="minDate"
+                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               />
             </div>
@@ -162,14 +162,13 @@ let minDate = year + "-" + month + "-" + day;
             </div>
             <div class="mb-6 w-full">
               <label
-                for="date_start"
+                for="date_end"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Begin Date<span class="text-red">*</span></label
+                >End Date<span class="text-red">*</span></label
               >
               <input
                 type="date"
-                name="date_start"
-                :min="minDate"
+                name="date_end"
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               />
@@ -192,16 +191,18 @@ let minDate = year + "-" + month + "-" + day;
             </div>
             <div class="mb-6 w-full">
               <label
-                for="date_end"
+                for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >End Date<span class="text-red">*</span></label
+                >Company<span class="text-red">*</span></label
               >
-              <input
-                type="date"
-                name="date_end"
+              <select
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
-              />
+              >
+                <option disabled selected>Company</option>
+                <option>Company A</option>
+                <option>Company B</option>
+              </select>
             </div>
           </div>
 
@@ -223,17 +224,17 @@ let minDate = year + "-" + month + "-" + day;
             </div>
             <div class="mb-6 w-full">
               <label
-                for="company"
+                for="location"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Company<span class="text-red">*</span></label
+                >Location<span class="text-red">*</span></label
               >
               <select
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
-                <option disabled selected>Company</option>
-                <option>Company A</option>
-                <option>Company B</option>
+                <option disabled selected>Location</option>
+                <option>Location A</option>
+                <option>Location B</option>
               </select>
             </div>
           </div>
@@ -256,18 +257,35 @@ let minDate = year + "-" + month + "-" + day;
             </div>
             <div class="mb-6 w-full">
               <label
-                for="site"
+                for="job"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Site<span class="text-red">*</span></label
+                >Job Band<span class="text-red">*</span></label
               >
               <select
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
-                <option disabled selected>Site</option>
-                <option>Site A</option>
-                <option>Site B</option>
+                <option disabled selected>Job Band</option>
+                <option>Job Band A</option>
+                <option>Job Band B</option>
               </select>
+            </div>
+          </div>
+
+          <div class="flex justify-between px-6 items-center gap-2">
+            <div class="mb-6 w-full">
+              <label
+                for="sn"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Phone Number<span class="text-red">*</span></label
+              >
+              <input
+                type="number"
+                name="phone_number"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Phone Number"
+                required
+              />
             </div>
           </div>
 

@@ -3,14 +3,16 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalRejectShortcut from "@/components/approval/cash-advance-travel/ModalRejectShortcut.vue";
+import ModalAdd from "@/components/reference/hotel/ModalAdd.vue";
+import ModalEdit from "@/components/reference/hotel/ModalEdit.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import icon_ceklis from "@/assets/icon_ceklis.svg";
+import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import cadata from "@/utils/Api/approval/cash-advance-travel/cadata.js";
+import hoteldata from "@/utils/Api/reference/hoteldata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -18,13 +20,13 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
 //for sort & search
-const date = ref();
 const search = ref("");
 let sortedData = ref([]);
-const selectedType = ref("Type");
+const selectedHotel = ref("Hotel");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
+let lockScrollbar = ref(false);
 
 //for paginations
 let showingValue = ref(1);
@@ -39,12 +41,12 @@ const onChangePage = (pageOfItem) => {
 };
 
 //for filter & reset button
-const filterDataByType = () => {
-  if (selectedType.value === "") {
+const filterDataByCompany = () => {
+  if (selectedCompany.value === "") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
+      (item) => item.company === selectedCompany.value
     );
   }
 };
@@ -52,7 +54,7 @@ const filterDataByType = () => {
 //for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
-  selectedType.value = "Type";
+  selectedCompany.value = "Company";
 };
 
 //for check & uncheck all
@@ -74,13 +76,10 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Requestor", jsonData: "name" },
-  { Id: 5, title: "Type", jsonData: "type" },
-  { Id: 6, title: "Total", jsonData: "total" },
-  { Id: 7, title: "Status", jsonData: "status" },
-  { Id: 8, title: "Actions" },
+  { Id: 2, title: "Hotel Name", jsonData: "hotel_name" },
+  { Id: 3, title: "City", jsonData: "city" },
+  { Id: 4, title: "Type", jsonData: "type" },
+  { Id: 5, title: "Actions" },
 ];
 
 //for sort
@@ -96,7 +95,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = cadata;
+  instanceArray = hoteldata;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -105,11 +104,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.hotel_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.city.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.hotel_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.city.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -123,7 +122,10 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div
+    class="flex flex-col w-full this"
+    :class="lockScrollbar === true ? 'fixed' : ''"
+  >
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -142,51 +144,46 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
             <p
-              class="font-JakartaSans text-2xl capitalize text-[#0A0A0A] font-semibold"
+              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Cash Advance Travel
+              Hotel
             </p>
+            <div class="flex gap-4">
+              <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" />
+              <button
+                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+              >
+                <img :src="icon_receive" class="w-6 h-6" />
+              </button>
+            </div>
           </div>
 
           <!-- SORT & SEARCH -->
-          <div class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2">
-            <div class="flex flex-wrap items-center gap-2">
+          <div
+            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4"
+          >
+            <div class="flex flex-wrap items-center gap-4">
               <div>
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-              >
-                Item Type
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedType"
-              >
-                <option disabled selected>Type</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.type }}
-                </option>
-              </select>
-            </div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Type
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedHotel"
+                >
+                  <option disabled selected>Hotel</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.type }}
+                  </option>
+                </select>
+              </div>
 
-            <div>
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-              >
-                Date
-              </p>
-
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
-            </div>
-
-              <div class="flex flex-wrap gap-2 items-center pt-6">
+              <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByType"
+                  @click="filterDataByCompany"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -205,7 +202,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="pt-6 w-full">
+            <div class="pt-6 flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -302,19 +299,16 @@ const getSessionForSidebar = () => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.ca_no }}</td>
-                    <td>{{ data.name }}</td>
+                    <td>{{ data.hotel_name }}</td>
+                    <td>{{ data.city }}</td>
                     <td>{{ data.type }}</td>
-                    <td>{{ data.total }}</td>
-                    <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewapprovalcatravel">
-                        <button>
-                          <img :src="icon_ceklis" class="w-6 h-6" />
-                        </button>
-                      </router-link>
-                      <ModalRejectShortcut />
+                      <ModalEdit
+                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                      />
+                      <button>
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
                     </td>
                   </tr>
                 </tbody>
@@ -378,9 +372,5 @@ tr th {
 
 .this {
   overflow-x: hidden;
-}
-
-.my-date {
-  width: 260px !important;
 }
 </style>

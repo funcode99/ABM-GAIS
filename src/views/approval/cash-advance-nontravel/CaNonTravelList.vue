@@ -3,7 +3,6 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-
 import ModalRejectShortcutnonTravel from "@/components/approval/cash-advance-non-travel/ModalRejectShortcutnonTravel.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
@@ -77,9 +76,9 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
   { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Event", jsonData: "event" },
-  { Id: 5, title: "Cost Center", jsonData: "cost_center" },
-  { Id: 6, title: "Nominal", jsonData: "nominal" },
+  { Id: 4, title: "Requestor", jsonData: "name" },
+  { Id: 5, title: "Event", jsonData: "event" },
+  { Id: 6, title: "Total", jsonData: "nominal" },
   { Id: 7, title: "Status", jsonData: "status" },
   { Id: 8, title: "Actions" },
 ];
@@ -143,29 +142,33 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
             <p
-              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+              class="font-JakartaSans text-2xl capitalize text-[#0A0A0A] font-semibold"
             >
               Cash Advance Non Travel
             </p>
           </div>
 
           <!-- SORT & SEARCH -->
-          <div class="flex flex-wrap justify-between items-center mx-4 py-2">
+          <div
+            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
+          >
             <div class="flex flex-wrap items-center gap-4">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Date
-              </p>
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Date
+                </p>
 
-              <VueDatePicker
-                v-model="date"
-                range
-                :enable-time-picker="false"
-                class="my-date"
-              />
+                <VueDatePicker
+                  v-model="date"
+                  range
+                  :enable-time-picker="false"
+                  class="my-date"
+                />
+              </div>
 
-              <div class="flex flex-wrap gap-4 items-center">
+              <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   @click="filterDataByType"
@@ -187,7 +190,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="py-2 flex md:mx-0">
+            <div class="pt-6 w-full">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -219,7 +222,7 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
@@ -286,8 +289,8 @@ const getSessionForSidebar = () => {
                     <td>{{ data.no }}</td>
                     <td>{{ data.created_date }}</td>
                     <td>{{ data.ca_no }}</td>
+                    <td>{{ data.name }}</td>
                     <td>{{ data.event }}</td>
-                    <td>{{ data.cost_center }}</td>
                     <td>{{ data.nominal }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">

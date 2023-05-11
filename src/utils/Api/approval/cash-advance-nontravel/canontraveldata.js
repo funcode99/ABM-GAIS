@@ -7,7 +7,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC001',
         nominal: 10000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'John Doe',
     },
     {
         id: 2,
@@ -17,7 +18,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 50000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'Jane Smith',
     },
     {
         id: 3,
@@ -27,7 +29,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC001',
         nominal: 75000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Bob Johnson',
     },
     {
         id: 4,
@@ -37,7 +40,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC003',
         nominal: 25000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'Alice Lee',
     },
     {
         id: 5,
@@ -47,7 +51,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 80000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'David Brown',
     },
     {
         id: 6,
@@ -57,7 +62,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC003',
         nominal: 45000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Samantha Johnson',
     },
     {
         id: 7,
@@ -67,7 +73,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC001',
         nominal: 15000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'Chris Green',
     },
     {
         id: 8,
@@ -77,7 +84,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 40000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'Tom Wilson',
     },
     {
         id: 9,
@@ -87,7 +95,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC001',
         nominal: 50000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Emily Davis',
     },
     {
         id: 10,
@@ -97,7 +106,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC003',
         nominal: 20000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'William Adams',
     },
     {
         id: 11,
@@ -107,7 +117,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 65000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'Linda Jackson',
     },
     {
         id: 12,
@@ -117,7 +128,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC003',
         nominal: 35000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Samuel Hernandez',
     },
     {
         id: 13,
@@ -127,7 +139,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC001',
         nominal: 12000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'Olivia Perez',
     },
     {
         id: 14,
@@ -137,7 +150,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 55000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'Daniel Kim',
     },
     {
         id: 15,
@@ -147,7 +161,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC001',
         nominal: 30000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Megan Chen',
     },
     {
         id: 16,
@@ -157,7 +172,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC003',
         nominal: 18000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'Benjamin Garcia',
     },
     {
         id: 17,
@@ -167,7 +183,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 45000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'Sophia Kim',
     },
     {
         id: 18,
@@ -177,7 +194,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC003',
         nominal: 25000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Christopher Lee',
     },
     {
         id: 19,
@@ -187,7 +205,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC001',
         nominal: 8000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'Isabella Hernandez',
     },
     {
         id: 20,
@@ -197,7 +216,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 35000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'Ethan Johnson',
     },
     {
         id: 21,
@@ -207,7 +227,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC003',
         nominal: 15000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Madison Davis',
     },
     {
         id: 22,
@@ -217,7 +238,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC001',
         nominal: 13000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'Alexander Brown',
     },
     {
         id: 23,
@@ -227,7 +249,8 @@ const canontraveldata = [
         event: 'Sport',
         cost_center: 'CC002',
         nominal: 60000,
-        status: 'Pending'
+        status: 'Pending',
+        name: 'Ava Jackson',
     },
     {
         id: 24,
@@ -237,7 +260,8 @@ const canontraveldata = [
         event: 'Meeting',
         cost_center: 'CC003',
         nominal: 40000,
-        status: 'Rejected'
+        status: 'Rejected',
+        name: 'Braitwaite',
     },
     {
         id: 25,
@@ -247,7 +271,8 @@ const canontraveldata = [
         event: 'Snack',
         cost_center: 'CC001',
         nominal: 11000,
-        status: 'Approved'
+        status: 'Approved',
+        name: 'Steven G',
     }
 ];
 

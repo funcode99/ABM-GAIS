@@ -141,7 +141,7 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
             <p
-              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+              class="font-JakartaSans text-2xl capitalize text-[#0A0A0A] font-semibold"
             >
               Request Trip
             </p>
@@ -153,37 +153,41 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-              <p
-                class="capitalize font-JakartaSans text-xs text-black font-medium"
-              >
-                Purpose of trip
-              </p>
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="selectedType"
-              >
-                <option disabled selected>Purpose</option>
-                <option v-for="data in sortedData" :key="data.id">
-                  {{ data.purpose_of_trip }}
-                </option>
-              </select>
-
-              <div class="flex flex-wrap gap-4 items-center">
+              <div>
                 <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
-                  Date
+                  Purpose of trip
                 </p>
-
-                <VueDatePicker
-                  v-model="date"
-                  range
-                  :enable-time-picker="false"
-                  class="my-date lg:w-10"
-                />
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedType"
+                >
+                  <option disabled selected>Purpose</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.purpose_of_trip }}
+                  </option>
+                </select>
               </div>
 
               <div class="flex flex-wrap gap-4 items-center">
+                <div>
+                  <p
+                    class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                  >
+                    Date
+                  </p>
+
+                  <VueDatePicker
+                    v-model="date"
+                    range
+                    :enable-time-picker="false"
+                    class="my-date lg:w-10"
+                  />
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   @click="filterDataByType"
@@ -205,7 +209,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="py-2 pl-8">
+            <div class="pt-6 w-full">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -237,7 +241,7 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"

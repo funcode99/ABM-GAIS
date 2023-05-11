@@ -24,6 +24,7 @@ import ListSite from "@/views/reference/sites/ListSite.vue"
 import ListUom from "@/views/reference/uom/ListUom.vue"
 import ListWarehouse from "@/views/reference/warehouse/ListWarehouse.vue"
 import ListZona from "@/views/reference/zona/ListZona.vue"
+import HotelList from "@/views/reference/hotel/HotelList.vue"
 
 //system configuration
 import ListUser from '@/views/system-configuration/user/ListUser.vue'
@@ -227,6 +228,14 @@ const router = createRouter({
       component: ListZona,
       meta: {
         title: "Zona / Tunjangan Lokasi Kerja",
+      }
+    },
+    {
+      path: '/hotel',
+      name: 'hotel',
+      component: HotelList,
+      meta: {
+        title: "Hotel",
       }
     },
 
