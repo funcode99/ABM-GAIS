@@ -19,6 +19,8 @@ const updatePhoto = (event) => {
   file.value = event.target.files[0]
 }
 
+let isOpenModal = ref(false)
+
 const submit = () => {
 
   try {     
@@ -32,6 +34,9 @@ const submit = () => {
       formState.menu.sequence = sequence.value
       formState.menu.url = url.value
       formState.menu.icon = file.value
+
+      isOpenModal.value = !isOpenModal.value
+
   } catch (error) {
       console.error(error)
   }
@@ -57,7 +62,7 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
         + Add New
     </label>
 
-  <input type="checkbox" id="add-menu-modal" class="modal-toggle" />
+  <input type="checkbox" id="add-menu-modal" class="modal-toggle" v-model="isOpenModal" />
   
   <div class="modal">
 
@@ -148,7 +153,6 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
               Save
             </button>
           </button>
-
 
         </div>
         </div>

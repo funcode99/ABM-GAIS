@@ -9,11 +9,14 @@
   let password = ref('')
   let role = ref('Administrator')
 
+  let isOpenModal = ref(false)
+
   const submitUser = () => {
     formState.user.username = username.value,
     formState.user.email = email.value
     formState.user.password = password.value
     formState.user.roleId = 1
+    isOpenModal.value = !isOpenModal.value
   }
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
@@ -28,7 +31,7 @@
       + Add New
     </label>
 
-    <input type="checkbox" id="add-user-modal" class="modal-toggle" />
+    <input type="checkbox" id="add-user-modal" class="modal-toggle" v-model="isOpenModal" />
     
     <div class="modal">
       <div class="modal-box relative">

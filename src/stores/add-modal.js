@@ -22,6 +22,9 @@ export const useFormAddStore = defineStore('add-form', {
                 approvalAuthId: 0,
                 companyId: 0,
                 siteId: 0
+            },
+            role: {
+                roleName : ''
             }
         }
     }

@@ -13,8 +13,13 @@
     identity: Array
   })
 
-  let role = ref(props.identity[1])
-  let description = ref(props.identity[2])
+  const submitEdit = () => {
+
+  }
+
+  // let role = ref(props.identity[1])
+  // let description = ref(props.identity[2])
+
 
 </script>
 
@@ -60,14 +65,15 @@
             <label
               @click="isVisible = !isVisible"
               for="add-user-modal"
-              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-              >Cancel</label
-            >
-            <button
-            @click="$emit('changeRole', [props.identity[0], role, description])"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-            >
-              Save
+              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
+              Cancel
+            </label>
+            <button>
+              <button
+              @click="$emit('changeRole')"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
+                Save
+              </button>
             </button>
           </div>
       </div>

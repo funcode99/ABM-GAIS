@@ -38,7 +38,7 @@
     <ModalAddUser @add-user="$emit('increaseUser')" v-if="props.modalAddType === 'user'" />
     <ModalAddApproval v-if="props.modalAddType === 'approval'" />
     <ModalAddSequence v-if="props.modalAddType === 'sequence'" />
-    <ModalAddRole v-if="props.modalAddType === 'role'" />
+    <ModalAddRole @add-role="$emit('increaseRole')" v-if="props.modalAddType === 'role'" />
 
     <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
       <img :src="icon_receive" class="w-6 h-6" />

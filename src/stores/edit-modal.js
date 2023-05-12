@@ -12,6 +12,9 @@ export const useFormEditStore = defineStore('add-form', {
                 description: 'Kosong',
                 url: '',
                 icon: {}
+            },
+            role: {
+                roleName: ''
             }
         }
     }
