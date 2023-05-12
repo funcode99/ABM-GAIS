@@ -79,7 +79,6 @@ const sortList = (sortBy) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
-  // instanceArray = dataCompany;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -241,6 +240,7 @@ const deleteCompany = async (id) => {
           >
             <div class="block overflow-x-auto">
               <table
+                v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -303,6 +303,13 @@ const deleteCompany = async (id) => {
                   </tr>
                 </tbody>
               </table>
+
+              <div
+                v-else
+                class="h-[100px] border-t border-t-black flex items-center justify-center"
+              >
+                <h1 class="text-center">Tidak Ada Data</h1>
+              </div>
             </div>
           </div>
 

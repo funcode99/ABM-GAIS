@@ -9,7 +9,9 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import flightdata from "@/utils/Api/reference/flightdata.js";
+import Swal from "sweetalert2";
+
+import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -72,7 +74,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = flightdata;
+  fetchFlight();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -95,6 +97,47 @@ const filteredItems = (search) => {
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+//get all flight
+const fetchFlight = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/flight/");
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+const deleteFlight = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/flight/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Flight has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetchFlight();
+      });
+    } else {
+      return;
+    }
+  });
 };
 </script>
 
@@ -126,7 +169,7 @@ const getSessionForSidebar = () => {
               flight class
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -188,6 +231,7 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
+                v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -223,7 +267,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -232,17 +276,26 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.flight_class }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.flight_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
-                      <button>
+                      <ModalEdit
+                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                      />
+                      <button @click="deleteFlight(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
+
+              <div
+                v-else
+                class="h-[100px] border-t border-t-black flex items-center justify-center"
+              >
+                <h1 class="text-center">Tidak Ada Data</h1>
+              </div>
             </div>
           </div>
 
