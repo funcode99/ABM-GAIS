@@ -3,17 +3,17 @@ import { ref } from 'vue'
 import Api from '@/utils/Api'
 import iconClose from "@/assets/navbar/icon_close.svg"
 
-let newRole = ref('')
+import { useFormAddStore } from '@/stores/add-modal.js'
 
-const addRole = async () => {
-        const token = JSON.parse(localStorage.getItem('token'))
-        // Set authorization for api
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        await Api.post(`/role/store`, {
-          role: newRole.value,
-          description: 'Negara'
-        })
-  }
+const formState = useFormAddStore()
+
+let newRole = ref('')
+let isOpenModal = ref(false)
+
+const submitRole = () => {
+        formState.role.roleName = newRole.value
+        isOpenModal.value = !isOpenModal.value
+}
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -25,17 +25,17 @@ const addRole = async () => {
         + Add New
     </label>
 
-  <input type="checkbox" id="add-role-modal" class="modal-toggle" />
+  <input type="checkbox" id="add-role-modal" class="modal-toggle" v-model="isOpenModal" />
   <div class="modal">
     <div class="modal-box relative">
       
-        <nav class="sticky top-0 z-50 bg-white py-4">
+        <div class="sticky top-0 z-50 bg-white py-4">
             <label for="add-role-modal" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </label>
             <p class="font-JakartaSans text-2xl font-semibold">New Role</p>
             <div className="divider m-0"></div>
-        </nav>
+        </div>
 
       <div class="mb-3">
         
@@ -70,35 +70,23 @@ const addRole = async () => {
 
       </div>
 
-      <!-- <div class="sticky bottom-0 bg-white py-4">
-        <div className="divider m-0 pb-4"></div>
-        <div class="flex justify-end gap-4">
-          <label
-            for="add-role-modal"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            @click="addRole"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          >
-            Save
-          </button>
-        </div>
-      </div> -->
-
       <div class="sticky bottom-0 bg-white py-8">
           <div className="divider m-0 pb-4 w-full"></div>
           <div class="flex justify-end gap-4">
             <label
               for="add-role-modal"
               class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-              >Cancel</label
-            >
-            <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-            >
-              Save
+              >
+              Cancel
+            </label>
+            <!-- dia harus label ternyata -->
+            <!-- for="add-role-modal" -->
+            <button @click="submitRole">
+              <button 
+              @click="$emit('addRole')"
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
+                Save
+              </button>
             </button>
           </div>
       </div>
@@ -135,12 +123,4 @@ const addRole = async () => {
   overscroll-behavior: contain;
 }
 
- /* .heightButton {
-    height: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    padding: 4px 8px;
-} */
 </style>

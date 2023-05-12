@@ -4,7 +4,7 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
-    import dataDummy from '@/utils/Api/system-configuration/userdata.js'
+    import Api from '@/utils/Api'
 
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
@@ -13,13 +13,17 @@
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
+    import { useFormAddStore } from '@/stores/add-modal.js'
     const sidebar = useSidebarStore()
+    const formState = useFormAddStore()
     
     const search = ref('')
     let sortedData = ref([])
+    let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
     let lengthCounter = 0
+    let editDataUserId = ref(0)
 
     //for paginations
     let showingValue = ref(1);
@@ -31,7 +35,7 @@
     const onChangePage = (pageOfItem) => {
       paginateIndex.value = pageOfItem - 1;
       showingValue.value = pageOfItem;
-    };
+    }
 
     const selectAll = (checkValue) => { 
       const checkLead = checkValue
@@ -71,11 +75,8 @@
     // watch(ref, callback)
 
     onBeforeMount(() => {
-      // sortedData.value gak dianggap sebagai array lagi
       getSessionForSidebar()
-      instanceArray = dataDummy
-      sortedData.value = instanceArray
-      lengthCounter = sortedData.value.length
+      fetch()
     })
 
     const filteredItems = (search) => {
@@ -96,7 +97,70 @@
 
     const getSessionForSidebar = () => {
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
-  }
+    }
+
+    const fetch = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      // Set authorization for api
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/users')      
+      instanceArray = api.data.data
+      sortedData.value = instanceArray
+      lengthCounter = sortedData.value.length
+    }
+
+    const deleteData = async (event) => {
+     await Api.delete(`/users/delete_data/${event}`)
+      if (sortedData.value.length == 1) {
+        router.go()
+      } else {
+        fetch()
+      }
+    }
+
+    const addNewUser = async () => {
+        setTimeout(callAddApi, 500);
+    }
+
+    const callAddApi = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        // console.log(token)
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.post('/users/store', 
+        {
+          username: formState.user.username,
+          email: formState.user.email,
+          password: formState.user.password,
+          is_employee: 1,
+          id_role: 1,
+          id_approval_auth: 1,
+          id_company: 1,
+          id_site: 1,
+        })
+        fetch()
+    }
+
+    const editExistingUser = async (data) => {
+      editDataUserId.value = data
+        setTimeout(callEditApi, 1000)
+    }
+
+    const callEditApi = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.post(`/users/update_data/${editDataUserId.value}`, 
+        {
+          username: formState.user.username,
+          email: formState.user.email,
+          password: formState.user.password,
+          is_employee: 1,
+          id_role: 1,
+          id_approval_auth: 1,
+          id_company: 1,
+          id_site: 1,
+        })
+        fetch()
+    }
   
 </script>
 
@@ -113,11 +177,10 @@
 
       <Sidebar class="flex-none" />    
         
-      <!-- lengthCounter > 6 ? 'backgroundHeight' : '',  -->
       <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin ease-in-out duration-500" 
         :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
-          <TableTopBar :title="'User'" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
+          <TableTopBar :title="'User'" @increase-user="addNewUser" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
           
           <!-- actual table -->
           <!-- scrollbar horizontal juga ada disini -->
@@ -151,7 +214,7 @@
 
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                    <tr v-for="data in sortedData.slice(
+                    <tr v-for="data in sortedDataReactive.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.No">
@@ -162,17 +225,17 @@
                         {{ data.No }} 
                       </td>
                       <td>
-                        {{ data.Username }}
+                        {{ data.username }}
                       </td>
                       <td>
-                        {{ data.UserRole }}
+                        {{ data.id_role }}
                       </td>
                       <td>
-                        {{ data.ApprovalAuthorities }}
+                        {{ data.id_approval_auth }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditUser/>
-                        <ModalDelete/>
+                        <ModalEditUser @change-user="editExistingUser(data.id)" />
+                        <ModalDelete @confirm-delete="deleteData(data.id)" />
                       </td>
                     </tr>
 

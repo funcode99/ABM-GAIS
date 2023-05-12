@@ -3,10 +3,25 @@
     import { Modal } from 'usemodal-vue3'
     import iconClose from "@/assets/navbar/icon_close.svg"
     import editIcon from "@/assets/navbar/edit_icon.svg"
+    import { useFormEditStore } from '@/stores/edit-modal.js'
 
     let isVisible = ref(false)
     let type = '' 
     let modalPaddingHeight = 50
+
+    let formEditState = useFormEditStore()
+
+    let username = ref('')
+    let email = ref('')
+    let password = ref('')
+    let role = ref('Administrator')
+
+    const editUser = () => {
+    formEditState.user.username = username.value,
+    formEditState.user.email = email.value
+    formEditState.user.password = password.value
+    formEditState.user.roleId = 1
+    }
 
     const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -29,113 +44,125 @@
 
         <div class="px-8 text-left modal-box-inner">
 
-            <div class="mb-6">
-            <span>Employee?<span class="text-red-star">*</span></span>
-            <div class="flex gap-2 pt-2">
-              <div class="flex gap-1">
-                <!-- fill the same name value for individual select -->
-                <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-                <label for="">Yes</label>
-              </div>
-              <div class="flex gap-1">
-                <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-                <label for="">No</label>
-              </div>
+          <div class="mb-6">
+          <span>Employee?<span class="text-red-star">*</span></span>
+          <div class="flex gap-2 pt-2">
+            <div class="flex gap-1">
+              <!-- fill the same name value for individual select -->
+              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+              <label for="">Yes</label>
             </div>
+            <div class="flex gap-1">
+              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+              <label for="">No</label>
             </div>
-
-            <div class="mb-6">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                        Username<span class="text-red">*</span>
-                </label>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    :class=inputStylingClass
-                    required
-                />
-            </div>
-
-            <div class="mb-6">
-            <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Passwords<span class="text-red">*</span></label
-            >
-            <input
-              type="password"
-              placeholder="Passwords"
-              :class=inputStylingClass
-              required
-            />
-            </div>
-
-            <div class="mb-6 flex flex-col text-left justify-start">
-            <span
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              id="company"
-              >User Role<span class="text-red">*</span></span
-            >
-            <select :class=inputStylingClass required>
-              <option disabled selected hidden>Role</option>
-              <option>Administrator</option>
-              <option>Super Admin</option>
-              <option>Admin</option>
-              <option>Receptionist</option>
-              <option>Employee</option>
-              <option>Driver</option>
-            </select>
-            </div>
-
-            <div class="mb-6">
-                    <label
-                        for="name"
-                        class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-                        >Approval Authorities<span class="text-red">*</span></label
-                    >
-                    <div class="flex justify-between">
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" name="PM" id="">
-                            <label for="">PM</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" name="GA" id="">
-                            <label for="">GA</label>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <input type="checkbox" name="HR" id="">
-                            <label for="">HR</label>
-                        </div>
-                        <div class="flex items-center gap-2">                
-                            <input type="checkbox" name="Finance / Accounting" id="">
-                            <label class="" for="">Finance / Accounting</label>
-                        </div>
-                    </div>
-            </div>
-
-            <div class="mb-6">
-            <span>Company <span class="text-red-star">*</span></span>
-            <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" />
+          </div>
           </div>
 
           <div class="mb-6">
-            <span>Site <span class="text-red-star">*</span></span>
-            <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" />
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                      Username<span class="text-red">*</span>
+              </label>
+              <input
+                  v-model="username"
+                  type="text"
+                  placeholder="Username"
+                  :class="inputStylingClass"
+                  required
+              />
           </div>
 
-
-            <div class="mb-6">
+          <div class="mb-6">
             <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Email<span class="text-red">*</span></label
-            >
+              class="block mb-2 font-JakartaSans font-medium text-sm">
+              Email<span class="text-red">*</span>
+            </label>
             <input
+              v-model="email"
               type="text"
               placeholder="Email"
               :class=inputStylingClass
               required
             />
+          </div>
+
+          <div class="mb-6">
+          <label
+            class="block mb-2 font-JakartaSans font-medium text-sm">
+            Passwords<span class="text-red">*</span>
+          </label>
+          <input
+            v-model="password"
+            type="password"
+            placeholder="Passwords"
+            :class="inputStylingClass"
+            required
+          />
+          </div>
+
+          <div class="mb-6 flex flex-col text-left justify-start">
+          <span
+            for="company"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            id="company"
+            >User Role<span class="text-red">*</span></span
+          >
+          <select :class="inputStylingClass" v-model="role" required>
+            <option disabled selected hidden>Role</option>
+            <option>Administrator</option>
+            <option>Super Admin</option>
+            <option>Admin</option>
+            <option>Receptionist</option>
+            <option>Employee</option>
+            <option>Driver</option>
+          </select>
+          </div>
+
+          <div class="mb-6">
+            <label
+                for="name"
+                class="block mb-2 font-JakartaSans font-medium text-sm text-left"
+                >Approval Authorities<span class="text-red">*</span></label
+            >
+            <div class="flex justify-between">
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="PM" id="">
+                    <label for="">PM</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="GA" id="">
+                    <label for="">GA</label>
+                </div>
+                <div class="flex items-center gap-2">
+                    <input type="checkbox" name="HR" id="">
+                    <label for="">HR</label>
+                </div>
+                <div class="flex items-center gap-2">                
+                    <input type="checkbox" name="Finance / Accounting" id="">
+                    <label class="" for="">Finance / Accounting</label>
+                </div>
             </div>
+          </div>
+
+          <div class="mb-6">
+              <span class="text-sm">Company <span class="text-red-star">*</span></span>
+              <select v-model="company">
+                <option>
+                  Company A
+                </option>
+              </select>
+              <!-- <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" /> -->
+          </div>
+
+          <div class="mb-6">
+              <span class="text-sm">Location <span class="text-red-star">*</span></span>
+              <select v-model="location">
+                <option>
+                  Location A
+                </option>
+              </select>
+              <!-- <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" /> -->
+          </div>
 
         </div>
 
@@ -145,12 +172,16 @@
             <button
                 @click="isVisible = false"
                 class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-              >Cancel</button
-            >
-            <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-            >
-              Save
+              >
+              Cancel
+              </button>
+            <button @click="editUser">
+              <button
+                @click="$emit('changeUser')"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+              >
+                Save
+              </button>
             </button>
           </div>
         </div>

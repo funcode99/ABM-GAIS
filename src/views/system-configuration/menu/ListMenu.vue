@@ -17,6 +17,7 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormEditStore } from '@/stores/edit-modal.js'
     import { useFormAddStore } from '@/stores/add-modal.js'
+
     let formState = useFormAddStore()
     let formEditState = useFormEditStore()
     const sidebar = useSidebarStore()
@@ -62,17 +63,12 @@
     }
 
     const editMenu = async (data) => {
-
       editDataId.value = data
       // masukin argumen membuat nya jadi lama
       setTimeout(callEditApi, 1000)
     }
 
     const callEditApi = async () => {
-
-      console.log(formEditState.menu.menuName)
-      console.log(formEditState.menu.url)
-      console.log(formEditState.menu.icon)
       
       try {
         const token = JSON.parse(localStorage.getItem('token'))

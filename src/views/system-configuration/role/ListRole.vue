@@ -13,8 +13,12 @@
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import { useFormAddStore } from '@/stores/add-modal.js'
+    import { useFormEditStore } from '@/stores/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
+    const formState = useFormAddStore()
+    const formEditState = useFormEditStore()
 
     // import untuk table
     let sortedData = ref([])
@@ -22,10 +26,11 @@
     let instanceArray = []
     let lengthCounter = 0
 
+    let editRoleDataId = ref()
+
     const deleteData = (event) => {
       Api.delete(`/role/delete_data/${event}`)
-      // console.log('ini adalah id ke ' + event)
-      // console.log(sortedData.value.length)
+      fetch()
       if (sortedData.value.length == 1) {
         router.go()
       } else {
@@ -34,15 +39,30 @@
     }
 
     const editRole = async (data) => {
-      console.log(data)
-        const token = JSON.parse(localStorage.getItem('token'))
-        // Set authorization for api
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        await Api.post(`/role/update_data/${data[0]}`, {
-          role: data[1],
-          description: data[2]
-        })
+        editRoleDataId.value = data
+        setTimeout(callEditApi, 500)
   }
+
+    callEditApi = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        await Api.post(`/role/update_data/${editRoleDataId.value}`, {
+          role_name: data[1]
+        })
+    }
+
+    const addRole = async () => {
+      setTimeout(callAddApi, 500)
+    } 
+
+    const callAddApi = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      await Api.post(`/role/store`, {
+        role_name: formState.role.roleName
+      })
+      fetch()
+    }
 
     const tableHead = [
         {Id: 1, title: 'No', jsonData: 'No'},
@@ -105,7 +125,7 @@
 
     <div class="flex w-screen content mt-[115px]">
 
-        <Sidebar class="flex-none" /> 
+      <Sidebar class="flex-none" /> 
         
       <!-- slate box -->
       <!-- lengthCounter < 6 ? 'backgroundHeight' : '',  -->
@@ -114,9 +134,8 @@
       >
       
         <!-- table box -->
-        <TableTopBar :title="'Role'" modalAddType="role" />
+        <TableTopBar :title="'Role'" @increase-role="addRole" modalAddType="role" />
 
-        
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
 
@@ -147,11 +166,11 @@
                     {{ data.id }} 
                   </td>
                   <td>
-                    {{ data.role }}
+                    {{ data.role_name }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
                     <ModalMenuAccessRole />
-                    <ModalEditRole @change-role="editRole" :identity="[data.id, data.role, data.description]" />
+                    <ModalEditRole @change-role="editRole(data.id)" :identity="[data.id, data.role, data.description]" />
                     <ModalDelete @confirm-delete="deleteData(data.id)" />
                   </td>
                 </tr>
@@ -160,12 +179,6 @@
             
           </table>
         </div>
-
-          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <p class="font-Inter text-xs font-normal text-[#888888]">
-              Showing 1 to 10 of 20 entries
-            </p>
-          </div> -->
 
         </div>
 

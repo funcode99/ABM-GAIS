@@ -12,6 +12,19 @@ export const useFormAddStore = defineStore('add-form', {
                 description: 'Kosong',
                 url: '',
                 icon: {}
+            },
+            user: {
+                username: '',
+                email: '',
+                password: '',
+                isEmployee: 0,
+                roleId: 0,
+                approvalAuthId: 0,
+                companyId: 0,
+                siteId: 0
+            },
+            role: {
+                roleName : ''
             }
         }
     }
