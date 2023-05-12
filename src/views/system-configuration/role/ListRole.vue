@@ -43,11 +43,11 @@
         setTimeout(callEditApi, 500)
   }
 
-    callEditApi = async () => {
+    const callEditApi = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         await Api.post(`/role/update_data/${editRoleDataId.value}`, {
-          role_name: data[1]
+          role_name: formEditState.role.roleName
         })
     }
 

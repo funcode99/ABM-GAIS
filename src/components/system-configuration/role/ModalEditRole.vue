@@ -5,6 +5,9 @@
   import { ref } from 'vue'
   import { Modal } from 'usemodal-vue3'
 
+  import { useFormEditStore } from '@/src/stores/edit-modal.js'
+  let formEditState = useFormEditStore()
+
   let isVisible = ref(false)
   let type = ''
   let modalPaddingHeight = 50
@@ -13,13 +16,14 @@
     identity: Array
   })
 
-  const submitEdit = () => {
+  const currentRoleName = ref('')
 
+  const submitEdit = () => {
+    formEditState.role.roleName = currentRoleName.value
   }
 
   // let role = ref(props.identity[1])
   // let description = ref(props.identity[2])
-
 
 </script>
 
@@ -48,13 +52,6 @@
             Role <span class="text-red">*</span>
           </span>
           <input v-model="role" type="text" id="name" placeholder="Role" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-        </div>
-
-        <div>
-          <span class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-            Description <span class="text-red-star">*</span>
-          </span>
-          <input v-model="description" type="text" id="name" placeholder="Description" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
         </div>
 
       </div>

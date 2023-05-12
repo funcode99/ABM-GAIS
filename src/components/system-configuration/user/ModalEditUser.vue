@@ -21,6 +21,7 @@
     formEditState.user.email = email.value
     formEditState.user.password = password.value
     formEditState.user.roleId = 1
+    isVisible.value = false
     }
 
     const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
@@ -122,8 +123,9 @@
             <label
                 for="name"
                 class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-                >Approval Authorities<span class="text-red">*</span></label
-            >
+                >
+                Approval Authorities<span class="text-red">*</span>
+            </label>
             <div class="flex justify-between">
                 <div class="flex items-center gap-2">
                     <input type="checkbox" name="PM" id="">
@@ -144,24 +146,22 @@
             </div>
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 flex flex-col gap-2">
               <span class="text-sm">Company <span class="text-red-star">*</span></span>
-              <select v-model="company">
+              <select v-model="company" :class="inputStylingClass">
                 <option>
                   Company A
                 </option>
               </select>
-              <!-- <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" /> -->
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 flex flex-col gap-2">
               <span class="text-sm">Location <span class="text-red-star">*</span></span>
-              <select v-model="location">
+              <select v-model="location" :class="inputStylingClass">
                 <option>
                   Location A
                 </option>
               </select>
-              <!-- <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" /> -->
           </div>
 
         </div>
@@ -169,20 +169,21 @@
         <div class="sticky bottom-0 bg-white px-4">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
+            
             <button
-                @click="isVisible = false"
-                class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-              >
+              @click="isVisible = false"
+              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
               Cancel
-              </button>
+            </button>
+
             <button @click="editUser">
               <button
                 @click="$emit('changeUser')"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-              >
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
                 Save
               </button>
             </button>
+
           </div>
         </div>
 
