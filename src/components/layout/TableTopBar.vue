@@ -35,7 +35,7 @@
     
     <!-- modal add ini perlu di segregasi -->
     <ModalAddMenu @add-menu="$emit('increaseMenu')" v-if="props.modalAddType === 'menu'" />
-    <ModalAddUser v-if="props.modalAddType === 'user'" />
+    <ModalAddUser @add-user="$emit('increaseUser')" v-if="props.modalAddType === 'user'" />
     <ModalAddApproval v-if="props.modalAddType === 'approval'" />
     <ModalAddSequence v-if="props.modalAddType === 'sequence'" />
     <ModalAddRole v-if="props.modalAddType === 'role'" />
