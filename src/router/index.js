@@ -59,6 +59,9 @@ import ApporvalReimbursementView from "@/views/approval/reimbursement/Reimbursem
 import ApprovalAtkRequestList from "@/views/approval/atk-request/AtkRequestList.vue"
 import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.vue"
 
+//facility service system
+import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -453,8 +456,21 @@ const router = createRouter({
         title: 'View Approval ATK Request'
       }
     },
+
+    //facility service system
+    {
+      path: '/managementitem',
+      name: 'management item atk',
+      component: ItemAtkList,
+      meta: {
+        title: 'Management Item ATK'
+      }
+    },
+
   ]
 })
+
+
 
 router.beforeEach((to, from, next) => {
   document.title = `GAIS || ${to.meta.title}`;
