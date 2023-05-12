@@ -4,7 +4,8 @@
     import formView from '@/assets/form-view.png'
     import tableView from '@/assets/table-view.png'
 
-    import buttonEditFormView from '@/components/atomics/buttonEditFormview.vue'
+    // salah nya disini ternyata
+    import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
     import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
 
     const props = defineProps({
