@@ -15,6 +15,8 @@ import approvalSelected from "@/assets/approval-selected.png";
 import submenuLine from "@/assets/submenu-line.png";
 import submenuLineSelected from "@/assets/submenu-line-selected.png";
 import submenuInner from "@/assets/inner-sub-menu.png";
+import facilityIcon from "@/assets/facilityIcon.png";
+import facilityIconSelected from "@/assets/facilityIconSelected.png";
 
 import searchIcon from "@/assets/Icons.png";
 import expandArrow from "@/assets/ExpandArrow.png";
@@ -33,6 +35,7 @@ let system = "systemConfiguration";
 let reference = "reference";
 let travel = "travelManagementSystem";
 let approval = "approval";
+let facility = "facilityServiceSystem";
 
 onMounted(() => {
   let scroller = window.document.querySelector(".scroller");
@@ -1613,6 +1616,246 @@ onMounted(() => {
                                   class="w-2 h-2"
                                 />
                                 ATK Request
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+                      </button>
+                    </ul>
+                  </div>
+                </collapse-transition>
+              </div>
+            </li>
+
+            <!-- ffs menu -->
+            <li>
+              <button
+                @click="sidebar.increment(facility)"
+                class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4 w-full"
+                :class="
+                  sidebar.sidebarMenu.facilityServiceSystem == true
+                    ? 'text-white bg-[#015289]'
+                    : ''
+                "
+              >
+                <div class="flex justify-between w-full items-center">
+                  <div class="flex gap-4 items-center">
+                    <img
+                      :src="facilityIcon"
+                      class="w-6 h-6 rounded-lg"
+                      :class="
+                        sidebar.sidebarMenu.facilityServiceSystem === true
+                          ? 'hidden'
+                          : 'block'
+                      "
+                      alt=""
+                    />
+                    <img
+                      :src="facilityIconSelected"
+                      class="w-6 h-6 rounded-lg"
+                      :class="
+                        sidebar.sidebarMenu.facilityServiceSystem === false
+                          ? 'hidden'
+                          : 'block'
+                      "
+                      alt=""
+                    />
+                    <h3
+                      class="text-left"
+                      :class="sidebar.isWide === true ? '' : 'hidden'"
+                    >
+                      Facility System
+                    </h3>
+                  </div>
+
+                  <!-- arrow transition for opening menu -->
+                  <div class="relative">
+                    <div
+                      class="ease-in-out duration-500 absolute bottom-0"
+                      :class="
+                        sidebar.sidebarMenu.facilityServiceSystem === false
+                          ? ''
+                          : '-rotate-180 opacity-0'
+                      "
+                    >
+                      <img :src="expandArrow" />
+                    </div>
+
+                    <div
+                      class="ease-in-out duration-500"
+                      :class="
+                        sidebar.sidebarMenu.facilityServiceSystem === false
+                          ? '-rotate-180 opacity-0'
+                          : ''
+                      "
+                    >
+                      <img :src="expandArrowSelected" />
+                    </div>
+                  </div>
+                </div>
+              </button>
+
+              <div v-if="sidebar.isWide">
+                <collapse-transition dimension="height" :duration="500">
+                  <div
+                    v-if="sidebar.sidebarMenu.facilityServiceSystem === true"
+                    class="pl-4 pb-4 sm:flex sm:flex-col hidden"
+                  >
+                    <ul class="flex flex-col gap-4 pt-4 px-2">
+                      <button class="cursor-pointer text-left">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <a
+                            href="#"
+                            class="flex items-center w-full justify-between"
+                            :class="[
+                              $route.path == '#'
+                                ? `anchorImage anchorSubMenu`
+                                : '',
+                            ]"
+                          >
+                            Meeting Room
+                            <img class="w-5 h-5" :src="groupIcon" alt="" />
+                          </a>
+                        </div>
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Management Meeting Room
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+                      </button>
+
+                      <button class="cursor-pointer text-left">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <a
+                            href="#"
+                            class="flex items-center w-full justify-between"
+                            :class="[
+                              $route.path == '#'
+                                ? `anchorImage anchorSubMenu`
+                                : '',
+                            ]"
+                          >
+                            ATK Supplies
+                            <img class="w-5 h-5" :src="groupIcon" alt="" />
+                          </a>
+                        </div>
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Management Item ATK
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                <p class="mr-[30px]">Stock In ATK</p>
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Stock Opname ATK
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                <p class="mr-[28px]">ATK Request</p>
                                 <img class="w-5 h-5" :src="groupIcon" alt="" />
                               </li>
                             </router-link>

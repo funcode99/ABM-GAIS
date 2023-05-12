@@ -8,6 +8,7 @@ export const useSidebarStore = defineStore('sidebar', {
                 systemConfiguration: false,
                 reference: false,
                 approval: false,
+                facilityServiceSystem: false,
             },
             isWide: true,
             scrollValue: 0
@@ -23,6 +24,7 @@ export const useSidebarStore = defineStore('sidebar', {
                 this.sidebarMenu.systemConfiguration = false
                 this.sidebarMenu.travelManagementSystem = false
                 this.sidebarMenu.approval = false
+                this.sidebarMenu.facilityServiceSystem = false
 
             } else if (state === 'systemConfiguration') {
 
@@ -32,6 +34,7 @@ export const useSidebarStore = defineStore('sidebar', {
                 this.sidebarMenu.reference = false
                 this.sidebarMenu.travelManagementSystem = false
                 this.sidebarMenu.approval = false
+                this.sidebarMenu.facilityServiceSystem = false
 
             } else if (state === 'travelManagementSystem') {
 
@@ -41,6 +44,7 @@ export const useSidebarStore = defineStore('sidebar', {
                 this.sidebarMenu.systemConfiguration = false
                 this.sidebarMenu.reference = false
                 this.sidebarMenu.approval = false
+                this.sidebarMenu.facilityServiceSystem = false
 
             } else if (state === 'approval') {
 
@@ -50,6 +54,18 @@ export const useSidebarStore = defineStore('sidebar', {
                 this.sidebarMenu.reference = false
                 this.sidebarMenu.systemConfiguration = false
                 this.sidebarMenu.travelManagementSystem = false
+                this.sidebarMenu.facilityServiceSystem = false
+
+            } else if (state === 'facilityServiceSystem') {
+
+                this.sidebarMenu.facilityServiceSystem = !this.sidebarMenu.facilityServiceSystem
+                this.sidebarMenu.facilityServiceSystem ? sessionStorage.setItem('isOpen', state) : sessionStorage.setItem('isOpen', '')
+
+                this.sidebarMenu.reference = false
+                this.sidebarMenu.systemConfiguration = false
+                this.sidebarMenu.travelManagementSystem = false
+                this.sidebarMenu.approval = false
+
             }
         },
         changeWide() {
@@ -68,6 +84,8 @@ export const useSidebarStore = defineStore('sidebar', {
                     this.sidebarMenu.travelManagementSystem = true
                 } else if (state === 'approval') {
                     this.sidebarMenu.approval = true
+                } else if (state === 'facilityServiceSystem') {
+                    this.sidebarMenu.facilityServiceSystem = true
                 }
             }
         }
