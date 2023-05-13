@@ -58,8 +58,8 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Flight Class", jsonData: "flight_class" },
+  { Id: 1, title: "No", jsonData: "index" },
+  { Id: 2, title: "Flight Class", jsonData: "flight_name" },
   { Id: 3, title: "Actions" },
 ];
 
@@ -85,11 +85,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -128,7 +128,7 @@ const deleteFlight = async (id) => {
       Api.delete(`/flight/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Flight has been deleted.",
+          text: "Class Flight has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#3085d6",
@@ -172,7 +172,7 @@ const callEditApi = async () => {
 
 <template>
   <div
-    class="flex w-full this h-[100vh]"
+    class="flex flex-col w-full this"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
@@ -299,10 +299,12 @@ const callEditApi = async () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="(data, index) in sortedData
+                      .reverse()
+                      .slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )"
                     :key="data.no"
                   >
                     <td>

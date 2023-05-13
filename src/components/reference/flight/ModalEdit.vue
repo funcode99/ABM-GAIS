@@ -18,6 +18,15 @@ const emits = defineEmits([
   "changeEdit",
   "assignEditFlight",
 ]);
+
+const omitModal = () => {
+  setTimeout(vanishModal, 3000)
+}
+
+const vanishModal = () => {
+  isOpenModal.value = !isOpenModal.value
+}
+
 </script>
 
 <template>
@@ -77,13 +86,15 @@ const emits = defineEmits([
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button @click="$emit('assignEditFlight', UpdateFlight)">
-                <button
-                  type="submit"
-                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                  @click="$emit('changeEdit')"
-                >
-                  Save
+              <button @click="omitModal">
+                <button @click="$emit('assignEditFlight', UpdateFlight)">
+                  <button
+                    type="submit"
+                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                    @click="$emit('changeEdit')"
+                  >
+                    Save
+                  </button>
                 </button>
               </button>
             </div>
