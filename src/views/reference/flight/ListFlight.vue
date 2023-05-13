@@ -172,13 +172,13 @@ const callEditApi = async () => {
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
