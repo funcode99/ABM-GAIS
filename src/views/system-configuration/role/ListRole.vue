@@ -32,7 +32,8 @@
       Api.delete(`/role/delete_data/${event}`)
       fetch()
       if (sortedData.value.length == 1) {
-        router.go()
+        // router.go()
+        fetch()
       } else {
         fetch()
       }
@@ -159,7 +160,6 @@
             <tbody>
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
-
                 <tr v-for="data in sortedData" :key="data.id">
                   <td>
                     {{ data.id }} 
