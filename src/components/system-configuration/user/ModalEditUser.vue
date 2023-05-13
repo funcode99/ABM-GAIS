@@ -1,5 +1,5 @@
 <script setup>
-    import { ref } from 'vue'
+    import { ref, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import iconClose from "@/assets/navbar/icon_close.svg"
     import editIcon from "@/assets/navbar/edit_icon.svg"
@@ -25,6 +25,12 @@
     }
 
     const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
+    const additional = ref([])
+
+    watch(additional, (newValue) => {
+        return additional.length > 0
+    })
 
 </script>
 
@@ -128,23 +134,25 @@
             </label>
             <div class="flex justify-between">
                 <div class="flex items-center gap-2">
-                    <input type="checkbox" name="PM" id="">
-                    <label for="">PM</label>
+                    <input type="checkbox" name="PM" v-model="additional" :disabled="condition">
+                    <label>PM</label>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input type="checkbox" name="GA" id="">
-                    <label for="">GA</label>
+                    <input type="checkbox" name="GA" v-model="additional" :disabled="condition">
+                    <label>GA</label>
                 </div>
                 <div class="flex items-center gap-2">
-                    <input type="checkbox" name="HR" id="">
-                    <label for="">HR</label>
+                    <input type="checkbox" name="HR" v-model="additional" :disabled="condition">
+                    <label>HR</label>
                 </div>
                 <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Finance / Accounting" id="">
-                    <label class="" for="">Finance / Accounting</label>
+                    <input type="checkbox" name="Finance / Accounting" v-model="additional" :disabled="condition">
+                    <label >Finance / Accounting</label>
                 </div>
             </div>
           </div>
+
+          {{ additional }}
 
           <div class="mb-6 flex flex-col gap-2">
               <span class="text-sm">Company <span class="text-red-star">*</span></span>
@@ -169,7 +177,7 @@
         <div class="sticky bottom-0 bg-white px-4">
           <div className="divider m-0 pb-4"></div>
           <div class="flex justify-end gap-4">
-            
+
             <button
               @click="isVisible = false"
               class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">

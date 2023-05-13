@@ -1,13 +1,48 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
  
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
 import { ref } from 'vue'
-let authorities = ref('PM')
+
+import { useFormAddStore } from '@/stores/add-modal.js'
+
+const formState = useFormAddStore()
+
 const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
+let isOpenModal = ref(false)
+
+let matrixName = ref('')
+let menu = ref('')
+let document = ref('')
+let company = ref('')
+
+let authorities = ref('PM')
+
+let approverLines = ref([])
+
+const addField = (fieldType) => {
+        fieldType.push({
+          level: 1,
+          authorities: authorities.value,
+          approverName : ''
+        })
+}
+
+const removeField = (index, fieldType) => {
+        fieldType.splice(index, 1)
+}
+
+const saveField = () => {
+        console.log(approverLines.value)
+        formState.approval.matrixName = matrixName.value
+        // formState.approval.companyId = company.value
+        // formState.approval.menuId = menu.value
+        // formState.approval.codeDocumentId = document.value
+        isOpenModal.value = !isOpenModal.value
+}
 
 </script>
 
@@ -19,7 +54,7 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
     + Add New
   </label>
 
-  <input type="checkbox" id="add-approver-modal" class="modal-toggle" />
+  <input type="checkbox" id="add-approver-modal" class="modal-toggle" v-model="isOpenModal" />
 
   <div class="modal">
     <div class="modal-box relative">
@@ -34,11 +69,13 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
 
       <div class="mb-3 px-8 text-left modal-box-inner">
         
+        <!-- bagian atas -->
         <div class="mb-3">
           <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm">
             Nama Matrix<span class="text-red">*</span>
           </label>
           <input
+            v-model="matrixName"
             type="text"
             id="name"
             placeholder="Nama Matrix"
@@ -52,7 +89,7 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
             <label class="block mb-2 font-JakartaSans font-medium text-sm">
               Menu<span class="text-red">*</span>
             </label>
-            <select :class="inputStylingClass">
+            <select v-model="menu" :class="inputStylingClass">
               <option disabled selected hidden value="">
                 Menu
               </option>
@@ -66,9 +103,25 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
         <div class="mb-3 flex items-center">
           <div class="flex flex-col w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Document<span class="text-red">*</span>
+            </label>
+            <select v-model="document" :class="inputStylingClass">
+              <option disabled selected hidden value="">
+                Document
+              </option>
+              <option value="">
+                ABC
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3 flex items-center">
+          <div class="flex flex-col w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
               Company<span class="text-red">*</span>
             </label>
-            <select :class="inputStylingClass">
+            <select v-model="company" :class="inputStylingClass">
               <option disabled selected hidden value="">
                 Company
               </option>
@@ -79,6 +132,7 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
           </div>
         </div>
 
+        <!-- bagian bawah -->
         <h1 class="font-medium">Approver Lines <span>*</span></h1>
         <hr class="border border-black">
 
@@ -113,30 +167,30 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
 
           <tbody class="bg-[#F5F5F5]">
 
-            <tr class="text-center">
+            <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
               
-
-              <td v-if="authorities === 'PM'">
-                1
+              <!-- nilai awalnya PM -->
+              <td v-if="input.authorities === 'PM' ? input.level = 1 : ''">
+                  1
               </td>
-              <td v-if="authorities === 'GA'">
+              <td v-if="input.authorities === 'GA' ? input.level = 2 : ''" >
                 2
               </td>
-              <td v-if="authorities === 'HR'">
+              <td v-if="input.authorities === 'HR' ? input.level = 3 : ''">
                 3
               </td>
-              <td v-if="authorities === 'Atasan Langsung'">
+              <td v-if="input.authorities === 'Atasan Langsung' ? input.level = 4 : ''">
                 4
               </td>
-              <td v-if="authorities === 'Accounting'">
+              <td v-if="input.authorities === 'Accounting' ? input.level = 5 : ''">
                 5
               </td>
-              <td v-if="authorities === 'Treasury'">
+              <td v-if="input.authorities === 'Treasury' ? input.level = 6 : ''">
                 6
               </td>
 
               <td>
-                <select v-model="authorities">
+                <select v-model="input.authorities">
                   <option>PM</option>
                   <option>GA</option>
                   <option>HR</option>
@@ -146,17 +200,12 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
                 </select>
               </td>
 
-              <td
-                
-              >
-                John Mane
+              <td>
+                <input type="text" class="px-2" v-model="input.approverName" />
               </td>
 
               <td class="flex flex-wrap gap-4 justify-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-                <button>
+                <button  @click="removeField(index, approverLines)">
                   <img :src="deleteicon" class="w-6 h-6" />
                 </button>
               </td>
@@ -166,7 +215,9 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
               <td></td>
               <td></td>
               <td></td>
-              <td class="flex justify-center"><img class="cursor-pointer" :src="iconPlus" alt=""></td>
+              <td class="flex justify-center">
+                <img @click="addField(approverLines)" class="cursor-pointer" :src="iconPlus" alt="">
+              </td>
             </tr>
 
           </tbody>
@@ -183,12 +234,13 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
             class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
             Cancel
           </label>
-          <button class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-            Save
+          <button @click="saveField">
+            <button @click="$emit('addApprover')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
+              Save
+            </button>
           </button>
         </div>
       </div>
-
 
     </div>
   </div>
@@ -207,7 +259,7 @@ const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   width: 91.666667%;
-  max-width: 32rem 
+  max-width: 50rem 
   /* 512px */;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;

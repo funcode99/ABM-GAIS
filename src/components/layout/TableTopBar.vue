@@ -36,8 +36,8 @@
     <!-- modal add ini perlu di segregasi -->
     <ModalAddMenu @add-menu="$emit('increaseMenu')" v-if="props.modalAddType === 'menu'" />
     <ModalAddUser @add-user="$emit('increaseUser')" v-if="props.modalAddType === 'user'" />
-    <ModalAddApproval v-if="props.modalAddType === 'approval'" />
-    <ModalAddSequence v-if="props.modalAddType === 'sequence'" />
+    <ModalAddApproval @add-approver="$emit('increaseApprover')" v-if="props.modalAddType === 'approval'" />
+    <ModalAddSequence @add-sequence="$emit('increaseSequence')" v-if="props.modalAddType === 'sequence'" />
     <ModalAddRole @add-role="$emit('increaseRole')" v-if="props.modalAddType === 'role'" />
 
     <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">

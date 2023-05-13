@@ -4,9 +4,26 @@
   import iconClose from "@/assets/navbar/icon_close.svg"
   import editIcon from "@/assets/navbar/edit_icon.svg";
 
+  import { useFormEditStore } from '@/stores/edit-modal.js'
+  let formEditState = useFormEditStore()
+
   let isVisible = ref(false)
   let type = '' 
   let modalPaddingHeight = 50
+
+  let menuSequenceName = ref('')
+  let recycleBy = ref('Administrator')
+  let nextValue = ref('')
+  let menu = ref('Administrator')
+  let sequenceSize = ref('')
+  let prefix = ref('')
+  let suffix = ref('')
+
+  const submitEdit = () => {
+    formEditState.sequence.sequenceName = menuSequenceName.value
+    formEditState.sequence.recycle = recycleBy.value
+    isVisible.value = !isVisible.value
+  }
 
 </script>
 
@@ -37,6 +54,7 @@
                   >Nama<span class="text-red">*</span></label
                 >
                 <input
+                  v-model="menuSequenceName"
                   type="text"
                   placeholder="Nama Sequence"
                   class="max-w-[100%] input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
@@ -106,8 +124,8 @@
                     id="company"
                     >Recycle by<span class="text-red">*</span></label
                   >
-                  <select class="select select-accent w-full" required>
-                    <option disabled selected hidden>Month</option>
+                  
+                  <select v-model="recycleBy" class="select select-accent w-full" required>
                     <option>Administrator</option>
                     <option>Super Admin</option>
                     <option>Admin</option>
@@ -115,6 +133,7 @@
                     <option>Employee</option>
                     <option>Driver</option>
                   </select>
+
                 </div>
               </div>
               
@@ -166,9 +185,13 @@
                         >
                         Cancel
                       </label>
-                      <button class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                        Save
+
+                      <button @click="submitEdit">
+                        <button @click="$emit('changeSequence')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
+                          Save
+                        </button>
                       </button>
+
                     </div>
           </div>
         

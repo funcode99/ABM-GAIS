@@ -41,8 +41,10 @@
             <button @click="isVisible = false" class="border border-blue text-blue rounded-lg px-4 py-3 w-[141px] h-[44px]">
               Cancel
             </button>
-            <button @click="$emit('confirmDelete')" class="bg-red text-white rounded-lg px-4 py-3 w-[141px] h-[44px]">
-              Yes
+            <button @click="isVisible = false">
+              <button @click="$emit('confirmDelete')" class="bg-red text-white rounded-lg px-4 py-3 w-[141px] h-[44px]">
+                Yes
+              </button>
             </button>
       </div>
       

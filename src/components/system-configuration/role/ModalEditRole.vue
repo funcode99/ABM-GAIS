@@ -5,7 +5,7 @@
   import { ref } from 'vue'
   import { Modal } from 'usemodal-vue3'
 
-  import { useFormEditStore } from '@/src/stores/edit-modal.js'
+  import { useFormEditStore } from '@/stores/edit-modal.js'
   let formEditState = useFormEditStore()
 
   let isVisible = ref(false)
@@ -65,7 +65,7 @@
               class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
               Cancel
             </label>
-            <button>
+            <button @click="submitEdit">
               <button
               @click="$emit('changeRole')"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">

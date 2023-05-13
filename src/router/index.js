@@ -62,9 +62,17 @@ import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.
 //facility service system
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
 
+//experiment
+// import addinputfield from '@/views/experiment/addinputfield.vue'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+
+    // {
+    //   path: '/addfield',
+    //   component: addinputfield
+    // },
 
     // Not found Page
     {
