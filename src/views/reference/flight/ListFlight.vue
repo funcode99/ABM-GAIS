@@ -25,6 +25,8 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let editDataId = ref(0);
+let UpdateListFlight = ref("");
 
 //for paginations
 let showingValue = ref(1);
@@ -139,17 +141,44 @@ const deleteFlight = async (id) => {
     }
   });
 };
+
+const editFlight = async (data) => {
+  editDataId.value = data;
+  setTimeout(callEditApi, 1000);
+};
+
+const callEditApi = async () => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    const api = await Api.post(`/flight/update_data/${editDataId.value}`, {
+      flight_name: UpdateListFlight.value,
+    });
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    fetchFlight();
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -284,6 +313,9 @@ const deleteFlight = async (id) => {
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        @change-edit="editFlight(data.id)"
+                        @assignEditFlight="(n) => (UpdateListFlight = n)"
+                        :currentValue="data.flight_name"
                       />
                       <button @click="deleteFlight(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />

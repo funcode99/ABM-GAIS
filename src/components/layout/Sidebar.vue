@@ -85,7 +85,7 @@ onMounted(() => {
     <div class="sidebar-wrapper mt-3">
       <div class="sidebar scroller">
         <div class="px-4 flex flex-col items-center">
-          <ul id="myMenu">
+          <ul id="myMenu" class="pb-20">
             <li class="">
               <div
                 class="flex justify-center items-center cursor-pointer py-4"
