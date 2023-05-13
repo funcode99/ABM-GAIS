@@ -95,10 +95,10 @@ const tableHeadVoucherTaxi = [
 
             <div class="flex gap-4">
 
-              <RequestTripModal v-if="requestTripType == 'Company Business'" />
-              <RequestTripSiteVisit v-if="requestTripType == 'Site Visit'" />
+              <RequestTripModal />
+              <!-- <RequestTripSiteVisit v-if="requestTripType == 'Site Visit'" />
               <RequestTripFieldBreak v-if="requestTripType == 'Field Break'" />
-              <RequestTripTaxiVoucherOnly v-if="requestTripType == 'Taxi Voucher Only'" />
+              <RequestTripTaxiVoucherOnly v-if="requestTripType == 'Taxi Voucher Only'" /> -->
 
               <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
                 <img :src="icon_receive" class="w-6 h-6" />

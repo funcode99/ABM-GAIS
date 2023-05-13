@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 import iconClose from "@/assets/navbar/icon_close.svg"
 
@@ -26,6 +26,28 @@ let type = ''
 let modalPaddingHeight = 50
 
 let formStep = ref(0)
+
+let requestType = ref('Company Business')
+let stepCounter = ref(7)
+
+watch(requestType, (newValue, oldValue) => {
+
+  console.log('nilai baru ' + newValue)
+  console.log('nilai lama ' + oldValue)
+
+  if(newValue == 'Company Business') {
+    stepCounter.value = 7
+  } else if(newValue == 'Site Visit') {
+    stepCounter.value = 7
+  } else if (newValue == 'Field Break') {
+    stepCounter.value = 4
+  } else if (newValue == 'Taxi Voucher Only') {
+    stepCounter.value = 3
+  }
+
+  console.log(stepCounter.value)
+
+})
 
 const tableHeadAirlines = [
   {id: 1, title: 'Airline'},
@@ -293,55 +315,154 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
         <!-- step circle -->
         <div class="flex justify-center pt-3 gap-x-[19px] modal-inner">
 
-        <!-- step 1 circle -->
-        <div :class="[formStep > 0 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Requester Info</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 0 ? 'block' : 'hidden'">
-        </div>
+          <!-- step 1 circle -->
+          <div :class="[formStep > 0 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+            <h1 class="mt-11 w-11 font-medium text-[10px]">Requester Info</h1>
+            <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+            <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 0 ? 'block' : 'hidden'">
+          </div>
 
-        <!-- step 2 circle -->
-        <div :class="[formStep > 1 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Purpose of Trip</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 1 ? 'block' : 'hidden'">
-        </div>
+          <!-- step 2 circle -->
+          <div :class="[formStep > 1 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+            <h1 class="mt-11 w-11 font-medium text-[10px]">Purpose of Trip</h1>
+            <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+            <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 1 ? 'block' : 'hidden'">
+          </div>
 
-        <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Travellers</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 2 ? 'block' : 'hidden'">
-        </div>
 
-        <!-- lebar div harus sama kaya text biar lingkarannya gak gepeng -->
-        <div :class="[formStep > 3 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Airlines</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 3 ? 'block' : 'hidden'">
-        </div>
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Company Business'">
 
-        <div :class="[formStep > 4 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Taxi Voucher</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 4 ? 'block' : 'hidden'">
-        </div>
+            <!-- step 3 circle travellers -->
+            <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Travellers</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 2 ? 'block' : 'hidden'">
+            </div>
+  
+            <!-- lebar div harus sama kaya text biar lingkarannya gak gepeng -->
+            <!-- step 4 circle airlines -->
+            <div :class="[formStep > 3 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Airlines</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 3 ? 'block' : 'hidden'">
+            </div>
+  
+            <!-- step 5 circle taxi voucher -->
+            <div :class="[formStep > 4 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Taxi Voucher</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 4 ? 'block' : 'hidden'">
+            </div>
+  
+            <!-- step 6 circle other transportation -->
+            <div :class="[formStep > 5 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 font-medium text-[10px]">Other Transportation</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 5 ? 'block' : 'hidden'">
+            </div>
+  
+            <!-- step 7 circle -->
+            <div :class="[formStep > 6 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 font-medium text-[10px]">Accomodation</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 6 ? 'block' : 'hidden'">
+            </div>
+  
+            <!-- step 8 circle -->
+            <div class="rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Cash Advance</h1>
+              <!-- <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt=""> -->
+            </div>
 
-        <div :class="[formStep > 5 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 font-medium text-[10px]">Other Transportation</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 5 ? 'block' : 'hidden'">
-        </div>
+          </div>
 
-        <div :class="[formStep > 6 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
-          <h1 class="mt-11 font-medium text-[10px]">Accomodation</h1>
-          <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
-          <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 6 ? 'block' : 'hidden'">
-        </div>
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Site Visit'">
 
-        <div class="rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative">
-          <h1 class="mt-11 w-11 font-medium text-[10px]">Cash Advance</h1>
-          <!-- <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt=""> -->
-        </div>
+            <!-- step 3 circle travellers -->
+            <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Travellers</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 2 ? 'block' : 'hidden'">
+            </div>
+
+            <!-- lebar div harus sama kaya text biar lingkarannya gak gepeng -->
+            <!-- step 4 circle airlines -->
+            <div :class="[formStep > 3 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Airlines</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 3 ? 'block' : 'hidden'">
+            </div>
+
+            <!-- step 5 circle taxi voucher -->
+            <div :class="[formStep > 4 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Taxi Voucher</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 4 ? 'block' : 'hidden'">
+            </div>
+
+            <!-- step 6 circle other transportation -->
+            <div :class="[formStep > 5 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 font-medium text-[10px]">Other Transportation</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 5 ? 'block' : 'hidden'">
+            </div>
+
+            <!-- step 7 circle -->
+            <div :class="[formStep > 6 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 font-medium text-[10px]">Accomodation</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 6 ? 'block' : 'hidden'">
+            </div>
+
+            <!-- step 8 circle -->
+            <div class="rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Cash Advance</h1>
+              <!-- <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt=""> -->
+            </div>
+
+          </div>
+
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Field Break'">
+             
+            <!-- step 3 circle travellers -->
+            <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Travellers</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 2 ? 'block' : 'hidden'">
+            </div>
+  
+            <!-- step 4 circle airlines -->
+            <div :class="[formStep > 3 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Airlines</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 3 ? 'block' : 'hidden'">
+            </div>
+
+            <!-- step 5 circle other transportation -->
+            <div :class="[formStep > 4 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 font-medium text-[10px]">Other Transportation</h1>
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 5 ? 'block' : 'hidden'">
+            </div>
+
+          </div>
+
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Taxi Voucher Only'">
+             
+            <!-- step 3 circle travellers -->
+            <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Travellers</h1>
+              <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" alt="">
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 2 ? 'block' : 'hidden'">
+            </div>
+
+            <!-- step 4 circle taxi voucher -->
+            <div :class="[formStep > 3 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+              <h1 class="mt-11 w-11 font-medium text-[10px]">Taxi Voucher</h1>
+              <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 4 ? 'block' : 'hidden'">
+            </div>
+
+          </div>
+
 
         </div>
 
@@ -400,9 +521,18 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               <div :class="columnClass + ' mx-4'">
         
                   <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                  <select :class="inputStylingWithoutWidthClass">
-                    <option hidden selected disabled value="">
+                  <select v-model="requestType" :class="inputStylingWithoutWidthClass">
+                    <option>
                       Company Business
+                    </option>
+                    <option>
+                      Site Visit
+                    </option>
+                    <option>
+                      Field Break
+                    </option>
+                    <option>
+                      Taxi Voucher Only
                     </option>
                   </select>
             
@@ -489,81 +619,130 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
               
             </div>
 
+            <div v-if="requestType == 'Company Business'">
+
             <!-- step 3 form Traveller -->
             <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
 
-              <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Guest
-              </button>
+<button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Guest
+</button>
 
-              <div class="overflow-x-auto mt-5">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th v-for="data in tableHeadTravellers" :key="data.id">
-                        {{ data.title }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="data in tableBodyTravellers" :key="data.id">
-                      <td>
-                        {{ data.name }}
-                      </td>
-                      <td>
-                        {{ data.sn }}
-                      </td>
-                      <td>
-                        {{ data.gender }}
-                      </td>
-                      <td>
-                        {{ data.contactNo }}
-                      </td>
-                      <td>
-                        {{ data.department }}
-                      </td>
-                      <td>
-                        {{ data.company }}
-                      </td>
-                      <td>
-                        {{ data.type }}
-                      </td>
-                      <td>
-                        {{ data.maxHotelFare }}
-                      </td>
-                      <td>
-                        {{ data.flightClass }}
-                      </td>
-                      <td>
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadTravellers" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyTravellers" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.sn }}
+        </td>
+        <td>
+          {{ data.gender }}
+        </td>
+        <td>
+          {{ data.contactNo }}
+        </td>
+        <td>
+          {{ data.department }}
+        </td>
+        <td>
+          {{ data.company }}
+        </td>
+        <td>
+          {{ data.type }}
+        </td>
+        <td>
+          {{ data.maxHotelFare }}
+        </td>
+        <td>
+          {{ data.flightClass }}
+        </td>
+        <td>
 
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
             </div>
 
             <!-- step 4 form Airlines -->
             <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
 
-              <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Airlines
-              </button>
+            <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+              + Add Airlines
+            </button>
 
-              <div class="overflow-x-auto mt-5">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
-                        {{ data.title }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+            <div class="overflow-x-auto mt-5">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
+                      {{ data.title }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+                    <td>
+                      {{ data.name }}
+                    </td>
+                    <td>
+                      {{ data.departure }}
+                    </td>
+                    <td>
+                      {{ data.arrival }}
+                    </td>
+                    <td>
+                      {{ data.flightNumber }}
+                    </td>
+                    <td>
+                      {{ data.flightRegion }}
+                    </td>
+                    <td>
+                      {{ data.status }}
+                    </td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            </div>
+
+            <!-- step 5 form Taxi Voucher -->
+            <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
+
+            <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+              + Add Taxi Voucher
+            </button>
+
+            <div class="overflow-x-auto mt-5">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
+                      {{ data.title }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
                       <td>
                         {{ data.name }}
+                      </td>
+                      <td>
+                        {{ data.date }}
                       </td>
                       <td>
                         {{ data.departure }}
@@ -572,45 +751,528 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
                         {{ data.arrival }}
                       </td>
                       <td>
-                        {{ data.flightNumber }}
+                        {{ data.amount }}
                       </td>
                       <td>
-                        {{ data.flightRegion }}
+                        {{ data.accountName }}
+                      </td>
+                      <td>
+                        {{ data.remarks }}
                       </td>
                       <td>
                         {{ data.status }}
                       </td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
             </div>
 
-            <!-- step 5 form Taxi Voucher -->
-            <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
+            <!-- step 6 form Other Transportation -->
+            <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
 
-              <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Taxi Voucher
-              </button>
+            <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+              + Add Other Transportation
+            </button>
 
-              <div class="overflow-x-auto mt-5">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
-                        {{ data.title }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
+            <div class="overflow-x-auto mt-5">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th v-for="data in tableHeadOtherTransportation" :key="data.id">
+                      {{ data.title }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
+                    <td>
+                      {{ data.name }}
+                    </td>
+                    <td>
+                      {{ data.type }}
+                    </td>
+                    <td>
+                      {{ data.fromDate }}
+                    </td>
+                    <td>
+                      {{ data.toDate }}
+                    </td>
+                    <td>
+                      {{ data.quantity }}
+                    </td>
+                    <td>
+                      {{ data.city }}
+                    </td>
+                    <td>
+                      {{ data.status }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            </div>
+
+            <!-- step 7 form Accomodation -->
+            <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
+
+            <button @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+              + Add Accomodation
+            </button>
+
+            <div class="overflow-x-auto mt-5">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
+                      {{ data.title }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
+                    <td>
+                      {{ data.name }}
+                    </td>
+                    <td>
+                      {{ data.hotelName }}
+                    </td>
+                    <td>
+                      {{ data.checkIn }}
+                    </td>
+                    <td>
+                      {{ data.checkOut }}
+                    </td>
+                    <td>
+                      {{ data.city }}
+                    </td>
+                    <td>
+                      {{ data.type }}
+                    </td>
+                    <td>
+                      {{ data.sharingWith }}
+                    </td>
+                    <td>
+                      {{ data.status }}
+                    </td>
+                    <td>
+
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            </div>
+
+            <!-- step 8 form -->
+            <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
+
+            <button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+              + Add Cash Advance
+            </button>
+
+            <div class="overflow-x-auto mt-5">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th v-for="data in tableHeadCashAdvance" :key="data.id">
+                      {{ data.title }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="data in tableBodyCashAdvance" :key="data.id">
+                    <td>
+                      {{ data.caNo }}
+                    </td>
+                    <td>
+                      {{ data.total }}
+                    </td>
+                    <td>
+                      {{ data.notes }}
+                    </td>
+                    <td>
+                      {{ data.status }}
+                    </td>
+                    <td>
+                      
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            </div>
+            </div>
+
+            <div v-if="requestType == 'Site Visit'">
+
+<!-- step 3 form Traveller -->
+<div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
+
+<button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
++ Add Guest
+</button>
+
+<div class="overflow-x-auto mt-5">
+<table class="table">
+<thead>
+<tr>
+<th v-for="data in tableHeadTravellers" :key="data.id">
+{{ data.title }}
+</th>
+</tr>
+</thead>
+<tbody>
+<tr v-for="data in tableBodyTravellers" :key="data.id">
+<td>
+{{ data.name }}
+</td>
+<td>
+{{ data.sn }}
+</td>
+<td>
+{{ data.gender }}
+</td>
+<td>
+{{ data.contactNo }}
+</td>
+<td>
+{{ data.department }}
+</td>
+<td>
+{{ data.company }}
+</td>
+<td>
+{{ data.type }}
+</td>
+<td>
+{{ data.maxHotelFare }}
+</td>
+<td>
+{{ data.flightClass }}
+</td>
+<td>
+
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+<!-- step 4 form Airlines -->
+<div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
+
+<button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Airlines
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.departure }}
+        </td>
+        <td>
+          {{ data.arrival }}
+        </td>
+        <td>
+          {{ data.flightNumber }}
+        </td>
+        <td>
+          {{ data.flightRegion }}
+        </td>
+        <td>
+          {{ data.status }}
+        </td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<!-- step 5 form Taxi Voucher -->
+<div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
+
+<button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Taxi Voucher
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
+          <td>
+            {{ data.name }}
+          </td>
+          <td>
+            {{ data.date }}
+          </td>
+          <td>
+            {{ data.departure }}
+          </td>
+          <td>
+            {{ data.arrival }}
+          </td>
+          <td>
+            {{ data.amount }}
+          </td>
+          <td>
+            {{ data.accountName }}
+          </td>
+          <td>
+            {{ data.remarks }}
+          </td>
+          <td>
+            {{ data.status }}
+          </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<!-- step 6 form Other Transportation -->
+<div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
+
+<button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Other Transportation
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadOtherTransportation" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.type }}
+        </td>
+        <td>
+          {{ data.fromDate }}
+        </td>
+        <td>
+          {{ data.toDate }}
+        </td>
+        <td>
+          {{ data.quantity }}
+        </td>
+        <td>
+          {{ data.city }}
+        </td>
+        <td>
+          {{ data.status }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<!-- step 7 form Accomodation -->
+<div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
+
+<button @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Accomodation
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.hotelName }}
+        </td>
+        <td>
+          {{ data.checkIn }}
+        </td>
+        <td>
+          {{ data.checkOut }}
+        </td>
+        <td>
+          {{ data.city }}
+        </td>
+        <td>
+          {{ data.type }}
+        </td>
+        <td>
+          {{ data.sharingWith }}
+        </td>
+        <td>
+          {{ data.status }}
+        </td>
+        <td>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<!-- step 8 form -->
+<div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
+
+<button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Cash Advance
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadCashAdvance" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyCashAdvance" :key="data.id">
+        <td>
+          {{ data.caNo }}
+        </td>
+        <td>
+          {{ data.total }}
+        </td>
+        <td>
+          {{ data.notes }}
+        </td>
+        <td>
+          {{ data.status }}
+        </td>
+        <td>
+          
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</div>
+            </div>
+
+            <div v-if="requestType == 'Field Break'">
+                <!-- step 3 form Traveller -->
+                <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
+
+<button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Guest
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadTravellers" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyTravellers" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.sn }}
+        </td>
+        <td>
+          {{ data.gender }}
+        </td>
+        <td>
+          {{ data.contactNo }}
+        </td>
+        <td>
+          {{ data.department }}
+        </td>
+        <td>
+          {{ data.company }}
+        </td>
+        <td>
+          {{ data.type }}
+        </td>
+        <td>
+          {{ data.maxHotelFare }}
+        </td>
+        <td>
+          {{ data.flightClass }}
+        </td>
+        <td>
+
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+                </div>
+
+                <!-- step 4 form Airlines -->
+                <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
+
+                <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  + Add Airlines
+                </button>
+
+                <div class="overflow-x-auto mt-5">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
+                          {{ data.title }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
                         <td>
                           {{ data.name }}
-                        </td>
-                        <td>
-                          {{ data.date }}
                         </td>
                         <td>
                           {{ data.departure }}
@@ -619,161 +1281,177 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
                           {{ data.arrival }}
                         </td>
                         <td>
-                          {{ data.amount }}
+                          {{ data.flightNumber }}
                         </td>
                         <td>
-                          {{ data.accountName }}
-                        </td>
-                        <td>
-                          {{ data.remarks }}
+                          {{ data.flightRegion }}
                         </td>
                         <td>
                           {{ data.status }}
                         </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                </div>
+
+                <!-- step 6 form Other Transportation -->
+                <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
+
+<button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Other Transportation
+</button>
+
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadOtherTransportation" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.type }}
+        </td>
+        <td>
+          {{ data.fromDate }}
+        </td>
+        <td>
+          {{ data.toDate }}
+        </td>
+        <td>
+          {{ data.quantity }}
+        </td>
+        <td>
+          {{ data.city }}
+        </td>
+        <td>
+          {{ data.status }}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+                </div>
 
             </div>
 
-            <!-- step 6 form Other Transportation -->
-            <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
+            <div v-if="requestType == 'Taxi Voucher Only'">
 
-              <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Other Transportation
-              </button>
+                <!-- step 3 form Traveller -->
+                <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
 
-              <div class="overflow-x-auto mt-5">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th v-for="data in tableHeadOtherTransportation" :key="data.id">
-                        {{ data.title }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
-                      <td>
-                        {{ data.name }}
-                      </td>
-                      <td>
-                        {{ data.type }}
-                      </td>
-                      <td>
-                        {{ data.fromDate }}
-                      </td>
-                      <td>
-                        {{ data.toDate }}
-                      </td>
-                      <td>
-                        {{ data.quantity }}
-                      </td>
-                      <td>
-                        {{ data.city }}
-                      </td>
-                      <td>
-                        {{ data.status }}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+<button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Guest
+</button>
 
-            </div>
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadTravellers" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyTravellers" :key="data.id">
+        <td>
+          {{ data.name }}
+        </td>
+        <td>
+          {{ data.sn }}
+        </td>
+        <td>
+          {{ data.gender }}
+        </td>
+        <td>
+          {{ data.contactNo }}
+        </td>
+        <td>
+          {{ data.department }}
+        </td>
+        <td>
+          {{ data.company }}
+        </td>
+        <td>
+          {{ data.type }}
+        </td>
+        <td>
+          {{ data.maxHotelFare }}
+        </td>
+        <td>
+          {{ data.flightClass }}
+        </td>
+        <td>
 
-            <!-- step 7 form Accomodation -->
-            <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-              <button @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Accomodation
-              </button>
+                </div>
 
-              <div class="overflow-x-auto mt-5">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
-                        {{ data.title }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
-                      <td>
-                        {{ data.name }}
-                      </td>
-                      <td>
-                        {{ data.hotelName }}
-                      </td>
-                      <td>
-                        {{ data.checkIn }}
-                      </td>
-                      <td>
-                        {{ data.checkOut }}
-                      </td>
-                      <td>
-                        {{ data.city }}
-                      </td>
-                      <td>
-                        {{ data.type }}
-                      </td>
-                      <td>
-                        {{ data.sharingWith }}
-                      </td>
-                      <td>
-                        {{ data.status }}
-                      </td>
-                      <td>
+                <!-- step 4 form Taxi Voucher -->
+                <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
 
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+<button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  + Add Taxi Voucher
+</button>
 
-            </div>
+<div class="overflow-x-auto mt-5">
+  <table class="table">
+    <thead>
+      <tr>
+        <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
+          {{ data.title }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
+          <td>
+            {{ data.name }}
+          </td>
+          <td>
+            {{ data.date }}
+          </td>
+          <td>
+            {{ data.departure }}
+          </td>
+          <td>
+            {{ data.arrival }}
+          </td>
+          <td>
+            {{ data.amount }}
+          </td>
+          <td>
+            {{ data.accountName }}
+          </td>
+          <td>
+            {{ data.remarks }}
+          </td>
+          <td>
+            {{ data.status }}
+          </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-            <!-- step 8 form -->
-            <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
+                </div>
 
-              <button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Cash Advance
-              </button>
-
-              <div class="overflow-x-auto mt-5">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th v-for="data in tableHeadCashAdvance" :key="data.id">
-                        {{ data.title }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="data in tableBodyCashAdvance" :key="data.id">
-                      <td>
-                        {{ data.caNo }}
-                      </td>
-                      <td>
-                        {{ data.total }}
-                      </td>
-                      <td>
-                        {{ data.notes }}
-                      </td>
-                      <td>
-                        {{ data.status }}
-                      </td>
-                      <td>
-                        
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-            </div>
+            </div>  
 
         </div>
 
@@ -788,7 +1466,7 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
                 Back
               </button>
 
-              <button v-if="formStep < 7" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+              <button v-if="formStep < stepCounter" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                 Next
               </button>
 
