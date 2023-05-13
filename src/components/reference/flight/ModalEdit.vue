@@ -2,7 +2,22 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import { ref } from "vue";
+
+let UpdateFlight = ref("");
+let isOpenModal = ref(false);
+
+const props = defineProps({
+  currentValue: String,
+});
+
+UpdateFlight = props.currentValue;
+
+const emits = defineEmits([
+  "unlockScrollbar",
+  "changeEdit",
+  "assignEditFlight",
+]);
 </script>
 
 <template>
@@ -13,7 +28,12 @@ const emits = defineEmits(["unlockScrollbar"]);
     ><img :src="editicon" class="w-6 h-6"
   /></label>
 
-  <input type="checkbox" id="modal-edit-flight" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="modal-edit-flight"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -32,7 +52,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-flight">
-        <form class="pt-4">
+        <div class="pt-4">
           <div class="mb-6 text-start px-4 w-full">
             <label
               for="flight"
@@ -45,6 +65,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Flight Class"
               required
+              v-model="UpdateFlight"
             />
           </div>
 
@@ -56,14 +77,18 @@ const emits = defineEmits(["unlockScrollbar"]);
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
+              <button @click="$emit('assignEditFlight', UpdateFlight)">
+                <button
+                  type="submit"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                  @click="$emit('changeEdit')"
+                >
+                  Save
+                </button>
               </button>
             </div>
           </div>
-        </form>
+        </div>
       </main>
     </div>
   </div>
