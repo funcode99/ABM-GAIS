@@ -83,7 +83,6 @@
     const fetch = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         
-        // Set authorization for api
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get('/role')
         instanceArray = api.data.data

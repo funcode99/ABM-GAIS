@@ -5,7 +5,6 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
-    import dataDummy from '@/utils/Api/system-configuration/approverdata.js'
 
     // import untuk approval table
     import { ref, onBeforeMount } from 'vue'
@@ -13,15 +12,20 @@
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import Api from '@/utils/Api'
+
+    import { useFormAddStore } from '@/stores/add-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
-
+    
+    const formState = useFormAddStore()
     const search = ref('')
     let showingValue = ref(0)
 
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
+    let lengthCounter = 0
 
 const selectAll = (checkValue) => { 
   const checkLead = checkValue
@@ -57,13 +61,21 @@ const sortList = (sortBy) => {
   }
 }
 
+const fetch = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+        
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/approval/get_approval')
+    instanceArray = api.data.data
+    sortedData.value = instanceArray
+    lengthCounter = sortedData.value.length
+    }
+
 // watch(ref, callback)
 
 onBeforeMount(() => {
   getSessionForSidebar()
-  // sortedData.value gak dianggap sebagai array lagi
-  instanceArray = dataDummy
-  sortedData.value = instanceArray
+  fetch()
 })
 
 const filteredItems = (search) => {
@@ -79,7 +91,34 @@ const filteredItems = (search) => {
 
 const getSessionForSidebar = () => {
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
-  }
+}
+
+const addNewApprover = async () => {
+    setTimeout(callAddApi, 500)
+}
+
+const callAddApi = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    await Api.post(`/approval/store_approval`, {
+      approval_name:  formState.approval.matrixName,
+      id_company: formState.approval.companyId,
+      id_menu: formState.approval.menuId,
+      id_code_document: formState.approval.codeDocumentId,
+    })
+    fetch()
+}
+
+const deleteData = (event) => {
+      console.log(event)
+      Api.delete(`/approval/delete_data_approval/${event}`)
+      fetch()
+      if (sortedData.value.length == 1) {
+        router.go()
+      } else {
+        fetch()
+      }
+}
   
 </script>
 
@@ -99,12 +138,12 @@ const getSessionForSidebar = () => {
           :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
       
-        <TableTopBar :title="'Approval'" @change-showing="fillPageMultiplier" modalAddType="approval" />
+        <TableTopBar :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
           
-          <!-- <TableUser class="py-2 relative overflow-auto" :searchResult=search /> -->
+
 
         <div class="relative w-full">
           <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
@@ -134,22 +173,22 @@ const getSessionForSidebar = () => {
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                <tr v-for="data in sortedData" :key="data.No">
+                <tr v-for="(data, index) in sortedData" :key="data.No">
                   <td>
                     <input type="checkbox" name="chk">
                   </td>
                   <td>
-                    {{ data.No }} 
+                    {{ index+1 }} 
                   </td>
                   <td>
-                    {{ data.MatrixName }}
+                    {{ data.approval_name }}
                   </td>
                   <td>
-                    {{ data.Menu }}
+                    {{ data.menu }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
                     <ModalEditApproval />
-                    <ModalDelete/>
+                    <ModalDelete @confirm-delete="deleteData(data.id)" />
                   </td>
                 </tr>
 
@@ -157,12 +196,6 @@ const getSessionForSidebar = () => {
             
           </table>
         </div>
-
-          <!-- <div class="flex flex-wrap justify-between items-center mx-4 py-2">
-            <p class="font-Inter text-xs font-normal text-[#888888]">
-              Showing 1 to 10 of 20 entries
-            </p>
-          </div> -->
 
         </div>
 

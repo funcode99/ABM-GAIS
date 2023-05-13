@@ -2,21 +2,26 @@
   import { ref } from 'vue'
   import iconClose from "@/assets/navbar/icon_close.svg"
 
-  let companyTags = ref([])
-  let siteTags = ref([])
+  import { useFormAddStore } from '@/stores/add-modal.js'
+  let formState = useFormAddStore()
 
-  // let tagNoRef = []
+  let menuSequenceName = ref('')
+  let nextValue = ref('')
+  let menu = ref('Administrator')
+  let sequenceSize = ref('')
+  let prefix = ref('')
+  let recycleBy = ref('Administrator')
+  let suffix = ref('')
 
-  const handleChangeCompanyTag = (newTag) => {
-    // akan memasukkan nilai primitive
-    companyTags.value = newTag
-    // akan memasukkan array dalam array
-    // tagNoRef.push(newTag)
+  let isOpenModal = ref(false)
+
+  const submitSequence = () => {
+    formState.sequence.sequenceName = menuSequenceName.value
+    formState.sequence.recycle = recycleBy.value
+    isOpenModal.value = !isOpenModal.value
   }
 
-  const handleChangeSiteTag = (newTag) => {
-    siteTags.value = newTag
-  }
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -29,7 +34,7 @@
       + Add New
       </label>
 
-    <input type="checkbox" id="add-user-modal" class="modal-toggle" />
+    <input type="checkbox" id="add-user-modal" class="modal-toggle" v-model="isOpenModal" />
     
     <div class="modal">
 
@@ -43,18 +48,22 @@
           <div className="divider m-0"></div>
         </div>
 
-        <div>
+        <div class="modal-box-inner px-4">
 
           <div class="flex">
+
             <div class="mb-6">
+            
             <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Nama<span class="text-red">*</span></label
-            >
+              class="block mb-2 font-JakartaSans font-medium text-sm">
+                Nama<span class="text-red">*</span>
+            </label>
+
             <input
+              v-model="menuSequenceName"
               type="text"
               placeholder="Nama Sequence"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              :class="inputStylingClass"
               required
             />
             </div>
@@ -63,17 +72,19 @@
 
             <div class="mb-6">
             <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Next Value<span class="text-red">*</span></label
-            >
+              class="block mb-2 font-JakartaSans font-medium text-sm">
+                Next Value<span class="text-red">*</span>
+            </label>
             <input
+              v-model="nextValue"
               type="text"
               id="name"
               placeholder="Next Value"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              :class="inputStylingClass"
               required
             />
-            </div>   
+            </div>
+
           </div>
 
           <div class="flex gap-2">
@@ -86,7 +97,7 @@
                   id="company"
                   >Menu<span class="text-red">*</span></label
                 >
-                <select class="select select-accent w-full" required>
+                <select v-model="menu" :class="inputStylingClass" required>
                   <option disabled selected hidden>Menu</option>
                   <option>Administrator</option>
                   <option>Super Admin</option>
@@ -98,16 +109,16 @@
               </div>
             </div>
 
-
             <div class="mb-6 w-full flex-1">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Sequence Size<span class="text-red">*</span></label
             >
             <input
+              v-model="sequenceSize"
               type="text"
               placeholder="Sequence Size"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+              :class="inputStylingClass"
               required
             />
             </div>
@@ -124,7 +135,7 @@
                   id="company"
                   >Recycle by<span class="text-red">*</span></label
                 >
-                <select class="select select-accent w-full" required>
+                <select v-model="recycleBy" :class="inputStylingClass" required>
                   <option disabled selected hidden>Month</option>
                   <option>Administrator</option>
                   <option>Super Admin</option>
@@ -142,9 +153,10 @@
               Prefix<span class="text-red">*</span>
             </label>
             <input
+              :class="inputStylingClass"
+              v-model="prefix"
               type="text"
               placeholder="Prefix"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               required
             />
             </div>
@@ -155,14 +167,15 @@
 
             <div class="mb-6">
               <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Suffix<span class="text-red">*</span></label
-              >
+                class="block mb-2 font-JakartaSans font-medium text-sm">
+                  Suffix<span class="text-red">*</span>
+              </label>
               <input
+                v-model="suffix"
                 type="text"
                 id="name"
                 placeholder="Suffix"
-                class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                :class="inputStylingClass"
                 required
               />
             </div>
@@ -172,7 +185,6 @@
             </div>
             
           </div>
-
 
         </div>
 
@@ -184,10 +196,13 @@
               class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
               >Cancel</label
             >
-            <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-            >
-              Save
+            <button @click="submitSequence">
+              <button
+                @click="$emit('addSequence')"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+              >
+                Save
+              </button>
             </button>
           </div>
         </div>

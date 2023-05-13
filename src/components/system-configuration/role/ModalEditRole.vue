@@ -5,8 +5,8 @@ import editIcon from "@/assets/navbar/edit_icon.svg";
 import { ref } from "vue";
 import { Modal } from "usemodal-vue3";
 
-import { useFormEditStore } from "/src/stores/edit-modal.js";
-let formEditState = useFormEditStore();
+  import { useFormEditStore } from '@/stores/edit-modal.js'
+  let formEditState = useFormEditStore()
 
 let isVisible = ref(false);
 let type = "";
@@ -69,17 +69,16 @@ const submitEdit = () => {
       </div>
 
       <div class="sticky bottom-0 bg-white py-8">
-        <div className="divider m-0 pb-4 w-full"></div>
-        <div class="flex justify-end gap-4">
-          <label
-            @click="isVisible = !isVisible"
-            for="add-user-modal"
-            class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-          >
-            Cancel
-          </label>
-          <button>
-            <button
+          <div className="divider m-0 pb-4 w-full"></div>
+          <div class="flex justify-end gap-4">
+            <label
+              @click="isVisible = !isVisible"
+              for="add-user-modal"
+              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
+              Cancel
+            </label>
+            <button @click="submitEdit">
+              <button
               @click="$emit('changeRole')"
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
             >

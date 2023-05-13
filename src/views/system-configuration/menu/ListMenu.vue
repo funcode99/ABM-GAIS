@@ -39,8 +39,6 @@
     }
 
     const addNewMenu = async () => {
-      // state nya butuh waktu
-      console.log(formState.menu.menuName)
       setTimeout(callApi, 500)
     }
 

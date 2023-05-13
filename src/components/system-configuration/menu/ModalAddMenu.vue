@@ -76,7 +76,7 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
             <div className="divider m-0"></div>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3 ">
         
           <div class="mb-3">
             <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">

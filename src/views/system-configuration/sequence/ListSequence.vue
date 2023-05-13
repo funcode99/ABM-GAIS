@@ -4,7 +4,7 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
-    import dataDummy from '@/utils/Api/system-configuration/sequencedata.js'
+    import Api from '@/utils/Api'
 
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
@@ -12,8 +12,14 @@
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import { useFormEditStore } from '@/stores/edit-modal.js'
+    import { useFormAddStore } from '@/stores/add-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
+    let formState = useFormAddStore()
+    let formEditState = useFormEditStore()
+
+    let editSequenceDataId = ref(0)
     
     const search = ref('')
     let sortedData = ref([])
@@ -73,10 +79,7 @@
 
     onBeforeMount(() => {
       getSessionForSidebar()
-      // sortedData.value gak dianggap sebagai array lagi
-      instanceArray = dataDummy
-      sortedData.value = instanceArray
-      lengthCounter = sortedData.value.length
+      fetch()
     })
 
     const filteredItems = (search) => {
@@ -97,13 +100,73 @@
     const getSessionForSidebar = () => {
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
+
+    const fetch = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      // Set authorization for api
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/sequence')      
+      instanceArray = api.data.data
+      sortedData.value = instanceArray
+      lengthCounter = sortedData.value.length
+    }
+
+    const deleteData = async (event) => {
+     await Api.delete(`/sequence/delete_data/${event}`)
+      if (sortedData.value.length == 1) {
+        router.go()
+      } else {
+        fetch()
+      }
+    }
+
+    const addNewSequence = () => {
+      setTimeout(callAddApi, 500)
+    }
+
+    const callAddApi = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.post('/sequence/store', 
+      {
+        sequence_name:  formState.sequence.sequenceName,
+        recycle:  formState.sequence.recycle,
+        next_value: formState.sequence.nextValue,
+        prefix: formState.sequence.prefix,
+        suffix: formState.sequence.suffix,
+        id_menu: formState.sequence.menuId,
+        sequence_size: formState.sequence.sequenceSize
+      })
+      fetch()
+    }
+
+    const editExistingSequence = async (data) => {
+      editSequenceDataId.value = data
+      setTimeout(callEditApi, 500)
+    }
+
+    const callEditApi = async () => {
+      
+      const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        await Api.post(`/sequence/update_data/${editSequenceDataId.value}`, {
+          sequence_name: formEditState.sequence.sequenceName,
+          recycle: formEditState.sequence.recycle,
+          next_value: formEditState.sequence.nextValue,
+          prefix: formEditState.sequence.prefix,
+          suffix: formEditState.sequence.suffix,
+          id_menu: formEditState.sequence.menuId,
+          sequence_size: formEditState.sequence.sequenceSize
+        })
+        fetch()
+    }
   
 </script>
 
 
 <template>
 
-<!-- kenak loh, ternyata disini overflow x nya -->
+  <!-- kenak loh, ternyata disini overflow x nya -->
   <div class="flex flex-col w-full this h-[100vh]">
 
     <Navbar/>
@@ -119,7 +182,7 @@
         :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
           >
   
-            <TableTopBar :title="'Sequence'" @change-showing="fillPageMultiplier" modalAddType="sequence" />
+            <TableTopBar :title="'Sequence'" @increase-sequence="addNewSequence" @change-showing="fillPageMultiplier" modalAddType="sequence" />
             
             <!-- actual table -->
             <!-- scrollbar horizontal juga ada disini -->
@@ -145,7 +208,6 @@
                       </span>
                     </th>
   
-  
                   </tr>
                 </thead>
   
@@ -153,7 +215,7 @@
   
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
   
-                    <tr v-for="data in sortedData.slice(
+                    <tr v-for="(data, index) in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.No">
@@ -161,23 +223,23 @@
                         <input type="checkbox" name="chk">
                       </td>
                       <td>
-                        {{ data.No }} 
+                        {{ index + 1 }} 
                       </td>
                       <td>
-                        {{ data.Name }}
+                        {{ data.sequence_name }}
                       </td>
                       <td>
-                        {{ data.Prefix }}
+                        {{ data.prefix }}
                       </td>
                       <td>
-                        {{ data.Suffix }}
+                        {{ data.suffix }}
                       </td>
                       <td>
-                        {{ data.SequenceSize }}
+                        {{ data.sequence_size }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditSequence/>
-                        <ModalDelete/>
+                        <ModalEditSequence @change-sequence="editExistingSequence(data.id)" />
+                        <ModalDelete @confirm-delete="deleteData(data.id)" />
                       </td>
                     </tr>
   
