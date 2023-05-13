@@ -5,12 +5,10 @@ import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
 import { ref } from "vue";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
 let newFlightClass = ref("");
-
-const emits = defineEmits(["unlockScrollbar"]);
+let isOpenModal = ref(false);
+const emits = defineEmits(["unlockScrollbar", "flight-class-saved"]);
 
 const saveFlightClass = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -28,8 +26,8 @@ const saveFlightClass = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-
-    router.replace({ path: "/flight" });
+    emits("flight-class-saved");
+    isOpenModal.value = !isOpenModal.value;
   } catch (error) {
     console.log(error);
   }
@@ -44,7 +42,12 @@ const saveFlightClass = async () => {
     >+ Add New</label
   >
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="my-modal-3"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
