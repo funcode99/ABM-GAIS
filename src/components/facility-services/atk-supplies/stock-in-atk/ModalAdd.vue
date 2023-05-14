@@ -10,32 +10,30 @@ const emits = defineEmits(["unlockScrollbar"]);
 <template>
   <label
     @click="this.$emit('unlockScrollbar')"
-    for="my-modal-item-atk"
+    for="my-modal-stock-in"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add Item</label
   >
 
-  <input type="checkbox" id="my-modal-item-atk" class="modal-toggle" />
+  <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
-          for="my-modal-item-atk"
+          for="my-modal-stock-in"
           class="cursor-pointer absolute right-3 top-3"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          Management Item
+          Stock In
         </p>
       </nav>
 
       <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
         <img :src="icondanger" class="w-5 h-5" />
-        <p class="font-JakartaSans font-semibold text-lg">
-          Management Item Info
-        </p>
+        <p class="font-JakartaSans font-semibold text-lg">Stock In Info</p>
       </div>
 
       <main class="modal-box-inner-brand pb-14">
@@ -61,14 +59,13 @@ const emits = defineEmits(["unlockScrollbar"]);
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Brand<span class="text-red">*</span></label
               >
-              <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              <input
+                type="text"
+                name="company"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Brand"
                 required
-              >
-                <option disabled selected>Select Brand</option>
-                <option>Brand A</option>
-                <option>Brand B</option>
-              </select>
+              />
             </div>
           </div>
 
@@ -89,18 +86,17 @@ const emits = defineEmits(["unlockScrollbar"]);
             </div>
             <div class="mb-6 w-full">
               <label
-                for="uom"
+                for="qty"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >UOM<span class="text-red">*</span></label
+                >Quantity<span class="text-red">*</span></label
               >
-              <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              <input
+                type="text"
+                name="company"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Quantity"
                 required
-              >
-                <option disabled selected>Select UOM</option>
-                <option>UOM A</option>
-                <option>UOM B</option>
-              </select>
+              />
             </div>
           </div>
 
@@ -122,15 +118,15 @@ const emits = defineEmits(["unlockScrollbar"]);
             </div>
             <div class="mb-6 w-full">
               <label
-                for="alert"
+                for="uom"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Alert Quantity<span class="text-red">*</span></label
+                >UOM<span class="text-red">*</span></label
               >
               <input
                 type="text"
                 name="company"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Alert Quantity"
+                placeholder="UOM"
                 required
               />
             </div>
@@ -151,23 +147,6 @@ const emits = defineEmits(["unlockScrollbar"]);
                 required
               />
             </div>
-            <div class="mb-6 w-full">
-              <label
-                for="item_name"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Item Name<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Item Name"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="flex justify-start px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="id_item"
@@ -209,12 +188,22 @@ const emits = defineEmits(["unlockScrollbar"]);
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
+                  Date
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
                   ID Item
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
-                  Item Name
+                  Iteem Name
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Quantity
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -225,11 +214,6 @@ const emits = defineEmits(["unlockScrollbar"]);
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
                   UOM
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Alert Quantity
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -246,6 +230,7 @@ const emits = defineEmits(["unlockScrollbar"]);
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16">
                 <th class="border border-[#B9B9B9]"></th>
+                <td class="border border-[#B9B9B9]"></td>
                 <td class="border border-[#B9B9B9]"></td>
                 <td class="border border-[#B9B9B9]"></td>
                 <td class="border border-[#B9B9B9]"></td>
