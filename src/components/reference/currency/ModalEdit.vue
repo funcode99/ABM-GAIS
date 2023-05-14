@@ -61,7 +61,12 @@ const updateCurrency = async () => {
     ><img :src="editicon" class="w-6 h-6"
   /></label>
 
-  <input type="checkbox" id="modal-edit-currency" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="modal-edit-currency"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">

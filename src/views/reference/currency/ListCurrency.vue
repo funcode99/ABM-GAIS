@@ -112,7 +112,7 @@ const deleteCurrency = async (id) => {
       Api.delete(`/currency/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Class Flight has been deleted.",
+          text: "Currency has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#3085d6",
@@ -279,7 +279,9 @@ const props = defineProps({
                 v-else
                 class="h-[100px] border-t border-t-black flex items-center justify-center"
               >
-                <h1 class="text-center font-JakartaSans text-base font-medium">Tidak Ada Data</h1>
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
               </div>
             </div>
           </div>
@@ -305,7 +307,7 @@ const props = defineProps({
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
   </div>
 </template>
