@@ -19,6 +19,9 @@ const saveFlightClass = async () => {
       flight_name: newFlightClass.value,
     });
 
+    // Reset the input values
+    newFlightClass.value = "";
+
     Swal.fire({
       position: "center",
       icon: "success",

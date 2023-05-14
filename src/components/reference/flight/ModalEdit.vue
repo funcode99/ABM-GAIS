@@ -25,7 +25,7 @@ const emits = defineEmits(["unlockScrollbar", "flight-class-update"]);
 // computed property untuk menyimpan id sebagai reactive variable
 const reactiveId = computed(() => props.id);
 
-console.log(props.id);
+// console.log(props.id);
 
 const updateFlightClass = async () => {
   try {

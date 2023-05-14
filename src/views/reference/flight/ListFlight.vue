@@ -147,7 +147,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
@@ -304,7 +304,9 @@ const props = defineProps({
                 v-else
                 class="h-[100px] border-t border-t-black flex items-center justify-center"
               >
-                <h1 class="text-center">Tidak Ada Data</h1>
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
               </div>
             </div>
           </div>
