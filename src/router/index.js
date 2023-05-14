@@ -61,6 +61,8 @@ import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.
 
 //facility service system
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
+import StockInAtkList from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkList.vue"
+import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkView.vue"
 
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
@@ -474,7 +476,22 @@ const router = createRouter({
         title: 'Management Item ATK'
       }
     },
-
+    {
+      path: '/stockinatk',
+      name: 'stock in atk',
+      component: StockInAtkList,
+      meta: {
+        title: 'Stock In ATK'
+      }
+    },
+    {
+      path: '/viewstockinatk',
+      name: 'viewstock in atk',
+      component: StockInAtkView,
+      meta: {
+        title: 'View Stock In ATK'
+      }
+    },
   ]
 })
 

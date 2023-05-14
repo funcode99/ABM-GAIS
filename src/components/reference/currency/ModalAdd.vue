@@ -1,7 +1,46 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
+
+import { ref } from "vue";
+
+const emits = defineEmits(["unlockScrollbar", "currency-saved"]);
+let isOpenModal = ref(false);
+let newCurrency = ref("");
+let CurrencySymbol = ref("");
+let CurrencyCode = ref("");
+
+const saveCurrency = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  try {
+    await Api.post(`/currency/store`, {
+      currency_name: newCurrency.value,
+      currency_symbol: CurrencySymbol.value,
+      currency_code: CurrencyCode.value,
+    });
+
+    // Reset the input values
+    newCurrency.value = "";
+    CurrencySymbol.value = "";
+    CurrencyCode.value = "";
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    emits("currency-saved");
+    isOpenModal.value = !isOpenModal.value;
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
@@ -12,7 +51,12 @@ const emits = defineEmits(["unlockScrollbar"]);
     >+ Add New</label
   >
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="my-modal-3"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -29,7 +73,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-currency">
-        <form class="pt-4">
+        <form class="pt-4" @submit.prevent="saveCurrency">
           <div class="mb-6 px-4 w-full">
             <label
               for="currency"
@@ -42,6 +86,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Currency"
               required
+              v-model="newCurrency"
             />
           </div>
 
@@ -57,6 +102,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Symbol"
               required
+              v-model="CurrencySymbol"
             />
           </div>
 
@@ -72,6 +118,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Code"
               required
+              v-model="CurrencyCode"
             />
           </div>
 
@@ -84,6 +131,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Cancel</label
               >
               <button
+                type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Save

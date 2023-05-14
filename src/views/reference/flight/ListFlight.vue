@@ -25,8 +25,6 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
-let editDataId = ref(0);
-let UpdateListFlight = ref("");
 
 //for paginations
 let showingValue = ref(1);
@@ -58,8 +56,8 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Flight Class", jsonData: "flight_class" },
+  { Id: 1, title: "No", jsonData: "index" },
+  { Id: 2, title: "Flight Class", jsonData: "flight_name" },
   { Id: 3, title: "Actions" },
 ];
 
@@ -85,11 +83,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -128,7 +126,7 @@ const deleteFlight = async (id) => {
       Api.delete(`/flight/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Flight has been deleted.",
+          text: "Class Flight has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#3085d6",
@@ -142,37 +140,14 @@ const deleteFlight = async (id) => {
   });
 };
 
-const editFlight = async (data) => {
-  editDataId.value = data;
-  setTimeout(callEditApi, 1000);
-};
-
-const callEditApi = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    const api = await Api.post(`/flight/update_data/${editDataId.value}`, {
-      flight_name: UpdateListFlight.value,
-    });
-
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    fetchFlight();
-  } catch (error) {
-    console.log(error);
-  }
-};
+const props = defineProps({
+  id: Number,
+});
 </script>
 
 <template>
   <div
-    class="flex w-full this h-[100vh]"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
@@ -313,9 +288,9 @@ const callEditApi = async () => {
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        @change-edit="editFlight(data.id)"
-                        @assignEditFlight="(n) => (UpdateListFlight = n)"
-                        :currentValue="data.flight_name"
+                        :id="data.id"
+                        :key="`edit-flight-${data.id}`"
+                        @flight-class-update="fetchFlight"
                       />
                       <button @click="deleteFlight(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
@@ -329,7 +304,9 @@ const callEditApi = async () => {
                 v-else
                 class="h-[100px] border-t border-t-black flex items-center justify-center"
               >
-                <h1 class="text-center">Tidak Ada Data</h1>
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
               </div>
             </div>
           </div>

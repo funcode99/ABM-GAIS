@@ -2,16 +2,18 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/city/ModalAdd.vue";
-import ModalEdit from "@/components/reference/city/ModalEdit.vue";
 
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
+import gearicon from "@/assets/system-configuration-not-selected.png";
 
-import Swal from "sweetalert2";
+import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue";
 
-import Api from "@/utils/Api";
+import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -19,8 +21,12 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
 //for sort & search
+const date = ref();
 const search = ref("");
 let sortedData = ref([]);
+const selectedType = ref("Company");
+const selectedTypeWarehouse = ref("Warehouse");
+
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
@@ -36,6 +42,23 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+};
+
+//for filter & reset button
+const filterDataByType = () => {
+  if (selectedType.value === "") {
+    sortedData.value = instanceArray;
+  } else {
+    sortedData.value = instanceArray.filter(
+      (item) => item.type === selectedType.value
+    );
+  }
+};
+
+//for filter & reset button
+const resetData = () => {
+  sortedData.value = instanceArray;
+  selectedType.value = "Type";
 };
 
 //for check & uncheck all
@@ -57,9 +80,11 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "City Code", jsonData: "hotel_fare" },
-  { Id: 3, title: "City Name", jsonData: "company" },
-  { Id: 4, title: "Actions" },
+  { Id: 2, title: "Document No", jsonData: "document_no" },
+  { Id: 3, title: "Date", jsonData: "date" },
+  { Id: 4, title: "Warehouse", jsonData: "warehouse" },
+  { Id: 5, title: "Item Count", jsonData: "item_count" },
+  { Id: 6, title: "Actions" },
 ];
 
 //for sort
@@ -75,7 +100,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchCity();
+  instanceArray = stockindata;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -84,11 +109,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.city_code.toString().indexOf(search.toLowerCase()) > -1) |
-      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.document_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.warehouse.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.city_code.toString().indexOf(search.toLowerCase()) > -1) |
-      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.document_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.warehouse.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -99,61 +124,17 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
-
-//get all city
-const fetchCity = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/city/");
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
-
-const deleteCity = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-  Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Api.delete(`/city/delete_data/${id}`).then((res) => {
-        Swal.fire({
-          title: "Successfully",
-          text: "City has been deleted.",
-          icon: "success",
-          showCancelButton: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok",
-        });
-        fetchCity();
-      });
-    } else {
-      return;
-    }
-  });
-};
-
-const props = defineProps({
-  id: Number,
-});
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this h-[100vh]"
+    class="flex flex-col w-full this"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
-    <div class="flex w-screen content mt-[115px]">
-      <Sidebar class="flex-none" />
+
+    <div class="flex w-screen mt-[115px]">
+      <Sidebar class="flex-none fixed" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -164,20 +145,20 @@ const props = defineProps({
       >
         <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div
-            class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
-          >
-            <p
-              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
-            >
-              City
+          <div class="flex flex-wrap items-center justify-between mx-4 py-2">
+            <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
+              Stock In ATK
             </p>
 
-            <div class="flex gap-4">
-              <ModalAdd
-                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                @city-saved="fetchCity"
-              />
+            <div class="flex justify-between gap-4 items-center">
+              <button
+                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+              >
+                <img :src="gearicon" class="w-6 h-6" />
+              </button>
+
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -186,23 +167,86 @@ const props = defineProps({
             </div>
           </div>
 
-          <!-- SEARCH & SHOWING -->
-          <div class="flex flex-wrap justify-between items-center mx-4">
-            <div class="flex items-center gap-1 pt-6 pb-4 h-4">
-              <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
-              <select
-                class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="pageMultiplier"
-              >
-                <option>10</option>
-                <option>25</option>
-                <option>50</option>
-                <option>75</option>
-                <option>100</option>
-              </select>
+          <!-- SORT, DATE & SEARCH -->
+
+          <div
+            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
+          >
+            <div class="flex flex-wrap items-center gap-4">
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Company
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedType"
+                >
+                  <option disabled selected>Company</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.company }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Warehouse
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedTypeWarehouse"
+                >
+                  <option disabled selected>Warehouse</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.warehouse }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-wrap gap-4 items-center">
+                <div>
+                  <p
+                    class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                  >
+                    Choose a Date
+                  </p>
+
+                  <VueDatePicker
+                    v-model="date"
+                    range
+                    :enable-time-picker="false"
+                    class="my-date lg:w-10"
+                  />
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-4 items-center pt-6">
+                <button
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  @click="filterDataByType"
+                >
+                  <span>
+                    <img :src="icon_filter" class="w-5 h-5" />
+                  </span>
+                  Filter
+                </button>
+                <button
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
+                >
+                  <span>
+                    <img :src="icon_reset" class="w-5 h-5" />
+                  </span>
+                  Reset
+                </button>
+              </div>
             </div>
 
-            <div class="flex md:mx-0">
+            <div class="pt-6 w-full ml-2">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -233,13 +277,27 @@ const props = defineProps({
             </div>
           </div>
 
+          <!-- SHOWING -->
+          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+            <select
+              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              v-model="pageMultiplier"
+            >
+              <option>10</option>
+              <option>25</option>
+              <option>50</option>
+              <option>75</option>
+              <option>100</option>
+            </select>
+          </div>
+
           <!-- TABLE -->
           <div
             class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
           >
             <div class="block overflow-x-auto">
               <table
-                v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -259,7 +317,7 @@ const props = defineProps({
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer"
+                      class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-sm"
                       @click="sortList(`${data.jsonData}`)"
                     >
                       <span class="flex justify-center items-center gap-1">
@@ -275,41 +333,43 @@ const props = defineProps({
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
+                    v-for="data in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
                     :key="data.no"
                   >
-                    <td>
+                    <td class="p-0">
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ data.city_code }}</td>
-                    <td>{{ data.city_name }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit
-                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        :id="data.id"
-                        :key="`edit-city-${data.id}`"
-                        @city-update="fetchCity"
-                      />
-                      <button @click="deleteCity(data.id)">
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.no }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.document_no }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.date }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.warehouse }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.item_count }}
+                    </td>
+                    <td class="flex flex-nowrap gap-1 justify-center">
+                      <router-link to="/viewstockinatk">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                      </router-link>
+                      <button>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
-
-              <div
-                v-else
-                class="h-[100px] border-t border-t-black flex items-center justify-center"
-              >
-                <h1 class="text-center font-JakartaSans text-base font-medium">
-                  Tidak Ada Data
-                </h1>
-              </div>
             </div>
           </div>
 
@@ -334,7 +394,7 @@ const props = defineProps({
           </div>
         </div>
       </div>
-      <Footer />
+      <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
   </div>
 </template>
@@ -369,5 +429,9 @@ tr th {
 
 .this {
   overflow-x: hidden;
+}
+
+.my-date {
+  width: 200px !important;
 }
 </style>

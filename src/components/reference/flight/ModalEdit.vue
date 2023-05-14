@@ -2,22 +2,56 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import { ref } from "vue";
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
+
+import { ref, computed } from "vue";
+
+const props = defineProps({
+  id: {
+    type: Number,
+    required: true,
+  },
+});
 
 let UpdateFlight = ref("");
 let isOpenModal = ref(false);
 
-const props = defineProps({
-  currentValue: String,
-});
+// console.log(props.id);
+// const id = props.id;
 
-UpdateFlight = props.currentValue;
+const emits = defineEmits(["unlockScrollbar", "flight-class-update"]);
 
-const emits = defineEmits([
-  "unlockScrollbar",
-  "changeEdit",
-  "assignEditFlight",
-]);
+// computed property untuk menyimpan id sebagai reactive variable
+const reactiveId = computed(() => props.id);
+
+// console.log(props.id);
+
+const updateFlightClass = async () => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    await Api.post(`/flight/update_data/${reactiveId.value}`, {
+      flight_name: UpdateFlight.value,
+    });
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    isOpenModal.value = !isOpenModal.value;
+
+    setTimeout(() => {
+      emits("flight-class-update");
+    }, 1000);
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
@@ -77,14 +111,13 @@ const emits = defineEmits([
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button @click="$emit('assignEditFlight', UpdateFlight)">
-                <button
-                  type="submit"
-                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                  @click="$emit('changeEdit')"
-                >
-                  Save
-                </button>
+
+              <button
+                @click="updateFlightClass()"
+                type="submit"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
               </button>
             </div>
           </div>

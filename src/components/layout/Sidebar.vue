@@ -56,7 +56,9 @@ onMounted(() => {
     <div
       class="fixed top-[155px] w-[32px] h-[32px] bg-blue rounded-full sm:flex justify-center items-center hidden cursor-pointer ease-in-out duration-500 z-Infinite"
       @click="sidebar.changeWide"
-      :class="sidebar.isWide === true ? 'left-[240px]' : 'left-[84px]'"
+      :class="
+        sidebar.isWide === true ? 'left-[240px]' : '-scale-x-100 left-[84px]'
+      "
     >
       <img :src="chevronIcon" class="w-3 h-3" alt="" />
     </div>
@@ -1786,7 +1788,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="/managementitem" class="cursor-pointer">
+                            <router-link
+                              to="/managementitem"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1806,7 +1811,7 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="#" class="cursor-pointer">
+                            <router-link to="/stockinatk" class="cursor-pointer">
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >

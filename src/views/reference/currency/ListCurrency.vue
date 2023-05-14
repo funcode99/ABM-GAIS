@@ -9,7 +9,9 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import currencydata from "@/utils/Api/reference/currencydata.js";
+import Swal from "sweetalert2";
+
+import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -58,7 +60,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = currencydata;
+  fetchCurrency();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -67,11 +69,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.currency.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.code.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.currency_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.currency_code.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.currency.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.code.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.currency_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.currency_code.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -82,17 +84,62 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+//get all currency
+const fetchCurrency = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/currency/");
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+const deleteCurrency = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/currency/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Currency has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetchCurrency();
+      });
+    } else {
+      return;
+    }
+  });
+};
+
+const props = defineProps({
+  id: Number,
+});
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -112,7 +159,10 @@ const getSessionForSidebar = () => {
               Currency
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
+              <ModalAdd
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                @currency-saved="fetchCurrency"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -174,6 +224,7 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
+                v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -199,25 +250,39 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
                     :key="data.no"
                   >
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.currency }}</td>
-                    <td>{{ data.symbol }}</td>
-                    <td>{{ data.code }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.currency_name }}</td>
+                    <td>{{ data.currency_symbol }}</td>
+                    <td>{{ data.currency_code }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
-                      <button>
+                      <ModalEdit
+                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        :id="data.id"
+                        :key="`edit-currency-${data.id}`"
+                        @currency-update="fetchCurrency"
+                      />
+                      <button @click="deleteCurrency(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
+
+              <div
+                v-else
+                class="h-[100px] border-t border-t-black flex items-center justify-center"
+              >
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
+              </div>
             </div>
           </div>
 
@@ -242,7 +307,7 @@ const getSessionForSidebar = () => {
           </div>
         </div>
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+      <Footer />
     </div>
   </div>
 </template>
