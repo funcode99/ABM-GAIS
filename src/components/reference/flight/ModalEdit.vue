@@ -45,7 +45,9 @@ const updateFlightClass = async () => {
     });
     isOpenModal.value = !isOpenModal.value;
 
-    emits("flight-class-update"); // emit event
+    setTimeout(() => {
+      emits("flight-class-update");
+    }, 1000);
   } catch (error) {
     console.log(error);
   }
