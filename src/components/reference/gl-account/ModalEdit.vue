@@ -2,7 +2,53 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
+
+import { ref, computed } from "vue";
+
+const props = defineProps({
+  id: {
+    type: Number,
+    required: true,
+  },
+});
+
+const emits = defineEmits(["unlockScrollbar", "gl-update"]);
+
+const reactiveId = computed(() => props.id);
+
+// console.log(props.id);
+
+let UpdateGlAccount = ref("");
+let UpdateGlName = ref("");
+let isOpenModal = ref(false);
+
+const updateGLAccount = async () => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    await Api.post(`/gl_account/update_data/${reactiveId.value}`, {
+      gl_account: UpdateGlAccount.value,
+      gl_name: UpdateGlName.value,
+    });
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    isOpenModal.value = !isOpenModal.value;
+    setTimeout(() => {
+      emits("gl-update");
+    }, 1000);
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
@@ -13,7 +59,12 @@ const emits = defineEmits(["unlockScrollbar"]);
     ><img :src="editicon" class="w-6 h-6"
   /></label>
 
-  <input type="checkbox" id="modal-edit-car" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="modal-edit-car"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -32,7 +83,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-gl">
-        <form>
+        <div>
           <div class="mb-6 text-start w-full px-4">
             <label
               for="gl_account"
@@ -45,6 +96,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="GL Account"
               required
+              v-model="UpdateGlAccount"
             />
           </div>
           <div class="mb-6 text-start w-full px-4">
@@ -59,6 +111,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="GL Name"
               required
+              v-model="UpdateGlName"
             />
           </div>
 
@@ -71,13 +124,15 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Cancel</label
               >
               <button
+                @click="updateGLAccount()"
+                type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Save
               </button>
             </div>
           </div>
-        </form>
+        </div>
       </main>
     </div>
   </div>

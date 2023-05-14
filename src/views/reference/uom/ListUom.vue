@@ -13,8 +13,6 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
-import uomdata from "@/utils/Api/reference/uomdata.js";
-
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";

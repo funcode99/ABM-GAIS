@@ -9,7 +9,9 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import gldata from "@/utils/Api/reference/gldata.js";
+import Swal from "sweetalert2";
+
+import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -73,7 +75,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = gldata;
+  fetchGLAccount();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -91,23 +93,68 @@ const filteredItems = (search) => {
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
-  onChangePage(1)
+  onChangePage(1);
 };
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+//get all gl_account
+const fetchGLAccount = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("gl_account/");
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+const deleteGLAccount = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/gl_account/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "GL Account has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetchGLAccount();
+      });
+    } else {
+      return;
+    }
+  });
+};
+
+const props = defineProps({
+  id: Number,
+});
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -127,7 +174,10 @@ const getSessionForSidebar = () => {
               GL Account
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
+              <ModalAdd
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                @gl-saved="fetchGLAccount"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -224,7 +274,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -233,12 +283,17 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td>{{ data.gl_account }}</td>
                     <td>{{ data.gl_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar"/>
-                      <button>
+                      <ModalEdit
+                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        :id="data.id"
+                        :key="`edit-gl-${data.id}`"
+                        @gl-update="fetchGLAccount"
+                      />
+                      <button @click="deleteGLAccount(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
@@ -269,7 +324,7 @@ const getSessionForSidebar = () => {
           </div>
         </div>
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+      <Footer />
     </div>
   </div>
 </template>
