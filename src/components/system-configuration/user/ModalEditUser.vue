@@ -11,8 +11,12 @@
 
     let formEditState = useFormEditStore()
 
-    let username = ref('')
-    let email = ref('')
+    const props = defineProps({
+      formContent: Array
+    })
+
+    let username = ref(props.formContent[0])
+    let email = ref(props.formContent[1])
     let password = ref('')
     let role = ref('Administrator')
 
@@ -31,6 +35,8 @@
     watch(additional, (newValue) => {
         return additional.length > 0
     })
+
+
 
 </script>
 
@@ -151,8 +157,6 @@
                 </div>
             </div>
           </div>
-
-          {{ additional }}
 
           <div class="mb-6 flex flex-col gap-2">
               <span class="text-sm">Company <span class="text-red-star">*</span></span>

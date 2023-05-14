@@ -20,6 +20,8 @@
         modalAddType: String
     })
 
+    const modalPaddingHeight = '10'
+
 </script>
 
 <template>

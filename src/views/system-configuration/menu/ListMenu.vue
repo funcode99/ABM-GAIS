@@ -208,12 +208,12 @@
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
               
-                      <tr @confirm-delete="hiddenRow = true" :class="hiddenRow ? 'hidden' : ''" v-for="(data, key) in sortedDataReactive" :key="data.id">
+                      <tr @confirm-delete="hiddenRow = true" :class="hiddenRow ? 'hidden' : ''" v-for="(data, index) in sortedDataReactive" :key="data.id">
                         <td>
-                          <input type="checkbox" name="">
+                          <input type="checkbox" name="chk">
                         </td>
                         <td>
-                          {{ data.id }} 
+                          {{ index + 1 }} 
                         </td>
                         <td>
                           {{ data.menu }}
@@ -226,7 +226,7 @@
                           {{ data.id_status_menu }}
                         </td>
                         <td class="flex flex-wrap gap-4 justify-center">
-                          <ModalEditMenu @change-menu="editMenu(data.id)" :identity="[data.id, data.menu_name, data.id_status_menu]" />
+                          <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url]" />
                           <ModalDelete @confirm-delete="deleteData(data.id)" />
                         </td>
                       </tr>
@@ -245,8 +245,7 @@
                         <div class="flex justify-center">
                           <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
                         </div>
-                      </th>
-      
+                      </th>    
                       <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
                         <span class="flex justify-center items-center gap-1">
                           {{ data.title }} 
@@ -255,10 +254,9 @@
                           </button>
                         </span>
                       </th>
-      
-      
                     </tr>
                 </thead>
+
               </table>
             </div>
     

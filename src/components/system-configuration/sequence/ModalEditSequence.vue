@@ -7,17 +7,21 @@
   import { useFormEditStore } from '@/stores/edit-modal.js'
   let formEditState = useFormEditStore()
 
+  const props = defineProps({
+    formContent: Array
+  })
+
   let isVisible = ref(false)
   let type = '' 
   let modalPaddingHeight = 50
 
-  let menuSequenceName = ref('')
-  let recycleBy = ref('Administrator')
-  let nextValue = ref('')
+  let menuSequenceName = ref(props.formContent[0])
+  let prefix = ref(props.formContent[1])
+  let suffix = ref(props.formContent[2])
+  let sequenceSize = ref(props.formContent[3])
+  let recycleBy = ref(props.formContent[4])
+  let nextValue = ref(props.formContent[5])
   let menu = ref('Administrator')
-  let sequenceSize = ref('')
-  let prefix = ref('')
-  let suffix = ref('')
 
   const submitEdit = () => {
     formEditState.sequence.sequenceName = menuSequenceName.value
@@ -25,11 +29,12 @@
     isVisible.value = !isVisible.value
   }
 
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template>
   
-
     <button @click="isVisible = !isVisible" class="cursor-pointer">
         <img :src="editIcon" class="w-6 h-6" />
     </button>
@@ -57,7 +62,7 @@
                   v-model="menuSequenceName"
                   type="text"
                   placeholder="Nama Sequence"
-                  class="max-w-[100%] input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  :class="inputStylingClass"
                   required
                 />
               </div>
@@ -68,10 +73,11 @@
                   >Next Value<span class="text-red">*</span></label
                 >
                 <input
+                  v-model="nextValue"
                   type="text"
                   id="name"
                   placeholder="Next Value"
-                  class="max-w-[100%] input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  :class="inputStylingClass"
                   required
                 />
               </div>
@@ -88,8 +94,7 @@
                     id="company"
                     >Menu<span class="text-red">*</span></label
                   >
-                  <select class="select select-accent w-full" required>
-                    <option disabled selected hidden>Menu</option>
+                  <select :class="inputStylingClass" required>
                     <option>Administrator</option>
                     <option>Super Admin</option>
                     <option>Admin</option>
@@ -106,9 +111,10 @@
                   >Sequence Size<span class="text-red">*</span></label
                 >
                 <input
+                  v-model="sequenceSize"
                   type="text"
                   placeholder="Sequence Size"
-                  class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  :class="inputStylingClass"
                   required
                 />
               </div>
@@ -118,14 +124,15 @@
               
               <div class="mb-6 flex-1">
                 <div class="w-full">
+                  
                   <label
                     for="company"
                     class="block mb-2 font-JakartaSans font-medium text-sm"
                     id="company"
-                    >Recycle by<span class="text-red">*</span></label
-                  >
+                    >Recycle by<span class="text-red">*</span>
+                  </label>
                   
-                  <select v-model="recycleBy" class="select select-accent w-full" required>
+                  <select v-model="recycleBy" :class="inputStylingClass" required>
                     <option>Administrator</option>
                     <option>Super Admin</option>
                     <option>Admin</option>
@@ -140,12 +147,13 @@
               <div class="mb-6 flex-1">
                 <label
                   class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Prefix<span class="text-red">*</span></label
-                >
+                  >Prefix<span class="text-red">*</span>
+                </label>
                 <input
+                  v-model="prefix"
                   type="text"
                   placeholder="Prefix"
-                  class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  :class="inputStylingClass"
                   required
                 />
               </div>
@@ -157,13 +165,15 @@
               <div class="mb-6 flex-1">
                 <label
                   class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Suffix<span class="text-red">*</span></label
-                >
+                  >
+                  Suffix<span class="text-red">*</span>
+                </label>
                 <input
+                  v-model="suffix"
                   type="text"
                   id="name"
                   placeholder="Suffix"
-                  class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                  :class="inputStylingClass"
                   required
                 />
               </div>

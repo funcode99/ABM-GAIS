@@ -78,8 +78,6 @@ const submitRole = () => {
               >
               Cancel
             </label>
-            <!-- dia harus label ternyata -->
-            <!-- for="add-role-modal" -->
             <button @click="submitRole">
               <button 
               @click="$emit('addRole')"

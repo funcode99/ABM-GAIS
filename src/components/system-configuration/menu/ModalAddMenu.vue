@@ -10,10 +10,13 @@ let formState = useFormAddStore()
 let menuName = ref('')
 let url = ref('')
 let idStatusMenu = ref('Active')
+let idParent = ref(1)
 let sort = ref(1)
 let sequence = ref(0)
-let statusMenu = ref(null)
 const file = ref({})
+
+// buat ngisi dropdown status
+let statusMenu = ref(null)
 
 const updatePhoto = (event) => {
   file.value = event.target.files[0]
@@ -35,6 +38,10 @@ const submit = () => {
       formState.menu.url = url.value
       formState.menu.icon = file.value
 
+      // active / disable only value
+      // formState.menu.idStatusMenu = idStatusMenu.value
+      // formState.menu.parentId = idParent.value
+      
       isOpenModal.value = !isOpenModal.value
 
   } catch (error) {
@@ -133,7 +140,6 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
           <div class="flex gap-2 mb-3">
               <input type="checkbox" v-model="sequence">
               <h1>Use Sequence</h1>
-              <h1>{{ sequence }}</h1>
           </div>
 
         </div>

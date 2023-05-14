@@ -124,18 +124,18 @@
 
     const callAddApi = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
-        // console.log(token)
+
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.post('/users/store', 
         {
           username: formState.user.username,
           email: formState.user.email,
           password: formState.user.password,
-          is_employee: 1,
-          id_role: 1,
-          id_approval_auth: 1,
-          id_company: 1,
-          id_site: 1,
+          is_employee: formState.user.isEmployee,
+          id_role: formState.user.roleId,
+          id_approval_auth: formState.user.approvalAuthId,
+          id_company: formState.user.companyId,
+          id_site: formState.user.siteId,
         })
         fetch()
     }
@@ -214,7 +214,7 @@
 
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                    <tr v-for="data in sortedDataReactive.slice(
+                    <tr v-for="(data, index) in sortedDataReactive.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.No">
@@ -222,7 +222,7 @@
                         <input type="checkbox" name="chk">
                       </td>
                       <td>
-                        {{ data.No }} 
+                        {{ index + 1 }} 
                       </td>
                       <td>
                         {{ data.username }}
@@ -234,7 +234,7 @@
                         {{ data.id_approval_auth }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditUser @change-user="editExistingUser(data.id)" />
+                        <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[data.username, data.email, data.id_role, data.id_approval_auth]" />
                         <ModalDelete @confirm-delete="deleteData(data.id)" />
                       </td>
                     </tr>

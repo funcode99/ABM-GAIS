@@ -146,24 +146,22 @@
             </div>
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 flex flex-col gap-2">
               <span class="text-sm">Company <span class="text-red-star">*</span></span>
-              <select v-model="company">
+              <select v-model="company" :class="inputStylingClass">
                 <option>
                   Company A
                 </option>
               </select>
-              <!-- <vue3-tags-input :tags="tags" placeholder="Company Tag" @on-tags-changed="handleChangeCompanyTag" /> -->
           </div>
 
-          <div class="mb-6">
+          <div class="mb-6 flex flex-col gap-2">
               <span class="text-sm">Location <span class="text-red-star">*</span></span>
-              <select v-model="location">
+              <select v-model="location" :class="inputStylingClass">
                 <option>
                   Location A
                 </option>
               </select>
-              <!-- <vue3-tags-input :tags="tags" placeholder="Site Tag" @on-tags-changed="handleChangeSiteTag" /> -->
           </div>
 
         </div>

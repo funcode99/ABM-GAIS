@@ -7,7 +7,7 @@
     import ModalEditRole from '@/components/system-configuration/role/ModalEditRole.vue'
     import ModalMenuAccessRole from '@/components/system-configuration/role/ModalMenuAccessRole.vue'
 
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, onBeforeMount, computed } from 'vue'
     import Api from '@/utils/Api'
 
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
@@ -22,6 +22,7 @@
 
     // import untuk table
     let sortedData = ref([])
+    let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
     let lengthCounter = 0
@@ -50,6 +51,7 @@
         await Api.post(`/role/update_data/${editRoleDataId.value}`, {
           role_name: formEditState.role.roleName
         })
+        fetch()
     }
 
     const addRole = async () => {
@@ -160,16 +162,16 @@
             <tbody>
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
-                <tr v-for="data in sortedData" :key="data.id">
+                <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
                   <td>
-                    {{ data.id }} 
+                    {{ index + 1 }} 
                   </td>
                   <td>
                     {{ data.role_name }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
                     <ModalMenuAccessRole />
-                    <ModalEditRole @change-role="editRole(data.id)" :identity="[data.id, data.role, data.description]" />
+                    <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name]" />
                     <ModalDelete @confirm-delete="deleteData(data.id)" />
                   </td>
                 </tr>

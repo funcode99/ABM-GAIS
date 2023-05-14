@@ -40,11 +40,8 @@
   let modalPaddingHeight = 50
 
   const props = defineProps({
-    identity: Array
+    formContent: Array
   })
-
-  // let menu = ref(props.identity[1])
-  // let idStatusMenu = ref(props.identity[2])
 
   onBeforeMount(() => {
     getMenuStatus()
@@ -56,9 +53,9 @@
       statusMenu.value = getStatus
   }
 
-let menuName = ref('')
-let url = ref('')
-let idStatusMenu = ref(12)
+let menuName = ref(props.formContent[0])
+let url = ref(props.formContent[1])
+let idStatusMenu = ref('Active')
 let sort = ref(1)
 let sequence = ref(true)
 let statusMenu = ref(null)

@@ -5,13 +5,13 @@ export const useFormAddStore = defineStore('add-form', {
         return {
             menu: {
                 menuName: '',
+                url: '',
+                sequence: '',
+                description: 'Kosong',
+                icon: {},
                 sort: 1,
                 idStatusMenu: 2, 
                 parentId: 3,
-                sequence: '',
-                description: 'Kosong',
-                url: '',
-                icon: {}
             },
             user: {
                 username: '',
@@ -35,11 +35,11 @@ export const useFormAddStore = defineStore('add-form', {
             sequence: {
                 sequenceName: '',
                 recycle: '',
-                menuId: 1,
                 nextValue: 1,
-                sequenceSize: 1,
                 prefix: 1,
-                suffix: 1
+                suffix: 1,
+                menuId: 1,
+                sequenceSize: 1,
             }
         }
     }

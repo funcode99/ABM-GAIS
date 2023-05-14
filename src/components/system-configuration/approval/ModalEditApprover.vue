@@ -95,7 +95,7 @@ const saveField = () => {
             />
         </div>
   
-        <div class="mb-3 flex items-center">
+        <div class="mb-3 flex items-center text-left">
           <div class="flex flex-col w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm">
               Menu<span class="text-red">*</span>
@@ -111,7 +111,7 @@ const saveField = () => {
           </div>
         </div>
 
-        <div class="mb-3 flex items-center">
+        <div class="mb-3 flex items-center text-left">
           <div class="flex flex-col w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm">
               Document<span class="text-red">*</span>
@@ -127,7 +127,7 @@ const saveField = () => {
           </div>
         </div>
 
-        <div class="mb-3 flex items-center">
+        <div class="mb-3 flex items-center text-left">
           <div class="flex flex-col w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm">
               Company<span class="text-red">*</span>

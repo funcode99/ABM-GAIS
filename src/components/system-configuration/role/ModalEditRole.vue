@@ -13,17 +13,18 @@ let type = "";
 let modalPaddingHeight = 50;
 
 const props = defineProps({
-  identity: Array,
+  formContent: Array,
 });
 
-const currentRoleName = ref("");
+const currentRoleName = ref(props.formContent[0]);
 
 const submitEdit = () => {
-  formEditState.role.roleName = currentRoleName.value;
-};
+  formEditState.role.roleName = currentRoleName.value
+  isVisible.value = !isVisible.value
+}
 
-// let role = ref(props.identity[1])
-// let description = ref(props.identity[2])
+const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template class="font-JakartaSans">
@@ -57,14 +58,16 @@ const submitEdit = () => {
           >
             Role <span class="text-red">*</span>
           </span>
-          <input
-            v-model="role"
-            type="text"
-            id="name"
-            placeholder="Role"
-            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
-          />
+            <input
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changeRole')"
+              v-model="currentRoleName"
+              type="text"
+              id="name"
+              placeholder="Role"
+              :class="inputStylingClass"
+              required
+              />
         </div>
       </div>
 

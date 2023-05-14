@@ -23,13 +23,24 @@ let authorities = ref('PM')
 
 let approverLines = ref([])
 
+let level = 0
+let authoritiesValue = ''
+let approverName = ''
+
 const addField = (fieldType) => {
         fieldType.push({
-          level: 1,
-          authorities: authorities.value,
-          approverName : ''
-        })
+          array_detail: [
+            level = 1,
+            authoritiesValue = authorities.value,
+            approverName = ''
+          ],
+          // level : 1,
+          // authorities : authorities.value,
+          // approverName : ''
+})
 }
+
+
 
 const removeField = (index, fieldType) => {
         fieldType.splice(index, 1)
@@ -137,92 +148,94 @@ const saveField = () => {
         <hr class="border border-black">
 
         <!-- scroll nya di dalam kalau semua konten masuk di container ini -->
-        <table
-          class="table table-zebra table-compact border w-full rounded-lg"
-        >
-
-          <thead class="text-center font-Montserrat text-sm font-bold">
-            <tr class="">
-              <th class="relative">
-                <span class="flex justify-center">Level</span>
-                <button class="absolute right-0 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
-                </button>
-              </th>
-              <th class="relative">
-                <span class="flex justify-center">Authorities</span>
-                <button class="absolute right-0 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
-                </button>
-              </th>
-              <th class="relative">
-                <span class="flex justify-center">Approver Name</span>
-                <button class="absolute right-1 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
-                </button>
-              </th>
-              <th class="flex justify-center">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody class="bg-[#F5F5F5]">
-
-            <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
-              
-              <!-- nilai awalnya PM -->
-              <td v-if="input.authorities === 'PM' ? input.level = 1 : ''">
-                  1
-              </td>
-              <td v-if="input.authorities === 'GA' ? input.level = 2 : ''" >
-                2
-              </td>
-              <td v-if="input.authorities === 'HR' ? input.level = 3 : ''">
-                3
-              </td>
-              <td v-if="input.authorities === 'Atasan Langsung' ? input.level = 4 : ''">
-                4
-              </td>
-              <td v-if="input.authorities === 'Accounting' ? input.level = 5 : ''">
-                5
-              </td>
-              <td v-if="input.authorities === 'Treasury' ? input.level = 6 : ''">
-                6
-              </td>
-
-              <td>
-                <select v-model="input.authorities">
-                  <option>PM</option>
-                  <option>GA</option>
-                  <option>HR</option>
-                  <option>Atasan Langsung</option>
-                  <option>Accounting</option>
-                  <option>Treasury</option>
-                </select>
-              </td>
-
-              <td>
-                <input type="text" class="px-2" v-model="input.approverName" />
-              </td>
-
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button  @click="removeField(index, approverLines)">
-                  <img :src="deleteicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-
-            <tr class='text-center'>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="flex justify-center">
-                <img @click="addField(approverLines)" class="cursor-pointer" :src="iconPlus" alt="">
-              </td>
-            </tr>
-
-          </tbody>
-          
-        </table>
+        <div class="overflow-x-auto">
+          <table
+            class="table table-zebra table-compact border w-full rounded-lg"
+          >
+  
+            <thead class="text-center font-Montserrat text-sm font-bold">
+              <tr class="">
+                <th class="relative">
+                  <span class="flex justify-center">Level</span>
+                  <button class="absolute right-0 top-0 bottom-0">
+                    <img :src="arrowicon" class="w-[9px] h-3" />
+                  </button>
+                </th>
+                <th class="relative">
+                  <span class="flex justify-center">Authorities</span>
+                  <button class="absolute right-0 top-0 bottom-0">
+                    <img :src="arrowicon" class="w-[9px] h-3" />
+                  </button>
+                </th>
+                <th class="relative">
+                  <span class="flex justify-center">Approver Name</span>
+                  <button class="absolute right-1 top-0 bottom-0">
+                    <img :src="arrowicon" class="w-[9px] h-3" />
+                  </button>
+                </th>
+                <th class="flex justify-center">Actions</th>
+              </tr>
+            </thead>
+  
+            <tbody class="bg-[#F5F5F5]">
+  
+              <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
+                
+                <!-- nilai awalnya PM -->
+                <td v-if="input.array_detail[1] === 'PM' ? input.array_detail[0] = 1 : ''">
+                    1
+                </td>
+                <td v-if="input.array_detail[1] === 'GA' ? input.array_detail[0] = 2 : ''" >
+                  2
+                </td>
+                <td v-if="input.array_detail[1] === 'HR' ? input.array_detail[0] = 3 : ''">
+                  3
+                </td>
+                <td v-if="input.array_detail[1] === 'Atasan Langsung' ? input.array_detail[0] = 4 : ''">
+                  4
+                </td>
+                <td v-if="input.array_detail[1] === 'Accounting' ? input.array_detail[0] = 5 : ''">
+                  5
+                </td>
+                <td v-if="input.array_detail[1] === 'Treasury' ? input.array_detail[0] = 6 : ''">
+                  6
+                </td>
+  
+                <td>
+                  <select v-model="input.array_detail[1]">
+                    <option>PM</option>
+                    <option>GA</option>
+                    <option>HR</option>
+                    <option>Atasan Langsung</option>
+                    <option>Accounting</option>
+                    <option>Treasury</option>
+                  </select>
+                </td>
+  
+                <td>
+                  <input type="text" class="px-2" v-model="input.array_detail[2]" />
+                </td>
+  
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <button  @click="removeField(index, approverLines)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
+              </tr>
+  
+              <tr class='text-center'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="flex justify-center">
+                  <img @click="addField(approverLines)" class="cursor-pointer" :src="iconPlus" alt="">
+                </td>
+              </tr>
+  
+            </tbody>
+            
+          </table>
+        </div>
 
       </div>
 
@@ -259,7 +272,7 @@ const saveField = () => {
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   width: 91.666667%;
-  max-width: 50rem 
+  max-width: 30rem 
   /* 512px */;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;

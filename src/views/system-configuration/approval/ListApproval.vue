@@ -25,7 +25,6 @@
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
-    let lengthCounter = 0
 
 const selectAll = (checkValue) => { 
   const checkLead = checkValue
@@ -68,8 +67,8 @@ const fetch = async () => {
     const api = await Api.get('/approval/get_approval')
     instanceArray = api.data.data
     sortedData.value = instanceArray
-    lengthCounter = sortedData.value.length
-    }
+
+}
 
 // watch(ref, callback)
 
@@ -133,7 +132,7 @@ const deleteData = (event) => {
 
       <Sidebar class="flex-none" />
 
-      <!-- lengthCounter < 6 ? 'backgroundHeight' : 'h-full',  -->
+
       <div class="bg-[#e4e4e6] pb-20 pt-10 pr-5 pl-5 w-screen  clean-margin ease-in-out duration-500"
           :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
@@ -143,59 +142,57 @@ const deleteData = (event) => {
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
           
+          <div class="relative w-full">
+            <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
+
+              <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                <tr class="">
+                  <th>
+                    <div class="flex justify-center">
+                      <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                    </div>
+                  </th>
+
+                  <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }} 
+                      <button class="">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </span>
+                  </th>
 
 
-        <div class="relative w-full">
-          <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
-
-            <thead class="text-center font-Montserrat text-sm font-bold h-10">
-              <tr class="">
-                <th>
-                  <div class="flex justify-center">
-                    <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-                  </div>
-                </th>
-
-                <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }} 
-                    <button class="">
-                      <img :src="arrowicon" class="w-[9px] h-3" />
-                    </button>
-                  </span>
-                </th>
-
-
-              </tr>
-            </thead>
-
-            <tbody>
-
-              <!-- sortir nya harus sama dengan key yang di data dummy -->
-
-                <tr v-for="(data, index) in sortedData" :key="data.No">
-                  <td>
-                    <input type="checkbox" name="chk">
-                  </td>
-                  <td>
-                    {{ index+1 }} 
-                  </td>
-                  <td>
-                    {{ data.approval_name }}
-                  </td>
-                  <td>
-                    {{ data.menu }}
-                  </td>
-                  <td class="flex flex-wrap gap-4 justify-center">
-                    <ModalEditApproval />
-                    <ModalDelete @confirm-delete="deleteData(data.id)" />
-                  </td>
                 </tr>
+              </thead>
 
-            </tbody>
-            
-          </table>
-        </div>
+              <tbody>
+
+                <!-- sortir nya harus sama dengan key yang di data dummy -->
+
+                  <tr v-for="(data, index) in sortedData" :key="data.No">
+                    <td>
+                      <input type="checkbox" name="chk">
+                    </td>
+                    <td>
+                      {{ index + 1 }} 
+                    </td>
+                    <td>
+                      {{ data.approval_name }}
+                    </td>
+                    <td>
+                      {{ data.menu }}
+                    </td>
+                    <td class="flex flex-wrap gap-4 justify-center">
+                      <ModalEditApproval />
+                      <ModalDelete @confirm-delete="deleteData(data.id)" />
+                    </td>
+                  </tr>
+
+              </tbody>
+              
+            </table>
+          </div>
 
         </div>
 
