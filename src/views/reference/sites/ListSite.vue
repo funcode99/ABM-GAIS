@@ -200,7 +200,7 @@ const deleteSite = async (id) => {
       Api.delete(`/site/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Company has been deleted.",
+          text: "Site has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#3085d6",
