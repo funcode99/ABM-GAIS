@@ -161,10 +161,6 @@ const deleteCurrency = async (id) => {
     }
   });
 };
-
-const props = defineProps({
-  id: Number,
-});
 </script>
 
 <template>

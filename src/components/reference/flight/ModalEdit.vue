@@ -70,7 +70,7 @@ const submitEdit = () => {
               required
               v-model="currentflightClassName"
               @keydown.enter="submitEdit"
-              @keyup.enter="$emit('changecurrencyName')"
+              @keyup.enter="$emit('changeflightClassName')"
             />
           </div>
 
