@@ -15,12 +15,44 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
-import brandData from "@/utils/Api/reference/branddata.js";
-
+import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let brandName = ref("");
+let brandIdCompany = ref("");
+let brandIdSite = ref();
+
+let editBrandDataId = ref();
+
+//for edit
+const editBrand = async (data) => {
+  editBrandDataId.value = data;
+  setTimeout(callEditApi, 500);
+  // console.log("ini data id:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/brand/update_data/${editBrandDataId.value}`, {
+    brand_name: formEditState.brand.brandName,
+    id_company: formEditState.brand.brandIdCompany,
+    id_site: formEditState.brand.brandIdSite,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchBrand();
+};
 
 //for sort, search, & filter
 const search = ref("");
@@ -368,6 +400,12 @@ const deleteBrand = async (id) => {
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        @change-brand="editBrand(data.id)"
+                        :formContent="[
+                          data.brandName,
+                          data.brandIdCompany,
+                          data.brandIdSite,
+                        ]"
                       />
                       <button @click="deleteBrand(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
