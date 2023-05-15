@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -64,6 +64,7 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let Company = ref("");
 
 //for paginations
 let showingValue = ref(1);
@@ -77,13 +78,26 @@ const onChangePage = (pageOfItem) => {
   showingValue.value = pageOfItem;
 };
 
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+});
+
 //for filter & reset button
 const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
+  if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
+      (item) => item.id_company === selectedCompany.value
     );
   }
 };
@@ -115,7 +129,7 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Site Code", jsonData: "site" },
   { Id: 3, title: "Site Name", jsonData: "site_name" },
-  { Id: 4, title: "Company", jsonData: "company" },
+  { Id: 4, title: "Company", jsonData: "company_name" },
   { Id: 5, title: "Actions" },
 ];
 
@@ -141,11 +155,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.site.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.site_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.site.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.site_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -258,8 +272,8 @@ const deleteSite = async (id) => {
                   v-model="selectedCompany"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.company }}
+                  <option v-for="company in Company" :value="company.id">
+                    {{ company.company_name }}
                   </option>
                 </select>
               </div>
