@@ -27,7 +27,7 @@ const fetchParentCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get_parent");
   parentCompany.value = res.data.data;
-  console.log("ini data parent" + JSON.stringify(res.data.data));
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 //for get vendor in select
@@ -36,7 +36,7 @@ const fetchVendors = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/flight_trip/get_vendor");
   vendorAirlines.value = res.data.data;
-  console.log("ini data vendor" + JSON.stringify(res.data.data));
+  // console.log("ini data vendor" + JSON.stringify(res.data.data));
 };
 
 // onMounted(fetch);

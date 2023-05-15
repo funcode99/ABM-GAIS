@@ -10,15 +10,53 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-// import dataCompany from "@/utils/Api/reference/companydata.js";
 import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let companyCode = ref();
+let companyName = ref();
+let companyParentCompany = ref();
+let companyLogo = ref();
+let companyVendor = ref();
+
+let editCompanyDataId = ref();
+
+//for edit
+const editCompany = async (data) => {
+  editCompanyDataId.value = data;
+  setTimeout(callEditApi, 500);
+  // console.log("ini data id:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/company/update_data/${editCompanyDataId.value}`, {
+    company_code: formEditState.company.companyCode,
+    company_name: formEditState.company.companyName,
+    parent_company: formEditState.company.companyParentCompany,
+    id_vendor: formEditState.company.companyVendor,
+    logo: formEditState.company.companyLogo,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetch();
+};
 
 //for sort & search
 const search = ref("");
@@ -87,11 +125,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.code.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.company_code.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.code.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.company_code.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -148,13 +186,13 @@ const deleteCompany = async (id) => {
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -283,7 +321,7 @@ const deleteCompany = async (id) => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="index"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
@@ -298,6 +336,14 @@ const deleteCompany = async (id) => {
                       />
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        @change-company="editCompany(data.id)"
+                        :formContent="[
+                          data.companyCode,
+                          data.companyName,
+                          data.companyParentCompany,
+                          data.companyLogo,
+                          data.companyVendor,
+                        ]"
                       />
                       <button @click="deleteCompany(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
@@ -311,7 +357,9 @@ const deleteCompany = async (id) => {
                 v-else
                 class="h-[100px] border-t border-t-black flex items-center justify-center"
               >
-                <h1 class="text-center">Tidak Ada Data</h1>
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
               </div>
             </div>
           </div>
@@ -337,7 +385,7 @@ const deleteCompany = async (id) => {
           </div>
         </div>
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+      <Footer />
     </div>
   </div>
 </template>
