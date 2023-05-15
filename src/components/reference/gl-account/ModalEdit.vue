@@ -2,52 +2,26 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import { ref } from "vue";
 
-import { ref, computed } from "vue";
+import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js";
+let formEditState = useFormEditStore();
+
+let isVisible = ref(false);
+
+const emits = defineEmits(["unlockScrollbar", "changeGl"]);
 
 const props = defineProps({
-  id: {
-    type: Number,
-    required: true,
-  },
+  formContent: Array,
 });
 
-const emits = defineEmits(["unlockScrollbar", "gl-update"]);
+const currentglAccountCode = ref(props.formContent[0]);
+const currentglAccountName = ref(props.formContent[1]);
 
-const reactiveId = computed(() => props.id);
-
-// console.log(props.id);
-
-let UpdateGlAccount = ref("");
-let UpdateGlName = ref("");
-let isOpenModal = ref(false);
-
-const updateGLAccount = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    await Api.post(`/gl_account/update_data/${reactiveId.value}`, {
-      gl_account: UpdateGlAccount.value,
-      gl_name: UpdateGlName.value,
-    });
-
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    isOpenModal.value = !isOpenModal.value;
-    setTimeout(() => {
-      emits("gl-update");
-    }, 1000);
-  } catch (error) {
-    console.log(error);
-  }
+const submitEdit = () => {
+  formEditState.glAccount.glAccountCode = currentglAccountCode.value;
+  formEditState.glAccount.glAccountName = currentglAccountName.value;
+  isVisible.value = !isVisible.value;
 };
 </script>
 
@@ -63,7 +37,7 @@ const updateGLAccount = async () => {
     type="checkbox"
     id="modal-edit-car"
     class="modal-toggle"
-    v-model="isOpenModal"
+    v-model="isVisible"
   />
   <div class="modal">
     <div class="modal-box relative">
@@ -96,7 +70,9 @@ const updateGLAccount = async () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="GL Account"
               required
-              v-model="UpdateGlAccount"
+              v-model="currentglAccountCode"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changeglAccountCode')"
             />
           </div>
           <div class="mb-6 text-start w-full px-4">
@@ -111,7 +87,9 @@ const updateGLAccount = async () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="GL Name"
               required
-              v-model="UpdateGlName"
+              v-model="currentglAccountName"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changeglAccountName')"
             />
           </div>
 
@@ -123,12 +101,13 @@ const updateGLAccount = async () => {
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button
-                @click="updateGLAccount()"
-                type="submit"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
+              <button @click="submitEdit">
+                <button
+                  @click="$emit('changeGl')"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
               </button>
             </div>
           </div>
