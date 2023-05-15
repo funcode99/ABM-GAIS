@@ -18,8 +18,43 @@ import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let siteName = ref("");
+let siteIdCompany = ref("");
+let siteCode = ref();
+
+let editSiteDataId = ref();
+
+//for edit
+const editSite = async (data) => {
+  editSiteDataId.value = data;
+  setTimeout(callEditApi, 500);
+  // console.log("ini data id:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/site/update_data/${editSiteDataId.value}`, {
+    site_name: formEditState.site.siteName,
+    id_company: formEditState.site.siteIdCompany,
+    site_code: formEditState.site.siteCode,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchSite();
+};
 
 //for sort & search
 const search = ref("");
@@ -358,6 +393,12 @@ const deleteSite = async (id) => {
                       />
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        @change-site="editSite(data.id)"
+                        :formContent="[
+                          data.siteName,
+                          data.siteIdCompany,
+                          data.siteCode,
+                        ]"
                       />
                       <button @click="deleteSite(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />

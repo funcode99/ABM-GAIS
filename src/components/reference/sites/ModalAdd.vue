@@ -20,7 +20,7 @@ const fetchGetCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  console.log("ini data parent" + JSON.stringify(res.data.data));
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 onMounted(() => {
