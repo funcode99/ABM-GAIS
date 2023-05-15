@@ -115,11 +115,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.flight_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.flight_class.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
