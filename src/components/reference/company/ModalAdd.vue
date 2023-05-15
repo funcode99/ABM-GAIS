@@ -162,7 +162,7 @@ const saveCommpany = async () => {
             >
               <option disabled selected>Company</option>
               <option v-for="company in parentCompany" :value="company.id">
-                {{ company.parent_company }}
+                {{ company.company_name }}
               </option>
             </select>
           </div>
