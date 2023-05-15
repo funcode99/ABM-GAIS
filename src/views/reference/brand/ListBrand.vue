@@ -11,9 +11,13 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
+import Swal from "sweetalert2";
+
+import Api from "@/utils/Api";
+
 import brandData from "@/utils/Api/reference/branddata.js";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
@@ -25,6 +29,7 @@ const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 let lockScrollbar = ref(false);
+let Company = ref("");
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -41,11 +46,11 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
+  if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
+      (item) => item.id_company === selectedCompany.value
     );
   }
 };
@@ -93,7 +98,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = brandData;
+  fetchBrand();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -103,10 +108,10 @@ const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
     (item.brand_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1);
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
       (item.brand_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -117,17 +122,73 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+});
+
+//get call brand
+const fetchBrand = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/brand/");
+  // console.log(res.data.data);
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+//delete brand
+const deleteBrand = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/brand/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Brand has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetchBrand();
+      });
+    } else {
+      return;
+    }
+  });
+};
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -147,7 +208,10 @@ const getSessionForSidebar = () => {
               Brand
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                @brand-saved="fetchBrand"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -173,8 +237,8 @@ const getSessionForSidebar = () => {
                   v-model="selectedCompany"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.company }}
+                  <option v-for="company in Company" :value="company.id">
+                    {{ company.company_name }}
                   </option>
                 </select>
               </div>
@@ -253,6 +317,7 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
+                v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -288,7 +353,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -297,20 +362,29 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td>{{ data.brand_name }}</td>
-                    <td>{{ data.company }}</td>
+                    <td>{{ data.company_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       />
-                      <button>
+                      <button @click="deleteBrand(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
                   </tr>
                 </tbody>
               </table>
+
+              <div
+                v-else
+                class="h-[100px] border-t border-t-black flex items-center justify-center"
+              >
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
+              </div>
             </div>
           </div>
 

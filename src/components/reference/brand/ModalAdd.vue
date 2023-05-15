@@ -1,7 +1,73 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
+
+import { ref, onMounted } from "vue";
+
+let selectedCompany = ref("Company");
+let selectedSite = ref("Site");
+let brandName = ref("");
+let Company = ref("");
+let Site = ref("");
+let isOpenModal = ref(false);
+
+const emits = defineEmits(["unlockScrollbar", "brand-saved"]);
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+//for get site in select
+const fetchGetSite = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/");
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+  fetchGetSite();
+});
+
+const saveBrand = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  try {
+    const payload = {
+      brand_name: brandName.value,
+      id_company: selectedCompany.value,
+      id_site: selectedSite.value,
+    };
+
+    await Api.post(`/brand/store`, payload);
+
+    // Reset nilai input
+    (brandName.value = ""), (selectedCompany.value = "");
+    selectedSite.value = "";
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    emits("brand-saved");
+    isOpenModal.value = !isOpenModal.value;
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <template>
@@ -12,7 +78,12 @@ const emits = defineEmits(["unlockScrollbar"]);
     >+ Add New</label
   >
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="my-modal-3"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -29,7 +100,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-brand">
-        <form>
+        <form @submit.prevent="saveBrand">
           <div class="mb-6 w-full px-4">
             <label
               for="company"
@@ -39,10 +110,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedCompany"
             >
               <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
+              <option v-for="company in Company" :value="company.id">
+                {{ company.company_name }}
+              </option>
             </select>
           </div>
 
@@ -55,10 +128,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedSite"
             >
               <option disabled selected>Site</option>
-              <option>Site A</option>
-              <option>Site B</option>
+              <option v-for="site in Site" :value="site.id">
+                {{ site.site_name }}
+              </option>
             </select>
           </div>
 
@@ -74,6 +149,7 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Brand Name"
               required
+              v-model="brandName"
             />
           </div>
 
@@ -86,6 +162,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Cancel</label
               >
               <button
+                type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Save
