@@ -2,54 +2,28 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import { ref } from "vue";
 
-import { ref, computed } from "vue";
+import { useFormEditStore } from "@/stores/reference/city/edit-modal.js";
+let formEditState = useFormEditStore();
+
+let isVisible = ref(false);
+
+const emits = defineEmits(["unlockScrollbar", "changeCurrency"]);
 
 const props = defineProps({
-  id: {
-    type: Number,
-    required: true,
-  },
+  formContent: Array,
 });
 
-const emits = defineEmits(["unlockScrollbar", "currency-update"]);
+const currentcurrencyName = ref(props.formContent[0]);
+const currentcurrencySymbol = ref(props.formContent[1]);
+const currentcurrencyCode = ref(props.formContent[2]);
 
-const reactiveId = computed(() => props.id);
-
-// console.log(props.id);
-
-let UpdateCurrency = ref("");
-let UpdateCurrencySymbol = ref("");
-let UpdateCurrencyCode = ref("");
-let isOpenModal = ref(false);
-
-const updateCurrency = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    await Api.post(`/currency/update_data/${reactiveId.value}`, {
-      currency_name: UpdateCurrency.value,
-      currency_symbol: UpdateCurrencySymbol.value,
-      currency_code: UpdateCurrencyCode.value,
-    });
-
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    isOpenModal.value = !isOpenModal.value;
-    setTimeout(() => {
-      emits("currency-update");
-    }, 1000);
-  } catch (error) {
-    console.log(error);
-  }
+const submitEdit = () => {
+  formEditState.currency.currencyName = currentcurrencyName.value;
+  formEditState.currency.currencySymbol = currentcurrencySymbol.value;
+  formEditState.currency.currencyCode = currentcurrencyCode.value;
+  isVisible.value = !isVisible.value;
 };
 </script>
 
@@ -65,7 +39,7 @@ const updateCurrency = async () => {
     type="checkbox"
     id="modal-edit-currency"
     class="modal-toggle"
-    v-model="isOpenModal"
+    v-model="isVisible"
   />
   <div class="modal">
     <div class="modal-box relative">
@@ -98,7 +72,9 @@ const updateCurrency = async () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Currency"
               required
-              v-model="UpdateCurrency"
+              v-model="currentcurrencyName"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changecurrencyName')"
             />
           </div>
 
@@ -114,7 +90,9 @@ const updateCurrency = async () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Symbol"
               required
-              v-model="UpdateCurrencySymbol"
+              v-model="currentcurrencySymbol"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changecurrencySymbol')"
             />
           </div>
 
@@ -130,7 +108,9 @@ const updateCurrency = async () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Code"
               required
-              v-model="UpdateCurrencyCode"
+              v-model="currentcurrencyCode"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changecurrencyCode')"
             />
           </div>
 
@@ -142,12 +122,13 @@ const updateCurrency = async () => {
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button
-                @click="updateCurrency()"
-                type="submit"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
+              <button @click="submitEdit">
+                <button
+                  @click="$emit('changeCurrency')"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
               </button>
             </div>
           </div>

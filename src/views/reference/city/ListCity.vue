@@ -322,7 +322,7 @@ const deleteCity = async (id) => {
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                         @change-city="editCity(data.id)"
-                        :formContent="[data.cityCode, cityName]"
+                        :formContent="[data.cityCode, data.cityName]"
                       />
                       <button @click="deleteCity(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />

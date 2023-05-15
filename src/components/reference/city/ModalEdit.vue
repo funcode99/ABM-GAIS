@@ -2,10 +2,12 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
+import { ref } from "vue";
+
 import { useFormEditStore } from "@/stores/reference/city/edit-modal.js";
 let formEditState = useFormEditStore();
 
-import { ref } from "vue";
+let isVisible = ref(false);
 
 const emits = defineEmits(["unlockScrollbar", "changeCity"]);
 
@@ -19,9 +21,8 @@ const currentcityName = ref(props.formContent[1]);
 const submitEdit = () => {
   formEditState.city.cityCode = currentcityCode.value;
   formEditState.city.cityName = currentcityName.value;
+  isVisible.value = !isVisible.value;
 };
-
-let isOpenModal = ref(false);
 </script>
 
 <template>
@@ -36,7 +37,7 @@ let isOpenModal = ref(false);
     type="checkbox"
     id="modal-edit-pagu"
     class="modal-toggle"
-    v-model="isOpenModal"
+    v-model="isVisible"
   />
   <div class="modal">
     <div class="modal-box relative">
