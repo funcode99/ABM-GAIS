@@ -273,6 +273,7 @@ const tableBodyDetailsItem = [
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
             <label
+            @click="stepForm--"
             for="add-menu-modal"
             class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
                 Cancel
@@ -345,5 +346,6 @@ input::file-selector-button {
     padding: 3px 3px;
     text-align:center;
 }
+
 
 </style>

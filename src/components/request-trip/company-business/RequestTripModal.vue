@@ -1747,12 +1747,6 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
 
       </div>
 
-      <!-- <div class="flex justify-center">
-        <button class="bg-blue-button text-white font-bold text-center px-11 py-3 rounded-lg">
-          Check
-        </button>
-      </div> -->
-
       <checkButton />
 
       <h1 class="mt-4 text-center text-sm font-bold">Flight Schedule</h1>
@@ -1912,8 +1906,6 @@ const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 
       </div>
 
       </div>
-
-
 
     </div>
 

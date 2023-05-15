@@ -1,5 +1,5 @@
 <script setup>
-import { onBeforeMount, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 
 import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
@@ -47,14 +47,15 @@ onMounted(() => {
 </script>
 
 <template>
+
   <!-- ga perlu pake class transition kalo mau pake transition di tailwind -->
   <div
     class="mt-[115px] hidden sm:flex sm:flex-col fixed top-0 bottom-0 overflow-y-auto bg-white zInfinite font-JakartaSans this ease-in-out duration-500"
     :class="sidebar.isWide === true ? 'w-[260px]' : 'w-[100px]'"
   >
+
     <!-- grow/shrink sidebar button -->
-    <div
-      class="fixed top-[155px] w-[32px] h-[32px] bg-blue rounded-full sm:flex justify-center items-center hidden cursor-pointer ease-in-out duration-500 z-Infinite"
+    <div class="fixed top-[155px] w-[32px] h-[32px] bg-blue rounded-full sm:flex justify-center items-center hidden cursor-pointer ease-in-out duration-500 z-Infinite"
       @click="sidebar.changeWide"
       :class="
         sidebar.isWide === true ? 'left-[240px]' : '-scale-x-100 left-[84px]'
@@ -64,8 +65,7 @@ onMounted(() => {
     </div>
 
     <!-- sidebar search -->
-    <div
-      class="ml-6 pt-7 flex"
+    <div class="ml-6 pt-7 flex"
       :class="sidebar.isWide === true ? '' : 'hidden'"
     >
       <div
@@ -88,6 +88,7 @@ onMounted(() => {
       <div class="sidebar scroller">
         <div class="px-4 flex flex-col items-center">
           <ul id="myMenu" class="pb-20">
+
             <li class="">
               <div
                 class="flex justify-center items-center cursor-pointer py-4"
@@ -113,7 +114,6 @@ onMounted(() => {
             </li>
 
             <!-- travel management -->
-
             <li>
               <button
                 @click="sidebar.increment(travel)"
@@ -164,7 +164,7 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :src="expandArrow" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
                     </div>
 
                     <div
@@ -175,7 +175,7 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :src="expandArrowSelected" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
                     </div>
                   </div>
                 </div>
@@ -522,7 +522,7 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :src="expandArrow" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
                     </div>
 
                     <div
@@ -533,7 +533,7 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :src="expandArrowSelected" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
                     </div>
                   </div>
                 </div>
@@ -767,7 +767,7 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :src="expandArrow" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
                     </div>
 
                     <div
@@ -778,7 +778,7 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :src="expandArrowSelected" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
                     </div>
                   </div>
                 </div>
@@ -1330,7 +1330,7 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :src="expandArrow" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
                     </div>
 
                     <div
@@ -1341,7 +1341,7 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :src="expandArrowSelected" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
                     </div>
                   </div>
                 </div>
@@ -1681,7 +1681,7 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :src="expandArrow" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
                     </div>
 
                     <div
@@ -1692,7 +1692,7 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :src="expandArrowSelected" />
+                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
                     </div>
                   </div>
                 </div>
@@ -1872,11 +1872,14 @@ onMounted(() => {
                 </collapse-transition>
               </div>
             </li>
+
           </ul>
         </div>
       </div>
     </div>
+
   </div>
+
 </template>
 
 <style scoped>
