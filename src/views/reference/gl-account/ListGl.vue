@@ -15,8 +15,41 @@ import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let glAccountCode = ref();
+let glAccountName = ref();
+
+let editglAccountDataId = ref();
+
+//for edit
+const editGlAccount = async (data) => {
+  editglAccountDataId.value = data;
+  setTimeout(callEditApi, 500);
+  console.log("ini data:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/gl_account/update_data/${editglAccountDataId.value}`, {
+    gl_account: formEditState.glAccount.glAccountCode,
+    gl_name: formEditState.glAccount.glAccountName,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchGLAccount();
+};
 
 //for sort & search
 const search = ref("");
@@ -24,6 +57,7 @@ let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lockScrollbar = ref(false);
+let sortedDataReactive = computed(() => sortedData.value);
 
 //for paginations
 let showingValue = ref(1);
@@ -140,10 +174,6 @@ const deleteGLAccount = async (id) => {
     }
   });
 };
-
-const props = defineProps({
-  id: Number,
-});
 </script>
 
 <template>
@@ -289,9 +319,8 @@ const props = defineProps({
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        :id="data.id"
-                        :key="`edit-gl-${data.id}`"
-                        @gl-update="fetchGLAccount"
+                        @change-gl="editGlAccount(data.id)"
+                        :formContent="[data.glAccountCode, data.glAccountName]"
                       />
                       <button @click="deleteGLAccount(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />

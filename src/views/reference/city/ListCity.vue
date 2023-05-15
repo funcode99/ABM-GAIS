@@ -15,8 +15,11 @@ import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/city/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
 
 //for sort & search
 const search = ref("");
@@ -25,12 +28,43 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let sortedDataReactive = computed(() => sortedData.value);
+
+let cityCode = ref();
+let cityName = ref();
 
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+let editCityDataId = ref();
+
+//for edit
+const editCity = async (data) => {
+  editCityDataId.value = data;
+  setTimeout(callEditApi, 500);
+  console.log("ini data:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/city/update_data/${editCityDataId.value}`, {
+    city_code: formEditState.city.cityCode,
+    city_name: formEditState.city.cityName,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchCity();
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -110,6 +144,7 @@ const fetchCity = async () => {
   lengthCounter = sortedData.value.length;
 };
 
+//delete city
 const deleteCity = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -140,10 +175,6 @@ const deleteCity = async (id) => {
     }
   });
 };
-
-const props = defineProps({
-  id: Number,
-});
 </script>
 
 <template>
@@ -290,9 +321,8 @@ const props = defineProps({
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        :id="data.id"
-                        :key="`edit-city-${data.id}`"
-                        @city-update="fetchCity"
+                        @change-city="editCity(data.id)"
+                        :formContent="[data.cityCode, data.cityName]"
                       />
                       <button @click="deleteCity(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />

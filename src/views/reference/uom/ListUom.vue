@@ -13,10 +13,40 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
+import { useFormEditStore } from "@/stores/reference/uom/edit-modal.js";
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let uomName = ref();
+
+let editUomDataId = ref();
+
+//for edit
+const editUom = async (data) => {
+  editUomDataId.value = data;
+  setTimeout(callEditApi, 500);
+  console.log("ini data:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/uom/update_data/${editUomDataId.value}`, {
+    uom_name: formEditState.uom.uomName,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchUom();
+};
 
 //for sort & search
 const search = ref("");
@@ -139,10 +169,6 @@ const deleteUom = async (id) => {
     }
   });
 };
-
-const props = defineProps({
-  id: Number,
-});
 </script>
 
 <template>
@@ -287,9 +313,8 @@ const props = defineProps({
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        :id="data.id"
-                        :key="`edit-uom-${data.id}`"
-                        @uom-update="fetchUom"
+                        @change-uom="editUom(data.id)"
+                        :formContent="[data.uomName]"
                       />
                       <button @click="deleteUom(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />

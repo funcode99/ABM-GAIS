@@ -15,7 +15,10 @@ import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/currency/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
+const formEditState = useFormEditStore();
 const sidebar = useSidebarStore();
 
 //for sort & search
@@ -25,12 +28,45 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let sortedDataReactive = computed(() => sortedData.value);
+
+let currencyName = ref();
+let currencySymbol = ref();
+let currencyCode = ref();
 
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+let editCurrencyDataId = ref();
+
+//for edit
+const editCurrency = async (data) => {
+  editCurrencyDataId.value = data;
+  setTimeout(callEditApi, 500);
+  console.log("ini data:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/currency/update_data/${editCurrencyDataId.value}`, {
+    currency_name: formEditState.currency.currencyName,
+    currency_symbol: formEditState.currency.currencySymbol,
+    currency_code: formEditState.currency.currencyCode,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchCurrency();
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -125,10 +161,6 @@ const deleteCurrency = async (id) => {
     }
   });
 };
-
-const props = defineProps({
-  id: Number,
-});
 </script>
 
 <template>
@@ -263,9 +295,12 @@ const props = defineProps({
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        :id="data.id"
-                        :key="`edit-currency-${data.id}`"
-                        @currency-update="fetchCurrency"
+                        @change-currency="editCurrency(data.id)"
+                        :formContent="[
+                          data.currencyName,
+                          data.currencySymbol,
+                          data.currencyCode,
+                        ]"
                       />
                       <button @click="deleteCurrency(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
