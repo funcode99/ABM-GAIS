@@ -4,7 +4,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 
 import { ref } from "vue";
 
-import { useFormEditStore } from "@/stores/reference/city/edit-modal.js";
+import { useFormEditStore } from "@/stores/reference/currency/edit-modal.js";
 let formEditState = useFormEditStore();
 
 let isVisible = ref(false);

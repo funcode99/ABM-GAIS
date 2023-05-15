@@ -2,55 +2,24 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import { ref } from "vue";
 
-import { ref, computed } from "vue";
+import { useFormEditStore } from "@/stores/reference/flight/edit-modal.js";
+let formEditState = useFormEditStore();
+
+let isVisible = ref(false);
+
+const emits = defineEmits(["unlockScrollbar", "changeFlight"]);
 
 const props = defineProps({
-  id: {
-    type: Number,
-    required: true,
-  },
+  formContent: Array,
 });
 
-let UpdateFlight = ref("");
-let isOpenModal = ref(false);
+const currentflightClassName = ref(props.formContent[0]);
 
-// console.log(props.id);
-// const id = props.id;
-
-const emits = defineEmits(["unlockScrollbar", "flight-class-update"]);
-
-// computed property untuk menyimpan id sebagai reactive variable
-const reactiveId = computed(() => props.id);
-
-// console.log(props.id);
-
-const updateFlightClass = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    await Api.post(`/flight/update_data/${reactiveId.value}`, {
-      flight_name: UpdateFlight.value,
-    });
-
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    isOpenModal.value = !isOpenModal.value;
-
-    setTimeout(() => {
-      emits("flight-class-update");
-    }, 1000);
-  } catch (error) {
-    console.log(error);
-  }
+const submitEdit = () => {
+  formEditState.flight.flightClassName = currentflightClassName.value;
+  isVisible.value = !isVisible.value;
 };
 </script>
 
@@ -66,7 +35,7 @@ const updateFlightClass = async () => {
     type="checkbox"
     id="modal-edit-flight"
     class="modal-toggle"
-    v-model="isOpenModal"
+    v-model="isVisible"
   />
   <div class="modal">
     <div class="modal-box relative">
@@ -99,7 +68,9 @@ const updateFlightClass = async () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Flight Class"
               required
-              v-model="UpdateFlight"
+              v-model="currentflightClassName"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changecurrencyName')"
             />
           </div>
 
@@ -111,13 +82,13 @@ const updateFlightClass = async () => {
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-
-              <button
-                @click="updateFlightClass()"
-                type="submit"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
+              <button @click="submitEdit">
+                <button
+                  @click="$emit('changeFlight')"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
               </button>
             </div>
           </div>

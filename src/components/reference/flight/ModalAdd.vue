@@ -15,8 +15,8 @@ const saveFlightClass = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   try {
-    await Api.post(`/flight/store`, {
-      flight_name: newFlightClass.value,
+    await Api.post(`/flight_class/store`, {
+      flight_class: newFlightClass.value,
     });
 
     // Reset the input values

@@ -15,8 +15,39 @@ import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/flight/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let flightClassName = ref();
+
+let editFlightDataId = ref();
+
+//for edit
+const editFlight = async (data) => {
+  editFlightDataId.value = data;
+  setTimeout(callEditApi, 500);
+  console.log("ini data:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/flight_class/update_data/${editFlightDataId.value}`, {
+    flight_class: formEditState.flight.flightClassName,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchFlight();
+};
 
 //for sort & search
 const search = ref("");
@@ -25,6 +56,7 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let sortedDataReactive = computed(() => sortedData.value);
 
 //for paginations
 let showingValue = ref(1);
@@ -103,7 +135,7 @@ const getSessionForSidebar = () => {
 const fetchFlight = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/flight/");
+  const res = await Api.get("/flight_class/");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -123,7 +155,7 @@ const deleteFlight = async (id) => {
     confirmButtonText: "Yes, delete it!",
   }).then((result) => {
     if (result.isConfirmed) {
-      Api.delete(`/flight/delete_data/${id}`).then((res) => {
+      Api.delete(`/flight_class/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
           text: "Class Flight has been deleted.",
@@ -152,7 +184,7 @@ const props = defineProps({
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
       <div
@@ -284,13 +316,12 @@ const props = defineProps({
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ index + 1 }}</td>
-                    <td>{{ data.flight_name }}</td>
+                    <td>{{ data.flight_class }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        :id="data.id"
-                        :key="`edit-flight-${data.id}`"
-                        @flight-class-update="fetchFlight"
+                        @change-flight="editFlight(data.id)"
+                        :formContent="[data.flightClassName]"
                       />
                       <button @click="deleteFlight(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
