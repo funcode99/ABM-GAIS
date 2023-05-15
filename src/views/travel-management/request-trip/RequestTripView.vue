@@ -1,7 +1,8 @@
 <script setup>
     import { ref } from 'vue'
     
-    import expandArrow from '@/assets/ExpandArrow.png'
+    import miniABM from '@/assets/mini-abm.png'
+    import userImg from '@/assets/3-user.png'
     
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
@@ -26,6 +27,8 @@
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
+
+    const closeBar = ref(true)
 </script>
 
 <template>
@@ -60,6 +63,10 @@
                                 <input type="text" disabled value="13/5/2023" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
                             </div>
                             <div class="flex flex-col gap-2">
+                              <span>File Attachment <span class="text-[#f5333f]">*</span></span>
+                              <input type="text" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" />
+                            </div>
+                            <div class="flex flex-col gap-2">
                                 <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
                                 <input type="text" disabled value="Company Business" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
                             </div>
@@ -90,17 +97,19 @@
 
                     <div v-if="tab == 'details'" class="flex">
                                                
-                        <div class="">
+                        <div>
 
                             <div class="py-12 px-4">
 
                                 <!-- harus refresh page dulu baru props nya masuk -->
-                                <multiStepCircleVertical number="1" title="Traveler" />
-                                <multiStepCircleVertical number="2" title="Airlines" />
-                                <multiStepCircleVertical number="3" title="Taxi Voucher" />
-                                <multiStepCircleVertical number="4" title="Other Transportation" />
-                                <multiStepCircleVertical number="5" title="Accomodation" />
-                                <multiStepCircleVertical number="6" title="Cash Advance" limit="6" />
+                                <multiStepCircleVertical number="1" title="Traveller" 
+                                @change-header="headerTitle = 'Traveller'" />
+                                <multiStepCircleVertical number="2" title="Airlines" 
+                                @change-header="headerTitle = 'Airlines'" />
+                                <multiStepCircleVertical number="3" title="Taxi Voucher" @change-header="headerTitle = 'Taxi Voucher'" />
+                                <multiStepCircleVertical number="4" title="Other Transportation" @change-header="headerTitle = 'Other Transportation'" />
+                                <multiStepCircleVertical number="5" title="Accomodation" @change-header="headerTitle = 'Accomodation'" />
+                                <multiStepCircleVertical number="6" title="Cash Advance" @change-header="headerTitle = 'Cash Advance'" limit="6" />
 
                             </div>
 
@@ -114,11 +123,13 @@
                             
                             <detailsFormHeader :title="headerTitle" />
 
-                            <div class="ml-8">
+                            <!-- if headerTitle = 'Traveller' -->
+                            <div v-if="headerTitle == 'Traveller'" class="ml-8">
+
                                 <div :class="rowClass">
 
-<div :class="columnClass">
-  <div class="w-full">
+                                  <div :class="columnClass">
+                                      <div class="w-full">
       <label :class="labelStylingClass">
           Type of Traveller<span class="text-red-star">*</span>
       </label>
@@ -127,10 +138,10 @@
           Type
         </option>
       </select>
-  </div>
-</div>
+                                      </div>
+                                  </div>
 
-<div :class="columnClass">
+                                  <div :class="columnClass">
   <div class="w-full">
     <label
         class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -143,11 +154,229 @@
         required
     />
   </div>
+                                  </div>
+
+                                </div>
+
+                                <div :class="rowClass">
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                            Name<span class="text-red-star">*</span>
+                                        </label>
+                                        <select :class="inputStylingClass">
+                                          <option selected hidden disabled>
+                                            Name
+                                          </option>
+                                        </select>
+                                    </div>
+                                  </div>
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                      <label
+                                          class="block mb-2 font-JakartaSans font-medium text-sm"
+                                          >Company<span class="text-red-star">*</span></label
+                                      >
+                                      <select :class="inputStylingClass">
+                                          <option selected hidden disabled>
+                                            Company
+                                          </option>
+                                        </select>
+                                    </div>
+                                  </div>
+
+                                </div>
+
+                                <div :class="rowClass">
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                            Gender<span class="text-red-star">*</span>
+                                        </label>
+                                        <select :class="inputStylingClass">
+                                          <option selected hidden disabled>
+                                            Male
+                                          </option>
+                                          <option selected hidden disabled>
+                                            Female
+                                          </option>
+                                        </select>
+                                    </div>
+                                  </div>
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                      <label
+                                          class="block mb-2 font-JakartaSans font-medium text-sm"
+                                          >Hotel Fare<span class="text-red-star">*</span></label
+                                      >
+                                      <select :class="inputStylingClass">
+                                          <option selected hidden disabled>
+                                            Fare
+                                          </option>
+                                        </select>
+                                    </div>
+                                  </div>
+
+                                </div>
+
+                                <div :class="rowClass">
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                            NIK<span class="text-red-star">*</span>
+                                        </label>
+                                        <input type="text" placeholder="NIK" :class="inputStylingClass">
+                                    </div>
+                                  </div>
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                      <label
+                                          class="block mb-2 font-JakartaSans font-medium text-sm"
+                                          >Flight Entitlement<span class="text-red-star">*</span></label
+                                      >
+                                      <select :class="inputStylingClass">
+                                          <option selected hidden disabled>
+                                            Flight Entitlement
+                                          </option>
+                                        </select>
+                                    </div>
+                                  </div>
+
+                                </div>
+
+                                <div :class="rowClass">
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                            Contact No<span class="text-red-star">*</span>
+                                        </label>
+                                        <input :class="inputStylingClass" type="text" placeholder="Contact No">
+                                    </div>
+                                  </div>
+
+                                  <div :class="columnClass">
+                                    <div class="w-full">
+                                      <label
+                                          :class="labelStylingClass"
+                                          >Notes<span class="text-red-star">*</span></label
+                                      >
+                                      <input type="text" placeholder="Notes" :class="inputStylingClass">
+                                    </div>
+                                  </div>
+
+                                </div>
+
+                            </div>
+
+                            <div v-if="headerTitle == 'Airlines'" class="ml-8">
+                              <div :class="rowClass">
+
+<div :class="columnClass">
+  <div class="w-full">
+      <label :class="labelStylingClass">
+          Traveller<span class="text-red-star">*</span>
+      </label>
+      <select :class="inputStylingClass">
+        <option selected hidden disabled>
+          Name
+        </option>
+      </select>
+  </div>
 </div>
 
+<div :class="columnClass">
+  <div class="w-full">
+    <label
+        class="block mb-2 font-JakartaSans font-medium text-sm"
+        >Departure<span class="text-red-star">*</span></label
+    >
+    <select :class="inputStylingClass">
+        <option selected hidden disabled>
+          City
+        </option>
+      </select>
+  </div>
 </div>
 
-<div :class="rowClass">
+                              </div>
+
+                                <div :class="rowClass">
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                          <label :class="labelStylingClass">
+                                              Departure Date<span class="text-red-star">*</span>
+                                          </label>
+                                          <select :class="inputStylingClass">
+                                            <option selected hidden disabled>
+                                              Date
+                                            </option>
+                                          </select>
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label
+                                            class="block mb-2 font-JakartaSans font-medium text-sm"
+                                            >Arrival<span class="text-red-star">*</span></label
+                                        >
+                                        <select :class="inputStylingClass">
+                                            <option selected hidden disabled>
+                                              City
+                                            </option>
+                                          </select>
+                                      </div>
+                                    </div>
+
+                                </div>
+
+                            <div class="flex justify-between mx-4 items-start gap-2 my-6">
+
+                                <div :class="columnClass">
+                                  <div class="w-full">
+                                      <label :class="labelStylingClass">
+                                          Flight Class<span class="text-red-star">*</span>
+                                      </label>
+                                      <select :class="inputStylingClass">
+                                        <option selected hidden disabled>
+                                          Class
+                                        </option>
+                                      </select>
+                                  </div>
+                                </div>
+
+                                <div :class="columnClass">
+                                  <div class="w-full">
+                                    <label
+                                        class="block mb-2 font-JakartaSans font-medium text-sm"
+                                        >Vendor<span class="text-red-star">*</span></label
+                                    >
+                                    <div>
+                                      <input class="w-6 h-6" type="radio" name="vendor">
+                                      <label class="ml-4">Antavaya</label>
+                                    </div>
+                                    <div>
+                                      <input class="w-6 h-6" type="radio" name="vendor">
+                                      <label class="ml-4">Aerowisata</label>
+                                    </div>
+                                  </div>
+                                </div>
+
+                            </div>
+
+                            </div>
+
+                            <div v-if="headerTitle == 'Taxi Voucher'" class="ml-8">
+
+                              <div :class="rowClass">
 
 <div :class="columnClass">
   <div class="w-full">
@@ -166,31 +395,97 @@
   <div class="w-full">
     <label
         class="block mb-2 font-JakartaSans font-medium text-sm"
-        >Company<span class="text-red-star">*</span></label
+        >Date<span class="text-red-star">*</span></label
     >
     <select :class="inputStylingClass">
         <option selected hidden disabled>
-          Company
+          Date
         </option>
       </select>
   </div>
 </div>
 
-</div>
+                              </div>
 
-<div :class="rowClass">
+                              <div :class="rowClass">
+
+                              <div :class="columnClass">
+                                <div class="w-full">
+                                    <label :class="labelStylingClass">
+                                        Arrival<span class="text-red-star">*</span>
+                                    </label>
+                                    <select :class="inputStylingClass">
+                                      <option selected hidden disabled>
+                                        City
+                                      </option>
+                                    </select>
+                                </div>
+                              </div>
+
+                              <div :class="columnClass">
+                                <div class="w-full">
+                                  <label
+                                      class="block mb-2 font-JakartaSans font-medium text-sm"
+                                      >Arrival<span class="text-red-star">*</span></label
+                                  >
+                                  <select :class="inputStylingClass">
+                                      <option selected hidden disabled>
+                                        City
+                                      </option>
+                                    </select>
+                                </div>
+                              </div>
+
+                              </div>
+
+                              <div :class="rowClass">
+
+                              <div :class="columnClass">
+                                <div class="w-full">
+                                    <label :class="labelStylingClass">
+                                        Amount<span class="text-red-star">*</span>
+                                    </label>
+                                    <input type="text" :class='inputStylingClass' placeholder="Amount">
+                                </div>
+                              </div>
+
+                              <div :class="columnClass">
+                                <div class="w-full">
+                                    <label :class="labelStylingClass">
+                                        <span>Remarks</span>
+                                    </label>
+                                    <input type="text" :class='inputStylingClass' placeholder="Remarks">
+                                </div>
+                              </div>
+
+                              </div>
+
+                              <div :class="rowClass">
+
+                              <div :class="columnClass">
+                              <div class="w-full">
+                                  <label :class="labelStylingClass">
+                                      <span>Account Name</span>
+                                  </label>
+                                  <input type="text" :class='inputStylingClass' placeholder="Account Name">
+                              </div>
+                              </div>
+
+                              </div>
+
+                            </div>
+
+                            <div v-if="headerTitle == 'Other Transportation'" class="ml-8">
+                              <div :class="rowClass">
 
 <div :class="columnClass">
   <div class="w-full">
       <label :class="labelStylingClass">
-          Gender<span class="text-red-star">*</span>
+          Traveller<span class="text-red-star">*</span>
       </label>
       <select :class="inputStylingClass">
         <option selected hidden disabled>
-          Male
-        </option>
-        <option selected hidden disabled>
-          Female
+          Name
         </option>
       </select>
   </div>
@@ -200,11 +495,11 @@
   <div class="w-full">
     <label
         class="block mb-2 font-JakartaSans font-medium text-sm"
-        >Hotel Fare<span class="text-red-star">*</span></label
+        >City<span class="text-red-star">*</span></label
     >
     <select :class="inputStylingClass">
         <option selected hidden disabled>
-          Fare
+          City
         </option>
       </select>
   </div>
@@ -217,9 +512,31 @@
 <div :class="columnClass">
   <div class="w-full">
       <label :class="labelStylingClass">
-          NIK<span class="text-red-star">*</span>
+          Type of Transportation<span class="text-red-star">*</span>
       </label>
-      <input type="text" placeholder="NIK" :class="inputStylingClass">
+      <select :class="inputStylingClass">
+        <option selected hidden disabled>
+          City
+        </option>
+        <option>
+          RWA HO Office Car
+        </option>
+        <option>
+          Rent Car
+        </option>
+        <option>
+          TIA Site Car
+        </option>
+        <option>
+          CK MIFA Site Car
+        </option>
+        <option>
+          TIA HO Car
+        </option>
+        <option>
+          SSB Pool Car
+        </option>
+      </select>
   </div>
 </div>
 
@@ -227,13 +544,9 @@
   <div class="w-full">
     <label
         class="block mb-2 font-JakartaSans font-medium text-sm"
-        >Flight Entitlement<span class="text-red-star">*</span></label
+        >Quantity<span class="text-red-star">*</span></label
     >
-    <select :class="inputStylingClass">
-        <option selected hidden disabled>
-          Flight Entitlement
-        </option>
-      </select>
+    <input type="text" placeholder="Quantity" :class=inputStylingClass>
   </div>
 </div>
 
@@ -242,21 +555,42 @@
 <div :class="rowClass">
 
 <div :class="columnClass">
-  <div class="w-full">
-      <label :class="labelStylingClass">
-          Contact No<span class="text-red-star">*</span>
-      </label>
-      <input :class="inputStylingClass" type="text" placeholder="Contact No">
-  </div>
+<div class="w-full">
+<label :class="labelStylingClass">
+  From Date<span class="text-red-star">*</span>
+</label>
+<select :class="inputStylingClass">
+<option selected hidden disabled>
+  Date
+</option>
+</select>
+</div>
 </div>
 
 <div :class="columnClass">
+<div class="w-full">
+<label
+  class="block mb-2 font-JakartaSans font-medium text-sm"
+  >Remarks<span class="text-red-star">*</span></label
+>
+<input type="text" placeholder="Remarks" :class=inputStylingClass>
+</div>
+</div>
+
+</div>
+
+<div :class="rowClass">
+
+<div :class="columnClass">
   <div class="w-full">
-    <label
-        :class="labelStylingClass"
-        >Notes<span class="text-red-star">*</span></label
-    >
-    <input type="text" placeholder="Notes" :class="inputStylingClass">
+    <label :class="labelStylingClass">
+      To Date<span class="text-red-star">*</span>
+    </label>
+    <select :class="inputStylingClass">
+    <option selected hidden disabled>
+      Date
+    </option>
+    </select>
   </div>
 </div>
 
@@ -296,7 +630,38 @@
 
                     <div v-else-if="tab == 'approval'">
 
+                    <div class="flex justify-start">
+                      <div class="flex flex-col items-center">
+                        <img :src="miniABM" class="h-[60px] w-60" />
+                        <h1 class="text-2xl font-medium leading-7">Approval</h1>
+                      </div>
                     </div>
+
+                    <div class="flex justify-center">
+
+                      <div class="py-12 px-4">
+
+                        <!-- harus refresh page dulu baru props nya masuk -->
+                        <multiStepCircleVertical :image="userImg" formType="traveller"  />
+                        <multiStepCircleVertical :image="userImg" formType="airlines" />
+                        <multiStepCircleVertical :image="userImg" formType="taxi-voucher" />
+                        <multiStepCircleVertical :image="userImg" formType="other-transportation" />
+                        <multiStepCircleVertical :image="userImg" formType="accomodation" />
+                        <!-- closeBar isi nya true -->
+                        <multiStepCircleVertical :image="userImg" formType="cash-advance" :stop="closeBar" />
+
+                      </div>
+
+                    <div>
+
+</div>
+
+
+                    </div>
+
+                  </div>
+
+                    <!-- diluar approval -->
 
                 </div>
 
