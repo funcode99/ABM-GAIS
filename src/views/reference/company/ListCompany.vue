@@ -107,7 +107,7 @@ const getSessionForSidebar = () => {
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/");
+  const res = await Api.get("/company/get");
   // console.log(res.data.data);
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
@@ -174,7 +174,10 @@ const deleteCompany = async (id) => {
               company
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                @company-saved="fetch"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
