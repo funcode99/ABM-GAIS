@@ -7,7 +7,7 @@
 
 
     // import untuk approval table
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
@@ -15,98 +15,130 @@
     import Api from '@/utils/Api'
 
     import { useFormAddStore } from '@/stores/add-modal.js'
+    import { useFormEditStore } from '@/stores/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
-    
+    const formEditState = useFormEditStore()
     const formState = useFormAddStore()
-    const search = ref('')
-    let showingValue = ref(0)
+
+    const editApprovalId = ref()
 
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
 
-const selectAll = (checkValue) => { 
-  const checkLead = checkValue
-  if(checkLead == true) {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=true;  
+    let showingValue = ref(1)
+    let paginateIndex = ref(0);
+    let pageMultiplier = ref(10);
+    let pageMultiplierReactive = computed(() => pageMultiplier.value);
+
+    //for paginations
+    const onChangePage = (pageOfItem) => {
+      paginateIndex.value = pageOfItem - 1;
+      showingValue.value = pageOfItem;
+    };
+
+    const selectAll = (checkValue) => { 
+      const checkLead = checkValue
+      if(checkLead == true) {
+        let check = document.getElementsByName('chk')
+        for(let i=0; i<check.length; i++) {  
+            if(check[i].type=='checkbox')  
+            check[i].checked=true;  
+        }
+      } else {
+        let check = document.getElementsByName('chk')
+        for(let i=0; i<check.length; i++) {  
+            if(check[i].type=='checkbox')  
+            check[i].checked=false;  
+        }
+      }
     }
-  } else {
-    let check = document.getElementsByName('chk')
-    for(let i=0; i<check.length; i++) {  
-        if(check[i].type=='checkbox')  
-        check[i].checked=false;  
+
+    const tableHead = [
+      {Id: 1, title: 'No', jsonData: 'No'},
+      {Id: 2, title: 'Matrix Name', jsonData: 'MatrixName'},
+      {Id: 3, title: 'Menu', jsonData: 'Menu'},
+      {Id: 4, title: 'Actions'}
+    ]
+
+    const sortList = (sortBy) => {
+      if(sortedbyASC) {
+        sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+        sortedbyASC = false
+      } else {
+        sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+        sortedbyASC = true
+      }
     }
-  }
-}
 
-const tableHead = [
-  {Id: 1, title: 'No', jsonData: 'No'},
-  {Id: 2, title: 'Matrix Name', jsonData: 'MatrixName'},
-  {Id: 3, title: 'Menu', jsonData: 'Menu'},
-  {Id: 4, title: 'Actions'}
-]
+    const fetch = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+            
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/approval/get_approval')
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
 
-const sortList = (sortBy) => {
-  if(sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
-    sortedbyASC = false
-  } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
-    sortedbyASC = true
-  }
-}
+    }
 
-const fetch = async () => {
-    const token = JSON.parse(localStorage.getItem('token'))
-        
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.get('/approval/get_approval')
-    instanceArray = api.data.data
-    sortedData.value = instanceArray
+    // watch(ref, callback)
 
-}
-
-// watch(ref, callback)
-
-onBeforeMount(() => {
-  getSessionForSidebar()
-  fetch()
-})
-
-const filteredItems = (search) => {
-    sortedData.value = instanceArray
-      const filteredR = sortedData.value.filter(item => {
-        // console.log(item.No)
-        console.log(item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1)
-         return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
-      })
-      sortedData.value = filteredR
-      onChangePage(1)
-}
-
-const getSessionForSidebar = () => {
-      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
-}
-
-const addNewApprover = async () => {
-    setTimeout(callAddApi, 500)
-}
-
-const callAddApi = async () => {
-    const token = JSON.parse(localStorage.getItem('token'))
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    await Api.post(`/approval/store_approval`, {
-      approval_name:  formState.approval.matrixName,
-      id_company: formState.approval.companyId,
-      id_menu: formState.approval.menuId,
-      id_code_document: formState.approval.codeDocumentId,
+    onBeforeMount(() => {
+      getSessionForSidebar()
+      fetch()
     })
-    fetch()
-}
+
+    const filteredItems = (search) => {
+        console.log('isi search ' + search)
+        sortedData.value = instanceArray
+          const filteredR = sortedData.value.filter(item => {
+            
+            // console.log(search.toLowerCase())
+            // pastikan data yang di filter ada di sortedData
+            console.log(item.approval_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+            return item.approval_name.toLowerCase().indexOf(search.toLowerCase()) > -1
+          })
+          sortedData.value = filteredR
+          onChangePage(1)
+    }
+
+    const getSessionForSidebar = () => {
+          sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
+    }
+
+    const addNewApprover = async () => {
+        setTimeout(callAddApi, 500)
+    }
+
+    const callAddApi = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        await Api.post(`/approval/store_approval`, {
+          approval_name:  formState.approval.matrixName,
+          id_company: formState.approval.companyId,
+          id_menu: formState.approval.menuId,
+          id_code_document: formState.approval.codeDocumentId,
+        })
+        fetch()
+    }
+
+    const editExistingApprover = async (data) => {
+        editApprovalId.value = data
+        setTimeout(callEditApi, 500)
+    }
+
+    const callEditApi = async() => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        await Api.post(`/approval/update_data_approval/${editApprovalId.value}`, {
+          approval_name:  formEditState.approval.matrixName,
+          id_company: formEditState.approval.companyId,
+          id_menu: formEditState.approval.menuId,
+          id_code_document: formEditState.approval.codeDocumentId,
+        })
+        fetch()
+    }
 
 const deleteData = (event) => {
       console.log(event)
@@ -137,7 +169,7 @@ const deleteData = (event) => {
           :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
       
-        <TableTopBar :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
+        <TableTopBar @do-search="filteredItems" :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
@@ -170,7 +202,7 @@ const deleteData = (event) => {
 
                 <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                  <tr v-for="(data, index) in sortedData" :key="data.No">
+                  <tr v-for="(data, index) in sortedData" :key="data.id">
                     <td>
                       <input type="checkbox" name="chk">
                     </td>
@@ -184,7 +216,7 @@ const deleteData = (event) => {
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval />
+                      <ModalEditApproval @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document]"  />
                       <ModalDelete @confirm-delete="deleteData(data.id)" />
                     </td>
                   </tr>
@@ -194,6 +226,26 @@ const deleteData = (event) => {
             </table>
           </div>
 
+        </div>
+
+        <!-- PAGINATION -->
+        <div
+          class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+        >
+          <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+            Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+            {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+            of {{ sortedData.length }} entries
+          </p>
+          <vue-awesome-paginate
+            :total-items="sortedData.length"
+            :items-per-page="parseInt(pageMultiplierReactive)"
+            :on-click="onChangePage"
+            v-model="showingValue"
+            :max-pages-shown="4"
+            :show-breakpoint-buttons="false"
+            :show-jump-buttons="true"
+          />
         </div>
 
       </div>

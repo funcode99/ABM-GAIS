@@ -359,6 +359,7 @@ const getSessionForSidebar = () => {
               :show-jump-buttons="true"
             />
           </div>
+          
         </div>
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />

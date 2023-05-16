@@ -32,6 +32,7 @@
     } catch (error) {
         console.error(error)
     }
+    isVisible.value = !isVisible.value
 
 }
 
@@ -43,22 +44,10 @@
     formContent: Array
   })
 
-  onBeforeMount(() => {
-    getMenuStatus()
-  })
-
-  const getMenuStatus = async () => {
-      const status = await Api.get('/menu/get_status/status')
-      let getStatus = status.data.data
-      statusMenu.value = getStatus
-  }
-
 let menuName = ref(props.formContent[0])
 let url = ref(props.formContent[1])
-let idStatusMenu = ref('Active')
 let sort = ref(1)
 let sequence = ref(true)
-let statusMenu = ref(null)
 const file = ref({})
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
@@ -119,21 +108,25 @@ const file = ref({})
                 <option value="">Option A</option>
             </select>
         </div>
-  
-        <div class="mb-3 text-left">
-              <h1>Status</h1>
-              <select :class="inputStylingClass" v-model="idStatusMenu">
-                  <option v-for="data in statusMenu" :key="data.code">
-                    {{ data.status }}
-                  </option>
-              </select>
-          </div>
 
         <div class="mb-3 text-left">
               <h1>Sort</h1>
               <select :class="inputStylingClass" v-model="sort">
                   <option>1</option>
                   <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                  <option>6</option>
+                  <option>7</option>
+                  <option>8</option>
+                  <option>9</option>
+                  <option>10</option>
+                  <option>11</option>
+                  <option>12</option>
+                  <option>13</option>
+                  <option>14</option>
+                  <option>15</option>
               </select>
         </div>
   
@@ -141,7 +134,7 @@ const file = ref({})
               <input type="checkbox" v-model="sequence">
               <h1>Use Sequence</h1>
               <h1>{{ sequence }}</h1>
-          </div>
+        </div>
   
       </div>
   

@@ -132,7 +132,7 @@
       // Set authorization for api
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data
+      instanceArray = api.data.data.data
       sortedData.value = instanceArray
       lengthCounter = sortedData.value.length
     }
@@ -208,7 +208,7 @@
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
               
-                      <tr @confirm-delete="hiddenRow = true" :class="hiddenRow ? 'hidden' : ''" v-for="(data, index) in sortedDataReactive" :key="data.id">
+                      <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
                         <td>
                           <input type="checkbox" name="chk">
                         </td>

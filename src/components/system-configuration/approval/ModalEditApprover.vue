@@ -10,43 +10,47 @@ import editIcon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
  
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 
-import { useFormAddStore } from '@/stores/add-modal.js'
+import { useFormEditStore } from '@/stores/edit-modal.js'
 
-const formState = useFormAddStore()
+import Api from '@/utils/Api'
 
-let isOpenModal = ref(false)
+  const formEditState = useFormEditStore()
 
-let matrixName = ref('')
-let menu = ref('')
-let document = ref('')
-let company = ref('')
+  const props = defineProps({
+    formContent: Array
+  })
 
-let authorities = ref('PM')
+  let matrixName = ref(props.formContent[0])
+  let company = ref(props.formContent[1])
+  let menu = ref(props.formContent[2])
+  let document = ref(props.formContent[3])
 
-let approverLines = ref([])
+  let authorities = ref('PM')
 
-const addField = (fieldType) => {
-        fieldType.push({
-          level: 1,
-          authorities: authorities.value,
-          approverName : ''
-        })
-}
+  let approverLines = ref([])
 
-const removeField = (index, fieldType) => {
-        fieldType.splice(index, 1)
-}
+  const saveField = () => {
+          // console.log(approverLines.value)
+          formEditState.approval.matrixName = matrixName.value
+          formEditState.approval.companyId = company.value
+          formEditState.approval.menuId = menu.value
+          formEditState.approval.codeDocumentId = document.value
+          isVisible.value = !isVisible.value
+  }
 
-const saveField = () => {
-        console.log(approverLines.value)
-        formState.approval.matrixName = matrixName.value
-        // formState.approval.companyId = company.value
-        // formState.approval.menuId = menu.value
-        // formState.approval.codeDocumentId = document.value
-        isOpenModal.value = !isOpenModal.value
-}
+  const addField = (fieldType) => {
+          fieldType.push({
+            level: 1,
+            authorities: authorities.value,
+            approverName : ''
+          })
+  }
+
+  const removeField = (index, fieldType) => {
+          fieldType.splice(index, 1)
+  }
 
   const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -60,6 +64,22 @@ const saveField = () => {
       }
   ]
 
+  // for get Menu Dropdown
+  let instanceArray = []
+  let addData = ref([])
+
+  const fetchMenu = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      // Set authorization for api
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/menu/get')      
+      instanceArray = api.data.data.data
+      addData.value = instanceArray
+  }
+
+  onBeforeMount(() => {
+  fetchMenu()
+  })
 
 </script>
 
@@ -88,6 +108,7 @@ const saveField = () => {
               >Nama Matrix<span class="text-red">*</span></label
             >
             <input
+              v-model="matrixName"
               type="text"
               placeholder="Nama Matrix"
               :class="inputStylingClass"
@@ -101,11 +122,8 @@ const saveField = () => {
               Menu<span class="text-red">*</span>
             </label>
             <select v-model="menu" :class="inputStylingClass">
-              <option disabled selected hidden value="">
-                Menu
-              </option>
-              <option value="">
-                ABC
+              <option v-for="data in addData" :key="data.id" :value="data.id">
+                {{ data.menu }}
               </option>
             </select>
           </div>
@@ -117,11 +135,14 @@ const saveField = () => {
               Document<span class="text-red">*</span>
             </label>
             <select v-model="document" :class="inputStylingClass">
-              <option disabled selected hidden value="">
-                Document
+              <option>
+                1
               </option>
-              <option value="">
-                ABC
+              <option>
+                2
+              </option>
+              <option>
+                3
               </option>
             </select>
           </div>
@@ -133,17 +154,18 @@ const saveField = () => {
               Company<span class="text-red">*</span>
             </label>
             <select v-model="company" :class="inputStylingClass">
-              <option disabled selected hidden value="">
-                Company
+              <option>
+                1
               </option>
-              <option value="">
-                ABC
+              <option>
+                2
+              </option>
+              <option>
+                3
               </option>
             </select>
           </div>
         </div>
-
-
   
         <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
         <hr class="border border-black">

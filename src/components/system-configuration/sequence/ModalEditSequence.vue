@@ -25,7 +25,11 @@
 
   const submitEdit = () => {
     formEditState.sequence.sequenceName = menuSequenceName.value
+    formEditState.sequence.prefix = prefix.value
+    formEditState.sequence.suffix = suffix.value
+    formEditState.sequence.sequenceSize = sequenceSize.value
     formEditState.sequence.recycle = recycleBy.value
+    formEditState.sequence.nextValue = nextValue.value
     isVisible.value = !isVisible.value
   }
 
@@ -133,12 +137,9 @@
                   </label>
                   
                   <select v-model="recycleBy" :class="inputStylingClass" required>
-                    <option>Administrator</option>
-                    <option>Super Admin</option>
-                    <option>Admin</option>
-                    <option>Receptionist</option>
-                    <option>Employee</option>
-                    <option>Driver</option>
+                    <option value="W">Weekly</option>
+                    <option value="M">Month</option>
+                    <option value="Y">Year</option>
                   </select>
 
                 </div>

@@ -12,12 +12,8 @@
   let modalPaddingHeight = 50
 
 const menuHeadTable = [
-  // {Id: 1, title: 'Create'},
-  // {Id: 2, title: 'Read'},
-  // {Id: 3, title: 'Update'},
-  // {Id: 4, title: 'Delete'}
   {Id: 1, title: 'Write'},
-  {Id: 2, title: 'Delete'},
+  {Id: 2, title: 'Read'},
 ]
 
 const menuBodyTable = [
@@ -40,21 +36,22 @@ const menuBodyTable = [
 
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
         
-    <nav class="sticky top-0 z-50 bg-white py-4">
-        <button @click="isVisible = false" for="menu-access-role-modal" class="cursor-pointer absolute right-0">
+    <nav class="sticky top-0 z-50 bg-white py-4 px-20">
+        <button @click="isVisible = false" for="menu-access-role-modal" class="cursor-pointer absolute right-[80px]">
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </button>
         <p class="font-JakartaSans text-2xl font-semibold text-left">Menu Access</p>
         <div className="divider m-0"></div>
     </nav>
 
-    <div class="mb-3 block overflow-x-auto">
+    <div class="mb-3 overflow-x-auto px-20">
+
         <table class="table w-full">
           
           <thead>
             <tr class="table-layout">
               <th></th>
-              <th v-for="data in menuHeadTable" :key="data.Id">
+              <th class="text-center" v-for="data in menuHeadTable" :key="data.Id">
                 {{ data.title }}
               </th>
             </tr>
@@ -65,8 +62,6 @@ const menuBodyTable = [
               <th class="text-[12px]">
                 Travel Management System
               </th>
-              <th></th>
-              <th></th>
               <th></th>
               <th></th>
             </tr>
@@ -85,21 +80,23 @@ const menuBodyTable = [
                 </th>
               </tr>
           </tbody>
+
         </table>
+        
     </div>
 
-    <div class="fixed right-4 bg-white pt-2 pb-4">
+    <div class="fixed right-4 bg-white px-20 pt-2 pb-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <button
             @click="isVisible = false"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+            class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
             >
             Cancel
           </button
           >
           <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+          class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
           >
             Save
           </button>

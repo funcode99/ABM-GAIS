@@ -10,7 +10,7 @@
   let menu = ref('Administrator')
   let sequenceSize = ref('')
   let prefix = ref('')
-  let recycleBy = ref('Administrator')
+  let recycleBy = ref('Weekly')
   let suffix = ref('')
 
   let isOpenModal = ref(false)
@@ -18,6 +18,10 @@
   const submitSequence = () => {
     formState.sequence.sequenceName = menuSequenceName.value
     formState.sequence.recycle = recycleBy.value
+    formState.sequence.sequenceSize = sequenceSize.value
+    formState.sequence.nextValue = nextValue.value
+    formState.sequence.prefix = prefix.value
+    formState.sequence.suffix = suffix.value
     isOpenModal.value = !isOpenModal.value
   }
 
@@ -136,13 +140,9 @@
                   >Recycle by<span class="text-red">*</span></label
                 >
                 <select v-model="recycleBy" :class="inputStylingClass" required>
-                  <option disabled selected hidden>Month</option>
-                  <option>Administrator</option>
-                  <option>Super Admin</option>
-                  <option>Admin</option>
-                  <option>Receptionist</option>
-                  <option>Employee</option>
-                  <option>Driver</option>
+                  <option value="W">Weekly</option>
+                  <option value="M">Month</option>
+                  <option value="Y">Year</option>
                 </select>
               </div>
             </div>

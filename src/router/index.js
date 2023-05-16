@@ -95,10 +95,9 @@ const router = createRouter({
         title: "Welcome",
       },
       beforeEnter: (to, from, next) => {
-        const user = localStorage.getItem('user');
         const token = localStorage.getItem('token');
 
-        if (user && token) {
+        if (token) {
           return next('/user')
         }
 
@@ -111,6 +110,15 @@ const router = createRouter({
       component: ForgotPassword,
       meta: {
         title: 'Forgot Password'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -119,6 +127,15 @@ const router = createRouter({
       component: Profile,
       meta: {
         title: 'Profile'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -127,6 +144,15 @@ const router = createRouter({
       component: Dashboard,
       meta: {
         title: "Dashboard",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
 
@@ -137,6 +163,15 @@ const router = createRouter({
       component: ListBrand,
       meta: {
         title: "Brand",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -145,6 +180,15 @@ const router = createRouter({
       component: ListGl,
       meta: {
         title: "GL Account",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -153,6 +197,15 @@ const router = createRouter({
       component: ListCompany,
       meta: {
         title: "Company",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -161,6 +214,15 @@ const router = createRouter({
       component: ListCurrency,
       meta: {
         title: "Currency",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -169,6 +231,15 @@ const router = createRouter({
       component: ListDepartement,
       meta: {
         title: "Departement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -177,6 +248,15 @@ const router = createRouter({
       component: List,
       meta: {
         title: "Employee",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -185,6 +265,15 @@ const router = createRouter({
       component: ListFlight,
       meta: {
         title: "Flight Entitlement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -193,6 +282,15 @@ const router = createRouter({
       component: ListJob,
       meta: {
         title: "Job Band",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -201,6 +299,15 @@ const router = createRouter({
       component: ListCity,
       meta: {
         title: "City",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -209,6 +316,15 @@ const router = createRouter({
       component: ListReimbursement,
       meta: {
         title: "Reimbursement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -217,6 +333,15 @@ const router = createRouter({
       component: ListSite,
       meta: {
         title: "Site",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -225,6 +350,15 @@ const router = createRouter({
       component: ListUom,
       meta: {
         title: "Unit Of Measure Categories",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -233,6 +367,15 @@ const router = createRouter({
       component: ListWarehouse,
       meta: {
         title: "Warehouse",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -241,6 +384,15 @@ const router = createRouter({
       component: ListZona,
       meta: {
         title: "Zona / Tunjangan Lokasi Kerja",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -249,6 +401,15 @@ const router = createRouter({
       component: HotelList,
       meta: {
         title: "Hotel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
 
@@ -260,6 +421,15 @@ const router = createRouter({
       component: ListUser,
       meta: {
         title: "User",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -268,6 +438,15 @@ const router = createRouter({
       component: ListRole,
       meta: {
         title: "Role",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -276,6 +455,15 @@ const router = createRouter({
       component: ListApproval,
       meta: {
         title: "Approval",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -284,6 +472,15 @@ const router = createRouter({
       component: ListMenu,
       meta: {
         title: "Menu",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -292,6 +489,15 @@ const router = createRouter({
       component: ListSequence,
       meta: {
         title: "Sequence",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
 
@@ -302,6 +508,15 @@ const router = createRouter({
       component: RequestTripListTMS,
       meta: {
         title: 'Request Trip'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -310,6 +525,15 @@ const router = createRouter({
       component: RequestTripViewTMS,
       meta: {
         title: 'View Request Trip'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -318,6 +542,15 @@ const router = createRouter({
       component: TravelList,
       meta: {
         title: 'CA Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -326,6 +559,15 @@ const router = createRouter({
       component: TravelView,
       meta: {
         title: 'View CA Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -334,6 +576,15 @@ const router = createRouter({
       component: NonTravelList,
       meta: {
         title: 'CA Non Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -342,6 +593,15 @@ const router = createRouter({
       component: NonTravelView,
       meta: {
         title: 'View CA Non Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -350,6 +610,15 @@ const router = createRouter({
       component: SettlementList,
       meta: {
         title: 'Settlement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -358,6 +627,15 @@ const router = createRouter({
       component: ClaimReimbursementList,
       meta: {
         title: 'Claim Reimbursement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -366,6 +644,15 @@ const router = createRouter({
       component: ClaimReimbursementView,
       meta: {
         title: 'View Claim Reimbursement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
 
@@ -376,6 +663,15 @@ const router = createRouter({
       component: CaTravelList,
       meta: {
         title: 'Approval CA Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -384,6 +680,15 @@ const router = createRouter({
       component: CaTravelView,
       meta: {
         title: 'View Approval CA Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -392,6 +697,15 @@ const router = createRouter({
       component: CaNonTravelList,
       meta: {
         title: 'Approval CA Non Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -400,6 +714,15 @@ const router = createRouter({
       component: CaNonTravelView,
       meta: {
         title: 'View Approval CA Non Travel'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -408,6 +731,15 @@ const router = createRouter({
       component: RequestTripList,
       meta: {
         title: 'Approval Request Trip'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -416,6 +748,15 @@ const router = createRouter({
       component: RequestTripView,
       meta: {
         title: 'View Approval Request Trip'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -424,6 +765,15 @@ const router = createRouter({
       component: ApprovalSettlementList,
       meta: {
         title: 'Approval Settlement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -432,6 +782,15 @@ const router = createRouter({
       component: ApprovalSettlementView,
       meta: {
         title: 'View Approval Settlement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -440,6 +799,15 @@ const router = createRouter({
       component: ApporvalReimbursementList,
       meta: {
         title: 'Approval Reimbursement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -448,6 +816,15 @@ const router = createRouter({
       component: ApporvalReimbursementView,
       meta: {
         title: 'View Approval Reimbursement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -456,6 +833,15 @@ const router = createRouter({
       component: ApprovalAtkRequestList,
       meta: {
         title: 'Approval ATK Request'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -464,6 +850,15 @@ const router = createRouter({
       component: ApprovalAtkRequestView,
       meta: {
         title: 'View Approval ATK Request'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
 
@@ -474,6 +869,15 @@ const router = createRouter({
       component: ItemAtkList,
       meta: {
         title: 'Management Item ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -482,6 +886,15 @@ const router = createRouter({
       component: StockInAtkList,
       meta: {
         title: 'Stock In ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
     {
@@ -490,6 +903,15 @@ const router = createRouter({
       component: StockInAtkView,
       meta: {
         title: 'View Stock In ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
       }
     },
   ]

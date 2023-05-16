@@ -36,8 +36,8 @@ export const useFormAddStore = defineStore('add-form', {
                 sequenceName: '',
                 recycle: '',
                 nextValue: 1,
-                prefix: 1,
-                suffix: 1,
+                prefix: '',
+                suffix: '',
                 menuId: 1,
                 sequenceSize: 1,
             }
