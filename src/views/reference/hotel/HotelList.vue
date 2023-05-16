@@ -12,9 +12,11 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import hoteldata from "@/utils/Api/reference/hoteldata.js";
+import Swal from "sweetalert2";
 
-import { ref, onBeforeMount, computed } from "vue";
+import Api from "@/utils/Api";
+
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
@@ -22,11 +24,13 @@ const sidebar = useSidebarStore();
 //for sort & search
 const search = ref("");
 let sortedData = ref([]);
-const selectedHotel = ref("Hotel");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+
+let selectedHotel = ref("Type");
+let HotelType = ref("");
 
 //for paginations
 let showingValue = ref(1);
@@ -41,12 +45,12 @@ const onChangePage = (pageOfItem) => {
 };
 
 //for filter & reset button
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
+const filterDataByHotelType = () => {
+  if (selectedHotel.value === "Type") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
+      (item) => item.id_type_hotel === selectedHotel.value
     );
   }
 };
@@ -54,7 +58,7 @@ const filterDataByCompany = () => {
 //for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
-  selectedCompany.value = "Company";
+  selectedHotel.value = "Type";
 };
 
 //for check & uncheck all
@@ -95,7 +99,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = hoteldata;
+  fetchHotel();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -105,10 +109,10 @@ const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
     (item.hotel_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.city.toLowerCase().indexOf(search.toLowerCase()) > -1);
+      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
       (item.hotel_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.city.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -119,17 +123,73 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+//for get type hotel in select
+const fetchGetHotel = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/hotel/get_by_type");
+  HotelType.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetHotel();
+});
+
+//get all hotel
+const fetchHotel = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/hotel/get");
+  // console.log(res.data.data);
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+//delete hotel
+const deleteHotel = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/hotel/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Hotel has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetchHotel();
+      });
+    } else {
+      return;
+    }
+  });
+};
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -149,7 +209,10 @@ const getSessionForSidebar = () => {
               Hotel
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd
+                @unlockScrollbar="lockScrollbar = !lockScrollbar"
+                @hotel-saved="fetchHotel"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -173,9 +236,9 @@ const getSessionForSidebar = () => {
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedHotel"
                 >
-                  <option disabled selected>Hotel</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.type }}
+                  <option disabled selected>Type</option>
+                  <option v-for="hotel in HotelType" :value="hotel.id">
+                    {{ hotel.type_accomodation }}
                   </option>
                 </select>
               </div>
@@ -183,7 +246,7 @@ const getSessionForSidebar = () => {
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByCompany"
+                  @click="filterDataByHotelType"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -289,7 +352,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -298,15 +361,15 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td>{{ data.hotel_name }}</td>
-                    <td>{{ data.city }}</td>
-                    <td>{{ data.type }}</td>
+                    <td>{{ data.city_name }}</td>
+                    <td>{{ data.type_accomodation }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       />
-                      <button>
+                      <button @click="deleteHotel(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
@@ -337,7 +400,7 @@ const getSessionForSidebar = () => {
           </div>
         </div>
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+      <Footer />
     </div>
   </div>
 </template>
