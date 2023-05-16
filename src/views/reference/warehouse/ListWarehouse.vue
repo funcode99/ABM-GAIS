@@ -12,9 +12,13 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
+import Swal from "sweetalert2";
+
+import Api from "@/utils/Api";
+
 import warehousedata from "@/utils/Api/reference/warehousedata.js";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
@@ -22,11 +26,13 @@ const sidebar = useSidebarStore();
 //for sort & search
 const search = ref("");
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+
+let selectedCompany = ref("Company");
+let Company = ref("");
 
 //for paginations
 let showingValue = ref(1);
@@ -95,7 +101,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = warehousedata;
+  fetchWarehouse();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -119,16 +125,72 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+});
+
+//get all warehouse
+const fetchWarehouse = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/warehouse/");
+  // console.log(res.data.data);
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+//delete brand
+const deleteWarehouse = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/warehouse/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Warehouse has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetchWarehouse();
+      });
+    } else {
+      return;
+    }
+  });
+};
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -149,7 +211,10 @@ const getSessionForSidebar = () => {
             </p>
 
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                @warehouse-saved="fetchWarehouse"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -175,8 +240,8 @@ const getSessionForSidebar = () => {
                   v-model="selectedCompany"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.company }}
+                  <option v-for="company in Company" :value="company.id">
+                    {{ company.company_name }}
                   </option>
                 </select>
               </div>
@@ -290,7 +355,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -299,15 +364,15 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td>{{ data.warehouse_name }}</td>
-                    <td>{{ data.company }}</td>
-                    <td>{{ data.site }}</td>
+                    <td>{{ data.company_name }}</td>
+                    <td>{{ data.site_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       />
-                      <button>
+                      <button @click="deleteWarehouse(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
