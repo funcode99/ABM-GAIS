@@ -2,7 +2,63 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import Api from "@/utils/Api";
+
+import { ref, onMounted } from "vue";
+
+import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
+let formEditState = useFormEditStore();
+
+let isVisible = ref(false);
+
+let selectedCompany = ref("Company");
+let Company = ref("");
+let Site = ref("");
+let warehouseName = ref("");
+let warehouseIdCompany = ref("");
+let warehouseIdSite = ref();
+let selectedCompanyId = ref(null);
+let selectedSiteId = ref(null);
+
+const emits = defineEmits(["unlockScrollbar", "change-warehouse"]);
+
+const props = defineProps({
+  formContent: Array,
+});
+
+const currentwarehouseName = ref(props.formContent[0]);
+const currentwarehouseIdCompany = ref(props.formContent[1]);
+const currentwarehouseIdSite = ref(props.formContent[2]);
+
+const submitEdit = () => {
+  formEditState.warehouse.warehouseName = currentwarehouseName.value;
+  formEditState.warehouse.warehouseIdCompany = selectedCompanyId.value;
+  formEditState.warehouse.warehouseIdSite = selectedSiteId.value;
+  isVisible.value = !isVisible.value;
+};
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+//for get site in select
+const fetchGetSite = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/");
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+  fetchGetSite();
+});
 </script>
 
 <template>
@@ -13,7 +69,12 @@ const emits = defineEmits(["unlockScrollbar"]);
     ><img :src="editicon" class="w-6 h-6"
   /></label>
 
-  <input type="checkbox" id="modal-edit-warehouse" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="modal-edit-warehouse"
+    class="modal-toggle"
+    v-model="isVisible"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -32,7 +93,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-warehouse">
-        <form>
+        <div>
           <div class="mb-6 text-start w-full px-4">
             <label
               for="company"
@@ -42,10 +103,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedCompanyId"
             >
               <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
+              <option v-for="company in Company" :value="company.id">
+                {{ company.company_name }}
+              </option>
             </select>
           </div>
 
@@ -58,10 +121,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedSiteId"
             >
               <option disabled selected>Site</option>
-              <option>Site A</option>
-              <option>Site B</option>
+              <option v-for="site in Site" :value="site.id">
+                {{ site.site_name }}
+              </option>
             </select>
           </div>
 
@@ -77,6 +142,9 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Warehouse Name"
               required
+              v-model="currentwarehouseName"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changewarehouseName')"
             />
           </div>
 
@@ -88,14 +156,17 @@ const emits = defineEmits(["unlockScrollbar"]);
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
+              <button @click="submitEdit">
+                <button
+                  @click="$emit('change-warehouse')"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
               </button>
             </div>
           </div>
-        </form>
+        </div>
       </main>
     </div>
   </div>

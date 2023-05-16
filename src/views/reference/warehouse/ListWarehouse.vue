@@ -16,12 +16,44 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
-import warehousedata from "@/utils/Api/reference/warehousedata.js";
-
+import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let warehouseName = ref("");
+let warehouseIdCompany = ref("");
+let warehouseIdSite = ref();
+
+let editWarehouseDataId = ref();
+
+//for edit
+const editWarehouse = async (data) => {
+  editWarehouseDataId.value = data;
+  setTimeout(callEditApi, 500);
+  console.log("ini data id:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/warehouse/update_data/${editWarehouseDataId.value}`, {
+    warehouse_name: formEditState.warehouse.warehouseName,
+    id_company: formEditState.warehouse.warehouseIdCompany,
+    id_site: formEditState.warehouse.warehouseIdSite,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchWarehouse();
+};
 
 //for sort & search
 const search = ref("");
@@ -48,11 +80,11 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
+  if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
+      (item) => item.id_company === selectedCompany.value
     );
   }
 };
@@ -111,10 +143,10 @@ const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
     (item.warehouse_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1);
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
       (item.warehouse_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -371,6 +403,12 @@ const deleteWarehouse = async (id) => {
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        @change-warehouse="editWarehouse(data.id)"
+                        :formContent="[
+                          data.warehouseName,
+                          data.warehouseIdCompany,
+                          data.warehouseIdSite,
+                        ]"
                       />
                       <button @click="deleteWarehouse(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
