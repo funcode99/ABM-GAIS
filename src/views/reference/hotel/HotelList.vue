@@ -18,8 +18,51 @@ import Api from "@/utils/Api";
 
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/hotel/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+let hotelName = ref("");
+let hotelAddress = ref("");
+let hotelIdTypeHotel = ref("");
+let hotelIdCity = ref();
+let hotelEmail = ref("");
+let hotelPhoneNumber = ref("");
+let hotelRating = ref("");
+
+let editHotelDataId = ref();
+
+//for edit
+const editHotel = async (data) => {
+  editHotelDataId.value = data;
+  setTimeout(callEditApi, 500);
+  console.log("ini data id:" + data);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/hotel/update_data/${editHotelDataId.value}`, {
+    hotel_name: formEditState.hotel.hotelName,
+    address: formEditState.hotel.hotelAddress,
+    id_type_hotel: formEditState.hotel.hotelIdTypeHotel,
+    id_city: formEditState.hotel.hotelIdCity,
+    email: formEditState.hotel.hotelEmail,
+    phone_number: formEditState.hotel.hotelPhoneNumber,
+    rating: formEditState.hotel.hotelRating,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchHotel();
+};
 
 //for sort & search
 const search = ref("");
@@ -368,6 +411,16 @@ const deleteHotel = async (id) => {
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                        @change-hotel="editHotel(data.id)"
+                        :formContent="[
+                          data.hotelName,
+                          data.hotelAddress,
+                          data.hotelIdTypeHotel,
+                          data.hotelIdCity,
+                          data.hotelEmail,
+                          data.hotelPhoneNumber,
+                          data.hotelRating,
+                        ]"
                       />
                       <button @click="deleteHotel(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
