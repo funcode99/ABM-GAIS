@@ -13,8 +13,6 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
-import zonaData from "@/utils/Api/reference/zonadata.js";
-
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -173,7 +171,10 @@ const deleteZona = async (id) => {
             </p>
 
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                @zona-saved="fetchZona"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
