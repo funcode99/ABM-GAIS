@@ -138,7 +138,7 @@ const getSessionForSidebar = () => {
 const fetchGLAccount = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("gl_account/");
+  const res = await Api.get("/gl_account/");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;

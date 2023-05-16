@@ -2,7 +2,51 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import Api from "@/utils/Api";
+
+import { ref, onMounted } from "vue";
+
+import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
+let formEditState = useFormEditStore();
+
+let isVisible = ref(false);
+
+let selectedCompany = ref("Company");
+let Company = ref("");
+let siteName = ref("");
+let siteIdCompany = ref("");
+let siteCode = ref();
+let selectedCompanyId = ref(null);
+
+const emits = defineEmits(["unlockScrollbar", "change-site"]);
+
+const props = defineProps({
+  formContent: Array,
+});
+
+const currentsiteName = ref(props.formContent[0]);
+const currentsiteIdCompany = ref(props.formContent[1]);
+const currentsiteCode = ref(props.formContent[2]);
+
+const submitEdit = () => {
+  formEditState.site.siteName = currentsiteName.value;
+  formEditState.site.siteIdCompany = selectedCompanyId.value;
+  formEditState.site.siteCode = currentsiteCode.value;
+  isVisible.value = !isVisible.value;
+};
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+});
 </script>
 
 <template>
@@ -13,7 +57,12 @@ const emits = defineEmits(["unlockScrollbar"]);
     ><img :src="editicon" class="w-6 h-6"
   /></label>
 
-  <input type="checkbox" id="modal-edit-site" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="modal-edit-site"
+    class="modal-toggle"
+    v-model="isVisible"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -32,7 +81,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-site">
-        <form>
+        <div>
           <div class="mb-6 text-start w-full px-4">
             <label
               for="company"
@@ -42,10 +91,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedCompanyId"
             >
               <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
+              <option v-for="company in Company" :value="company.id">
+                {{ company.company_name }}
+              </option>
             </select>
           </div>
 
@@ -61,6 +112,9 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Site Code"
               required
+              v-model="currentsiteCode"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changesiteCode')"
             />
           </div>
 
@@ -76,6 +130,9 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Site Name"
               required
+              v-model="currentsiteName"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changesiteName')"
             />
           </div>
 
@@ -87,14 +144,17 @@ const emits = defineEmits(["unlockScrollbar"]);
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
+              <button @click="submitEdit">
+                <button
+                  @click="$emit('change-site')"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
               </button>
             </div>
           </div>
-        </form>
+        </div>
       </main>
     </div>
   </div>

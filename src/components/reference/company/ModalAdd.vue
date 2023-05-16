@@ -2,44 +2,89 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconUpload from "@/assets/icon_upload.svg";
 
+import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
 import { ref, onMounted } from "vue";
 
-const emits = defineEmits(["unlockScrollbar"]);
+const emits = defineEmits(["unlockScrollbar", "company-saved"]);
 
 let sortedData = ref([]);
 const selectedImage = ref(null);
 let selectedCompany = ref("Company");
 let selectedVendor = ref("Vendor");
+let companyCode = ref("");
+let companyName = ref("");
+let parentCompany = ref("");
+let logoCompany = ref("");
+let vendorAirlines = ref("");
+let isOpenModal = ref(false);
+const file = ref({});
 
-//for get company in select
-const fetch = async () => {
+//for get parent company in select
+const fetchParentCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/");
-  sortedData.value = res.data.data;
+  const res = await Api.get("/company/get_parent");
+  parentCompany.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 //for get vendor in select
-const fetchVendor = async () => {
+const fetchVendors = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/flight_trip/get_vendor");
-  sortedData.value = res.data.data;
-  // console.log(res.data.data);
+  vendorAirlines.value = res.data.data;
+  // console.log("ini data vendor" + JSON.stringify(res.data.data));
 };
 
 // onMounted(fetch);
 onMounted(() => {
-  fetch();
-  fetchVendor();
+  fetchParentCompany();
+  fetchVendors();
 });
 
 //for image logo
 const onFileSelected = (event) => {
   const file = event.target.files[0];
-  selectedImage.value = file ? file.name : null;
+  selectedImage.value = file ? file : null;
+};
+
+const saveCommpany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  try {
+    const payload = {
+      company_code: companyCode.value,
+      company_name: companyName.value,
+      parent_company: selectedCompany.value, // Ubah nama properti menjadi 'parent_company'
+      logo: selectedImage.value,
+      id_vendor: selectedVendor.value, // Ubah nama properti menjadi 'id_vendor'
+    };
+
+    await Api.post(`/company/store`, payload);
+
+    // Reset nilai input
+    companyCode.value = "";
+    companyName.value = "";
+    selectedCompany.value = "";
+    selectedImage.value = null;
+    selectedVendor.value = "";
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    emits("company-saved");
+    isOpenModal.value = !isOpenModal.value;
+  } catch (error) {
+    console.log(error);
+  }
 };
 </script>
 
@@ -51,7 +96,12 @@ const onFileSelected = (event) => {
     >+ Add New</label
   >
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="my-modal-3"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -68,7 +118,7 @@ const onFileSelected = (event) => {
       </nav>
 
       <main class="modal-box-inner-company">
-        <form>
+        <form @submit.prevent="saveCommpany">
           <div class="mb-6 w-full px-4">
             <label
               for="code"
@@ -81,6 +131,7 @@ const onFileSelected = (event) => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Code"
               required
+              v-model="companyCode"
             />
           </div>
           <div class="mb-6 w-full px-4">
@@ -95,6 +146,7 @@ const onFileSelected = (event) => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Name Company"
               required
+              v-model="companyName"
             />
           </div>
           <div class="mb-6 w-full px-4">
@@ -109,8 +161,8 @@ const onFileSelected = (event) => {
               v-model="selectedCompany"
             >
               <option disabled selected>Company</option>
-              <option v-for="company in sortedData" :value="company.id">
-                {{ company.parent_company }}
+              <option v-for="company in parentCompany" :value="company.id">
+                {{ company.company_name }}
               </option>
             </select>
           </div>
@@ -126,7 +178,7 @@ const onFileSelected = (event) => {
             <div class="relative border border-slate-300 rounded-lg py-2">
               <input
                 type="file"
-                name="logo_company"
+                name="logo"
                 id="logo_company"
                 class="hidden border"
                 accept="image/*"
@@ -157,7 +209,7 @@ const onFileSelected = (event) => {
               v-model="selectedVendor"
             >
               <option disabled selected>Vendor</option>
-              <option v-for="vendor in sortedData" :value="vendor.id">
+              <option v-for="vendor in vendorAirlines" :value="vendor.id">
                 {{ vendor.vendor }}
               </option>
             </select>
@@ -172,6 +224,7 @@ const onFileSelected = (event) => {
                 >Cancel</label
               >
               <button
+                type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Save

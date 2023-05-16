@@ -158,7 +158,7 @@ const deleteFlight = async (id) => {
       Api.delete(`/flight_class/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Class Flight has been deleted.",
+          text: "Flight Class has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#3085d6",

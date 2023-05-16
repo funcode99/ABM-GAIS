@@ -3,7 +3,75 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 import iconUpload from "@/assets/icon_upload.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import Api from "@/utils/Api";
+
+import { ref, onMounted } from "vue";
+
+import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
+let formEditState = useFormEditStore();
+
+let isVisible = ref(false);
+
+const selectedImage = ref(null);
+let selectedCompany = ref("Company");
+let selectedVendor = ref("Vendor");
+let parentCompany = ref("");
+let logoCompany = ref("");
+let vendorAirlines = ref("");
+const file = ref({});
+
+const emits = defineEmits(["unlockScrollbar", "change-company"]);
+
+const props = defineProps({
+  formContent: Array,
+});
+
+const currentcompanyCode = ref(props.formContent[0]);
+const currentcompanyName = ref(props.formContent[1]);
+const currentcompanyParentCompany = ref(props.formContent[2]);
+const currentcompanyLogo = ref(props.selectedImage);
+const currentcompanyVendor = ref(props.formContent[4]);
+
+const submitEdit = () => {
+  formEditState.company.companyCode = currentcompanyCode.value;
+  formEditState.company.companyName = currentcompanyName.value;
+  formEditState.company.companyParentCompany =
+    currentcompanyParentCompany.value;
+  formEditState.company.companyLogo = currentcompanyLogo.value;
+  formEditState.company.companyVendor = currentcompanyVendor.value;
+
+  isVisible.value = !isVisible.value;
+};
+
+//for get parent company in select
+const fetchParentCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get_parent");
+  parentCompany.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+//for get vendor in select
+const fetchVendors = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/flight_trip/get_vendor");
+  vendorAirlines.value = res.data.data;
+  // console.log("ini data vendor" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchParentCompany();
+  fetchVendors();
+});
+
+//for image logo
+const onFileSelectedUpdate = (event) => {
+  const file = event.target.files[0];
+  selectedImage.value = file ? file.name : null;
+  console.log("selectedImage:", selectedImage.value);
+};
 </script>
 
 <template>
@@ -14,7 +82,12 @@ const emits = defineEmits(["unlockScrollbar"]);
     ><img :src="editicon" class="w-6 h-6"
   /></label>
 
-  <input type="checkbox" id="modal-edit-company" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="modal-edit-company"
+    class="modal-toggle"
+    v-model="isVisible"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -33,7 +106,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       </nav>
 
       <main class="modal-box-inner-company">
-        <form>
+        <div>
           <div class="mb-6 text-start px-4 w-full">
             <label
               for="code"
@@ -46,6 +119,9 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Code"
               required
+              v-model="currentcompanyCode"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changecompanyCode')"
             />
           </div>
           <div class="mb-6 text-start px-4 w-full">
@@ -60,6 +136,9 @@ const emits = defineEmits(["unlockScrollbar"]);
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Name Company"
               required
+              v-model="currentcompanyName"
+              @keydown.enter="submitEdit"
+              @keyup.enter="$emit('changecompanyName')"
             />
           </div>
           <div class="mb-6 text-start px-4 w-full">
@@ -71,10 +150,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedCompany"
             >
               <option disabled selected>Company</option>
-              <option>Company A</option>
-              <option>Company B</option>
+              <option v-for="company in parentCompany" :value="company.id">
+                {{ company.parent_company }}
+              </option>
             </select>
           </div>
 
@@ -92,11 +173,17 @@ const emits = defineEmits(["unlockScrollbar"]);
                 name="logo_company"
                 id="logo_company"
                 class="hidden border"
+                accept="image/*"
+                @change="onFileSelectedUpdate"
               />
               <label for="logo_company">
                 <span
                   class="font-JakartaSans font-medium text-sm cursor-pointer mx-4"
-                  >Logo Company</span
+                  >{{
+                    selectedImage && selectedImage.name
+                      ? selectedImage.name
+                      : "Logo Company"
+                  }}</span
                 >
                 <img
                   :src="iconUpload"
@@ -115,10 +202,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             <select
               class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
+              v-model="selectedVendor"
             >
               <option disabled selected>Vendor</option>
-              <option>Vendor A</option>
-              <option>Vendor B</option>
+              <option v-for="vendor in vendorAirlines" :value="vendor.id">
+                {{ vendor.vendor }}
+              </option>
             </select>
           </div>
 
@@ -130,14 +219,17 @@ const emits = defineEmits(["unlockScrollbar"]);
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >
-              <button
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
+              <button @click="submitEdit">
+                <button
+                  @click="$emit('change-company')"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                >
+                  Save
+                </button>
               </button>
             </div>
           </div>
-        </form>
+        </div>
       </main>
     </div>
   </div>
