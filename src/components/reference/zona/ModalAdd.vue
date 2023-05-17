@@ -8,7 +8,7 @@ import { ref, onMounted } from "vue";
 const emits = defineEmits(["unlockScrollbar", "zona-saved"]);
 const tags = ref([]);
 
-let selectedCity = ref("City");
+let selectedCity = ref(null);
 let zonaName = ref("");
 let City = ref("");
 let isOpenModal = ref(false);
@@ -25,28 +25,6 @@ const fetchCity = async () => {
 onMounted(() => {
   fetchCity();
 });
-
-function addTag(event) {
-  if (event.code === "Comma" || event.code === "Enter") {
-    event.preventDefault();
-    var val = event.target.value.trim();
-
-    if (val.length > 0) {
-      tags.value.push(val);
-      event.target.value = "";
-    }
-  }
-}
-
-function removeTag(index) {
-  tags.value.splice(index, 1);
-}
-
-function removeLastTag(event) {
-  if (event.target.value.length === 0) {
-    removeTag(tags.value.length - 1);
-  }
-}
 
 const saveZona = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -77,6 +55,11 @@ const saveZona = async () => {
     console.log(error);
   }
 };
+
+function handleChangeTag(newTags) {
+  tags.value = newTags;
+  // console.log("ini type pada tags value" + typeof tags.value);
+}
 </script>
 
 <template>
@@ -135,25 +118,11 @@ const saveZona = async () => {
             <div
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
             >
-              <div
-                v-for="(tag, index) in tags"
-                :key="tag"
-                class="tag-input__tag"
-              >
-                {{ tag }}
-                <span
-                  @click="removeTag(index)"
-                  class="text-xs items-center cursor-pointer"
-                  >x</span
-                >
-              </div>
-              <input
+              <vue3-tags-input
                 v-model="selectedCity"
-                type="text"
-                placeholder="Enter a city"
-                class="tag-input__text px-4 text-sm font-medium w-full font-JakartaSans focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                @keydown="addTag"
-                @keydown.delete="removeLastTag"
+                :tags="tags"
+                placeholder="enter some tags"
+                @on-tags-changed="handleChangeTag"
               />
             </div>
           </div>
@@ -196,24 +165,5 @@ const saveZona = async () => {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
-}
-
-.tag-input__tag {
-  height: 30px;
-  float: left;
-  margin-right: 10px;
-  background-color: #e4e4e4;
-  margin-top: 10px;
-  line-height: 30px;
-  padding: 0 5px;
-  border-radius: 5px;
-}
-
-.tag-input__text {
-  border: none;
-  outline: none;
-  font-size: 0.9em;
-  line-height: 50px;
-  background: none;
 }
 </style>
