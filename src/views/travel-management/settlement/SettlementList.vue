@@ -106,11 +106,9 @@ const getSessionForSidebar = () => {
 
 const fetch = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/settlement')      
       instanceArray = api.data.data
-      console.log(instanceArray)
       sortedData.value = instanceArray
       lengthCounter = sortedData.value.length
 }
@@ -236,6 +234,7 @@ onBeforeMount(() => {
                   Reset
                 </button>
               </div>
+
             </div>
 
             <div class="flex py-2">

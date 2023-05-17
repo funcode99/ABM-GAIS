@@ -132,9 +132,10 @@
                 for="name"
                 class="block mb-2 font-JakartaSans font-medium text-sm text-left"
                 >
-                Approval Authorities<span class="text-red">*</span> {{ selected }}
+                Approval Authorities<span class="text-red">*</span>
             </label>
 
+            <!-- ambil value selected nya -->
             <div class="grid grid-cols-3">
               <div v-for="name in approvalAuthoritiesName">
                   <div class="flex items-center gap-2" >
