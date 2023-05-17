@@ -84,12 +84,15 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.zona_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.zona_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
+    const zonaNameMatch =
+      item.zona_name.toLowerCase().indexOf(search.toLowerCase()) > -1;
+    const cityNameMatch =
+      item.city &&
+      item.city.some(
+        (city) =>
+          city.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1
+      );
+    return zonaNameMatch || cityNameMatch;
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
