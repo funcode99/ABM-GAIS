@@ -168,7 +168,9 @@
 <template>
 
 <!-- kenak loh, ternyata disini overflow x nya -->
-  <div class="flex flex-col w-full this h-[100vh]">
+  <div 
+  class="flex flex-col w-full this h-[100vh]"
+  >
 
     <Navbar/>
 

@@ -5,6 +5,7 @@
     import editIcon from "@/assets/navbar/edit_icon.svg"
     import { useFormEditStore } from '@/stores/edit-modal.js'
 
+
     let isVisible = ref(false)
     let type = '' 
     let modalPaddingHeight = 50
@@ -28,15 +29,10 @@
     isVisible.value = false
     }
 
+    let approvalAuthoritiesName = ref(['PM', 'GA', 'HR', 'Treasury', 'Accounting', 'Atasan'])
+    let selected = ref()
+
     const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
-
-    const additional = ref([])
-
-    watch(additional, (newValue) => {
-        return additional.length > 0
-    })
-
-
 
 </script>
 
@@ -136,25 +132,16 @@
                 for="name"
                 class="block mb-2 font-JakartaSans font-medium text-sm text-left"
                 >
-                Approval Authorities<span class="text-red">*</span>
+                Approval Authorities<span class="text-red">*</span> {{ selected }}
             </label>
-            <div class="flex justify-between">
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="PM" v-model="additional" :disabled="condition">
-                    <label>PM</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="GA" v-model="additional" :disabled="condition">
-                    <label>GA</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="HR" v-model="additional" :disabled="condition">
-                    <label>HR</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Finance / Accounting" v-model="additional" :disabled="condition">
-                    <label >Finance / Accounting</label>
-                </div>
+
+            <div class="grid grid-cols-3">
+              <div v-for="name in approvalAuthoritiesName">
+                  <div class="flex items-center gap-2" >
+                    <input type="checkbox" :id="name" @click="selected = name" :checked="selected === name" />
+                    <label :for="name">{{ name }}</label>
+                  </div>
+              </div>
             </div>
           </div>
 
@@ -185,14 +172,14 @@
             <button
               @click="isVisible = false"
               class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
-              Cancel
+               Cancel
             </button>
 
             <button @click="editUser">
               <button
                 @click="$emit('changeUser')"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                Save
+                  Save
               </button>
             </button>
 

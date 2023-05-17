@@ -51,11 +51,11 @@
           <div class="flex gap-2 pt-2">
             <div class="flex gap-1">
               <!-- fill the same name value for individual select -->
-              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]" required>
               <label for="">Yes</label>
             </div>
             <div class="flex gap-1">
-              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
+              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]" required>
               <label for="">No</label>
             </div>
           </div>
@@ -126,7 +126,7 @@
                 class="block mb-2 font-JakartaSans font-medium text-sm text-left"
                 >Approval Authorities<span class="text-red">*</span></label
             >
-            <div class="flex justify-between">
+            <div class="grid grid-cols-3">
                 <div class="flex items-center gap-2">
                     <input type="checkbox" name="PM" id="">
                     <label for="">PM</label>
@@ -140,8 +140,16 @@
                     <label for="">HR</label>
                 </div>
                 <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Finance / Accounting" id="">
-                    <label class="" for="">Finance / Accounting</label>
+                    <input type="checkbox" name="Treasury" id="">
+                    <label class="" for="">Treasury</label>
+                </div>
+                <div class="flex items-center gap-2">                
+                    <input type="checkbox" name="Accounting" id="">
+                    <label class="" for="">Accounting</label>
+                </div>
+                <div class="flex items-center gap-2">                
+                    <input type="checkbox" name="Atasan" id="">
+                    <label class="" for="">Atasan</label>
                 </div>
             </div>
           </div>

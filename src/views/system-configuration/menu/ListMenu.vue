@@ -50,8 +50,8 @@
       {
         menu: formState.menu.menuName,
         sort: formState.menu.sort,
-        parent_id: 1,
-        id_status_menu: 1,
+        parent_id: null,
+        id_status_menu: formState.menu.idStatusMenu,
         use_sequence: formState.menu.sequence,
         description: 'kosong',
         url: formState.menu.url,
@@ -77,10 +77,10 @@
         description: 'kosong',
         url: formEditState.menu.url,
         icon: formEditState.menu.icon,
-        sort: 1,
-        parent_id: 1,
-        use_sequence: 1,
-        id_status_menu: 1,
+        sort: formEditState.menu.sort,
+        parent_id: null,
+        use_sequence: formEditState.menu.sequence,
+        id_status_menu: formEditState.menu.idStatusMenu,
       })
       console.log(api)
       fetch()        
@@ -222,11 +222,14 @@
                         <td>
                           {{ data.parent_id }}
                         </td>
-                        <td>
-                          {{ data.id_status_menu }}
+                        <td v-if="data.id_status_menu == 1">
+                          Active
+                        </td>
+                        <td v-else>
+                          Disabled
                         </td>
                         <td class="flex flex-wrap gap-4 justify-center">
-                          <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url]" />
+                          <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon_path]" />
                           <ModalDelete @confirm-delete="deleteData(data.id)" />
                         </td>
                       </tr>

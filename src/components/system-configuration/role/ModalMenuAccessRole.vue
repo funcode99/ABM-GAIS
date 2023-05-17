@@ -4,27 +4,52 @@
   import deleteicon from "@/assets/navbar/delete_icon.svg"
   import roleIcon from '@/assets/menu-access-role.png'
 
-  import { ref } from 'vue'
+  import { ref, computed, onBeforeMount } from 'vue'
   import { Modal } from 'usemodal-vue3'
+  import Api from '@/utils/Api'
+
+  const props = defineProps({
+    roleId: Number
+  })
 
   let isVisible = ref(false)
   let type = '' 
   let modalPaddingHeight = 50
+
+  let sortedData = ref([])
+  let sortedDataReactive = computed(() => sortedData.value)
+  let instanceArray = []
 
 const menuHeadTable = [
   {Id: 1, title: 'Write'},
   {Id: 2, title: 'Read'},
 ]
 
-const menuBodyTable = [
-  {Id: 1, list: 'Request Trip'},
-  {Id: 2, list: 'Settlement'},
-  {Id: 3, list: 'Cash Advance Travel'},
-  {Id: 4, list: 'Cash Advance Non Travel'},
-  {Id: 5, list: 'Claim/Reimbursement'},
-  {Id: 6, list: 'Pool Car Management'},
-  {Id: 7, list: 'List Pool Car Request'}
-]
+
+let writeValue = ref([])
+let readValue = ref([])
+
+const fetch = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/role/get_active')      
+    instanceArray = api.data.data
+    sortedData.value = instanceArray
+}
+
+onBeforeMount(() => {
+  fetch()
+})
+
+const submitAccess = async () => {
+  const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.post(`/role/store_menu/${props.roleId}`, {
+      id_role: props.roleId,
+      write: writeValue.value,
+      read: readValue.value
+    })
+}
 
 </script>
 
@@ -60,7 +85,7 @@ const menuBodyTable = [
           <thead>
             <tr>
               <th class="text-[12px]">
-                Travel Management System
+                  Travel Management System
               </th>
               <th></th>
               <th></th>
@@ -68,15 +93,15 @@ const menuBodyTable = [
           </thead>
 
           <tbody>
-              <tr v-for="data in menuBodyTable" :key="data.Id">
+              <tr v-for="data in sortedDataReactive" :key="data.Id">
                 <th>
-                  {{ data.list }}
+                  {{ data.menu }}
                 </th>
                 <th class="text-center">
-                  <input type="checkbox">
+                  <input type="checkbox" :value="data.id" v-model="writeValue">
                 </th>
                 <th class="text-center">
-                  <input type="checkbox">
+                  <input type="checkbox" :value="data.id" v-model="readValue">
                 </th>
               </tr>
           </tbody>
@@ -96,6 +121,7 @@ const menuBodyTable = [
           </button
           >
           <button
+          @click="submitAccess"
           class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
           >
             Save

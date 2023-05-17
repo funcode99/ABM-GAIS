@@ -10,6 +10,9 @@
 
   let formState = useFormEditStore()
 
+  let statusMenu = ref(null)
+  let idStatusMenu = ref(0)
+
   const updatePhoto = (event) => {
   file.value = event.target.files[0]
 }
@@ -28,6 +31,7 @@
         formState.menu.sequence = sequence.value
         formState.menu.url = url.value
         formState.menu.icon = file.value
+        formState.menu.idStatusMenu = idStatusMenu.value
 
     } catch (error) {
         console.error(error)
@@ -35,6 +39,17 @@
     isVisible.value = !isVisible.value
 
 }
+
+onBeforeMount(() => {
+    getMenuStatus()
+  })
+
+const getMenuStatus = async () => {
+      const status = await Api.get('/menu/get_status/status')
+      let getStatus = status.data.data
+      statusMenu.value = getStatus
+}
+
 
   let isVisible = ref(false)
   let type = '' 
@@ -44,13 +59,15 @@
     formContent: Array
   })
 
-let menuName = ref(props.formContent[0])
-let url = ref(props.formContent[1])
-let sort = ref(1)
-let sequence = ref(true)
-const file = ref({})
+  let menuName = ref(props.formContent[0])
+  let url = ref(props.formContent[1])
+  let sort = ref(props.formContent[2])
+  const file = ref(props.formContent[3])
+  let sequence = ref(true)
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
+  console.log(file.value)
 
 </script>
 
@@ -72,8 +89,13 @@ const file = ref({})
             <div className="divider m-0"></div>
       </div>
   
-      <div class="mb-3 modal-box-inner px-4">
+      <div class="mb-3 pb-10 modal-box-inner px-4">
         
+        <div class="mb-3 flex gap-2">
+            <input type="checkbox" v-model="isParentMenuCheckbox" />
+            <label >is Parent Menu</label>
+          </div>
+
         <div class="mb-3">
             <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
               Menu Name<span class="text-red-star">*</span>
@@ -96,18 +118,30 @@ const file = ref({})
             <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
               Icon<span class="text-red-star">*</span>
             </label>
+
+            <!-- :value="file.value" -->
+            <!-- v-model="file.value" -->
             <input
             :class="inputStylingClass"
-            @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+            @change="updatePhoto" :value="file.value" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
           </div>
   
         <div class="mb-3 text-left">
             <h1>Parent Menu</h1>
             <select :class="inputStylingClass">
-                <option selected hidden disabled value="">Travel Management System</option>
-                <option value="">Option A</option>
+                <option>Travel Management System</option>
+                <option>Option A</option>
             </select>
         </div>
+
+        <div class="mb-3 text-left">
+            <h1>Status</h1>
+            <select :class="inputStylingClass" v-model="idStatusMenu">
+                <option v-for="data in statusMenu" :key="data.id" :value="data.code">
+                  {{ data.status }}
+                </option>
+            </select>
+          </div>
 
         <div class="mb-3 text-left">
               <h1>Sort</h1>
@@ -133,11 +167,9 @@ const file = ref({})
         <div class="flex gap-2 mb-2">
               <input type="checkbox" v-model="sequence">
               <h1>Use Sequence</h1>
-              <h1>{{ sequence }}</h1>
         </div>
   
       </div>
-  
 
       <div class="sticky bottom-0 bg-white py-8">
           <div className="divider m-0 pb-4 w-full"></div>

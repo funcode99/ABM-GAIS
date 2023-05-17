@@ -119,6 +119,7 @@
           id_company: formState.approval.companyId,
           id_menu: formState.approval.menuId,
           id_code_document: formState.approval.codeDocumentId,
+          array_detail: formState.approval.arrayDetail
         })
         fetch()
     }
@@ -216,7 +217,7 @@ const deleteData = (event) => {
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document]"  />
+                      <ModalEditApproval @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data.detail]"  />
                       <ModalDelete @confirm-delete="deleteData(data.id)" />
                     </td>
                   </tr>

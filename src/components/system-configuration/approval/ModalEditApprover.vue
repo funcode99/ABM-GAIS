@@ -27,9 +27,23 @@ import Api from '@/utils/Api'
   let menu = ref(props.formContent[2])
   let document = ref(props.formContent[3])
 
-  let authorities = ref('PM')
+  let authorities = ref('')
 
-  let approverLines = ref([])
+  let approverLines = ref(props.formContent[4])
+  let addAuthoritiesData = ref([])
+
+  let levelValue = ref()
+
+  const fetchApproverAuthorities = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/approval/get_approval_type')
+      instanceArray = api.data.data 
+      // console.log(instanceArray) 
+      addAuthoritiesData.value = instanceArray
+      authorities.value = addAuthoritiesData.value[0].level
+      levelValue.value = addAuthoritiesData.value[0].level
+  }
 
   const saveField = () => {
           // console.log(approverLines.value)
@@ -40,11 +54,16 @@ import Api from '@/utils/Api'
           isVisible.value = !isVisible.value
   }
 
-  const addField = (fieldType) => {
+  let currentAuthoritiesId = ref()
+
+  const addField = (fieldType, isi) => {
+
+      addAuthoritiesData.value = addAuthoritiesData.value.filter((item) => item.id != isi)
+
           fieldType.push({
-            level: 1,
-            authorities: authorities.value,
-            approverName : ''
+            id_approval_auth : authorities.value,
+            level: levelValue.value,
+            // approverName : ''
           })
   }
 
@@ -79,6 +98,7 @@ import Api from '@/utils/Api'
 
   onBeforeMount(() => {
   fetchMenu()
+  fetchApproverAuthorities()
   })
 
 </script>
@@ -202,35 +222,21 @@ import Api from '@/utils/Api'
 
             <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
               
-              <!-- nilai awalnya PM -->
-              <td v-if="input.authorities === 'PM' ? input.level = 1 : ''">
-                  1
-              </td>
-              <td v-if="input.authorities === 'GA' ? input.level = 2 : ''" >
-                2
-              </td>
-              <td v-if="input.authorities === 'HR' ? input.level = 3 : ''">
-                3
-              </td>
-              <td v-if="input.authorities === 'Atasan Langsung' ? input.level = 4 : ''">
-                4
-              </td>
-              <td v-if="input.authorities === 'Accounting' ? input.level = 5 : ''">
-                5
-              </td>
-              <td v-if="input.authorities === 'Treasury' ? input.level = 6 : ''">
-                6
+              <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
+                {{ input.level }}
               </td>
 
+              <!-- event listener gak ngaruh di option -->
               <td>
-                <select v-model="input.authorities">
-                  <option>PM</option>
-                  <option>GA</option>
-                  <option>HR</option>
-                  <option>Atasan Langsung</option>
-                  <option>Accounting</option>
-                  <option>Treasury</option>
+                <select v-model="input.id_approval_auth">
+                  <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id">
+                      {{ data.auth_name }}
+                  </option>
                 </select>
+              </td>
+
+              <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
+
               </td>
 
               <td>
@@ -249,7 +255,7 @@ import Api from '@/utils/Api'
               <td></td>
               <td></td>
               <td class="flex justify-center">
-                <img @click="addField(approverLines)" class="cursor-pointer" :src="iconPlus" alt="">
+                <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
               </td>
             </tr>
 

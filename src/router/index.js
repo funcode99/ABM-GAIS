@@ -66,15 +66,17 @@ import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/
 
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
+import avoidduplicatedropdown from '@/views/experiment/avoidduplicatedropdown.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
 
-    // {
-    //   path: '/addfield',
-    //   component: addinputfield
-    // },
+    {
+      path: '/addfield',
+      // component: addinputfield,
+      component: avoidduplicatedropdown
+    },
 
     // Not found Page
     {

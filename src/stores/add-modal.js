@@ -10,7 +10,7 @@ export const useFormAddStore = defineStore('add-form', {
                 description: 'Kosong',
                 icon: {},
                 sort: 1,
-                idStatusMenu: 2, 
+                idStatusMenu: 0, 
                 parentId: 3,
             },
             user: {
@@ -30,7 +30,8 @@ export const useFormAddStore = defineStore('add-form', {
                 matrixName: '',
                 companyId: 1,
                 menuId: 1,
-                codeDocumentId: 1
+                codeDocumentId: 1,
+                arrayDetail: null
             },
             sequence: {
                 sequenceName: '',

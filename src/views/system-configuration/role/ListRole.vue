@@ -87,7 +87,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const api = await Api.get('/role')
+        const api = await Api.get('/role/get')
         instanceArray = api.data.data
         sortedData.value = instanceArray
         lengthCounter = sortedData.value.length
@@ -170,7 +170,7 @@
                     {{ data.role_name }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
-                    <ModalMenuAccessRole />
+                    <ModalMenuAccessRole :roleId="data.id" />
                     <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name]" />
                     <ModalDelete @confirm-delete="deleteData(data.id)" />
                   </td>

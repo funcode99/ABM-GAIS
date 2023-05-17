@@ -16,8 +16,9 @@ import Api from '@/utils/Api'
 
   let isOpenModal = ref(false)
 
-  let authorities = ref('PM')
+  let authorities = ref('')
 
+  // ini fieldType nya
   let approverLines = ref([])
 
   let level = 0
@@ -26,36 +27,71 @@ import Api from '@/utils/Api'
 
   // for get Menu Dropdown
   let instanceArray = []
-  let addData = ref([])
+  let addMenuData = ref([])
+  let addCompanyData = ref([])
+  let addDocumentData = ref([])
+  let addAuthoritiesData = ref([])
 
   let matrixName = ref('')
   let menu = ref()
-  let document = ref(1)
-  let company = ref(1)
+  let document = ref()
+  let company = ref()
+
+  const fetchApproverAuthorities = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/approval/get_approval_type')
+      instanceArray = api.data.data 
+      // console.log(instanceArray) 
+      addAuthoritiesData.value = instanceArray
+      authorities.value = addAuthoritiesData.value[0].auth_name
+      // console.log(authorities.value)
+  }
 
   const fetchMenu = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/menu/get')      
       instanceArray = api.data.data.data
-      addData.value = instanceArray
-      menu.value = addData.value[0].id
+      addMenuData.value = instanceArray
+      menu.value = addMenuData.value[0].id
   }
+
+  const fetchCompany = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/company/get");
+    // console.log(res)
+    instanceArray = res.data.data;
+    // console.log(instanceArray)
+    addCompanyData.value = instanceArray;
+    // console.log(addCompanyData.value)
+    company.value = addCompanyData.value[0].id
+};
+
+const fetchDocument = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/request_trip/get_document_code");
+    // console.log(res)
+    instanceArray = res.data.data;
+    // console.log(instanceArray)
+    addDocumentData.value = instanceArray;
+    // console.log(addDocumentData.value)
+    document.value = addDocumentData.value[0].id
+};
 
   onBeforeMount(() => {
   fetchMenu()
+  fetchCompany()
+  fetchDocument()
+  fetchApproverAuthorities()
   })
 
   const addField = (fieldType) => {
           fieldType.push({
-            array_detail: [
-              level = 1,
-              authoritiesValue = authorities.value,
-              approverName = ''
-            ],
-            // level : 1,
-            // authorities : authorities.value,
+            level : 1,
+            id_approval_auth : authorities.value,
             // approverName : ''
   })
   }
@@ -65,11 +101,14 @@ import Api from '@/utils/Api'
   }
 
   const saveField = () => {
-          console.log(approverLines.value)
+          // console.log(approverLines.value)
+
           formState.approval.matrixName = matrixName.value
-          // formState.approval.companyId = company.value
-          // formState.approval.menuId = menu.value
-          // formState.approval.codeDocumentId = document.value
+          formState.approval.companyId = company.value
+          formState.approval.menuId = menu.value
+          formState.approval.codeDocumentId = document.value
+          formState.approval.arrayDetail = approverLines.value
+
           isOpenModal.value = !isOpenModal.value
   }
 
@@ -119,7 +158,7 @@ import Api from '@/utils/Api'
               Menu<span class="text-red">*</span>
             </label>
             <select v-model="menu" :class="inputStylingClass">
-              <option v-for="data in addData" :key="data.id" :value="data.id">
+              <option v-for="data in addMenuData" :key="data.id" :value="data.id">
                 {{ data.menu }}
               </option>
             </select>
@@ -132,14 +171,8 @@ import Api from '@/utils/Api'
               Document<span class="text-red">*</span>
             </label>
             <select v-model="document" :class="inputStylingClass">
-              <option>
-                1
-              </option>
-              <option>
-                2
-              </option>
-              <option>
-                3
+              <option v-for="data in addDocumentData" :key="data.id" :value="data.id">
+                {{ data.document_name }}
               </option>
             </select>
           </div>
@@ -151,14 +184,8 @@ import Api from '@/utils/Api'
               Company<span class="text-red">*</span>
             </label>
             <select v-model="company" :class="inputStylingClass">
-              <option>
-                1
-              </option>
-              <option>
-                2
-              </option>
-              <option>
-                3
+              <option v-for="data in addCompanyData" :key="data.id" :value="data.id">
+                {{ data.company_name }}
               </option>
             </select>
           </div>
@@ -203,38 +230,35 @@ import Api from '@/utils/Api'
               <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
                 
                 <!-- nilai awalnya PM -->
-                <td v-if="input.array_detail[1] === 'PM' ? input.array_detail[0] = 1 : ''">
+                <td v-if="input.id_approval_auth === 1 ? input.level = 1 : ''">
                     1
                 </td>
-                <td v-if="input.array_detail[1] === 'GA' ? input.array_detail[0] = 2 : ''" >
+                <td v-if="input.id_approval_auth === 2 ? input.level = 2 : ''" >
                   2
                 </td>
-                <td v-if="input.array_detail[1] === 'HR' ? input.array_detail[0] = 3 : ''">
+                <td v-if="input.id_approval_auth === 3 ? input.level = 3 : ''">
                   3
                 </td>
-                <td v-if="input.array_detail[1] === 'Atasan Langsung' ? input.array_detail[0] = 4 : ''">
+                <td v-if="input.id_approval_auth === 4 ? input.level = 4 : ''">
                   4
                 </td>
-                <td v-if="input.array_detail[1] === 'Accounting' ? input.array_detail[0] = 5 : ''">
+                <td v-if="input.id_approval_auth === 5 ? input.level = 5 : ''">
                   5
                 </td>
-                <td v-if="input.array_detail[1] === 'Treasury' ? input.array_detail[0] = 6 : ''">
+                <td v-if="input.id_approval_auth === 6 ? input.level = 6 : ''">
                   6
                 </td>
   
                 <td>
-                  <select v-model="input.array_detail[1]">
-                    <option>PM</option>
-                    <option>GA</option>
-                    <option>HR</option>
-                    <option>Atasan Langsung</option>
-                    <option>Accounting</option>
-                    <option>Treasury</option>
+                  <select v-model="input.id_approval_auth">
+                    <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id">
+                      {{ data.auth_name }}
+                    </option>
                   </select>
                 </td>
   
                 <td>
-                  <input type="text" class="px-2" v-model="input.array_detail[2]" />
+                  <!-- <input type="text" class="px-2" v-model="input.approverName" /> -->
                 </td>
   
                 <td class="flex flex-wrap gap-4 justify-center">

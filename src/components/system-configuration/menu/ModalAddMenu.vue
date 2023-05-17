@@ -7,9 +7,10 @@ import Api from '@/utils/Api'
 import { useFormAddStore } from '@/stores/add-modal.js'
 let formState = useFormAddStore()
 
+let isParentMenuCheckbox = ref(true)
 let menuName = ref('')
 let url = ref('')
-let idStatusMenu = ref('Active')
+let idStatusMenu = ref(0)
 let idParent = ref(1)
 let sort = ref(1)
 let sequence = ref(0)
@@ -32,6 +33,11 @@ const submit = () => {
       } else {
         sequence.value = 0
       }
+
+      // if(isParentMenuCheckbox == true) {
+      //   parentMenu = 1
+      // }
+
       formState.menu.menuName = menuName.value
       formState.menu.sort = sort.value
       formState.menu.sequence = sequence.value
@@ -39,7 +45,7 @@ const submit = () => {
       formState.menu.icon = file.value
 
       // active / disable only value
-      // formState.menu.idStatusMenu = idStatusMenu.value
+      formState.menu.idStatusMenu = idStatusMenu.value
       // formState.menu.parentId = idParent.value
       
       isOpenModal.value = !isOpenModal.value
@@ -85,6 +91,11 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
 
         <div class="mb-3 ">
         
+          <div class="mb-3 flex gap-2">
+            <input type="checkbox" v-model="isParentMenuCheckbox" />
+            <label >is Parent Menu</label>
+          </div>
+
           <div class="mb-3">
             <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
               Menu Name<span class="text-red-star">*</span>
@@ -112,12 +123,21 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
             @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
           </div>
 
-          <div class="mb-3 text-left">
+          <div class="mb-3 text-left" v-if="isParentMenuCheckbox === true ? '' : 'hidden'">
               <h1>Parent Menu</h1>
               <select :class="inputStylingClass">
-                  <option selected hidden disabled value="">Travel Management System</option>
-                  <option value="">Option A</option>
+                  <option>Travel Management System</option>
+                  <option>Option A</option>
               </select>
+          </div>
+
+          <div class="mb-3 text-left">
+            <h1>Status</h1>
+            <select :class="inputStylingClass" v-model="idStatusMenu">
+                <option v-for="data in statusMenu" :key="data.id" :value="data.code">
+                  {{ data.status }}
+                </option>
+            </select>
           </div>
 
           <div class="mb-3 text-left">
