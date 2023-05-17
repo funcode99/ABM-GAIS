@@ -6,12 +6,25 @@ import Api from "@/utils/Api";
 import { ref, onMounted } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "zona-saved"]);
-const tags = ref([]);
+// const tags = ref([]);
 
-let selectedCity = ref(null);
+let selectedCity = ref("City");
 let zonaName = ref("");
 let City = ref("");
 let isOpenModal = ref(false);
+const selectedCityTags = ref("");
+
+const tags = ref([]);
+const tag = ref('');
+// const selectItems = ref([{ text: 'HTML' }, { text: 'CSS' }, { text: 'VUE' }]);
+
+const handleSelectedTag = (tag) => {
+  tags.value.push(tag);
+};
+
+const handleChangeTag = (tags) => {
+  tags.value = tags;
+};
 
 //for get city in input
 const fetchCity = async () => {
@@ -56,10 +69,10 @@ const saveZona = async () => {
   }
 };
 
-function handleChangeTag(newTags) {
-  tags.value = newTags;
-  // console.log("ini type pada tags value" + typeof tags.value);
-}
+// function handleChangeTag(newTags) {
+//   tags.value = newTags;
+//   // console.log("ini type pada tags value" + typeof tags.value);
+// }
 </script>
 
 <template>
@@ -118,12 +131,41 @@ function handleChangeTag(newTags) {
             <div
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
             >
-              <vue3-tags-input
+              <!-- <select
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
                 v-model="selectedCity"
+              >
+                <option disabled selected>City</option>
+                <option v-for="city in City" :value="String(city.id)" :key="city.id">
+                  {{ city.city_name }}
+                </option>
+              </select> -->
+
+              <!-- <vue3-tags-input
+                v-model="selectedCityTags "
                 :tags="tags"
                 placeholder="enter some tags"
                 @on-tags-changed="handleChangeTag"
-              />
+              /> -->
+
+              <vue3-tags-input
+                v-model:tags="tags"
+                v-model="tag"
+                :select="true"
+                :select-items="City"
+                @on-select="handleSelectedTag"
+                @on-tags-changed="handleChangeTag"
+                placeholder="Select the tag"
+              >
+                <template #item="{ tag, index }">
+                  {{ tag.city_name }}
+                </template>
+                <template #no-data> No Data </template>
+                <template #select-item="tag">
+                  {{ tag.city_name }}
+                </template>
+              </vue3-tags-input>
             </div>
           </div>
 
