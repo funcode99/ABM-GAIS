@@ -1,19 +1,37 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onBeforeMount } from 'vue'
   import iconClose from "@/assets/navbar/icon_close.svg"
+
+  import Api from '@/utils/Api'
 
   import { useFormAddStore } from '@/stores/add-modal.js'
   let formState = useFormAddStore()
 
   let menuSequenceName = ref('')
   let nextValue = ref('')
-  let menu = ref('Administrator')
+  let menu = ref('')
   let sequenceSize = ref('')
   let prefix = ref('')
-  let recycleBy = ref('Weekly')
+  let recycleBy = ref('W')
   let suffix = ref('')
 
   let isOpenModal = ref(false)
+
+  let instanceArray = []
+  let addMenuData = ref([])
+
+  const fetchMenu = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/menu/get')      
+      instanceArray = api.data.data.data
+      addMenuData.value = instanceArray
+      menu.value = addMenuData.value[0].id
+  }
+
+  onBeforeMount(() => {
+    fetchMenu()
+  })
 
   const submitSequence = () => {
     formState.sequence.sequenceName = menuSequenceName.value
@@ -26,6 +44,7 @@
   }
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 
 </script>
 
@@ -102,13 +121,9 @@
                   >Menu<span class="text-red">*</span></label
                 >
                 <select v-model="menu" :class="inputStylingClass" required>
-                  <option disabled selected hidden>Menu</option>
-                  <option>Administrator</option>
-                  <option>Super Admin</option>
-                  <option>Admin</option>
-                  <option>Receptionist</option>
-                  <option>Employee</option>
-                  <option>Driver</option>
+                  <option v-for="data in addMenuData" :key="data.id" :value="data.id">
+                    {{ data.menu }}
+                  </option>
                 </select>
               </div>
             </div>

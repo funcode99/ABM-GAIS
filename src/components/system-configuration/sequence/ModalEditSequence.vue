@@ -1,8 +1,10 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref, onBeforeMount } from 'vue'
   import { Modal } from 'usemodal-vue3'
   import iconClose from "@/assets/navbar/icon_close.svg"
-  import editIcon from "@/assets/navbar/edit_icon.svg";
+  import editIcon from "@/assets/navbar/edit_icon.svg"
+
+  import Api from '@/utils/Api'
 
   import { useFormEditStore } from '@/stores/edit-modal.js'
   let formEditState = useFormEditStore()
@@ -21,7 +23,23 @@
   let sequenceSize = ref(props.formContent[3])
   let recycleBy = ref(props.formContent[4])
   let nextValue = ref(props.formContent[5])
-  let menu = ref('Administrator')
+  let menu = ref(props.formContent[6])
+
+  let instanceArray = []
+  let addMenuData = ref([])
+
+  const fetchMenu = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/menu/get')      
+      instanceArray = api.data.data.data
+      addMenuData.value = instanceArray
+      menu.value = addMenuData.value[0].id
+  }
+
+  onBeforeMount(() => {
+    fetchMenu()
+  })
 
   const submitEdit = () => {
     formEditState.sequence.sequenceName = menuSequenceName.value
@@ -98,13 +116,10 @@
                     id="company"
                     >Menu<span class="text-red">*</span></label
                   >
-                  <select :class="inputStylingClass" required>
-                    <option>Administrator</option>
-                    <option>Super Admin</option>
-                    <option>Admin</option>
-                    <option>Receptionist</option>
-                    <option>Employee</option>
-                    <option>Driver</option>
+                  <select v-model="menu" :class="inputStylingClass" required>
+                    <option v-for="data in addMenuData" :key="data.id" :value="data.id">
+                      {{ data.menu }}
+                    </option>
                   </select>
                 </div>
               </div>

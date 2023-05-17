@@ -238,7 +238,7 @@
                         {{ data.sequence_size }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditSequence @change-sequence="editExistingSequence(data.id)" :formContent="[data.sequence_name, data.prefix, data.suffix, data.sequence_size, data.recycle, data.next_value]" />
+                        <ModalEditSequence @change-sequence="editExistingSequence(data.id)" :formContent="[data.sequence_name, data.prefix, data.suffix, data.sequence_size, data.recycle, data.next_value, data.id_menu]" />
                         <ModalDelete @confirm-delete="deleteData(data.id)" />
                       </td>
                     </tr>
