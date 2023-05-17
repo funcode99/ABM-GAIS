@@ -33,7 +33,7 @@ let editWarehouseDataId = ref();
 const editWarehouse = async (data) => {
   editWarehouseDataId.value = data;
   setTimeout(callEditApi, 500);
-  console.log("ini data id:" + data);
+  // console.log("ini data id:" + data);
 };
 
 //for edit
