@@ -282,7 +282,18 @@ const deleteZona = async (id) => {
                     </td>
                     <td>{{ index + 1 }}</td>
                     <td>{{ data.zona_name }}</td>
-                    <td>{{ data.city_name }}</td>
+                    <!-- <td>{{ data.city_name }}</td> -->
+                    <td>
+                      <span
+                        v-for="(city, cityIndex) in data.city"
+                        :key="cityIndex"
+                      >
+                        {{ city.city_name }}
+                        <span v-if="cityIndex !== data.city.length - 1"
+                          >,
+                        </span>
+                      </span>
+                    </td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"

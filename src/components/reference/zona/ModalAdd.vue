@@ -6,20 +6,19 @@ import Api from "@/utils/Api";
 import { ref, onMounted } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "zona-saved"]);
-// const tags = ref([]);
 
-let selectedCity = ref("City");
+let selectedCity = ref("");
 let zonaName = ref("");
 let City = ref("");
 let isOpenModal = ref(false);
-const selectedCityTags = ref("");
+const selectedCityTags = ref([]);
 
 const tags = ref([]);
-const tag = ref('');
-// const selectItems = ref([{ text: 'HTML' }, { text: 'CSS' }, { text: 'VUE' }]);
+const tag = ref("");
 
 const handleSelectedTag = (tag) => {
   tags.value.push(tag);
+  selectedCityTags.value.push(tag.id);
 };
 
 const handleChangeTag = (tags) => {
@@ -46,14 +45,16 @@ const saveZona = async () => {
   try {
     const payload = {
       zona_name: zonaName.value,
-      id_city: selectedCity.value,
+      id_city: selectedCityTags.value,
     };
+
+    // console.log("ini payload:" + JSON.stringify(payload));
 
     await Api.post(`/zona/store`, payload);
 
     // Reset nilai input
     zonaName.value = "";
-    selectedCity.value = "";
+    selectedCityTags.value = [];
 
     Swal.fire({
       position: "center",
@@ -68,11 +69,6 @@ const saveZona = async () => {
     console.log(error);
   }
 };
-
-// function handleChangeTag(newTags) {
-//   tags.value = newTags;
-//   // console.log("ini type pada tags value" + typeof tags.value);
-// }
 </script>
 
 <template>
@@ -131,24 +127,6 @@ const saveZona = async () => {
             <div
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
             >
-              <!-- <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                required
-                v-model="selectedCity"
-              >
-                <option disabled selected>City</option>
-                <option v-for="city in City" :value="String(city.id)" :key="city.id">
-                  {{ city.city_name }}
-                </option>
-              </select> -->
-
-              <!-- <vue3-tags-input
-                v-model="selectedCityTags "
-                :tags="tags"
-                placeholder="enter some tags"
-                @on-tags-changed="handleChangeTag"
-              /> -->
-
               <vue3-tags-input
                 v-model:tags="tags"
                 v-model="tag"
@@ -158,7 +136,13 @@ const saveZona = async () => {
                 @on-tags-changed="handleChangeTag"
                 placeholder="Select the tag"
               >
-                <template #item="{ tag, index }">
+                <template
+                  #item="{ tag, index }"
+                  v-model="selectedCity"
+                  v-for="city in City"
+                  :value="Array(city.id)"
+                  :key="city.id"
+                >
                   {{ tag.city_name }}
                 </template>
                 <template #no-data> No Data </template>
