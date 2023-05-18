@@ -270,7 +270,7 @@ const saveDepartement = async () => {
                 v-model="departementHead"
               >
                 <option disabled selected>Name</option>
-                <option v-for="name in Employee" :value="name.id">
+                <option v-for="name in Employee" :value="name.employee_name">
                   {{ name.employee_name }}
                 </option>
               </select>
