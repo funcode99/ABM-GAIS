@@ -13,7 +13,7 @@ import gearicon from "@/assets/system-configuration-not-selected.png";
 
 import ModalAddATKOpname from "@/components/facility-services/atk-supplies/stock-opname-atk/ModalAddOpname.vue";
 
-import Api from "@/utils/Api";
+import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
 
 import { ref, onBeforeMount, computed } from "vue";
@@ -153,7 +153,6 @@ onBeforeMount(() => {
         ]"
       >
         <div class="bg-white rounded-t-xl custom-card">
-
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
             <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
@@ -183,9 +182,7 @@ onBeforeMount(() => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-
-
-                <div>
+              <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
@@ -416,7 +413,6 @@ onBeforeMount(() => {
       </div>
 
       <Footer class="fixed bottom-0 left-0 right-0" />
-
     </div>
   </div>
 </template>

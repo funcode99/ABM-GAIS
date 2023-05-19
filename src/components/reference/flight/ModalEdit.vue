@@ -23,6 +23,9 @@ const props = defineProps({
 const currentFlightClassName = ref(props.formContent[0]);
 
 const submitEdit = () => {
+  if (!formEditState.flight) {
+    formEditState.flight = {}; // Inisialisasi objek flight jika belum ada
+  }
   formEditState.flight.flightClassName = currentFlightClassName.value;
   isVisible.value = !isVisible.value;
 };
@@ -48,7 +51,7 @@ const inputStylingClass =
         <p
           class="font-JakartaSans text-sm lg:text-2xl font-semibold text-white mx-4 py-2 text-start"
         >
-          Edit Flight
+          Edit Flight Class
         </p>
       </div>
 

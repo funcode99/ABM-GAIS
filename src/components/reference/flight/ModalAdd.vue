@@ -35,6 +35,10 @@ const saveFlightClass = async () => {
     console.log(error);
   }
 };
+
+const resetInput = () => {
+  newFlightClass.value = "";
+};
 </script>
 
 <template>
@@ -55,7 +59,10 @@ const saveFlightClass = async () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="
+            resetInput();
+            this.$emit('unlockScrollbar');
+          "
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-0 lg:top-3"
         >
@@ -89,7 +96,10 @@ const saveFlightClass = async () => {
           <div class="sticky bottom-0 bg-white py-2">
             <div class="flex justify-end gap-4 mr-6">
               <label
-                @click="this.$emit('unlockScrollbar')"
+                @click="
+                  resetInput();
+                  this.$emit('unlockScrollbar');
+                "
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label

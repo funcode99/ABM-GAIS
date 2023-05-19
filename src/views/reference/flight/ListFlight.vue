@@ -13,6 +13,8 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
+import { Workbook } from "exceljs";
+
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useFormEditStore } from "@/stores/reference/flight/edit-modal.js";
@@ -29,7 +31,7 @@ let editFlightDataId = ref();
 const editFlight = async (data) => {
   editFlightDataId.value = data;
   setTimeout(callEditApi, 500);
-  console.log("ini data:" + data);
+  // console.log("ini data:" + data);
 };
 
 //for edit
@@ -57,6 +59,7 @@ let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
+let sortAscending = true;
 
 //for paginations
 let showingValue = ref(1);
@@ -88,19 +91,23 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "index" },
-  { Id: 2, title: "Flight Class", jsonData: "flight_name" },
+  { Id: 1, title: "No", jsonData: "String.fromCharCode(97 + index)" },
+  { Id: 2, title: "Flight Class", jsonData: "flight_class" },
   { Id: 3, title: "Actions" },
 ];
 
 //for sort
 const sortList = (sortBy) => {
-  if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+  if (sortAscending) {
+    sortedData.value.sort((x, y) =>
+      parseInt(x[sortBy]) > parseInt(y[sortBy]) ? 1 : -1
+    );
+    sortAscending = false;
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) =>
+      parseInt(x[sortBy]) < parseInt(y[sortBy]) ? 1 : -1
+    );
+    sortAscending = true;
   }
 };
 
@@ -171,6 +178,51 @@ const deleteFlight = async (id) => {
     }
   });
 };
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Flight Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "Flight Class" },
+    { title: "Created At" },
+    { title: "Created By" },
+    { title: "Updated At" },
+    { title: "Updated By" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    // Menambahkan nomor urutan
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+
+    // Menambahkan data dari properti lainnya
+    Object.keys(data).forEach((key, columnIndex) => {
+      worksheet.getCell(rowIndex + 2, columnIndex + 2).value = data[key];
+    });
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "flight_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 </script>
 
 <template>
@@ -207,6 +259,7 @@ const deleteFlight = async (id) => {
               />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
@@ -289,29 +342,38 @@ const deleteFlight = async (id) => {
                       class="overflow-x-hidden cursor-pointer"
                       @click="sortList(`${data.jsonData}`)"
                     >
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }}
+                      <div class="flex justify-between items-center">
+                        <p
+                          class="font-JakartaSans font-bold text-sm xl:ml-[120px]"
+                        >
+                          {{ data.title }}
+                        </p>
                         <button>
-                          <img :src="arrowicon" class="w-[9px] h-3" />
+                          <img :src="arrowicon" class="w-[9px] h-3 mr-2" />
                         </button>
-                      </span>
+                      </div>
                     </th>
                   </tr>
                 </thead>
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
-                    :key="data.no"
+                    class="font-JakartaSans font-normal text-sm capitalize"
+                    v-for="(data, index) in sortedData
+                      .slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )
+                      .reverse()"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>
+                      {{ index + 1 + paginateIndex * pageMultiplierReactive }}
+                    </td>
+                    <!-- <td>{{ data.id }}</td> -->
                     <td>{{ data.flight_class }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
@@ -354,12 +416,12 @@ const deleteFlight = async (id) => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
         </div>
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+      <Footer />
     </div>
   </div>
 </template>
