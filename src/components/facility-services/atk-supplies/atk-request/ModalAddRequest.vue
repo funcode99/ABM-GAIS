@@ -335,7 +335,7 @@ const emits = defineEmits(["unlockScrollbar"]);
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
-
+/*  */
 .inner-table {
   overflow-x: auto;
 }
