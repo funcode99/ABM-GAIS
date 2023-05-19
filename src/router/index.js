@@ -41,6 +41,7 @@ import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
 import NonTravelView from '@/views/travel-management/cash-advance-non-travel/NonTravelView.vue'
 import SettlementList from "@/views/travel-management/settlement/SettlementList.vue"
+import SettlementReport from '@/views/travel-management/settlement/SettlementReport.vue'
 
 import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
 import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue"
@@ -63,6 +64,10 @@ import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
 import StockInAtkList from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkList.vue"
 import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkView.vue"
+import ATKRequestList from '@/views/facility-services/atk-supplies/atk-request/ATK-request.vue'
+import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/ATKRequestView.vue'
+import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
+import StockOpnameATKView from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKView.vue'
 
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
@@ -624,6 +629,23 @@ const router = createRouter({
       }
     },
     {
+      path: '/settlement-report',
+      name: 'Settlement Reports',
+      component: SettlementReport,
+      meta: {
+        title: 'Settlement Report'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
       path: '/claimreimbursement',
       name: 'Claim Reimbursement',
       component: ClaimReimbursementList,
@@ -905,6 +927,74 @@ const router = createRouter({
       component: StockInAtkView,
       meta: {
         title: 'View Stock In ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/atk-request',
+      name: 'ATK Request',
+      component: ATKRequestList,
+      meta: {
+        title: 'View Stock In ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/atk-request-view',
+      name: 'ATK Request View',
+      component: ATKRequestView,
+      meta: {
+        title: 'Request ATK View'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/stock-opname-atk',
+      name: 'Stock Opname ATK List',
+      component: StockOpnameATKList,
+      meta: {
+        title: 'Stock Opname ATK List'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/stock-opname-atk-view',
+      name: 'Stock Opname ATK View',
+      component: StockOpnameATKView,
+      meta: {
+        title: 'Stock Opname ATK View'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');

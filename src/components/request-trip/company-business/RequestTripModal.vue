@@ -286,6 +286,34 @@ const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-
 const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative'
 
+let requestor = ref('')
+let location = ref('')
+let sn = ref('')
+let telephone = ref('')
+
+let purposeOfTrip = ref('')
+let notesToPurposeOfTrip = ref('')
+let fromCity = ref('')
+let toCity = ref('')
+let zona = ref('')
+let TLKperDay = ref('')
+let dateDeparture = ref('')
+let totalTLK = ref('')
+let returnDate = ref('')
+
+
+// guest as a traveller
+let typeOfTraveller = ref('')
+let department = ref('')
+let name = ref('')
+let company = ref('')
+let gender = ref('')
+let hotelFare = ref('')
+let NIK = ref('')
+let flightClass = ref('')
+let contactNo = ref('')
+let notesGuestAsTraveller = ref('')
+
 </script>
 
 <template>

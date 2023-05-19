@@ -129,6 +129,7 @@
         const api = await Api.post('/users/store', 
         {
           username: formState.user.username,
+          name: formState.user.username,
           email: formState.user.email,
           password: formState.user.password,
           is_employee: formState.user.isEmployee,

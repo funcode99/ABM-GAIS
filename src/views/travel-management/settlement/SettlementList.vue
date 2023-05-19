@@ -73,14 +73,13 @@ const tableHead = [
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
   }
 };
-
 
 
 //for searching
@@ -96,12 +95,12 @@ const filteredItems = (search) => {
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
-  onChangePage(1);
-};
+  onChangePage(1)
+}
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
 
 const fetch = async () => {
@@ -116,25 +115,21 @@ const fetch = async () => {
 onBeforeMount(() => {
   fetch()
   getSessionForSidebar();
-  // instanceArray = settlementdata;
-  // sortedData.value = instanceArray;
-  // lengthCounter = sortedData.value.length;
 });
 
 </script>
 
 <template>
 
-  <div class="flex flex-col w-full this">
+  <div class="flex flex-col w-full h-[100vh] this">
 
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen h-full mt-[115px]">
   
       <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+      <div class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[
           lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
@@ -380,7 +375,6 @@ onBeforeMount(() => {
         </div>
 
       </div>
-
 
     </div>
     
