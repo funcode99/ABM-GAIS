@@ -88,8 +88,8 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "index" },
-  { Id: 2, title: "Flight Class", jsonData: "flight_name" },
+  { Id: 1, title: "No", jsonData: "" },
+  { Id: 2, title: "Flight Class", jsonData: "" },
   { Id: 3, title: "Actions" },
 ];
 
@@ -302,10 +302,12 @@ const deleteFlight = async (id) => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="(data, index) in sortedDataReactive
+                      .slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )
+                      .reverse()"
                     :key="data.no"
                   >
                     <td>
