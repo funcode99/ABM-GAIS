@@ -29,7 +29,7 @@ let editFlightDataId = ref();
 const editFlight = async (data) => {
   editFlightDataId.value = data;
   setTimeout(callEditApi, 500);
-  console.log("ini data:" + data);
+  // console.log("ini data:" + data);
 };
 
 //for edit
