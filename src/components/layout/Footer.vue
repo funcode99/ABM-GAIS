@@ -8,6 +8,6 @@
 
 <style>
     .zInfinite {
-      z-index: 999 !important;
+      z-index: 50 !important;
     }
 </style>

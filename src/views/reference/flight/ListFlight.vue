@@ -57,6 +57,7 @@ let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
+let sortAscending = true;
 
 //for paginations
 let showingValue = ref(1);
@@ -88,19 +89,23 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "" },
-  { Id: 2, title: "Flight Class", jsonData: "" },
+  { Id: 1, title: "No", jsonData: "String.fromCharCode(97 + index)" },
+  { Id: 2, title: "Flight Class", jsonData: "flight_class" },
   { Id: 3, title: "Actions" },
 ];
 
 //for sort
 const sortList = (sortBy) => {
-  if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+  if (sortAscending) {
+    sortedData.value.sort((x, y) =>
+      parseInt(x[sortBy]) > parseInt(y[sortBy]) ? 1 : -1
+    );
+    sortAscending = false;
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) =>
+      parseInt(x[sortBy]) < parseInt(y[sortBy]) ? 1 : -1
+    );
+    sortAscending = true;
   }
 };
 
@@ -289,19 +294,23 @@ const deleteFlight = async (id) => {
                       class="overflow-x-hidden cursor-pointer"
                       @click="sortList(`${data.jsonData}`)"
                     >
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }}
+                      <div class="flex justify-between items-center">
+                        <p
+                          class="font-JakartaSans font-bold text-sm xl:ml-[120px]"
+                        >
+                          {{ data.title }}
+                        </p>
                         <button>
-                          <img :src="arrowicon" class="w-[9px] h-3" />
+                          <img :src="arrowicon" class="w-[9px] h-3 mr-2" />
                         </button>
-                      </span>
+                      </div>
                     </th>
                   </tr>
                 </thead>
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm"
+                    class="font-JakartaSans font-normal text-sm capitalize"
                     v-for="(data, index) in sortedData
                       .slice(
                         paginateIndex * pageMultiplierReactive,
@@ -313,7 +322,10 @@ const deleteFlight = async (id) => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>
+                      {{ index + 1 + paginateIndex * pageMultiplierReactive }}
+                    </td>
+                    <!-- <td>{{ data.id }}</td> -->
                     <td>{{ data.flight_class }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
@@ -356,12 +368,12 @@ const deleteFlight = async (id) => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
         </div>
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+      <Footer />
     </div>
   </div>
 </template>
