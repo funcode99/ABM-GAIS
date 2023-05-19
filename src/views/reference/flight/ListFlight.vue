@@ -317,7 +317,7 @@ const deleteFlight = async (id) => {
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                         @change-flight="editFlight(data.id)"
-                        :formContent="[data.flightClassName]"
+                        :formContent="[data.flight_class]"
                       />
                       <button @click="deleteFlight(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />

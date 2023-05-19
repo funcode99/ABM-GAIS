@@ -6,12 +6,24 @@ import Api from "@/utils/Api";
 import { ref, onMounted } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "zona-saved"]);
-const tags = ref([]);
 
-let selectedCity = ref(null);
+let selectedCity = ref("");
 let zonaName = ref("");
 let City = ref("");
 let isOpenModal = ref(false);
+const selectedCityTags = ref([]);
+
+const tags = ref([]);
+const tag = ref("");
+
+const handleSelectedTag = (tag) => {
+  tags.value.push(tag);
+  selectedCityTags.value.push(tag.id);
+};
+
+const handleChangeTag = (tags) => {
+  tags.value = tags;
+};
 
 //for get city in input
 const fetchCity = async () => {
@@ -33,14 +45,16 @@ const saveZona = async () => {
   try {
     const payload = {
       zona_name: zonaName.value,
-      id_city: selectedCity.value,
+      id_city: selectedCityTags.value,
     };
+
+    // console.log("ini payload:" + JSON.stringify(payload));
 
     await Api.post(`/zona/store`, payload);
 
     // Reset nilai input
     zonaName.value = "";
-    selectedCity.value = "";
+    selectedCityTags.value = [];
 
     Swal.fire({
       position: "center",
@@ -55,11 +69,6 @@ const saveZona = async () => {
     console.log(error);
   }
 };
-
-function handleChangeTag(newTags) {
-  tags.value = newTags;
-  // console.log("ini type pada tags value" + typeof tags.value);
-}
 </script>
 
 <template>
@@ -119,11 +128,28 @@ function handleChangeTag(newTags) {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
             >
               <vue3-tags-input
-                v-model="selectedCity"
-                :tags="tags"
-                placeholder="enter some tags"
+                v-model:tags="tags"
+                v-model="tag"
+                :select="true"
+                :select-items="City"
+                @on-select="handleSelectedTag"
                 @on-tags-changed="handleChangeTag"
-              />
+                placeholder="Select the tag"
+              >
+                <template
+                  #item="{ tag, index }"
+                  v-model="selectedCity"
+                  v-for="city in City"
+                  :value="Array(city.id)"
+                  :key="city.id"
+                >
+                  {{ tag.city_name }}
+                </template>
+                <template #no-data> No Data </template>
+                <template #select-item="tag">
+                  {{ tag.city_name }}
+                </template>
+              </vue3-tags-input>
             </div>
           </div>
 

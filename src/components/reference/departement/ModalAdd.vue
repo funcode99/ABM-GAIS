@@ -1,34 +1,106 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-//code for tags
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+
+const emits = defineEmits(["unlockScrollbar", "departement-saved"]);
 
 const tags = ref([]);
+const selectedDivisionTags = ref([]);
+let isOpenModal = ref(false);
+let selectedCompany = ref("Company");
+let Company = ref();
+let selectedGlAccount = ref("Account");
+let GlAccount = ref();
+let nameDepartement = ref("");
+let costCenter = ref("");
+let profitCenter = ref("");
+let status = ref("Status");
+let departementHead = ref("Name");
+let Employee = ref("");
 
-function addTag(event) {
-  if (event.code === "Comma" || event.code === "Enter") {
-    event.preventDefault();
-    var val = event.target.value.trim();
+//for get company in select
+const fetchCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 
-    if (val.length > 0) {
-      tags.value.push(val);
-      event.target.value = "";
-    }
+//for get gl account in select
+const fetchGlAccount = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/gl_account/");
+  GlAccount.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+//for get employee in select
+const fetchEmployee = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/employee/get/");
+  Employee.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchCompany();
+  fetchGlAccount();
+  fetchEmployee();
+});
+
+const handleChangeTag = (tags) => {
+  tags.value = tags;
+  selectedDivisionTags.value.push(tags);
+};
+
+const saveDepartement = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  try {
+    const payload = {
+      departement_name: nameDepartement.value,
+      id_company: selectedCompany.value,
+      cost_center: costCenter.value,
+      is_active: status.value,
+      profit_center: profitCenter.value,
+      departement_head: departementHead.value,
+      division: selectedDivisionTags.value,
+    };
+
+    console.log("ini payload:" + JSON.stringify(payload));
+
+    await Api.post(`/department/store`, payload);
+
+    // Reset nilai input
+    nameDepartement.value = "";
+    selectedCompany.value = "";
+    costCenter.value = "";
+    status.value = "";
+    profitCenter.value = "";
+    departementHead.value = "";
+    selectedDivisionTags.value = [];
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    emits("departement-saved");
+    isOpenModal.value = !isOpenModal.value;
+  } catch (error) {
+    console.log(error);
   }
-}
-
-function removeTag(index) {
-  tags.value.splice(index, 1);
-}
-
-function removeLastTag(event) {
-  if (event.target.value.length === 0) {
-    removeTag(tags.value.length - 1);
-  }
-}
+};
 </script>
 
 <template>
@@ -39,7 +111,12 @@ function removeLastTag(event) {
     >+ Add New</label
   >
 
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input
+    type="checkbox"
+    id="my-modal-3"
+    class="modal-toggle"
+    v-model="isOpenModal"
+  />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -56,7 +133,7 @@ function removeLastTag(event) {
       </nav>
 
       <main class="modal-box-inner-departement">
-        <form>
+        <form @submit.prevent="saveDepartement">
           <div class="w-full">
             <div class="mb-6 w-full px-4">
               <label
@@ -67,10 +144,12 @@ function removeLastTag(event) {
               <select
                 class="bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
+                v-model="selectedCompany"
               >
                 <option disabled selected>Company</option>
-                <option>Company A</option>
-                <option>Company B</option>
+                <option v-for="company in Company" :value="company.id">
+                  {{ company.company_name }}
+                </option>
               </select>
             </div>
           </div>
@@ -87,6 +166,7 @@ function removeLastTag(event) {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Name Departement"
               required
+              v-model="nameDepartement"
             />
           </div>
 
@@ -97,29 +177,30 @@ function removeLastTag(event) {
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Cost Center<span class="text-red">*</span></label
               >
-              <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              <input
+                type="text"
+                name="name"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Cost Center"
                 required
-              >
-                <option disabled selected>Cost Center</option>
-                <option>Cost Center A</option>
-                <option>Cost Center B</option>
-              </select>
+                v-model="costCenter"
+              />
             </div>
+
             <div class="mb-6 w-full ml-6">
               <label
-                for="status"
+                for="profit"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Status<span class="text-red">*</span></label
+                >Profit Center<span class="text-red">*</span></label
               >
-              <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              <input
+                type="text"
+                name="name"
+                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Profit Center"
                 required
-              >
-                <option disabled selected>Status</option>
-                <option>Active</option>
-                <option>Non Active</option>
-              </select>
+                v-model="profitCenter"
+              />
             </div>
           </div>
 
@@ -133,25 +214,28 @@ function removeLastTag(event) {
               <select
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
+                v-model="selectedGlAccount"
               >
                 <option disabled selected>Account</option>
-                <option>Account A</option>
-                <option>Account B</option>
+                <option v-for="account in GlAccount" :value="account.id">
+                  {{ account.gl_account }}
+                </option>
               </select>
             </div>
             <div class="mb-6 w-full ml-6">
               <label
-                for="profit"
+                for="status"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Profit Center<span class="text-red">*</span></label
+                >Status<span class="text-red">*</span></label
               >
               <select
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
+                v-model="status"
               >
-                <option disabled selected>Profit Center</option>
-                <option>Profit A</option>
-                <option>Profit B</option>
+                <option disabled selected>Status</option>
+                <option>Active</option>
+                <option>Non Active</option>
               </select>
             </div>
           </div>
@@ -164,28 +248,12 @@ function removeLastTag(event) {
                 >Division<span class="text-red">*</span></label
               >
               <div
-                class="block bg-white w-full lg:w-[220px] md:w-56 border border-slate-300 rounded-md shadow-sm"
+                class="block bg-white w-full lg:w-[220px] md:w-52 border border-slate-300 rounded-md shadow-sm"
               >
-                <div
-                  v-for="(tag, index) in tags"
-                  :key="tag"
-                  class="h-[30px] bg-[#e4e4e4] my-1 rounded-md text-center items-center font-JakartaSans font-medium text-sm mx-2"
-                >
-                  <p class="pt-1">
-                    {{ tag }}
-                    <span
-                      @click="removeTag(index)"
-                      class="items-center cursor-pointer pl-10"
-                      >x</span
-                    >
-                  </p>
-                </div>
-                <input
-                  type="text"
-                  placeholder="Input Division"
-                  class="tag-input__text w-full px-2 text-sm font-medium leading-[38px] font-JakartaSans focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                  @keydown="addTag"
-                  @keydown.delete="removeLastTag"
+                <vue3-tags-input
+                  :tags="tags"
+                  placeholder="enter some tags"
+                  @on-tags-changed="handleChangeTag"
                 />
               </div>
             </div>
@@ -199,10 +267,12 @@ function removeLastTag(event) {
               <select
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
+                v-model="departementHead"
               >
-                <option disabled selected>Nama</option>
-                <option>Nama A</option>
-                <option>Nama B</option>
+                <option disabled selected>Name</option>
+                <option v-for="name in Employee" :value="name.employee_name">
+                  {{ name.employee_name }}
+                </option>
               </select>
             </div>
           </div>
@@ -216,6 +286,7 @@ function removeLastTag(event) {
                 >Cancel</label
               >
               <button
+                type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Save
@@ -245,10 +316,5 @@ function removeLastTag(event) {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
-}
-
-.tag-input__text {
-  border: none;
-  outline: none;
 }
 </style>

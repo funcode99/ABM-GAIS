@@ -11,9 +11,11 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import departementdata from "@/utils/Api/reference/departementdata.js";
+import Swal from "sweetalert2";
 
-import { ref, onBeforeMount, computed } from "vue";
+import Api from "@/utils/Api";
+
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
@@ -22,6 +24,7 @@ const sidebar = useSidebarStore();
 const search = ref("");
 let sortedData = ref([]);
 const selectedCompany = ref("Company");
+let Company = ref("");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
@@ -95,7 +98,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = departementdata;
+  fetchDepartement();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -121,17 +124,72 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+});
+
+//get all departement
+const fetchDepartement = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/department/");
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+//delete departement
+const deleteDepartement = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/department/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Departement has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Ok",
+        });
+        fetchDepartement();
+      });
+    } else {
+      return;
+    }
+  });
+};
 </script>
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
@@ -151,7 +209,10 @@ const getSessionForSidebar = () => {
               Departement
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                @departement-saved="departement - saved"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -177,8 +238,8 @@ const getSessionForSidebar = () => {
                   v-model="selectedCompany"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.company }}
+                  <option v-for="company in Company" :value="company.id">
+                    {{ company.company_name }}
                   </option>
                 </select>
               </div>
@@ -292,7 +353,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -301,16 +362,16 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.name_departement }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.departement_name }}</td>
                     <td>{{ data.cost_center }}</td>
-                    <td>{{ data.status }}</td>
-                    <td>{{ data.name_departement_head }}</td>
+                    <td>{{ data.is_active }}</td>
+                    <td>{{ data.departement_head }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       />
-                      <button>
+                      <button @click="deleteDepartement(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>

@@ -84,12 +84,15 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.zona_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.zona_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
+    const zonaNameMatch =
+      item.zona_name.toLowerCase().indexOf(search.toLowerCase()) > -1;
+    const cityNameMatch =
+      item.city &&
+      item.city.some(
+        (city) =>
+          city.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1
+      );
+    return zonaNameMatch || cityNameMatch;
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
@@ -282,7 +285,18 @@ const deleteZona = async (id) => {
                     </td>
                     <td>{{ index + 1 }}</td>
                     <td>{{ data.zona_name }}</td>
-                    <td>{{ data.city_name }}</td>
+                    <!-- <td>{{ data.city_name }}</td> -->
+                    <td>
+                      <span
+                        v-for="(city, cityIndex) in data.city"
+                        :key="cityIndex"
+                      >
+                        {{ city.city_name }}
+                        <span v-if="cityIndex !== data.city.length - 1"
+                          >,
+                        </span>
+                      </span>
+                    </td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
