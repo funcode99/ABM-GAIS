@@ -314,6 +314,10 @@ let flightClass = ref('')
 let contactNo = ref('')
 let notesGuestAsTraveller = ref('')
 
+const resetRef = () => {
+  
+}
+
 </script>
 
 <template>
@@ -334,7 +338,7 @@ let notesGuestAsTraveller = ref('')
 
         <!-- modal title -->
         <nav class="sticky p-4 top-0 z-50 bg-[#015289]">
-          <label for="company-business-trip-request-modal" class="cursor-pointer absolute right-4">
+          <label @click="resetRef" for="company-business-trip-request-modal" class="cursor-pointer absolute right-4">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </label>
           <p class="font-JakartaSans text-2xl font-semibold text-white">New Request Trip</p>

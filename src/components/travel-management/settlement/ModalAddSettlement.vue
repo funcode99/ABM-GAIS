@@ -19,6 +19,7 @@ let titleArray = [
     {id: 1, title: 'Settlement Cash Advance'}
 ]
 
+let stepMinimum = 0
 let stepLength = 2
 let stepForm = ref(0)
 let CAOption = ref('CA Travel')
@@ -137,6 +138,12 @@ onBeforeMount(() => {
     fetchDetail()
 })
 
+const resetState = () => {
+    CANo.value = ''
+    reference.value = ''
+    stepForm.value = 0
+}
+
 </script>
 
 <template>
@@ -152,7 +159,7 @@ onBeforeMount(() => {
     <div class="modal-box relative">
       
         <div class="sticky top-0 z-50 bg-white py-4">
-            <label for="add-menu-modal" class="cursor-pointer absolute right-0">
+            <label @click="resetState" for="add-menu-modal" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </label>
             <p class="font-JakartaSans text-2xl font-semibold">New Settlement</p>
@@ -309,8 +316,7 @@ onBeforeMount(() => {
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
             <label
-            @click="stepForm--"
-            for="add-menu-modal"
+            @click="stepForm == stepMinimum ? '' : stepForm--"
             class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
                 Cancel
             </label>

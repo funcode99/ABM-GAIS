@@ -229,7 +229,7 @@
                           Disabled
                         </td>
                         <td class="flex flex-wrap gap-4 justify-center">
-                          <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon_path]" />
+                          <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon]" />
                           <ModalDelete @confirm-delete="deleteData(data.id)" />
                         </td>
                       </tr>

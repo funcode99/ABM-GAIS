@@ -10,6 +10,7 @@
 
   let formState = useFormEditStore()
 
+  // let isParentMenuCheckbox = ref(true)
   let statusMenu = ref(null)
   let idStatusMenu = ref(0)
 
@@ -119,11 +120,17 @@ const getMenuStatus = async () => {
               Icon<span class="text-red-star">*</span>
             </label>
 
-            <!-- :value="file.value" -->
-            <!-- v-model="file.value" -->
-            <input
-            :class="inputStylingClass"
-            @change="updatePhoto" :value="file.value" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+            <div class="flex flex-col">
+              <input
+              :class="inputStylingClass"
+              @change="updatePhoto" :value="file.value" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+  
+              <h1 class="text-left">
+                Your current icon = {{ file }}
+              </h1>
+
+            </div>
+
           </div>
   
         <div class="mb-3 text-left">

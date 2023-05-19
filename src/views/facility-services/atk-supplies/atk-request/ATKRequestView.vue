@@ -52,7 +52,7 @@ const buttonStyling = 'p-4 border border-[#8c8c8c] rounded-lg rounded-bl-3xl w-[
                 ATK Request<span
                   class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
                 >
-                  Request No. 1232312
+                  / Request No. 1232312
                 </span>
               </h1>
             </router-link>

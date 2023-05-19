@@ -1,10 +1,27 @@
 <script setup>
+
+import { ref } from 'vue'
+
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icondanger from "@/assets/icon-danger-circle.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+const emits = defineEmits(["unlockScrollbar"])
+
+let companyModal = ref('')
+let dateModal = ref('')
+let siteModal = ref('')
+
+let warehouseModal = ref('')
+let quantityOpnameModal = ref('')
+let itemModal = ref('')
+let brandModal = ref('')
+let adjusmentTypeModal = ref('')
+let UOMModal = ref('')
+let quantityModal = ref('')
+let remarksModal = ref('')
+
 </script>
 
 <template>
@@ -27,17 +44,17 @@ const emits = defineEmits(["unlockScrollbar"]);
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          Stock Opname
+          ATK Request
         </p>
       </nav>
 
       <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
         <img :src="icondanger" class="w-5 h-5" />
-        <p class="font-JakartaSans font-semibold text-lg">Stock Opname ATK Info</p>
+        <p class="font-JakartaSans font-semibold text-lg">Request Stock Out Info</p>
       </div>
 
-      <main class="modal-box-inner-brand pb-14">
-        <form>
+      <main class="modal-box-inner-brand pr-6 pb-14">
+        <div>
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
@@ -46,6 +63,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Company<span class="text-red">*</span></label
               >
               <input
+                v-modal="companyModal"
                 type="text"
                 name="company"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -55,13 +73,14 @@ const emits = defineEmits(["unlockScrollbar"]);
             </div>
             <div class="mb-6 w-full">
               <label
-                for="brand"
+                for="Date"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Date<span class="text-red">*</span></label
               >
               <input
+                v-model="dateModal"
                 type="text"
-                name="company"
+                name="date"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Brand"
                 required
@@ -77,8 +96,9 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Site<span class="text-red">*</span></label
               >
               <input
+                v-model="siteModal"
                 type="text"
-                name="company"
+                name="site"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Site"
                 required
@@ -94,6 +114,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Warehouse<span class="text-red">*</span></label
               >
               <select
+                v-model="warehouseModal"
                 class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 required
               >
@@ -102,6 +123,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 <option>Warehouse B</option>
               </select>
             </div>
+
             <div class="mb-6 w-full">
               <label
                 for="uom"
@@ -109,8 +131,9 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Quantity Opname<span class="text-red">*</span></label
               >
               <input
+                v-model="quantityOpnameModal"
                 type="text"
-                name="company"
+                name="quantity opname"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Quantity Opname"
                 required
@@ -126,8 +149,9 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Item<span class="text-red">*</span></label
               >
               <input
+                v-model="itemModal"
                 type="text"
-                name="company"
+                name="item"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Item"
                 required
@@ -140,6 +164,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Brand<span class="text-red">*</span></label
               >
               <input
+                v-model="brandModal"
                 type="text"
                 name="brand"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -157,6 +182,7 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Adjusment Type<span class="text-red">*</span></label
               >
               <input
+                v-model="adjusmentTypeModal"
                 type="text"
                 name="adjusment type"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -170,8 +196,9 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >UOM<span class="text-red">*</span></label
               >
               <input
+                v-model="UOMModal"
                 type="text"
-                name="company"
+                name="UOM"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="UOM"
                 required
@@ -182,11 +209,12 @@ const emits = defineEmits(["unlockScrollbar"]);
           <div class="flex justify-between px-6 items-start gap-2">
             <div class="mb-6 w-full">
               <label
-                for="id_item"
+                for="quantity"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Quantity<span class="text-red">*</span></label
               >
               <input
+                v-model="quantityModal"
                 type="text"
                 name="Quantity"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -196,11 +224,12 @@ const emits = defineEmits(["unlockScrollbar"]);
             </div>
             <div class="mb-6 w-full">
               <label
-                for="id_item"
+                for="remarks"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Remarks<span class="text-red">*</span></label
               >
               <textarea
+                v-model="remarksModal"
                 type="text"
                 name="Remarks"
                 class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -211,25 +240,19 @@ const emits = defineEmits(["unlockScrollbar"]);
           </div>
 
           <div class="flex justify-center py-2">
-            <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
-            >
+            <button class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue">
               Add
             </button>
           </div>
-        </form>
+
+        </div>
 
         <!-- INNER TABLE -->
-        <div class="inner-table px-6">
+        <div class="overflow-x-auto">
           <table class="table table-compact w-full text-center">
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
                 
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Warehouse
-                </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
@@ -240,30 +263,11 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >
                   Item Name
                 </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Adjusment Type
-                </th>
+
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
                  Quantity
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                 Quantity Opname
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                 Brand
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                 UOM
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -283,11 +287,6 @@ const emits = defineEmits(["unlockScrollbar"]);
                 <td class="border border-[#B9B9B9]"></td>
                 <td class="border border-[#B9B9B9]"></td>
                 <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">
                     <button>
@@ -302,6 +301,7 @@ const emits = defineEmits(["unlockScrollbar"]);
             </tbody>
           </table>
         </div>
+
       </main>
 
       <div class="sticky bottom-0 bg-white py-2">
@@ -326,7 +326,7 @@ const emits = defineEmits(["unlockScrollbar"]);
 
 .modal-box-inner-brand {
   height: 450px;
-  --tw-scale-x: 1;
+  --tw-scale-x: .9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
@@ -335,7 +335,7 @@ const emits = defineEmits(["unlockScrollbar"]);
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
-/*  */
+
 .inner-table {
   overflow-x: auto;
 }

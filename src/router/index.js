@@ -64,7 +64,7 @@ import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
 import StockInAtkList from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkList.vue"
 import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkView.vue"
-import ATKRequestList from '@/views/facility-services/atk-supplies/atk-request/ATK-request.vue'
+import ATKRequestList from '@/views/facility-services/atk-supplies/atk-request/ATK-Request.vue'
 import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/ATKRequestView.vue'
 import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
 import StockOpnameATKView from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKView.vue'
