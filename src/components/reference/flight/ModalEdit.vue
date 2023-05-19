@@ -23,6 +23,9 @@ const props = defineProps({
 const currentFlightClassName = ref(props.formContent[0]);
 
 const submitEdit = () => {
+  if (!formEditState.flight) {
+    formEditState.flight = {}; // Inisialisasi objek flight jika belum ada
+  }
   formEditState.flight.flightClassName = currentFlightClassName.value;
   isVisible.value = !isVisible.value;
 };
