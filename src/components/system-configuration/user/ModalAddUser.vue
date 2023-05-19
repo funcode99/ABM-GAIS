@@ -21,6 +21,9 @@
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
+  let approvalAuthoritiesName = ref(['PM', 'GA', 'HR', 'Treasury', 'Accounting', 'Atasan'])
+    let selected = ref()
+
 </script>
 
 <template>
@@ -124,34 +127,19 @@
             <label
                 for="name"
                 class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-                >Approval Authorities<span class="text-red">*</span></label
+                >Approval Authorities<span class="text-red">*</span> </label
             >
+
+            <!-- ambil value selected nya -->
             <div class="grid grid-cols-3">
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="PM" id="">
-                    <label for="">PM</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="GA" id="">
-                    <label for="">GA</label>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" name="HR" id="">
-                    <label for="">HR</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Treasury" id="">
-                    <label class="" for="">Treasury</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Accounting" id="">
-                    <label class="" for="">Accounting</label>
-                </div>
-                <div class="flex items-center gap-2">                
-                    <input type="checkbox" name="Atasan" id="">
-                    <label class="" for="">Atasan</label>
-                </div>
+              <div v-for="name in approvalAuthoritiesName">
+                  <div class="flex items-center gap-2" >
+                    <input type="checkbox" :id="name" @click="selected = name" :checked="selected === name" />
+                    <label :for="name">{{ name }}</label>
+                  </div>
+              </div>
             </div>
+
           </div>
 
           <div class="mb-6 flex flex-col gap-2">

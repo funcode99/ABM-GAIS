@@ -11,7 +11,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
 
-import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue";
+import ModalAddATKRequest from "@/components/facility-services/atk-supplies/stock-atk-opname/ModalAddOpname.vue";
 
 import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
@@ -79,11 +79,11 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 1, title: "Created Date", jsonData: "no" },
   { Id: 2, title: "Document No", jsonData: "document_no" },
-  { Id: 3, title: "Date", jsonData: "date" },
-  { Id: 4, title: "Warehouse", jsonData: "warehouse" },
-  { Id: 5, title: "Item Count", jsonData: "item_count" },
+  { Id: 3, title: "Requestor", jsonData: "date" },
+  { Id: 4, title: "Item Count", jsonData: "warehouse" },
+  { Id: 5, title: "Status", jsonData: "item_count" },
   { Id: 6, title: "Actions" },
 ];
 
@@ -134,6 +134,7 @@ const getSessionForSidebar = () => {
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
+        
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -144,10 +145,11 @@ const getSessionForSidebar = () => {
         ]"
       >
         <div class="bg-white rounded-t-xl custom-card">
+
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
             <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
-              Stock In ATK
+              Stock Opname ATK
             </p>
 
             <div class="flex justify-between gap-4 items-center">
@@ -157,7 +159,7 @@ const getSessionForSidebar = () => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAddATKRequest @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -173,8 +175,9 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-              
-              <div>
+
+
+                <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
@@ -299,7 +302,7 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                class="table-auto table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
                   class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -395,7 +398,9 @@ const getSessionForSidebar = () => {
           </div>
         </div>
       </div>
+
       <Footer class="fixed bottom-0 left-0 right-0" />
+
     </div>
   </div>
 </template>

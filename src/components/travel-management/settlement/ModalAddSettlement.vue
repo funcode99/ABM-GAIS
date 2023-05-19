@@ -4,8 +4,13 @@ import multiStepCircle from '@/components/molecules/multiStepCircle.vue'
 import iconClose from "@/assets/navbar/icon_close.svg";
 
 // cuma gara2 lupa import ref sidebar gua error terus anjing
-import { ref } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import Api from '@/utils/Api'
+
+let instanceArray = []
+let sortedData = ref([])
+let sortedDataNonTravel = ref([])
+let sortedDataDetail = ref([])
 
 let menuName = ref('')
 let idStatusMenu = ref('Active')
@@ -101,6 +106,37 @@ const tableBodyDetailsItem = [
     }
 ]
 
+
+const fetch = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/cash_advance/travel')      
+      instanceArray = api.data.data
+      sortedData.value = instanceArray
+}
+
+const fetchNonTravel = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/cash_advance/non_travel')      
+      instanceArray = api.data.data
+      sortedDataNonTravel.value = instanceArray
+}
+
+const fetchDetail = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/cash_advance/get_detail')      
+      instanceArray = api.data.data
+      sortedDataDetail.value = instanceArray
+}
+
+onBeforeMount(() => {
+    fetch()
+    fetchNonTravel()
+    fetchDetail()
+})
+
 </script>
 
 <template>
@@ -160,15 +196,15 @@ const tableBodyDetailsItem = [
                             </tr>
                     </thead>
                     <tbody>
-                            <tr v-for="data in tableBodyCATravel" :key="data.id">
+                            <tr v-for="(data, index) in sortedData" :key="data.id">
                                 <td>
-                                    {{ data.CANo }}
+                                    {{ data.no_ca }}
                                 </td>
                                 <td>
                                     {{ data.reference }}
                                 </td>
                                 <td>
-                                    {{ data.total }}
+                                    {{ data.grand_total }}
                                 </td>
                                 <td>
                                     {{ data.status }}
@@ -192,7 +228,7 @@ const tableBodyDetailsItem = [
                             </tr>
                     </thead>
                     <tbody>
-                            <tr v-for="data in tableBodyCANonTravel" :key="data.id">
+                            <tr v-for="data in sortedDataNonTravel" :key="data.id">
                                 <td>
                                     {{ data.CANo }}
                                 </td>
@@ -237,9 +273,9 @@ const tableBodyDetailsItem = [
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="data in tableBodyDetailsItem" :key="data.id">
+                            <tr v-for="data in sortedDataDetail" :key="data.id">
                                 <td>    
-                                    {{ data.item }}
+                                    {{ data.item_name }}
                                 </td>
                                 <td>
                                     {{ data.frequency }}

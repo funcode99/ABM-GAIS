@@ -139,7 +139,7 @@
           id_code_document: formEditState.approval.codeDocumentId,
         })
         fetch()
-    }
+  }
 
 const deleteData = (event) => {
       console.log(event)
@@ -164,7 +164,6 @@ const deleteData = (event) => {
     <div class="flex w-screen content mt-[115px]">
 
       <Sidebar class="flex-none" />
-
 
       <div class="bg-[#e4e4e6] pb-20 pt-10 pr-5 pl-5 w-screen  clean-margin ease-in-out duration-500"
           :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
