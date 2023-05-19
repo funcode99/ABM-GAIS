@@ -18,6 +18,7 @@
     "daisyui": "^2.51.5",
     "datatables.net-vue3": "^2.1.0",
     "dotenv": "^16.0.3",
+    "exceljs": "^4.3.0",
     "jw-vue-pagination": "^1.0.3",
     "pinia": "^2.0.32",
     "pinia-plugin-persistedstate": "^3.1.0",

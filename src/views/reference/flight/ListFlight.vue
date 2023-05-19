@@ -13,6 +13,8 @@ import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
+import { Workbook } from "exceljs";
+
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useFormEditStore } from "@/stores/reference/flight/edit-modal.js";
@@ -176,6 +178,51 @@ const deleteFlight = async (id) => {
     }
   });
 };
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Flight Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "Flight Class" },
+    { title: "Created At" },
+    { title: "Created By" },
+    { title: "Updated At" },
+    { title: "Updated By" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    // Menambahkan nomor urutan
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+
+    // Menambahkan data dari properti lainnya
+    Object.keys(data).forEach((key, columnIndex) => {
+      worksheet.getCell(rowIndex + 2, columnIndex + 2).value = data[key];
+    });
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "flight_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 </script>
 
 <template>
@@ -212,6 +259,7 @@ const deleteFlight = async (id) => {
               />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
