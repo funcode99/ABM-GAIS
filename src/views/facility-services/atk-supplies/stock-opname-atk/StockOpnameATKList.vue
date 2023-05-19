@@ -11,7 +11,8 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
 
-import ModalAddATKRequest from "@/components/facility-services/atk-supplies/stock-atk-opname/ModalAddOpname.vue";
+// import ModalAddATKRequest from "@/components/facility-services/atk-supplies/stock-atk-opname/ModalAddOpname.vue";
+import ModalAddOpname from "@/components/facility-services/atk-supplies/stock-opname-atk/ModalAddOpname.vue";
 
 import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
@@ -134,7 +135,6 @@ const getSessionForSidebar = () => {
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
-        
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -145,7 +145,6 @@ const getSessionForSidebar = () => {
         ]"
       >
         <div class="bg-white rounded-t-xl custom-card">
-
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
             <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
@@ -159,7 +158,9 @@ const getSessionForSidebar = () => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAddATKRequest @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAddOpname
+                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+              />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -175,9 +176,7 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-
-
-                <div>
+              <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
@@ -400,7 +399,6 @@ const getSessionForSidebar = () => {
       </div>
 
       <Footer class="fixed bottom-0 left-0 right-0" />
-
     </div>
   </div>
 </template>

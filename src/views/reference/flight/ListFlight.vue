@@ -302,13 +302,13 @@ const deleteFlight = async (id) => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedDataReactive
+                    v-for="(data, index) in sortedData
                       .slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )
                       .reverse()"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
