@@ -29,6 +29,18 @@
 
     let editRoleDataId = ref()
 
+    //for paginations
+    let showingValue = ref(1);
+    let pageMultiplier = ref(10);
+    let pageMultiplierReactive = computed(() => pageMultiplier.value);
+    let paginateIndex = ref(0);
+
+    //for paginations
+    const onChangePage = (pageOfItem) => {
+      paginateIndex.value = pageOfItem - 1;
+      showingValue.value = pageOfItem;
+    }
+
     const deleteData = (event) => {
       Api.delete(`/role/delete_data/${event}`)
       fetch()
@@ -43,7 +55,7 @@
     const editRole = async (data) => {
         editRoleDataId.value = data
         setTimeout(callEditApi, 500)
-  }
+    }
 
     const callEditApi = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -68,8 +80,8 @@
     }
 
     const tableHead = [
-        {Id: 1, title: 'No', jsonData: 'No'},
-        {Id: 2, title: 'User Role', jsonData: 'UserRole'},
+        {Id: 1, title: 'No'},
+        {Id: 2, title: 'User Role', jsonData: 'role_name'},
         {Id: 3, title: 'Actions'}
     ]
 
@@ -104,9 +116,7 @@
     const filteredItems = (search) => {
       sortedData.value = instanceArray
         const filteredR = sortedData.value.filter(item => {
-          // console.log(item.No)
-          // harus diganti nama json nya
-          return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role.toLowerCase().indexOf(search.toLowerCase()) > -1
+          return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role_name.toLowerCase().indexOf(search.toLowerCase()) > -1
         })
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
@@ -130,13 +140,12 @@
       <Sidebar class="flex-none" /> 
         
       <!-- slate box -->
-      <!-- lengthCounter < 6 ? 'backgroundHeight' : '',  -->
       <div class="bg-[#e4e4e6] pt-10 pb-20 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"
       :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
       
         <!-- table box -->
-        <TableTopBar :title="'Role'" @increase-role="addRole" modalAddType="role" />
+        <TableTopBar :title="'Role'" @increase-role="addRole" @do-search="filteredItems" modalAddType="role" />
 
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
@@ -170,7 +179,7 @@
                     {{ data.role_name }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
-                    <ModalMenuAccessRole :roleId="data.id" />
+                    <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" />
                     <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name]" />
                     <ModalDelete @confirm-delete="deleteData(data.id)" />
                   </td>
@@ -182,6 +191,24 @@
         </div>
 
         </div>
+
+          <!-- PAGINATION -->
+          <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
+            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+              of {{ sortedData.length }} entries
+            </p>
+            <vue-awesome-paginate
+              :total-items="sortedData.length"
+              :items-per-page="parseInt(pageMultiplierReactive)"
+              :on-click="onChangePage"
+              v-model="showingValue"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
+            />
+          </div>
 
       </div>
 

@@ -57,11 +57,11 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'No'},
-      {Id: 2, title: 'Name', jsonData: 'Name'},
-      {Id: 3, title: 'Prefix', jsonData: 'Prefix'},
-      {Id: 4, title: 'Suffix', jsonData: 'Suffix'},
-      {Id: 5, title: 'Sequence Size', jsonData: 'SequenceSize'},
+      {Id: 1, title: 'No'},
+      {Id: 2, title: 'Name', jsonData: 'sequence_name'},
+      {Id: 3, title: 'Prefix', jsonData: 'prefix'},
+      {Id: 4, title: 'Suffix', jsonData: 'suffix'},
+      {Id: 5, title: 'Sequence Size', jsonData: 'sequence_size'},
       {Id: 6, title: 'Actions'}
     ]
 
@@ -85,7 +85,7 @@
     const filteredItems = (search) => {
       sortedData.value = instanceArray
         const filteredR = sortedData.value.filter(item => {
-          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+          return item.sequence_name.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.prefix.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.suffix.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.sequence_size.toString().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
@@ -178,11 +178,11 @@
 
         <!-- h-full -->
         <!-- lengthCounter < 6 ? 'backgroundHeight' : '',  -->
-        <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin ease-in-out duration-500" 
+        <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500" 
         :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
           >
   
-            <TableTopBar :title="'Sequence'" @increase-sequence="addNewSequence" @change-showing="fillPageMultiplier" modalAddType="sequence" />
+            <TableTopBar :title="'Sequence'" @do-search="filteredItems" @increase-sequence="addNewSequence" @change-showing="fillPageMultiplier" modalAddType="sequence" />
             
             <!-- actual table -->
             <!-- scrollbar horizontal juga ada disini -->

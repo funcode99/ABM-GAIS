@@ -14,8 +14,10 @@
 
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormAddStore } from '@/stores/add-modal.js'
+    import { useFormEditStore } from '@/stores/edit-modal.js'
     const sidebar = useSidebarStore()
     const formState = useFormAddStore()
+    const formEditState = useFormEditStore()
     
     const search = ref('')
     let sortedData = ref([])
@@ -55,10 +57,10 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'No'},
-      {Id: 2, title: 'Username', jsonData: 'Username'},
-      {Id: 3, title: 'User Role', jsonData: 'UserRole'},
-      {Id: 4, title: 'Approval Authoritites', jsonData: 'ApprovalAuthorities'},
+      {Id: 1, title: 'No'},
+      {Id: 2, title: 'Username', jsonData: 'username'},
+      {Id: 3, title: 'User Role', jsonData: 'id_role'},
+      {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'},
       {Id: 5, title: 'Actions'}
     ]
 
@@ -82,7 +84,7 @@
     const filteredItems = (search) => {
       sortedData.value = instanceArray
         const filteredR = sortedData.value.filter(item => {
-          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+          return item.username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
       lengthCounter = sortedData.value.length
@@ -129,7 +131,6 @@
         const api = await Api.post('/users/store', 
         {
           username: formState.user.username,
-          name: formState.user.username,
           email: formState.user.email,
           password: formState.user.password,
           is_employee: formState.user.isEmployee,
@@ -137,6 +138,7 @@
           id_approval_auth: formState.user.approvalAuthId,
           id_company: formState.user.companyId,
           id_site: formState.user.siteId,
+          name: formState.user.fullname,
         })
         fetch()
     }
@@ -151,14 +153,15 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.post(`/users/update_data/${editDataUserId.value}`, 
         {
-          username: formState.user.username,
-          email: formState.user.email,
-          password: formState.user.password,
-          is_employee: 1,
-          id_role: 1,
-          id_approval_auth: 1,
-          id_company: 1,
-          id_site: 1,
+          username: formEditState.user.username,
+          nama: formEditState.user.fullname,
+          email: formEditState.user.email,
+          password: formEditState.user.password,
+          is_employee: formEditState.user.isEmployee,
+          id_role: formEditState.user.roleId,
+          id_approval_auth: formEditState.user.approvalAuthId,
+          id_company: formEditState.user.companyId,
+          id_site: formEditState.user.siteId,
         })
         fetch()
     }
@@ -180,7 +183,7 @@
 
       <Sidebar class="flex-none" />    
         
-      <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin ease-in-out duration-500" 
+      <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500" 
         :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
           <TableTopBar :title="'User'" @increase-user="addNewUser" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
@@ -202,8 +205,8 @@
 
                     <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
                       <span class="flex justify-center items-center gap-1">
-                        {{ data.title }} 
-                        <button class="">
+                        {{ data.title }}
+                        <button>
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </span>
@@ -237,7 +240,7 @@
                         {{ data.id_approval_auth }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[data.username, data.email, data.id_role, data.id_approval_auth]" />
+                        <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[data.username, data.email, data.id_approval_auth, data.id_role, data.id_company, data.id_site, data.is_employee, data.name]" />
                         <ModalDelete @confirm-delete="deleteData(data.id)" />
                       </td>
                     </tr>

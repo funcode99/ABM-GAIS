@@ -1,8 +1,5 @@
 <script setup>
   import { Modal } from 'usemodal-vue3'
-  let isVisible = ref(false)
-  let type = ''
-  let modalPaddingHeight = 50
   
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
@@ -21,6 +18,10 @@ import Api from '@/utils/Api'
   const props = defineProps({
     formContent: Array
   })
+
+  let isVisible = ref(false)
+  let type = ''
+  let modalPaddingHeight = 50
 
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])
@@ -47,12 +48,13 @@ import Api from '@/utils/Api'
   }
 
   const saveField = () => {
+      formEditState.approval.matrixName = matrixName.value
+      formEditState.approval.companyId = company.value
+      formEditState.approval.menuId = menu.value
+      formEditState.approval.codeDocumentId = document.value
+      formEditState.approval.arrayDetail = approverLines.value
 
-          formEditState.approval.matrixName = matrixName.value
-          formEditState.approval.companyId = company.value
-          formEditState.approval.menuId = menu.value
-          formEditState.approval.codeDocumentId = document.value
-          isVisible.value = !isVisible.value
+      isVisible.value = !isVisible.value
   }
 
   let currentAuthoritiesId = ref()

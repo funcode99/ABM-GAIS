@@ -1,10 +1,8 @@
 <script setup>
-    // import { ref } from 'vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
-
 
     // import untuk approval table
     import { ref, computed, onBeforeMount } from 'vue'
@@ -17,6 +15,7 @@
     import { useFormAddStore } from '@/stores/add-modal.js'
     import { useFormEditStore } from '@/stores/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
+
     const sidebar = useSidebarStore()
     const formEditState = useFormEditStore()
     const formState = useFormAddStore()
@@ -56,9 +55,9 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'No'},
-      {Id: 2, title: 'Matrix Name', jsonData: 'MatrixName'},
-      {Id: 3, title: 'Menu', jsonData: 'Menu'},
+      {Id: 1, title: 'No'},
+      {Id: 2, title: 'Matrix Name', jsonData: 'approval_name'},
+      {Id: 3, title: 'Menu', jsonData: 'menu'},
       {Id: 4, title: 'Actions'}
     ]
 
@@ -74,12 +73,10 @@
 
     const fetch = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
-            
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get('/approval/get_approval')
         instanceArray = api.data.data
         sortedData.value = instanceArray
-
     }
 
     // watch(ref, callback)
@@ -90,14 +87,11 @@
     })
 
     const filteredItems = (search) => {
-        console.log('isi search ' + search)
         sortedData.value = instanceArray
           const filteredR = sortedData.value.filter(item => {
             
-            // console.log(search.toLowerCase())
             // pastikan data yang di filter ada di sortedData
-            console.log(item.approval_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-            return item.approval_name.toLowerCase().indexOf(search.toLowerCase()) > -1
+            return item.approval_name.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.menu.toLowerCase().indexOf(search.toLowerCase()) > -1
           })
           sortedData.value = filteredR
           onChangePage(1)
@@ -137,11 +131,12 @@
           id_company: formEditState.approval.companyId,
           id_menu: formEditState.approval.menuId,
           id_code_document: formEditState.approval.codeDocumentId,
+          array_detail: formEditState.approval.arrayDetail
         })
         fetch()
-  }
+    }
 
-const deleteData = (event) => {
+    const deleteData = (event) => {
       console.log(event)
       Api.delete(`/approval/delete_data_approval/${event}`)
       fetch()
@@ -150,7 +145,7 @@ const deleteData = (event) => {
       } else {
         fetch()
       }
-}
+    }
   
 </script>
 

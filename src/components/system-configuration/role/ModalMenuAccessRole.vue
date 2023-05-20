@@ -9,7 +9,8 @@
   import Api from '@/utils/Api'
 
   const props = defineProps({
-    roleId: Number
+    roleId: Number,
+    roleAccess: Array
   })
 
   let isVisible = ref(false)
@@ -26,8 +27,8 @@ const menuHeadTable = [
 ]
 
 
-let writeValue = ref([])
-let readValue = ref([])
+let writeValue = ref(props.roleAccess[0] == undefined ? [] : props.roleAccess[0])
+let readValue = ref(props.roleAccess[1] == undefined ? [] : props.roleAccess[1])
 
 const fetch = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
@@ -61,7 +62,7 @@ const submitAccess = async () => {
 
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
         
-    <nav class="sticky top-0 z-50 bg-white py-4 px-20">
+    <nav class="sticky top-0 z-50 bg-white py-4 px-10">
         <button @click="isVisible = false" for="menu-access-role-modal" class="cursor-pointer absolute right-[80px]">
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </button>
@@ -69,7 +70,7 @@ const submitAccess = async () => {
         <div className="divider m-0"></div>
     </nav>
 
-    <div class="mb-3 overflow-x-auto px-20">
+    <div class="mb-3 overflow-x-auto px-10">
 
         <table class="table w-full">
           
@@ -110,7 +111,7 @@ const submitAccess = async () => {
         
     </div>
 
-    <div class="fixed right-4 bg-white px-20 pt-2 pb-4">
+    <div class="fixed right-4 bg-white px-10 pt-2 pb-4">
         <div className="divider m-0 pb-4"></div>
         <div class="flex justify-end gap-4">
           <button
@@ -124,7 +125,9 @@ const submitAccess = async () => {
           @click="submitAccess"
           class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
           >
+          <button @click="isVisible = false">
             Save
+          </button>
           </button>
         </div>
     </div>
