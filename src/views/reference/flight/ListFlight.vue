@@ -348,8 +348,8 @@ const exportToExcel = () => {
                         >
                           {{ data.title }}
                         </p>
-                        <button>
-                          <img :src="arrowicon" class="w-[9px] h-3 mr-2" />
+                        <button v-if="data.jsonData" class="ml-2">
+                          <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </div>
                     </th>
