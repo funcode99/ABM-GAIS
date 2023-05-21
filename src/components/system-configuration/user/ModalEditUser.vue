@@ -1,38 +1,87 @@
 <script setup>
-    import { ref, watch } from 'vue'
+    import { ref, watch, onBeforeMount } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import iconClose from "@/assets/navbar/icon_close.svg"
     import editIcon from "@/assets/navbar/edit_icon.svg"
+    import Api from '@/utils/Api'
+
     import { useFormEditStore } from '@/stores/edit-modal.js'
 
+    let formEditState = useFormEditStore()
 
     let isVisible = ref(false)
     let type = '' 
     let modalPaddingHeight = 50
 
-    let formEditState = useFormEditStore()
-
     const props = defineProps({
       formContent: Array
     })
-
+    
+    let password = ref('')
     let username = ref(props.formContent[0])
     let email = ref(props.formContent[1])
-    let password = ref('')
-    let role = ref('Administrator')
+    let selected = ref([props.formContent[2]])
+    let role = ref(props.formContent[3])
+    let company = ref(props.formContent[4])
+    let location = ref(props.formContent[5])
+    let isEmployee = ref(props.formContent[6])
+    let fullname = ref(props.formContent[7])
 
     const editUser = () => {
-    formEditState.user.username = username.value,
-    formEditState.user.email = email.value
-    formEditState.user.password = password.value
-    formEditState.user.roleId = 1
-    isVisible.value = false
+      formEditState.user.username = username.value,
+      formEditState.user.email = email.value
+      formEditState.user.password = password.value
+      formEditState.user.roleId = role.value
+      formEditState.user.approvalAuthId = selected.value
+      formEditState.user.companyId = company.value
+      formEditState.user.siteId = location.value
+      formEditState.user.fullname = fullname.value
+      isVisible.value = false
     }
 
-    let approvalAuthoritiesName = ref(['PM', 'GA', 'HR', 'Treasury', 'Accounting', 'Atasan'])
-    let selected = ref()
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
-    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  // let approvalAuthoritiesName = ref(['PM', 'GA', 'Treasury', 'Accounting', 'Atasan', 'HR'])
+  let responseRoleArray = ref([])
+  let responseCompanyArray = ref([])
+  let responseSiteArray = ref([])
+  let responseEmployeeArray = ref([])
+  let responseAuthoritiesArray = ref([])
+
+  const fetchRole = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/role/get')
+    responseRoleArray.value = api.data.data
+  }
+
+  const fetchCompany = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/company/get')
+    responseCompanyArray.value = api.data.data
+  }
+
+  const fetchSite = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/site')
+    responseSiteArray.value = api.data.data
+  }
+
+  const fetchAuthorities = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/approval/get_approval_type')
+    responseAuthoritiesArray.value = api.data.data
+  }
+
+  onBeforeMount(() => {
+    fetchRole()
+    fetchCompany()
+    fetchSite()
+    fetchAuthorities()
+  })
 
 </script>
 
@@ -54,18 +103,18 @@
         <div class="px-8 text-left modal-box-inner">
 
           <div class="mb-6">
-          <span>Employee?<span class="text-red-star">*</span></span>
-          <div class="flex gap-2 pt-2">
-            <div class="flex gap-1">
-              <!-- fill the same name value for individual select -->
-              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-              <label for="">Yes</label>
+            <span>Employee?<span class="text-red-star">*</span></span>
+            <div class="flex gap-2 pt-2">
+              <div class="flex gap-1">
+                <!-- fill the same name attribute for individual select -->
+                <input type="radio" name="employee"  v-model="isEmployee" :value="true" class="border border-black w-[26px] h-[26px]">
+                <label for="">Yes</label>
+              </div>
+              <div class="flex gap-1">
+                <input type="radio" name="employee"  v-model="isEmployee" :value="false" class="border border-black w-[26px] h-[26px]">
+                <label for="">No</label>
+              </div>
             </div>
-            <div class="flex gap-1">
-              <input type="radio" name="employee" id="" class="border border-black w-[26px] h-[26px]">
-              <label for="">No</label>
-            </div>
-          </div>
           </div>
 
           <div class="mb-6">
@@ -73,12 +122,19 @@
                       Username<span class="text-red">*</span>
               </label>
               <input
+                  v-if="!isEmployee"
                   v-model="username"
                   type="text"
                   placeholder="Username"
                   :class="inputStylingClass"
                   required
               />
+
+              <select v-if="isEmployee" v-model="username" :class="inputStylingClass">
+                <option v-for="data in responseEmployeeArray" :key="data.id" :value="data.employee_name">
+                  {{ data.employee_name }}
+                </option>
+              </select>
           </div>
 
           <div class="mb-6">
@@ -111,20 +167,30 @@
 
           <div class="mb-6 flex flex-col text-left justify-start">
           <span
-            for="company"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            id="company"
-            >User Role<span class="text-red">*</span></span
-          >
+            >User Role<span class="text-red">*</span>
+          </span>
           <select :class="inputStylingClass" v-model="role" required>
-            <option disabled selected hidden>Role</option>
-            <option>Administrator</option>
-            <option>Super Admin</option>
-            <option>Admin</option>
-            <option>Receptionist</option>
-            <option>Employee</option>
-            <option>Driver</option>
+            <option v-for="data in responseRoleArray" :selected="data.id == role ? true : false" :key="data.id" :value="data.id">
+              {{ data.role_name }}
+            </option>
           </select>
+          </div>
+
+          <div class="mb-6 flex flex-col text-left justify-start">
+            <span
+              for="company"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              id="company">
+              Full Name<span class="text-red">*</span>
+            </span>
+            <input
+                  v-model="fullname"
+                  type="text"
+                  placeholder="Full Name"
+                  :class="inputStylingClass"
+                  required
+              />
           </div>
 
           <div class="mb-6">
@@ -137,20 +203,30 @@
 
             <!-- ambil value selected nya -->
             <div class="grid grid-cols-3">
-              <div v-for="name in approvalAuthoritiesName">
-                  <div class="flex items-center gap-2" >
-                    <input type="checkbox" :id="name" @click="selected = name" :checked="selected === name" />
-                    <label :for="name">{{ name }}</label>
+                <div v-for="name in responseAuthoritiesArray" 
+                :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
+                :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''"
+                >
+                  <div class="flex items-center gap-2" 
+                :class="name.auth_name == 'HR' && role[1] == 'Admin' ? 'hidden' : ''"
+                    >
+                      <input
+                      type="checkbox" 
+                      :id="name.auth_name" 
+                      @click="selected = name.id" 
+                      :checked="selected === name.id" 
+                      />
+                      <label>{{ name.auth_name }}</label>
                   </div>
-              </div>
+                </div>
             </div>
           </div>
 
           <div class="mb-6 flex flex-col gap-2">
-              <span class="text-sm">Company <span class="text-red-star">*</span></span>
+              <span class="text-sm">Company <span class="text-red-star">*</span> </span>
               <select v-model="company" :class="inputStylingClass">
-                <option>
-                  Company A
+                <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" :selected="data.id == company ? true : false" >
+                  {{ data.company_name }}
                 </option>
               </select>
           </div>
@@ -158,8 +234,8 @@
           <div class="mb-6 flex flex-col gap-2">
               <span class="text-sm">Location <span class="text-red-star">*</span></span>
               <select v-model="location" :class="inputStylingClass">
-                <option>
-                  Location A
+                <option v-for="data in responseSiteArray" :key="data.id" :value="data.id" >
+                    {{ data.site_name }}
                 </option>
               </select>
           </div>

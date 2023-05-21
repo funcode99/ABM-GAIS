@@ -1,8 +1,5 @@
 <script setup>
   import { Modal } from 'usemodal-vue3'
-  let isVisible = ref(false)
-  let type = ''
-  let modalPaddingHeight = 50
   
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
@@ -10,7 +7,7 @@ import editIcon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
  
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, onMounted } from 'vue'
 
 import { useFormEditStore } from '@/stores/edit-modal.js'
 
@@ -22,6 +19,10 @@ import Api from '@/utils/Api'
     formContent: Array
   })
 
+  let isVisible = ref(false)
+  let type = ''
+  let modalPaddingHeight = 50
+
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])
   let menu = ref(props.formContent[2])
@@ -29,46 +30,54 @@ import Api from '@/utils/Api'
 
   let authorities = ref('')
 
-  let approverLines = ref(props.formContent[4])
+  let approverLines = ref(props.formContent[4] || [])
   let addAuthoritiesData = ref([])
 
   let levelValue = ref()
+
+  let dropdownRemoveList = ref([])
 
   const fetchApproverAuthorities = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/approval/get_approval_type')
       instanceArray = api.data.data 
-      // console.log(instanceArray) 
       addAuthoritiesData.value = instanceArray
       authorities.value = addAuthoritiesData.value[0].level
       levelValue.value = addAuthoritiesData.value[0].level
   }
 
   const saveField = () => {
-          // console.log(approverLines.value)
-          formEditState.approval.matrixName = matrixName.value
-          formEditState.approval.companyId = company.value
-          formEditState.approval.menuId = menu.value
-          formEditState.approval.codeDocumentId = document.value
-          isVisible.value = !isVisible.value
+      formEditState.approval.matrixName = matrixName.value
+      formEditState.approval.companyId = company.value
+      formEditState.approval.menuId = menu.value
+      formEditState.approval.codeDocumentId = document.value
+      formEditState.approval.arrayDetail = approverLines.value
+
+      isVisible.value = !isVisible.value
   }
 
   let currentAuthoritiesId = ref()
+  let currentApproverLinesIndex = ref()
 
   const addField = (fieldType, isi) => {
 
-      addAuthoritiesData.value = addAuthoritiesData.value.filter((item) => item.id != isi)
+          if(isi) {
+            dropdownRemoveList.value.push(isi)
+          }
 
           fieldType.push({
             id_approval_auth : authorities.value,
             level: levelValue.value,
             // approverName : ''
           })
+
   }
 
   const removeField = (index, fieldType) => {
           fieldType.splice(index, 1)
+          dropdownRemoveList.value.splice(index-1, 1)
+          dropdownRemoveList.value.splice(index+1, 1)
   }
 
   const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
@@ -199,19 +208,19 @@ import Api from '@/utils/Api'
               <th class="relative">
                 <span class="flex justify-center">Level</span>
                 <button class="absolute right-0 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
+                  <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                 </button>
               </th>
               <th class="relative">
                 <span class="flex justify-center">Authorities</span>
                 <button class="absolute right-0 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
+                  <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                 </button>
               </th>
               <th class="relative">
                 <span class="flex justify-center">Approver Name</span>
                 <button class="absolute right-1 top-0 bottom-0">
-                  <img :src="arrowicon" class="w-[9px] h-3" />
+                  <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                 </button>
               </th>
               <th class="flex justify-center">Actions</th>
@@ -220,7 +229,7 @@ import Api from '@/utils/Api'
 
           <tbody class="bg-[#F5F5F5]">
 
-            <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
+            <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
               
               <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
                 {{ input.level }}
@@ -228,8 +237,8 @@ import Api from '@/utils/Api'
 
               <!-- event listener gak ngaruh di option -->
               <td>
-                <select v-model="input.id_approval_auth">
-                  <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id">
+                <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false"  >
+                  <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
                       {{ data.auth_name }}
                   </option>
                 </select>

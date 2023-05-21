@@ -10,11 +10,14 @@
 
   let formState = useFormEditStore()
 
+  // let isParentMenuCheckbox = ref(true)
   let statusMenu = ref(null)
   let idStatusMenu = ref(0)
 
   const updatePhoto = (event) => {
   file.value = event.target.files[0]
+  filename.value = event.target.files[0].name
+  // console.log(event.target.files[0].name)
 }
 
   const submitEdit = () => {
@@ -62,12 +65,13 @@ const getMenuStatus = async () => {
   let menuName = ref(props.formContent[0])
   let url = ref(props.formContent[1])
   let sort = ref(props.formContent[2])
-  const file = ref(props.formContent[3])
+  let filename = ref(props.formContent[3])
+  const file = ref()
   let sequence = ref(true)
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
-  console.log(file.value)
+  // console.log(file.value)
 
 </script>
 
@@ -119,11 +123,17 @@ const getMenuStatus = async () => {
               Icon<span class="text-red-star">*</span>
             </label>
 
-            <!-- :value="file.value" -->
-            <!-- v-model="file.value" -->
-            <input
-            :class="inputStylingClass"
-            @change="updatePhoto" :value="file.value" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+            <div class="flex flex-col">
+              <input
+              :class="inputStylingClass"
+              @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+  
+              <h1 class="text-left">
+                Your current icon = {{ filename }}
+              </h1>
+
+            </div>
+
           </div>
   
         <div class="mb-3 text-left">

@@ -42,10 +42,8 @@ import Api from '@/utils/Api'
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/approval/get_approval_type')
       instanceArray = api.data.data 
-      // console.log(instanceArray) 
       addAuthoritiesData.value = instanceArray
       authorities.value = addAuthoritiesData.value[0].auth_name
-      // console.log(authorities.value)
   }
 
   const fetchMenu = async () => {
@@ -73,11 +71,8 @@ const fetchDocument = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const res = await Api.get("/request_trip/get_document_code");
-    // console.log(res)
     instanceArray = res.data.data;
-    // console.log(instanceArray)
     addDocumentData.value = instanceArray;
-    // console.log(addDocumentData.value)
     document.value = addDocumentData.value[0].id
 };
 
@@ -101,7 +96,6 @@ const fetchDocument = async () => {
   }
 
   const saveField = () => {
-          // console.log(approverLines.value)
 
           formState.approval.matrixName = matrixName.value
           formState.approval.companyId = company.value

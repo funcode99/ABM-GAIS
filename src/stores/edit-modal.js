@@ -13,6 +13,17 @@ export const useFormEditStore = defineStore('add-form', {
                 url: '',
                 icon: {}
             },
+            user: {
+                username: '',
+                fullname: '',
+                email: '',
+                password: '',
+                isEmployee: 0,
+                roleId: 0,
+                approvalAuthId: 0,
+                companyId: 0,
+                siteId: 0
+            },
             role: {
                 roleName: ''
             },
@@ -20,7 +31,8 @@ export const useFormEditStore = defineStore('add-form', {
                 matrixName: '',
                 companyId: 1,
                 menuId: 1,
-                codeDocumentId: 1
+                codeDocumentId: 1,
+                arrayDetail: null
             },
             sequence: {
                 sequenceName: '',

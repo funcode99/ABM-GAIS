@@ -29,6 +29,18 @@
     let lengthCounter = 0
     let editDataId = ref(0)
 
+    //for paginations
+    let showingValue = ref(1);
+    let pageMultiplier = ref(10);
+    let pageMultiplierReactive = computed(() => pageMultiplier.value);
+    let paginateIndex = ref(0);
+
+    //for paginations
+    const onChangePage = (pageOfItem) => {
+      paginateIndex.value = pageOfItem - 1;
+      showingValue.value = pageOfItem;
+    }
+
     const deleteData = async (event) => {
      await Api.delete(`/menu/delete_data/${event}`)
       if (sortedData.value.length == 1) {
@@ -108,10 +120,10 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'No'},
-      {Id: 2, title: 'Name', jsonData: 'Name'},
-      {Id: 3, title: 'Parent Menu', jsonData: 'ParentMenu'},
-      {Id: 4, title: 'Status', jsonData: 'Status'},
+      {Id: 1, title: 'No'},
+      {Id: 2, title: 'Name', jsonData: 'menu'},
+      {Id: 3, title: 'Parent Menu', jsonData: 'parent_id'},
+      {Id: 4, title: 'Status', jsonData: 'id_status_menu'},
       {Id: 5, title: 'Actions'}
     ]
 
@@ -180,7 +192,8 @@
         <!-- actual table -->
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
-            <div class="block overflow-x-auto">
+            <div class="block overflow-x-auto overflow-y-hidden">
+              
               <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
     
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
@@ -217,20 +230,26 @@
                         </td>
                         <td>
                           {{ data.menu }}
-                          <!-- <img class="w-2 h-2" :src="`http://103.165.130.157:8086/` + data.icon_path" /> -->
                         </td>
-                        <td>
-                          {{ data.parent_id }}
+
+                        <td class="flex justify-center">
+                          <img class="w-16 h-16" :src="data.icon_path" />
+                          <!-- {{ data.parent_id }} -->
                         </td>
+
                         <td v-if="data.id_status_menu == 1">
                           Active
                         </td>
+
                         <td v-else>
                           Disabled
                         </td>
-                        <td class="flex flex-wrap gap-4 justify-center">
-                          <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon_path]" />
-                          <ModalDelete @confirm-delete="deleteData(data.id)" />
+
+                        <td class="flex flex-wrap justify-center h-full gap-4 relative">
+                          <div class="flex items-center absolute top-0 bottom-0">
+                            <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon]" />
+                            <ModalDelete @confirm-delete="deleteData(data.id)" />
+                          </div>
                         </td>
                       </tr>
     
@@ -265,6 +284,24 @@
     
             </div>
   
+          </div>
+
+                    <!-- PAGINATION -->
+                    <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
+            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+              of {{ sortedData.length }} entries
+            </p>
+            <vue-awesome-paginate
+              :total-items="sortedData.length"
+              :items-per-page="parseInt(pageMultiplierReactive)"
+              :on-click="onChangePage"
+              v-model="showingValue"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
+            />
           </div>
 
       </div>

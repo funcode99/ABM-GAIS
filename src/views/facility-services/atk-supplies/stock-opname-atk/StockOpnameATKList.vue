@@ -11,10 +11,10 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
 
-// import ModalAddATKRequest from "@/components/facility-services/atk-supplies/stock-atk-opname/ModalAddOpname.vue";
-import ModalAddOpname from "@/components/facility-services/atk-supplies/stock-opname-atk/ModalAddOpname.vue";
+import ModalAddATKOpname from "@/components/facility-services/atk-supplies/stock-opname-atk/ModalAddOpname.vue";
 
 import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
+
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -24,13 +24,13 @@ const sidebar = useSidebarStore();
 //for sort & search
 const date = ref();
 const search = ref("");
-let sortedData = ref([]);
+let instanceArray = [];
+let sortedData = ref([])
 const selectedType = ref("Company");
 const selectedTypeWarehouse = ref("Warehouse");
 
 let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
+
 let lockScrollbar = ref(false);
 
 //for paginations
@@ -38,6 +38,14 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+const fetch = async () => {
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/request_atk/get")
+  instanceArray = res.data.data.data
+  sortedData.value = instanceArray
+}
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -47,20 +55,20 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByType = () => {
-  if (selectedType.value === "") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
-    );
-  }
+  // if (selectedType.value === "") {
+  //   sortedData.value = instanceArray;
+  // } else {
+  //   sortedData.value = instanceArray.filter(
+  //     (item) => item.type === selectedType.value
+  //   );
+  // }
 };
 
 //for filter & reset button
-const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedType.value = "Type";
-};
+// const resetData = () => {
+//   sortedData.value = instanceArray;
+//   selectedType.value = "Type";
+// };
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -82,9 +90,9 @@ const selectAll = (checkValue) => {
 const tableHead = [
   { Id: 1, title: "Created Date", jsonData: "no" },
   { Id: 2, title: "Document No", jsonData: "document_no" },
-  { Id: 3, title: "Requestor", jsonData: "date" },
-  { Id: 4, title: "Item Count", jsonData: "warehouse" },
-  { Id: 5, title: "Status", jsonData: "item_count" },
+  { Id: 3, title: "Created By", jsonData: "date" },
+  { Id: 4, title: "Warehouse", jsonData: "warehouse" },
+  { Id: 5, title: "Item Count", jsonData: "item_count" },
   { Id: 6, title: "Actions" },
 ];
 
@@ -99,12 +107,7 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = stockindata;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+
 
 //for searching
 const filteredItems = (search) => {
@@ -118,13 +121,18 @@ const filteredItems = (search) => {
     );
   });
   sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
   onChangePage(1);
 };
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+onBeforeMount(() => {
+  getSessionForSidebar()
+  fetch()
+})
+
 </script>
 
 <template>
@@ -134,13 +142,13 @@ const getSessionForSidebar = () => {
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen mt-[115px] h-[100vh]">
+        
       <Sidebar class="flex-none fixed" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
         ]"
       >
@@ -158,9 +166,7 @@ const getSessionForSidebar = () => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAddOpname
-                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-              />
+              <ModalAddATKOpname @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -187,9 +193,9 @@ const getSessionForSidebar = () => {
                   v-model="selectedType"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
+                  <!-- <option v-for="data in sortedData" :key="data.id">
                     {{ data.company }}
-                  </option>
+                  </option> -->
                 </select>
               </div>
 
@@ -204,9 +210,9 @@ const getSessionForSidebar = () => {
                   v-model="selectedTypeWarehouse"
                 >
                   <option disabled selected>Warehouse</option>
-                  <option v-for="data in sortedData" :key="data.id">
+                  <!-- <option v-for="data in sortedData" :key="data.id">
                     {{ data.warehouse }}
-                  </option>
+                  </option> -->
                 </select>
               </div>
 
@@ -301,7 +307,7 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table-auto table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                class="w-full table-zebra table-compact border sm:w-full h-full rounded-lg"
               >
                 <thead
                   class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -314,6 +320,11 @@ const getSessionForSidebar = () => {
                           name="checked"
                           @click="selectAll((checkList = !checkList))"
                         />
+                      </div>
+                    </th>
+                    <th>
+                      <div class="flex justify-center">
+                        No
                       </div>
                     </th>
 
@@ -336,7 +347,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -345,17 +356,20 @@ const getSessionForSidebar = () => {
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
                     </td>
+                    <td>
+                      {{ index+1 }}
+                    </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.no }}
+                      {{ data.created_at.slice(0,10) }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.document_no }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.date }}
+                      {{ data.created_by }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.warehouse }}
+                      {{ data.warehouse_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}

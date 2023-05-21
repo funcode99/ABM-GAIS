@@ -11,21 +11,20 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
 
+import Api from "@/utils/Api"
 import ModalAddATKRequest from "@/components/facility-services/atk-supplies/atk-request/ModalAddRequest.vue";
-
-import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
+
 //for sort & search
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
 const selectedType = ref("Company");
-const selectedTypeWarehouse = ref("Warehouse");
 
 let sortedbyASC = true;
 let instanceArray = [];
@@ -98,12 +97,7 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = stockindata;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+
 
 //for searching
 const filteredItems = (search) => {
@@ -124,6 +118,30 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+const fetch = async () => {
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/request_atk/get")
+  instanceArray = res.data.data.data
+  sortedData.value = instanceArray
+}
+
+onBeforeMount(() => {
+  getSessionForSidebar()
+  fetch()
+})
+
+ const deleteData = (id) => {
+      Api.delete(`/request_atk/delete_data/${id}`)
+      fetch()
+      if (sortedData.value.length == 1) {
+        router.go()
+      } else {
+        fetch()
+      }
+ }
+
 </script>
 
 <template>
@@ -133,7 +151,7 @@ const getSessionForSidebar = () => {
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen mt-[115px] h-[100vh]">
         
       <Sidebar class="flex-none fixed" />
 
@@ -305,6 +323,12 @@ const getSessionForSidebar = () => {
                       </div>
                     </th>
 
+                    <th>
+                      <div class="flex justify-center">
+                        No
+                      </div>
+                    </th>
+
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
@@ -324,37 +348,41 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.no }}
+                      {{ index + 1 }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.document_no }}
+                      {{ data.created_at.slice(0,10) }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.date }}
+                      {{ data.no_atk_request }}
+                    </td>
+                    <!-- gue anggap requestor nya adalah employee -->
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.warehouse }}
+                      {{ data.warehouse_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link to="/viewstockinatk">
+                      <router-link to="/atk-request-view">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
                       </router-link>
-                      <button>
+                      <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
