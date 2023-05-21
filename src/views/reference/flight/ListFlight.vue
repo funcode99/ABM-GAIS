@@ -367,7 +367,7 @@ const exportToExcel = () => {
                     <td>
                       {{ index + 1 + paginateIndex * pageMultiplierReactive }}
                     </td>
-                    <td>{{ data.id }}</td>
+                    <!-- <td>{{ data.id }}</td> -->
                     <td>{{ data.flight_class }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
