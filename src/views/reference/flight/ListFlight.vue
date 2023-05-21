@@ -91,23 +91,19 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "String.fromCharCode(97 + index)" },
+  { Id: 1, title: "No" },
   { Id: 2, title: "Flight Class", jsonData: "flight_class" },
   { Id: 3, title: "Actions" },
 ];
 
 //for sort
 const sortList = (sortBy) => {
-  if (sortAscending) {
-    sortedData.value.sort((x, y) =>
-      parseInt(x[sortBy]) > parseInt(y[sortBy]) ? 1 : -1
-    );
-    sortAscending = false;
+  if (sortedbyASC) {
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? 1 : -1));
+    sortedbyASC = false;
   } else {
-    sortedData.value.sort((x, y) =>
-      parseInt(x[sortBy]) < parseInt(y[sortBy]) ? 1 : -1
-    );
-    sortAscending = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? 1 : -1));
+    sortedbyASC = true;
   }
 };
 
@@ -342,9 +338,9 @@ const exportToExcel = () => {
                       class="overflow-x-hidden cursor-pointer"
                       @click="sortList(`${data.jsonData}`)"
                     >
-                      <div class="flex justify-between items-center">
+                      <div class="flex justify-center items-center">
                         <p
-                          class="font-JakartaSans font-bold text-sm xl:ml-[120px]"
+                          class="font-JakartaSans font-bold text-sm"
                         >
                           {{ data.title }}
                         </p>
@@ -359,12 +355,10 @@ const exportToExcel = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm capitalize"
-                    v-for="(data, index) in sortedData
-                      .slice(
-                        paginateIndex * pageMultiplierReactive,
-                        (paginateIndex + 1) * pageMultiplierReactive
-                      )
-                      .reverse()"
+                    v-for="(data, index) in sortedData.slice(
+                      paginateIndex * pageMultiplierReactive,
+                      (paginateIndex + 1) * pageMultiplierReactive
+                    )"
                     :key="data.id"
                   >
                     <td>
@@ -373,7 +367,7 @@ const exportToExcel = () => {
                     <td>
                       {{ index + 1 + paginateIndex * pageMultiplierReactive }}
                     </td>
-                    <!-- <td>{{ data.id }}</td> -->
+                    <td>{{ data.id }}</td>
                     <td>{{ data.flight_class }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
