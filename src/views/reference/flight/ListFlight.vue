@@ -184,10 +184,6 @@ const exportToExcel = () => {
     { title: "Nomor" },
     { title: "ID" },
     { title: "Flight Class" },
-    { title: "Created At" },
-    { title: "Created By" },
-    { title: "Updated At" },
-    { title: "Updated By" },
   ];
 
   // Menambahkan header kolom
@@ -197,13 +193,9 @@ const exportToExcel = () => {
 
   // Menambahkan data ke baris-baris selanjutnya
   sortedDataReactive.value.forEach((data, rowIndex) => {
-    // Menambahkan nomor urutan
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-
-    // Menambahkan data dari properti lainnya
-    Object.keys(data).forEach((key, columnIndex) => {
-      worksheet.getCell(rowIndex + 2, columnIndex + 2).value = data[key];
-    });
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.flight_class;
   });
 
   // Menyimpan workbook menjadi file Excel
@@ -339,9 +331,7 @@ const exportToExcel = () => {
                       @click="sortList(`${data.jsonData}`)"
                     >
                       <div class="flex justify-center items-center">
-                        <p
-                          class="font-JakartaSans font-bold text-sm"
-                        >
+                        <p class="font-JakartaSans font-bold text-sm">
                           {{ data.title }}
                         </p>
                         <button v-if="data.jsonData" class="ml-2">
