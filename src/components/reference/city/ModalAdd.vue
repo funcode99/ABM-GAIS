@@ -108,13 +108,13 @@ const saveCity = async () => {
               <label
                 @click="this.$emit('unlockScrollbar')"
                 for="my-modal-3"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                >Cancel</label
-              >
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">
+                Cancel
+              </label>
               <button
                 type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
+                >
                 Save
               </button>
             </div>
