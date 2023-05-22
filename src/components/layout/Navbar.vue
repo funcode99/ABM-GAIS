@@ -6,14 +6,22 @@
   import ABMIcon from '@/assets/abm.png'
   import { ref } from 'vue'
   import { useSidebarStore } from "@/stores/sidebar.js"
+
+  import Api from '@/utils/Api'
   
   const sidebar = useSidebarStore()
   let isOpen = ref(false)
   let isNotificationOpen = ref(false)
   
   const changeViewStatus = () => {
-    // console.log('masuk ke fungsi')
     isOpen.value = false
+  }
+
+  const logout = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    let api = await Api.post('/users/logout')
+    console.log(api)
   }
 
 </script>
@@ -115,7 +123,7 @@
             <ul v-if="isOpen" class="mt-3 p-2 shadow bg-base-100 rounded-box w-52 absolute">
               <li class="py-2 border-b-2"><a>Profile</a></li>
               <li class="py-2 border-b-2"><a>Settings</a></li>
-              <li class="py-2 border-b-2"><a>Logout</a></li>
+              <li @click="logout" class="py-2 border-b-2 cursor-pointer"><a>Logout</a></li>
             </ul>
    
           </div>
@@ -141,7 +149,6 @@
 
   .slide-enter-from
 {   
-    /* transform: translateY(-10px); */
     top: 70px;
 }
 
@@ -152,7 +159,6 @@
 
 .slide-enter-to
 {
-   /* transform: translateY(0px); */
    top: 50px;
 }
 

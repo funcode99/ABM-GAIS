@@ -1,64 +1,103 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
 
-import RequestTripModal from "@/components/request-trip/company-business/RequestTripModal.vue"
+    import Navbar from "@/components/layout/Navbar.vue"
+    import Sidebar from "@/components/layout/Sidebar.vue"
+    import Footer from "@/components/layout/Footer.vue"
 
-import icon_receive from "@/assets/icon-receive.svg"
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import editicon from "@/assets/navbar/edit_icon.svg"
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
+    import RequestTripModal from "@/components/request-trip/company-business/RequestTripModal.vue"
 
-import fieldbreakdata from "@/utils/Api/request-trip/fieldbreakdata.js"
-import taxivoucherdata from "@/utils/Api/request-trip/taxivoucherdata.js"
+    import icon_receive from "@/assets/icon-receive.svg"
+    import icon_filter from "@/assets/icon_filter.svg"
+    import icon_reset from "@/assets/icon_reset.svg"
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import editicon from "@/assets/navbar/edit_icon.svg"
+    import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
-import { ref } from "vue"
-import { useSidebarStore } from "@/stores/sidebar.js"
+    import Api from '@/utils/Api'
 
-let lengthCounter = 0
-const sidebar = useSidebarStore()
-let requestTripType = ref("Company Business")
+    import { ref, computed, onBeforeMount } from "vue"
+    import { useSidebarStore } from "@/stores/sidebar.js"
 
-//for check & uncheck all
-const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+    let lengthCounter = 0
+    const sidebar = useSidebarStore()
+    let requestTripType = ref("Company Business")
+
+    
+    let sortedDataCompanyBusiness = ref([])
+    let sortedDataSiteVisit = ref([])
+    
+    let sortedDataReactive = computed(() => sortedData.value)
+    let sortedbyASC = true
+    
+    let instanceArray = []
+    let sortedData = ref([])
+
+    //for check & uncheck all
+    const selectAll = (checkValue) => {
+      const checkList = checkValue;
+      if (checkList == true) {
+        let check = document.getElementsByName("checks");
+        for (let i = 0; i < check.length; i++) {
+          if (check[i].type == "checkbox") check[i].checked = true;
+        }
+      } else {
+        let check = document.getElementsByName("checks");
+        for (let i = 0; i < check.length; i++) {
+          if (check[i].type == "checkbox") check[i].checked = false;
+        }
+      }
     }
-  } else {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+
+    const tableHeadCompanyBusiness = [
+      {id: 0, title: 'No'},
+      {id: 1, title: 'Created Date'},
+      {id: 2, title: 'Request No'},
+      {id: 3, title: 'Requestor'},
+      {id: 4, title: 'Purpose of Trip'},
+      {id: 5, title: 'Status'},
+      {id: 6, title: 'Action'}
+    ]
+
+    //for tableHeadFieldBreak
+    const tableHeadFieldBreak = [
+      { Id: 1, title: "No", jsonData: "no" },
+      { Id: 2, title: "Created Date", jsonData: "created_date" },
+      { Id: 3, title: "Request No", jsonData: "request_no" },
+      { Id: 4, title: "Requestor", jsonData: "requestor" },
+      { Id: 5, title: "Purpose of Trip", jsonData: "purpose_of_trip" },
+      { Id: 6, title: "Status", jsonData: "Status" },
+      { Id: 7, title: "Actions" },
+    ]
+
+    //for tableHeadVoucherTaxi
+    const tableHeadVoucherTaxi = [
+      { Id: 1, title: "No", jsonData: "no" },
+      { Id: 2, title: "Created Date", jsonData: "createdDate" },
+      { Id: 3, title: "Request No", jsonData: "RequestNo" },
+      { Id: 4, title: "Requestor", jsonData: "Requestor" },
+      { Id: 5, title: "Purpose of Trip", jsonData: "PurposeOfTrip" },
+      { Id: 6, title: "Status", jsonData: "Status" },
+      { Id: 7, title: "Actions" },
+    ]
+
+    const fetch = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/request_trip/get')      
+        instanceArray = api.data.data.data
+        sortedData.value = instanceArray
+        sortedDataCompanyBusiness.value = sortedData.value.filter((item) => {
+          return item.code_document == 'CB'
+        })
+        sortedDataSiteVisit.value = sortedData.value.filter((item) => {
+          return item.code_document == 'SV'
+        })
+        lengthCounter = sortedData.value.length
     }
-  }
-}
 
-//for tableHeadFieldBreak
-const tableHeadFieldBreak = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "Request No", jsonData: "request_no" },
-  { Id: 4, title: "Requestor", jsonData: "requestor" },
-  { Id: 5, title: "Purpose of Trip", jsonData: "purpose_of_trip" },
-  { Id: 6, title: "Status", jsonData: "Status" },
-  { Id: 7, title: "Actions" },
-]
-
-//for tableHeadVoucherTaxi
-const tableHeadVoucherTaxi = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "createdDate" },
-  { Id: 3, title: "Request No", jsonData: "RequestNo" },
-  { Id: 4, title: "Requestor", jsonData: "Requestor" },
-  { Id: 5, title: "Purpose of Trip", jsonData: "PurposeOfTrip" },
-  { Id: 6, title: "Status", jsonData: "Status" },
-  { Id: 7, title: "Actions" },
-]
+    onBeforeMount(() => {
+      fetch()
+    })
 
 </script>
 
@@ -200,10 +239,7 @@ const tableHeadVoucherTaxi = [
         </div>
 
           <!-- TABLE Company Business -->
-          <!-- TABLE Site Visit -->
-
-          <!-- TABLE Field Break -->
-          <div v-if="requestTripType === 'Field Break'">
+          <div v-if="requestTripType === 'Company Business'">
             <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
               
               <div class="block overflow-x-auto">
@@ -226,7 +262,7 @@ const tableHeadVoucherTaxi = [
                       </th>
 
                       <th
-                        v-for="data in tableHeadFieldBreak"
+                        v-for="data in tableHeadCompanyBusiness"
                         :key="data.Id"
                         class="overflow-x-hidden cursor-pointer"
                         @click="sortList(`${data.jsonData}`)"
@@ -244,17 +280,17 @@ const tableHeadVoucherTaxi = [
                   <tbody>
                     <tr
                       class="font-JakartaSans font-normal text-sm"
-                      v-for="data in fieldbreakdata"
-                      :key="data.no"
+                      v-for="(data, index) in sortedDataCompanyBusiness"
+                      :key="data.id"
                     >
                       <td>
                         <input type="checkbox" name="checks" />
                       </td>
-                      <td>{{ data.no }}</td>
-                      <td>{{ data.created_date }}</td>
-                      <td>{{ data.request_no }}</td>
-                      <td>{{ data.requestor }}</td>
-                      <td>{{ data.purpose_of_trip }}</td>
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ data.created_at }}</td>
+                      <td>{{ data.no_request_trip }}</td>
+                      <td>{{ data.employee_name }}</td>
+                      <td>{{ data.document_name }}</td>
                       <td>{{ data.status }}</td>
                       <td class="flex flex-wrap gap-4 justify-center">
                         <button>
@@ -274,15 +310,15 @@ const tableHeadVoucherTaxi = [
             </div>
           </div>
 
-          <!-- TABLE Taxi Voucher Only -->
-          <div v-if="requestTripType === 'Taxi Voucher Only'">
-            <div
-              class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden w-full"
-            >
+          <!-- TABLE Site Visit -->
+          <div v-if="requestTripType === 'Site Visit'">
+            <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+              
               <div class="block overflow-x-auto">
-                <table
-                  class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                
+                <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
                 >
+
                   <thead
                     class="text-center font-JakartaSans text-sm font-bold h-10"
                   >
@@ -298,7 +334,7 @@ const tableHeadVoucherTaxi = [
                       </th>
 
                       <th
-                        v-for="data in tableHeadVoucherTaxi"
+                        v-for="data in tableHeadCompanyBusiness"
                         :key="data.Id"
                         class="overflow-x-hidden cursor-pointer"
                         @click="sortList(`${data.jsonData}`)"
@@ -316,18 +352,18 @@ const tableHeadVoucherTaxi = [
                   <tbody>
                     <tr
                       class="font-JakartaSans font-normal text-sm"
-                      v-for="data in taxivoucherdata"
-                      :key="data.no"
+                      v-for="(data, index) in sortedDataSiteVisit"
+                      :key="data.id"
                     >
                       <td>
                         <input type="checkbox" name="checks" />
                       </td>
-                      <td>{{ data.no }}</td>
-                      <td>{{ data.createdDate }}</td>
-                      <td>{{ data.RequestNo }}</td>
-                      <td>{{ data.Requestor }}</td>
-                      <td>{{ data.PurposeOfTrip }}</td>
-                      <td>{{ data.Status }}</td>
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ data.created_at }}</td>
+                      <td>{{ data.no_request_trip }}</td>
+                      <td>{{ data.employee_name }}</td>
+                      <td>{{ data.document_name }}</td>
+                      <td>{{ data.status }}</td>
                       <td class="flex flex-wrap gap-4 justify-center">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
@@ -338,10 +374,14 @@ const tableHeadVoucherTaxi = [
                       </td>
                     </tr>
                   </tbody>
+
                 </table>
+
               </div>
+
             </div>
           </div>
+
 
       </div>
 
