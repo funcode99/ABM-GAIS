@@ -6,8 +6,11 @@
   import ABMIcon from '@/assets/abm.png'
   import { ref } from 'vue'
   import { useSidebarStore } from "@/stores/sidebar.js"
+  import { useRouter } from 'vue-router'
 
   import Api from '@/utils/Api'
+
+  const router = useRouter()
   
   const sidebar = useSidebarStore()
   let isOpen = ref(false)
@@ -18,10 +21,12 @@
   }
 
   const logout = async () => {
+    console.log('masuk ke logout')
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
     let api = await Api.post('/users/logout')
-    console.log(api)
+    localStorage.removeItem('token')
+    router.push({path: '/'})
   }
 
 </script>
