@@ -83,13 +83,14 @@ const inputStylingClass =
           >
             Cancel
           </label>
-          <button @click="submitEdit">
-            <button
-              @click="$emit('changeFlight')"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-            >
-              Save
-            </button>
+          <button
+            @click="
+              submitEdit();
+              $emit('changeFlight');
+            "
+            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+          >
+            Save
           </button>
         </div>
       </div>
