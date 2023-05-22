@@ -66,6 +66,12 @@
 
 }
 
+.modal-vue3-wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  margin: -8px;
+}
+
 .modal-vue3-header,
 .modal-vue3-footer {
   display: none !important;
