@@ -8,6 +8,8 @@ import ModalEdit from "@/components/reference/flight/ModalEdit.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 
@@ -149,10 +151,14 @@ const deleteFlight = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
     confirmButtonText: "Yes, delete it!",
@@ -164,7 +170,7 @@ const deleteFlight = async (id) => {
           text: "Flight Class has been deleted.",
           icon: "success",
           showCancelButton: false,
-          confirmButtonColor: "#3085d6",
+          confirmButtonColor: "#015289",
           confirmButtonText: "Ok",
         });
         fetchFlight();

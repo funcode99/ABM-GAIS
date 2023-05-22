@@ -133,6 +133,11 @@
   /* overscroll-behavior-y: contain; */
 }
 
+.swal2-icon {
+  border: none !important;
+  box-shadow: none !important;
+}
+
 /* apply effect until 639px width */
 @media screen and (max-width:640px) {
   .clean-margin {
