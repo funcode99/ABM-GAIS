@@ -21,13 +21,22 @@ const props = defineProps({
 });
 
 const currentFlightClassName = ref(props.formContent[0]);
+const originalFlightClassName = ref(props.formContent[0]);
 
 const submitEdit = () => {
   if (!formEditState.flight) {
     formEditState.flight = {}; // Inisialisasi objek flight jika belum ada
   }
   formEditState.flight.flightClassName = currentFlightClassName.value;
+
+  // Update originalFlightClassName saat penyimpanan
+  originalFlightClassName.value = currentFlightClassName.value;
+
   isVisible.value = !isVisible.value;
+};
+
+const resetForm = () => {
+  currentFlightClassName.value = originalFlightClassName.value;
 };
 
 const inputStylingClass =
@@ -35,7 +44,12 @@ const inputStylingClass =
 </script>
 
 <template>
-  <button @click="isVisible = !isVisible">
+  <button
+    @click="
+      resetForm();
+      isVisible = !isVisible;
+    "
+  >
     <img :src="editIcon" alt="" />
   </button>
 
@@ -77,7 +91,10 @@ const inputStylingClass =
       <div class="sticky bottom-0 bg-white">
         <div class="flex justify-end gap-4 mr-4">
           <label
-            @click="isVisible = !isVisible"
+            @click="
+              resetForm();
+              isVisible = !isVisible;
+            "
             for="add-user-modal"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
           >
