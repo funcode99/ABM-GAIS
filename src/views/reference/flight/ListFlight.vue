@@ -158,10 +158,16 @@ const deleteFlight = async (id) => {
     showCloseButton: true,
     closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
     reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/flight_class/delete_data/${id}`).then((res) => {
@@ -171,7 +177,8 @@ const deleteFlight = async (id) => {
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#015289",
-          confirmButtonText: "Ok",
+          showConfirmButton: false,
+          timer: 1500,
         });
         fetchFlight();
       });
