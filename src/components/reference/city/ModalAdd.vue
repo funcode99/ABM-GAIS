@@ -6,10 +6,10 @@ import Api from "@/utils/Api";
 
 import { ref } from "vue";
 
-const emits = defineEmits(["unlockScrollbar", "city-saved"]);
 let isOpenModal = ref(false);
 let CityCode = ref("");
 let CityName = ref("");
+const emits = defineEmits(["unlockScrollbar", "city-saved"]);
 
 const saveCity = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -38,6 +38,11 @@ const saveCity = async () => {
     console.log(error);
   }
 };
+
+const resetInput = () => {
+  CityCode.value = "";
+  CityName.value = "";
+};
 </script>
 
 <template>
@@ -58,7 +63,10 @@ const saveCity = async () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="
+            resetInput();
+            this.$emit('unlockScrollbar');
+          "
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -106,15 +114,19 @@ const saveCity = async () => {
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
               <label
-                @click="this.$emit('unlockScrollbar')"
+                @click="
+                  resetInput();
+                  this.$emit('unlockScrollbar');
+                "
                 for="my-modal-3"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+              >
                 Cancel
               </label>
               <button
                 type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                >
+              >
                 Save
               </button>
             </div>
