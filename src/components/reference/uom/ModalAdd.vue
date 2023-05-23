@@ -6,9 +6,9 @@ import Api from "@/utils/Api";
 
 import { ref } from "vue";
 
-const emits = defineEmits(["unlockScrollbar", "uom-saved"]);
 let isOpenModal = ref(false);
 let UomName = ref("");
+const emits = defineEmits(["unlockScrollbar", "uom-saved"]);
 
 const saveUom = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -35,6 +35,10 @@ const saveUom = async () => {
     console.log(error);
   }
 };
+
+const resetInput = () => {
+  UomName.value = "";
+};
 </script>
 
 <template>
@@ -55,7 +59,10 @@ const saveUom = async () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="
+            resetInput();
+            this.$emit('unlockScrollbar');
+          "
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -67,7 +74,7 @@ const saveUom = async () => {
       </nav>
 
       <main class="modal-box-inner-uom">
-        <form @submit.prevent="saveUom">
+        <form class="pt-4" @submit.prevent="saveUom">
           <div class="mb-6 w-full px-4">
             <label
               for="uom"
@@ -87,7 +94,10 @@ const saveUom = async () => {
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
               <label
-                @click="this.$emit('unlockScrollbar')"
+                @click="
+                  resetInput();
+                  this.$emit('unlockScrollbar');
+                "
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
@@ -122,22 +132,5 @@ const saveUom = async () => {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
-}
-
-th {
-  padding: 2px;
-  text-align: left;
-  position: relative;
-}
-
-tr td {
-  text-align: center;
-  white-space: nowrap;
-}
-
-tr th {
-  background-color: #015289;
-  text-transform: capitalize;
-  color: white;
 }
 </style>

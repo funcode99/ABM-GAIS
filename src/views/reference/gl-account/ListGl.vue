@@ -367,7 +367,7 @@ const exportToExcel = () => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
