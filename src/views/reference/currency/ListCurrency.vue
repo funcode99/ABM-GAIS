@@ -8,10 +8,14 @@ import ModalEdit from "@/components/reference/currency/ModalEdit.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
+
+import { Workbook } from "exceljs";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -21,32 +25,18 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const formEditState = useFormEditStore();
 const sidebar = useSidebarStore();
 
-//for sort & search
-const search = ref("");
-let sortedData = ref([]);
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
-let lockScrollbar = ref(false);
-let sortedDataReactive = computed(() => sortedData.value);
-
 let currencyName = ref();
 let currencySymbol = ref();
 let currencyCode = ref();
-
-//for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
 
 let editCurrencyDataId = ref();
 
 //for edit
 const editCurrency = async (data) => {
   editCurrencyDataId.value = data;
-  setTimeout(callEditApi, 500);
-  console.log("ini data:" + data);
+  callEditApi();
+  // setTimeout(callEditApi, 500);
+  // console.log("ini data:" + data);
 };
 
 //for edit
@@ -68,6 +58,22 @@ const callEditApi = async () => {
   fetchCurrency();
 };
 
+//for sort & search
+const search = ref("");
+let sortedData = ref([]);
+let sortedbyASC = true;
+let instanceArray = [];
+let lengthCounter = 0;
+let lockScrollbar = ref(false);
+let sortedDataReactive = computed(() => sortedData.value);
+let sortAscending = true;
+
+//for paginations
+let showingValue = ref(1);
+let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let paginateIndex = ref(0);
+
 //for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
@@ -76,10 +82,10 @@ const onChangePage = (pageOfItem) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Currency", jsonData: "currency" },
-  { Id: 3, title: "Symbol", jsonData: "symbol" },
-  { Id: 4, title: "Code", jsonData: "code" },
+  { Id: 1, title: "No" },
+  { Id: 2, title: "Currency", jsonData: "currency_name" },
+  { Id: 3, title: "Symbol", jsonData: "currency_symbol" },
+  { Id: 4, title: "Code", jsonData: "currency_code" },
   { Id: 5, title: "Actions" },
 ];
 
@@ -131,18 +137,29 @@ const fetchCurrency = async () => {
   lengthCounter = sortedData.value.length;
 };
 
+//delete currency
 const deleteCurrency = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/currency/delete_data/${id}`).then((res) => {
@@ -151,14 +168,56 @@ const deleteCurrency = async (id) => {
           text: "Currency has been deleted.",
           icon: "success",
           showCancelButton: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok",
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
         });
         fetchCurrency();
       });
     } else {
       return;
     }
+  });
+};
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Currency Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "Currency" },
+    { title: "Symbol" },
+    { title: "Code" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.currency_name;
+    worksheet.getCell(rowIndex + 2, 4).value = data.currency_symbol;
+    worksheet.getCell(rowIndex + 2, 5).value = data.currency_code;
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "currency_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
   });
 };
 </script>
@@ -197,6 +256,7 @@ const deleteCurrency = async (id) => {
               />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
@@ -271,7 +331,7 @@ const deleteCurrency = async (id) => {
                     >
                       <span class="flex justify-center items-center gap-1">
                         {{ data.title }}
-                        <button>
+                        <button v-if="data.jsonData">
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </span>
@@ -286,9 +346,11 @@ const deleteCurrency = async (id) => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
-                    <td>{{ index + 1 }}</td>
+                    <td>
+                      {{ index + 1 + paginateIndex * pageMultiplierReactive }}
+                    </td>
                     <td>{{ data.currency_name }}</td>
                     <td>{{ data.currency_symbol }}</td>
                     <td>{{ data.currency_code }}</td>
@@ -297,9 +359,9 @@ const deleteCurrency = async (id) => {
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                         @change-currency="editCurrency(data.id)"
                         :formContent="[
-                          data.currencyName,
-                          data.currencySymbol,
-                          data.currencyCode,
+                          data.currency_name,
+                          data.currency_symbol,
+                          data.currency_code,
                         ]"
                       />
                       <button @click="deleteCurrency(data.id)">
@@ -337,7 +399,7 @@ const deleteCurrency = async (id) => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
         </div>

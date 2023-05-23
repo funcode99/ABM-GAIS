@@ -6,11 +6,11 @@ import Api from "@/utils/Api";
 
 import { ref } from "vue";
 
-const emits = defineEmits(["unlockScrollbar", "currency-saved"]);
 let isOpenModal = ref(false);
 let newCurrency = ref("");
 let CurrencySymbol = ref("");
 let CurrencyCode = ref("");
+const emits = defineEmits(["unlockScrollbar", "currency-saved"]);
 
 const saveCurrency = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -41,6 +41,12 @@ const saveCurrency = async () => {
     console.log(error);
   }
 };
+
+const resetInput = () => {
+  newCurrency.value = "";
+  CurrencySymbol.value = "";
+  CurrencyCode.value = "";
+};
 </script>
 
 <template>
@@ -61,7 +67,10 @@ const saveCurrency = async () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="
+            resetInput();
+            this.$emit('unlockScrollbar');
+          "
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -87,6 +96,7 @@ const saveCurrency = async () => {
               placeholder="Currency"
               required
               v-model="newCurrency"
+              @keyup.enter="$emit('currency-saved')"
             />
           </div>
 
@@ -103,6 +113,7 @@ const saveCurrency = async () => {
               placeholder="Symbol"
               required
               v-model="CurrencySymbol"
+              @keyup.enter="$emit('currency-saved')"
             />
           </div>
 
@@ -119,13 +130,17 @@ const saveCurrency = async () => {
               placeholder="Code"
               required
               v-model="CurrencyCode"
+              @keyup.enter="$emit('currency-saved')"
             />
           </div>
 
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
               <label
-                @click="this.$emit('unlockScrollbar')"
+                @click="
+                  resetInput();
+                  this.$emit('unlockScrollbar');
+                "
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label

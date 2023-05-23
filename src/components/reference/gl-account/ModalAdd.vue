@@ -92,6 +92,7 @@ const resetInput = () => {
               placeholder="GL Account"
               required
               v-model="GlAccount"
+              @keyup.enter="$emit('gl-saved')"
             />
           </div>
           <div class="mb-6 w-full px-4">
@@ -107,6 +108,7 @@ const resetInput = () => {
               placeholder="GL Name"
               required
               v-model="GlName"
+              @keyup.enter="$emit('gl-saved')"
             />
           </div>
 
