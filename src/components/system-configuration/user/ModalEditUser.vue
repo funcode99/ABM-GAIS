@@ -20,15 +20,15 @@
     let password = ref('')
     let username = ref(props.formContent[0])
     let email = ref(props.formContent[1])
-    let selected = ref([props.formContent[2]])
-    let role = ref(props.formContent[3])
+    let selected = ref(props.formContent[2])
+    let role = ref([props.formContent[3], null])
     let company = ref(props.formContent[4])
     let location = ref(props.formContent[5])
     let isEmployee = ref(props.formContent[6])
     let fullname = ref(props.formContent[7])
 
     const editUser = () => {
-      formEditState.user.username = username.value,
+      formEditState.user.username = username.value
       formEditState.user.email = email.value
       formEditState.user.password = password.value
       formEditState.user.roleId = role.value
@@ -41,7 +41,6 @@
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
-  // let approvalAuthoritiesName = ref(['PM', 'GA', 'Treasury', 'Accounting', 'Atasan', 'HR'])
   let responseRoleArray = ref([])
   let responseCompanyArray = ref([])
   let responseSiteArray = ref([])
@@ -81,6 +80,18 @@
     fetchCompany()
     fetchSite()
     fetchAuthorities()
+  })
+
+  watch(isVisible, () => {
+    password = ''
+    username.value = props.formContent[0]
+    email.value = props.formContent[1]
+    selected.value = props.formContent[2]
+    role.value = [props.formContent[3], null]
+    company.value = props.formContent[4]
+    location.value = props.formContent[5]
+    isEmployee.value = props.formContent[6]
+    fullname.value = props.formContent[7]
   })
 
 </script>
@@ -171,7 +182,7 @@
             >User Role<span class="text-red">*</span>
           </span>
           <select :class="inputStylingClass" v-model="role" required>
-            <option v-for="data in responseRoleArray" :selected="data.id == role ? true : false" :key="data.id" :value="data.id">
+            <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]">
               {{ data.role_name }}
             </option>
           </select>
@@ -203,13 +214,14 @@
 
             <!-- ambil value selected nya -->
             <div class="grid grid-cols-3">
-                <div v-for="name in responseAuthoritiesArray" 
+                <div 
+                v-for="name in responseAuthoritiesArray" 
                 :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
                 :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''"
+                :key="name.id"
                 >
-                  <div class="flex items-center gap-2" 
-                :class="name.auth_name == 'HR' && role[1] == 'Admin' ? 'hidden' : ''"
-                    >
+                <div class="flex items-center gap-2" 
+                  :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' )  ? 'hidden' : ''" >
                       <input
                       type="checkbox" 
                       :id="name.auth_name" 

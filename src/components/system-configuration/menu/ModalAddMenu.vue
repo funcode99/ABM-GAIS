@@ -7,7 +7,6 @@ import Api from '@/utils/Api'
 import { useFormAddStore } from '@/stores/add-modal.js'
 let formState = useFormAddStore()
 
-let isParentMenuCheckbox = ref(true)
 let menuName = ref('')
 let url = ref('')
 let idStatusMenu = ref(0)
@@ -33,10 +32,6 @@ const submit = () => {
       } else {
         sequence.value = 0
       }
-
-      // if(isParentMenuCheckbox == true) {
-      //   parentMenu = 1
-      // }
 
       formState.menu.menuName = menuName.value
       formState.menu.sort = sort.value
@@ -90,11 +85,6 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
         </div>
 
         <div class="mb-3 ">
-        
-          <div class="mb-3 flex gap-2">
-            <input type="checkbox" v-model="isParentMenuCheckbox" />
-            <label >is Parent Menu</label>
-          </div>
 
           <div class="mb-3">
             <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
@@ -123,7 +113,7 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
             @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
           </div>
 
-          <div class="mb-3 text-left" v-if="isParentMenuCheckbox === true ? '' : 'hidden'">
+          <div class="mb-3 text-left">
               <h1>Parent Menu</h1>
               <select :class="inputStylingClass">
                   <option>Travel Management System</option>

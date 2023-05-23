@@ -60,8 +60,7 @@
       {Id: 1, title: 'No'},
       {Id: 2, title: 'Username', jsonData: 'username'},
       {Id: 3, title: 'User Role', jsonData: 'id_role'},
-      {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'},
-      {Id: 5, title: 'Actions'}
+      {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'}
     ]
 
     const sortList = (sortBy) => {
@@ -212,6 +211,11 @@
                       </span>
                     </th>
 
+                    <th class="overflow-x-hidden cursor-pointer">
+                      <span class="flex justify-center items-center gap-1">
+                        Actions
+                      </span>
+                    </th>
 
                   </tr>
                 </thead>

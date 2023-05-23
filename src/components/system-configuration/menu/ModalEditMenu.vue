@@ -10,15 +10,13 @@
 
   let formState = useFormEditStore()
 
-  // let isParentMenuCheckbox = ref(true)
   let statusMenu = ref(null)
   let idStatusMenu = ref(0)
 
   const updatePhoto = (event) => {
   file.value = event.target.files[0]
   filename.value = event.target.files[0].name
-  // console.log(event.target.files[0].name)
-}
+  }
 
   const submitEdit = () => {
     try {     
@@ -41,18 +39,17 @@
     }
     isVisible.value = !isVisible.value
 
-}
+  }
 
-onBeforeMount(() => {
+  onBeforeMount(() => {
     getMenuStatus()
   })
 
 const getMenuStatus = async () => {
-      const status = await Api.get('/menu/get_status/status')
-      let getStatus = status.data.data
-      statusMenu.value = getStatus
+    const status = await Api.get('/menu/get_status/status')
+    let getStatus = status.data.data
+    statusMenu.value = getStatus
 }
-
 
   let isVisible = ref(false)
   let type = '' 
@@ -71,7 +68,7 @@ const getMenuStatus = async () => {
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
-  // console.log(file.value)
+  const emits = defineEmits(["unlockScrollbar"]);
 
 </script>
 
@@ -79,12 +76,13 @@ const getMenuStatus = async () => {
 <template class="font-JakartaSans">
 
   <button @click="isVisible = !isVisible">
-    <img :src=editIcon alt="">
+    <button @click="this.$emit('unlockScrollbar')">
+      <img :src=editIcon alt="">
+    </button>
   </button>
       
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
-    <div class="px-8">
       <div class="sticky top-0 z-50 bg-white py-4">
             <button @click="isVisible = false" class="cursor-pointer absolute right-0">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
@@ -94,11 +92,6 @@ const getMenuStatus = async () => {
       </div>
   
       <div class="mb-3 pb-10 modal-box-inner px-4">
-        
-        <div class="mb-3 flex gap-2">
-            <input type="checkbox" v-model="isParentMenuCheckbox" />
-            <label >is Parent Menu</label>
-          </div>
 
         <div class="mb-3">
             <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
@@ -119,11 +112,13 @@ const getMenuStatus = async () => {
         </div>
 
           <div class="mb-3">
+
             <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
               Icon<span class="text-red-star">*</span>
             </label>
 
             <div class="flex flex-col">
+
               <input
               :class="inputStylingClass"
               @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
@@ -185,7 +180,9 @@ const getMenuStatus = async () => {
           <div className="divider m-0 pb-4 w-full"></div>
           <div class="flex justify-end gap-4">
             <label @click="isVisible = !isVisible" class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
-              Cancel
+              <button @click="this.$emit('unlockScrollbar')">
+                Cancel
+              </button>
             </label>
             <button @click="submitEdit">
               <button 
@@ -197,9 +194,6 @@ const getMenuStatus = async () => {
             </button>
           </div>
       </div>
-
-    </div>
-
 
   </Modal>
   
