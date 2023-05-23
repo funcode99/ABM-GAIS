@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, onBeforeMount } from 'vue'
+  import { ref, onBeforeMount, watch } from 'vue'
   import iconClose from "@/assets/navbar/icon_close.svg"
 
   import Api from '@/utils/Api'
@@ -45,6 +45,15 @@
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
+  watch(isOpenModal, () => {
+    menuSequenceName.value = ''
+    nextValue.value = ''
+    menu.value = ''
+    sequenceSize.value = ''
+    prefix.value = ''
+    suffix.value = ''
+    recycleBy.value = 'W'
+  })
 
 </script>
 

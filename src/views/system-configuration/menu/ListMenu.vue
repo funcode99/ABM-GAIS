@@ -137,16 +137,24 @@
       }
     }
 
+    let status = ref('')
+    let message = ref('')
+
     // watch(ref, callback)
 
     const fetch = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data.data
-      sortedData.value = instanceArray
-      lengthCounter = sortedData.value.length
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/menu/get/')
+        instanceArray = api.data.data.data
+        sortedData.value = instanceArray
+        lengthCounter = sortedData.value.length
+      } catch (error) {
+        console.log(error)
+        status.value = error.response.status
+        message.value = error.response.data.message
+      }
     }
 
     onBeforeMount(() => {
@@ -156,7 +164,7 @@
 
     const filteredItems = (search) => {
       sortedData.value = instanceArray
-        const filteredR = sortedData.value.filter(item => {
+          const filteredR = sortedData.value.filter(item => {
           return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
@@ -259,39 +267,46 @@
                     
               </table>
     
-            <div v-else>
-              <table class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
-                <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                    <tr class="">
-                      <th>
-                        <div class="flex justify-center">
-                          <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-                        </div>
-                      </th>    
-                      <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                        <span class="flex justify-center items-center gap-1">
-                          {{ data.title }} 
-                          <button class="">
-                            <img :src="arrowicon" class="w-[9px] h-3" />
-                          </button>
-                        </span>
-                      </th>
-                    </tr>
-                </thead>
+              <div v-else>
 
-              </table>
-            </div>
+                <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+                  <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                      <tr class="">
+                        <th>
+                          <div class="flex justify-center">
+                            <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                          </div>
+                        </th>    
+                        <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                          <span class="flex justify-center items-center gap-1">
+                            {{ data.title }} 
+                            <button class="">
+                              <img :src="arrowicon" class="w-[9px] h-3" />
+                            </button>
+                          </span>
+                        </th>
+                      </tr>
+                  </thead>
+
+                </table>
+
+                <div class="text-center py-5">
+                  <h1>{{ status }}</h1>
+                  <h1>{{ message }}</h1>
+                </div>
+
+              </div>
     
             </div>
   
           </div>
 
-                    <!-- PAGINATION -->
-                    <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
+          <!-- PAGINATION -->
+          <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
               {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              of {{ sortedData.length }} entries {{ status }}
             </p>
             <vue-awesome-paginate
               :total-items="sortedData.length"

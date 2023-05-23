@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, onBeforeMount } from 'vue'
+  import { ref, onBeforeMount, watch } from 'vue'
   import { Modal } from 'usemodal-vue3'
   import iconClose from "@/assets/navbar/icon_close.svg"
   import editIcon from "@/assets/navbar/edit_icon.svg"
@@ -52,6 +52,16 @@
   }
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
+  watch(isVisible, () => {
+    menuSequenceName = props.formContent[0]
+    prefix = props.formContent[1]
+    suffix = props.formContent[2]
+    sequenceSize = props.formContent[3]
+    recycleBy = props.formContent[4]
+    nextValue = props.formContent[5]
+    menu = props.formContent[6]
+  })
 
 </script>
 

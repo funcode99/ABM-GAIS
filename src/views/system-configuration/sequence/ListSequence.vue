@@ -176,8 +176,6 @@
 
         <Sidebar class="flex-none" />
 
-        <!-- h-full -->
-        <!-- lengthCounter < 6 ? 'backgroundHeight' : '',  -->
         <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500" 
         :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
           >

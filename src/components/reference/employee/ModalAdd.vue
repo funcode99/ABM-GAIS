@@ -37,8 +37,11 @@ let minDate = year + "-" + month + "-" + day;
   >
 
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+
   <div class="modal">
+
     <div class="modal-box relative">
+      
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
@@ -180,8 +183,9 @@ let minDate = year + "-" + month + "-" + day;
               <label
                 for="dob"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >DOB<span class="text-red">*</span></label
-              >
+                >
+                DOB<span class="text-red">*</span>
+              </label>
               <input
                 type="date"
                 name="dob"
@@ -306,8 +310,11 @@ let minDate = year + "-" + month + "-" + day;
           </div>
         </form>
       </main>
+
     </div>
+
   </div>
+
 </template>
 
 <style scoped>

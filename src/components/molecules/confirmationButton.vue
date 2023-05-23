@@ -13,7 +13,8 @@
               >Cancel</button
               >
               <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+                @click="$emit('saveData')"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
               >
               Save
               </button>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onBeforeMount } from 'vue'
+import { ref, watch, computed, onBeforeMount } from 'vue'
 
 import iconClose from "@/assets/navbar/icon_close.svg"
 
@@ -17,12 +17,23 @@ import Api from '@/utils/Api'
 
 import { Modal } from 'usemodal-vue3'
 
+import { Switch } from '@headlessui/vue'
+  
+    const enabled = ref(false)
+
     let instanceArray = []
     let optionDataPurposeofTrip = ref([])
     let optionDataEmployeeRequestor = ref([])
     let optionDataCity = ref([])
     let optionDataZona = ref([])
     let optionDataSiteLocation = ref([])
+    let optionDataFlightClass = ref([])
+    let optionDataTravellerType = ref([])
+    let optionDataCompany = ref([])
+    let optionDataJobBand = ref([])
+    let optionDataTransportationType = ref([])
+
+    let travellerGuestTable = ref([])
 
     const fetchDocumentCode = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
@@ -34,7 +45,7 @@ import { Modal } from 'usemodal-vue3'
     const fetchEmployeeRequestor = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/employee/get')
+      const api = await Api.get('/employee/get_by_login')
       optionDataEmployeeRequestor.value = api.data.data
     }
 
@@ -54,9 +65,53 @@ import { Modal } from 'usemodal-vue3'
 
     const fetchZona = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get('/zona/get')
       optionDataZona.value = api.data.data
+    }
+
+    const fetchFlight = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/flight_class/')
+      optionDataFlightClass.value = api.data.data
+    }
+
+    const fetchTravellerType = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/travel_guest/get_type_traveller')
+      optionDataTravellerType.value = api.data.data
+    }
+
+    const fetchCompany = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/company/get')
+      optionDataCompany.value = api.data.data
+    }
+
+    const fetchJobBand = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/job_band')
+      optionDataJobBand.value = api.data.data
+    }
+
+    const fetchTypeOfTransportation = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/other_transport/get_type_transport')
+      optionDataTransportationType.value = api.data.data
+    }
+
+    // for request trip table
+    const fetchTravellerGuest = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/travel_guest/get')
+      travellerGuestTable.value = api.data.data
+      console.log(travellerGuestTable.value)
     }
 
     onBeforeMount(() => {
@@ -65,6 +120,13 @@ import { Modal } from 'usemodal-vue3'
       fetchSiteLocation()
       fetchCity()
       fetchZona()
+      fetchCompany()
+      fetchFlight()
+      fetchJobBand()
+      fetchTypeOfTransportation()
+
+      fetchTravellerGuest()
+      fetchTravellerType()
     })
 
     let isVisibleGuest = ref(false)
@@ -79,7 +141,7 @@ import { Modal } from 'usemodal-vue3'
 
     let formStep = ref(0)
 
-    let requestType = ref('Company Business')
+    let requestType = ref([null, 'Company Business'])
     let stepCounter = ref(7)
 
     watch(requestType, (newValue, oldValue) => {
@@ -90,11 +152,9 @@ import { Modal } from 'usemodal-vue3'
         stepCounter.value = 7
       } else if (newValue == 'Field Break') {
         stepCounter.value = 4
-      } else if (newValue == 'Taxi Voucher Only') {
+      } else if (newValue == 'Taxi Voucher') {
         stepCounter.value = 3
       }
-
-      // console.log(stepCounter.value)
 
     })
 
@@ -335,22 +395,27 @@ import { Modal } from 'usemodal-vue3'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
     const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative'
 
+    // Purpose of Trip API
+    let selectedRequestor = ref([])
     let requestor = ref('')
+    let locationId = ref('')
     let location = ref('')
     let sn = ref('')
     let telephone = ref('')
-
     let purposeOfTrip = ref('')
     let notesToPurposeOfTrip = ref('')
     let fromCity = ref('')
     let toCity = ref('')
+    let fromCityId = ref('')
+    let toCityId = ref('')
     let zona = ref('')
-    let TLKperDay = ref('')
-    let totalTLK = ref('')
+    let TLKperDay = ref(0)
+    let totalDays = ref()
+    let totalTLK = ref(0)
     let departureDate = ref('')
     let returnDate = ref('')
 
-    // guest as a traveller
+    // Guest as a traveller
     let typeOfTraveller = ref('')
     let department = ref('')
     let name = ref('')
@@ -358,57 +423,154 @@ import { Modal } from 'usemodal-vue3'
     let gender = ref('')
     let hotelFare = ref('')
     let NIK = ref('')
-    let flightClass = ref('')
-    let contactNo = ref('')
+    let flightClassGuestAsATraveller = ref('')
+    let contactNumber = ref('')
     let notesGuestAsTraveller = ref('')
+
+    // Airlines
+    let traveller = ref('')
+    let departure = ref('')
+    let departureDateAirlines = ref('')
+    let arrival = ref('')
+    let flightClassAirlines = ref('')
+    let vendor = ref('')
+
+    // Taxi Voucher
+    let nameTaxiVoucher = ref('')
+    let dateTaxiVoucher = ref('')
+    let departureTaxiVoucher = ref('')
+    let arrivalTaxiVoucher = ref('')
+    let amountTaxiVoucher = ref('')
+    let remarksTaxiVoucher = ref('')
+    let accountNameTaxiVoucher = ref('')
+    let voucherCodeTaxiVoucher = ref('')
+
+    // Other Transportation
+    let travellerOtherTransportation = ref('')
+    let cityOtherTransportation = ref('')
+    let typeOfTransportationOtherTransportation = ref('')
+    let quantityOtherTransportation = ref('')
+    let fromDateOtherTransportation = ref('')
+    let toDateOtherTransportation = ref('')
+    let remarksOtherTransportation = ref('')
+
+    // Accomodation
+    let travellerAccomodation = ref('')
+    let genderAccomodation = ref('')
+    let hotelFareAccomodation = ref('')
+    let cityRequestedAccomodation = ref('')
+    let remarksRequestedAccomodation = ref('')
+    let checkInRequestedAccomodation = ref('')
+    let checkOutRequestedAccomodation = ref('')
+    let createGLRequestedAccomodation = ref(false)
+    let accomodationTypeRequestedAccomodation = ref('')
+    let vendorRequestedAccomodation = ref('')
+
+    // Cash Advance
+    let travellerCashAdvance = ref('')
+    let nominalCashAdvance = ref('')
+    let itemCashAdvance = ref('')
+    let totalCashAdvance = ref('')
+    let frequency = ref('')
+    let remarks = ref('')
+    let currency = ref('')
 
     const resetRef = () => {
       
     }
 
-  let dtToday = new Date();
-  let month = dtToday.getMonth() + 1;
-  let day = dtToday.getDate();
-  let year = dtToday.getFullYear();
-  if (month < 10) month = "0" + month.toString();
-  if (day < 10) day = "0" + day.toString();
-  let minDate = year + "-" + month + "-" + day;
+    let dtToday = new Date();
+    let month = dtToday.getMonth() + 1;
+    let day = dtToday.getDate();
+    let year = dtToday.getFullYear();
+    if (month < 10) month = "0" + month.toString();
+    if (day < 10) day = "0" + day.toString();
+    let minDate = year + "-" + month + "-" + day;
 
-  let getDepartureDateYear = ref()
-  let getDepartureDateMonth = ref()
-  let getDepartureDateDay = ref()
+    let getDepartureDateYear = ref()
+    let getDepartureDateMonth = ref()
+    let getDepartureDateDay = ref()
 
-  let getReturnDateYear = ref()
-  let getReturnDateMonth = ref()
-  let getReturnDateDay = ref()
-  
-  let formattedDepartureDate = ref()
-  let formattedReturnDate = ref()
+    let getReturnDateYear = ref()
+    let getReturnDateMonth = ref()
+    let getReturnDateDay = ref()
+    
+    let formattedDepartureDate = ref()
+    let formattedReturnDate = ref()
 
-  let date1 = ref()
-  let date2 = ref()
-  let margin = ref()
-  let totalDays = ref()
+    let date1 = ref()
+    let date2 = ref('')
+    let margin = ref()
 
-  watch(departureDate, (newValue, oldValue) => {
-    getDepartureDateYear = newValue.toString().substring(0,4)
-    getDepartureDateMonth = newValue.toString().substring(5,7)
-    getDepartureDateDay = newValue.toString().substring(8,10)
-    formattedDepartureDate = getDepartureDateYear + '/' + getDepartureDateMonth + '/' + getDepartureDateDay
-    date2 = new Date(formattedDepartureDate)
-  })
+    watch(departureDate, (newValue, oldValue) => {
+      getDepartureDateYear = newValue.toString().substring(0,4)
+      getDepartureDateMonth = newValue.toString().substring(5,7)
+      getDepartureDateDay = newValue.toString().substring(8,10)
+      formattedDepartureDate = getDepartureDateYear + '/' + getDepartureDateMonth + '/' + getDepartureDateDay
+      date2 = new Date(formattedDepartureDate)
+      if(date2.value !== '') {
+        margin = date1.getTime() - date2.getTime()
+        totalDays = Math.ceil((margin/(1000*3600*24))+1)
+        totalTLK = totalDays * TLKperDay.value
+      }
+    })
 
-  watch(returnDate, (newValue) => {
-    getReturnDateYear = newValue.toString().substring(0,4)
-    getReturnDateMonth = newValue.toString().substring(5,7)
-    getReturnDateDay = newValue.toString().substring(8,10)
-    formattedReturnDate = getReturnDateYear + '/' + getReturnDateMonth + '/' + getReturnDateDay
-    date1 = new Date(formattedReturnDate)
-    // yesss dapet hasil nya
-    margin = date1.getTime() - date2.getTime()
-    totalDays = Math.ceil((margin/(1000*3600*24))+1)
-  })
+    watch(returnDate, (newValue) => {
+        getReturnDateYear = newValue.toString().substring(0,4)
+        getReturnDateMonth = newValue.toString().substring(5,7)
+        getReturnDateDay = newValue.toString().substring(8,10)
+        formattedReturnDate = getReturnDateYear + '/' + getReturnDateMonth + '/' + getReturnDateDay
+        date1 = new Date(formattedReturnDate)
+        // yesss dapet hasil nya
+        if(date2.value !== '') {
+          margin = date1.getTime() - date2.getTime()
+          totalDays = Math.ceil((margin/(1000*3600*24))+1)
+          totalTLK = totalDays * TLKperDay.value
+        }
+    })
 
+    watch(TLKperDay, () => {
+      if(date2.value !== '') {
+        margin = date1.getTime() - date2.getTime()
+        totalDays = Math.ceil((margin/(1000*3600*24))+1)
+        totalTLK = totalDays * TLKperDay.value
+      }
+    })
+
+    watch(formStep, async () => {
+      if (formStep.value === 2) {
+
+          const token = JSON.parse(localStorage.getItem('token'))
+          Api.defaults.headers.common.Authorization = `Bearer ${token}`
+          const api = await Api.post('/request_trip/store', {
+            id_employee: requestor.value,
+            no_request_trip: '',
+            code_document: requestType.value[0],
+            id_site: locationId.value,
+            notes: notesToPurposeOfTrip.value,
+            id_city_from: fromCity.value,
+            id_city_to: toCity.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            id_zona: zona.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK
+          })
+          console.log(api)
+      }
+    })
+
+    watch(selectedRequestor, (newValue) => {
+      requestor.value = newValue[0]
+      locationId.value = optionDataEmployeeRequestor.value[newValue[1]].id_site
+      location.value = optionDataEmployeeRequestor.value[newValue[1]].company_name
+      sn.value = optionDataEmployeeRequestor.value[newValue[1]].sn_employee
+      telephone.value = optionDataEmployeeRequestor.value[newValue[1]].phone_number
+    })
+
+  const submitGuestTraveller = () => {
+
+  }
 
 </script>
 
@@ -453,7 +615,7 @@ import { Modal } from 'usemodal-vue3'
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 1 ? 'block' : 'hidden'">
           </div>
 
-          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Company Business'">
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType[1] == 'Company Business'">
 
             <!-- step 3 circle travellers -->
             <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
@@ -499,7 +661,7 @@ import { Modal } from 'usemodal-vue3'
 
           </div>
 
-          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Site Visit'">
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType[1] == 'Site Visit'">
 
             <!-- step 3 circle travellers -->
             <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
@@ -545,7 +707,7 @@ import { Modal } from 'usemodal-vue3'
 
           </div>
 
-          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Field Break'">
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType[1] == 'Field Break'">
              
             <!-- step 3 circle travellers -->
             <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
@@ -569,7 +731,7 @@ import { Modal } from 'usemodal-vue3'
 
           </div>
 
-          <div class="flex justify-center gap-x-[19px]" v-if="requestType == 'Taxi Voucher Only'">
+          <div class="flex justify-center gap-x-[19px]" v-if="requestType[1] == 'Taxi Voucher'">
              
             <!-- step 3 circle travellers -->
             <div :class="[formStep > 2 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
@@ -592,150 +754,155 @@ import { Modal } from 'usemodal-vue3'
         <!-- modal body -->
         <div class="modal-box-inner mt-[30px]">
 
-            <!-- step 1 form Requestor Info -->
-            <div class="text-left" :class="formStep == 0 ? 'block' : 'hidden'">
-
-            <div :class="rowClass">
-
-              <div :class="columnClass">
-                <div class="w-full">
-                  <span>Requestor <span class="text-[#f5333f]">*</span></span>
-                  <select :class="inputStylingClass">
-                    <option v-for="data in optionDataEmployeeRequestor" value=:>
-                      {{ data.employee_name }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-
-              <div :class="columnClass">
-                <div class="w-full">
-                  <span class="block">Location <span class="text-[#f5333f]">*</span></span>
-                  <input disabled type="text" v-for="data in optionDataEmployeeRequestor" :value="data.id_site" :class="inputStylingClass" placeholder="Location" />
-                </div>
-              </div>
-
-            </div>
-
-            <div :class="rowClass">
-
-              <div :class="columnClass">
-                <div class="w-full">
-                  <span class="block">SN <span class="text-red-star">*</span></span>
-                  <input disabled type="text" v-for="data in optionDataEmployeeRequestor" :value="data.sn_employee" :class="inputStylingClass" placeholder="SN Number" />
-                </div>
-
-              </div>
-
-              <div :class="columnClass">
-                <div class="w-full">
-                  <span class="block">Telephone <span class="text-red-star">*</span></span>
-                  <input disabled type="text" v-for="data in optionDataEmployeeRequestor" :value="data.phone_number" :class="inputStylingClass" placeholder="Telephone">
-                </div>
-              </div>
-
-            </div>
-
-            </div>
-
-            <!-- step 2 form -->
-            <div class="text-left px-4 pb-[60px] flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'">
-
-              <div :class="columnClass + ' mx-4'">
-        
-                  <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                  <select v-model="requestType" :class="inputStylingWithoutWidthClass">
-                    <option v-for="data in optionDataPurposeofTrip">
-                      {{ data.document_name }}
-                    </option>
-                  </select>
-            
-              </div>
-
-              <div :class="columnClass + ' mx-4 my-3'">
-                <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes">
-              </div>
-
-              <h1 class="mx-4 mt-6">Itinerary</h1>
-              
+            <form>
+              <!-- step 1 form Requestor Info -->
+              <div class="text-left" :class="formStep == 0 ? 'block' : 'hidden'">
+  
               <div :class="rowClass">
-
-                <!-- From -->
-                <div class="w-full">
-                  <div :class="columnClass">
-                    <span>From<span class="text-red-star">*</span></span>
-                    <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="From">
-                      <option v-for="data in optionDataCity">
-                      {{ data.city_name }}
+  
+                <div :class="columnClass">
+                  <div class="w-full">
+                    <span>Requestor <span class="text-[#f5333f]">*</span></span>
+                    <select :class="inputStylingClass" v-model="selectedRequestor" required>
+                      <option v-for="(data, index) in optionDataEmployeeRequestor" :value="[data.id, index]">
+                        {{ data.employee_name }}
                       </option>
                     </select>
                   </div>
                 </div>
+  
+                <div :class="columnClass">
+                  <div class="w-full">
+                    <span class="block">Location <span class="text-[#f5333f]">*</span></span>
+                    <input disabled type="text" v-for="data in optionDataEmployeeRequestor" v-model="location" :class="inputStylingClass" placeholder="Location" required />
+                  </div>
+                </div>
+  
+              </div>
+  
+              <div :class="rowClass">
+  
+                <div :class="columnClass">
+                  <div class="w-full">
+                    <span class="block">SN <span class="text-red-star">*</span></span>
+                    <input disabled type="text" v-for="data in optionDataEmployeeRequestor" v-model="sn" :class="inputStylingClass" placeholder="SN Number" required />
+                  </div>
+  
+                </div>
+  
+                <div :class="columnClass">
+                  <div class="w-full">
+                    <span class="block">Telephone <span class="text-red-star">*</span></span>
+                    <input disabled type="text" v-for="data in optionDataEmployeeRequestor" v-model="telephone" :class="inputStylingClass" placeholder="Telephone" required>
+                  </div>
+                </div>
+  
+              </div>
+  
+              </div>
+  
+              <!-- step 2 form -->
+              <div class="text-left px-4 pb-[60px] flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'">
+  
+                <div :class="columnClass + ' mx-4'">
+          
+                    <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
 
-                <!-- Zona -->
-                <div class="w-full">
+                    <select v-model="requestType" :class="inputStylingWithoutWidthClass" required>
+                      <option v-for="data in optionDataPurposeofTrip" :value="[data.id, data.document_name]">
+                        {{ data.document_name }}
+                      </option>
+                    </select>
+              
+                </div>
+  
+                <div :class="columnClass + ' mx-4 my-3'">
+  
+                  <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                  <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" required v-model="notesToPurposeOfTrip">
+  
+                </div>
+  
+                <h1 class="mx-4 mt-6">Itinerary</h1>
+                
+                <div :class="rowClass">
+  
+                  <!-- From -->
+                  <div class="w-full">
+                    <div :class="columnClass">
+                      <span>From<span class="text-red-star">*</span></span>
+                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" v-model="fromCity" required>
+                        <option v-for="data in optionDataCity" :value="data.id">
+                        {{ data.city_name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+  
+                  <!-- Zona -->
+                  <div class="w-full">
+                    <div :class="columnClass">
+                      <span>Zona<span class="text-red-star">*</span></span>
+                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Zona" v-model="zona" required>
+                        <option v-for="data in optionDataZona" :value="data.id">
+                          {{ data.zona_name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+  
+                </div>
+  
+                <div :class="rowClass">
+  
+                  <!-- To -->
                   <div :class="columnClass">
-                    <span>Zona<span class="text-red-star">*</span></span>
-                    <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Zona" v-model="zona">
-                      <option v-for="data in optionDataZona">
-                        {{ data.zona_name }}
+                    <span>To<span class="text-red-star">*</span></span>
+                    <select :class="inputStylingClass" v-model="toCity" required>
+                      <option v-for="data in optionDataCity" :value="data.id">
+                        {{ data.city_name }}
                       </option>
                     </select>
                   </div>
+                  
+                  <!-- TLK/Day -->
+                  <div :class="columnClass">
+                    <span>TLK/Day<span class="text-red-star">*</span></span>
+                    <input type="text" :class="inputStylingClass" placeholder="TLK/Day" v-model="TLKperDay" required>
+                  </div>
+  
                 </div>
-
-              </div>
-
-              <div :class="rowClass">
-
-                <!-- To -->
-                <div :class="columnClass">
-                  <span>To<span class="text-red-star">*</span></span>
-                  <select :class="inputStylingClass" placeholder="City">
-                    <option v-for="data in optionDataCity">
-                      {{ data.city_name }}
-                    </option>
-                  </select>
+  
+                <div :class="rowClass">
+                  
+                  <!-- Date Departure -->
+                  <div :class="columnClass">
+                    <span>Date Departure<span class="text-red-star">*</span> {{ formattedDepartureDate }}</span>
+                    <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate" :max="returnDate" required>
+                  </div>
+  
+                    <!-- Total TLK -->
+                  <div :class="columnClass">
+                    <span class="">Total TLK<span class="text-red-star">*</span></span>
+                    <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
+                  </div>
+  
+                </div>
+  
+                <div :class="rowClass">
+                    <!-- Return date -->
+                    <div :class="columnClass">
+                        <span class="">Return Date<span class="text-red-star">*</span> {{ formattedReturnDate }} </span>
+                        <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
+                    </div>
+                    <div :class="columnClass">
+                    </div>
                 </div>
                 
-                <!-- TLK/Day -->
-                <div :class="columnClass">
-                  <span>TLK/Day<span class="text-red-star">*</span></span>
-                  <input type="text" :class="inputStylingClass" placeholder="TLK/Day">
-                </div>
-
               </div>
+            </form>
 
-              <div :class="rowClass">
-                
-                <!-- Date Departure -->
-                <div :class="columnClass">
-                  <span>Date Departure<span class="text-red-star">*</span> {{ formattedDepartureDate }}</span>
-                  <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate">
-                </div>
-
-                  <!-- Total TLK -->
-                <div :class="columnClass">
-                  <span class="">Total TLK<span class="text-red-star">*</span></span>
-                  <input type="text" disabled :value="totalDays" :class="inputStylingClass" placeholder="Total">
-                </div>
-
-              </div>
-
-              <div :class="rowClass">
-                  <!-- Return date -->
-                  <div :class="columnClass">
-                      <span class="">Return Date<span class="text-red-star">*</span> {{ formattedReturnDate }} </span>
-                      <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date">
-                  </div>
-                  <div :class="columnClass">
-                  </div>
-              </div>
-              
-            </div>
-
-            <div v-if="requestType == 'Company Business'">
+            <div v-if="requestType[1] == 'Company Business'">
 
               <!-- step 3 form Traveller -->
               <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
@@ -754,33 +921,35 @@ import { Modal } from 'usemodal-vue3'
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="data in tableBodyTravellers" :key="data.id">
+                      <tr v-for="data in travellerGuestTable" :key="data.id">
                         <td>
-                          {{ data.name }}
+                          {{ data.employee_name }}
                         </td>
                         <td>
-                          {{ data.sn }}
+                          <!-- belom ada sn -->
+                          {{ data.sn }} 
                         </td>
                         <td>
                           {{ data.gender }}
                         </td>
                         <td>
-                          {{ data.contactNo }}
+                          {{ data.contact_no }}
                         </td>
                         <td>
-                          {{ data.department }}
+                          <!-- kenapa departement nya cuma id -->
+                          {{ data.departement }}
                         </td>
                         <td>
-                          {{ data.company }}
+                          {{ data.company_name }}
                         </td>
                         <td>
-                          {{ data.type }}
+                          {{ data.type_traveller }}
                         </td>
                         <td>
                           {{ data.maxHotelFare }}
                         </td>
                         <td>
-                          {{ data.flightClass }}
+                          {{ data.flight_class }}
                         </td>
                         <td>
 
@@ -983,7 +1152,7 @@ import { Modal } from 'usemodal-vue3'
 
               </div>
 
-              <!-- step 8 form -->
+              <!-- step 8 form Cash Advance -->
               <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
 
               <button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
@@ -1025,348 +1194,60 @@ import { Modal } from 'usemodal-vue3'
 
             </div>
 
-            <div v-if="requestType == 'Site Visit'">
+            <div v-if="requestType[1] == 'Site Visit'">
 
-            <!-- step 3 form Traveller -->
-            <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
-
-            <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-            + Add Guest
-            </button>
-
-            <div class="overflow-x-auto mt-5">
-            <table class="table">
-            <thead>
-            <tr>
-            <th v-for="data in tableHeadTravellers" :key="data.id">
-            {{ data.title }}
-            </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="data in tableBodyTravellers" :key="data.id">
-            <td>
-            {{ data.name }}
-            </td>
-            <td>
-            {{ data.sn }}
-            </td>
-            <td>
-            {{ data.gender }}
-            </td>
-            <td>
-            {{ data.contactNo }}
-            </td>
-            <td>
-            {{ data.department }}
-            </td>
-            <td>
-            {{ data.company }}
-            </td>
-            <td>
-            {{ data.type }}
-            </td>
-            <td>
-            {{ data.maxHotelFare }}
-            </td>
-            <td>
-            {{ data.flightClass }}
-            </td>
-            <td>
-
-            </td>
-            </tr>
-            </tbody>
-            </table>
-            </div>
-
-            </div>
-
-            <!-- step 4 form Airlines -->
-            <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
-
-            <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-              + Add Airlines
-            </button>
-
-            <div class="overflow-x-auto mt-5">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
-                      {{ data.title }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
-                    <td>
-                      {{ data.name }}
-                    </td>
-                    <td>
-                      {{ data.departure }}
-                    </td>
-                    <td>
-                      {{ data.arrival }}
-                    </td>
-                    <td>
-                      {{ data.flightNumber }}
-                    </td>
-                    <td>
-                      {{ data.flightRegion }}
-                    </td>
-                    <td>
-                      {{ data.status }}
-                    </td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            </div>
-
-            <!-- step 5 form Taxi Voucher -->
-            <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
-
-            <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-              + Add Taxi Voucher
-            </button>
-
-            <div class="overflow-x-auto mt-5">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
-                      {{ data.title }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
-                      <td>
-                        {{ data.name }}
-                      </td>
-                      <td>
-                        {{ data.date }}
-                      </td>
-                      <td>
-                        {{ data.departure }}
-                      </td>
-                      <td>
-                        {{ data.arrival }}
-                      </td>
-                      <td>
-                        {{ data.amount }}
-                      </td>
-                      <td>
-                        {{ data.accountName }}
-                      </td>
-                      <td>
-                        {{ data.remarks }}
-                      </td>
-                      <td>
-                        {{ data.status }}
-                      </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            </div>
-
-            <!-- step 6 form Other Transportation -->
-            <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
-
-            <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-              + Add Other Transportation
-            </button>
-
-            <div class="overflow-x-auto mt-5">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th v-for="data in tableHeadOtherTransportation" :key="data.id">
-                      {{ data.title }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
-                    <td>
-                      {{ data.name }}
-                    </td>
-                    <td>
-                      {{ data.type }}
-                    </td>
-                    <td>
-                      {{ data.fromDate }}
-                    </td>
-                    <td>
-                      {{ data.toDate }}
-                    </td>
-                    <td>
-                      {{ data.quantity }}
-                    </td>
-                    <td>
-                      {{ data.city }}
-                    </td>
-                    <td>
-                      {{ data.status }}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            </div>
-
-            <!-- step 7 form Accomodation -->
-            <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
-
-            <button @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-              + Add Accomodation
-            </button>
-
-            <div class="overflow-x-auto mt-5">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
-                      {{ data.title }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
-                    <td>
-                      {{ data.name }}
-                    </td>
-                    <td>
-                      {{ data.hotelName }}
-                    </td>
-                    <td>
-                      {{ data.checkIn }}
-                    </td>
-                    <td>
-                      {{ data.checkOut }}
-                    </td>
-                    <td>
-                      {{ data.city }}
-                    </td>
-                    <td>
-                      {{ data.type }}
-                    </td>
-                    <td>
-                      {{ data.sharingWith }}
-                    </td>
-                    <td>
-                      {{ data.status }}
-                    </td>
-                    <td>
-
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            </div>
-
-            <!-- step 8 form -->
-            <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
-
-            <button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-              + Add Cash Advance
-            </button>
-
-            <div class="overflow-x-auto mt-5">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th v-for="data in tableHeadCashAdvance" :key="data.id">
-                      {{ data.title }}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="data in tableBodyCashAdvance" :key="data.id">
-                    <td>
-                      {{ data.caNo }}
-                    </td>
-                    <td>
-                      {{ data.total }}
-                    </td>
-                    <td>
-                      {{ data.notes }}
-                    </td>
-                    <td>
-                      {{ data.status }}
-                    </td>
-                    <td>
-                      
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            </div>
-            </div>
-
-            <div v-if="requestType == 'Field Break'">
                 <!-- step 3 form Traveller -->
                 <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
 
-<button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-  + Add Guest
-</button>
+                <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                + Add Guest
+                </button>
 
-<div class="overflow-x-auto mt-5">
-  <table class="table">
-    <thead>
-      <tr>
-        <th v-for="data in tableHeadTravellers" :key="data.id">
-          {{ data.title }}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="data in tableBodyTravellers" :key="data.id">
-        <td>
-          {{ data.name }}
-        </td>
-        <td>
-          {{ data.sn }}
-        </td>
-        <td>
-          {{ data.gender }}
-        </td>
-        <td>
-          {{ data.contactNo }}
-        </td>
-        <td>
-          {{ data.department }}
-        </td>
-        <td>
-          {{ data.company }}
-        </td>
-        <td>
-          {{ data.type }}
-        </td>
-        <td>
-          {{ data.maxHotelFare }}
-        </td>
-        <td>
-          {{ data.flightClass }}
-        </td>
-        <td>
+                <div class="overflow-x-auto mt-5">
+                <table class="table">
+                <thead>
+                <tr>
+                <th v-for="data in tableHeadTravellers" :key="data.id">
+                {{ data.title }}
+                </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="data in tableBodyTravellers" :key="data.id">
+                <td>
+                {{ data.name }}
+                </td>
+                <td>
+                {{ data.sn }}
+                </td>
+                <td>
+                {{ data.gender }}
+                </td>
+                <td>
+                {{ data.contactNo }}
+                </td>
+                <td>
+                {{ data.department }}
+                </td>
+                <td>
+                {{ data.company }}
+                </td>
+                <td>
+                {{ data.type }}
+                </td>
+                <td>
+                {{ data.maxHotelFare }}
+                </td>
+                <td>
+                {{ data.flightClass }}
+                </td>
+                <td>
 
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+                </td>
+                </tr>
+                </tbody>
+                </table>
+                </div>
 
                 </div>
 
@@ -1414,108 +1295,398 @@ import { Modal } from 'usemodal-vue3'
 
                 </div>
 
-                <!-- step 6 form Other Transportation -->
+                <!-- step 5 form Taxi Voucher -->
                 <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
 
-<button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-  + Add Other Transportation
-</button>
+                <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  + Add Taxi Voucher
+                </button>
 
-<div class="overflow-x-auto mt-5">
-  <table class="table">
-    <thead>
-      <tr>
-        <th v-for="data in tableHeadOtherTransportation" :key="data.id">
-          {{ data.title }}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
-        <td>
-          {{ data.name }}
-        </td>
-        <td>
-          {{ data.type }}
-        </td>
-        <td>
-          {{ data.fromDate }}
-        </td>
-        <td>
-          {{ data.toDate }}
-        </td>
-        <td>
-          {{ data.quantity }}
-        </td>
-        <td>
-          {{ data.city }}
-        </td>
-        <td>
-          {{ data.status }}
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+                <div class="overflow-x-auto mt-5">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
+                          {{ data.title }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
+                          <td>
+                            {{ data.name }}
+                          </td>
+                          <td>
+                            {{ data.date }}
+                          </td>
+                          <td>
+                            {{ data.departure }}
+                          </td>
+                          <td>
+                            {{ data.arrival }}
+                          </td>
+                          <td>
+                            {{ data.amount }}
+                          </td>
+                          <td>
+                            {{ data.accountName }}
+                          </td>
+                          <td>
+                            {{ data.remarks }}
+                          </td>
+                          <td>
+                            {{ data.status }}
+                          </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                </div>
+
+                <!-- step 6 form Other Transportation -->
+                <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
+
+                <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  + Add Other Transportation
+                </button>
+
+                <div class="overflow-x-auto mt-5">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th v-for="data in tableHeadOtherTransportation" :key="data.id">
+                          {{ data.title }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
+                        <td>
+                          {{ data.name }}
+                        </td>
+                        <td>
+                          {{ data.type }}
+                        </td>
+                        <td>
+                          {{ data.fromDate }}
+                        </td>
+                        <td>
+                          {{ data.toDate }}
+                        </td>
+                        <td>
+                          {{ data.quantity }}
+                        </td>
+                        <td>
+                          {{ data.city }}
+                        </td>
+                        <td>
+                          {{ data.status }}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                </div>
+
+                <!-- step 7 form Accomodation -->
+                <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
+
+                <button @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  + Add Accomodation
+                </button>
+
+                <div class="overflow-x-auto mt-5">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
+                          {{ data.title }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
+                        <td>
+                          {{ data.name }}
+                        </td>
+                        <td>
+                          {{ data.hotelName }}
+                        </td>
+                        <td>
+                          {{ data.checkIn }}
+                        </td>
+                        <td>
+                          {{ data.checkOut }}
+                        </td>
+                        <td>
+                          {{ data.city }}
+                        </td>
+                        <td>
+                          {{ data.type }}
+                        </td>
+                        <td>
+                          {{ data.sharingWith }}
+                        </td>
+                        <td>
+                          {{ data.status }}
+                        </td>
+                        <td>
+
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                </div>
+
+                <!-- step 8 form -->
+                <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
+
+                <button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  + Add Cash Advance
+                </button>
+
+                <div class="overflow-x-auto mt-5">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th v-for="data in tableHeadCashAdvance" :key="data.id">
+                          {{ data.title }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="data in tableBodyCashAdvance" :key="data.id">
+                        <td>
+                          {{ data.caNo }}
+                        </td>
+                        <td>
+                          {{ data.total }}
+                        </td>
+                        <td>
+                          {{ data.notes }}
+                        </td>
+                        <td>
+                          {{ data.status }}
+                        </td>
+                        <td>
+                          
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
                 </div>
 
             </div>
 
-            <div v-if="requestType == 'Taxi Voucher Only'">
+            <div v-if="requestType[1] == 'Field Break'">
 
                 <!-- step 3 form Traveller -->
                 <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
 
-<button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-  + Add Guest
-</button>
+                  <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                    + Add Guest
+                  </button>
 
-<div class="overflow-x-auto mt-5">
-  <table class="table">
-    <thead>
-      <tr>
-        <th v-for="data in tableHeadTravellers" :key="data.id">
-          {{ data.title }}
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="data in tableBodyTravellers" :key="data.id">
-        <td>
-          {{ data.name }}
-        </td>
-        <td>
-          {{ data.sn }}
-        </td>
-        <td>
-          {{ data.gender }}
-        </td>
-        <td>
-          {{ data.contactNo }}
-        </td>
-        <td>
-          {{ data.department }}
-        </td>
-        <td>
-          {{ data.company }}
-        </td>
-        <td>
-          {{ data.type }}
-        </td>
-        <td>
-          {{ data.maxHotelFare }}
-        </td>
-        <td>
-          {{ data.flightClass }}
-        </td>
-        <td>
+                  <div class="overflow-x-auto mt-5">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th v-for="data in tableHeadTravellers" :key="data.id">
+                            {{ data.title }}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="data in tableBodyTravellers" :key="data.id">
+                          <td>
+                            {{ data.name }}
+                          </td>
+                          <td>
+                            {{ data.sn }}
+                          </td>
+                          <td>
+                            {{ data.gender }}
+                          </td>
+                          <td>
+                            {{ data.contactNo }}
+                          </td>
+                          <td>
+                            {{ data.department }}
+                          </td>
+                          <td>
+                            {{ data.company }}
+                          </td>
+                          <td>
+                            {{ data.type }}
+                          </td>
+                          <td>
+                            {{ data.maxHotelFare }}
+                          </td>
+                          <td>
+                            {{ data.flightClass }}
+                          </td>
+                          <td>
 
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+                <!-- step 4 form Airlines -->
+                <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
+
+                <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  + Add Airlines
+                </button>
+
+                <div class="overflow-x-auto mt-5">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
+                          {{ data.title }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+                        <td>
+                          {{ data.name }}
+                        </td>
+                        <td>
+                          {{ data.departure }}
+                        </td>
+                        <td>
+                          {{ data.arrival }}
+                        </td>
+                        <td>
+                          {{ data.flightNumber }}
+                        </td>
+                        <td>
+                          {{ data.flightRegion }}
+                        </td>
+                        <td>
+                          {{ data.status }}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                </div>
+
+                <!-- step 5 form Other Transportation -->
+                <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
+
+                  <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                    + Add Other Transportation
+                  </button>
+
+                  <div class="overflow-x-auto mt-5">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th v-for="data in tableHeadOtherTransportation" :key="data.id">
+                            {{ data.title }}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
+                          <td>
+                            {{ data.name }}
+                          </td>
+                          <td>
+                            {{ data.type }}
+                          </td>
+                          <td>
+                            {{ data.fromDate }}
+                          </td>
+                          <td>
+                            {{ data.toDate }}
+                          </td>
+                          <td>
+                            {{ data.quantity }}
+                          </td>
+                          <td>
+                            {{ data.city }}
+                          </td>
+                          <td>
+                            {{ data.status }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+
+            </div>
+
+            <div v-if="requestType[1] == 'Taxi Voucher'">
+
+                <!-- step 3 form Traveller -->
+                <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
+
+              <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                + Add Guest
+              </button>
+
+                <div class="overflow-x-auto mt-5">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th v-for="data in tableHeadTravellers" :key="data.id">
+                            {{ data.title }}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr v-for="data in tableBodyTravellers" :key="data.id">
+                          <td>
+                            {{ data.name }}
+                          </td>
+                          <td>
+                            {{ data.sn }}
+                          </td>
+                          <td>
+                            {{ data.gender }}
+                          </td>
+                          <td>
+                            {{ data.contactNo }}
+                          </td>
+                          <td>
+                            {{ data.department }}
+                          </td>
+                          <td>
+                            {{ data.company }}
+                          </td>
+                          <td>
+                            {{ data.type }}
+                          </td>
+                          <td>
+                            {{ data.maxHotelFare }}
+                          </td>
+                          <td>
+                            {{ data.flightClass }}
+                          </td>
+                          <td>
+
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                </div>
 
                 </div>
 
@@ -1614,29 +1785,8 @@ import { Modal } from 'usemodal-vue3'
                   Type of Traveller<span class="text-red-star">*</span>
               </label>
               <select v-model="typeOfTraveller" :class="inputStylingClass">
-                <option>
-                  Interviewee
-                </option>
-                <option>
-                  Consultant
-                </option>
-                <option>
-                  Buyers
-                </option>
-                <option>
-                  Presales
-                </option>
-                <option>
-                  Government
-                </option>
-                <option>
-                  Employee Non Staff
-                </option>
-                <option>
-                  Family Status
-                </option>
-                <option>
-                  Vendor
+                <option v-for="data in optionDataTravellerType" :value="data.id">
+                  {{ data.type_traveller }}
                 </option>
               </select>
           </div>
@@ -1644,14 +1794,14 @@ import { Modal } from 'usemodal-vue3'
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Department<span class="text-red-star">*</span></label
-            >
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Department<span class="text-red-star">*</span>
+            </label>
             <input
                 type="text"
                 placeholder="Department"
                 :class="inputStylingClass"
+                v-model="department"
                 required
             />
           </div>
@@ -1666,25 +1816,24 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Name<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Name
-                </option>
+              <select :class="inputStylingClass" v-model="name">
+                  <option v-for="(data, index) in optionDataEmployeeRequestor" :value="data.id">
+                    {{ data.employee_name }}
+                  </option>
               </select>
           </div>
         </div>
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Company<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Company
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Company<span class="text-red-star">*</span>
+            </label>
+            <select :class="inputStylingClass" v-model="company">
+                <option v-for="data in optionDataCompany" :key="data.id" :value="data.company_code">
+                    {{ data.company_name }}
                 </option>
-              </select>
+            </select>
           </div>
         </div>
 
@@ -1697,11 +1846,11 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Gender<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
+              <select :class="inputStylingClass" v-model="gender">
+                <option selected>
                   Male
                 </option>
-                <option selected hidden disabled>
+                <option>
                   Female
                 </option>
               </select>
@@ -1710,13 +1859,12 @@ import { Modal } from 'usemodal-vue3'
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Hotel Fare<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Fare
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Hotel Fare<span class="text-red-star">*</span>
+            </label>
+            <select :class="inputStylingClass" v-model="hotelFare">
+                <option v-for="data in optionDataJobBand" :key="data.id">
+                  {{ data.hotel_fare }}
                 </option>
               </select>
           </div>
@@ -1731,7 +1879,7 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   NIK<span class="text-red-star">*</span>
               </label>
-              <input type="text" placeholder="NIK" :class="inputStylingClass">
+              <input type="text" placeholder="NIK" :class="inputStylingClass" v-model="NIK">
           </div>
         </div>
 
@@ -1739,11 +1887,11 @@ import { Modal } from 'usemodal-vue3'
           <div class="w-full">
             <label
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Flight Entitlement<span class="text-red-star">*</span></label
+                >Flight Class<span class="text-red-star">*</span></label
             >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Flight Entitlement
+            <select :class="inputStylingClass" v-model="flightClassGuestAsATraveller">
+                <option v-for="data in optionDataFlightClass" :value="data.id">
+                    {{ data.flight_class }}
                 </option>
               </select>
           </div>
@@ -1758,17 +1906,16 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Contact No<span class="text-red-star">*</span>
               </label>
-              <input :class="inputStylingClass" type="text" placeholder="Contact No">
+              <input :class="inputStylingClass" type="text" placeholder="Contact No" v-model="contactNumber">
           </div>
         </div>
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                :class="labelStylingClass"
-                >Notes<span class="text-red-star">*</span></label
-            >
-            <input type="text" placeholder="Notes" :class="inputStylingClass">
+            <label :class="labelStylingClass">
+              Notes<span class="text-red-star">*</span>
+            </label>
+            <input type="text" placeholder="Notes" :class="inputStylingClass" v-model="notesGuestAsTraveller">
           </div>
         </div>
 
@@ -1777,7 +1924,7 @@ import { Modal } from 'usemodal-vue3'
 
     </div>
 
-    <confirmationButton @cancel-click="isVisibleGuest = false" />
+    <confirmationButton @save-data="submitGuestTraveller" @cancel-click="isVisibleGuest = false" />
 
     </Modal>
 
@@ -1786,7 +1933,6 @@ import { Modal } from 'usemodal-vue3'
 
     <modalHeader @close-click="isVisibleAirlines = false" :title="'Airlines'" />
 
-    <!-- pb-28 -->
     <div class="px-3 text-left modal-box-inner pb-4">
 
       <div :class="rowClass">
@@ -1796,10 +1942,10 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Traveller<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Name
-                </option>
+              <select :class="inputStylingClass" v-model="traveller">
+                  <option v-for="(data, index) in optionDataEmployeeRequestor" :value="data.id">
+                    {{ data.employee_name }}
+                  </option>
               </select>
           </div>
         </div>
@@ -1810,11 +1956,11 @@ import { Modal } from 'usemodal-vue3'
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Departure<span class="text-red-star">*</span></label
             >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
-                </option>
-              </select>
+            <select :class="inputStylingClass" v-model="departure">
+              <option v-for="data in optionDataCity" :value="data.id">
+                {{ data.city_name }}
+              </option>
+            </select>
           </div>
         </div>
 
@@ -1827,7 +1973,7 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Departure Date<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
+              <select :class="inputStylingClass" v-model="departureDateAirlines">
                 <option selected hidden disabled>
                   Date
                 </option>
@@ -1837,15 +1983,10 @@ import { Modal } from 'usemodal-vue3'
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Arrival<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
-                </option>
-              </select>
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Return Date<span class="text-red-star">*</span>
+            </label>
+            <input type="date" v-model="returnDateAirlines" :class="inputStylingClass" />
           </div>
         </div>
 
@@ -1854,32 +1995,67 @@ import { Modal } from 'usemodal-vue3'
       <div class="flex justify-between mx-4 items-start gap-2 my-6">
 
         <div :class="columnClass">
+
           <div class="w-full">
+
               <label :class="labelStylingClass">
                   Flight Class<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
+              <select :class="inputStylingClass" v-model="flightClassAirlines">
                 <option selected hidden disabled>
                   Class
                 </option>
               </select>
+
+          </div>
+
+        </div>
+
+        <div :class="columnClass">
+          <div class="w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Vendor<span class="text-red-star">*</span>
+            </label>
+            <div>
+              <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
+              <label class="ml-4">Antavaya</label>
+            </div>
+            <div>
+              <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
+              <label class="ml-4">Aerowisata</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div :class="rowClass">
+
+        <div :class="columnClass">
+          <h1 class="text-center">Round Trip</h1>
+          <div class="py-1 flex justify-center">
+              <Switch
+                v-model="enabled"
+                :class="enabled ? 'bg-teal-900' : 'bg-teal-700'"
+                class="relative inline-flex h-[40px] w-[80px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75" >
+                <span
+                  aria-hidden="true"
+                  :class="enabled ? 'translate-x-10' : 'translate-x-0'"
+                  class="pointer-events-none inline-block h-[35px] w-[35px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
+              </Switch>
           </div>
         </div>
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Vendor<span class="text-red-star">*</span></label
-            >
-            <div>
-              <input class="w-6 h-6" type="radio" name="vendor">
-              <label class="ml-4">Antavaya</label>
-            </div>
-            <div>
-              <input class="w-6 h-6" type="radio" name="vendor">
-              <label class="ml-4">Aerowisata</label>
-            </div>
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Arrival<span class="text-red-star">*</span>
+            </label>
+            <select :class="inputStylingClass" v-model="arrival">
+                <option v-for="data in optionDataCity" :value="data.id">
+                    {{ data.city_name }}
+                </option>
+            </select>
           </div>
         </div>
 
@@ -1945,7 +2121,6 @@ import { Modal } from 'usemodal-vue3'
 
     <modalHeader @close-click="isVisibleTaxiVoucher = false" :title="'Taxi Voucher'" />
 
-    <!-- pb-28 -->
     <div class="px-3 text-left modal-box-inner pb-4">
 
       <div :class="rowClass">
@@ -1955,9 +2130,9 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Name<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Name
+              <select :class="inputStylingClass" v-model="nameTaxiVoucher">
+                <option v-for="(data, index) in optionDataEmployeeRequestor" :value="data.id">
+                  {{ data.employee_name }}
                 </option>
               </select>
           </div>
@@ -1965,15 +2140,10 @@ import { Modal } from 'usemodal-vue3'
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Date<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Date
-                </option>
-              </select>
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"> 
+              Date<span class="text-red-star">*</span>
+            </label>
+            <input v-model="dateTaxiVoucher" type="date" :class="inputStylingClass" :min="minDate" required>
           </div>
         </div>
 
@@ -1984,11 +2154,11 @@ import { Modal } from 'usemodal-vue3'
         <div :class="columnClass">
           <div class="w-full">
               <label :class="labelStylingClass">
-                   Arrival<span class="text-red-star">*</span>
+                   Departure<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
+              <select :class="inputStylingClass" v-model="departureTaxiVoucher">
+                <option v-for="data in optionDataCity" :value="data.id">
+                  {{ data.city_name }}
                 </option>
               </select>
           </div>
@@ -2000,11 +2170,11 @@ import { Modal } from 'usemodal-vue3'
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Arrival<span class="text-red-star">*</span></label
             >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
-                </option>
-              </select>
+            <select :class="inputStylingClass" v-model="arrivalTaxiVoucher">
+              <option v-for="data in optionDataCity" :value="data.id">
+                {{ data.city_name }}
+              </option>
+            </select>
           </div>
         </div>
 
@@ -2017,7 +2187,7 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Amount<span class="text-red-star">*</span>
               </label>
-              <input type="text" :class='inputStylingClass' placeholder="Amount">
+              <input type="text" :class='inputStylingClass' placeholder="Amount" v-model="amountTaxiVoucher">
           </div>
         </div>
 
@@ -2026,7 +2196,7 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   <span>Remarks</span>
               </label>
-              <input type="text" :class='inputStylingClass' placeholder="Remarks">
+              <input type="text" :class='inputStylingClass' placeholder="Remarks" v-model="remarksTaxiVoucher">
           </div>
         </div>
 
@@ -2034,14 +2204,23 @@ import { Modal } from 'usemodal-vue3'
 
       <div :class="rowClass">
 
-      <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-                <span>Account Name</span>
-            </label>
-            <input type="text" :class='inputStylingClass' placeholder="Account Name">
+        <div :class="columnClass">
+          <div class="w-full">
+              <label :class="labelStylingClass">
+                  <span>Account Name</span>
+              </label>
+              <input type="text" :class='inputStylingClass' placeholder="Account Name" v-model="accountNameTaxiVoucher">
+          </div>
         </div>
-      </div>
+
+        <div :class="columnClass">
+          <div class="w-full">
+              <label :class="labelStylingClass">
+                  <span>Voucher Code</span>
+              </label>
+              <input type="text" :class='inputStylingClass' placeholder="Voucher Code" v-model="voucherCodeTaxiVoucher">
+          </div>
+        </div>
 
       </div>
 
@@ -2056,7 +2235,7 @@ import { Modal } from 'usemodal-vue3'
 
     <modalHeader @close-click="isVisibleOtherTransportation = false" :title="'Other Transportation'" />
 
-    <!-- pb-28 -->
+
     <div class="px-3 text-left modal-box-inner pb-4">
 
       <div :class="rowClass">
@@ -2066,9 +2245,9 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Traveller<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  Name
+              <select :class="inputStylingClass" v-model="travellerOtherTransportation">
+                <option v-for="(data, index) in optionDataEmployeeRequestor" :value="data.id">
+                  {{ data.employee_name }}
                 </option>
               </select>
           </div>
@@ -2080,11 +2259,11 @@ import { Modal } from 'usemodal-vue3'
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >City<span class="text-red-star">*</span></label
             >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
+            <select :class="inputStylingClass" v-model="cityOtherTransportation">
+                <option v-for="data in optionDataCity" :value="data.id">
+                  {{ data.city_name }}
                 </option>
-              </select>
+            </select>
           </div>
         </div>
 
@@ -2097,27 +2276,9 @@ import { Modal } from 'usemodal-vue3'
               <label :class="labelStylingClass">
                   Type of Transportation<span class="text-red-star">*</span>
               </label>
-              <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                  City
-                </option>
-                <option>
-                  RWA HO Office Car
-                </option>
-                <option>
-                  Rent Car
-                </option>
-                <option>
-                  TIA Site Car
-                </option>
-                <option>
-                  CK MIFA Site Car
-                </option>
-                <option>
-                  TIA HO Car
-                </option>
-                <option>
-                  SSB Pool Car
+              <select :class="inputStylingClass" v-model="typeOfTransportationOtherTransportation">
+                <option v-for="data in optionDataTransportationType" :key=data.id>
+                  {{ data.type_transportation }}
                 </option>
               </select>
           </div>
@@ -2125,39 +2286,11 @@ import { Modal } from 'usemodal-vue3'
 
         <div :class="columnClass">
           <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Quantity<span class="text-red-star">*</span></label
-            >
-            <input type="text" placeholder="Quantity" :class=inputStylingClass>
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Quantity<span class="text-red-star">*</span>
+            </label>
+            <input type="text" placeholder="Quantity" :class=inputStylingClass v-model="quantityOtherTransportation">
           </div>
-        </div>
-
-      </div>
-
-      <div :class="rowClass">
-
-        <div :class="columnClass">
-  <div class="w-full">
-      <label :class="labelStylingClass">
-          From Date<span class="text-red-star">*</span>
-      </label>
-      <select :class="inputStylingClass">
-        <option selected hidden disabled>
-          Date
-        </option>
-      </select>
-  </div>
-        </div>
-
-        <div :class="columnClass">
-    <div class="w-full">
-      <label
-          class="block mb-2 font-JakartaSans font-medium text-sm"
-          >Remarks<span class="text-red-star">*</span></label
-      >
-      <input type="text" placeholder="Remarks" :class=inputStylingClass>
-    </div>
         </div>
 
       </div>
@@ -2166,15 +2299,37 @@ import { Modal } from 'usemodal-vue3'
 
         <div :class="columnClass">
           <div class="w-full">
+              <label :class="labelStylingClass">
+                  From Date<span class="text-red-star">*</span>
+              </label>
+              <input v-model="fromDateOtherTransportation" type="date" :class="inputStylingClass" :min="minDate" required>
+          </div>
+        </div>
+
+        <div :class="columnClass">
+          <div class="w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Remarks<span class="text-red-star">*</span>
+            </label>
+            <input type="text" placeholder="Remarks" :class=inputStylingClass v-model="remarksOtherTransportation">
+          </div>
+        </div>
+
+      </div>
+
+      <div :class="rowClass">
+
+        <div :class="columnClass">
+
+          <div class="w-full">
+            
             <label :class="labelStylingClass">
               To Date<span class="text-red-star">*</span>
             </label>
-            <select :class="inputStylingClass">
-            <option selected hidden disabled>
-              Date
-            </option>
-            </select>
+            <input v-model="toDateOtherTransportation" type="date" :class="inputStylingClass" :min="minDate" required>
+
           </div>
+
         </div>
 
       </div>
@@ -2199,9 +2354,9 @@ import { Modal } from 'usemodal-vue3'
                 <label :class="labelStylingClass">
                     Traveller<span class="text-red-star">*</span>
                 </label>
-                <select :class="inputStylingClass">
-                  <option selected hidden disabled>
-                    Name
+                <select :class="inputStylingClass" v-model="travellerAccomodation">
+                  <option v-for="(data, index) in optionDataEmployeeRequestor" :value="data.id">
+                    {{ data.employee_name }}
                   </option>
                 </select>
             </div>
@@ -2209,11 +2364,17 @@ import { Modal } from 'usemodal-vue3'
 
           <div :class="columnClass">
             <div class="w-full">
-              <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Gender</label
-              >
-              <input type="text" placeholder="Gender" :class="inputStylingClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Gender
+              </label>
+              <select :class="inputStylingClass" v-model="genderAccodomation">
+                <option>
+                  Male
+                </option>
+                <option>
+                  Female
+                </option>
+              </select>
             </div>
           </div>
 
@@ -2223,11 +2384,10 @@ import { Modal } from 'usemodal-vue3'
 
           <div :class="columnClass">
             <div class="w-full">
-              <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Hotel Fare</label
-              >
-              <input type="text" placeholder="Max Fare" :class="inputStylingClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Hotel Fare
+              </label>
+              <input type="text" placeholder="Max Fare" :class="inputStylingClass" v-model="hotelFareAccomodation">
             </div>
           </div>
 
@@ -2238,23 +2398,23 @@ import { Modal } from 'usemodal-vue3'
 
         <div :class="rowClass">
 
-          <div :class="columnClass">
-            <div class="w-full">
-              <label :class="labelStylingClass">City</label>
-              <select :class="inputStylingClass">
-                <option hidden selected disabled>
-                  City
-                </option>
-              </select>
+            <div :class="columnClass">
+              <div class="w-full">
+                <label :class="labelStylingClass">City</label>
+                <select :class="inputStylingClass" v-model="cityOtherTransportation">
+                  <option v-for="data in optionDataCity" :value="data.id">
+                    {{ data.city_name }}
+                  </option>
+                </select>
+              </div>
             </div>
-          </div>
 
-          <div :class="columnClass">
-            <div class="w-full">
-              <label :class="labelStylingClass">Remarks</label>
-              <input :class="inputStylingClass" placeholder="Remarks">
+            <div :class="columnClass">
+              <div class="w-full">
+                <label :class="labelStylingClass">Remarks</label>
+                <input :class="inputStylingClass" placeholder="Remarks">
+              </div>
             </div>
-          </div>
 
         </div>
 
