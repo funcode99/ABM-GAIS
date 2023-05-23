@@ -66,6 +66,12 @@
 
 }
 
+.modal-vue3-wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  margin: -8px;
+}
+
 .modal-vue3-header,
 .modal-vue3-footer {
   display: none !important;
@@ -125,6 +131,50 @@
   overflow-y: auto;
   overflow-x: hidden;
   /* overscroll-behavior-y: contain; */
+}
+
+.swal2-icon {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.swal2-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  padding-left: 275px !important;
+}
+
+.swal-cancel-button {
+  color: #1F7793 !important;
+  background-color: #ffffff !important;
+  border: 1px solid #1F7793 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  padding: 8px 16px !important;
+  border-radius: 10px !important;
+  width: 100px !important;
+}
+
+.swal-cancel-button:hover {
+  background-color: #1F7793 !important;
+  color: #ffffff !important;
+}
+
+.swal-confirm-button {
+  color: #ffffff !important;
+  background-color: #F04438 !important;
+  border: 1px solid #F04438 !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  padding: 8px 16px !important;
+  border-radius: 10px !important;
+  width: 100px !important;
+}
+
+.swal-confirm-button:hover {
+  background-color: #ffffff !important;
+  color: #F04438 !important;
 }
 
 /* apply effect until 639px width */

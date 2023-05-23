@@ -8,6 +8,8 @@ import ModalEdit from "@/components/reference/flight/ModalEdit.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 
@@ -149,13 +151,23 @@ const deleteFlight = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/flight_class/delete_data/${id}`).then((res) => {
@@ -164,8 +176,9 @@ const deleteFlight = async (id) => {
           text: "Flight Class has been deleted.",
           icon: "success",
           showCancelButton: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok",
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
         });
         fetchFlight();
       });
@@ -184,10 +197,6 @@ const exportToExcel = () => {
     { title: "Nomor" },
     { title: "ID" },
     { title: "Flight Class" },
-    { title: "Created At" },
-    { title: "Created By" },
-    { title: "Updated At" },
-    { title: "Updated By" },
   ];
 
   // Menambahkan header kolom
@@ -197,13 +206,9 @@ const exportToExcel = () => {
 
   // Menambahkan data ke baris-baris selanjutnya
   sortedDataReactive.value.forEach((data, rowIndex) => {
-    // Menambahkan nomor urutan
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-
-    // Menambahkan data dari properti lainnya
-    Object.keys(data).forEach((key, columnIndex) => {
-      worksheet.getCell(rowIndex + 2, columnIndex + 2).value = data[key];
-    });
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.flight_class;
   });
 
   // Menyimpan workbook menjadi file Excel
@@ -339,9 +344,7 @@ const exportToExcel = () => {
                       @click="sortList(`${data.jsonData}`)"
                     >
                       <div class="flex justify-center items-center">
-                        <p
-                          class="font-JakartaSans font-bold text-sm"
-                        >
+                        <p class="font-JakartaSans font-bold text-sm">
                           {{ data.title }}
                         </p>
                         <button v-if="data.jsonData" class="ml-2">
