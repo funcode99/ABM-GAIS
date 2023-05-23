@@ -6,10 +6,10 @@ import Api from "@/utils/Api";
 
 import { ref } from "vue";
 
-const emits = defineEmits(["unlockScrollbar", "gl-saved"]);
 let isOpenModal = ref(false);
 let GlAccount = ref("");
 let GlName = ref("");
+const emits = defineEmits(["unlockScrollbar", "gl-saved"]);
 
 const saveGlAccount = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -38,6 +38,11 @@ const saveGlAccount = async () => {
     console.log(error);
   }
 };
+
+const resetInput = () => {
+  GlAccount.value = "";
+  GlName.value = "";
+};
 </script>
 
 <template>
@@ -58,7 +63,10 @@ const saveGlAccount = async () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="
+            resetInput();
+            this.$emit('unlockScrollbar');
+          "
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -70,7 +78,7 @@ const saveGlAccount = async () => {
       </nav>
 
       <main class="modal-box-inner-gl">
-        <form @submit.prevent="saveGlAccount">
+        <form class="pt-4" @submit.prevent="saveGlAccount">
           <div class="mb-6 w-full px-4">
             <label
               for="gl_account"
@@ -105,7 +113,10 @@ const saveGlAccount = async () => {
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
               <label
-                @click="this.$emit('unlockScrollbar')"
+                @click="
+                  resetInput();
+                  this.$emit('unlockScrollbar');
+                "
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
