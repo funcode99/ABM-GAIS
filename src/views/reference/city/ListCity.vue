@@ -33,7 +33,8 @@ let editCityDataId = ref();
 //for edit
 const editCity = async (data) => {
   editCityDataId.value = data;
-  setTimeout(callEditApi, 500);
+  callEditApi();
+  // setTimeout(callEditApi, 500);
   // console.log("ini data:" + data);
 };
 
@@ -104,10 +105,10 @@ const tableHead = [
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? 1 : -1));
     sortedbyASC = false;
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? 1 : -1));
     sortedbyASC = true;
   }
 };
@@ -376,12 +377,14 @@ const exportToExcel = () => {
                       {{ index + 1 + paginateIndex * pageMultiplierReactive }}
                     </td>
                     <td>{{ data.city_code }}</td>
+                    <!-- <td>{{ data.id }}</td> -->
                     <td>{{ data.city_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                         @change-city="editCity(data.id)"
-                        :formContent="[data.cityCode, data.cityName]"
+                        :formContent="[data.city_code, data.city_name]"
+                        :key="data.id"
                       />
                       <button @click="deleteCity(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
