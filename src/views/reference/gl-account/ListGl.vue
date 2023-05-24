@@ -8,10 +8,14 @@ import ModalEdit from "@/components/reference/gl-account/ModalEdit.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
+
+import { Workbook } from "exceljs";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -29,8 +33,9 @@ let editglAccountDataId = ref();
 //for edit
 const editGlAccount = async (data) => {
   editglAccountDataId.value = data;
-  setTimeout(callEditApi, 500);
-  console.log("ini data:" + data);
+  callEditApi();
+  // setTimeout(callEditApi, 500);
+  // console.log("ini data:" + data);
 };
 
 //for edit
@@ -58,13 +63,14 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
+let lengthCounter = 0;
+let sortAscending = true;
 
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
-let lengthCounter = 0;
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -90,7 +96,7 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 1, title: "No" },
   { Id: 2, title: "GL Account", jsonData: "gl_account" },
   { Id: 3, title: "GL Name", jsonData: "gl_name" },
   { Id: 4, title: "Actions" },
@@ -144,18 +150,29 @@ const fetchGLAccount = async () => {
   lengthCounter = sortedData.value.length;
 };
 
+//delete gl account
 const deleteGLAccount = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/gl_account/delete_data/${id}`).then((res) => {
@@ -164,14 +181,54 @@ const deleteGLAccount = async (id) => {
           text: "GL Account has been deleted.",
           icon: "success",
           showCancelButton: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok",
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
         });
         fetchGLAccount();
       });
     } else {
       return;
     }
+  });
+};
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("GL Account Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "GL Account" },
+    { title: "GL Name" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.gl_account;
+    worksheet.getCell(rowIndex + 2, 4).value = data.gl_name;
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "glaccount_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
   });
 };
 </script>
@@ -210,6 +267,7 @@ const deleteGLAccount = async (id) => {
               />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
@@ -269,6 +327,7 @@ const deleteGLAccount = async (id) => {
           >
             <div class="block overflow-x-auto">
               <table
+                v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -293,7 +352,7 @@ const deleteGLAccount = async (id) => {
                     >
                       <span class="flex justify-center items-center gap-1">
                         {{ data.title }}
-                        <button>
+                        <button v-if="data.jsonData" class="ml-2">
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </span>
@@ -308,19 +367,22 @@ const deleteGLAccount = async (id) => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>
+                      {{ index + 1 + paginateIndex * pageMultiplierReactive }}
+                    </td>
+                    <!-- <td>{{ data.id }}</td> -->
                     <td>{{ data.gl_account }}</td>
                     <td>{{ data.gl_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                         @change-gl="editGlAccount(data.id)"
-                        :formContent="[data.glAccountCode, data.glAccountName]"
+                        :formContent="[data.gl_account, data.gl_name]"
                       />
                       <button @click="deleteGLAccount(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
@@ -329,6 +391,15 @@ const deleteGLAccount = async (id) => {
                   </tr>
                 </tbody>
               </table>
+
+              <div
+                v-else
+                class="h-[100px] border-t border-t-black flex items-center justify-center"
+              >
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
+              </div>
             </div>
           </div>
 
@@ -348,7 +419,7 @@ const deleteGLAccount = async (id) => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
         </div>

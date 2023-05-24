@@ -8,10 +8,14 @@ import ModalEdit from "@/components/reference/city/ModalEdit.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
+
+import { Workbook } from "exceljs";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -21,31 +25,17 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const formEditState = useFormEditStore();
 
-//for sort & search
-const search = ref("");
-let sortedData = ref([]);
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
-let lockScrollbar = ref(false);
-let sortedDataReactive = computed(() => sortedData.value);
-
 let cityCode = ref();
 let cityName = ref();
-
-//for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
 
 let editCityDataId = ref();
 
 //for edit
 const editCity = async (data) => {
   editCityDataId.value = data;
-  setTimeout(callEditApi, 500);
-  console.log("ini data:" + data);
+  callEditApi();
+  // setTimeout(callEditApi, 500);
+  // console.log("ini data:" + data);
 };
 
 //for edit
@@ -65,6 +55,22 @@ const callEditApi = async () => {
   });
   fetchCity();
 };
+
+//for sort & search
+const search = ref("");
+let sortedData = ref([]);
+let sortedbyASC = true;
+let instanceArray = [];
+let lengthCounter = 0;
+let lockScrollbar = ref(false);
+let sortedDataReactive = computed(() => sortedData.value);
+let sortAscending = true;
+
+//for paginations
+let showingValue = ref(1);
+let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -90,19 +96,19 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "City Code", jsonData: "hotel_fare" },
-  { Id: 3, title: "City Name", jsonData: "company" },
+  { Id: 1, title: "No" },
+  { Id: 2, title: "City Code", jsonData: "city_code" },
+  { Id: 3, title: "City Name", jsonData: "city_name" },
   { Id: 4, title: "Actions" },
 ];
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? 1 : -1));
     sortedbyASC = false;
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? 1 : -1));
     sortedbyASC = true;
   }
 };
@@ -150,13 +156,23 @@ const deleteCity = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/city/delete_data/${id}`).then((res) => {
@@ -165,14 +181,54 @@ const deleteCity = async (id) => {
           text: "City has been deleted.",
           icon: "success",
           showCancelButton: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok",
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
         });
         fetchCity();
       });
     } else {
       return;
     }
+  });
+};
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("City Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "City Code" },
+    { title: "City Name" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.city_code;
+    worksheet.getCell(rowIndex + 2, 4).value = data.city_name;
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "city_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
   });
 };
 </script>
@@ -183,6 +239,7 @@ const deleteCity = async (id) => {
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
+
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
@@ -211,6 +268,7 @@ const deleteCity = async (id) => {
               />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
@@ -295,7 +353,7 @@ const deleteCity = async (id) => {
                     >
                       <span class="flex justify-center items-center gap-1">
                         {{ data.title }}
-                        <button>
+                        <button v-if="data.jsonData" class="ml-2">
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </span>
@@ -310,19 +368,23 @@ const deleteCity = async (id) => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>
+                      {{ index + 1 + paginateIndex * pageMultiplierReactive }}
+                    </td>
                     <td>{{ data.city_code }}</td>
+                    <!-- <td>{{ data.id }}</td> -->
                     <td>{{ data.city_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                         @change-city="editCity(data.id)"
-                        :formContent="[data.cityCode, data.cityName]"
+                        :formContent="[data.city_code, data.city_name]"
+                        :key="data.id"
                       />
                       <button @click="deleteCity(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
@@ -359,7 +421,7 @@ const deleteCity = async (id) => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
         </div>
