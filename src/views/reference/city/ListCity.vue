@@ -300,7 +300,7 @@ function toggleReadMore(id) {
                 style="display: none"
                 @click="hapusDataDiceklis()"
               >
-                Hapus
+                Delete
               </button>
               <ModalAdd
                 @unlock-scrollbar="lockScrollbar = !lockScrollbar"
@@ -403,7 +403,7 @@ function toggleReadMore(id) {
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm"
+                    class="font-JakartaSans font-normal text-sm capitalize"
                     v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
