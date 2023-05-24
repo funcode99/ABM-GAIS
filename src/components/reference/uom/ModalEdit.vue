@@ -10,7 +10,7 @@ let formEditState = useFormEditStore();
 
 const emits = defineEmits(["unlockScrollbar", "changeUom"]);
 let isVisible = ref(false);
-let modalPaddingHeight = 150;
+let modalPaddingHeight = 207;
 
 const props = defineProps({
   formContent: Array,
@@ -113,5 +113,6 @@ const inputStylingClass =
 <style scoped>
 :deep(.modal-vue3-content) {
   max-height: 210px !important;
+  max-width: 510px !important;
 }
 </style>
