@@ -66,6 +66,7 @@ let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
 let sortAscending = true;
 const showFullText = ref({});
+let checkList = false;
 
 //for paginations
 let showingValue = ref(1);
@@ -81,17 +82,43 @@ const onChangePage = (pageOfItem) => {
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
+  const check = document.getElementsByName("checks");
+  const btnHapus = document.getElementById("btnHapus");
+
+  if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type === "checkbox") {
+        check[i].checked = true;
+      }
     }
+    btnHapus.style.display = "block";
   } else {
-    let check = document.getElementsByName("checks");
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type === "checkbox") {
+        check[i].checked = false;
+      }
     }
+    btnHapus.style.display = "none";
+  }
+};
+
+const hapusDataDiceklis = () => {
+  const check = document.getElementsByName("checks");
+  for (let i = 0; i < check.length; i++) {
+    if (check[i].type === "checkbox" && check[i].checked) {
+      // Lakukan tindakan penghapusan data yang sesuai di sini
+      const row = check[i].parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  }
+
+  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
+  const btnHapus = document.getElementById("btnHapus");
+  const checkedCheckboxes = document.querySelectorAll(
+    'input[name="checks"]:checked'
+  );
+  if (checkedCheckboxes.length === 0) {
+    btnHapus.style.display = "none";
   }
 };
 
@@ -267,6 +294,14 @@ function toggleReadMore(id) {
             </p>
 
             <div class="flex gap-4">
+              <button
+                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                id="btnHapus"
+                style="display: none"
+                @click="hapusDataDiceklis()"
+              >
+                Hapus
+              </button>
               <ModalAdd
                 @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                 @city-saved="fetchCity"
@@ -391,9 +426,7 @@ function toggleReadMore(id) {
                       </span>
                       <span v-else class="readmore-text">
                         {{ data.city_name.substring(0, 30) }}
-                        <a href="#" @click="toggleReadMore(data.id)"
-                          >...</a
-                        >
+                        <a href="#" @click="toggleReadMore(data.id)">...</a>
                       </span>
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
