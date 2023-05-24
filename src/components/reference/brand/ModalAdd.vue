@@ -52,8 +52,8 @@ const saveBrand = async () => {
     await Api.post(`/brand/store`, payload);
 
     // Reset nilai input
-    (brandName.value = ""), (selectedCompany.value = "");
-    selectedSite.value = "";
+    (brandName.value = ""), (selectedCompany.value = "Company");
+    selectedSite.value = "Site";
 
     Swal.fire({
       position: "center",
@@ -67,6 +67,11 @@ const saveBrand = async () => {
   } catch (error) {
     console.log(error);
   }
+};
+const resetInput = () => {
+  brandName.value = "";
+  selectedCompany.value = "Company";
+  selectedSite.value = "Site";
 };
 </script>
 
@@ -88,7 +93,10 @@ const saveBrand = async () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="
+            resetInput();
+            this.$emit('unlockScrollbar');
+          "
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -100,7 +108,7 @@ const saveBrand = async () => {
       </nav>
 
       <main class="modal-box-inner-brand">
-        <form @submit.prevent="saveBrand">
+        <form class="pt-4" @submit.prevent="saveBrand">
           <div class="mb-6 w-full px-4">
             <label
               for="company"
@@ -150,13 +158,17 @@ const saveBrand = async () => {
               placeholder="Brand Name"
               required
               v-model="brandName"
+              @keyup.enter="$emit('brand-saved')"
             />
           </div>
 
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
               <label
-                @click="this.$emit('unlockScrollbar')"
+                @click="
+                  resetInput();
+                  this.$emit('unlockScrollbar');
+                "
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label

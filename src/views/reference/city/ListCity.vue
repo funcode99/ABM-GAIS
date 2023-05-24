@@ -33,8 +33,8 @@ let editCityDataId = ref();
 //for edit
 const editCity = async (data) => {
   editCityDataId.value = data;
-  callEditApi();
-  // setTimeout(callEditApi, 500);
+  // callEditApi();
+  setTimeout(callEditApi, 500);
   // console.log("ini data:" + data);
 };
 
@@ -96,7 +96,7 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No" },
+  { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "City Code", jsonData: "city_code" },
   { Id: 3, title: "City Name", jsonData: "city_name" },
   { Id: 4, title: "Actions" },
@@ -373,11 +373,8 @@ const exportToExcel = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>
-                      {{ index + 1 + paginateIndex * pageMultiplierReactive }}
-                    </td>
+                    <td>{{ data.no }}</td>
                     <td>{{ data.city_code }}</td>
-                    <!-- <td>{{ data.id }}</td> -->
                     <td>{{ data.city_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit

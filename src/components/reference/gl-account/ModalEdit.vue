@@ -9,7 +9,7 @@ import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js";
 let formEditState = useFormEditStore();
 
 let isVisible = ref(false);
-let modalPaddingHeight = 150;
+let modalPaddingHeight = 160;
 
 const emits = defineEmits(["unlockScrollbar", "changeGl"]);
 
@@ -136,5 +136,6 @@ const inputStylingClass =
 <style scoped>
 :deep(.modal-vue3-content) {
   max-height: 300px !important;
+  max-width: 510px !important;
 }
 </style>

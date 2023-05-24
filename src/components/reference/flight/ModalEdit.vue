@@ -121,5 +121,6 @@ const inputStylingClass =
 <style scoped>
 :deep(.modal-vue3-content) {
   max-height: 210px !important;
+  max-width: 510px !important;
 }
 </style>
