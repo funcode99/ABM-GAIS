@@ -11,7 +11,7 @@ import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
 let formEditState = useFormEditStore();
 
 let isVisible = ref(false);
-let modalPaddingHeight = 160;
+let modalPaddingHeight = 118;
 
 let selectedCompany = ref("Company");
 let Company = ref("");
