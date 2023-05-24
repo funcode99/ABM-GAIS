@@ -88,11 +88,10 @@ const resetInput = () => {
             <input
               type="text"
               name="gl_account"
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="GL Account"
               required
               v-model="GlAccount"
-              @keyup.enter="$emit('gl-saved')"
             />
           </div>
           <div class="mb-6 w-full px-4">
@@ -104,11 +103,10 @@ const resetInput = () => {
             <input
               type="text"
               name="gl_name"
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="GL Name"
               required
               v-model="GlName"
-              @keyup.enter="$emit('gl-saved')"
             />
           </div>
 
