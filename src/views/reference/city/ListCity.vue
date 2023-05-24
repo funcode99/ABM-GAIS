@@ -65,6 +65,7 @@ let lengthCounter = 0;
 let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
 let sortAscending = true;
+const showFullText = ref({});
 
 //for paginations
 let showingValue = ref(1);
@@ -231,6 +232,10 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 };
+
+function toggleReadMore(id) {
+  showFullText.value = { ...showFullText.value, [id]: true };
+}
 </script>
 
 <template>
@@ -375,7 +380,22 @@ const exportToExcel = () => {
                     </td>
                     <td>{{ data.no }}</td>
                     <td>{{ data.city_code }}</td>
-                    <td>{{ data.city_name }}</td>
+                    <td>
+                      <span
+                        v-if="
+                          data.city_name.length <= 30 || showFullText[data.id]
+                        "
+                        class="readmore-text"
+                      >
+                        {{ data.city_name }}
+                      </span>
+                      <span v-else class="readmore-text">
+                        {{ data.city_name.substring(0, 30) }}
+                        <a href="#" @click="toggleReadMore(data.id)"
+                          >...</a
+                        >
+                      </span>
+                    </td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
@@ -458,5 +478,20 @@ tr th {
 
 .this {
   overflow-x: hidden;
+}
+
+.readmore-text {
+  display: inline-block;
+  max-width: 200px; /* Atur sesuai kebutuhan */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 500px;
+  white-space: nowrap;
+  word-break: break-word;
 }
 </style>
