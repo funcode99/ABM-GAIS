@@ -226,8 +226,6 @@
           </div>
         </div>
 
-        </div>
-
           <!-- PAGINATION -->
           <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
@@ -245,6 +243,9 @@
               :show-jump-buttons="true"
             />
           </div>
+
+        </div>
+
 
       </div>
 

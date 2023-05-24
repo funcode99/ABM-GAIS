@@ -22,8 +22,6 @@
         modalAddType: String
     })
 
-  const modalPaddingHeight = '10'
-
   let companyData = ref([])
   let roleData = ref([])
 
@@ -68,7 +66,7 @@
           <ModalAddSequence @add-sequence="$emit('increaseSequence')" v-if="props.modalAddType === 'sequence'" />
           <ModalAddRole @add-role="$emit('increaseRole')" v-if="props.modalAddType === 'role'" />
 
-          <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
+          <button v-if="$route.path !== '/role'" class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
             <img :src="icon_receive" class="w-6 h-6" />
           </button>
 
@@ -77,7 +75,7 @@
       </div>
 
       <!-- SORT & SEARCH -->
-      <div class="flex flex-wrap items-center px-4 py-2 gap-y-2">
+      <div v-if="$route.path !== '/role'" class="flex flex-wrap items-center px-4 py-2 gap-y-2">
 
           <!-- sort company -->
           <div class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4">

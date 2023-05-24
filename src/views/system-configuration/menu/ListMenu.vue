@@ -299,25 +299,26 @@
     
             </div>
   
+              <!-- PAGINATION -->
+              <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
+                <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                  Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+                  {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
+                  of {{ sortedData.length }} entries {{ status }}
+                </p>
+                <vue-awesome-paginate
+                  :total-items="sortedData.length"
+                  :items-per-page="parseInt(pageMultiplierReactive)"
+                  :on-click="onChangePage"
+                  v-model="showingValue"
+                  :max-pages-shown="4"
+                  :show-breakpoint-buttons="false"
+                  :show-jump-buttons="true"
+                />
+              </div>
+
           </div>
 
-          <!-- PAGINATION -->
-          <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
-            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries {{ status }}
-            </p>
-            <vue-awesome-paginate
-              :total-items="sortedData.length"
-              :items-per-page="parseInt(pageMultiplierReactive)"
-              :on-click="onChangePage"
-              v-model="showingValue"
-              :max-pages-shown="4"
-              :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
-            />
-          </div>
 
       </div>
 

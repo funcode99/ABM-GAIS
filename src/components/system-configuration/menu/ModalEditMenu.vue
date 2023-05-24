@@ -90,7 +90,7 @@ const getMenuStatus = async () => {
 
       <main class="modal-box-inner-inner">
 
-        <div class="px-8">
+        <div class="px-8 text-left">
   
           <div class="mb-3">
               <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
@@ -238,7 +238,7 @@ const getMenuStatus = async () => {
   --tw-scale-y: 0.9;  
 }
 
- .height {
+.height {
     height: 36px;
     display: flex;
     justify-content: center;
@@ -246,4 +246,5 @@ const getMenuStatus = async () => {
     border-radius: 8px;
     padding: 4px 8px;
 }
+
 </style>

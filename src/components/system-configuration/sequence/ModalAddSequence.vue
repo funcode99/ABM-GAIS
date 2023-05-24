@@ -231,6 +231,50 @@
           </div>
         </div>
 
+        <div class="px-4 pb-4">
+            <div class="flex flex-col gap-2">
+              <h1 class="text-left font-semibold text-sm">Sequence Format Info (Prefix & Suffix)</h1>
+              <hr class="border border-black" />
+              <!-- place = justify + align -->
+              <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
+                <div class="justify-self-start">
+                  <span>%(year)</span>
+                  <span>:</span>
+                  <span>Year including century</span>
+                </div>
+                <div class="justify-self-start">
+                  <span>%(year-only)</span>
+                  <span>:</span>
+                  <span>Year Only</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
+                <div class="place-self-start">
+                  <span>%(month)</span>
+                  <span>:</span>
+                  <span>Month including century</span>
+                </div>
+                <div class="place-self-start">
+                  <span>%(department)</span>
+                  <span>:</span>
+                  <span>Department Code</span>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
+                <div class="place-self-start">
+                  <span>%(company)</span>
+                  <span>:</span>
+                  <span>Company Code</span>
+                </div>
+                <div class="place-self-start">
+                  <span>%(menu)</span>
+                  <span>:</span>
+                  <span>Menu Code</span>
+                </div>
+              </div>
+            </div>
+        </div>
+
       </div>
 
     </div>
