@@ -3,7 +3,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+const emits = defineEmits(["unlockScrollbar"])
 </script>
 
 <template>
