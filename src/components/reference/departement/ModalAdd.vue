@@ -29,7 +29,7 @@ const fetchCompany = async () => {
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 
 //for get gl account in select
 const fetchGlAccount = async () => {

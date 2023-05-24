@@ -160,11 +160,11 @@
 
       <Sidebar class="flex-none" />
 
-      <div class="bg-[#e4e4e6] pb-20 pt-10 pr-5 pl-5 w-screen  clean-margin ease-in-out duration-500"
+      <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500"
           :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
       >
       
-        <TableTopBar @do-search="filteredItems" :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
+      <TableTopBar @do-search="filteredItems" :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">

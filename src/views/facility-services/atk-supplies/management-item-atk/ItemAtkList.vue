@@ -41,8 +41,8 @@ let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
+  paginateIndex.value = pageOfItem - 1
+  showingValue.value = pageOfItem
 };
 
 //for filter & reset button

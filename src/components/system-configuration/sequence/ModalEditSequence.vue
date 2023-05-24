@@ -81,7 +81,7 @@
             <div className="divider m-0"></div>
           </div>
   
-          <div class="modal-box-inner px-4 text-left">
+          <div class="px-8 text-left">
   
             <div class="flex gap-2">
   
@@ -214,23 +214,24 @@
           <div class="sticky left-0 right-0 bottom-0 z-50 bg-white px-4 py-4">
                     <div className="divider m-0 pb-4"></div>
                     <div class="flex justify-end gap-4">
+
                       <label
                       @click="isVisible = false"
                         for="edit-sequence-modal"
-                        class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-                        >
+                        class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
                         Cancel
                       </label>
 
-                      <button @click="submitEdit">
-                        <button @click="$emit('changeSequence')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                          Save
+                      <button>
+                        <button @click="submitEdit">
+                          <button @click="$emit('changeSequence')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
+                            Save
+                          </button>
                         </button>
                       </button>
 
                     </div>
           </div>
-        
 
     </Modal>
 

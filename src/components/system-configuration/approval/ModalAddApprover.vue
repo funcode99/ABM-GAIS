@@ -4,7 +4,7 @@ import iconPlus from "@/assets/navbar/icon_plus.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
  
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
-import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount, watch } from 'vue'
 
 import { useFormAddStore } from '@/stores/add-modal.js'
 
@@ -33,9 +33,9 @@ import Api from '@/utils/Api'
   let addAuthoritiesData = ref([])
 
   let matrixName = ref('')
-  let menu = ref()
-  let document = ref()
-  let company = ref()
+  let menu = ref('')
+  let document = ref('')
+  let company = ref('')
 
   const fetchApproverAuthorities = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
@@ -106,6 +106,15 @@ const fetchDocument = async () => {
           isOpenModal.value = !isOpenModal.value
   }
 
+  watch(isOpenModal, () => {
+    matrixName.value = ''
+    company.value = ''
+    menu.value = ''
+    document.value = ''
+    approverLines.value = []
+  })
+
+
 </script>
 
 <template>
@@ -129,7 +138,7 @@ const fetchDocument = async () => {
         <div className="divider m-0"></div>
       </div>
 
-      <div class="mb-3 px-8 text-left modal-box-inner">
+      <div class="mb-3 px-8 text-left">
         
         <!-- bagian atas -->
         <div class="mb-3">

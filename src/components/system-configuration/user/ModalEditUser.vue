@@ -28,14 +28,16 @@
     let fullname = ref(props.formContent[7])
 
     const editUser = () => {
+
       formEditState.user.username = username.value
       formEditState.user.email = email.value
       formEditState.user.password = password.value
-      formEditState.user.roleId = role.value
+      formEditState.user.roleId = role.value[0]
       formEditState.user.approvalAuthId = selected.value
       formEditState.user.companyId = company.value
       formEditState.user.siteId = location.value
       formEditState.user.fullname = fullname.value
+
       isVisible.value = false
     }
 
@@ -68,6 +70,13 @@
     responseSiteArray.value = api.data.data
   }
 
+  const fetchEmployee = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get('/employee/get')
+    responseEmployeeArray.value = api.data.data
+  }
+
   const fetchAuthorities = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -83,7 +92,7 @@
   })
 
   watch(isVisible, () => {
-    password = ''
+    password.value = ''
     username.value = props.formContent[0]
     email.value = props.formContent[1]
     selected.value = props.formContent[2]
@@ -104,14 +113,14 @@
 
     <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
-        <div class="sticky w-full top-0 z-50 bg-white px-8 pb-4 pt-8 flex justify-between">
-            <p class="font-JakartaSans text-2xl font-semibold">Edit User</p>
-            <button @click="isVisible = false" class="cursor-pointer">
+        <div class="sticky top-0 z-50 text-white bg-[#015289]">
+            <p class="font-JakartaSans text-2xl font-semibold mx-4 py-2 text-left">Edit User</p>
+            <button @click="isVisible = false" class="cursor-pointer absolute right-3 top-3">
                 <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
             </button>
         </div>
 
-        <div class="px-8 text-left modal-box-inner">
+        <div class="my-3 px-8 text-left">
 
           <div class="mb-6">
             <span>Employee?<span class="text-red-star">*</span></span>
@@ -182,7 +191,7 @@
             >User Role<span class="text-red">*</span>
           </span>
           <select :class="inputStylingClass" v-model="role" required>
-            <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]">
+            <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]" :selected="data.id == role[0] ? true : false">
               {{ data.role_name }}
             </option>
           </select>
@@ -254,8 +263,7 @@
 
         </div>
 
-        <div class="sticky bottom-0 bg-white px-4">
-          <div className="divider m-0 pb-4"></div>
+        <div class="sticky bottom-2 bg-white px-4 pr-3">
           <div class="flex justify-end gap-4">
 
             <button
@@ -278,3 +286,9 @@
     </Modal>
 
 </template>
+
+<style scoped>
+  .modal-vue3-wrap {
+    width: 112px !important;
+  }
+</style>

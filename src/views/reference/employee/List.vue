@@ -29,15 +29,15 @@ let lengthCounter = 0;
 let lockScrollbar = ref(false);
 
 //for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
+let showingValue = ref(1)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
+  paginateIndex.value = pageOfItem - 1
+  showingValue.value = pageOfItem
 };
 
 //for filter & reset button
@@ -145,9 +145,7 @@ const getSessionForSidebar = () => {
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
-            <p
-              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
-            >
+            <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
               Employee
             </p>
             <div class="flex gap-4">
@@ -165,6 +163,7 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4"
           >
             <div class="flex flex-wrap items-center gap-4">
+
               <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"

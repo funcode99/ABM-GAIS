@@ -191,7 +191,7 @@
 
       <!-- slate box -->
       <div 
-      class="bg-[#e4e4e6] pb-20 pt-10 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"
+      class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500"
       :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
@@ -255,7 +255,7 @@
 
                         <td class="flex flex-wrap justify-center h-full gap-4 relative">
                           <div class="flex items-center absolute top-0 bottom-0">
-                            <ModalEditMenu @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon]" />
+                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon]" />
                             <ModalDelete @confirm-delete="deleteData(data.id)" />
                           </div>
                         </td>
