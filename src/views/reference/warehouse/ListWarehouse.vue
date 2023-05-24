@@ -8,18 +8,22 @@ import ModalEdit from "@/components/reference/warehouse/ModalEdit.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
-
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
-import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
+import { Workbook } from "exceljs";
+
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
 const formEditState = useFormEditStore();
 
@@ -62,9 +66,12 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
-
 let selectedCompany = ref("Company");
 let Company = ref("");
+let sortAscending = true;
+let sortedDataReactive = computed(() => sortedData.value);
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
 let showingValue = ref(1);
@@ -97,26 +104,52 @@ const resetData = () => {
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
+  const check = document.getElementsByName("checks");
+  const btnHapus = document.getElementById("btnHapus");
+
+  if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type === "checkbox") {
+        check[i].checked = true;
+      }
     }
+    btnHapus.style.display = "block";
   } else {
-    let check = document.getElementsByName("checks");
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type === "checkbox") {
+        check[i].checked = false;
+      }
     }
+    btnHapus.style.display = "none";
+  }
+};
+
+const hapusDataDiceklis = () => {
+  const check = document.getElementsByName("checks");
+  for (let i = 0; i < check.length; i++) {
+    if (check[i].type === "checkbox" && check[i].checked) {
+      // Lakukan tindakan penghapusan data yang sesuai di sini
+      const row = check[i].parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  }
+
+  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
+  const btnHapus = document.getElementById("btnHapus");
+  const checkedCheckboxes = document.querySelectorAll(
+    'input[name="checks"]:checked'
+  );
+  if (checkedCheckboxes.length === 0) {
+    btnHapus.style.display = "none";
   }
 };
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 1, title: "No" },
   { Id: 2, title: "Warehouse Name", jsonData: "warehouse_name" },
-  { Id: 3, title: "Company", jsonData: "company" },
-  { Id: 4, title: "Site", jsonData: "site" },
+  { Id: 3, title: "Company", jsonData: "company_name" },
+  { Id: 4, title: "Site", jsonData: "site_name" },
   { Id: 4, title: "Actions" },
 ];
 
@@ -188,23 +221,34 @@ const deleteWarehouse = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/warehouse/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Warehouse has been deleted.",
+          text: "Brand has been deleted.",
           icon: "success",
           showCancelButton: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok",
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
         });
         fetchWarehouse();
       });
@@ -213,6 +257,51 @@ const deleteWarehouse = async (id) => {
     }
   });
 };
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Warehouse Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "Warehouse Name" },
+    { title: "Company" },
+    { title: "Site" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.warehouse_name;
+    worksheet.getCell(rowIndex + 2, 4).value = data.company_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.site_name;
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "warehouse_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
+
+function toggleReadMore(id) {
+  showFullText.value = { ...showFullText.value, [id]: true };
+}
 </script>
 
 <template>
@@ -221,6 +310,7 @@ const deleteWarehouse = async (id) => {
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
+
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
@@ -243,12 +333,21 @@ const deleteWarehouse = async (id) => {
             </p>
 
             <div class="flex gap-4">
+              <button
+                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                id="btnHapus"
+                style="display: none"
+                @click="hapusDataDiceklis()"
+              >
+                Delete
+              </button>
               <ModalAdd
                 @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                 @warehouse-saved="fetchWarehouse"
               />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
@@ -352,6 +451,7 @@ const deleteWarehouse = async (id) => {
           >
             <div class="block overflow-x-auto">
               <table
+                v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -376,7 +476,7 @@ const deleteWarehouse = async (id) => {
                     >
                       <span class="flex justify-center items-center gap-1">
                         {{ data.title }}
-                        <button>
+                        <button v-if="data.jsonData" class="ml-2">
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </span>
@@ -386,18 +486,34 @@ const deleteWarehouse = async (id) => {
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm"
+                    class="font-JakartaSans font-normal text-sm capitalize"
                     v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ data.warehouse_name }}</td>
+                    <td>
+                      {{ index + 1 + paginateIndex * pageMultiplierReactive }}
+                    </td>
+                    <td>
+                      <span
+                        v-if="
+                          data.warehouse_name.length <= 30 ||
+                          showFullText[data.id]
+                        "
+                        class="readmore-text"
+                      >
+                        {{ data.warehouse_name }}
+                      </span>
+                      <span v-else class="readmore-text">
+                        {{ data.warehouse_name.substring(0, 30) }}
+                        <a href="#" @click="toggleReadMore(data.id)">...</a>
+                      </span>
+                    </td>
                     <td>{{ data.company_name }}</td>
                     <td>{{ data.site_name }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
@@ -405,9 +521,9 @@ const deleteWarehouse = async (id) => {
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                         @change-warehouse="editWarehouse(data.id)"
                         :formContent="[
-                          data.warehouseName,
-                          data.warehouseIdCompany,
-                          data.warehouseIdSite,
+                          data.warehouse_name,
+                          data.id_company,
+                          data.id_site,
                         ]"
                       />
                       <button @click="deleteWarehouse(data.id)">
@@ -417,6 +533,15 @@ const deleteWarehouse = async (id) => {
                   </tr>
                 </tbody>
               </table>
+
+              <div
+                v-else
+                class="h-[100px] border-t border-t-black flex items-center justify-center"
+              >
+                <h1 class="text-center font-JakartaSans text-base font-medium">
+                  Tidak Ada Data
+                </h1>
+              </div>
             </div>
           </div>
 
@@ -436,12 +561,12 @@ const deleteWarehouse = async (id) => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
         </div>
       </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+      <Footer />
     </div>
   </div>
 </template>
@@ -476,5 +601,20 @@ tr th {
 
 .this {
   overflow-x: hidden;
+}
+
+.readmore-text {
+  display: inline-block;
+  max-width: 200px; /* Atur sesuai kebutuhan */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 500px;
+  white-space: nowrap;
+  word-break: break-word;
 }
 </style>
