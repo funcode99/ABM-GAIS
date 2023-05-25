@@ -21,7 +21,6 @@
     const formState = useFormAddStore()
     const formEditState = useFormEditStore()
     
-    const search = ref('')
     let sortedData = ref([])
     let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
@@ -116,10 +115,15 @@
     }
 
     const addNewUser = async () => {
-        setTimeout(callAddApi, 500);
+      // berhasil
+      if(formState.user.fullname === '') {
+        formState.user.fullname = '-'
+      }
+      setTimeout(callAddApi, 500);
     }
 
     const callAddApi = async () => {
+
         const token = JSON.parse(localStorage.getItem('token'))
 
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -185,7 +189,6 @@
           @change-showing="fillPageMultiplier" 
           modalAddType="user" 
         />
-          
 
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             

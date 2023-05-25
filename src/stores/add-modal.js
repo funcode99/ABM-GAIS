@@ -15,6 +15,7 @@ export const useFormAddStore = defineStore('add-form', {
             },
             user: {
                 username: '',
+                fullname: '',
                 email: '',
                 password: '',
                 isEmployee: 0,

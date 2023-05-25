@@ -1,5 +1,7 @@
 <script setup>
 import modalHeader from "@/components/modal/ModalHeader.vue"
+import modalBody from "@/components/modal/ModalBody.vue"
+import modalFooter from '@/components/modal/ModalFooter.vue'
 
 // cuma gara2 lupa import ref sidebar gua error terus anjing
 import { ref, onBeforeMount } from 'vue'
@@ -84,135 +86,115 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
 
     <div class="modal-box relative">
       
-        <modalHeader title="New Menu" />
+        <modalHeader title="New Menu" forLabel="add-menu-modal" />
 
-        <main class="modal-box-inner-menu">
+        <modalBody>
 
-          <div class="px-8">
-  
-            <div class="mb-3">
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                Menu Name<span class="text-red-star">*</span>
-              </label>
-              <input
-              :class="inputStylingClass"
-              v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-            </div>
-  
-            <div class="mb-3">
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                URL<span class="text-red-star">*</span>
-              </label>
-              <input
-              :class="inputStylingClass"
-              v-model="url" type="text" id="name" placeholder="URL" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-            </div>
-  
-            <div class="mb-3">
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                Icon<span class="text-red-star">*</span>
-              </label>
-              <input
-              :class="inputStylingClass"
-              @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-            </div>
-  
-            <div class="mb-3 text-left">
-                <h1>Parent Menu</h1>
-                <select :class="inputStylingClass">
-                    <option>Travel Management System</option>
-                    <option>Option A</option>
-                </select>
-            </div>
-  
-            <div class="mb-3 text-left">
-              <h1>Status</h1>
-              <select :class="inputStylingClass" v-model="idStatusMenu">
-                  <option v-for="data in statusMenu" :key="data.id" :value="data.code">
-                    {{ data.status }}
-                  </option>
-              </select>
-            </div>
-
-            <div class="mb-3 ">
-              <h1>Company</h1>
-              <vue3-tags-input 
+            <div class="px-8">
+    
+              <div class="mb-3">
+                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  Menu Name<span class="text-red-star">*</span>
+                </label>
+                <input
                 :class="inputStylingClass"
-                @on-tags-changed="addNewTagField"
-                :tags="tags"
-                placeholder="input tags" 
-                />
-            </div>
-  
-            <div class="mb-3 text-left">
-                <h1>Sort</h1>
-                <select :class="inputStylingClass" v-model="sort">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    <option>6</option>
-                    <option>7</option>
-                    <option>8</option>
-                    <option>9</option>
-                    <option>10</option>
-                    <option>11</option>
-                    <option>12</option>
-                    <option>13</option>
-                    <option>14</option>
-                    <option>15</option>
+                v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+              </div>
+    
+              <div class="mb-3">
+                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  URL<span class="text-red-star">*</span>
+                </label>
+                <input
+                :class="inputStylingClass"
+                v-model="url" type="text" id="name" placeholder="URL" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+              </div>
+    
+              <div class="mb-3">
+                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  Icon<span class="text-red-star">*</span>
+                </label>
+                <input
+                :class="inputStylingClass"
+                @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+              </div>
+    
+              <div class="mb-3 text-left">
+                  <h1>Parent Menu</h1>
+                  <select :class="inputStylingClass">
+                      <option>Travel Management System</option>
+                      <option>Option A</option>
+                  </select>
+              </div>
+    
+              <div class="mb-3 text-left">
+                <h1>Status</h1>
+                <select :class="inputStylingClass" v-model="idStatusMenu">
+                    <option v-for="data in statusMenu" :key="data.id" :value="data.code">
+                      {{ data.status }}
+                    </option>
                 </select>
-            </div>
+              </div>
   
-            <div class="flex gap-2 mb-3">
-                <input type="checkbox" v-model="sequence">
-                <h1>Use Sequence</h1>
-            </div>
+              <div class="mb-3 ">
+                <h1>Company</h1>
+                <vue3-tags-input 
+                  :class="inputStylingClass"
+                  @on-tags-changed="addNewTagField"
+                  :tags="tags"
+                  placeholder="input tags" 
+                  />
+              </div>
+    
+              <div class="mb-3 text-left">
+                  <h1>Sort</h1>
+                  <select :class="inputStylingClass" v-model="sort">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                      <option>6</option>
+                      <option>7</option>
+                      <option>8</option>
+                      <option>9</option>
+                      <option>10</option>
+                      <option>11</option>
+                      <option>12</option>
+                      <option>13</option>
+                      <option>14</option>
+                      <option>15</option>
+                  </select>
+              </div>
+    
+              <div class="flex gap-2 mb-3">
+                  <input type="checkbox" v-model="sequence">
+                  <h1>Use Sequence</h1>
+              </div>
+    
+              <div class="mb-3" v-if="sequence">
   
-            <div class="mb-3" v-if="sequence">
-
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                Sequence Code<span class="text-red-star">*</span>
-              </label>
-
-              <input
-              :class="inputStylingClass"
-              v-model="sequenceCode" 
-              type="text"
-              maxlength="5" 
-              placeholder="Sequence Code" 
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
-              required 
-              />
-
-            </div>
+                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  Sequence Code<span class="text-red-star">*</span>
+                </label>
   
+                <input
+                :class="inputStylingClass"
+                v-model="sequenceCode" 
+                type="text"
+                maxlength="5" 
+                placeholder="Sequence Code" 
+                class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
+                required 
+                />
   
-          </div>
-  
-          <div class="sticky bottom-0 bg-white px-4 py-8">
-            <div class="flex justify-end gap-4">
-              
-              <label
-                for="add-menu-modal"
-                class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
-                Cancel
-              </label>
-
-              <button @click="submit">
-                <button
-                @click="$emit('addMenu')"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                  Save
-                </button>
-              </button>
+              </div>
     
             </div>
-          </div>
-
-        </main>
-
+  
+            <modalFooter forLabel="add-menu-modal" @add-something="$emit('addMenu')" @do-something="submit" />
+          
+        </modalBody>
 
     </div>
 

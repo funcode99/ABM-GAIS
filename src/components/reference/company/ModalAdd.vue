@@ -51,7 +51,7 @@ const onFileSelected = (event) => {
   selectedImage.value = file ? file : null;
 };
 
-const saveCommpany = async () => {
+const saveCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
@@ -82,6 +82,7 @@ const saveCommpany = async () => {
     });
     emits("company-saved");
     isOpenModal.value = !isOpenModal.value;
+
   } catch (error) {
     console.log(error);
   }
@@ -89,6 +90,7 @@ const saveCommpany = async () => {
 </script>
 
 <template>
+
   <label
     @click="this.$emit('unlockScrollbar')"
     for="my-modal-3"
@@ -102,6 +104,7 @@ const saveCommpany = async () => {
     class="modal-toggle"
     v-model="isOpenModal"
   />
+  
   <div class="modal">
     <div class="modal-box relative">
 
@@ -119,7 +122,7 @@ const saveCommpany = async () => {
       </nav>
 
       <main class="modal-box-inner-company">
-        <form @submit.prevent="saveCommpany">
+        <form @submit.prevent="saveCompany">
           <div class="mb-6 w-full px-4">
             <label
               for="code"

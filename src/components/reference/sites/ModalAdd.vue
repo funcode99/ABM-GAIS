@@ -76,6 +76,7 @@ const saveSite = async () => {
   />
   <div class="modal">
     <div class="modal-box relative">
+
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
@@ -90,7 +91,9 @@ const saveSite = async () => {
       </nav>
 
       <main class="modal-box-inner-site">
+
         <form @submit.prevent="saveSite">
+
           <div class="mb-6 w-full px-4">
             <label
               for="company"
@@ -157,8 +160,11 @@ const saveSite = async () => {
               </button>
             </div>
           </div>
+
         </form>
+        
       </main>
+
     </div>
   </div>
 </template>

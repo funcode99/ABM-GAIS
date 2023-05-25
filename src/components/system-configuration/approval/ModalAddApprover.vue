@@ -8,6 +8,8 @@ import { ref, onBeforeMount, watch } from 'vue'
 import { useFormAddStore } from '@/stores/add-modal.js'
 
 import modalHeader from "@/components/modal/ModalHeader.vue"
+import modalBody from "@/components/modal/ModalBody.vue"
+import modalFooter from '@/components/modal/ModalFooter.vue'
 
 import Api from '@/utils/Api'
 
@@ -126,15 +128,17 @@ const fetchDocument = async () => {
     + Add New
   </label>
 
+  <!-- harus ada id nya agar bisa muncul modal -->
   <input type="checkbox" id="add-approver-modal" class="modal-toggle" v-model="isOpenModal" />
 
   <div class="modal">
 
     <div class="modal-box relative">
 
-      <modalHeader title="New Matrix" />
+      <modalHeader title="New Matrix" forLabel="add-approver-modal" />
 
-      <main class="modal-box-inner-inner">
+      <modalBody>
+        
         <div class="mb-3 px-8 text-left">
           
           <!-- bagian atas -->
@@ -157,7 +161,7 @@ const fetchDocument = async () => {
               <label class="block mb-2 font-JakartaSans font-medium text-sm">
                 Menu<span class="text-red">*</span>
               </label>
-              <select v-model="menu" :class="inputStylingClass">
+              <select v-model="menu" :class="inputStylingClass" required>
                 <option v-for="data in addMenuData" :key="data.id" :value="data.id">
                   {{ data.menu }}
                 </option>
@@ -170,7 +174,7 @@ const fetchDocument = async () => {
               <label class="block mb-2 font-JakartaSans font-medium text-sm">
                 Document<span class="text-red">*</span>
               </label>
-              <select v-model="document" :class="inputStylingClass">
+              <select v-model="document" :class="inputStylingClass" required>
                 <option v-for="data in addDocumentData" :key="data.id" :value="data.id">
                   {{ data.document_name }}
                 </option>
@@ -183,7 +187,7 @@ const fetchDocument = async () => {
               <label class="block mb-2 font-JakartaSans font-medium text-sm">
                 Company<span class="text-red">*</span>
               </label>
-              <select v-model="company" :class="inputStylingClass">
+              <select v-model="company" :class="inputStylingClass" required>
                 <option v-for="data in addCompanyData" :key="data.id" :value="data.id">
                   {{ data.company_name }}
                 </option>
@@ -287,22 +291,9 @@ const fetchDocument = async () => {
   
         </div>
   
-        <div class="sticky bottom-0 bg-white py-4">
-          <div className="divider m-0 pb-4"></div>
-          <div class="flex justify-end gap-4">
-            <label
-              for="add-approver-modal"
-              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
-              Cancel
-            </label>
-            <button @click="saveField">
-              <button @click="$emit('addApprover')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                Save
-              </button>
-            </button>
-          </div>
-        </div>
-      </main>
+        <modalFooter forLabel="add-approver-modal" @add-something="$emit('addApprover')" @do-something="saveField" />
+
+      </modalBody>
 
     </div>
 

@@ -57,6 +57,8 @@ let minDate = year + "-" + month + "-" + day;
 
       <main class="modal-box-inner-employee">
         <form>
+          
+          <!-- photo icon -->
           <div class="flex justify-center items-center">
             <div class="avatar">
               <div class="w-[100px] h-[100px] rounded-full bg-[#D9D9D9]">
@@ -80,6 +82,8 @@ let minDate = year + "-" + month + "-" + day;
               </div>
             </div>
           </div>
+
+          <!-- photo text -->
           <p
             class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4 mb-6"
           >
@@ -294,20 +298,27 @@ let minDate = year + "-" + month + "-" + day;
           </div>
 
           <div class="sticky bottom-0 bg-white">
+
             <div class="flex justify-end gap-4 mr-6">
+
               <label
                 @click="this.$emit('unlockScrollbar')"
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                >Cancel</label
-              >
+                >
+                Cancel
+              </label>
+
               <button
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Save
               </button>
+
             </div>
+
           </div>
+
         </form>
       </main>
 

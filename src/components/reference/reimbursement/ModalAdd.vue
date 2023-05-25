@@ -15,6 +15,7 @@ const emits = defineEmits(["unlockScrollbar"]);
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
+      
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
         @click="this.$emit('unlockScrollbar')"
@@ -32,6 +33,7 @@ const emits = defineEmits(["unlockScrollbar"]);
 
       <main class="modal-box-inner-reimbursement">
         <form class="pt-4">
+
           <div class="mb-6 w-full px-4">
             <label
               for="reimbursement_type"
@@ -94,8 +96,10 @@ const emits = defineEmits(["unlockScrollbar"]);
               </button>
             </div>
           </div>
+          
         </form>
       </main>
+
     </div>
   </div>
 </template>

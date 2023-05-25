@@ -4,6 +4,8 @@ import { ref, watch } from 'vue'
 import { useFormAddStore } from '@/stores/add-modal.js'
 
 import modalHeader from "@/components/modal/ModalHeader.vue"
+import modalBody from "@/components/modal/ModalBody.vue"
+import modalFooter from '@/components/modal/ModalFooter.vue'
 
 const formState = useFormAddStore()
 
@@ -32,11 +34,12 @@ const submitRole = () => {
   <input type="checkbox" id="add-role-modal" class="modal-toggle" v-model="isOpenModal" />
 
   <div class="modal">
+
     <div class="modal-box relative">
       
-        <modalHeader title="New Role" />
+        <modalHeader title="New Role" forLabel="add-role-modal" />
 
-        <main>
+        <modalBody>
 
           <div class="py-3 px-8 ">
             
@@ -71,28 +74,12 @@ const submitRole = () => {
   
           </div>
   
-          <div class="sticky bottom-0 bg-white px-4 py-8">
-              <div className="divider m-0 pb-4 w-full"></div>
-              <div class="flex justify-end gap-4">
-                <label
-                  for="add-role-modal"
-                  class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-                  >
-                  Cancel
-                </label>
-                <button @click="submitRole">
-                  <button 
-                  @click="$emit('addRole')"
-                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                    Save
-                  </button>
-                </button>
-              </div>
-          </div>
-
-        </main>
+          <modalFooter forLabel="add-role-modal" @add-something="$emit('addRole')" @do-something="submitRole" />
+        
+        </modalBody>
 
     </div>
+    
   </div>
 </template>
 

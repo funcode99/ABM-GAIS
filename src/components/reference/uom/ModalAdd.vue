@@ -57,6 +57,7 @@ const resetInput = () => {
   />
   <div class="modal">
     <div class="modal-box relative">
+
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="
@@ -74,7 +75,9 @@ const resetInput = () => {
       </nav>
 
       <main class="modal-box-inner-uom">
+
         <form class="pt-4" @submit.prevent="saveUom">
+
           <div class="mb-6 w-full px-4">
             <label
               for="uom"
@@ -110,8 +113,11 @@ const resetInput = () => {
               </button>
             </div>
           </div>
+          
         </form>
+
       </main>
+
     </div>
   </div>
 </template>

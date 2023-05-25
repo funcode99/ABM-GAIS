@@ -2,6 +2,8 @@
   import { ref, onBeforeMount, watch } from 'vue'
 
   import modalHeader from "@/components/modal/ModalHeader.vue"
+  import modalBody from "@/components/modal/ModalBody.vue"
+  import modalFooter from '@/components/modal/ModalFooter.vue'
 
   import Api from '@/utils/Api'
 
@@ -77,19 +79,19 @@
 
       <div class="modal-box relative">
 
-        <modalHeader title="New Sequence" />
+        <modalHeader title="New Sequence" forLabel="add-user-modal" />
 
-        <div class="modal-box-inner-inner">
+        <modalBody>
 
           <div :class="rowClass">
-
+  
             <div :class="columnClass">
             
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm">
                 Nama<span class="text-red">*</span>
             </label>
-
+  
             <input
               v-model="menuSequenceName"
               type="text"
@@ -98,7 +100,7 @@
               required
             />
             </div>
-
+  
             <div :class="columnClass">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm">
@@ -113,11 +115,11 @@
               required
             />
             </div>
-
+  
           </div>
-
+  
           <div :class="rowClass">
-
+  
             <div :class="columnClass">
               <div class="w-full">
                 <label
@@ -133,7 +135,7 @@
                 </select>
               </div>
             </div>
-
+  
             <div :class="columnClass">
             <label
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -147,9 +149,9 @@
               required
             />
             </div>
-
+  
           </div>
-
+  
           <div :class="rowClass">
             
             <div :class="columnClass">
@@ -181,11 +183,11 @@
               required
             />
             </div>
-
+  
           </div>
   
           <div :class="rowClass">
-
+  
             <div :class="columnClass">
               <label
                 class="block mb-2 font-JakartaSans font-medium text-sm">
@@ -202,27 +204,10 @@
             </div>
             
           </div>
+  
+          <modalFooter forLabel="add-user-modal" @add-something="$emit('addSequence')" @do-something="submitSequence" />
 
-        </div>
-
-        <div class="sticky left-0 right-0 bottom-0 z-50 bg-white px-4 py-4">
-          <div className="divider m-0 pb-4"></div>
-          <div class="flex justify-end gap-4">
-            <label
-              for="add-user-modal"
-              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-              >Cancel</label
-            >
-            <button @click="submitSequence">
-              <button
-                @click="$emit('addSequence')"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-              >
-                Save
-              </button>
-            </button>
-          </div>
-        </div>
+        </modalBody>
 
         <div class="px-4 pb-4">
             <div class="flex flex-col gap-2">
