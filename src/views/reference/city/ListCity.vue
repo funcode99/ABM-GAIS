@@ -403,7 +403,7 @@ function toggleReadMore(id) {
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm capitalize"
+                    class="font-JakartaSans font-normal text-sm"
                     v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
