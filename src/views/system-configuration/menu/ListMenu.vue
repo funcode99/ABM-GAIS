@@ -120,7 +120,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No'},
+      {Id: 1, title: 'No', jsonData: 'id'},
       {Id: 2, title: 'Name', jsonData: 'menu'},
       {Id: 3, title: 'Parent Menu', jsonData: 'parent_id'},
       {Id: 4, title: 'Status', jsonData: 'id_status_menu'},
@@ -319,7 +319,6 @@
 
           </div>
 
-
       </div>
 
     </div>
@@ -351,14 +350,6 @@
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
-  }
-
-  .this {
-    overflow-x: hidden;
-  }
-
-  .backgroundHeight {
-    min-height: calc(100vh - 115px);
   }
 
 </style>

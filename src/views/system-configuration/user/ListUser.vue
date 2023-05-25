@@ -4,6 +4,8 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
+    import tableContainer from '@/components/table/tableContainer.vue'
+
     import Api from '@/utils/Api'
 
     // import untuk user table
@@ -24,7 +26,6 @@
     let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
-    let lengthCounter = 0
     let editDataUserId = ref(0)
 
     //for paginations
@@ -57,7 +58,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No'},
+      {Id: 1, title: 'No', jsonData: 'id'},
       {Id: 2, title: 'Username', jsonData: 'username'},
       {Id: 3, title: 'User Role', jsonData: 'id_role'},
       {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'}
@@ -73,8 +74,6 @@
       }
     }
 
-    // watch(ref, callback)
-
     onBeforeMount(() => {
       getSessionForSidebar()
       fetch()
@@ -86,8 +85,6 @@
           return item.username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
-      lengthCounter = sortedData.value.length
-      console.log(lengthCounter)
       onChangePage(1)
     }
 
@@ -107,7 +104,6 @@
       const api = await Api.get('/users')      
       instanceArray = api.data.data
       sortedData.value = instanceArray
-      lengthCounter = sortedData.value.length
     }
 
     const deleteData = async (event) => {
@@ -171,25 +167,27 @@
 <template>
 
 <!-- kenak loh, ternyata disini overflow x nya -->
-  <div 
-  class="flex flex-col w-full this h-[100vh]"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
 
     <Navbar/>
 
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen content mt-[115px]">
 
-      <Sidebar class="flex-none" />    
-        
-      <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500" 
-        :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
+      <Sidebar class="flex-none" />
 
-          <TableTopBar :title="'User'" @increase-user="addNewUser" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
+      <tableContainer>
+
+        <TableTopBar 
+          :title="'User'" 
+          @increase-user="addNewUser" 
+          @do-search="filteredItems" 
+          @change-showing="fillPageMultiplier" 
+          modalAddType="user" 
+        />
           
-          <!-- actual table -->
-          <!-- scrollbar horizontal juga ada disini -->
-          <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
             <div class="block overflow-x-auto">
               <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
@@ -272,10 +270,9 @@
               />
             </div>
             
-          </div>
+        </div>
 
-
-      </div>
+      </tableContainer>
 
     </div>
     
@@ -306,19 +303,6 @@
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
-  }
-
-  .this {
-    overflow-x: hidden;
-  }
-
-  .backgroundHeight {
-    min-height: calc(100vh - 115px);
-  }
-
-  .custom-card {
-    box-shadow: 0px -4px #015289;
-    border-radius: 4px;
   }
 
 </style>

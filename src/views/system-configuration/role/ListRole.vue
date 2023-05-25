@@ -13,6 +13,8 @@
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import tableContainer from '@/components/table/tableContainer.vue'
+
     import { useFormAddStore } from '@/stores/add-modal.js'
     import { useFormEditStore } from '@/stores/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
@@ -80,7 +82,7 @@
     }
 
     const tableHead = [
-        {Id: 1, title: 'No'},
+        {Id: 1, title: 'No', jsonData: 'id'},
         {Id: 2, title: 'User Role', jsonData: 'role_name'},
         {Id: 3, title: 'Actions'}
     ]
@@ -112,8 +114,6 @@
 
     }
 
-    // watch(ref, callback)
-
     onBeforeMount(() => {
     getSessionForSidebar()
     // sortedData.value gak dianggap sebagai array lagi
@@ -144,13 +144,10 @@
 
     <div class="flex w-screen content mt-[115px]">
 
-      <Sidebar class="flex-none" /> 
+      <Sidebar class="flex-none" />
+
+      <tableContainer>
         
-      <!-- slate box -->
-      <div class="bg-[#e4e4e6] pt-10 pb-20 pr-5 pl-5 w-screen clean-margin ease-in-out duration-500"
-      :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
-      >
-      
         <!-- table box -->
         <TableTopBar :title="'Role'" @increase-role="addRole" @do-search="filteredItems" modalAddType="role" />
 
@@ -246,12 +243,10 @@
 
         </div>
 
-
-      </div>
+      </tableContainer>
 
     </div>
 
-    
   </div>
   
   <Footer/>
@@ -259,9 +254,6 @@
 </template>
 
 <style scoped>
-  /* .zInfinite {
-    z-index: 9999;
-  } */
 
   th {
     padding: 2px;
@@ -282,15 +274,6 @@
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
-  }
-
-  .backgroundHeight {
-    min-height: calc(100vh - 115px);
-  }
-
-  .custom-card {
-    box-shadow: 0px -4px #015289;
-    border-radius: 4px;
   }
 
 

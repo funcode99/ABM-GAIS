@@ -59,7 +59,6 @@ const fetchGetCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 //for get site in select
@@ -68,7 +67,6 @@ const fetchGetSite = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/site/");
   Site.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 onMounted(() => {
@@ -84,9 +82,11 @@ const resetForm = () => {
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+
 </script>
 
 <template>
+
   <button
     @click="
       resetForm();
@@ -97,6 +97,7 @@ const inputStylingClass =
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+
     <main>
       <div class="sticky top-0 z-50 bg-[#015289]">
         <button
@@ -113,12 +114,14 @@ const inputStylingClass =
       </div>
 
       <div class="pt-4">
+
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Company<span class="text-red">*</span></label
-          >
+          
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            for="company">
+            Company<span class="text-red">*</span>
+          </label>
+
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
@@ -129,16 +132,17 @@ const inputStylingClass =
               {{ company.company_name }}
             </option>
           </select>
+
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="site"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Site<span class="text-red">*</span></label
-          >
-          <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+          
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            for="site">
+            Site<span class="text-red">*</span>
+          </label>
+
+          <select class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
             v-model="selectedSiteId"
           >
@@ -147,6 +151,7 @@ const inputStylingClass =
               {{ site.site_name }}
             </option>
           </select>
+
         </div>
 
         <div class="mb-6 w-full px-4">
@@ -187,8 +192,11 @@ const inputStylingClass =
             </button>
           </div>
         </div>
+
       </div>
+
     </main>
+
   </Modal>
 </template>
 

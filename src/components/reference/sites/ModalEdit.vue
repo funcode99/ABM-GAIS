@@ -65,6 +65,7 @@ onMounted(() => {
   />
   <div class="modal">
     <div class="modal-box relative">
+
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
@@ -156,6 +157,7 @@ onMounted(() => {
           </div>
         </div>
       </main>
+
     </div>
   </div>
 </template>

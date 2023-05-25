@@ -54,51 +54,52 @@ watch(isVisible, () => {
             Edit Role
           </p>
         </div>
+
+        <main class="modal-box-inner-inner">
+          <div class="pt-4">
   
-        <div class="pt-4">
-
-          <div class="mb-6 text-start px-4 w-full">
-
-            <span class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-              Role <span class="text-red">*</span>
-            </span>
-
-              <input
-                @keydown.enter="submitEdit"
-                @keyup.enter="$emit('changeRole')"
-                v-model="currentRoleName"
-                type="text"
-                id="name"
-                placeholder="Role"
-                :class="inputStylingClass"
-                required
-                />
-
+            <div class="mb-6 text-start px-4 w-full">
+  
+              <span class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                Role <span class="text-red">*</span>
+              </span>
+  
+                <input
+                  @keydown.enter="submitEdit"
+                  @keyup.enter="$emit('changeRole')"
+                  v-model="currentRoleName"
+                  type="text"
+                  id="name"
+                  placeholder="Role"
+                  :class="inputStylingClass"
+                  required
+                  />
+  
+            </div>
           </div>
-        </div>
+    
+          <div class="sticky bottom-0 bg-white">
+              <div class="flex justify-end gap-4 mr-4">
+                
+                <label
+                  @click="isVisible = !isVisible"
+                  for="add-user-modal"
+                  class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
+                  Cancel
+                </label>
   
-        <div class="sticky bottom-0 bg-white">
-            <div class="flex justify-end gap-4 mr-4">
-              
-              <label
-                @click="isVisible = !isVisible"
-                for="add-user-modal"
-                class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
-                Cancel
-              </label>
-
-              <button @click="submitEdit">
-                <button
-                @click="$emit('changeRole')"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-              >
-                Save
-              </button>
-              </button>
-
+                <button @click="submitEdit">
+                  <button
+                  @click="$emit('changeRole')"
+                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
+                >
+                  Save
+                </button>
+                </button>
+  
+            </div>
           </div>
-        </div>
-  
+        </main>
       
     </main>
     

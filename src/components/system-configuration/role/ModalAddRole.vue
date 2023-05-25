@@ -1,8 +1,9 @@
 <script setup>
 import { ref, watch } from 'vue'
-import iconClose from "@/assets/navbar/icon_close.svg"
 
 import { useFormAddStore } from '@/stores/add-modal.js'
+
+import modalHeader from "@/components/modal/ModalHeader.vue"
 
 const formState = useFormAddStore()
 
@@ -33,13 +34,7 @@ const submitRole = () => {
   <div class="modal">
     <div class="modal-box relative">
       
-        <div class="sticky top-0 z-50 bg-[#015289] text-white">
-            <label for="add-role-modal" class="cursor-pointer absolute right-3 top-3">
-            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-            </label>
-            <p class="font-JakartaSans text-2xl font-semibold mx-4 py-2">New Role</p>
-            <div className="divider m-0"></div>
-        </div>
+        <modalHeader title="New Role" />
 
         <main>
 
@@ -96,7 +91,6 @@ const submitRole = () => {
           </div>
 
         </main>
-
 
     </div>
   </div>

@@ -53,7 +53,7 @@ const getMenuStatus = async () => {
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = 50
+  let modalPaddingHeight = 200
 
   const props = defineProps({
     formContent: Array
@@ -203,7 +203,7 @@ const getMenuStatus = async () => {
     
         </div>
   
-        <div class="sticky bottom-0 bg-white py-8 px-4">
+        <div class="sticky bottom-2 bg-white py-8 px-4">
   
   
             <div class="flex justify-end gap-4">
@@ -235,16 +235,19 @@ const getMenuStatus = async () => {
 
 .modal-box-inner-inner {
   --tw-scale-x: 1;
-  --tw-scale-y: 0.9;  
+  --tw-scale-y: 0.9;
+  height: 500px;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 
-.height {
-    height: 36px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-    padding: 4px 8px;
+:deep(.modal-vue3-content) {
+  max-height: 500px !important;
+
 }
 
 </style>
