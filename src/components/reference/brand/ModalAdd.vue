@@ -12,7 +12,6 @@ let brandName = ref("");
 let Company = ref("");
 let Site = ref("");
 let isOpenModal = ref(false);
-
 const emits = defineEmits(["unlockScrollbar", "brand-saved"]);
 
 //for get company in select
@@ -154,11 +153,10 @@ const resetInput = () => {
             <input
               type="text"
               name="brand"
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Brand Name"
               required
               v-model="brandName"
-              @keyup.enter="$emit('brand-saved')"
             />
           </div>
 

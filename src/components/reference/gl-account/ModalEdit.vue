@@ -35,6 +35,7 @@ const submitEdit = () => {
   originalglAccountName.value = currentglAccountName.value;
 
   isVisible.value = !isVisible.value;
+  emits("changeGl"); // Memanggil event 'changeGl'
 };
 
 const resetForm = () => {
@@ -43,7 +44,7 @@ const resetForm = () => {
 };
 
 const inputStylingClass =
-  "font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
@@ -81,7 +82,6 @@ const inputStylingClass =
           >
           <input
             @keydown.enter="submitEdit"
-            @keyup.enter="$emit('changeGl')"
             v-model="currentglAccountCode"
             type="text"
             id="name"
@@ -97,7 +97,6 @@ const inputStylingClass =
           >
           <input
             @keydown.enter="submitEdit"
-            @keyup.enter="$emit('changeGl')"
             v-model="currentglAccountName"
             type="text"
             id="name"

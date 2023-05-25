@@ -11,7 +11,7 @@ import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
 let formEditState = useFormEditStore();
 
 let isVisible = ref(false);
-let modalPaddingHeight = 160;
+let modalPaddingHeight = 118;
 
 let selectedCompany = ref("Company");
 let Company = ref("");
@@ -50,6 +50,7 @@ const submitEdit = () => {
   originalbrandIdSite.value = selectedSiteId.value;
 
   isVisible.value = !isVisible.value;
+  emits("changeBrand"); // Memanggil event 'changeBrand'
 };
 
 //for get company in select
@@ -82,7 +83,7 @@ const resetForm = () => {
 };
 
 const inputStylingClass =
-  "font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
@@ -156,7 +157,6 @@ const inputStylingClass =
           >
           <input
             @keydown.enter="submitEdit"
-            @keyup.enter="$emit('changeBrand')"
             v-model="currentbrandName"
             type="text"
             id="name"

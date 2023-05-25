@@ -12,7 +12,6 @@ let warehouseName = ref("");
 let Company = ref("");
 let Site = ref("");
 let isOpenModal = ref(false);
-
 const emits = defineEmits(["unlockScrollbar", "warehouse-saved"]);
 
 //for get company in select
@@ -52,8 +51,8 @@ const saveWarehouse = async () => {
     await Api.post(`/warehouse/store`, payload);
 
     // Reset nilai input
-    (warehouseName.value = ""), (selectedCompany.value = "");
-    selectedSite.value = "";
+    (warehouseName.value = ""), (selectedCompany.value = "Company");
+    selectedSite.value = "Site";
 
     Swal.fire({
       position: "center",
@@ -67,6 +66,12 @@ const saveWarehouse = async () => {
   } catch (error) {
     console.log(error);
   }
+};
+
+const resetInput = () => {
+  warehouseName.value = "";
+  selectedCompany.value = "Company";
+  selectedSite.value = "Site";
 };
 </script>
 
@@ -88,7 +93,10 @@ const saveWarehouse = async () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="
+            resetInput();
+            this.$emit('unlockScrollbar');
+          "
           for="my-modal-3"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -100,7 +108,7 @@ const saveWarehouse = async () => {
       </nav>
 
       <main class="modal-box-inner-warehouse">
-        <form @submit.prevent="saveWarehouse">
+        <form class="pt-4" @submit.prevent="saveWarehouse">
           <div class="mb-6 w-full px-4">
             <label
               for="company"
@@ -146,7 +154,7 @@ const saveWarehouse = async () => {
             <input
               type="text"
               name="warehouse"
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Warehouse Name"
               required
               v-model="warehouseName"
@@ -156,7 +164,10 @@ const saveWarehouse = async () => {
           <div class="sticky bottom-0 bg-white">
             <div class="flex justify-end gap-4 mr-6">
               <label
-                @click="this.$emit('unlockScrollbar')"
+                @click="
+                  resetInput();
+                  this.$emit('unlockScrollbar');
+                "
                 for="my-modal-3"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label

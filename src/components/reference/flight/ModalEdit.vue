@@ -8,11 +8,7 @@ import { Modal } from "usemodal-vue3";
 import { useFormEditStore } from "@/stores/reference/flight/edit-modal.js";
 let formEditState = useFormEditStore();
 
-const emits = defineEmits([
-  "unlockScrollbar",
-  "flight-class-update",
-  "changeFlight",
-]);
+const emits = defineEmits(["unlockScrollbar", "changeFlight"]);
 let isVisible = ref(false);
 let modalPaddingHeight = 200;
 
@@ -33,6 +29,7 @@ const submitEdit = () => {
   originalFlightClassName.value = currentFlightClassName.value;
 
   isVisible.value = !isVisible.value;
+  emits("changeFlight"); // Memanggil event 'changeFlight'
 };
 
 const resetForm = () => {
@@ -40,7 +37,7 @@ const resetForm = () => {
 };
 
 const inputStylingClass =
-  "font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
@@ -54,7 +51,6 @@ const inputStylingClass =
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-
     <main>
       <div class="sticky top-0 z-50 bg-[#015289]">
         <button
@@ -79,7 +75,6 @@ const inputStylingClass =
           >
           <input
             @keydown.enter="submitEdit"
-            @keyup.enter="$emit('changeFlight')"
             v-model="currentFlightClassName"
             type="text"
             id="name"
@@ -112,9 +107,7 @@ const inputStylingClass =
           </button>
         </div>
       </div>
-      
     </main>
-
   </Modal>
 </template>
 

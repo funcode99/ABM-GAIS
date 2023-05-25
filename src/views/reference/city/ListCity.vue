@@ -65,6 +65,8 @@ let lengthCounter = 0;
 let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
 let sortAscending = true;
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
 let showingValue = ref(1);
@@ -80,17 +82,43 @@ const onChangePage = (pageOfItem) => {
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
+  const check = document.getElementsByName("checks");
+  const btnHapus = document.getElementById("btnHapus");
+
+  if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type === "checkbox") {
+        check[i].checked = true;
+      }
     }
+    btnHapus.style.display = "block";
   } else {
-    let check = document.getElementsByName("checks");
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type === "checkbox") {
+        check[i].checked = false;
+      }
     }
+    btnHapus.style.display = "none";
+  }
+};
+
+const hapusDataDiceklis = () => {
+  const check = document.getElementsByName("checks");
+  for (let i = 0; i < check.length; i++) {
+    if (check[i].type === "checkbox" && check[i].checked) {
+      // Lakukan tindakan penghapusan data yang sesuai di sini
+      const row = check[i].parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  }
+
+  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
+  const btnHapus = document.getElementById("btnHapus");
+  const checkedCheckboxes = document.querySelectorAll(
+    'input[name="checks"]:checked'
+  );
+  if (checkedCheckboxes.length === 0) {
+    btnHapus.style.display = "none";
   }
 };
 
@@ -231,6 +259,10 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 };
+
+function toggleReadMore(id) {
+  showFullText.value = { ...showFullText.value, [id]: true };
+}
 </script>
 
 <template>
@@ -262,6 +294,14 @@ const exportToExcel = () => {
             </p>
 
             <div class="flex gap-4">
+              <button
+                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                id="btnHapus"
+                style="display: none"
+                @click="hapusDataDiceklis()"
+              >
+                Delete
+              </button>
               <ModalAdd
                 @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                 @city-saved="fetchCity"
@@ -363,7 +403,7 @@ const exportToExcel = () => {
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm"
+                    class="font-JakartaSans font-normal text-sm capitalize"
                     v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
@@ -375,7 +415,20 @@ const exportToExcel = () => {
                     </td>
                     <td>{{ data.no }}</td>
                     <td>{{ data.city_code }}</td>
-                    <td>{{ data.city_name }}</td>
+                    <td>
+                      <span
+                        v-if="
+                          data.city_name.length <= 30 || showFullText[data.id]
+                        "
+                        class="readmore-text"
+                      >
+                        {{ data.city_name }}
+                      </span>
+                      <span v-else class="readmore-text">
+                        {{ data.city_name.substring(0, 30) }}
+                        <a href="#" @click="toggleReadMore(data.id)">...</a>
+                      </span>
+                    </td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
@@ -458,5 +511,20 @@ tr th {
 
 .this {
   overflow-x: hidden;
+}
+
+.readmore-text {
+  display: inline-block;
+  max-width: 200px; /* Atur sesuai kebutuhan */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 500px;
+  white-space: nowrap;
+  word-break: break-word;
 }
 </style>
