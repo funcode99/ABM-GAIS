@@ -402,7 +402,7 @@ function toggleReadMore(id) {
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm capitalize"
+                    class="font-JakartaSans font-normal text-sm"
                     v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
@@ -414,7 +414,6 @@ function toggleReadMore(id) {
                     </td>
                     <td>{{ data.no }}</td>
                     <td>{{ data.gl_account }}</td>
-                    <!-- <td>{{ data.gl_name }}</td> -->
                     <td>
                       <span
                         v-if="

@@ -271,7 +271,7 @@ const router = createRouter({
       name: 'flight',
       component: ListFlight,
       meta: {
-        title: "Flight Entitlement",
+        title: "Flight Class",
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');
