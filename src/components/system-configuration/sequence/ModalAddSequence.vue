@@ -1,6 +1,7 @@
 <script setup>
   import { ref, onBeforeMount, watch } from 'vue'
-  import iconClose from "@/assets/navbar/icon_close.svg"
+
+  import modalHeader from "@/components/modal/ModalHeader.vue"
 
   import Api from '@/utils/Api'
 
@@ -66,9 +67,9 @@
     <label
       for="add-user-modal"
       class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-      >
+    >
       + Add New
-      </label>
+    </label>
 
     <input type="checkbox" id="add-user-modal" class="modal-toggle" v-model="isOpenModal" />
     
@@ -76,12 +77,7 @@
 
       <div class="modal-box relative">
 
-        <div class="sticky top-0 z-50 bg-[#015289]">
-          <label for="add-user-modal" class="cursor-pointer absolute right-3 top-3">
-            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-          </label>
-          <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">New Sequence</p>
-        </div>
+        <modalHeader title="New Sequence" />
 
         <div class="modal-box-inner-inner">
 

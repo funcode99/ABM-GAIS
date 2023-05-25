@@ -1,6 +1,6 @@
 <script setup>
-  import Multiselect from '@vueform/multiselect'
-import iconClose from "@/assets/navbar/icon_close.svg";
+import modalHeader from "@/components/modal/ModalHeader.vue"
+
 // cuma gara2 lupa import ref sidebar gua error terus anjing
 import { ref, onBeforeMount } from 'vue'
 import Api from '@/utils/Api'
@@ -84,12 +84,7 @@ const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-s
 
     <div class="modal-box relative">
       
-        <div class="sticky top-0 z-50 bg-[#015289]">
-            <label for="add-menu-modal" class="cursor-pointer absolute right-3 top-3">
-            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-            </label>
-            <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">New Menu</p>
-        </div>
+        <modalHeader title="New Menu" />
 
         <main class="modal-box-inner-menu">
 

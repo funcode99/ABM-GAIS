@@ -1,9 +1,9 @@
 <script setup>
   import { ref, onBeforeMount, watch } from 'vue'
-  import iconClose from "@/assets/navbar/icon_close.svg"
   import Api from '@/utils/Api'
-
   import { useFormAddStore } from '@/stores/add-modal.js'
+
+  import modalHeader from "@/components/modal/ModalHeader.vue"
 
   let formState = useFormAddStore()
 
@@ -114,12 +114,7 @@
 
       <div class="modal-box relative">
 
-        <div class="sticky top-0 z-50 bg-[#015289]">
-          <label for="add-user-modal" class="cursor-pointer absolute right-3 top-3">
-            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-          </label>
-          <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">New User</p>
-        </div>
+        <modalHeader title="New User" />
 
         <main class="modal-box-inner-user">
 
@@ -204,7 +199,7 @@
               </select>
             </div>
 
-            <div v-if="role[1] =='Driver' " class="mb-6 flex flex-col text-left justify-start">
+            <div v-if="role[1] == 'Driver' " class="mb-6 flex flex-col text-left justify-start">
               <span
                 for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"

@@ -1,5 +1,4 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
  
@@ -7,6 +6,8 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import { ref, onBeforeMount, watch } from 'vue'
 
 import { useFormAddStore } from '@/stores/add-modal.js'
+
+import modalHeader from "@/components/modal/ModalHeader.vue"
 
 import Api from '@/utils/Api'
 
@@ -128,14 +129,10 @@ const fetchDocument = async () => {
   <input type="checkbox" id="add-approver-modal" class="modal-toggle" v-model="isOpenModal" />
 
   <div class="modal">
+
     <div class="modal-box relative">
 
-      <div class="sticky top-0 z-50 bg-[#015289]">
-        <label for="add-approver-modal" class="cursor-pointer absolute right-3 top-3">
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">New Matrix</p>
-      </div>
+      <modalHeader title="New Matrix" />
 
       <main class="modal-box-inner-inner">
         <div class="mb-3 px-8 text-left">
@@ -307,12 +304,14 @@ const fetchDocument = async () => {
         </div>
       </main>
 
-
     </div>
+
   </div>
+
 </template>
 
 <style scoped>
+
 .modal-box {
   padding: 0;
   overflow-y: hidden;
