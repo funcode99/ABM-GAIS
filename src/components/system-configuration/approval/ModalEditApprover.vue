@@ -23,7 +23,7 @@ import Api from '@/utils/Api'
 
   let isVisible = ref(false)
   let type = ''
-  let modalPaddingHeight = 200
+  let modalPaddingHeight = '25%'
 
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])

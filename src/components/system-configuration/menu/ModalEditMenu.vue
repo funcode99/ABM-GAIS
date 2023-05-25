@@ -53,7 +53,7 @@ const getMenuStatus = async () => {
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = 200
+  let modalPaddingHeight = '25%'
 
   const props = defineProps({
     formContent: Array

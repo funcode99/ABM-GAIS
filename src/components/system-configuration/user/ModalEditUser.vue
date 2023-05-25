@@ -11,7 +11,8 @@
 
     let isVisible = ref(false)
     let type = '' 
-    let modalPaddingHeight = 200
+    // bisa dimasukkin string ternyata
+    let modalPaddingHeight = '25%'
 
     const props = defineProps({
       formContent: Array

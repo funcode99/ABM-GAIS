@@ -10,7 +10,7 @@ import { useFormEditStore } from '@/stores/edit-modal.js'
 let formEditState = useFormEditStore()
 
 let isVisible = ref(false);
-let modalPaddingHeight = 200;
+let modalPaddingHeight = '25%';
 
 const props = defineProps({
   formContent: Array,
