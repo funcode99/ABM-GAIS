@@ -350,11 +350,10 @@ th span {
   max-width: 600px !important; 
 }
 
-/* .modal-vue3-wrap div {
-  overflow-y: hidden !important;
-}
+
+
 .modal-vue3-wrap div div {
   overflow-y: auto !important;
-} */
+}
 
 </style>

@@ -100,7 +100,6 @@ watch(isVisible, () => {
             </div>
           </div>
         </main>
-  
       
     </main>
     
