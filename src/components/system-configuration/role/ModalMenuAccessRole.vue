@@ -15,7 +15,7 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = 50
+  let modalPaddingHeight = 200
 
   let sortedData = ref([])
   let sortedDataReactive = computed(() => sortedData.value)
@@ -71,6 +71,7 @@ const submitAccess = async () => {
         </nav>
     
         <main class="modal-box-inner-inner">
+
           <div class="mb-3 overflow-x-auto px-10">
       
               <table class="table w-full">
@@ -112,7 +113,7 @@ const submitAccess = async () => {
               
           </div>
       
-          <div class="sticky right-4 bg-white px-10 pt-2 pb-4">
+          <div class="sticky right-4 bottom-0 z-50 bg-white px-10 pt-2 pb-4">
               <div className="divider m-0 pb-4"></div>
               <div class="flex justify-end gap-4">
                 <button
@@ -132,6 +133,7 @@ const submitAccess = async () => {
                 </button>
               </div>
           </div>
+          
         </main>
         
 
@@ -143,6 +145,7 @@ const submitAccess = async () => {
 <style scoped>
 
 .modal-box-inner-inner {
+  height: 500px;
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -152,4 +155,10 @@ const submitAccess = async () => {
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
+
+:deep(.modal-vue3-content) {
+  height: 400px !important;
+}
+
+
 </style>

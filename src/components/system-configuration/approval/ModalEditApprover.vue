@@ -129,19 +129,18 @@ import Api from '@/utils/Api'
 
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight"> 
   
-    <div class="px-5">
+    <div>
 
-      <div class="sticky top-0 z-50 bg-white py-4">
-          <button @click="isVisible = false" class="cursor-pointer absolute right-0">
+      <div class="sticky top-0 z-50 text-white bg-[#015289]">
+          <button @click="isVisible = false" class="cursor-pointer absolute right-3 top-3">
             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
           </button>
-          <p class="font-JakartaSans text-2xl font-semibold text-left">Edit Matrix</p>
-          <div className="divider m-0"></div>
+          <p class="font-JakartaSans text-2xl font-semibold mx-4 py-2 text-left">Edit Matrix</p>
       </div>
 
-      <main class="modal-box-inner-inner px-4">
+      <main class="modal-box-inner-inner">
 
-        <div class="mb-3 px-8 text-left">
+        <div class="px-8 my-3 text-left">
             
           <div class="mb-3 text-left w-full">
               <label
@@ -210,98 +209,102 @@ import Api from '@/utils/Api'
           
         </div>
 
-        <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
-        <hr class="border border-black">
+        <div class="px-3">
 
-        <div class="overflow-x-auto">
-          <table
-            class="table table-zebra table-compact border rounded-lg w-full"
-            :class="approverLines.length == 0 ? 'w-full' : ''"
-          >
+          <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
+          <hr class="border border-black">
   
-            <thead class="text-center font-Montserrat text-sm font-bold">
-              <tr class="">
-                <th class="relative">
-                  <span class="flex justify-center">Level</span>
-                </th>
-                <th class="relative">
-                  <span class="flex justify-center">Authorities</span>
-                  <button class="absolute right-0 top-0 bottom-0">
-                    <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                  </button>
-                </th>
-                <th class="relative">
-                  <span class="flex justify-center">Approver Name</span>
-                  <button class="absolute right-1 top-0 bottom-0">
-                    <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                  </button>
-                </th>
-                <th class="flex justify-center">Actions</th>
-              </tr>
-            </thead>
-  
-            <tbody class="bg-[#F5F5F5]">
-  
-              <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
-
-                <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
-                  {{ input.level }} 
-                </td>
-
-                <!-- sudah betul -->
-                <td v-if="input.level == undefined">
-                  0
-                </td>
-  
-                <!-- event listener gak ngaruh di option -->
-                <td>
-                  <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false"  >
-                    <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
-                        {{ data.auth_name }}
-                    </option>
-                  </select>
-                </td>
-  
-                <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
-  
-                </td>
-  
-                <td>
-                  <input type="text" class="px-2" v-model="input.approverName" />
-                </td>
-  
-                <td v-if="input.isPosted" class="flex flex-wrap gap-4 justify-center">
-                  <button  @click="removeField(index, approverLines)">
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td>
-
-                <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
-                  <button @click="saveApproverLines(approverLines, index)">
-                    <img :src="checkIcon" class="w-5 h-5" />
-                  </button>
-                  <button @click="removeField(index, approverLines)">
-                    <img :src="closeIcon" class="w-5 h-5" />
-                  </button>
-                </td>
-
-              </tr>
-  
-              <tr class='text-center'>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td class="flex justify-center">
-                  <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
-                </td>
-              </tr>
-  
-            </tbody>
-            
-          </table>
-        </div>
+          <div class="overflow-x-auto">
+            <table
+              class="table table-zebra table-compact border rounded-lg w-full"
+              :class="approverLines.length == 0 ? 'w-full' : ''"
+            >
     
-        <div class="sticky bottom-0 bg-white py-4">
+              <thead class="text-center font-Montserrat text-sm font-bold">
+                <tr class="">
+                  <th class="relative">
+                    <span class="flex justify-center">Level</span>
+                  </th>
+                  <th class="relative">
+                    <span class="flex justify-center">Authorities</span>
+                    <button class="absolute right-0 top-0 bottom-0">
+                      <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
+                    </button>
+                  </th>
+                  <th class="relative">
+                    <span class="flex justify-center">Approver Name</span>
+                    <button class="absolute right-1 top-0 bottom-0">
+                      <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
+                    </button>
+                  </th>
+                  <th class="flex justify-center">Actions</th>
+                </tr>
+              </thead>
+    
+              <tbody class="bg-[#F5F5F5]">
+    
+                <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
+  
+                  <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
+                    {{ input.level }} 
+                  </td>
+  
+                  <!-- sudah betul -->
+                  <td v-if="input.level == undefined">
+                    0
+                  </td>
+    
+                  <!-- event listener gak ngaruh di option -->
+                  <td>
+                    <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false"  >
+                      <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
+                          {{ data.auth_name }}
+                      </option>
+                    </select>
+                  </td>
+    
+                  <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
+    
+                  </td>
+    
+                  <td>
+                    <input type="text" class="px-2" v-model="input.approverName" />
+                  </td>
+    
+                  <td v-if="input.isPosted" class="flex flex-wrap gap-4 justify-center">
+                    <button  @click="removeField(index, approverLines)">
+                      <img :src="deleteicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+  
+                  <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
+                    <button @click="saveApproverLines(approverLines, index)">
+                      <img :src="checkIcon" class="w-5 h-5" />
+                    </button>
+                    <button @click="removeField(index, approverLines)">
+                      <img :src="closeIcon" class="w-5 h-5" />
+                    </button>
+                  </td>
+  
+                </tr>
+    
+                <tr class='text-center'>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td class="flex justify-center">
+                    <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
+                  </td>
+                </tr>
+    
+              </tbody>
+              
+            </table>
+          </div>
+          
+        </div>
+
+        <div class="sticky bottom-0 bg-white pt-2 pb-5 px-4 pr-3">
             <div className="divider m-0 pb-4"></div>
             <div class="flex justify-end gap-4">
               <button
@@ -319,7 +322,6 @@ import Api from '@/utils/Api'
         </div>
 
       </main>
-  
 
     </div>
   
@@ -334,9 +336,9 @@ th span {
 }
 
 .modal-box-inner-inner {
-  height: 400px;
-  /* --tw-scale-x: 1;
-  --tw-scale-y: 0.9; */
+  --tw-scale-x: 1;
+  --tw-scale-y: 0.9;
+  height: 470px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -348,12 +350,6 @@ th span {
 :deep(.modal-vue3-content) {
   max-height: 490px !important;
   max-width: 600px !important; 
-}
-
-
-
-.modal-vue3-wrap div div {
-  overflow-y: auto !important;
 }
 
 </style>

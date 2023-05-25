@@ -237,8 +237,6 @@ const getMenuStatus = async () => {
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   height: 500px;
-  --tw-scale-x: 1;
-  --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
