@@ -90,6 +90,7 @@ const onFileSelectedUpdate = (event) => {
   />
   <div class="modal">
     <div class="modal-box relative">
+
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
@@ -98,15 +99,14 @@ const onFileSelectedUpdate = (event) => {
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p
-          class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
-        >
+        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start">
           Edit Company
         </p>
       </nav>
 
       <main class="modal-box-inner-company">
         <div>
+          
           <div class="mb-6 text-start px-4 w-full">
             <label
               for="code"
@@ -124,6 +124,7 @@ const onFileSelectedUpdate = (event) => {
               @keyup.enter="$emit('changecompanyCode')"
             />
           </div>
+          
           <div class="mb-6 text-start px-4 w-full">
             <label
               for="name"
@@ -141,6 +142,7 @@ const onFileSelectedUpdate = (event) => {
               @keyup.enter="$emit('changecompanyName')"
             />
           </div>
+          
           <div class="mb-6 text-start px-4 w-full">
             <label
               for="parent_company"
@@ -229,8 +231,10 @@ const onFileSelectedUpdate = (event) => {
               </button>
             </div>
           </div>
+
         </div>
       </main>
+
     </div>
   </div>
 </template>

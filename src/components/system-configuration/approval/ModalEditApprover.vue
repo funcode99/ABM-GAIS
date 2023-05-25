@@ -5,6 +5,8 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
 import editIcon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+import checkIcon from '@/assets/checkmark.png'
+import closeIcon from '@/assets/close-window.png'
  
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
 import { ref, onBeforeMount, onMounted } from 'vue'
@@ -21,7 +23,7 @@ import Api from '@/utils/Api'
 
   let isVisible = ref(false)
   let type = ''
-  let modalPaddingHeight = 50
+  let modalPaddingHeight = 200
 
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])
@@ -52,9 +54,15 @@ import Api from '@/utils/Api'
       formEditState.approval.companyId = company.value
       formEditState.approval.menuId = menu.value
       formEditState.approval.codeDocumentId = document.value
-      formEditState.approval.arrayDetail = approverLines.value
+      // formEditState.approval.arrayDetail = approverLines.value
 
       isVisible.value = !isVisible.value
+  }
+
+  const saveApproverLines = (data, idx) => {
+    // console.log(data[idx])
+    data[idx].id_approval_auth
+    data[idx].level
   }
 
   let currentAuthoritiesId = ref()
@@ -69,6 +77,7 @@ import Api from '@/utils/Api'
           fieldType.push({
             id_approval_auth : authorities.value,
             level: levelValue.value,
+            isPosted: false
             // approverName : ''
           })
 
@@ -129,168 +138,188 @@ import Api from '@/utils/Api'
           <p class="font-JakartaSans text-2xl font-semibold text-left">Edit Matrix</p>
           <div className="divider m-0"></div>
       </div>
+
+      <main class="modal-box-inner-inner px-4">
+
+        <div class="mb-3 px-8 text-left">
+            
+          <div class="mb-3 text-left w-full">
+              <label
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Nama Matrix<span class="text-red">*</span></label
+              >
+              <input
+                v-model="matrixName"
+                type="text"
+                placeholder="Nama Matrix"
+                :class="inputStylingClass"
+                required
+              />
+          </div>
+    
+          <div class="mb-3 flex items-center text-left">
+            <div class="flex flex-col w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Menu<span class="text-red">*</span>
+              </label>
+              <select v-model="menu" :class="inputStylingClass">
+                <option v-for="data in addData" :key="data.id" :value="data.id">
+                  {{ data.menu }}
+                </option>
+              </select>
+            </div>
+          </div>
   
-      <div class="mb-3 px-8">
+          <div class="mb-3 flex items-center text-left">
+            <div class="flex flex-col w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Document<span class="text-red">*</span>
+              </label>
+              <select v-model="document" :class="inputStylingClass">
+                <option>
+                  1
+                </option>
+                <option>
+                  2
+                </option>
+                <option>
+                  3
+                </option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="mb-3 flex items-center text-left">
+            <div class="flex flex-col w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Company<span class="text-red">*</span>
+              </label>
+              <select v-model="company" :class="inputStylingClass">
+                <option>
+                  1
+                </option>
+                <option>
+                  2
+                </option>
+                <option>
+                  3
+                </option>
+              </select>
+            </div>
+          </div>
           
-        <div class="mb-3 text-left">
-            <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Nama Matrix<span class="text-red">*</span></label
-            >
-            <input
-              v-model="matrixName"
-              type="text"
-              placeholder="Nama Matrix"
-              :class="inputStylingClass"
-              required
-            />
-        </div>
-  
-        <div class="mb-3 flex items-center text-left">
-          <div class="flex flex-col w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm">
-              Menu<span class="text-red">*</span>
-            </label>
-            <select v-model="menu" :class="inputStylingClass">
-              <option v-for="data in addData" :key="data.id" :value="data.id">
-                {{ data.menu }}
-              </option>
-            </select>
-          </div>
         </div>
 
-        <div class="mb-3 flex items-center text-left">
-          <div class="flex flex-col w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm">
-              Document<span class="text-red">*</span>
-            </label>
-            <select v-model="document" :class="inputStylingClass">
-              <option>
-                1
-              </option>
-              <option>
-                2
-              </option>
-              <option>
-                3
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="mb-3 flex items-center text-left">
-          <div class="flex flex-col w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm">
-              Company<span class="text-red">*</span>
-            </label>
-            <select v-model="company" :class="inputStylingClass">
-              <option>
-                1
-              </option>
-              <option>
-                2
-              </option>
-              <option>
-                3
-              </option>
-            </select>
-          </div>
-        </div>
-  
         <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
         <hr class="border border-black">
+
+        <div class="overflow-x-auto">
+          <table
+            class="table table-zebra table-compact border rounded-lg w-full"
+            :class="approverLines.length == 0 ? 'w-full' : ''"
+          >
   
-        <table
-          class="table table-zebra table-compact border w-full rounded-lg"
-        >
-
-          <thead class="text-center font-Montserrat text-sm font-bold">
-            <tr class="">
-              <th class="relative">
-                <span class="flex justify-center">Level</span>
-                <button class="absolute right-0 top-0 bottom-0">
-                  <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                </button>
-              </th>
-              <th class="relative">
-                <span class="flex justify-center">Authorities</span>
-                <button class="absolute right-0 top-0 bottom-0">
-                  <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                </button>
-              </th>
-              <th class="relative">
-                <span class="flex justify-center">Approver Name</span>
-                <button class="absolute right-1 top-0 bottom-0">
-                  <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                </button>
-              </th>
-              <th class="flex justify-center">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody class="bg-[#F5F5F5]">
-
-            <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
-              
-              <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
-                {{ input.level }}
-              </td>
-
-              <!-- event listener gak ngaruh di option -->
-              <td>
-                <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false"  >
-                  <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
-                      {{ data.auth_name }}
-                  </option>
-                </select>
-              </td>
-
-              <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
-
-              </td>
-
-              <td>
-                <input type="text" class="px-2" v-model="input.approverName" />
-              </td>
-
-              <td class="flex flex-wrap gap-4 justify-center">
-                <button  @click="removeField(index, approverLines)">
-                  <img :src="deleteicon" class="w-6 h-6" />
-                </button>
-              </td>
-            </tr>
-
-            <tr class='text-center'>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="flex justify-center">
-                <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
-              </td>
-            </tr>
-
-          </tbody>
-          
-        </table>
-        
-      </div>
+            <thead class="text-center font-Montserrat text-sm font-bold">
+              <tr class="">
+                <th class="relative">
+                  <span class="flex justify-center">Level</span>
+                </th>
+                <th class="relative">
+                  <span class="flex justify-center">Authorities</span>
+                  <button class="absolute right-0 top-0 bottom-0">
+                    <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
+                  </button>
+                </th>
+                <th class="relative">
+                  <span class="flex justify-center">Approver Name</span>
+                  <button class="absolute right-1 top-0 bottom-0">
+                    <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
+                  </button>
+                </th>
+                <th class="flex justify-center">Actions</th>
+              </tr>
+            </thead>
   
-      <div class="sticky bottom-0 bg-white py-4">
-          <div className="divider m-0 pb-4"></div>
-          <div class="flex justify-end gap-4">
-            <button
-            @click="isVisible = false"
-              class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-              >
-              Cancel
-            </button>
-            <button @click="saveField">
-              <button @click="$emit('editApprover')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                Save
+            <tbody class="bg-[#F5F5F5]">
+  
+              <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
+
+                <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
+                  {{ input.level }} 
+                </td>
+
+                <!-- sudah betul -->
+                <td v-if="input.level == undefined">
+                  0
+                </td>
+  
+                <!-- event listener gak ngaruh di option -->
+                <td>
+                  <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false"  >
+                    <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
+                        {{ data.auth_name }}
+                    </option>
+                  </select>
+                </td>
+  
+                <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
+  
+                </td>
+  
+                <td>
+                  <input type="text" class="px-2" v-model="input.approverName" />
+                </td>
+  
+                <td v-if="input.isPosted" class="flex flex-wrap gap-4 justify-center">
+                  <button  @click="removeField(index, approverLines)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
+
+                <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
+                  <button @click="saveApproverLines(approverLines, index)">
+                    <img :src="checkIcon" class="w-5 h-5" />
+                  </button>
+                  <button @click="removeField(index, approverLines)">
+                    <img :src="closeIcon" class="w-5 h-5" />
+                  </button>
+                </td>
+
+              </tr>
+  
+              <tr class='text-center'>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="flex justify-center">
+                  <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
+                </td>
+              </tr>
+  
+            </tbody>
+            
+          </table>
+        </div>
+    
+        <div class="sticky bottom-0 bg-white py-4">
+            <div className="divider m-0 pb-4"></div>
+            <div class="flex justify-end gap-4">
+              <button
+              @click="isVisible = false"
+                class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
+                >
+                Cancel
               </button>
-            </button>
-          </div>
-      </div>
+              <button @click="saveField">
+                <button @click="$emit('editApprover')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
+                  Save
+                </button>
+              </button>
+            </div>
+        </div>
+
+      </main>
+  
 
     </div>
   
@@ -303,5 +332,29 @@ import Api from '@/utils/Api'
 th span {
     text-transform: capitalize;
 }
+
+.modal-box-inner-inner {
+  height: 400px;
+  /* --tw-scale-x: 1;
+  --tw-scale-y: 0.9; */
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+}
+
+:deep(.modal-vue3-content) {
+  max-height: 490px !important;
+  max-width: 600px !important; 
+}
+
+/* .modal-vue3-wrap div {
+  overflow-y: hidden !important;
+}
+.modal-vue3-wrap div div {
+  overflow-y: auto !important;
+} */
 
 </style>

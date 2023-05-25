@@ -55,7 +55,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No'},
+      {Id: 1, title: 'No', jsonData: 'id'},
       {Id: 2, title: 'Matrix Name', jsonData: 'approval_name'},
       {Id: 3, title: 'Menu', jsonData: 'menu'},
       {Id: 4, title: 'Actions'}

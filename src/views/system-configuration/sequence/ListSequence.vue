@@ -57,7 +57,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No'},
+      {Id: 1, title: 'No', jsonData: 'id'},
       {Id: 2, title: 'Name', jsonData: 'sequence_name'},
       {Id: 3, title: 'Prefix', jsonData: 'prefix'},
       {Id: 4, title: 'Suffix', jsonData: 'suffix'},

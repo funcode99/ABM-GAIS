@@ -57,7 +57,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No'},
+      {Id: 1, title: 'No', jsonData: 'id'},
       {Id: 2, title: 'Username', jsonData: 'username'},
       {Id: 3, title: 'User Role', jsonData: 'id_role'},
       {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'}

@@ -39,7 +39,7 @@
 
 .modal-vue3-content {
   height: 100% !important;
-  max-height: 500px !important;
+  max-height: 600px !important;
   width: 100% !important;
   max-width: 500px !important;
   
@@ -55,7 +55,7 @@
   background-color: #fff !important;
   overflow: hidden !important;
   padding: 0px 0px !important;
-  max-height: 600px !important;
+  max-height: 700px !important;
   border-radius: 16px;
 
   position: absolute;
@@ -71,14 +71,6 @@
   flex-wrap: nowrap;
   margin: -8px;
 }
-
-/* .modal-vue3-wrap div {
-  overflow-y: hidden !important;
-}
-
-.modal-vue3-wrap div div {
-  overflow-y: auto !important;
-} */
 
 .modal-vue3-header,
 .modal-vue3-footer {
