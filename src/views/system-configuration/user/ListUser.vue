@@ -24,7 +24,6 @@
     let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
-    let lengthCounter = 0
     let editDataUserId = ref(0)
 
     //for paginations
@@ -86,8 +85,6 @@
           return item.username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
-      lengthCounter = sortedData.value.length
-      console.log(lengthCounter)
       onChangePage(1)
     }
 
@@ -107,7 +104,6 @@
       const api = await Api.get('/users')      
       instanceArray = api.data.data
       sortedData.value = instanceArray
-      lengthCounter = sortedData.value.length
     }
 
     const deleteData = async (event) => {
@@ -171,9 +167,7 @@
 <template>
 
 <!-- kenak loh, ternyata disini overflow x nya -->
-  <div 
-  class="flex flex-col w-full this h-[100vh]"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
 
     <Navbar/>
 
