@@ -24,14 +24,12 @@
 
     let lengthCounter = 0
     let requestTripType = ref("Company Business")
-
-    
+ 
     let sortedDataCompanyBusiness = ref([])
     let sortedDataSiteVisit = ref([])
     let sortedDataFieldBreak = ref([])
     let sortedDataTaxiVoucher = ref([])
     
-    let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     
     let instanceArray = []

@@ -12,6 +12,8 @@
 
     import Api from '@/utils/Api'
 
+    import tableContainer from '@/components/table/tableContainer.vue'
+
     import { useFormAddStore } from '@/stores/add-modal.js'
     import { useFormEditStore } from '@/stores/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
@@ -78,8 +80,6 @@
         instanceArray = api.data.data
         sortedData.value = instanceArray
     }
-
-    // watch(ref, callback)
 
     onBeforeMount(() => {
       getSessionForSidebar()
@@ -160,13 +160,10 @@
 
       <Sidebar class="flex-none" />
 
-      <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500"
-          :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
-      >
-      
-      <TableTopBar @do-search="filteredItems" :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
+      <tableContainer>
         
-        <!-- actual table -->
+        <TableTopBar @do-search="filteredItems" :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
+        
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
           
           <div class="relative w-full">
@@ -188,7 +185,6 @@
                       </button>
                     </span>
                   </th>
-
 
                 </tr>
               </thead>
@@ -243,8 +239,7 @@
           
         </div>
 
-
-      </div>
+      </tableContainer>
 
     </div>
 
@@ -275,10 +270,6 @@
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
-  }
-
-  .this {
-    overflow-x: hidden;
   }
 
 </style>

@@ -4,6 +4,8 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
+    import tableContainer from '@/components/table/tableContainer.vue'
+
     import Api from '@/utils/Api'
 
     // import untuk user table
@@ -71,8 +73,6 @@
         sortedbyASC = true
       }
     }
-
-    // watch(ref, callback)
 
     onBeforeMount(() => {
       getSessionForSidebar()
@@ -174,16 +174,20 @@
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen content mt-[115px]">
 
-      <Sidebar class="flex-none" />    
-        
-      <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500" 
-        :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
+      <Sidebar class="flex-none" />
 
-          <TableTopBar :title="'User'" @increase-user="addNewUser" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="user" />
+      <tableContainer>
+
+        <TableTopBar 
+          :title="'User'" 
+          @increase-user="addNewUser" 
+          @do-search="filteredItems" 
+          @change-showing="fillPageMultiplier" 
+          modalAddType="user" 
+        />
           
-          <!-- actual table -->
-          <!-- scrollbar horizontal juga ada disini -->
-          <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
             <div class="block overflow-x-auto">
               <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
@@ -266,10 +270,9 @@
               />
             </div>
             
-          </div>
+        </div>
 
-
-      </div>
+      </tableContainer>
 
     </div>
     
@@ -300,19 +303,6 @@
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
-  }
-
-  .this {
-    overflow-x: hidden;
-  }
-
-  .backgroundHeight {
-    min-height: calc(100vh - 115px);
-  }
-
-  .custom-card {
-    box-shadow: 0px -4px #015289;
-    border-radius: 4px;
   }
 
 </style>

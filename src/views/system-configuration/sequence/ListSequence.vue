@@ -12,6 +12,8 @@
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
     import ModalDelete from '@/components/modal/ModalDelete.vue'
 
+    import tableContainer from '@/components/table/tableContainer.vue'
+
     import { useFormEditStore } from '@/stores/edit-modal.js'
     import { useFormAddStore } from '@/stores/add-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
@@ -74,8 +76,6 @@
         sortedbyASC = true
       }
     }
-
-    // watch(ref, callback)
 
     onBeforeMount(() => {
       getSessionForSidebar()
@@ -166,25 +166,23 @@
 
 <template>
 
-  <!-- kenak loh, ternyata disini overflow x nya -->
+
   <div class="flex flex-col w-full this h-[100vh]">
 
     <Navbar/>
 
-    <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
+
     <div class="flex w-screen content mt-[115px]">
 
         <Sidebar class="flex-none" />
 
-        <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500" 
-        :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
-          >
-  
-            <TableTopBar :title="'Sequence'" @do-search="filteredItems" @increase-sequence="addNewSequence" @change-showing="fillPageMultiplier" modalAddType="sequence" />
+        <tableContainer>
+          
+          <TableTopBar :title="'Sequence'" @do-search="filteredItems" @increase-sequence="addNewSequence" @change-showing="fillPageMultiplier" modalAddType="sequence" />
             
-            <!-- actual table -->
-            <!-- scrollbar horizontal juga ada disini -->
-            <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+          <!-- actual table -->
+          <!-- scrollbar horizontal juga ada disini -->
+          <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
               
             <div class="block overflow-x-auto">
               <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
@@ -263,10 +261,9 @@
                   :show-jump-buttons="true"
                 />
               </div>
-            </div>
-  
-  
-        </div>
+          </div>
+
+        </tableContainer>
 
     </div>  
 
@@ -298,23 +295,5 @@
   .table-zebra tbody tr:hover td {
     background-color: grey;
   }
-
-  .this {
-    overflow-x: hidden;
-  }
-
-  .backgroundHeight {
-    min-height: calc(100vh - 115px);
-  }
-
-  .custom-card {
-    box-shadow: 0px -4px #015289;
-    border-radius: 4px;
-  }
-  
-  .zLow {
-    z-index: 1;
-  }
-
 
 </style>

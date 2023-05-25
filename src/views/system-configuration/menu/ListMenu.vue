@@ -319,7 +319,6 @@
 
           </div>
 
-
       </div>
 
     </div>
@@ -351,14 +350,6 @@
 
   .table-zebra tbody tr:hover td {
     background-color: grey;
-  }
-
-  .this {
-    overflow-x: hidden;
-  }
-
-  .backgroundHeight {
-    min-height: calc(100vh - 115px);
   }
 
 </style>

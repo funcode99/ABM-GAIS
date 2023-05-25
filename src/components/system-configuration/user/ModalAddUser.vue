@@ -204,7 +204,7 @@
               </select>
             </div>
 
-            <div class="mb-6 flex flex-col text-left justify-start">
+            <div v-if="role[1] =='Driver' " class="mb-6 flex flex-col text-left justify-start">
               <span
                 for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -271,6 +271,7 @@
           </div>
 
           <div class="sticky bottom-0 bg-white px-4 py-8">
+
             <div class="flex justify-end gap-4">
               <label
                 for="add-user-modal"
@@ -286,6 +287,7 @@
                 </button>
               </button>
             </div>
+
           </div>
 
         </main>

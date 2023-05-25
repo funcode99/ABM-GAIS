@@ -121,6 +121,7 @@
         </div>
 
         <main class="modal-box-inner-inner">
+
           <div class="my-3 px-8 text-left">
   
             <div class="mb-6">
@@ -173,45 +174,45 @@
             </div>
   
             <div class="mb-6">
-            <label
-              class="block mb-2 font-JakartaSans font-medium text-sm">
-              Passwords<span class="text-red">*</span>
-            </label>
-            <input
-              v-model="password"
-              type="password"
-              placeholder="Passwords"
-              :class="inputStylingClass"
-              required
-            />
-            </div>
-  
-            <div class="mb-6 flex flex-col text-left justify-start">
-            <span
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >User Role<span class="text-red">*</span>
-            </span>
-            <select :class="inputStylingClass" v-model="role" required>
-              <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]" :selected="data.id == role[0] ? true : false">
-                {{ data.role_name }}
-              </option>
-            </select>
+              <label
+                class="block mb-2 font-JakartaSans font-medium text-sm">
+                Passwords<span class="text-red">*</span>
+              </label>
+              <input
+                v-model="password"
+                type="password"
+                placeholder="Passwords"
+                :class="inputStylingClass"
+                required
+              />
             </div>
   
             <div class="mb-6 flex flex-col text-left justify-start">
               <span
-                for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                id="company">
-                Full Name<span class="text-red">*</span>
+                >User Role<span class="text-red">*</span>
               </span>
-              <input
-                    v-model="fullname"
-                    type="text"
-                    placeholder="Full Name"
-                    :class="inputStylingClass"
-                    required
-                />
+              <select :class="inputStylingClass" v-model="role" required>
+                <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]" :selected="data.id == role[0] ? true : false">
+                  {{ data.role_name }}
+                </option>
+              </select>
+            </div>
+  
+            <div v-if="role[1] == 'Driver' " class="mb-6 flex flex-col text-left justify-start">
+                <span
+                  for="company"
+                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                  id="company">
+                  Full Name<span class="text-red">*</span>
+                </span>
+                <input
+                      v-model="fullname"
+                      type="text"
+                      placeholder="Full Name"
+                      :class="inputStylingClass"
+                      required
+                  />
             </div>
   
             <div class="mb-6">
@@ -242,6 +243,7 @@
                     </div>
                   </div>
               </div>
+              
             </div>
   
             <div class="mb-6 flex flex-col gap-2">
@@ -283,6 +285,7 @@
   
             </div>
           </div>
+
         </main>
 
 
