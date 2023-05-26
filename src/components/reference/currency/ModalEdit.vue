@@ -1,72 +1,68 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg";
+import editicon from "@/assets/navbar/edit_icon.svg"
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
+import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
+import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
 
-import { ref } from "vue";
-import { Modal } from "usemodal-vue3";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import { useFormEditStore } from "@/stores/reference/currency/edit-modal.js";
-let formEditState = useFormEditStore();
-
-const emits = defineEmits(["unlockScrollbar", "changeCurrency"]);
-let isVisible = ref(false);
-let modalPaddingHeight = "19%";
-
+import { useFormEditStore } from "@/stores/reference/currency/edit-modal.js"
+let formEditState = useFormEditStore()
+const emits = defineEmits(["unlockScrollbar", "changeCurrency"])
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
 const props = defineProps({
-  formContent: Array,
-});
+  formContent: Array
+})
 
-const currentcurrencyName = ref(props.formContent[0]);
-const originalcurrencyName = ref(props.formContent[0]);
-const currentcurrencySymbol = ref(props.formContent[1]);
-const originalcurrencySymbol = ref(props.formContent[1]);
-const currentcurrencyCode = ref(props.formContent[2]);
-const originalcurrencyCode = ref(props.formContent[2]);
+const currencyName = ref(props.formContent[0])
+const currencySymbol = ref(props.formContent[1])
+const currencyCode = ref(props.formContent[2])
 
 const submitEdit = () => {
+  
   if (!formEditState.currency) {
-    formEditState.currency = {}; // Inisialisasi objek jika belum ada
+    formEditState.currency = {} // Inisialisasi objek jika belum ada
   }
 
-  formEditState.currency.currencyName = currentcurrencyName.value;
-  formEditState.currency.currencySymbol = currentcurrencySymbol.value;
-  formEditState.currency.currencyCode = currentcurrencyCode.value;
-
-  // Update original saat penyimpanan
-  originalcurrencyName.value = currentcurrencyName.value;
-  originalcurrencySymbol.value = currentcurrencySymbol.value;
-  originalcurrencyCode.value = currentcurrencyCode.value;
+  formEditState.currency.currencyName = currencyName.value
+  formEditState.currency.currencySymbol = currencySymbol.value
+  formEditState.currency.currencyCode = currencyCode.value
 
   isVisible.value = !isVisible.value;
   emits("changeCurrency"); // Memanggil event 'changeCurrency'
-};
 
-const resetForm = () => {
-  currentcurrencyName.value = originalcurrencyName.value;
-  currentcurrencySymbol.value = originalcurrencySymbol.value;
-  currentcurrencyCode.value = originalcurrencyCode.value;
-  isVisible.value = !isVisible.value;
-};
+}
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+"font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+
+watch(isVisible, () => {
+  currencyName.value = props.formContent[0]
+  currencySymbol.value = props.formContent[1]
+  currencyCode.value = props.formContent[2]
+})
+
 </script>
 
 <template>
-  <button @click="resetForm()">
+  
+  <button @click="isVisible = !isVisible">
     <img :src="editicon" alt="edit icon" />
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+    
     <main>
+
       <modalHeaderEdit
         @closeVisibility="isVisible = false"
         title="Edit Currency"
       />
 
-      <div class="pt-4">
+      <form class="pt-4">
+        
         <div class="mb-6 text-start px-4 w-full">
           <label
             for="currency"
@@ -75,7 +71,7 @@ const inputStylingClass =
           >
           <input
             @keydown.enter="submitEdit"
-            v-model="currentcurrencyName"
+            v-model="currencyName"
             type="text"
             id="name"
             :class="inputStylingClass"
@@ -91,7 +87,7 @@ const inputStylingClass =
           >
           <input
             @keydown.enter="submitEdit"
-            v-model="currentcurrencySymbol"
+            v-model="currencySymbol"
             type="text"
             id="name"
             :class="inputStylingClass"
@@ -107,7 +103,7 @@ const inputStylingClass =
           >
           <input
             @keydown.enter="submitEdit"
-            v-model="currentcurrencyCode"
+            v-model="currencyCode"
             type="text"
             id="name"
             :class="inputStylingClass"
@@ -116,14 +112,14 @@ const inputStylingClass =
         </div>
 
         <ModalFooterEdit
-          @closeEdit="resetForm()"
-          @submitEditForm="
-            submitEdit();
-            $emit('changeCurrency');
-          "
+          @closeEdit="isVisible = false"
+          @submitEditForm="submitEdit()"
         />
-      </div>
+
+      </form>
+
     </main>
+
   </Modal>
 </template>
 

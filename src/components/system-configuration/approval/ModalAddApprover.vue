@@ -46,7 +46,6 @@ import Api from '@/utils/Api'
       const api = await Api.get('/approval/get_approval_type')
       instanceArray = api.data.data 
       addAuthoritiesData.value = instanceArray
-      // authorities.value = addAuthoritiesData.value[0].auth_name
   }
 
   const fetchMenu = async () => {
@@ -68,16 +67,16 @@ import Api from '@/utils/Api'
     addCompanyData.value = instanceArray;
     // console.log(addCompanyData.value)
     company.value = addCompanyData.value[0].id
-};
+  }
 
-const fetchDocument = async () => {
+  const fetchDocument = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const res = await Api.get("/request_trip/get_document_code");
     instanceArray = res.data.data;
     addDocumentData.value = instanceArray;
     document.value = addDocumentData.value[0].id
-};
+  }
 
   onBeforeMount(() => {
   fetchMenu()

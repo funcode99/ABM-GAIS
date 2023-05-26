@@ -68,6 +68,7 @@
         await Api.post(`/role/update_data/${editRoleDataId.value}`, {
           role_name: formEditState.role.roleName
         })
+        fetchGetActive()
         fetch()
     }
 

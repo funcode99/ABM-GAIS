@@ -1,87 +1,94 @@
 <script setup>
 import editIcon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
+import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
+import modalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
 
-import { ref } from "vue";
-import { Modal } from "usemodal-vue3";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
 import { useFormEditStore } from "@/stores/reference/flight/edit-modal.js";
 let formEditState = useFormEditStore();
 
-const emits = defineEmits(["unlockScrollbar", "changeFlight"]);
-let isVisible = ref(false);
-let modalPaddingHeight = "32%";
-
+const emits = defineEmits(["unlockScrollbar", "changeFlight"])
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
 const props = defineProps({
-  formContent: Array,
-});
-
-const currentFlightClassName = ref(props.formContent[0]);
-const originalFlightClassName = ref(props.formContent[0]);
+  formContent: Array
+})
+const flightClassName = ref(props.formContent[0])
 
 const submitEdit = () => {
+  
   if (!formEditState.flight) {
-    formEditState.flight = {}; // Inisialisasi objek flight jika belum ada
+    formEditState.flight = {} // Inisialisasi objek flight jika belum ada
   }
-  formEditState.flight.flightClassName = currentFlightClassName.value;
 
-  // Update originalFlightClassName saat penyimpanan
-  originalFlightClassName.value = currentFlightClassName.value;
+  formEditState.flight.flightClassName = flightClassName.value
 
   isVisible.value = !isVisible.value;
-  emits("changeFlight"); // Memanggil event 'changeFlight'
-};
+  emits("changeFlight") // Memanggil event 'changeFlight'
 
-const resetForm = () => {
-  currentFlightClassName.value = originalFlightClassName.value;
-  isVisible.value = !isVisible.value;
-};
+}
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+"font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+
+watch(flightClassName, () => {
+  flightClassName.value = props.formContent[0]
+})
+
 </script>
 
 <template>
-  <button @click="resetForm()">
+
+  <button @click="isVisible = false">
     <img :src="editIcon" alt="edit icon" />
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+    
     <main>
+  
       <modalHeaderEdit
         @closeVisibility="isVisible = false"
         title="Edit Flight Class"
       />
 
-      <div class="pt-4">
+      <form class="pt-4">
+        
         <div class="mb-6 text-start px-4 w-full">
+          
           <label
             for="flight"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Flight Class<span class="text-red">*</span></label
           >
+            Flight Class<span class="text-red">*</span>
+          </label>
+
           <input
             @keydown.enter="submitEdit"
-            v-model="currentFlightClassName"
+            v-model="flightClassName"
             type="text"
             id="name"
             :class="inputStylingClass"
             required
           />
-        </div>
-      </div>
 
-      <ModalFooterEdit
-        @closeEdit="resetForm()"
-        @submitEditForm="
-          submitEdit();
-          $emit('changeFlight');
-        "
-      />
+        </div>
+
+        <modalFooterEdit
+          @closeEdit="isVisible = false"
+          @submitEditForm="submitEdit()"
+        />
+
+      </form>
+
+
     </main>
+
   </Modal>
+
 </template>
 
 <style scoped>

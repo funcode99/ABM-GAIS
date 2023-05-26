@@ -18,7 +18,9 @@
                     Cancel
                 </label>
 
-                <button type="button" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                <button 
+                type="button" 
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                     @click="
                     $emit('doSomething');
                     $emit('addSomething')
