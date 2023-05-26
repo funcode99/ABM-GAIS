@@ -11,7 +11,7 @@ import closeIcon from '@/assets/close-window.png'
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
 import { ref, onBeforeMount, onMounted } from 'vue'
 
-import { useFormEditStore } from '@/stores/edit-modal.js'
+import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 
 import Api from '@/utils/Api'
 

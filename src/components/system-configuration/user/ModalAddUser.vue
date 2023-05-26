@@ -1,7 +1,7 @@
 <script setup>
   import { ref, onBeforeMount, watch } from 'vue'
   import Api from '@/utils/Api'
-  import { useFormAddStore } from '@/stores/add-modal.js'
+  import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
 
   import modalHeader from "@/components/modal/add/ModalHeader.vue"
   import modalBody from "@/components/modal/add/ModalBody.vue"

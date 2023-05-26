@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 
-import { useFormAddStore } from '@/stores/add-modal.js'
+import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
 
 import modalHeader from "@/components/modal/add/ModalHeader.vue"
 import modalBody from "@/components/modal/add/ModalBody.vue"

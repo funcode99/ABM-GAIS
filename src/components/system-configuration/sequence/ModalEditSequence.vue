@@ -6,7 +6,7 @@
 
   import Api from '@/utils/Api'
 
-  import { useFormEditStore } from '@/stores/edit-modal.js'
+  import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
   let formEditState = useFormEditStore()
 
   const props = defineProps({

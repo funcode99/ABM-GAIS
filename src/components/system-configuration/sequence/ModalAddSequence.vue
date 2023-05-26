@@ -7,7 +7,7 @@
 
   import Api from '@/utils/Api'
 
-  import { useFormAddStore } from '@/stores/add-modal.js'
+  import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
   let formState = useFormAddStore()
 
   let menuSequenceName = ref('')

@@ -14,8 +14,8 @@
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
-    import { useFormAddStore } from '@/stores/add-modal.js'
-    import { useFormEditStore } from '@/stores/edit-modal.js'
+    import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
+    import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
 
     const sidebar = useSidebarStore()

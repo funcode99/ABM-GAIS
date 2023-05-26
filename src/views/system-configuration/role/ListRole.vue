@@ -16,12 +16,14 @@
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
-    import { useFormAddStore } from '@/stores/add-modal.js'
-    import { useFormEditStore } from '@/stores/edit-modal.js'
+    import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
+    import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
+    import { useMenuAccessStore } from '@/stores/savemenuaccess'
     const sidebar = useSidebarStore()
     const formState = useFormAddStore()
     const formEditState = useFormEditStore()
+    const menuAccess = useMenuAccessStore()
 
     // import untuk table
     let sortedData = ref([])
@@ -105,29 +107,6 @@
       }
     }
 
-    let status = ref('')
-    let message = ref('')
-    const fetch = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const api = await Api.get('/role/get')
-        instanceArray = api.data.data
-        sortedData.value = instanceArray
-        lengthCounter = sortedData.value.length
-      } catch (error) {
-        status.value = error.response.status
-        message.value = error.response.data.message
-      }
-
-    }
-
-    onBeforeMount(() => {
-    getSessionForSidebar()
-    // sortedData.value gak dianggap sebagai array lagi
-    fetch()
-    })
-
     const filteredItems = (search) => {
       sortedData.value = instanceArray
         const filteredR = sortedData.value.filter(item => {
@@ -147,6 +126,38 @@
       pageMultiplier.value = value
       onChangePage(1)
     }
+
+    const fetchGetActive = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/role/get_active')
+      // hasil nya sudah dapat
+      menuAccess.fetchResult = api.data.data
+    }
+
+    let status = ref('')
+    let message = ref('')
+    const fetch = async () => {
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/role/get')
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
+        lengthCounter = sortedData.value.length
+      } catch (error) {
+        status.value = error.response.status
+        message.value = error.response.data.message
+      }
+
+    }
+
+    onBeforeMount(async () => {
+      getSessionForSidebar()
+      // sortedData.value gak dianggap sebagai array lagi
+      fetch()
+      fetchGetActive()
+    })
   
 </script>
 
@@ -199,6 +210,7 @@
                     {{ data.role_name }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
+                    <!-- kalo tanpa value isi nya array kosong -->
                     <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" />
                     <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name]" />
                     <ModalDelete @confirm-delete="deleteData(data.id)" />

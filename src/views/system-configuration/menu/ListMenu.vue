@@ -15,8 +15,8 @@
     import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
-    import { useFormEditStore } from '@/stores/edit-modal.js'
-    import { useFormAddStore } from '@/stores/add-modal.js'
+    import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+    import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
 
     let formState = useFormAddStore()
     let formEditState = useFormEditStore()
