@@ -5,6 +5,10 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/gl-account/ModalAdd.vue";
 import ModalEdit from "@/components/reference/gl-account/ModalEdit.vue";
 
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
+
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
@@ -33,7 +37,6 @@ let editglAccountDataId = ref();
 //for edit
 const editGlAccount = async (data) => {
   editglAccountDataId.value = data;
-  // callEditApi();
   setTimeout(callEditApi, 500);
   // console.log("ini data:" + data);
 };
@@ -61,7 +64,6 @@ const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
-let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
 let lengthCounter = 0;
 let sortAscending = true;
@@ -83,7 +85,7 @@ const onChangePage = (pageOfItem) => {
 //for check & uncheck all
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
-  const btnHapus = document.getElementById("btnHapus");
+  const btnDelete = document.getElementById("btnDelete");
 
   if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
@@ -91,18 +93,18 @@ const selectAll = (checkValue) => {
         check[i].checked = true;
       }
     }
-    btnHapus.style.display = "block";
+    btnDelete.style.display = "block";
   } else {
     for (let i = 0; i < check.length; i++) {
       if (check[i].type === "checkbox") {
         check[i].checked = false;
       }
     }
-    btnHapus.style.display = "none";
+    btnDelete.style.display = "none";
   }
 };
 
-const hapusDataDiceklis = () => {
+const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
@@ -113,12 +115,12 @@ const hapusDataDiceklis = () => {
   }
 
   // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
-  const btnHapus = document.getElementById("btnHapus");
+  const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
   );
   if (checkedCheckboxes.length === 0) {
-    btnHapus.style.display = "none";
+    btnDelete.style.display = "none";
   }
 };
 
@@ -259,30 +261,17 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 };
-
-function toggleReadMore(id) {
-  showFullText.value = { ...showFullText.value, [id]: true };
-}
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full this h-[100vh]"
-    :class="lockScrollbar === true ? 'fixed' : ''"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white rounded-t-xl pb-3 relative custom-card">
+      <tableContainer>
+        <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -295,16 +284,13 @@ function toggleReadMore(id) {
             <div class="flex gap-4">
               <button
                 class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                id="btnHapus"
+                id="btnDelete"
                 style="display: none"
-                @click="hapusDataDiceklis()"
+                @click="deleteDataInCeklis()"
               >
                 Delete
               </button>
-              <ModalAdd
-                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                @gl-saved="fetchGLAccount"
-              />
+              <ModalAdd @gl-saved="fetchGLAccount" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
@@ -362,95 +348,119 @@ function toggleReadMore(id) {
           </div>
 
           <!-- TABLE -->
-          <div
-            class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
-          >
-            <div class="block overflow-x-auto">
-              <table
-                v-if="sortedData.length > 0"
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
-              >
-                <thead
-                  class="text-center font-JakartaSans text-sm font-bold h-10"
+          <tableData v-if="sortedData.length > 0">
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
+
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
                 >
-                  <tr>
-                    <th>
-                      <div class="flex justify-center">
-                        <input
-                          type="checkbox"
-                          name="checked"
-                          @click="selectAll((checkList = !checkList))"
-                        />
-                      </div>
-                    </th>
+                  <span class="flex justify-center items-center gap-1">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </span>
+                </th>
+              </tr>
+            </thead>
 
-                    <th
-                      v-for="data in tableHead"
-                      :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer"
-                      @click="sortList(`${data.jsonData}`)"
-                    >
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }}
-                        <button v-if="data.jsonData" class="ml-2">
-                          <img :src="arrowicon" class="w-[9px] h-3" />
-                        </button>
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr
-                    class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
-                    :key="data.id"
-                  >
-                    <td>
-                      <input type="checkbox" name="checks" />
-                    </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.gl_account }}</td>
-                    <td>
-                      <span
-                        v-if="
-                          data.gl_name.length <= 30 || showFullText[data.id]
-                        "
-                        class="readmore-text"
-                      >
-                        {{ data.gl_name }}
-                      </span>
-                      <span v-else class="readmore-text">
-                        {{ data.gl_name.substring(0, 30) }}
-                        <a href="#" @click="toggleReadMore(data.id)">...</a>
-                      </span>
-                    </td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit
-                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                        @change-gl="editGlAccount(data.id)"
-                        :formContent="[data.gl_account, data.gl_name]"
-                      />
-                      <button @click="deleteGLAccount(data.id)">
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div
-                v-else
-                class="h-[100px] border-t border-t-black flex items-center justify-center"
+            <tbody>
+              <tr
+                class="font-JakartaSans font-normal text-sm"
+                v-for="(data, index) in sortedData.slice(
+                  paginateIndex * pageMultiplierReactive,
+                  (paginateIndex + 1) * pageMultiplierReactive
+                )"
+                :key="data.id"
               >
-                <h1 class="text-center font-JakartaSans text-base font-medium">
-                  Tidak Ada Data
-                </h1>
-              </div>
-            </div>
+                <td style="width: 5%">
+                  <input type="checkbox" name="checks" />
+                </td>
+                <td style="width: 5%">{{ data.no }}</td>
+                <td style="width: 15%">{{ data.gl_account }}</td>
+                <td style="width: 60%">
+                  <span
+                    :class="[
+                      'readmore-text',
+                      showFullText[data.id] ? 'show-full' : '',
+                    ]"
+                  >
+                    {{ data.gl_name }}
+                  </span>
+                </td>
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <ModalEdit
+                    @change-gl="editGlAccount(data.id)"
+                    :formContent="[data.gl_account, data.gl_name]"
+                  />
+                  <button @click="deleteGLAccount(data.id)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </tableData>
+
+          <div v-else>
+            <tableData>
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="checked"
+                        @click="selectAll((checkList = !checkList))"
+                      />
+                    </div>
+                  </th>
+
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                      <button v-if="data.jsonData" class="ml-2">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="4"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                    Tidak Ada Data
+                  </td>
+                </tr>
+              </tbody>
+            </tableData>
           </div>
 
           <!-- PAGINATION -->
@@ -472,19 +482,15 @@ function toggleReadMore(id) {
               :show-ending-buttons="true"
             />
           </div>
-        </div>
-      </div>
+        </tableTop>
+      </tableContainer>
+
       <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-
 th {
   padding: 2px;
   text-align: left;
@@ -519,7 +525,6 @@ tr th {
   text-overflow: ellipsis;
   transition: max-width 0.3s ease-in-out;
 }
-
 .readmore-text:hover {
   max-width: 500px;
   white-space: nowrap;

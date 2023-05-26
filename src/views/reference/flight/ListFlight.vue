@@ -83,7 +83,7 @@ const onChangePage = (pageOfItem) => {
 //for check & uncheck all
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
-  const btnHapus = document.getElementById("btnHapus");
+  const btnDelete = document.getElementById("btnDelete");
 
   if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
@@ -91,18 +91,18 @@ const selectAll = (checkValue) => {
         check[i].checked = true;
       }
     }
-    btnHapus.style.display = "block";
+    btnDelete.style.display = "block";
   } else {
     for (let i = 0; i < check.length; i++) {
       if (check[i].type === "checkbox") {
         check[i].checked = false;
       }
     }
-    btnHapus.style.display = "none";
+    btnDelete.style.display = "none";
   }
 };
 
-const hapusDataDiceklis = () => {
+const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
@@ -113,12 +113,12 @@ const hapusDataDiceklis = () => {
   }
 
   // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
-  const btnHapus = document.getElementById("btnHapus");
+  const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
   );
   if (checkedCheckboxes.length === 0) {
-    btnHapus.style.display = "none";
+    btnDelete.style.display = "none";
   }
 };
 
@@ -279,9 +279,9 @@ const exportToExcel = () => {
             <div class="flex gap-4">
               <button
                 class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                id="btnHapus"
+                id="btnDelete"
                 style="display: none"
-                @click="hapusDataDiceklis()"
+                @click="deleteDataInCeklis()"
               >
                 Delete
               </button>
