@@ -49,6 +49,8 @@ const submitRole = () => {
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Role<span class="text-red">*</span></label>
               <input
+                @keydown.enter="submitRole"
+                @keyup.enter="$emit('addRole')"
                 v-model="newRole"
                 type="text"
                 id="name"
