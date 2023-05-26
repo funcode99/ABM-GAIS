@@ -89,6 +89,7 @@ const onFileSelectedUpdate = (event) => {
     v-model="isVisible"
   />
   <div class="modal">
+
     <div class="modal-box relative">
 
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -236,6 +237,7 @@ const onFileSelectedUpdate = (event) => {
       </main>
 
     </div>
+    
   </div>
 </template>
 

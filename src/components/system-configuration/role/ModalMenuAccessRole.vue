@@ -15,7 +15,7 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = 200
+  let modalPaddingHeight = '25%'
 
   let sortedData = ref([])
   let sortedDataReactive = computed(() => sortedData.value)
@@ -145,7 +145,7 @@ const submitAccess = async () => {
 <style scoped>
 
 .modal-box-inner-inner {
-  height: 500px;
+  height: 100%;
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -157,7 +157,7 @@ const submitAccess = async () => {
 }
 
 :deep(.modal-vue3-content) {
-  height: 400px !important;
+  height: 100% !important;
 }
 
 

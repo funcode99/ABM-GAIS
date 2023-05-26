@@ -99,6 +99,7 @@ const inputStylingClass =
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
 
     <main>
+      
       <div class="sticky top-0 z-50 bg-[#015289]">
         <button
           @click="isVisible = false"

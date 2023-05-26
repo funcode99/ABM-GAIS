@@ -42,8 +42,11 @@ function removeLastTag(event) {
   /></label>
 
   <input type="checkbox" id="modal-edit-departement" class="modal-toggle" />
+
   <div class="modal">
+
     <div class="modal-box relative">
+
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
@@ -228,8 +231,10 @@ function removeLastTag(event) {
           </div>
         </form>
       </main>
+
     </div>
   </div>
+  
 </template>
 
 <style scoped>

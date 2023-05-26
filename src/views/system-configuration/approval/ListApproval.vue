@@ -167,6 +167,7 @@
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
           
           <div class="relative w-full">
+
             <table class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
 
               <thead class="text-center font-Montserrat text-sm font-bold h-10">
@@ -207,7 +208,7 @@
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data.detail]"  />
+                      <ModalEditApproval @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data.detail, data.detail[index].id_matrix]" />
                       <ModalDelete @confirm-delete="deleteData(data.id)" />
                     </td>
                   </tr>
@@ -215,6 +216,7 @@
               </tbody>
               
             </table>
+
           </div>
 
           <!-- PAGINATION -->

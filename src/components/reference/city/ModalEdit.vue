@@ -46,6 +46,7 @@ const inputStylingClass =
 </script>
 
 <template>
+
   <button
     @click="
       resetForm();
@@ -56,7 +57,9 @@ const inputStylingClass =
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+
     <main>
+      
       <div class="sticky top-0 z-50 bg-[#015289]">
         <button
           @click="isVisible = false"
@@ -72,6 +75,7 @@ const inputStylingClass =
       </div>
 
       <div class="pt-4">
+
         <div class="mb-6 mr-6 text-start w-full px-4">
           <label
             for="city_code"
@@ -126,8 +130,11 @@ const inputStylingClass =
             </button>
           </div>
         </div>
+        
       </div>
+
     </main>
+
   </Modal>
 </template>
 

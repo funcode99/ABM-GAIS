@@ -56,6 +56,7 @@ watch(isVisible, () => {
         </div>
 
         <main class="modal-box-inner-inner">
+
           <div class="pt-4">
   
             <div class="mb-6 text-start px-4 w-full">
@@ -99,6 +100,7 @@ watch(isVisible, () => {
   
             </div>
           </div>
+          
         </main>
       
     </main>
