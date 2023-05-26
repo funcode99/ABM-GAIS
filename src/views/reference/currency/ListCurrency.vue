@@ -82,7 +82,7 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {

@@ -1,82 +1,84 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
+  import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
+  import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+  import { Modal } from "usemodal-vue3"
+  import Swal from "sweetalert2";
+  import Api from "@/utils/Api";
 
-import { ref } from "vue";
+  import { ref, watch } from "vue";
 
-let newFlightClass = ref("");
-let isOpenModal = ref(false);
-const emits = defineEmits(["unlockScrollbar", "flight-class-saved"]);
+  let newFlightClass = ref("");
+  const emits = defineEmits(["unlockScrollbar", "flight-class-saved"]);
+  let isVisible = ref(false)
+  let modalPaddingHeight = "25vh"
+  let isAdding = ref(false)
 
-const saveFlightClass = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-  try {
-    await Api.post(`/flight_class/store`, {
-      flight_class: newFlightClass.value,
-    });
-
-    // Reset the input values
-    newFlightClass.value = "";
-
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    emits("flight-class-saved");
-    isOpenModal.value = !isOpenModal.value;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const resetInput = () => {
+  const resetInput = () => {
   newFlightClass.value = "";
-};
+  }
+
+  const saveFlightClass = async () => {
+    isAdding.value = true
+    isVisible.value = !isVisible.value
+    setTimeout(callAddApi, 500)
+  }
+
+  const callAddApi = async () => {
+
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+    try {
+      await Api.post(`/flight_class/store`, {
+        flight_class: newFlightClass.value,
+      });
+
+      resetInput()
+
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Your work has been saved",
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      emits("flight-class-saved");
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
+  watch(isVisible, () => {
+    if(isAdding.value == true) {
+      isAdding.value = false
+    } else {
+      resetInput()
+    }
+  })
+
 </script>
 
 <template>
-  <label
-    @click="this.$emit('unlockScrollbar')"
-    for="my-modal-3"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add New</label
-  >
 
-  <input
-    type="checkbox"
-    id="my-modal-3"
-    class="modal-toggle"
-    v-model="isOpenModal"
-  />
-  <div class="modal">
-    <div class="modal-box relative">
-      <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label
-          @click="
-            resetInput();
-            this.$emit('unlockScrollbar');
-          "
-          for="my-modal-3"
-          class="cursor-pointer absolute right-3 top-0 lg:top-3"
-        >
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
-        <p
-          class="font-JakartaSans text-sm lg:text-2xl font-semibold text-white mx-4 py-2"
-        >
-          New Flight Class
-        </p>
-      </nav>
+  <button 
+    @click="isVisible = true" 
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+    + Add New
+  </button>
 
-      <main class="modal-box-inner-flight">
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+    
+    <main>
+      
+        <modalHeaderEdit
+          @closeVisibility="isVisible = false"
+          title="New Flight Class"
+        />
+  
         <form class="pt-4" @submit.prevent="saveFlightClass">
+  
           <div class="mb-6 px-4 w-full">
             <label
               for="flight"
@@ -92,30 +94,20 @@ const resetInput = () => {
               v-model="newFlightClass"
             />
           </div>
-
-          <div class="sticky bottom-0 bg-white py-2">
-            <div class="flex justify-end gap-4 mr-6">
-              <label
-                @click="
-                  resetInput();
-                  this.$emit('unlockScrollbar');
-                "
-                for="my-modal-3"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                >Cancel</label
-              >
-              <button
-                type="submit"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
-              </button>
-            </div>
-          </div>
+  
+          <ModalFooterEdit
+            @closeEdit="isVisible = false"
+          />
+  
         </form>
-      </main>
-    </div>
-  </div>
+  
+    </main>
+
+    <!-- <main class="modal-box-inner-flight">
+    </main> -->
+
+  </Modal>
+
 </template>
 
 <style scoped>
@@ -134,5 +126,10 @@ const resetInput = () => {
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
+}
+
+:deep(.modal-vue3-content) {
+  max-height: 210px !important;
+  max-width: 510px !important;
 }
 </style>

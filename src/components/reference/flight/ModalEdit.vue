@@ -34,7 +34,7 @@ const submitEdit = () => {
 const inputStylingClass =
 "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
-watch(flightClassName, () => {
+watch(isVisible, () => {
   flightClassName.value = props.formContent[0]
 })
 
@@ -42,7 +42,7 @@ watch(flightClassName, () => {
 
 <template>
 
-  <button @click="isVisible = false">
+  <button @click="isVisible = !isVisible">
     <img :src="editIcon" alt="edit icon" />
   </button>
 
@@ -55,7 +55,7 @@ watch(flightClassName, () => {
         title="Edit Flight Class"
       />
 
-      <form class="pt-4">
+      <div class="pt-4">
         
         <div class="mb-6 text-start px-4 w-full">
           
@@ -79,11 +79,10 @@ watch(flightClassName, () => {
 
         <modalFooterEdit
           @closeEdit="isVisible = false"
-          @submitEditForm="submitEdit()"
+          @submitEditForm="submitEdit"
         />
 
-      </form>
-
+      </div>
 
     </main>
 

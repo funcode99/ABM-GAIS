@@ -1,17 +1,33 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
+  import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
+  import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+  import { Modal } from "usemodal-vue3"
+  import Swal from "sweetalert2";
+  import Api from "@/utils/Api";
 
-import { ref } from "vue";
+  import { ref, watch } from "vue";
 
-let isOpenModal = ref(false);
-let CityCode = ref("");
-let CityName = ref("");
-const emits = defineEmits(["unlockScrollbar", "city-saved"]);
+  let CityCode = ref("");
+  let CityName = ref("");
+  const emits = defineEmits(["unlockScrollbar", "city-saved"]);
+  let isVisible = ref(false)
+  let modalPaddingHeight = "25vh"
+  let isAdding = ref(false)
 
-const saveCity = async () => {
+  const resetInput = () => {
+  CityCode.value = "";
+  CityName.value = "";
+  }
+
+  const saveCity = async () => {
+  isAdding.value = true
+  isVisible.value = !isVisible.value
+  setTimeout(callAddApi, 500)
+  }
+
+  const callAddApi = async () => {
+  
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
@@ -32,109 +48,92 @@ const saveCity = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
+
     emits("city-saved");
-    isOpenModal.value = !isOpenModal.value;
+
   } catch (error) {
     console.log(error);
   }
-};
 
-const resetInput = () => {
-  CityCode.value = "";
-  CityName.value = "";
-};
+  }
+
+  watch(isVisible, () => {
+
+if(isAdding.value == true) {
+  isAdding.value = false
+} else {
+  resetInput()
+}
+
+  })
+
 </script>
 
 <template>
-  <label
-    @click="this.$emit('unlockScrollbar')"
-    for="my-modal-3"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add New</label
-  >
 
-  <input
-    type="checkbox"
-    id="my-modal-3"
-    class="modal-toggle"
-    v-model="isOpenModal"
-  />
-  <div class="modal">
-    <div class="modal-box relative">
-      <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label
-          @click="
-            resetInput();
-            this.$emit('unlockScrollbar');
-          "
-          for="my-modal-3"
-          class="cursor-pointer absolute right-3 top-3"
-        >
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          New City
-        </p>
-      </nav>
+  <button 
+    @click="isVisible = true" 
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+    + Add New
+  </button>
 
-      <main class="modal-box-inner-city">
-        <form class="pt-4" @submit.prevent="saveCity">
-          <div class="mb-6 w-full px-4">
-            <label
-              for="city_code"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >City Code<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="city_code"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="City Code"
-              required
-              v-model="CityCode"
-            />
-          </div>
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
 
-          <div class="mb-6 w-full px-4">
-            <label
-              for="city_name"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >City Name<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="city_name"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="City Name"
-              required
-              v-model="CityName"
-            />
-          </div>
+    <main>
 
-          <div class="sticky bottom-0 bg-white">
-            <div class="flex justify-end gap-4 mr-6">
-              <label
-                @click="
-                  resetInput();
-                  this.$emit('unlockScrollbar');
-                "
-                for="my-modal-3"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-              >
-                Cancel
-              </label>
-              <button
-                type="submit"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </form>
-      </main>
-    </div>
-  </div>
+      <modalHeaderEdit
+        @closeVisibility="isVisible = false"
+        title="New City"
+      />
+
+      <form class="pt-4" @submit.prevent="saveCity">
+
+        <div class="mb-6 w-full px-4">
+          <label
+            for="city_code"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >City Code<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            name="city_code"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="City Code"
+            required
+            v-model="CityCode"
+          />
+        </div>
+
+        <div class="mb-6 w-full px-4">
+          <label
+            for="city_name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >City Name<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            name="city_name"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="City Name"
+            required
+            v-model="CityName"
+          />
+        </div>
+
+        <ModalFooterEdit
+            @closeEdit="isVisible = false"
+          />
+
+      </form>
+  
+      <!-- <main class="modal-box-inner-city">
+      </main> -->
+
+    </main>
+
+
+  </Modal>
+
 </template>
 
 <style scoped>
@@ -154,4 +153,10 @@ const resetInput = () => {
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
+
+:deep(.modal-vue3-content) {
+  max-height: 310px !important;
+  max-width: 510px !important;
+}
+
 </style>

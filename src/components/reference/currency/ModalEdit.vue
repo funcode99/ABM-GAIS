@@ -6,8 +6,8 @@ import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
 
 import { ref, watch } from "vue"
 import { Modal } from "usemodal-vue3"
-
 import { useFormEditStore } from "@/stores/reference/currency/edit-modal.js"
+
 let formEditState = useFormEditStore()
 const emits = defineEmits(["unlockScrollbar", "changeCurrency"])
 let isVisible = ref(false)
@@ -35,14 +35,14 @@ const submitEdit = () => {
 
 }
 
-const inputStylingClass =
-"font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+  const inputStylingClass =
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
-watch(isVisible, () => {
-  currencyName.value = props.formContent[0]
-  currencySymbol.value = props.formContent[1]
-  currencyCode.value = props.formContent[2]
-})
+  watch(isVisible, () => {
+    currencyName.value = props.formContent[0]
+    currencySymbol.value = props.formContent[1]
+    currencyCode.value = props.formContent[2]
+  })
 
 </script>
 
@@ -61,7 +61,7 @@ watch(isVisible, () => {
         title="Edit Currency"
       />
 
-      <form class="pt-4">
+      <form class="pt-4" @submit.prevent="submitEdit">
         
         <div class="mb-6 text-start px-4 w-full">
           <label
@@ -111,9 +111,9 @@ watch(isVisible, () => {
           />
         </div>
 
+        <!-- @submitEditForm="submitEdit()" -->
         <ModalFooterEdit
           @closeEdit="isVisible = false"
-          @submitEditForm="submitEdit()"
         />
 
       </form>
@@ -121,6 +121,7 @@ watch(isVisible, () => {
     </main>
 
   </Modal>
+
 </template>
 
 <style scoped>

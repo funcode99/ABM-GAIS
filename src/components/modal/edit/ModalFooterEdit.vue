@@ -3,7 +3,7 @@
 </script>
 
 <template>
-        <div class="sticky bottom-0 bg-white">
+    <div class="sticky bottom-0 bg-white">
 
           <div class="flex justify-end gap-4 mr-6">
 
@@ -16,13 +16,12 @@
             </label>
 
             <button
-              type="button"
-              @click="$emit('submitEditForm')"
+              type="submit"
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green">
               Save
             </button>
 
           </div>
           
-        </div>
+    </div>
 </template>

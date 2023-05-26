@@ -59,7 +59,7 @@ watch(isVisible, () => {
         title="Edit UOM"
       />
 
-      <form class="pt-4">
+      <form @submit.prevent="submitEdit" class="pt-4">
         
         <div class="mb-6 text-start w-full px-4">
           <label
@@ -77,9 +77,9 @@ watch(isVisible, () => {
           />
         </div>
 
+        <!-- @submitEditForm="submitEdit()" -->
         <modalFooterEdit
           @closeEdit="isVisible = false"
-          @submitEditForm="submitEdit()"
         />
 
       </form>
@@ -90,8 +90,8 @@ watch(isVisible, () => {
 </template>
 
 <style scoped>
-:deep(.modal-vue3-content) {
-  max-height: 210px !important;
-  max-width: 510px !important;
-}
+  :deep(.modal-vue3-content) {
+    max-height: 210px !important;
+    max-width: 510px !important;
+  }
 </style>

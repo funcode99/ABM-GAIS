@@ -31,7 +31,7 @@ const submitEdit = () => {
   formEditState.glAccount.glAccountCode = glAccountCode.value
   formEditState.glAccount.glAccountName = glAccountName.value
 
-  isVisible.value = !isVisible.value;
+  isVisible.value = !isVisible.value
   emits("changeGl") // Memanggil event 'changeGl'
 }
 
@@ -60,7 +60,7 @@ watch(isVisible, () => {
         title="Edit GL Account"
       />
 
-      <form class="pt-4">
+      <div class="pt-4">
 
         <div class="mb-6 text-start w-full px-4">
           <label
@@ -99,7 +99,7 @@ watch(isVisible, () => {
           @submitEditForm="submitEdit()"
         />
 
-      </form>
+      </div>
 
     </main>
 

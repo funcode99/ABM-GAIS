@@ -1,7 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg"
+
 import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
+import modalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
 
 import { ref, watch } from "vue"
 import { Modal } from "usemodal-vue3"
@@ -14,6 +15,7 @@ let modalPaddingHeight = "25vh"
 const props = defineProps({
   formContent: Array
 })
+
 const cityCode = ref(props.formContent[0])
 const cityName = ref(props.formContent[1])
 
@@ -54,7 +56,7 @@ const inputStylingClass =
 
       <modalHeaderEdit @closeVisibility="isVisible = false" title="Edit City" />
 
-      <form class="pt-4">
+      <form @submit.prevent="submitEdit" class="pt-4">
         
         <div class="mb-6 text-start w-full px-4">
           <label
@@ -88,9 +90,8 @@ const inputStylingClass =
           />
         </div>
 
-        <ModalFooterEdit
+        <modalFooterEdit
           @closeEdit="isVisible = false"
-          @submitEditForm="submitEdit()"
         />
 
       </form>
@@ -102,8 +103,8 @@ const inputStylingClass =
 </template>
 
 <style scoped>
-:deep(.modal-vue3-content) {
-  max-height: 300px !important;
+  :deep(.modal-vue3-content) {
+  max-height: 310px !important;
   max-width: 510px !important;
-}
+  }
 </style>
