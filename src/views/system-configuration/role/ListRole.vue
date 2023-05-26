@@ -141,6 +141,11 @@
     const getSessionForSidebar = () => {
         sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
+
+    const fillPageMultiplier = (value) => {
+      // ref harus pake .value biar ngaruh sama reactive :')
+      pageMultiplier.value = value
+    }
   
 </script>
 
@@ -157,7 +162,7 @@
       <tableContainer>
         
         <!-- table box -->
-        <TableTopBar :title="'Role'" @increase-role="addRole" @do-search="filteredItems" modalAddType="role" />
+        <TableTopBar :title="'Role'" @increase-role="addRole" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="role" />
 
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
