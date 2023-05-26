@@ -175,7 +175,10 @@
             <tbody>
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
-                <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
+                <tr v-for="(data, index) in sortedDataReactive.slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )" :key="data.id">
                   <td>
                     {{ index + 1 }} 
                   </td>
