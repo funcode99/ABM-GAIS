@@ -3,9 +3,9 @@ import { ref, watch } from 'vue'
 
 import { useFormAddStore } from '@/stores/add-modal.js'
 
-import modalHeader from "@/components/modal/ModalHeader.vue"
-import modalBody from "@/components/modal/ModalBody.vue"
-import modalFooter from '@/components/modal/ModalFooter.vue'
+import modalHeader from "@/components/modal/add/ModalHeader.vue"
+import modalBody from "@/components/modal/add/ModalBody.vue"
+import modalFooter from '@/components/modal/add/ModalFooter.vue'
 
 const formState = useFormAddStore()
 
@@ -59,20 +59,6 @@ const submitRole = () => {
                 required
               />
             </div>
-  
-            <!-- <div class="mb-3">
-              <label
-                for="name"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Allowed Site<span class="text-red">*</span></label>
-              <input
-                type="text"
-                id="name"
-                placeholder="Site"
-                class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-                required
-              />
-            </div> -->
   
           </div>
   

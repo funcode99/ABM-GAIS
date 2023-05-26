@@ -15,7 +15,7 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = '25%'
+  let modalPaddingHeight = '37%'
 
   let menuSequenceName = ref(props.formContent[0])
   let prefix = ref(props.formContent[1])

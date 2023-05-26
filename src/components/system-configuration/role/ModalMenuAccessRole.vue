@@ -1,7 +1,5 @@
 <script setup>
   import iconClose from "@/assets/navbar/icon_close.svg"
-  import iconPlus from "@/assets/navbar/icon_plus.svg"
-  import deleteicon from "@/assets/navbar/delete_icon.svg"
   import roleIcon from '@/assets/menu-access-role.png'
 
   import { ref, computed, onBeforeMount } from 'vue'
@@ -15,7 +13,7 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = '25%'
+  let modalPaddingHeight = '37%'
 
   let sortedData = ref([])
   let sortedDataReactive = computed(() => sortedData.value)
@@ -39,8 +37,10 @@ const fetch = async () => {
 }
 
 onBeforeMount(() => {
-  fetch()
+  
 })
+
+fetch()
 
 const submitAccess = async () => {
   const token = JSON.parse(localStorage.getItem('token'))
@@ -157,7 +157,7 @@ const submitAccess = async () => {
 }
 
 :deep(.modal-vue3-content) {
-  height: 100% !important;
+  height: 400px !important;
 }
 
 

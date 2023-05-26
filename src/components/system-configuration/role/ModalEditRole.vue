@@ -9,12 +9,12 @@ import { useFormEditStore } from '@/stores/edit-modal.js'
 
 let formEditState = useFormEditStore()
 
-let isVisible = ref(false);
-let modalPaddingHeight = '25%';
+let isVisible = ref(false)
+let modalPaddingHeight = '37%'
 
 const props = defineProps({
   formContent: Array,
-});
+})
 
 const currentRoleName = ref(props.formContent[0]);
 
@@ -32,6 +32,7 @@ watch(isVisible, () => {
 </script>
 
 <template class="font-JakartaSans">
+
   <button @click="isVisible = !isVisible">
     <img :src="editIcon" alt="" />
   </button>
@@ -106,6 +107,7 @@ watch(isVisible, () => {
     </main>
     
   </Modal>
+  
 </template>
 
 <style scoped>

@@ -10,7 +10,7 @@
     import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
-    import ModalDelete from '@/components/modal/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
 

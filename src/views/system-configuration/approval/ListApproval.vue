@@ -8,7 +8,7 @@
     import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
-    import ModalDelete from '@/components/modal/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import Api from '@/utils/Api'
 

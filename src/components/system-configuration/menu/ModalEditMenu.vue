@@ -53,7 +53,7 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = '25%'
+  let modalPaddingHeight = '37%'
 
   const props = defineProps({
     formContent: Array

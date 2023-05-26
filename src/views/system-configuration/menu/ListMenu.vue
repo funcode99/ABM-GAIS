@@ -12,7 +12,7 @@
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
-    import ModalDelete from '@/components/modal/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormEditStore } from '@/stores/edit-modal.js'

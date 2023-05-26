@@ -10,13 +10,14 @@
 
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
-    import arrowicon from "@/assets/navbar/icon_arrow.svg";
+    import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
-    import ModalDelete from '@/components/modal/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormAddStore } from '@/stores/add-modal.js'
     import { useFormEditStore } from '@/stores/edit-modal.js'
+    
     const sidebar = useSidebarStore()
     const formState = useFormAddStore()
     const formEditState = useFormEditStore()
@@ -28,10 +29,10 @@
     let editDataUserId = ref(0)
 
     //for paginations
-    let showingValue = ref(1);
-    let pageMultiplier = ref(10);
-    let pageMultiplierReactive = computed(() => pageMultiplier.value);
-    let paginateIndex = ref(0);
+    let showingValue = ref(1)
+    let pageMultiplier = ref(10)
+    let pageMultiplierReactive = computed(() => pageMultiplier.value)
+    let paginateIndex = ref(0)
 
     //for paginations
     const onChangePage = (pageOfItem) => {
