@@ -12,7 +12,7 @@ let formEditState = useFormEditStore();
 
 const emits = defineEmits(["unlockScrollbar", "changeFlight"]);
 let isVisible = ref(false);
-let modalPaddingHeight = "37%";
+let modalPaddingHeight = "32%";
 
 const props = defineProps({
   formContent: Array,
