@@ -256,10 +256,6 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 };
-
-function toggleReadMore(id) {
-  showFullText.value = { ...showFullText.value, [id]: true };
-}
 </script>
 
 <template>
