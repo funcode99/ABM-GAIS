@@ -145,6 +145,7 @@
     const fillPageMultiplier = (value) => {
       // ref harus pake .value biar ngaruh sama reactive :')
       pageMultiplier.value = value
+      onChangePage(1)
     }
   
 </script>
