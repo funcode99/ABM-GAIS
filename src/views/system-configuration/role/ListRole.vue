@@ -8,19 +8,22 @@
     import ModalMenuAccessRole from '@/components/system-configuration/role/ModalMenuAccessRole.vue'
 
     import { ref, onBeforeMount, computed } from 'vue'
+    import Swal from "sweetalert2"
     import Api from '@/utils/Api'
 
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
-    import ModalDelete from '@/components/modal/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
-    import { useFormAddStore } from '@/stores/add-modal.js'
-    import { useFormEditStore } from '@/stores/edit-modal.js'
+    import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
+    import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
+    import { useMenuAccessStore } from '@/stores/savemenuaccess'
     const sidebar = useSidebarStore()
     const formState = useFormAddStore()
     const formEditState = useFormEditStore()
+    const menuAccess = useMenuAccessStore()
 
     // import untuk table
     let sortedData = ref([])
@@ -78,6 +81,13 @@
       await Api.post(`/role/store`, {
         role_name: formState.role.roleName
       })
+      Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+      })
       fetch()
     }
 
@@ -97,6 +107,34 @@
       }
     }
 
+    const filteredItems = (search) => {
+      sortedData.value = instanceArray
+        const filteredR = sortedData.value.filter(item => {
+          return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role_name.toLowerCase().indexOf(search.toLowerCase()) > -1
+        })
+      sortedData.value = filteredR
+      lengthCounter = sortedData.value.length
+      onChangePage(1)
+    }
+
+    const getSessionForSidebar = () => {
+        sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
+    }
+
+    const fillPageMultiplier = (value) => {
+      // ref harus pake .value biar ngaruh sama reactive :')
+      pageMultiplier.value = value
+      onChangePage(1)
+    }
+
+    const fetchGetActive = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/role/get_active')
+      // hasil nya sudah dapat
+      menuAccess.fetchResult = api.data.data
+    }
+
     let status = ref('')
     let message = ref('')
     const fetch = async () => {
@@ -114,25 +152,12 @@
 
     }
 
-    onBeforeMount(() => {
-    getSessionForSidebar()
-    // sortedData.value gak dianggap sebagai array lagi
-    fetch()
+    onBeforeMount(async () => {
+      getSessionForSidebar()
+      // sortedData.value gak dianggap sebagai array lagi
+      fetch()
+      fetchGetActive()
     })
-
-    const filteredItems = (search) => {
-      sortedData.value = instanceArray
-        const filteredR = sortedData.value.filter(item => {
-          return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role_name.toLowerCase().indexOf(search.toLowerCase()) > -1
-        })
-      sortedData.value = filteredR
-      lengthCounter = sortedData.value.length
-      onChangePage(1)
-    }
-
-    const getSessionForSidebar = () => {
-        sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
-    }
   
 </script>
 
@@ -149,7 +174,7 @@
       <tableContainer>
         
         <!-- table box -->
-        <TableTopBar :title="'Role'" @increase-role="addRole" @do-search="filteredItems" modalAddType="role" />
+        <TableTopBar :title="'Role'" @increase-role="addRole" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="role" />
 
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
@@ -175,14 +200,17 @@
             <tbody>
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
-                <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
+                <tr v-for="(data, index) in sortedData.slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )" :key="data.id">
                   <td>
-                    {{ index + 1 }} 
-                  </td>
+                    {{ index + 1 + (paginateIndex * pageMultiplierReactive) }}                  </td>
                   <td>
                     {{ data.role_name }}
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
+                    <!-- kalo tanpa value isi nya array kosong -->
                     <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" />
                     <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name]" />
                     <ModalDelete @confirm-delete="deleteData(data.id)" />
@@ -221,6 +249,7 @@
               </div>
 
           </div>
+          
         </div>
 
           <!-- PAGINATION -->

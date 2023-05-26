@@ -5,11 +5,11 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
 import { ref, onBeforeMount, watch } from 'vue'
 
-import { useFormAddStore } from '@/stores/add-modal.js'
+import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
 
-import modalHeader from "@/components/modal/ModalHeader.vue"
-import modalBody from "@/components/modal/ModalBody.vue"
-import modalFooter from '@/components/modal/ModalFooter.vue'
+import modalHeader from "@/components/modal/add/ModalHeader.vue"
+import modalBody from "@/components/modal//add/ModalBody.vue"
+import modalFooter from '@/components/modal/add/ModalFooter.vue'
 
 import Api from '@/utils/Api'
 

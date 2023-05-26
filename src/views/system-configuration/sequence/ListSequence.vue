@@ -10,12 +10,12 @@
     import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
-    import ModalDelete from '@/components/modal/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
-    import { useFormEditStore } from '@/stores/edit-modal.js'
-    import { useFormAddStore } from '@/stores/add-modal.js'
+    import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+    import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
     let formState = useFormAddStore()

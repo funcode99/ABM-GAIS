@@ -6,7 +6,7 @@
   import { Modal } from 'usemodal-vue3'
   import Api from '@/utils/Api'
 
-  import { useFormEditStore } from '@/stores/edit-modal.js'
+  import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 
   let formState = useFormEditStore()
 
@@ -14,8 +14,8 @@
   let idStatusMenu = ref(0)
 
   const updatePhoto = (event) => {
-  file.value = event.target.files[0]
-  filename.value = event.target.files[0].name
+    file.value = event.target.files[0]
+    filename.value = event.target.files[0].name
   }
 
   const submitEdit = () => {
@@ -45,15 +45,15 @@
     getMenuStatus()
   })
 
-const getMenuStatus = async () => {
-    const status = await Api.get('/menu/get_status/status')
-    let getStatus = status.data.data
-    statusMenu.value = getStatus
-}
+  const getMenuStatus = async () => {
+      const status = await Api.get('/menu/get_status/status')
+      let getStatus = status.data.data
+      statusMenu.value = getStatus
+  }
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = 200
+  let modalPaddingHeight = '37%'
 
   const props = defineProps({
     formContent: Array
@@ -69,7 +69,6 @@ const getMenuStatus = async () => {
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
-  // const emits = defineEmits(["unlockScrollbar"]);
 </script>
 
 <!-- komponen ini mendapat warisan styling dari komponen parent nya (listMenu) -->

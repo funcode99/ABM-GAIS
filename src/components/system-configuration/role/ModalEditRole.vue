@@ -5,16 +5,16 @@ import editIcon from "@/assets/navbar/edit_icon.svg";
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
-import { useFormEditStore } from '@/stores/edit-modal.js'
+import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 
 let formEditState = useFormEditStore()
 
-let isVisible = ref(false);
-let modalPaddingHeight = 200;
+let isVisible = ref(false)
+let modalPaddingHeight = '37%'
 
 const props = defineProps({
   formContent: Array,
-});
+})
 
 const currentRoleName = ref(props.formContent[0]);
 
@@ -32,6 +32,7 @@ watch(isVisible, () => {
 </script>
 
 <template class="font-JakartaSans">
+
   <button @click="isVisible = !isVisible">
     <img :src="editIcon" alt="" />
   </button>
@@ -56,6 +57,7 @@ watch(isVisible, () => {
         </div>
 
         <main class="modal-box-inner-inner">
+
           <div class="pt-4">
   
             <div class="mb-6 text-start px-4 w-full">
@@ -99,11 +101,13 @@ watch(isVisible, () => {
   
             </div>
           </div>
+          
         </main>
       
     </main>
     
   </Modal>
+  
 </template>
 
 <style scoped>

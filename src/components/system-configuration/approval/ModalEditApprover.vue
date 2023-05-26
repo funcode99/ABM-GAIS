@@ -11,7 +11,7 @@ import closeIcon from '@/assets/close-window.png'
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
 import { ref, onBeforeMount, onMounted } from 'vue'
 
-import { useFormEditStore } from '@/stores/edit-modal.js'
+import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 
 import Api from '@/utils/Api'
 
@@ -23,12 +23,13 @@ import Api from '@/utils/Api'
 
   let isVisible = ref(false)
   let type = ''
-  let modalPaddingHeight = 200
+  let modalPaddingHeight = '37%'
 
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])
   let menu = ref(props.formContent[2])
   let document = ref(props.formContent[3])
+  let idMatrix = ref(props.formContent[5])
 
   let authorities = ref('')
 
@@ -59,14 +60,13 @@ import Api from '@/utils/Api'
       isVisible.value = !isVisible.value
   }
 
-  const saveApproverLines = (data, idx) => {
-    // console.log(data[idx])
-    data[idx].id_approval_auth
-    data[idx].level
+  const saveApproverLines = (data, idx, matrixId) => {
+    console.log(data[idx].id_approval_auth)
+    console.log(data[idx].level)
+    console.log(matrixId)
   }
 
   let currentAuthoritiesId = ref()
-  let currentApproverLinesIndex = ref()
 
   const addField = (fieldType, isi) => {
 
@@ -211,7 +211,7 @@ import Api from '@/utils/Api'
 
         <div class="px-3">
 
-          <h1 class="font-medium text-left">Approver Lines <span>*</span></h1>
+          <h1 class="font-medium text-left">Approver Lines <span>*</span> </h1>
           <hr class="border border-black">
   
           <div class="overflow-x-auto">
@@ -278,7 +278,7 @@ import Api from '@/utils/Api'
                   </td>
   
                   <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
-                    <button @click="saveApproverLines(approverLines, index)">
+                    <button @click="saveApproverLines(approverLines, index, idMatrix)">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
                     <button @click="removeField(index, approverLines)">

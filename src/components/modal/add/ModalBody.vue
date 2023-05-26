@@ -4,9 +4,9 @@
 
 <template>
     <main class="modal-box-inner-inner">
-        <form>
+        <div>
             <slot></slot>
-        </form>
+        </div>
     </main>
 </template>
 

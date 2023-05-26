@@ -1,13 +1,13 @@
 <script setup>
-import modalHeader from "@/components/modal/ModalHeader.vue"
-import modalBody from "@/components/modal/ModalBody.vue"
-import modalFooter from '@/components/modal/ModalFooter.vue'
+import modalHeader from "@/components/modal/add/ModalHeader.vue"
+import modalBody from "@/components/modal/add/ModalBody.vue"
+import modalFooter from '@/components/modal/add/ModalFooter.vue'
 
 // cuma gara2 lupa import ref sidebar gua error terus anjing
 import { ref, onBeforeMount } from 'vue'
 import Api from '@/utils/Api'
 
-import { useFormAddStore } from '@/stores/add-modal.js'
+import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
 let formState = useFormAddStore()
 
 let menuName = ref('')

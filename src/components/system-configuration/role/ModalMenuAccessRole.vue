@@ -1,12 +1,15 @@
 <script setup>
   import iconClose from "@/assets/navbar/icon_close.svg"
-  import iconPlus from "@/assets/navbar/icon_plus.svg"
-  import deleteicon from "@/assets/navbar/delete_icon.svg"
   import roleIcon from '@/assets/menu-access-role.png'
 
-  import { ref, computed, onBeforeMount } from 'vue'
+  import { useMenuAccessStore } from '@/stores/savemenuaccess'
+
+  import { ref, computed, onMounted, watch } from 'vue'
   import { Modal } from 'usemodal-vue3'
+
   import Api from '@/utils/Api'
+
+  const menuAccess = useMenuAccessStore()
 
   const props = defineProps({
     roleId: Number,
@@ -15,42 +18,39 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = 200
+  let modalPaddingHeight = '37%'
 
   let sortedData = ref([])
-  let sortedDataReactive = computed(() => sortedData.value)
   let instanceArray = []
+  let sortedDataReactive = computed(() => sortedData.value)
+
+  
+  // onMounted(() => {
+  //   setTimeout(, 2000)
+  //   console.log(sortedData.value)
+  // })
 
 const menuHeadTable = [
   {Id: 1, title: 'Write'},
   {Id: 2, title: 'Read'},
 ]
 
-
 let writeValue = ref(props.roleAccess[0] == undefined ? [] : props.roleAccess[0])
 let readValue = ref(props.roleAccess[1] == undefined ? [] : props.roleAccess[1])
 
-const fetch = async () => {
-    const token = JSON.parse(localStorage.getItem('token'))
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.get('/role/get_active')      
-    instanceArray = api.data.data
-    sortedData.value = instanceArray
-}
-
-onBeforeMount(() => {
-  fetch()
-})
-
 const submitAccess = async () => {
   const token = JSON.parse(localStorage.getItem('token'))
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
     const api = await Api.post(`/role/store_menu/${props.roleId}`, {
       id_role: props.roleId,
       write: writeValue.value,
       read: readValue.value
     })
 }
+
+watch(isVisible, () => {
+  sortedData.value = menuAccess.fetchResult
+})
 
 </script>
 
@@ -114,29 +114,32 @@ const submitAccess = async () => {
           </div>
       
           <div class="sticky right-4 bottom-0 z-50 bg-white px-10 pt-2 pb-4">
+
               <div className="divider m-0 pb-4"></div>
+
               <div class="flex justify-end gap-4">
+
                 <button
                   @click="isVisible = false"
                   class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
                   >
                   Cancel
-                </button
-                >
+                </button>
+
                 <button
                 @click="submitAccess"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
                 >
-                <button @click="isVisible = false">
-                  Save
+                  <button @click="isVisible = false">
+                    Save
+                  </button>
                 </button>
-                </button>
+
               </div>
+
           </div>
           
         </main>
-        
-
 
   </Modal>
 
@@ -145,7 +148,7 @@ const submitAccess = async () => {
 <style scoped>
 
 .modal-box-inner-inner {
-  height: 500px;
+  height: 100%;
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -159,6 +162,5 @@ const submitAccess = async () => {
 :deep(.modal-vue3-content) {
   height: 400px !important;
 }
-
 
 </style>

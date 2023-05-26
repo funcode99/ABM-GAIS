@@ -12,11 +12,11 @@
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
-    import ModalDelete from '@/components/modal/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
-    import { useFormEditStore } from '@/stores/edit-modal.js'
-    import { useFormAddStore } from '@/stores/add-modal.js'
+    import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+    import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
 
     let formState = useFormAddStore()
     let formEditState = useFormEditStore()
