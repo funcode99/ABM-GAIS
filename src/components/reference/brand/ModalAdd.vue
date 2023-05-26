@@ -1,12 +1,12 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
+import iconClose from "@/assets/navbar/icon_close.svg"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted } from "vue"
 
-let selectedCompany = ref("Company");
+let selectedCompany = ref("Company")
 let selectedSite = ref("Site");
 let brandName = ref("");
 let Company = ref("");
@@ -60,7 +60,7 @@ const saveBrand = async () => {
       title: "Your work has been saved",
       showConfirmButton: false,
       timer: 1500,
-    });
+    })
     emits("brand-saved");
     isOpenModal.value = !isOpenModal.value;
   } catch (error) {

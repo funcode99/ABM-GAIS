@@ -228,7 +228,7 @@
                     <tr v-for="(data, index) in sortedDataReactive.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
-                      )" :key="data.No">
+                      )" :key="data.id">
                       <td>
                         <input type="checkbox" name="chk">
                       </td>

@@ -8,6 +8,7 @@
     import ModalMenuAccessRole from '@/components/system-configuration/role/ModalMenuAccessRole.vue'
 
     import { ref, onBeforeMount, computed } from 'vue'
+    import Swal from "sweetalert2"
     import Api from '@/utils/Api'
 
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
@@ -77,6 +78,13 @@
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       await Api.post(`/role/store`, {
         role_name: formState.role.roleName
+      })
+      Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
       })
       fetch()
     }
@@ -175,13 +183,12 @@
             <tbody>
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
-                <tr v-for="(data, index) in sortedDataReactive.slice(
+                <tr v-for="(data, index) in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
                   <td>
-                    {{ index + 1 }} 
-                  </td>
+                    {{ index + 1 + (paginateIndex * pageMultiplierReactive) }}                  </td>
                   <td>
                     {{ data.role_name }}
                   </td>
