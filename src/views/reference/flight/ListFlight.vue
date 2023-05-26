@@ -383,10 +383,10 @@ const exportToExcel = () => {
                 )"
                 :key="data.id"
               >
-                <td style="width: 10%">
+                <td style="width: 5%">
                   <input type="checkbox" name="checks" />
                 </td>
-                <td style="width: 10%">{{ data.no }}</td>
+                <td style="width: 5%">{{ data.no }}</td>
                 <td style="width: 70%">
                   <span
                     :class="[
