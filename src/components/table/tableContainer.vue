@@ -4,7 +4,7 @@
 </script>
 
 <template>
-    <div class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500"
+    <div class="bg-[#e4e4e6] pb-16 pt-5 px-8 w-screen clean-margin ease-in-out duration-500"
     :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']"
     >
         <slot></slot>
