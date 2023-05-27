@@ -1,78 +1,70 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg"
+import editicon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
+import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
+import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
 
-import { ref, watch } from "vue"
-import { Modal } from "usemodal-vue3"
-import { useFormEditStore } from "@/stores/reference/currency/edit-modal.js"
+import { ref, watch } from "vue";
+import { Modal } from "usemodal-vue3";
+import { useFormEditStore } from "@/stores/reference/currency/edit-modal.js";
 
-let formEditState = useFormEditStore()
-const emits = defineEmits(["unlockScrollbar", "changeCurrency"])
-let isVisible = ref(false)
-let modalPaddingHeight = "25vh"
-let isAdding = ref(false)
+const emits = defineEmits(["unlockScrollbar", "changeCurrency"]);
+
+let formEditState = useFormEditStore();
+let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
 
 const props = defineProps({
-  formContent: Array
-})
+  formContent: Array,
+});
 
-const currencyName = ref(props.formContent[0])
-const currencySymbol = ref(props.formContent[1])
-const currencyCode = ref(props.formContent[2])
+const currencyName = ref(props.formContent[0]);
+const currencySymbol = ref(props.formContent[1]);
+const currencyCode = ref(props.formContent[2]);
 
 const submitEdit = () => {
+  isAdding.value = true;
 
-  isAdding.value = true
-  
   if (!formEditState.currency) {
-    formEditState.currency = {} // Inisialisasi objek jika belum ada
+    formEditState.currency = {}; // Inisialisasi objek jika belum ada
   }
 
-  formEditState.currency.currencyName = currencyName.value
-  formEditState.currency.currencySymbol = currencySymbol.value
-  formEditState.currency.currencyCode = currencyCode.value
+  formEditState.currency.currencyName = currencyName.value;
+  formEditState.currency.currencySymbol = currencySymbol.value;
+  formEditState.currency.currencyCode = currencyCode.value;
 
-  isVisible.value = false
+  isVisible.value = false;
   emits("changeCurrency"); // Memanggil event 'changeCurrency'
+};
 
-}
+const inputStylingClass =
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
-  const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-
-  watch(isVisible, () => {
-      if(isAdding.value == true) {
-        isAdding.value = false
-    } 
-      else {
-        currencyName.value = props.formContent[0]
-        currencySymbol.value = props.formContent[1]
-        currencyCode.value = props.formContent[2]
-    }
-   
-  })
-
+watch(isVisible, () => {
+  if (isAdding.value == true) {
+    isAdding.value = false;
+  } else {
+    currencyName.value = props.formContent[0];
+    currencySymbol.value = props.formContent[1];
+    currencyCode.value = props.formContent[2];
+  }
+});
 </script>
 
 <template>
-  
   <button @click="isVisible = !isVisible">
     <img :src="editicon" alt="edit icon" />
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-    
     <main>
-
       <modalHeaderEdit
         @closeVisibility="isVisible = false"
         title="Edit Currency"
       />
 
       <form class="pt-4" @submit.prevent="submitEdit">
-        
         <div class="mb-6 text-start px-4 w-full">
           <label
             for="currency"
@@ -121,16 +113,10 @@ const submitEdit = () => {
           />
         </div>
 
-        <ModalFooterEdit
-          @closeEdit="isVisible = false"
-        />
-
+        <ModalFooterEdit @closeEdit="isVisible = false" />
       </form>
-
     </main>
-
   </Modal>
-
 </template>
 
 <style scoped>

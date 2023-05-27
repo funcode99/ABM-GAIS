@@ -261,8 +261,7 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-}
-
+};
 </script>
 
 <template>

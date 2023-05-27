@@ -9,6 +9,8 @@ import Api from "@/utils/Api";
 
 import { ref, onMounted, watch } from "vue";
 
+const emits = defineEmits(["unlockScrollbar", "brand-saved"]);
+
 let selectedCompany = ref("Company");
 let selectedSite = ref("Site");
 let brandName = ref("");
@@ -17,7 +19,6 @@ let Site = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
-const emits = defineEmits(["unlockScrollbar", "brand-saved"]);
 
 //for get company in select
 const fetchGetCompany = async () => {
