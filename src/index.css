@@ -233,7 +233,7 @@ input[type=radio]:checked {
 }
 
 .modal-vue3-wrap div:nth-child(2) {
-  overflow-y: hidden !important;
+  overflow-y: auto !important;
 }
 
 .this {
