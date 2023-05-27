@@ -246,7 +246,7 @@ const deleteWarehouse = async (id) => {
       Api.delete(`/warehouse/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Brand has been deleted.",
+          text: "Warehouse has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#015289",

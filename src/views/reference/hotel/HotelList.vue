@@ -255,7 +255,7 @@ const deleteHotel = async (id) => {
       Api.delete(`/hotel/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Brand has been deleted.",
+          text: "Hotel has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#015289",
