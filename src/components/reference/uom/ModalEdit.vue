@@ -25,7 +25,7 @@ const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.uom) {
-    formEditState.uom = {}; // Inisialisasi objek flight jika belum ada
+    formEditState.uom = {}
   }
 
   formEditState.uom.uomName = uomName.value;
