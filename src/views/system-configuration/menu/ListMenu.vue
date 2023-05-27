@@ -22,10 +22,10 @@
     let formEditState = useFormEditStore()
     const sidebar = useSidebarStore()
 
+    let instanceArray = []
     let sortedData = ref([])
     let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
-    let instanceArray = []
     let lengthCounter = 0
     let editDataId = ref(0)
 

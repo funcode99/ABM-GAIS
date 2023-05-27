@@ -12,6 +12,9 @@ import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vu
 import { ref, computed, onBeforeMount } from "vue";
 
 import Api from "@/utils/Api";
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 let search = ref("");
 let pageMultiplier = ref(10);
@@ -25,23 +28,35 @@ const props = defineProps({
 let companyData = ref([]);
 let roleData = ref([]);
 
-const fetchCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  companyData.value = res.data.data;
-};
+// console.log(router.currentRoute.value.path)
+
+  const fetchCompany = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/company/get");
+    companyData.value = res.data.data;
+  }
+
+
 
 const fetchRole = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const api = await Api.get("/role/get");
-  roleData.value = api.data.data;
-};
+  roleData.value = api.data.data
+}
+
 
 onBeforeMount(() => {
-  fetchCompany();
-  fetchRole();
+
+  if(router.currentRoute.value.path == '/user') {
+    fetchRole()
+  }
+
+  if(router.currentRoute.value.path != '/role') {
+    fetchCompany()
+  }
+
 });
 </script>
 

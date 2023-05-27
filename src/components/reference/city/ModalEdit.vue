@@ -12,6 +12,8 @@ let formEditState = useFormEditStore()
 const emits = defineEmits(["unlockScrollbar", "changeCity"])
 let isVisible = ref(false)
 let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
+
 const props = defineProps({
   formContent: Array
 })
@@ -21,6 +23,8 @@ const cityName = ref(props.formContent[1])
 
 const submitEdit = () => {
 
+  isAdding.value = true
+
   if (!formEditState.city) {
     formEditState.city = {}; // Inisialisasi objek flight jika belum ada
   }
@@ -28,15 +32,18 @@ const submitEdit = () => {
   formEditState.city.cityCode = cityCode.value
   formEditState.city.cityName = cityName.value
 
-  isVisible.value = !isVisible.value
+  isVisible.value = false
   emits("changeCity") // Memanggil event 'changeCity'
 
 }
 
 watch(isVisible, () => {
-  // mereset nilai edit menjadi semula
-  cityCode.value = props.formContent[0]
-  cityName.value = props.formContent[1]
+  if(isAdding.value == true) {
+    isAdding.value = false
+  } else {
+    cityCode.value = props.formContent[0]
+    cityName.value = props.formContent[1]
+  }
 })
 
 const inputStylingClass =

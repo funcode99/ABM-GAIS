@@ -5,12 +5,13 @@
     import Footer from '@/components/layout/Footer.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
-
-    import Api from '@/utils/Api'
-
+    
+    
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
+    import Api from '@/utils/Api'
+
     import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
     import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
 
@@ -23,7 +24,7 @@
     const formEditState = useFormEditStore()
     
     let sortedData = ref([])
-    let sortedDataReactive = computed(() => sortedData.value)
+    // let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
     let editDataUserId = ref(0)
@@ -74,10 +75,7 @@
       }
     }
 
-    onBeforeMount(() => {
-      getSessionForSidebar()
-      fetch()
-    })
+
 
     const filteredItems = (search) => {
       sortedData.value = instanceArray
@@ -91,19 +89,6 @@
     const fillPageMultiplier = (value) => {
       // ref harus pake .value biar ngaruh sama reactive :')
       pageMultiplier.value = value
-    }
-
-    const getSessionForSidebar = () => {
-      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
-    }
-
-    const fetch = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/users')      
-      instanceArray = api.data.data
-      sortedData.value = instanceArray
     }
 
     const deleteData = async (event) => {
@@ -165,7 +150,29 @@
         })
         fetch()
     }
-  
+ 
+    const getSessionForSidebar = () => {
+      sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
+    }
+
+    const fetch = async () => {
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/users')      
+        instanceArray = api.data.data.data
+        console.log(instanceArray)
+        sortedData.value = instanceArray
+      } catch(error) {
+        console.log(error)
+      }
+    }
+
+    onBeforeMount(() => {
+      getSessionForSidebar()
+      fetch()
+    })
+
 </script>
 
 
@@ -226,7 +233,7 @@
 
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                    <tr v-for="(data, index) in sortedDataReactive.slice(
+                    <tr v-for="(data, index) in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">

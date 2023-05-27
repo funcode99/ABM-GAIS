@@ -27,10 +27,10 @@
 
     // import untuk table
     let sortedData = ref([])
-    let sortedDataReactive = computed(() => sortedData.value)
+    // let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
-    let lengthCounter = 0
+    // let lengthCounter = 0
 
     let editRoleDataId = ref()
 
@@ -114,12 +114,8 @@
           return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role_name.toLowerCase().indexOf(search.toLowerCase()) > -1
         })
       sortedData.value = filteredR
-      lengthCounter = sortedData.value.length
+      // lengthCounter = sortedData.value.length
       onChangePage(1)
-    }
-
-    const getSessionForSidebar = () => {
-        sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
     const fillPageMultiplier = (value) => {
@@ -136,6 +132,10 @@
       menuAccess.fetchResult = api.data.data
     }
 
+    const getSessionForSidebar = () => {
+        sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
+    }
+
     let status = ref('')
     let message = ref('')
     const fetch = async () => {
@@ -145,7 +145,7 @@
         const api = await Api.get('/role/get')
         instanceArray = api.data.data
         sortedData.value = instanceArray
-        lengthCounter = sortedData.value.length
+        // lengthCounter = sortedData.value.length
       } catch (error) {
         status.value = error.response.status
         message.value = error.response.data.message

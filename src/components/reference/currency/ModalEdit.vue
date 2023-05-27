@@ -12,6 +12,8 @@ let formEditState = useFormEditStore()
 const emits = defineEmits(["unlockScrollbar", "changeCurrency"])
 let isVisible = ref(false)
 let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
+
 const props = defineProps({
   formContent: Array
 })
@@ -21,6 +23,8 @@ const currencySymbol = ref(props.formContent[1])
 const currencyCode = ref(props.formContent[2])
 
 const submitEdit = () => {
+
+  isAdding.value = true
   
   if (!formEditState.currency) {
     formEditState.currency = {} // Inisialisasi objek jika belum ada
@@ -30,7 +34,7 @@ const submitEdit = () => {
   formEditState.currency.currencySymbol = currencySymbol.value
   formEditState.currency.currencyCode = currencyCode.value
 
-  isVisible.value = !isVisible.value;
+  isVisible.value = false
   emits("changeCurrency"); // Memanggil event 'changeCurrency'
 
 }
@@ -39,9 +43,15 @@ const submitEdit = () => {
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
   watch(isVisible, () => {
-    currencyName.value = props.formContent[0]
-    currencySymbol.value = props.formContent[1]
-    currencyCode.value = props.formContent[2]
+      if(isAdding.value == true) {
+        isAdding.value = false
+    } 
+      else {
+        currencyName.value = props.formContent[0]
+        currencySymbol.value = props.formContent[1]
+        currencyCode.value = props.formContent[2]
+    }
+   
   })
 
 </script>
@@ -111,7 +121,6 @@ const submitEdit = () => {
           />
         </div>
 
-        <!-- @submitEditForm="submitEdit()" -->
         <ModalFooterEdit
           @closeEdit="isVisible = false"
         />

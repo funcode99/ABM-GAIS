@@ -8,12 +8,12 @@ import { ref, watch } from "vue"
 import { Modal } from "usemodal-vue3"
 
 import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js"
-let formEditState = useFormEditStore()
 
+let formEditState = useFormEditStore()
+const emits = defineEmits(["unlockScrollbar", "changeGl"])
 let isVisible = ref(false)
 let modalPaddingHeight = '25vh'
-
-const emits = defineEmits(["unlockScrollbar", "changeGl"])
+let isAdding = ref(false)
 
 const props = defineProps({
   formContent: Array
@@ -24,6 +24,8 @@ const glAccountName = ref(props.formContent[1])
 
 const submitEdit = () => {
 
+  isAdding.value = true
+
   if (!formEditState.glAccount) {
     formEditState.glAccount = {} // Inisialisasi objek jika belum ada
   }
@@ -31,17 +33,22 @@ const submitEdit = () => {
   formEditState.glAccount.glAccountCode = glAccountCode.value
   formEditState.glAccount.glAccountName = glAccountName.value
 
-  isVisible.value = !isVisible.value
+  isVisible.value = false
   emits("changeGl") // Memanggil event 'changeGl'
 }
 
+watch(isVisible, () => {
+  if(isAdding.value == true) {
+    isAdding.value = false
+  } else {
+    glAccountCode.value = props.formContent[0]
+    glAccountName.value = props.formContent[1]
+  }
+
+})
+
 const inputStylingClass =
 "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-
-watch(isVisible, () => {
-  glAccountCode.value = props.formContent[0]
-  glAccountName.value = props.formContent[1]
-})
 
 </script>
 
@@ -60,7 +67,7 @@ watch(isVisible, () => {
         title="Edit GL Account"
       />
 
-      <div class="pt-4">
+      <form class="pt-4" @submit.prevent="submitEdit">
 
         <div class="mb-6 text-start w-full px-4">
           <label
@@ -94,12 +101,12 @@ watch(isVisible, () => {
           />
         </div>
 
+
         <modalFooterEdit
           @closeEdit="isVisible = false"
-          @submitEditForm="submitEdit()"
         />
 
-      </div>
+      </form>
 
     </main>
 
