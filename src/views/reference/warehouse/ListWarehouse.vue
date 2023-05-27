@@ -552,7 +552,7 @@ const exportToExcel = () => {
               <tbody>
                 <tr>
                   <td
-                    colspan="4"
+                    colspan="6"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Tidak Ada Data
