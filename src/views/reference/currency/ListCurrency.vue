@@ -82,7 +82,7 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-}
+};
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -397,7 +397,7 @@ const exportToExcel = () => {
                   <input type="checkbox" name="checks" />
                 </td>
                 <td style="width: 5%">{{ data.no }}</td>
-                <td style="width: 60%">
+                <td style="width: 55%">
                   <span
                     :class="[
                       'readmore-text',
@@ -463,7 +463,7 @@ const exportToExcel = () => {
               <tbody>
                 <tr>
                   <td
-                    colspan="4"
+                    colspan="6"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Tidak Ada Data

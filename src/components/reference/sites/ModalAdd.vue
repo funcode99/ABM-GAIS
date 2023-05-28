@@ -1,18 +1,23 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
+import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
+import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
+
+import { Modal } from "usemodal-vue3";
 
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+
+const emits = defineEmits(["unlockScrollbar", "site-saved"]);
 
 let selectedCompany = ref("Company");
 let Company = ref("");
 let siteCode = ref("");
 let siteName = ref("");
-let isOpenModal = ref(false);
-
-const emits = defineEmits(["unlockScrollbar", "site-saved"]);
+let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
 
 //for get company in select
 const fetchGetCompany = async () => {
@@ -28,22 +33,21 @@ onMounted(() => {
 });
 
 const saveSite = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  isAdding.value = true;
+  isVisible.value = !isVisible.value;
+  setTimeout(callAddApi, 500);
+};
 
+const callAddApi = async () => {
   try {
-    const payload = {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    await Api.post(`/site/store`, {
       id_company: selectedCompany.value,
       site_code: siteCode.value,
       site_name: siteName.value,
-    };
-
-    await Api.post(`/site/store`, payload);
-
-    // Reset nilai input
-    selectedCompany.value = "";
-    siteCode.value = "";
-    siteName.value = "";
+    });
 
     Swal.fire({
       position: "center",
@@ -52,138 +56,101 @@ const saveSite = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
+
     emits("site-saved");
-    isOpenModal.value = !isOpenModal.value;
   } catch (error) {
     console.log(error);
   }
 };
+
+const resetInput = () => {
+  selectedCompany.value = "Company";
+  siteCode.value = "";
+  siteName.value = "";
+};
+
+watch(isVisible, () => {
+  if (isAdding.value == true) {
+    isAdding.value = false;
+  } else {
+    resetInput();
+  }
+});
 </script>
 
 <template>
-  <label
-    @click="this.$emit('unlockScrollbar')"
-    for="my-modal-3"
+  <button
+    @click="isVisible = true"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add New</label
   >
+    + Add New
+  </button>
 
-  <input
-    type="checkbox"
-    id="my-modal-3"
-    class="modal-toggle"
-    v-model="isOpenModal"
-  />
-  <div class="modal">
-    <div class="modal-box relative">
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+    <main>
+      <modalHeaderEdit @closeVisibility="isVisible = false" title="New Site" />
 
-      <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label
-          @click="this.$emit('unlockScrollbar')"
-          for="my-modal-3"
-          class="cursor-pointer absolute right-3 top-3"
-        >
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          New Site
-        </p>
-      </nav>
+      <form class="pt-4" @submit.prevent="saveSite">
+        <div class="mb-6 w-full px-4">
+          <label
+            for="company"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Company<span class="text-red">*</span></label
+          >
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            required
+            v-model="selectedCompany"
+          >
+            <option disabled selected>Company</option>
+            <option v-for="company in Company" :value="company.id">
+              {{ company.company_name }}
+            </option>
+          </select>
+        </div>
 
-      <main class="modal-box-inner-site">
+        <div class="mb-6 w-full px-4">
+          <label
+            for="sitecode"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Site Code<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            name="sitecode"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Site Code"
+            required
+            v-model="siteCode"
+          />
+        </div>
 
-        <form @submit.prevent="saveSite">
+        <div class="mb-6 w-full px-4">
+          <label
+            for="site"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Site Name<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            name="site"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Site Name"
+            required
+            v-model="siteName"
+            @keyup.enter="$emit('site-saved')"
+          />
+        </div>
 
-          <div class="mb-6 w-full px-4">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedCompany"
-            >
-              <option disabled selected>Company</option>
-              <option v-for="company in Company" :value="company.id">
-                {{ company.company_name }}
-              </option>
-            </select>
-          </div>
-
-          <div class="mb-6 w-full px-4">
-            <label
-              for="sitecode"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Site Code<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="sitecode"
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Site Code"
-              required
-              v-model="siteCode"
-            />
-          </div>
-
-          <div class="mb-6 w-full px-4">
-            <label
-              for="site"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Site Name<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="site"
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Site Name"
-              required
-              v-model="siteName"
-            />
-          </div>
-
-          <div class="sticky bottom-0 bg-white">
-            <div class="flex justify-end gap-4 mr-6">
-              <label
-                @click="this.$emit('unlockScrollbar')"
-                for="my-modal-3"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                >Cancel</label
-              >
-              <button
-                type="submit"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-
-        </form>
-        
-      </main>
-
-    </div>
-  </div>
+        <ModalFooterEdit @closeEdit="isVisible = false" />
+      </form>
+    </main>
+  </Modal>
 </template>
 
 <style scoped>
-.modal-box {
-  padding: 0;
-  overflow-y: hidden;
-  overscroll-behavior: contain;
-}
-
-.modal-box-inner-site {
-  --tw-scale-x: 1;
-  --tw-scale-y: 0.9;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
+:deep(.modal-vue3-content) {
+  max-height: 400px !important;
+  max-width: 510px !important;
 }
 </style>

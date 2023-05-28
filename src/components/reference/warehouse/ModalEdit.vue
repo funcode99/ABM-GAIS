@@ -1,17 +1,22 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
+
+import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
+import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
 
 import Api from "@/utils/Api";
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
 import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
-let formEditState = useFormEditStore();
 
+const emits = defineEmits(["unlockScrollbar", "changeWarehouse"]);
+
+let formEditState = useFormEditStore();
 let isVisible = ref(false);
-let modalPaddingHeight = 118;
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
 
 let selectedCompany = ref("Company");
 let Company = ref("");
@@ -19,10 +24,8 @@ let Site = ref("");
 let warehouseName = ref("");
 let warehouseIdCompany = ref("");
 let warehouseIdSite = ref();
-let selectedCompanyId = ref(null);
-let selectedSiteId = ref(null);
-
-const emits = defineEmits(["unlockScrollbar", "changeWarehouse"]);
+let selectedCompanyId = ref(props.formContent[1] || null);
+let selectedSiteId = ref(props.formContent[2] || null);
 
 const props = defineProps({
   formContent: Array,
@@ -36,6 +39,8 @@ const currentwarehouseIdSite = ref(props.formContent[2]);
 const originalwarehouseIdSite = ref(props.formContent[2]);
 
 const submitEdit = () => {
+  isAdding.value = true;
+
   if (!formEditState.warehouse) {
     formEditState.warehouse = {}; // Inisialisasi objek jika belum ada
   }
@@ -44,12 +49,7 @@ const submitEdit = () => {
   formEditState.warehouse.warehouseIdCompany = selectedCompanyId.value;
   formEditState.warehouse.warehouseIdSite = selectedSiteId.value;
 
-  // Update original saat penyimpanan
-  originalwarehouseName.value = currentwarehouseName.value;
-  originalwarehouseIdCompany.value = selectedCompanyId.value;
-  originalwarehouseIdSite.value = selectedSiteId.value;
-
-  isVisible.value = !isVisible.value;
+  isVisible.value = false;
   emits("changeWarehouse"); // Memanggil event 'changeWarehouse'
 };
 
@@ -76,43 +76,42 @@ onMounted(() => {
   fetchGetSite();
 });
 
+const inputStylingClass =
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+
+watch(isVisible, () => {
+  if (isAdding.value == true) {
+    isAdding.value = false;
+  } else {
+    currentwarehouseName.value = props.formContent[0];
+    currentwarehouseIdCompany.value = props.formContent[1];
+    currentwarehouseIdSite.value = props.formContent[2];
+  }
+});
+
 const resetForm = () => {
   currentwarehouseName.value = originalwarehouseName.value;
   selectedCompanyId.value = originalwarehouseIdCompany.value;
   selectedSiteId.value = originalwarehouseIdSite.value;
 };
-
-const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
-  <button
-    @click="
-      resetForm();
-      isVisible = !isVisible;
-    "
-  >
-    <img :src="editicon" alt="" />
+  <button @click="isVisible = !isVisible">
+    <img :src="editicon" alt="edit icon" />
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <div class="sticky top-0 z-50 bg-[#015289]">
-        <button
-          @click="isVisible = false"
-          class="cursor-pointer absolute right-3 top-0 lg:top-3"
-        >
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </button>
-        <p
-          class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
-        >
-          Edit Warehouse
-        </p>
-      </div>
+      <modalHeaderEdit
+        @closeVisibility="
+          isVisible = false;
+          resetForm();
+        "
+        title="Edit Warehouse"
+      />
 
-      <div class="pt-4">
+      <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 text-start w-full px-4">
           <label
             for="company"
@@ -165,29 +164,13 @@ const inputStylingClass =
           />
         </div>
 
-        <div class="sticky bottom-0 bg-white">
-          <div class="flex justify-end gap-4 mr-6">
-            <label
-              @click="
-                resetForm();
-                isVisible = !isVisible;
-              "
-              for="modal-edit-warehouse"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-              >Cancel</label
-            >
-            <button
-              @click="
-                submitEdit();
-                $emit('changeWarehouse');
-              "
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-            >
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
+        <ModalFooterEdit
+          @closeEdit="
+            isVisible = false;
+            resetForm();
+          "
+        />
+      </form>
     </main>
   </Modal>
 </template>

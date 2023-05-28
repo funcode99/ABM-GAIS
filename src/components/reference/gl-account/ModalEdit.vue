@@ -1,55 +1,53 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg"
+import editicon from "@/assets/navbar/edit_icon.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue"
 import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { ref, watch } from "vue"
-import { Modal } from "usemodal-vue3"
+import { ref, watch } from "vue";
+import { Modal } from "usemodal-vue3";
 
-import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js"
+import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js";
 
-let formEditState = useFormEditStore()
-const emits = defineEmits(["unlockScrollbar", "changeGl"])
-let isVisible = ref(false)
-let modalPaddingHeight = '25vh'
-let isAdding = ref(false)
+const emits = defineEmits(["unlockScrollbar", "changeGl"]);
+
+let formEditState = useFormEditStore();
+let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
 
 const props = defineProps({
-  formContent: Array
-})
+  formContent: Array,
+});
 
-const glAccountCode = ref(props.formContent[0])
-const glAccountName = ref(props.formContent[1])
+const glAccountCode = ref(props.formContent[0]);
+const glAccountName = ref(props.formContent[1]);
 
 const submitEdit = () => {
-
-  isAdding.value = true
+  isAdding.value = true;
 
   if (!formEditState.glAccount) {
-    formEditState.glAccount = {} // Inisialisasi objek jika belum ada
+    formEditState.glAccount = {}; // Inisialisasi objek jika belum ada
   }
 
-  formEditState.glAccount.glAccountCode = glAccountCode.value
-  formEditState.glAccount.glAccountName = glAccountName.value
+  formEditState.glAccount.glAccountCode = glAccountCode.value;
+  formEditState.glAccount.glAccountName = glAccountName.value;
 
-  isVisible.value = false
-  emits("changeGl") // Memanggil event 'changeGl'
-}
+  isVisible.value = false;
+  emits("changeGl"); // Memanggil event 'changeGl'
+};
 
 watch(isVisible, () => {
-  if(isAdding.value == true) {
-    isAdding.value = false
+  if (isAdding.value == true) {
+    isAdding.value = false;
   } else {
-    glAccountCode.value = props.formContent[0]
-    glAccountName.value = props.formContent[1]
+    glAccountCode.value = props.formContent[0];
+    glAccountName.value = props.formContent[1];
   }
-
-})
+});
 
 const inputStylingClass =
-"font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
@@ -59,7 +57,7 @@ const inputStylingClass =
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-    
+
     <main>
 
       <modalHeader 
@@ -101,7 +99,6 @@ const inputStylingClass =
           />
         </div>
 
-
         <modalFooter
           @closeEdit="isVisible = false"
         />
@@ -111,7 +108,6 @@ const inputStylingClass =
     </main>
 
   </Modal>
-
 </template>
 
 <style scoped>

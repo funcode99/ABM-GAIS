@@ -11,6 +11,7 @@ export const useFormEditStore = defineStore('add-form', {
                 hotelEmail: '',
                 hotelPhoneNumber: '',
                 hotelRating: '',
+                hotelCode: '',
             },
         }
     }

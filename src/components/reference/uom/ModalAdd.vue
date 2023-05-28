@@ -2,73 +2,73 @@
 import modalHeader from "@/components/modal/modalHeader.vue"
 import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { Modal } from "usemodal-vue3"
+import { Modal } from "usemodal-vue3";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
 import { ref, watch } from "vue";
 
-  let UomName = ref("");
-  const emits = defineEmits(["unlockScrollbar", "uom-saved"]);
-  let isVisible = ref(false)
-  let modalPaddingHeight = "25vh"
-  let isAdding = ref(false)
+const emits = defineEmits(["unlockScrollbar", "uom-saved"]);
 
-  const resetInput = () => {
+let UomName = ref("");
+let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
+
+const resetInput = () => {
   UomName.value = "";
+};
+
+const saveUom = async () => {
+  isAdding.value = true;
+  isVisible.value = !isVisible.value;
+  setTimeout(callAddApi, 500);
+};
+
+const callAddApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  try {
+    await Api.post(`/uom/store`, {
+      uom_name: UomName.value,
+    });
+
+    resetInput();
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    emits("uom-saved");
+  } catch (error) {
+    console.log(error);
   }
+};
 
-  const saveUom = async () => {
-    isAdding.value = true
-    isVisible.value = !isVisible.value
-    setTimeout(callAddApi, 500)
+watch(isVisible, () => {
+  if (isAdding.value == true) {
+    isAdding.value = false;
+  } else {
+    resetInput();
   }
-
-  const callAddApi = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    try {
-      await Api.post(`/uom/store`, {
-        uom_name: UomName.value,
-      });
-
-      resetInput()
-
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Your work has been saved",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      emits("uom-saved");
-
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  watch(isVisible, () => {
-    if(isAdding.value == true) {
-      isAdding.value = false
-    } else {
-      resetInput()
-    }
-  })
-
+});
 </script>
 
 <template>
 
-<button 
-    @click="isVisible = true" 
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+  <button
+    @click="isVisible = true"
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+  >
     + Add New
   </button>
- 
-  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-    
+
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight"> 
+
     <main>
 
       <modalHeader
@@ -77,7 +77,6 @@ import { ref, watch } from "vue";
       />
   
       <form class="pt-4" @submit.prevent="saveUom">
-  
         <div class="mb-6 w-full px-4">
           <label
             for="uom"
@@ -103,35 +102,12 @@ import { ref, watch } from "vue";
     </main>
 
   </Modal>
-
-
-      <!-- <main class="modal-box-inner-uom">
-      </main> -->
-
-
+  
 </template>
 
 <style scoped>
-.modal-box {
-  padding: 0;
-  overflow-y: hidden;
-  overscroll-behavior: contain;
+:deep(.modal-vue3-content) {
+  max-height: 210px !important;
+  max-width: 510px !important;
 }
-
-.modal-box-inner-uom {
-  --tw-scale-x: 1;
-  --tw-scale-y: 0.9;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
-}
-
-  :deep(.modal-vue3-content) {
-    max-height: 210px !important;
-    max-width: 510px !important;
-  }
-  
 </style>

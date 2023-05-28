@@ -261,8 +261,7 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-}
-
+};
 </script>
 
 <template>
@@ -457,7 +456,7 @@ const exportToExcel = () => {
               <tbody>
                 <tr>
                   <td
-                    colspan="4"
+                    colspan="5"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Tidak Ada Data
