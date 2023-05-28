@@ -1,6 +1,8 @@
 <script setup>
-  import iconClose from "@/assets/navbar/icon_close.svg";
-  import editIcon from "@/assets/navbar/edit_icon.svg";
+  import editIcon from "@/assets/navbar/edit_icon.svg"
+
+  import modalHeader from "@/components/modal/modalHeader.vue"
+  import modalFooter from "@/components/modal/modalFooter.vue"
 
   import { ref, onBeforeMount } from 'vue'
   import { Modal } from 'usemodal-vue3'
@@ -12,6 +14,8 @@
 
   let statusMenu = ref(null)
   let idStatusMenu = ref(0)
+
+  const emits = defineEmits('changeMenu')
 
   const updatePhoto = (event) => {
     file.value = event.target.files[0]
@@ -34,6 +38,8 @@
         formState.menu.icon = file.value
         formState.menu.idStatusMenu = idStatusMenu.value
 
+        emits('changeMenu')
+
     } catch (error) {
         console.error(error)
     }
@@ -53,7 +59,7 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = '37%'
+  let modalPaddingHeight = '25vh'
 
   const props = defineProps({
     formContent: Array
@@ -80,151 +86,136 @@
   
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
-      <div class="sticky top-0 z-50 text-white bg-[#015289]">
-          <button @click="isVisible = false" class="cursor-pointer absolute right-3 top-3">
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-          </button>
-          <p class="font-JakartaSans text-2xl font-semibold mx-4 py-2 text-left">Edit Menu</p>
-      </div>
-
-      <main class="modal-box-inner-inner">
-
-        <div class="px-8 text-left">
+      <main>
+        
+        <modalHeader
+          @closeVisibility="isVisible = false"
+          title="Edit Menu"
+        />
   
-          <div class="mb-3">
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                Menu Name<span class="text-red-star">*</span>
-              </label>
-              <input
-              :class="inputStylingClass"
-              v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-          </div>
+        <form @submit.prevent="submitEdit" class="pr-4 modal-box-inner-inner">
   
-          <div class="mb-3">
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                URL<span class="text-red-star">*</span>
-              </label>
-              <input
-              :class="inputStylingClass"
-              v-model="url" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-          </div>
-  
-          <div class="mb-3">
-  
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                Icon<span class="text-red-star">*</span>
-              </label>
-  
-              <div class="flex flex-col">
-  
+          <div class="text-left">
+    
+            <div class="mb-3">
+                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  Menu Name<span class="text-red-star">*</span>
+                </label>
                 <input
                 :class="inputStylingClass"
-                @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-    
-                <h1 class="text-left">
-                  Your current icon = {{ filename }}
-                </h1>
-  
-              </div>
-  
-          </div>
-    
-          <div class="mb-3 text-left">
-              <h1>Parent Menu</h1>
-              <select :class="inputStylingClass">
-                  <option>Travel Management System</option>
-                  <option>Option A</option>
-              </select>
-          </div>
-  
-          <div class="mb-3 text-left">
-              <h1>Status</h1>
-              <select :class="inputStylingClass" v-model="idStatusMenu">
-                  <option v-for="data in statusMenu" :key="data.id" :value="data.code">
-                    {{ data.status }}
-                  </option>
-              </select>
-          </div>
-  
-          <div class="mb-3 text-left">
-                <h1>Company</h1>
-                <vue3-tags-input 
-                  :class="inputStylingClass"
-                  @on-tags-changed="addNewTagField"
-                  :tags="tags"
-                  placeholder="input tags" 
-                  />
-          </div>
-  
-          <div class="mb-3 text-left">
-                <h1>Sort</h1>
-                <select :class="inputStylingClass" v-model="sort">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                    <option>6</option>
-                    <option>7</option>
-                    <option>8</option>
-                    <option>9</option>
-                    <option>10</option>
-                    <option>11</option>
-                    <option>12</option>
-                    <option>13</option>
-                    <option>14</option>
-                    <option>15</option>
-                </select>
-          </div>
-    
-          <div class="flex gap-2 mb-2">
-                <input type="checkbox" v-model="sequence">
-                <h1>Use Sequence</h1>
-          </div>
-  
-          <div class="mb-3" v-if="sequence">
-            
-            <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                  Sequence Code<span class="text-red-star">*</span>
-            </label>
-  
-            <input
-                :class="inputStylingClass"
-                v-model="sequenceCode" 
-                type="text"
-                maxlength="5" 
-                placeholder="Sequence Code" 
-                class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
-                required 
-            />
-  
-          </div>
-    
-        </div>
-  
-        <div class="sticky bottom-2 bg-white py-8 px-4">
-  
-  
-            <div class="flex justify-end gap-4">
-  
-            <label @click="isVisible = !isVisible" class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
-                Cancel
-            </label>
-  
-                <button @click="submitEdit">
-                  <button 
-                  @click="$emit('changeMenu')"
-                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-                  >
-                    Save
-                  </button>
-                </button>
-  
+                v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
             </div>
-        </div>
-
-      </main>
+    
+            <div class="mb-3">
+                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  URL<span class="text-red-star">*</span>
+                </label>
+                <input
+                :class="inputStylingClass"
+                v-model="url" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+            </div>
+    
+            <div class="mb-3">
+    
+                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  Icon<span class="text-red-star">*</span>
+                </label>
+    
+                <div class="flex flex-col">
+    
+                  <input
+                  :class="inputStylingClass"
+                  @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+      
+                  <h1 class="text-left">
+                    Your current icon = {{ filename }}
+                  </h1>
+    
+                </div>
+    
+            </div>
+      
+            <div class="mb-3 text-left">
+                <h1>Parent Menu</h1>
+                <select :class="inputStylingClass">
+                    <option>Travel Management System</option>
+                    <option>Option A</option>
+                </select>
+            </div>
+    
+            <div class="mb-3 text-left">
+                <h1>Status</h1>
+                <select :class="inputStylingClass" v-model="idStatusMenu">
+                    <option v-for="data in statusMenu" :key="data.id" :value="data.code">
+                      {{ data.status }}
+                    </option>
+                </select>
+            </div>
+    
+            <div class="mb-3 text-left">
+                  <h1>Company</h1>
+                  <vue3-tags-input 
+                    :class="inputStylingClass"
+                    @on-tags-changed="addNewTagField"
+                    :tags="tags"
+                    placeholder="input tags" 
+                    />
+            </div>
+    
+            <div class="mb-3 text-left">
+                  <h1>Sort</h1>
+                  <select :class="inputStylingClass" v-model="sort">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                      <option>6</option>
+                      <option>7</option>
+                      <option>8</option>
+                      <option>9</option>
+                      <option>10</option>
+                      <option>11</option>
+                      <option>12</option>
+                      <option>13</option>
+                      <option>14</option>
+                      <option>15</option>
+                  </select>
+            </div>
+      
+            <div class="flex gap-2 mb-2">
+                  <input type="checkbox" v-model="sequence">
+                  <h1>Use Sequence</h1>
+            </div>
+    
+            <div class="mb-3" v-if="sequence">
+              
+              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    Sequence Code<span class="text-red-star">*</span>
+              </label>
+    
+              <input
+                  :class="inputStylingClass"
+                  v-model="sequenceCode" 
+                  type="text"
+                  maxlength="5" 
+                  placeholder="Sequence Code" 
+                  class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
+                  required 
+              />
+    
+            </div>
+      
+          </div>
   
+          <modalFooter
+            class="mt-6 pt-5"
+            @closeEdit="isVisible = false"
+          />
+  
+        </form>
+        
+      </main>
 
   </Modal>
   
@@ -232,8 +223,13 @@
 
 <style scoped>
 
+:deep(.modal-vue3-content) {
+  max-height: 550px !important;
+  overflow-y: auto !important;
+}
+
 .modal-box-inner-inner {
-  --tw-scale-x: 1;
+  --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   height: 500px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -242,11 +238,6 @@
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
-}
-
-:deep(.modal-vue3-content) {
-  max-height: 500px !important;
-
 }
 
 </style>

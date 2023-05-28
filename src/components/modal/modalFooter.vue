@@ -5,7 +5,7 @@
 <template>
     <div class="sticky bottom-0 bg-white">
 
-          <div class="flex justify-end gap-4 mr-6">
+          <div class="flex justify-end gap-4 mr-3">
 
             <label
               @click="$emit('closeEdit')"

@@ -1,8 +1,8 @@
 <script setup>
 import editIcon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
-import modalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
 import { ref, watch } from "vue"
 import { Modal } from "usemodal-vue3"
@@ -58,7 +58,7 @@ const submitEdit = () => {
     
     <main>
   
-      <modalHeaderEdit
+      <modalHeader
         @closeVisibility="isVisible = false"
         title="Edit Flight Class"
       />
@@ -82,7 +82,7 @@ const submitEdit = () => {
 
         </div>
 
-        <modalFooterEdit
+        <modalFooter
           @closeEdit="isVisible = false"
         />
 

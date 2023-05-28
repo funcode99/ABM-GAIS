@@ -36,12 +36,13 @@ export const useFormEditStore = defineStore('add-form', {
             },
             sequence: {
                 sequenceName: '',
+                sequenceSize: 1,
                 recycle: '',
                 menuId: 1,
                 nextValue: 1,
-                sequenceSize: 1,
-                prefix: 1,
-                suffix: 1
+                prefix: '',
+                suffix: '',
+                company: 0
             }
         }
     }

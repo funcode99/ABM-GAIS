@@ -92,6 +92,7 @@ onMounted(() => {
     class="modal-toggle"
     v-model="isVisible"
   />
+
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
@@ -259,6 +260,7 @@ onMounted(() => {
       </main>
     </div>
   </div>
+  
 </template>
 
 <style scoped>

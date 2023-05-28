@@ -10,7 +10,7 @@
     import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
-    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/modalDelete.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
@@ -135,6 +135,7 @@
         prefix: formState.sequence.prefix,
         suffix: formState.sequence.suffix,
         id_menu: formState.sequence.menuId,
+        id_company: formState.sequence.company,
         sequence_size: formState.sequence.sequenceSize
       })
       fetch()
@@ -156,6 +157,7 @@
           prefix: formEditState.sequence.prefix,
           suffix: formEditState.sequence.suffix,
           id_menu: formEditState.sequence.menuId,
+          id_company: formEditState.sequence.company,
           sequence_size: formEditState.sequence.sequenceSize
         })
         fetch()
@@ -234,7 +236,7 @@
                         {{ data.sequence_size }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditSequence @change-sequence="editExistingSequence(data.id)" :formContent="[data.sequence_name, data.prefix, data.suffix, data.sequence_size, data.recycle, data.next_value, data.id_menu]" />
+                        <ModalEditSequence @change-sequence="editExistingSequence(data.id)" :formContent="[data.sequence_name, data.prefix, data.suffix, data.sequence_size, data.recycle, data.next_value, data.id_menu, data.id_company]" />
                         <ModalDelete @confirm-delete="deleteData(data.id)" />
                       </td>
                     </tr>

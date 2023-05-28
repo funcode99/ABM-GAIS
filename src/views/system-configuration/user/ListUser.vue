@@ -6,14 +6,13 @@
 
     import tableContainer from '@/components/table/tableContainer.vue'
     
-    
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import Api from '@/utils/Api'
 
     import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
-    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/modalDelete.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
@@ -74,8 +73,6 @@
         sortedbyASC = true
       }
     }
-
-
 
     const filteredItems = (search) => {
       sortedData.value = instanceArray

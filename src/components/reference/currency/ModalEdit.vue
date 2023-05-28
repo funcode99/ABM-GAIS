@@ -1,8 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg"
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
 import { ref, watch } from "vue"
 import { Modal } from "usemodal-vue3"
@@ -66,7 +66,7 @@ const submitEdit = () => {
     
     <main>
 
-      <modalHeaderEdit
+      <modalHeader
         @closeVisibility="isVisible = false"
         title="Edit Currency"
       />
@@ -121,7 +121,7 @@ const submitEdit = () => {
           />
         </div>
 
-        <ModalFooterEdit
+        <modalFooter
           @closeEdit="isVisible = false"
         />
 

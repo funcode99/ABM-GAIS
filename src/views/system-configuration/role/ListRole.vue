@@ -12,7 +12,7 @@
     import Api from '@/utils/Api'
 
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
-    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/modalDelete.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
 

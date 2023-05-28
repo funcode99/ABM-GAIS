@@ -12,7 +12,9 @@
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
-    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/modalDelete.vue'
+
+    import tableContainer from '@/components/table/tableContainer.vue'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
@@ -57,7 +59,7 @@
     const callApi = async () => {
 
       const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.post('/menu/store', 
       {
         menu: formState.menu.menuName,
@@ -189,10 +191,7 @@
 
       <Sidebar class="flex-none" />
 
-      <!-- slate box -->
-      <div 
-      class="bg-[#e4e4e6] pb-20 pt-10 px-5 w-screen clean-margin ease-in-out duration-500"
-      :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
+      <tableContainer>
 
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
         <TableTopBar title="Menu" @increase-menu="addNewMenu " @do-search="filteredItems" modalAddType="menu" />
@@ -239,26 +238,27 @@
                         <td>
                           {{ data.menu }}
                         </td>
-
-                        <td class="flex justify-center">
-                          <img class="w-16 h-16" :src="data.icon_path" />
-                          <!-- {{ data.parent_id }} -->
+  
+                        <td class="">
+                          <!-- <img class="w-16 h-16" :src="data.icon_path" /> -->
+                          {{ data.parent_id }}
                         </td>
-
+  
                         <td v-if="data.id_status_menu == 1">
                           Active
                         </td>
-
+  
                         <td v-else>
                           Disabled
                         </td>
-
+  
                         <td class="flex flex-wrap justify-center h-full gap-4 relative">
                           <div class="flex items-center absolute top-0 bottom-0">
                             <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon]" />
                             <ModalDelete @confirm-delete="deleteData(data.id)" />
                           </div>
                         </td>
+                        
                       </tr>
     
                       <!-- tr gak boleh di dalam div ternyata, kalo enggak hasil nya bakal berantakan -->
@@ -268,7 +268,7 @@
               </table>
     
               <div v-else>
-
+  
                 <table class="table table-zebra table-compact border h-full w-full rounded-lg">
                   <thead class="text-center font-Montserrat text-sm font-bold h-10">
                       <tr class="">
@@ -287,14 +287,14 @@
                         </th>
                       </tr>
                   </thead>
-
+  
                 </table>
-
+  
                 <div class="text-center py-5">
                   <h1>{{ status }}</h1>
                   <h1>{{ message }}</h1>
                 </div>
-
+  
               </div>
     
             </div>
@@ -316,10 +316,10 @@
                   :show-jump-buttons="true"
                 />
               </div>
-
+  
           </div>
 
-      </div>
+      </tableContainer>
 
     </div>
     

@@ -1,6 +1,6 @@
 <script setup>
-  import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
-  import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
+  import modalHeader from "@/components/modal/modalHeader.vue"
+  import modalFooter from "@/components/modal/modalFooter.vue"
 
   import { Modal } from "usemodal-vue3"
   import Swal from "sweetalert2"
@@ -11,11 +11,11 @@
   let newCurrency = ref("");
   let CurrencySymbol = ref("");
   let CurrencyCode = ref("");
-  const emits = defineEmits(["unlockScrollbar", "currency-saved"]);
   let isVisible = ref(false)
-  let modalPaddingHeight = "25vh"
   let isAdding = ref(false)
-
+  let modalPaddingHeight = "25vh"
+  const emits = defineEmits(["unlockScrollbar", "currency-saved"]);
+  
   const resetInput = () => {
   newCurrency.value = "";
   CurrencySymbol.value = "";
@@ -81,7 +81,7 @@
 
     <main>
 
-      <modalHeaderEdit
+      <modalHeader
         @closeVisibility="isVisible = false"
         title="New Currency"
       />
@@ -139,7 +139,7 @@
             />
           </div>
 
-          <ModalFooterEdit
+          <modalFooter
             @closeEdit="isVisible = false"
           />
 

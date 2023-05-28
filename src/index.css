@@ -37,17 +37,23 @@
   border-color: #015289;
 }
 
+.modal-vue3-wrap div:nth-child(2) {
+  overflow-y: hidden !important;
+}
+
 .modal-vue3-content {
   height: 100% !important;
-  max-height: 600px !important;
+  max-height: 500px !important;
   width: 100% !important;
   max-width: 500px !important;
   
   border-radius: 16px !important;
 
-  overflow: scroll;
   position: relative;
   overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+
+  /* overflow: scroll; */
 }
 
 .modal-vue3-body {
@@ -55,7 +61,7 @@
   background-color: #fff !important;
   overflow: hidden !important;
   padding: 0px 0px !important;
-  max-height: 700px !important;
+  max-height: 100% !important;
   border-radius: 16px;
 
   position: absolute;
@@ -119,16 +125,6 @@
   color: black !important;
   width: 18px !important;
   height: 18px !important;
-}
-
-.modal-box-inner {
-  height: 330px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  overflow-y: auto;
-  overflow-x: hidden;
-  /* overscroll-behavior-y: contain; */
 }
 
 .swal2-icon {
@@ -230,10 +226,6 @@ input[type=radio]:checked {
   position: static;
   left: 0;
   z-index: 2;
-}
-
-.modal-vue3-wrap div:nth-child(2) {
-  overflow-y: hidden !important;
 }
 
 .this {

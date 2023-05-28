@@ -1,16 +1,16 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg";
+  import editicon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
+  import modalHeader from "@/components/modal/modalHeader.vue"
+  import modalFooter from "@/components/modal/modalFooter.vue"
 
-import Api from "@/utils/Api";
+  import Api from "@/utils/Api"
 
-import { ref, onMounted } from "vue";
-import { Modal } from "usemodal-vue3";
+  import { ref, onMounted } from "vue"
+  import { Modal } from "usemodal-vue3"
 
-import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
-let formEditState = useFormEditStore();
+  import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js"
+  let formEditState = useFormEditStore()
 
 let isVisible = ref(false);
 let modalPaddingHeight = "19%";
@@ -95,7 +95,7 @@ const inputStylingClass =
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeaderEdit
+      <modalHeader
         @closeVisibility="isVisible = false"
         title="Edit Brand"
       />
@@ -157,7 +157,7 @@ const inputStylingClass =
           />
         </div>
 
-        <ModalFooterEdit
+        <modalFooter
           @closeEdit="resetForm()"
           @submitEditForm="
             submitEdit();

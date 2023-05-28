@@ -1,8 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg"
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
-import modalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
 import { ref, watch } from "vue"
 import { Modal } from "usemodal-vue3"
@@ -61,7 +61,7 @@ const inputStylingClass =
 
     <main>
 
-      <modalHeaderEdit @closeVisibility="isVisible = false" title="Edit City" />
+      <modalHeader @closeVisibility="isVisible = false" title="Edit City" />
 
       <form @submit.prevent="submitEdit" class="pt-4">
         
@@ -97,7 +97,7 @@ const inputStylingClass =
           />
         </div>
 
-        <modalFooterEdit
+        <modalFooter
           @closeEdit="isVisible = false"
         />
 

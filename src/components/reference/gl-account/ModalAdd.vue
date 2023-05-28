@@ -1,6 +1,6 @@
 <script setup>
-  import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue"
-  import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue"
+  import modalHeader from "@/components/modal/modalHeader.vue"
+  import modalFooter from "@/components/modal/modalFooter.vue"
 
   import { Modal } from "usemodal-vue3"
   import Swal from "sweetalert2"
@@ -77,7 +77,7 @@
 
       <main>
         
-        <modalHeaderEdit
+        <modalHeader
           @closeVisibility="isVisible = false"
           title="New GL Account"
         />
@@ -116,7 +116,7 @@
               />
             </div>
         
-            <ModalFooterEdit
+            <modalFooter
               @closeEdit="isVisible = false"
             />
     

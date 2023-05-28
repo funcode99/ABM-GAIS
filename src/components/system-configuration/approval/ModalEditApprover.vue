@@ -9,7 +9,7 @@ import checkIcon from '@/assets/checkmark.png'
 import closeIcon from '@/assets/close-window.png'
  
 // tiap kali scrollTop error pasti itu karena ref nya belum di import
-import { ref, onBeforeMount, onMounted } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 
 import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 
@@ -22,8 +22,7 @@ import Api from '@/utils/Api'
   })
 
   let isVisible = ref(false)
-  let type = ''
-  let modalPaddingHeight = '37%'
+  let modalPaddingHeight = '25vh'
 
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])
@@ -32,6 +31,7 @@ import Api from '@/utils/Api'
   let idMatrix = ref(props.formContent[5])
 
   let authorities = ref('')
+  const emits = defineEmits('fetchApproval')
 
   let approverLines = ref(props.formContent[4] || [])
   let addAuthoritiesData = ref([])
@@ -40,9 +40,20 @@ import Api from '@/utils/Api'
 
   let dropdownRemoveList = ref([])
 
+  let instanceArrayFetch = []
+
+  const fetch = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/approval/get_approval')
+        instanceArrayFetch = api.data.data
+        // approverLines.value = instanceArray
+  }
+
   const fetchApproverAuthorities = async () => {
+
     const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get('/approval/get_approval_type')
       instanceArray = api.data.data 
       addAuthoritiesData.value = instanceArray
@@ -55,15 +66,31 @@ import Api from '@/utils/Api'
       formEditState.approval.companyId = company.value
       formEditState.approval.menuId = menu.value
       formEditState.approval.codeDocumentId = document.value
-      // formEditState.approval.arrayDetail = approverLines.value
 
       isVisible.value = !isVisible.value
   }
 
-  const saveApproverLines = (data, idx, matrixId) => {
-    console.log(data[idx].id_approval_auth)
-    console.log(data[idx].level)
-    console.log(matrixId)
+  const saveApproverLines = async (data, idx, matrixId) => {
+
+    // console.log(data[idx].id_approval_auth)
+    // console.log(data[idx].level)
+    // console.log(matrixId)
+
+    // console.log(props.formContent[4])
+
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.post('/approval/store_approval_detail', {
+      id_matrix: matrixId,
+      level: data[idx].level,
+      id_approval_auth: data[idx].id_approval_auth
+    })
+    data[idx].isPosted = true
+    console.log('approval telah ditambahkan!')
+
+    // emits('fetchApproval')
+    // console.log(props.formContent[4])
+
   }
 
   let currentAuthoritiesId = ref()
@@ -83,11 +110,35 @@ import Api from '@/utils/Api'
 
   }
 
-  const removeField = (index, fieldType) => {
-          fieldType.splice(index, 1)
-          dropdownRemoveList.value.splice(index-1, 1)
-          dropdownRemoveList.value.splice(index+1, 1)
+  const removeField = async (index, fieldType) => {
+
+    console.log(fieldType[index].id_detail)
+    // console.log(props.formContent[4])
+
+    if(fieldType[index].id_detail) {
+      
+      console.log('masuk ke api')
+      
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.delete(`/approval/delete_data_approval_detail/${fieldType[index].id_detail}`)
+
+      console.log('approval berhasil dihapus')
+      
+    }
+
+    fetch()
+
+    fieldType.splice(index, 1)
+    dropdownRemoveList.value.splice(index-1, 1)
+    dropdownRemoveList.value.splice(index+1, 1)
+
+    // emits('fetchApproval')
+    // console.log(props.formContent[4])
+  
   }
+
+  
 
   const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -115,8 +166,8 @@ import Api from '@/utils/Api'
   }
 
   onBeforeMount(() => {
-  fetchMenu()
-  fetchApproverAuthorities()
+    fetchMenu()
+    fetchApproverAuthorities()
   })
 
 </script>
@@ -127,7 +178,7 @@ import Api from '@/utils/Api'
     <img :src=editIcon alt="">
   </button>
 
-  <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight"> 
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight"> 
   
     <div>
 
@@ -271,12 +322,17 @@ import Api from '@/utils/Api'
                     <input type="text" class="px-2" v-model="input.approverName" />
                   </td>
     
-                  <td v-if="input.isPosted" class="flex flex-wrap gap-4 justify-center">
+                  <!-- awalnya semua akan tampil seperti ini -->
+                  <td v-if="input.isPosted !== false" class="flex flex-wrap gap-4 justify-center">
+                    <button @click="input.isPosted = false">
+                      <img :src="editIcon" class="w-6 h-6" />
+                    </button>
                     <button  @click="removeField(index, approverLines)">
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
                   </td>
-  
+
+                  <!-- saat ingin edit atau add baris baru akan muncul seperti ini -->
                   <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
                     <button @click="saveApproverLines(approverLines, index, idMatrix)">
                       <img :src="checkIcon" class="w-5 h-5" />

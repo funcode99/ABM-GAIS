@@ -8,7 +8,7 @@
     import { ref, computed, onBeforeMount } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
-    import ModalDelete from '@/components/modal/delete/ModalDelete.vue'
+    import ModalDelete from '@/components/modal/modalDelete.vue'
 
     import Api from '@/utils/Api'
 
@@ -146,6 +146,11 @@
         fetch()
       }
     }
+
+    const getData = () => {
+      console.log('mengambil kembali data')
+      fetch()
+    }
   
 </script>
 
@@ -208,7 +213,7 @@
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data.detail, data.detail[index].id_matrix]" />
+                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data.detail, data.detail[index].id_matrix]" />
                       <ModalDelete @confirm-delete="deleteData(data.id)" />
                     </td>
                   </tr>
