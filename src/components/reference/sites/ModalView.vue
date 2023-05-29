@@ -61,11 +61,31 @@ const fetchGetCompany = async () => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
+// //for get warehouse in select
+// const fetchGetWarehouse = async () => {
+//   // const token = JSON.parse(localStorage.getItem("token"));
+//   // Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   // const res = await Api.get("/warehouse/");
+//   // Warehouse.value = res.data.data;
+//   // console.log("ini data warehouse" + JSON.stringify(res.data.data));
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const id_company = "1";
+//   const id_site = "1";
+//   const res = await Api.get(`/warehouse/?id1=${id1}&id2=${id2}`);
+//   Warehouse.value = res.data.data;
+//   // console.log("ini data warehouse" + JSON.stringify(res.data.data));
+// };
+
 //for get warehouse in select
 const fetchGetWarehouse = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/warehouse/");
+  const id_company = "1";
+  const id_site = "1";
+  const res = await Api.get(
+    `/warehouse/?id_company=${id_company}&id_site=${id_site}`
+  );
   Warehouse.value = res.data.data;
   // console.log("ini data warehouse" + JSON.stringify(res.data.data));
 };
@@ -177,7 +197,11 @@ const resetForm = () => {
             disabled
           >
             <option disabled selected>Warehouse</option>
-            <option v-for="warehouse in Warehouse" :value="warehouse.id">
+            <option
+              v-for="warehouse in Warehouse"
+              :value="warehouse.id"
+              disabled
+            >
               {{ warehouse.warehouse_name }}
             </option>
           </select>
