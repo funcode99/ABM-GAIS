@@ -1,6 +1,6 @@
 <script setup>
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { Modal } from "usemodal-vue3";
 
@@ -99,7 +99,7 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeaderEdit @closeVisibility="isVisible = false" title="New Brand" />
+      <modalHeader @closeVisibility="isVisible = false" title="New Brand" />
 
       <form class="pt-4" @submit.prevent="saveBrand">
         <div class="mb-6 w-full px-4">
@@ -155,7 +155,7 @@ watch(isVisible, () => {
           />
         </div>
 
-        <ModalFooterEdit @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>

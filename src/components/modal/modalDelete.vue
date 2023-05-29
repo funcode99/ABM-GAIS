@@ -50,7 +50,6 @@
       
     </div>
 
-
   </Modal>
 
 </template>

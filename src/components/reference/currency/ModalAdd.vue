@@ -137,41 +137,6 @@ watch(isVisible, () => {
             @closeEdit="isVisible = false"
           />
 
-        <div class="mb-6 px-4 w-full">
-          <label
-            for="symbol"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Symbol<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            name="symbol"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Symbol"
-            required
-            v-model="CurrencySymbol"
-            @keyup.enter="$emit('currency-saved')"
-          />
-        </div>
-
-        <div class="mb-6 px-4 w-full">
-          <label
-            for="code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Code<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            name="code"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Code"
-            required
-            v-model="CurrencyCode"
-            @keyup.enter="$emit('currency-saved')"
-          />
-        </div>
-
-        <ModalFooterEdit @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>

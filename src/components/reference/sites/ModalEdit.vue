@@ -1,8 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
-import ModalFooterEdit from "@/components/modal/edit/ModalFooterEdit.vue";
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import Api from "@/utils/Api";
 
@@ -91,7 +91,7 @@ const resetForm = () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeaderEdit
+      <modalHeader
         @closeVisibility="
           isVisible = false;
           resetForm();
@@ -150,7 +150,7 @@ const resetForm = () => {
           />
         </div>
 
-        <ModalFooterEdit
+        <modalFooter
           @closeEdit="
             isVisible = false;
             resetForm();

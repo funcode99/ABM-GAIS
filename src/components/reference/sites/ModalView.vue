@@ -1,7 +1,7 @@
 <script setup>
 import iconview from "@/assets/view_icon.svg";
 
-import modalHeaderEdit from "@/components/modal/edit/ModalHeaderEdit.vue";
+import modalHeader from "@/components/modal/modalHeader.vue";
 
 import Api from "@/utils/Api";
 
@@ -90,7 +90,7 @@ const resetForm = () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeaderEdit
+      <modalHeader
         @closeVisibility="
           isVisible = false;
           resetForm();

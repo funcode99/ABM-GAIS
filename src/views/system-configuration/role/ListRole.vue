@@ -12,9 +12,12 @@
     import Api from '@/utils/Api'
 
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
-    import ModalDelete from '@/components/modal/modalDelete.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
+
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import icondanger from "@/assets/Danger.png"
+    import iconClose from "@/assets/navbar/icon_close.svg"
 
     import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
@@ -47,14 +50,55 @@
     }
 
     const deleteData = (event) => {
-      Api.delete(`/role/delete_data/${event}`)
-      fetch()
-      if (sortedData.value.length == 1) {
-        // router.go()
-        fetch()
-      } else {
-        fetch()
-      }
+
+
+      Swal.fire({
+        title:
+          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+        iconHtml: `<img src="${icondanger}" />`,
+        showCloseButton: true,
+        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+        showCancelButton: true,
+        buttonsStyling: false,
+        cancelButtonText: "Cancel",
+        customClass: {
+          cancelButton: "swal-cancel-button",
+          confirmButton: "swal-confirm-button",
+        },
+        reverseButtons: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      })
+        
+      .then((result) => {
+        if (result.isConfirmed) {
+          Api.delete(`/role/delete_data/${event}`)
+          .then((res) => {
+
+            Swal.fire({
+              title: "Successfully",
+              text: "Data has been deleted.",
+              icon: "success",
+              showCancelButton: false,
+              confirmButtonColor: "#015289",
+              showConfirmButton: false,
+              timer: 1500,
+            });
+
+            if (sortedData.value.length == 1) {
+              fetch()
+            } else {
+              fetch()
+            }
+
+          })
+        } else {
+          return
+        }
+      })
+
     }
 
     const editRole = async (data) => {
@@ -214,7 +258,9 @@
                     <!-- kalo tanpa value isi nya array kosong -->
                     <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" />
                     <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name]" />
-                    <ModalDelete @confirm-delete="deleteData(data.id)" />
+                    <button @click="deleteData(data.id)">
+                      <img :src="deleteicon" class="w-6 h-6" />
+                    </button>
                   </td>
                 </tr>
 

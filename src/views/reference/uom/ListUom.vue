@@ -10,8 +10,8 @@ import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
 import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 
@@ -217,8 +217,9 @@ const deleteUom = async (id) => {
     } else {
       return;
     }
-  });
-};
+  })
+
+}
 
 //for export
 const exportToExcel = () => {
