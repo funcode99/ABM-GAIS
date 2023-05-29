@@ -231,7 +231,7 @@ onMounted(() => {
 const fetchSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/");
+  const res = await Api.get("/site/get_data");
   // console.log(res.data.data);
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
