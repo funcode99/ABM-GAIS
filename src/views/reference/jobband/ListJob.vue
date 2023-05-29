@@ -181,7 +181,7 @@ const fetchJobBand = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/job_band/");
   // console.log(res.data.data);
-  instanceArray = res.data.data;
+  instanceArray = res.data.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 };

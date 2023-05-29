@@ -179,7 +179,7 @@ const fetchZona = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/zona/get/");
-  instanceArray = res.data.data;
+  instanceArray = res.data.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 };
@@ -441,7 +441,7 @@ const exportToExcel = () => {
                   <input type="checkbox" name="checks" />
                 </td>
                 <td style="width: 5%">{{ data.no }}</td>
-                <td style="width: 20%">{{ data.zona_name }}</td>
+                <td style="width: 20%">{{ data.zona }}</td>
                 <td style="width: 50%">
                   <span
                     :class="[
@@ -449,13 +449,7 @@ const exportToExcel = () => {
                       showFullText[data.id] ? 'show-full' : '',
                     ]"
                   >
-                    <span
-                      v-for="(city, cityIndex) in data.city"
-                      :key="cityIndex"
-                    >
-                      {{ city.city_name }}
-                      <span v-if="cityIndex !== data.city.length - 1">, </span>
-                    </span>
+                    {{ data.city_name }}
                   </span>
                 </td>
                 <td class="flex flex-wrap gap-4 justify-center">
