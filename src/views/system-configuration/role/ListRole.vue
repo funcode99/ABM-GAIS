@@ -102,6 +102,7 @@
     }
 
     const editRole = async (data) => {
+        console.log('masuk ke edit role')
         editRoleDataId.value = data
         setTimeout(callEditApi, 500)
     }
@@ -109,7 +110,7 @@
     const callEditApi = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        await Api.post(`/role/update_data/${editRoleDataId.value}`, {
+        let api = await Api.post(`/role/update_data/${editRoleDataId.value}`, {
           role_name: formEditState.role.roleName
         })
         fetchGetActive()

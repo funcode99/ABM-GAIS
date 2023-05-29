@@ -125,6 +125,14 @@
         url: formState.menu.url,
         icon: formState.menu.icon
       })
+      console.log(api)
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
+        })
       fetch()
     }
 

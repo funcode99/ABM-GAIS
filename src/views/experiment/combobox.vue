@@ -1,40 +1,57 @@
 <script setup>
-  
-import { ref, computed } from 'vue'
+    import { ref, computed, onBeforeMount } from 'vue'
 
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxButton,
-  ComboboxOptions,
-  ComboboxOption,
-  TransitionRoot,
-} from '@headlessui/vue'
+    import Api from "@/utils/Api";
 
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
+    import {
+    Combobox,
+    ComboboxInput,
+    ComboboxButton,
+    ComboboxOptions,
+    ComboboxOption,
+    TransitionRoot,
+    } from '@headlessui/vue'
 
-const people = [
-  { id: 1, name: 'Wade Cooper' },
-  { id: 2, name: 'Arlene Mccoy' },
-  { id: 3, name: 'Devon Webb' },
-  { id: 4, name: 'Tom Cook' },
-  { id: 5, name: 'Tanya Fox' },
-  { id: 6, name: 'Hellen Schmidt' },
-]
+    import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/20/solid'
 
-let selected = ref(people[0])
-let query = ref('')
 
-let filteredPeople = computed(() =>
-  query.value === ''
-    ? people
-    : people.filter((person) =>
-        person.name
-          .toLowerCase()
-          .replace(/\s+/g, '')
-          .includes(query.value.toLowerCase().replace(/\s+/g, ''))
-      )
-)
+    let companyData = ref([]);
+
+    const fetchCompany = async () => {
+        const token = JSON.parse(localStorage.getItem("token"))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const res = await Api.get("/company/get")
+        companyData.value = res.data.data
+        console.log(companyData.value)
+    }
+
+    const people = [
+    { id: 1, name: 'Wade Cooper' },
+    { id: 2, name: 'Arlene Mccoy' },
+    { id: 3, name: 'Devon Webb' },
+    { id: 4, name: 'Tom Cook' },
+    { id: 5, name: 'Tanya Fox' },
+    { id: 6, name: 'Hellen Schmidt' },
+    ]
+
+    let filteredPeople = computed(() =>
+    query.value === ''
+        ? companyData.value
+        : companyData.value.filter((person) =>
+            person.company_name
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .includes(query.value.toLowerCase().replace(/\s+/g, ''))
+        )
+    )
+
+    onBeforeMount(() => {
+        fetchCompany()
+    })
+
+    let selected = ref(companyData[0])
+    let query = ref('')
+
 </script>
 
 <template>
@@ -48,11 +65,20 @@ let filteredPeople = computed(() =>
           <div
             class="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm"
           >
+            
+            <vue3-tags-input 
+                :class="inputStylingClass"
+                @on-tags-changed="addNewTagField"
+                :tags="tags"
+                placeholder="input tags" 
+            />
+
             <ComboboxInput
               class="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-              :displayValue="(person) => person.name"
+              :displayValue="(person) => person.company_name"
               @change="query = $event.target.value"
             />
+
             <ComboboxButton
               class="absolute inset-y-0 right-0 flex items-center pr-2"
             >
@@ -61,6 +87,7 @@ let filteredPeople = computed(() =>
                 aria-hidden="true"
               />
             </ComboboxButton>
+
           </div>
 
             <TransitionRoot leave="transition ease-in duration-100"
@@ -96,7 +123,7 @@ let filteredPeople = computed(() =>
                         class="block truncate"
                         :class="{ 'font-medium': selected, 'font-normal': !selected }"
                     >
-                        {{ person.name }}
+                        {{ person.company_name }}
                     </span>
                     <span
                         v-if="selected"
@@ -117,6 +144,8 @@ let filteredPeople = computed(() =>
       </Combobox>
 
     </div>
+
+    <!-- {{ companyData }} -->
 
   </template>
   

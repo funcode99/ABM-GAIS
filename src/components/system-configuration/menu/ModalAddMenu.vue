@@ -36,6 +36,7 @@
   const submit = () => {
 
     try {     
+      
         if(sequence) {
           sequence.value = 1
         } else {
@@ -52,15 +53,16 @@
         formState.menu.idStatusMenu = idStatusMenu.value
         // formState.menu.parentId = idParent.value
 
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Your work has been saved",
-          showConfirmButton: false,
-          timer: 1500,
-        })
+        // Swal.fire({
+        //   position: "center",
+        //   icon: "success",
+        //   title: "Your work has been saved",
+        //   showConfirmButton: false,
+        //   timer: 1500,
+        // })
 
         emits('addMenu')
+        // isVisible.value = false
 
     } catch (error) {
         console.error(error)

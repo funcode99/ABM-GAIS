@@ -258,7 +258,7 @@
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data.detail]" />
+                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data?.detail, index]" />
                       <!-- approval authorities nya gaboleh kosong, karena akan dikirim sebagai props -->
                       <!-- {{ index }} -->
                      <!-- {{ data.detail[index] }} -->

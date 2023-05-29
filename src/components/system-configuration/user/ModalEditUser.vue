@@ -67,7 +67,7 @@
     const fetchSite = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/site')
+      const api = await Api.get('/site/get_data')
       responseSiteArray.value = api.data.data
     }
 

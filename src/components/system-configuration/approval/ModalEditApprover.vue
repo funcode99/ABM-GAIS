@@ -30,7 +30,17 @@
   let company = ref(props.formContent[1])
   let menu = ref(props.formContent[2])
   let document = ref(props.formContent[3])
-  let idMatrix = ref(props.formContent[5])
+  let idMatrix = props.formContent[4]
+  let indexNumber = ref(props.formContent[5])
+  let idMatrixActual = ref(null)
+  
+    if(props.formContent[4] == undefined) {
+      console.log('array detail tidak ada')
+    } else {
+        idMatrixActual.value = idMatrix[0].id_matrix
+        // 3, 26 adalah id_detail nya
+        console.log(idMatrixActual.value)
+    }
 
   let authorities = ref('')
   const emits = defineEmits('fetchApproval')
@@ -68,17 +78,10 @@
       formEditState.approval.companyId = company.value
       formEditState.approval.menuId = menu.value
       formEditState.approval.codeDocumentId = document.value
-
-      isVisible.value = !isVisible.value
+      // isVisible.value = !isVisible.value
   }
 
   const saveApproverLines = async (data, idx, matrixId) => {
-
-    // console.log(data[idx].id_approval_auth)
-    // console.log(data[idx].level)
-    // console.log(matrixId)
-
-    // console.log(props.formContent[4])
 
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -87,12 +90,15 @@
       level: data[idx].level,
       id_approval_auth: data[idx].id_approval_auth
     })
-    data[idx].isPosted = true
+
+    data[idx].isPosted = undefined
     console.log('approval telah ditambahkan!')
 
-    // emits('fetchApproval')
-    // console.log(props.formContent[4])
+  }
 
+  const editApproverLines = async () => {
+    console.log('masuk ke edit approver lines')
+    // emits('editApprover')
   }
 
   let currentAuthoritiesId = ref()
@@ -114,7 +120,7 @@
 
   const removeField = async (index, fieldType) => {
 
-    console.log(fieldType[index].id_detail)
+    // console.log(fieldType[index].id_detail)
     // console.log(props.formContent[4])
 
     if(fieldType[index].id_detail) {
@@ -257,7 +263,8 @@
           
         </div>
 
-        <div >
+        <!-- approver lines area -->
+        <div>
 
           <h1 class="font-medium text-left">Approver Lines <span>*</span> </h1>
           <hr class="border border-black">
@@ -318,10 +325,11 @@
                   <td>
                     <input type="text" class="px-2" v-model="input.approverName" />
                   </td>
-    
-                  <!-- awalnya semua akan tampil seperti ini -->
-                  <td v-if="input.isPosted !== false" class="flex flex-wrap gap-4 justify-center">
-                    <button @click="input.isPosted = false">
+ 
+                  <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
+                  <td v-if="input.isPosted === undefined && input.isEdit != false" class="flex flex-wrap gap-4 justify-center">
+                    edit
+                    <button @click="input.isEdit = false">
                       <img :src="editIcon" class="w-6 h-6" />
                     </button>
                     <button  @click="removeField(index, approverLines)">
@@ -329,9 +337,32 @@
                     </button>
                   </td>
 
-                  <!-- saat ingin edit atau add baris baru akan muncul seperti ini -->
+                  <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
                   <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
-                    <button @click="saveApproverLines(approverLines, index, idMatrix)">
+                    add
+                    <button @click="input.isPosted = true">
+                      <img :src="editIcon" class="w-6 h-6" />
+                    </button>
+                    <button @click="removeField(index, approverLines)">
+                      <img :src="deleteicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+
+                  <!-- berisi fungsi untuk mengganti -->
+                  <td v-if="input.isEdit === false" class="flex flex-wrap gap-4 justify-center">
+                    fungsi edit
+                    <button @click="editApproverLines() ">
+                      <img :src="checkIcon" class="w-5 h-5" />
+                    </button>
+                    <button @click="removeField(index, approverLines)">
+                      <img :src="closeIcon" class="w-5 h-5" />
+                    </button>
+                  </td>
+
+                  <!-- berisi fungsi untuk menambahkan -->
+                  <td v-if="input.isPosted === true" class="flex flex-wrap gap-4 justify-center">
+                    fungsi add
+                    <button @click="saveApproverLines(approverLines, index, idMatrixActual)">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
                     <button @click="removeField(index, approverLines)">
@@ -361,25 +392,6 @@
           class="mt-3 pt-2 pb-5"
           @closeEdit="isVisible = false"
         />
-
-        <!-- <div class="sticky bottom-0 bg-white pt-2 pb-5 px-4 pr-3">
-            <div className="divider m-0 pb-4"></div>
-            <div class="flex justify-end gap-4">
-              <button
-              @click="isVisible = false"
-                class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-                >
-                Cancel
-              </button>
-              <button @click="saveField">
-                <button @click="$emit('editApprover')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                  Save
-                </button>
-              </button>
-            </div>
-        </div> -->
-
-
 
       </form>
 

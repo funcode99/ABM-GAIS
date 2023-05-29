@@ -20,16 +20,13 @@
   let newRole = ref('')
 
   const submitRole = () => {
+    // isAdding.value = true
     isVisible.value = false
+
+    // saat isVisible diubah gak langsung direset
+    // console.log(newRole.value)
     formState.role.roleName = newRole.value
-    Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Your work has been saved",
-        showConfirmButton: false,
-        timer: 1500,
-    })
-    $emits('addRole')
+    emits('addRole')
   }
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
@@ -42,7 +39,9 @@
     if(isAdding.value == true) {
       isAdding.value = false
     } else {
+      console.log(newRole.value)
       resetInput()
+      console.log(newRole.value)
     }
   })
 
@@ -74,7 +73,6 @@
                   >Role<span class="text-red">*</span></label>
                 <input
                   @keydown.enter="submitRole"
-                  @keyup.enter="$emit('addRole')"
                   v-model="newRole"
                   type="text"
                   id="name"
@@ -94,17 +92,6 @@
           </main>
 
         </Modal>
-
-        <!-- <modalHeader title="New Role" forLabel="add-role-modal" /> -->
-
-        <!-- <modalBody>
-
-          <div class="py-3 px-8 ">
-          </div>
-  
-          <modalFooter forLabel="add-role-modal" @add-something="$emit('addRole')" @do-something="submitRole" />
-        
-        </modalBody> -->
 
 
 </template>
