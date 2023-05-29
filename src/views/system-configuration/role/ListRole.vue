@@ -225,10 +225,17 @@
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
 
         <div class="relative w-full">
+
           <table v-if="sortedData.length > 0"  class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
 
             <thead class="text-center font-Montserrat text-sm font-bold h-10">
               <tr class="">
+
+                <th>
+                  <div class="flex justify-center">
+                    <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                  </div>
+                </th>
 
                 <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
                   <span class="flex justify-center items-center gap-1">
@@ -249,6 +256,11 @@
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
+                  
+                  <td>
+                    <input type="checkbox" name="chk">
+                  </td>
+
                   <td>
                     {{ index + 1 + (paginateIndex * pageMultiplierReactive) }}                  </td>
                   <td>

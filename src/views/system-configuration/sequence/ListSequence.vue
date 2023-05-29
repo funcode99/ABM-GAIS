@@ -43,7 +43,7 @@
     const onChangePage = (pageOfItem) => {
       paginateIndex.value = pageOfItem - 1;
       showingValue.value = pageOfItem;
-    };
+    }
 
     const selectAll = (checkValue) => { 
       const checkLead = checkValue
@@ -236,7 +236,9 @@
               <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
   
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                  
                   <tr class="">
+
                     <th>
                       <div class="flex justify-center">
                         <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">

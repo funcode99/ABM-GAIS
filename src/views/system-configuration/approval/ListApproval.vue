@@ -190,15 +190,6 @@
         }
       })
 
-
-      // Api.delete(`/approval/delete_data_approval/${event}`)
-      // fetch()
-      // if (sortedData.value.length == 1) {
-      //   router.go()
-      // } else {
-      //   fetch()
-      // }
-
     }
 
     const getData = () => {

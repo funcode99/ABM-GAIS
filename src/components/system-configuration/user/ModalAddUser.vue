@@ -290,7 +290,6 @@
                   class="mt-6 pt-5"
                   @closeEdit="isVisible = false"
                 />
-
           
         </form>
 
