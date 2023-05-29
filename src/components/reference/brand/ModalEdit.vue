@@ -1,15 +1,15 @@
 <script setup>
-  import editicon from "@/assets/navbar/edit_icon.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
 
-  import modalHeader from "@/components/modal/modalHeader.vue"
-  import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
-  import Api from "@/utils/Api"
+import Api from "@/utils/Api";
 
-  import { ref, onMounted } from "vue"
-  import { Modal } from "usemodal-vue3"
+import { ref, onMounted, watch } from "vue";
+import { Modal } from "usemodal-vue3";
 
-  import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js"
+import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
 
 const emits = defineEmits(["unlockScrollbar", "changeBrand"]);
 
@@ -109,83 +109,76 @@ const resetForm = () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-
-      <modalHeader
-        @closeVisibility="isVisible = false"
-      />
+      <modalHeader @closeVisibility="isVisible = false" />
 
       <form>
-        
-          <div class="mb-6 text-start w-full px-4">
-            <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              for="company"
+        <div class="mb-6 text-start w-full px-4">
+          <label
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            for="company"
+          >
+            Company
+          </label>
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            required
+            v-model="selectedCompanyId"
+          >
+            <option disabled selected>Company</option>
+            <option
+              v-for="company in Company"
+              :value="company.id"
+              :key="company.id"
             >
-              Company
-            </label>
-            <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                required
-                v-model="selectedCompanyId"
-              >
-                <option disabled selected>Company</option>
-                <option
-                  v-for="company in Company"
-                  :value="company.id"
-                  :key="company.id"
-                >
-                  {{ company.company_name }}
-                </option>
-            </select>
-          </div>
-  
-          <div class="mb-6 text-start w-full px-4">
-            <label
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              for="site"
-            >
-              Site<span class="text-red">*</span>
-            </label>
-  
-            <select
-              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedSiteId"
-            >
-              <option disabled selected>Site</option>
-              <option v-for="site in Site" :value="site.id" :key="site.id">
-                {{ site.site_name }}
-              </option>
-            </select>
-          </div>
-  
-          <div class="mb-6 w-full px-4">
-            <label
-              for="brand"
-              class="block mb-2 font-JakartaSans font-medium text-sm text-start"
-              >Brand Name<span class="text-red">*</span></label
-            >
-            <input
-              @keydown.enter="submitEdit"
-              v-model="currentbrandName"
-              type="text"
-              id="name"
-              :class="inputStylingClass"
-              required
-            />
-          </div>
-  
-          <modalFooter
-            @closeEdit="resetForm()"
-            @submitEditForm="
-              submitEdit();
-              $emit('changeBrand');
-            "
+              {{ company.company_name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-6 text-start w-full px-4">
+          <label
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            for="site"
+          >
+            Site<span class="text-red">*</span>
+          </label>
+
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            required
+            v-model="selectedSiteId"
+          >
+            <option disabled selected>Site</option>
+            <option v-for="site in Site" :value="site.id" :key="site.id">
+              {{ site.site_name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-6 w-full px-4">
+          <label
+            for="brand"
+            class="block mb-2 font-JakartaSans font-medium text-sm text-start"
+            >Brand Name<span class="text-red">*</span></label
+          >
+          <input
+            @keydown.enter="submitEdit"
+            v-model="currentbrandName"
+            type="text"
+            id="name"
+            :class="inputStylingClass"
+            required
           />
+        </div>
 
+        <modalFooter
+          @closeEdit="resetForm()"
+          @submitEditForm="
+            submitEdit();
+            $emit('changeBrand');
+          "
+        />
       </form>
-
-
     </main>
   </Modal>
 </template>

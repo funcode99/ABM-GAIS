@@ -67,7 +67,7 @@ const fetchGetWarehouse = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/warehouse/");
   Warehouse.value = res.data.data;
-  console.log("ini data warehouse" + JSON.stringify(res.data.data));
+  // console.log("ini data warehouse" + JSON.stringify(res.data.data));
 };
 
 onMounted(() => {
