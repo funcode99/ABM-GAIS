@@ -2,9 +2,26 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
+import Api from "@/utils/Api";
+
+import { ref, onMounted, watch } from "vue";
+
 const emits = defineEmits(["unlockScrollbar"]);
-//code for tags
-import { ref } from "vue";
+let selectedCompany = ref("Company");
+let Company = ref("");
+
+//for get company in input
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+});
 
 const tags = ref([]);
 
@@ -59,6 +76,24 @@ function removeLastTag(event) {
 
       <main class="modal-box-inner-zona">
         <form class="pt-4">
+          <div class="mb-6 w-full px-4 text-start">
+            <label
+              for="company"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Company<span class="text-red">*</span></label
+            >
+            <select
+              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              required
+              v-model="selectedCompany"
+            >
+              <option disabled selected>Company</option>
+              <option v-for="company in Company" :value="company.id">
+                {{ company.company_name }}
+              </option>
+            </select>
+          </div>
+
           <div class="mb-6 w-full px-4 text-start">
             <label
               for="zona"
