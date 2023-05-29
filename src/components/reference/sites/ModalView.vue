@@ -23,6 +23,8 @@ let siteName = ref("");
 let siteIdCompany = ref("");
 let siteCode = ref();
 let selectedCompanyId = ref(props.formContent[1] || null);
+let Warehouse = ref("");
+let selectedWarehouse = ref("Warehouse");
 
 const props = defineProps({
   formContent: Array,
@@ -59,8 +61,18 @@ const fetchGetCompany = async () => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
+//for get warehouse in select
+const fetchGetWarehouse = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/warehouse/");
+  Warehouse.value = res.data.data;
+  console.log("ini data warehouse" + JSON.stringify(res.data.data));
+};
+
 onMounted(() => {
   fetchGetCompany();
+  fetchGetWarehouse();
 });
 
 const inputStylingClass =
@@ -95,7 +107,7 @@ const resetForm = () => {
           isVisible = false;
           resetForm();
         "
-        title="Edit Site"
+        title="View Site"
       />
 
       <form class="pt-4" @submit.prevent="submitEdit">
@@ -151,6 +163,25 @@ const resetForm = () => {
             disabled
           />
         </div>
+
+        <div class="mb-6 text-start w-full px-4">
+          <label
+            for="warehouse"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Warehouse<span class="text-red">*</span></label
+          >
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            required
+            v-model="selectedWarehouse"
+            disabled
+          >
+            <option disabled selected>Warehouse</option>
+            <option v-for="warehouse in Warehouse" :value="warehouse.id">
+              {{ warehouse.warehouse_name }}
+            </option>
+          </select>
+        </div>
       </form>
     </main>
   </Modal>
@@ -158,7 +189,7 @@ const resetForm = () => {
 
 <style scoped>
 :deep(.modal-vue3-content) {
-  max-height: 330px !important;
+  max-height: 500px !important;
   max-width: 510px !important;
 }
 </style>
