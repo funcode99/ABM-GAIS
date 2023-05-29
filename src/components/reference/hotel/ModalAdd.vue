@@ -117,7 +117,11 @@ watch(isVisible, () => {
     <main>
       <modalHeader @closeVisibility="isVisible = false" title="New Hotel" />
 
-      <form class="pt-4" @submit.prevent="saveHotel" @keydown.enter="saveHotel">
+      <form
+        class="pt-4 modal-box-inner-inner"
+        @submit.prevent="saveHotel"
+        @keydown.enter="saveHotel"
+      >
         <div class="mb-6 px-4 w-full">
           <label
             for="hotel_code"
@@ -259,7 +263,7 @@ watch(isVisible, () => {
           </select>
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-6" />
       </form>
     </main>
   </Modal>
@@ -269,5 +273,17 @@ watch(isVisible, () => {
 :deep(.modal-vue3-content) {
   max-height: 400px !important;
   max-width: 510px !important;
+}
+
+.modal-box-inner-inner {
+  max-height: 370px !important;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 </style>
