@@ -3,18 +3,28 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
-import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
+// import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
+// import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
-import employeedata from "@/utils/Api/reference/employeedata.js";
+import Swal from "sweetalert2";
 
-import { ref, onBeforeMount, computed } from "vue";
+import Api from "@/utils/Api";
+
+import { Workbook } from "exceljs";
+
+import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
@@ -25,28 +35,32 @@ let sortedData = ref([]);
 const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
+let Company = ref("");
 let lengthCounter = 0;
-let lockScrollbar = ref(false);
+let sortAscending = true;
+let sortedDataReactive = computed(() => sortedData.value);
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
-let showingValue = ref(1)
-let pageMultiplier = ref(10)
-let pageMultiplierReactive = computed(() => pageMultiplier.value)
-let paginateIndex = ref(0)
+let showingValue = ref(1);
+let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1
-  showingValue.value = pageOfItem
+  paginateIndex.value = pageOfItem - 1;
+  showingValue.value = pageOfItem;
 };
 
 //for filter & reset button
 const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
+  if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
+      (item) => item.id_company === selectedCompany.value
     );
   }
 };
@@ -58,30 +72,30 @@ const resetData = () => {
 };
 
 //for check & uncheck all
-const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
-    }
-  } else {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
-    }
-  }
-};
+// const selectAll = (checkValue) => {
+//   const checkList = checkValue;
+//   if (checkList == true) {
+//     let check = document.getElementsByName("checks");
+//     for (let i = 0; i < check.length; i++) {
+//       if (check[i].type == "checkbox") check[i].checked = true;
+//     }
+//   } else {
+//     let check = document.getElementsByName("checks");
+//     for (let i = 0; i < check.length; i++) {
+//       if (check[i].type == "checkbox") check[i].checked = false;
+//     }
+//   }
+// };
 
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "SN", jsonData: "sn" },
-  { Id: 3, title: "Name", jsonData: "name" },
-  { Id: 4, title: "Gender", jsonData: "gender" },
+  { Id: 2, title: "SN", jsonData: "sn_employee" },
+  { Id: 3, title: "Name", jsonData: "employee_name" },
+  { Id: 4, title: "Gender", jsonData: "jenkel" },
   { Id: 5, title: "Email", jsonData: "email" },
   { Id: 6, title: "Phone Number", jsonData: "phone_number" },
-  { Id: 7, title: "Actions" },
+  // { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -97,7 +111,7 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = employeedata;
+  fetchEmployee();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -106,11 +120,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.sn.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.sn_employee.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.employee_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.sn.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.sn_employee.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.employee_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -121,31 +135,137 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+onMounted(() => {
+  fetchGetCompany();
+});
+
+// get all employee
+const fetchEmployee = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/employee/get/");
+  // console.log("ini data employe" + JSON.stringify(res.data.data.data));
+  instanceArray = res.data.data.data;
+  // console.log("ini data instance array" + JSON.stringify(instanceArray));
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+//delete employee
+// const deleteBrand = async (id) => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+//   Swal.fire({
+//     title:
+//       "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+//     html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+//     iconHtml: `<img src="${icondanger}" />`,
+//     showCloseButton: true,
+//     closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+//     showCancelButton: true,
+//     buttonsStyling: false,
+//     cancelButtonText: "Cancel",
+//     customClass: {
+//       cancelButton: "swal-cancel-button",
+//       confirmButton: "swal-confirm-button",
+//     },
+//     reverseButtons: true,
+//     confirmButtonColor: "#3085d6",
+//     cancelButtonColor: "#d33",
+//     confirmButtonText: "Yes",
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       Api.delete(`/employee/delete_data/${id}`).then((res) => {
+//         Swal.fire({
+//           title: "Successfully",
+//           text: "Employee has been deleted.",
+//           icon: "success",
+//           showCancelButton: false,
+//           confirmButtonColor: "#015289",
+//           showConfirmButton: false,
+//           timer: 1500,
+//         });
+//         fetchBrand();
+//       });
+//     } else {
+//       return;
+//     }
+//   });
+// };
+
+//for export
+// const exportToExcel = () => {
+//   const workbook = new Workbook();
+//   const worksheet = workbook.addWorksheet("Employee Data");
+
+//   const tableHead = [
+//     { title: "Nomor" },
+//     { title: "ID" },
+//     { title: "SN" },
+//     { title: "Name" },
+//     { title: "Gender" },
+//     { title: "Email" },
+//     { title: "Phone" },
+//   ];
+
+//   // Menambahkan header kolom
+//   tableHead.forEach((column, index) => {
+//     worksheet.getCell(1, index + 1).value = column.title;
+//   });
+
+//   // Menambahkan data ke baris-baris selanjutnya
+//   sortedDataReactive.value.forEach((data, rowIndex) => {
+//     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+//     worksheet.getCell(rowIndex + 2, 2).value = data.id;
+//     worksheet.getCell(rowIndex + 2, 3).value = data.sn_employee;
+//     worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
+//     worksheet.getCell(rowIndex + 2, 5).value = data.jenkel;
+//     worksheet.getCell(rowIndex + 2, 6).value = data.email;
+//     worksheet.getCell(rowIndex + 2, 7).value = data.phone_number;
+//   });
+
+//   // Menyimpan workbook menjadi file Excel
+//   workbook.xlsx.writeBuffer().then((buffer) => {
+//     const blob = new Blob([buffer], {
+//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+//     });
+//     const url = URL.createObjectURL(blob);
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = "employee_data.xlsx";
+//     a.click();
+//     URL.revokeObjectURL(url);
+//   });
+// };
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full this"
-    :class="lockScrollbar === true ? 'fixed' : ''"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white rounded-t-xl custom-card">
+      <tableContainer>
+        <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div
+          <!-- <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
-            <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
+            <p
+              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+            >
               Employee
             </p>
             <div class="flex gap-4">
@@ -156,14 +276,13 @@ const getSessionForSidebar = () => {
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
             </div>
-          </div>
+          </div> -->
 
           <!-- SORT & SEARCH -->
           <div
-            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4"
+            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 pt-4"
           >
             <div class="flex flex-wrap items-center gap-4">
-
               <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
@@ -175,8 +294,8 @@ const getSessionForSidebar = () => {
                   v-model="selectedCompany"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.company }}
+                  <option v-for="company in Company" :key="company.id">
+                    {{ company.company_name }}
                   </option>
                 </select>
               </div>
@@ -250,71 +369,121 @@ const getSessionForSidebar = () => {
           </div>
 
           <!-- TABLE -->
-          <div
-            class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
-          >
-            <div class="block overflow-x-auto">
-              <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
-              >
-                <thead
-                  class="text-center font-JakartaSans text-sm font-bold h-10"
+          <tableData v-if="sortedData.length > 0">
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <!-- <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th> -->
+
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
                 >
-                  <tr>
-                    <th>
-                      <div class="flex justify-center">
-                        <input
-                          type="checkbox"
-                          name="checked"
-                          @click="selectAll((checkList = !checkList))"
-                        />
-                      </div>
-                    </th>
+                  <span class="flex justify-center items-center gap-1">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </span>
+                </th>
+              </tr>
+            </thead>
 
-                    <th
-                      v-for="data in tableHead"
-                      :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer"
-                      @click="sortList(`${data.jsonData}`)"
-                    >
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }}
-                        <button>
-                          <img :src="arrowicon" class="w-[9px] h-3" />
-                        </button>
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr
-                    class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
-                    :key="data.no"
+            <tbody>
+              <tr
+                class="font-JakartaSans font-normal text-sm"
+                v-for="data in sortedData.slice(
+                  paginateIndex * pageMultiplierReactive,
+                  (paginateIndex + 1) * pageMultiplierReactive
+                )"
+                :key="data.id"
+              >
+                <!-- <td style="width: 5%">
+                  <input type="checkbox" name="checks" />
+                </td> -->
+                <td style="width: 5%">{{ data.no }}</td>
+                <td style="width: 10%">{{ data.sn_employee }}</td>
+                <td style="width: 40%">
+                  <span
+                    :class="[
+                      'readmore-text',
+                      showFullText[data.id] ? 'show-full' : '',
+                    ]"
                   >
-                    <td>
-                      <input type="checkbox" name="checks" />
-                    </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.sn }}</td>
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.gender }}</td>
-                    <td>{{ data.email }}</td>
-                    <td>{{ data.phone_number }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
-                      <button>
-                        <img :src="deleteicon" class="w-6 h-6" />
+                    {{ data.employee_name }}
+                  </span>
+                </td>
+                <td style="width: 5%">{{ data.jenkel }}</td>
+                <td style="width: 10%">{{ data.email }}</td>
+                <td style="width: 10%">{{ data.phone_number }}</td>
+                <!-- <td class="flex flex-wrap gap-4 justify-center">
+                  <ModalEdit
+                    @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                  />
+                  <button>
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td> -->
+              </tr>
+            </tbody>
+          </tableData>
+
+          <div v-else>
+            <tableData>
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <!-- <input
+                        type="checkbox"
+                        name="checked"
+                        @click="selectAll((checkList = !checkList))"
+                      /> -->
+                    </div>
+                  </th>
+
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                      <button v-if="data.jsonData" class="ml-2">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
                       </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="8"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                    Tidak Ada Data
+                  </td>
+                </tr>
+              </tbody>
+            </tableData>
           </div>
 
           <!-- PAGINATION -->
@@ -333,22 +502,18 @@ const getSessionForSidebar = () => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
-        </div>
-      </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+        </tableTop>
+      </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-
 th {
   padding: 2px;
   text-align: left;
@@ -373,5 +538,20 @@ tr th {
 
 .this {
   overflow-x: hidden;
+}
+
+.readmore-text {
+  display: inline-block;
+  max-width: 200px; /* Atur sesuai kebutuhan */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 400px;
+  white-space: nowrap;
+  word-break: break-word;
 }
 </style>
