@@ -118,7 +118,7 @@ watch(isVisible, () => {
       <modalHeader @closeVisibility="isVisible = false" title="New Hotel" />
 
       <form
-        class="pt-4 modal-box-inner-inner"
+        class="pt-4 modal-box-inner-hotel"
         @submit.prevent="saveHotel"
         @keydown.enter="saveHotel"
       >
@@ -263,7 +263,7 @@ watch(isVisible, () => {
           </select>
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" class="pb-6" />
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>
@@ -275,14 +275,14 @@ watch(isVisible, () => {
   max-width: 510px !important;
 }
 
-.modal-box-inner-inner {
-  max-height: 370px !important;
+.modal-box-inner-hotel {
+  height: 360px;
   --tw-scale-x: 1;
-  --tw-scale-y: 1;
+  --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  overflow-y: auto !important;
+  overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }

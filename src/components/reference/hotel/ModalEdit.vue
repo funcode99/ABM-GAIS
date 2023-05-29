@@ -145,7 +145,7 @@ const resetForm = () => {
         title="Edit Hotel"
       />
 
-      <form class="pt-4" @submit.prevent="submitEdit">
+      <form class="pt-4 modal-box-inner-hotel" @submit.prevent="submitEdit">
         <div class="mb-6 px-4 w-full text-start">
           <label
             for="hotel_code"
@@ -298,5 +298,17 @@ const resetForm = () => {
 :deep(.modal-vue3-content) {
   max-height: 400px !important;
   max-width: 510px !important;
+}
+
+.modal-box-inner-hotel {
+  height: 360px;
+  --tw-scale-x: 1;
+  --tw-scale-y: 0.9;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 </style>
