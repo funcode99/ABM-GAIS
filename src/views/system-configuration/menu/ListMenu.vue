@@ -184,7 +184,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'id'},
+      {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Name', jsonData: 'menu'},
       {Id: 3, title: 'Parent Menu', jsonData: 'parent_id'},
       {Id: 4, title: 'Status', jsonData: 'id_status_menu'},
@@ -293,7 +293,7 @@
                           <input type="checkbox" name="chk">
                         </td>
                         <td>
-                          {{ index + 1 }} 
+                          {{ data.no }} 
                         </td>
                         <td>
                           {{ data.menu }}
