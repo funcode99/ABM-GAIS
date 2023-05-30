@@ -10,6 +10,8 @@ import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 
@@ -143,9 +145,10 @@ const fetchDepartement = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/department/");
-  instanceArray = res.data.data;
+  instanceArray = res.data.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  // console.log(instanceArray);
 };
 
 //delete departement
@@ -154,13 +157,23 @@ const deleteDepartement = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
     showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
+    confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/department/delete_data/${id}`).then((res) => {
@@ -169,8 +182,9 @@ const deleteDepartement = async (id) => {
           text: "Departement has been deleted.",
           icon: "success",
           showCancelButton: false,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Ok",
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
         });
         fetchDepartement();
       });
@@ -357,7 +371,7 @@ const deleteDepartement = async (id) => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
@@ -365,7 +379,7 @@ const deleteDepartement = async (id) => {
                     <td>{{ index + 1 }}</td>
                     <td>{{ data.departement_name }}</td>
                     <td>{{ data.cost_center }}</td>
-                    <td>{{ data.is_active }}</td>
+                    <td>{{ data.status_name }}</td>
                     <td>{{ data.departement_head }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEdit
