@@ -158,6 +158,7 @@
         parent_id: null,
         use_sequence: formEditState.menu.sequence,
         id_status_menu: formEditState.menu.idStatusMenu,
+        id_company: formEditState.menu.companyId
       })
       console.log(api)
       fetch()        
@@ -314,7 +315,7 @@
   
                         <td class="flex flex-wrap justify-center h-full gap-4 relative">
                           <div class="flex items-center absolute top-0 bottom-0">
-                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon, data.id_company, data.parent]" />
+                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon, data.comp_array, data.parent]" />
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>

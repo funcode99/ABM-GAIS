@@ -28,16 +28,12 @@ const props = defineProps({
 let companyData = ref([]);
 let roleData = ref([]);
 
-// console.log(router.currentRoute.value.path)
-
-  const fetchCompany = async () => {
+const fetchCompany = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const res = await Api.get("/company/get");
     companyData.value = res.data.data;
-  }
-
-
+}
 
 const fetchRole = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -45,7 +41,6 @@ const fetchRole = async () => {
   const api = await Api.get("/role/get");
   roleData.value = api.data.data
 }
-
 
 onBeforeMount(() => {
 
@@ -57,11 +52,13 @@ onBeforeMount(() => {
     fetchCompany()
   }
 
-});
+})
+
 </script>
 
 <template>
   <div class="bg-white rounded-t-xl relative custom-card">
+
     <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
     <div
       class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
@@ -198,7 +195,7 @@ onBeforeMount(() => {
 
     </div>
 
-      <div class="flex" v-if="$route.path === '/role'">
+    <div class="flex" v-if="$route.path === '/role'">
 
         <!-- showing -->
         <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
@@ -249,7 +246,7 @@ onBeforeMount(() => {
           </div>
         </div>
       
-      </div>
+    </div>
 
     <!-- SHOWING -->
     <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4" v-else>
@@ -266,7 +263,6 @@ onBeforeMount(() => {
         <option>100</option>
       </select>
     </div>
-
 
   </div>
 </template>

@@ -11,7 +11,8 @@ export const useFormEditStore = defineStore('add-form', {
                 sequence: '',
                 description: 'Kosong',
                 url: '',
-                icon: {}
+                icon: {},
+                companyId: null
             },
             user: {
                 username: '',
