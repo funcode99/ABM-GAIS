@@ -7,6 +7,7 @@
   import { ref, onBeforeMount } from 'vue'
   import { Modal } from 'usemodal-vue3'
   import Api from '@/utils/Api'
+  import Multiselect from '@vueform/multiselect'
 
   import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 

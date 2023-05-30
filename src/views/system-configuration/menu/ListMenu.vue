@@ -123,7 +123,8 @@
         use_sequence: formState.menu.sequence,
         description: 'kosong',
         url: formState.menu.url,
-        icon: formState.menu.icon
+        icon: formState.menu.icon,
+        id_company: formState.menu.companyId
       })
       console.log(api)
         Swal.fire({

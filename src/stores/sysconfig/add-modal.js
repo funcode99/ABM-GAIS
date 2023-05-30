@@ -12,6 +12,7 @@ export const useFormAddStore = defineStore('add-form', {
                 sort: 1,
                 idStatusMenu: 0, 
                 parentId: 3,
+                companyId: null
             },
             user: {
                 username: '',
