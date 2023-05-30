@@ -65,22 +65,6 @@ const onFileSelected = (event) => {
   // console.log(selectedImage)
 };
 
-// const onFileSelected = (event) => {
-//   const file = event.target.files[0];
-//   if (file) {
-//     // Menampilkan notifikasi berhasil jika gambar dipilih
-//     Swal.fire({
-//       icon: "success",
-//       title: "Image selected",
-//       text: "The image has been successfully selected.",
-//       confirmButtonText: "OK",
-//     });
-//     selectedImage.value = file;
-//   } else {
-//     selectedImage.value = null;
-//   }
-// };
-
 const saveCompany = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
@@ -124,6 +108,7 @@ const resetInput = () => {
   selectedImage.value = "Logo";
   selectedVendor.value = "Vendor";
   selectedCodeErp.value = "ERP";
+  iconfilename = "Logo";
 };
 
 watch(isVisible, () => {
@@ -222,7 +207,7 @@ watch(isVisible, () => {
             Logo Company
             <span class="text-red">*</span>
           </div>
-          <div class="relative border border-slate-300 rounded-lg py-2">
+          <div class="relative border border-slate-300 rounded-lg">
             <input
               type="file"
               name="logo"
@@ -233,7 +218,7 @@ watch(isVisible, () => {
             />
             <label class="py-2" for="logo_company">
               <span
-                class="font-JakartaSans hidden font-medium text-sm cursor-pointer mx-4"
+                class="font-JakartaSans hidden font-medium text-sm cursor-pointer"
                 >{{ selectedImage || "Logo Company" }}</span
               >
               <img
@@ -241,10 +226,12 @@ watch(isVisible, () => {
                 class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
               />
             </label>
-            <div v-if="iconfilename != null" class="pl-2">
+            <div v-if="iconfilename != null" class="px-5 py-2 font-JakartaSans font-medium text-sm">
               {{ iconfilename }}
             </div>
-            <div v-else class="pl-2 font-JakartaSans font-medium text-sm">Logo</div>
+            <div v-else class="px-4 py-2 font-JakartaSans font-medium text-sm">
+              Logo
+            </div>
           </div>
         </div>
 

@@ -221,26 +221,28 @@ const resetForm = () => {
               type="file"
               name="logo"
               id="logo_company"
-              class="border"
+              class="hidden border"
               accept="image/*"
               @change="onFileSelected"
             />
             <label class="py-2" for="logo_company">
-              <span
-                class="font-JakartaSans hidden font-medium text-sm cursor-pointer mx-4"
-                >{{ selectedImage || "Logo Company" }}</span
+              <div
+                v-if="iconfilename != null"
+                class="px-5 py-2 font-JakartaSans font-medium text-sm"
               >
+                {{ iconfilename }}
+              </div>
+              <div
+                v-else
+                class="px-5 font-JakartaSans font-medium text-sm"
+              >
+                {{ selectedImage || "Logo Company" }}
+              </div>
               <img
                 :src="iconUpload"
                 class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
               />
             </label>
-          </div>
-          <div v-if="iconfilename != null" class="pl-2">
-            {{ iconfilename }}
-          </div>
-          <div v-else class="pl-2 font-JakartaSans font-medium text-sm">
-            your icons name : {{ selectedImage || "Logo Company" }}
           </div>
         </div>
 
