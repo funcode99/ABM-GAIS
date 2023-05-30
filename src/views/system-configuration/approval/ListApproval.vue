@@ -61,7 +61,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'id'},
+      {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Matrix Name', jsonData: 'approval_name'},
       {Id: 3, title: 'Menu', jsonData: 'menu'},
       {Id: 4, title: 'Actions'}
@@ -249,7 +249,7 @@
                       <input type="checkbox" name="chk">
                     </td>
                     <td>
-                      {{ index + 1 }} 
+                      {{ data.no }} 
                     </td>
                     <td>
                       {{ data.approval_name }}

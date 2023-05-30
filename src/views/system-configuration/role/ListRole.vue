@@ -138,7 +138,7 @@
     }
 
     const tableHead = [
-        {Id: 1, title: 'No', jsonData: 'id'},
+        {Id: 1, title: 'No', jsonData: 'no'},
         {Id: 2, title: 'User Role', jsonData: 'role_name'},
         {Id: 3, title: 'Actions'}
     ]
@@ -263,7 +263,8 @@
                   </td>
 
                   <td>
-                    {{ index + 1 + (paginateIndex * pageMultiplierReactive) }}                  </td>
+                    {{ data.no }}
+                  </td>
                   <td>
                     {{ data.role_name }}
                   </td>

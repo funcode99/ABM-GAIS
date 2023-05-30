@@ -63,7 +63,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'id'},
+      {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Name', jsonData: 'sequence_name'},
       {Id: 3, title: 'Prefix', jsonData: 'prefix'},
       {Id: 4, title: 'Suffix', jsonData: 'suffix'},
@@ -264,12 +264,12 @@
                     <tr v-for="(data, index) in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
-                      )" :key="data.No">
+                      )" :key="data.id">
                       <td>
                         <input type="checkbox" name="chk">
                       </td>
                       <td>
-                        {{ index + 1 }} 
+                        {{ data.no }}
                       </td>
                       <td>
                         {{ data.sequence_name }}
