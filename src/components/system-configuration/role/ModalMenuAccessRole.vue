@@ -1,10 +1,12 @@
 <script setup>
-  import iconClose from "@/assets/navbar/icon_close.svg"
   import roleIcon from '@/assets/menu-access-role.png'
 
   import { useMenuAccessStore } from '@/stores/savemenuaccess'
 
-  import { ref, computed, onMounted, watch } from 'vue'
+  import modalHeader from "@/components/modal/modalHeader.vue"
+  import modalFooter from "@/components/modal/modalFooter.vue"
+
+  import { ref, computed, watch } from 'vue'
   import { Modal } from 'usemodal-vue3'
 
   import Api from '@/utils/Api'
@@ -18,17 +20,12 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = '37%'
+  let modalPaddingHeight = '25vh'
 
   let sortedData = ref([])
   let instanceArray = []
   let sortedDataReactive = computed(() => sortedData.value)
 
-  
-  // onMounted(() => {
-  //   setTimeout(, 2000)
-  //   console.log(sortedData.value)
-  // })
 
 const menuHeadTable = [
   {Id: 1, title: 'Write'},
@@ -38,18 +35,36 @@ const menuHeadTable = [
 let writeValue = ref(props.roleAccess[0] == undefined ? [] : props.roleAccess[0])
 let readValue = ref(props.roleAccess[1] == undefined ? [] : props.roleAccess[1])
 
+let defaultValueWrite = ref('')
+let defaultValueRead = ref('')
+
 const submitAccess = async () => {
-  const token = JSON.parse(localStorage.getItem('token'))
+
+    const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
     const api = await Api.post(`/role/store_menu/${props.roleId}`, {
       id_role: props.roleId,
       write: writeValue.value,
       read: readValue.value
     })
+
+    isVisible.value = false
+    defaultValueWrite.value = writeValue.value
+    defaultValueRead.value = readValue.value
 }
 
 watch(isVisible, () => {
+  
   sortedData.value = menuAccess.fetchResult
+  
+    if(isVisible.value == true) {
+      defaultValueWrite.value = writeValue.value
+      defaultValueRead.value = readValue.value
+    } else if (isVisible.value == false) {
+      writeValue.value = defaultValueWrite.value
+      readValue.value = defaultValueRead.value
+    }
+
 })
 
 </script>
@@ -62,15 +77,12 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
-        <nav class="sticky top-0 z-50 bg-[#015289]">
-            <button @click="isVisible = false" for="menu-access-role-modal" class="cursor-pointer absolute right-3 top-3">
-              <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-            </button>
-            <p class="font-JakartaSans text-2xl font-semibold text-left text-white mx-4 py-2">Menu Access</p>
-           
-        </nav>
+        <modalHeader
+          @closeVisibility="isVisible = false"
+          title="Menu Access"
+        />
     
-        <main class="modal-box-inner-inner">
+        <form class="modal-box-inner-inner" @submit.prevent="submitAccess">
 
           <div class="mb-3 overflow-x-auto px-10">
       
@@ -113,7 +125,7 @@ watch(isVisible, () => {
               
           </div>
       
-          <div class="sticky right-4 bottom-0 z-50 bg-white px-10 pt-2 pb-4">
+          <!-- <div class="sticky right-4 bottom-0 z-50 bg-white px-10 pt-2 pb-4">
 
               <div className="divider m-0 pb-4"></div>
 
@@ -137,9 +149,14 @@ watch(isVisible, () => {
 
               </div>
 
-          </div>
+          </div> -->
           
-        </main>
+          <modalFooter
+            class="mt-6 pt-5"
+            @closeEdit="isVisible = false"
+          />
+
+        </form>
 
   </Modal>
 

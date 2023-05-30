@@ -7,6 +7,7 @@
   import { ref, onBeforeMount } from 'vue'
   import { Modal } from 'usemodal-vue3'
   import Api from '@/utils/Api'
+  import Multiselect from '@vueform/multiselect'
 
   import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 
@@ -31,12 +32,15 @@
           sequence.value = 0
         }
 
+        // console.log(companyIdArray.value)
+
         formState.menu.menuName = menuName.value
         formState.menu.sort = sort.value
         formState.menu.sequence = sequence.value
         formState.menu.url = url.value
         formState.menu.icon = file.value
         formState.menu.idStatusMenu = idStatusMenu.value
+        formState.menu.companyId = companyIdArray.value
 
         emits('changeMenu')
 
@@ -49,6 +53,7 @@
 
   onBeforeMount(() => {
     getMenuStatus()
+    fetchCompany()
   })
 
   const getMenuStatus = async () => {
@@ -70,8 +75,40 @@
   let sort = ref(props.formContent[2])
   let filename = ref(props.formContent[3])
   const file = ref()
-  let sequence = ref(true)
+  let sequence = ref(false)
   let sequenceCode = ref('')
+
+  let companyIdObject = ref(props.formContent[4])
+  let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
+  let companyIdArray = ref([])
+  let companyData = ref(null)
+
+  console.log(companyIdObject.value)
+  console.log(companyIdObjectKeys.value)
+  companyIdObjectKeys.value.map((item) => {
+
+    // string
+    // console.log(typeof item) 
+
+    let number = Number(item)
+    
+    if(Number.isInteger(number)) {
+      companyIdArray.value.push(item)
+    }
+
+  })
+
+  console.log(companyIdArray.value)
+
+  const fetchCompany = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/company/get");
+    companyData = res.data.data
+    companyData.map((item) => {
+      item.value = item.id
+    })
+  }
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -152,15 +189,39 @@
                 </select>
             </div>
     
-            <div class="mb-3 text-left">
+            <div class="mb-3 text-left"></div>
                   <h1>Company</h1>
-                  <vue3-tags-input 
-                    :class="inputStylingClass"
-                    @on-tags-changed="addNewTagField"
-                    :tags="tags"
-                    placeholder="input tags" 
-                    />
-            </div>
+                  <Multiselect
+                    v-model="companyIdArray"
+                    mode="tags"
+                    placeholder="Select companies"
+                    track-by="company_name"
+                    label="company_name"
+                    :close-on-select="false"
+                    :searchable="true"
+                    :options="companyData"
+                    >
+                    
+                    <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                      <div
+                        class="multiselect-tag is-user"
+                        :class="{
+                          'is-disabled': disabled
+                        }"
+                      >
+                        {{ option.company_name }}
+                        <span
+                          v-if="!disabled"
+                          class="multiselect-tag-remove"
+                          @click="handleTagRemove(option, $event)"
+                        >
+                          <span class="multiselect-tag-remove-icon"></span>
+                        </span>
+                      </div>
+                    </template>
+
+                  </Multiselect>
+            <div class="mb-3"></div>
     
             <div class="mb-3 text-left">
                   <h1>Sort</h1>
@@ -201,7 +262,6 @@
                   maxlength="5" 
                   placeholder="Sequence Code" 
                   class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
-                  required 
               />
     
             </div>

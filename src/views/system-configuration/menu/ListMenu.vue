@@ -123,8 +123,17 @@
         use_sequence: formState.menu.sequence,
         description: 'kosong',
         url: formState.menu.url,
-        icon: formState.menu.icon
+        icon: formState.menu.icon,
+        id_company: formState.menu.companyId
       })
+      console.log(api)
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
+        })
       fetch()
     }
 
@@ -149,6 +158,7 @@
         parent_id: null,
         use_sequence: formEditState.menu.sequence,
         id_status_menu: formEditState.menu.idStatusMenu,
+        id_company: formEditState.menu.companyId
       })
       console.log(api)
       fetch()        
@@ -176,7 +186,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'id'},
+      {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Name', jsonData: 'menu'},
       {Id: 3, title: 'Parent Menu', jsonData: 'parent_id'},
       {Id: 4, title: 'Status', jsonData: 'id_status_menu'},
@@ -272,7 +282,6 @@
                       </span>
                     </th>
     
-    
                   </tr>
                 </thead>
     
@@ -280,12 +289,12 @@
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
               
-                      <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
+                      <tr v-for="data in sortedDataReactive" :key="data.id">
                         <td>
                           <input type="checkbox" name="chk">
                         </td>
                         <td>
-                          {{ index + 1 }} 
+                          {{ data.no }} 
                         </td>
                         <td>
                           {{ data.menu }}
@@ -306,7 +315,7 @@
   
                         <td class="flex flex-wrap justify-center h-full gap-4 relative">
                           <div class="flex items-center absolute top-0 bottom-0">
-                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon]" />
+                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon, data.comp_array, data.parent]" />
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>

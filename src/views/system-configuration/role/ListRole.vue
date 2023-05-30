@@ -102,6 +102,7 @@
     }
 
     const editRole = async (data) => {
+        console.log('masuk ke edit role')
         editRoleDataId.value = data
         setTimeout(callEditApi, 500)
     }
@@ -109,7 +110,7 @@
     const callEditApi = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        await Api.post(`/role/update_data/${editRoleDataId.value}`, {
+        let api = await Api.post(`/role/update_data/${editRoleDataId.value}`, {
           role_name: formEditState.role.roleName
         })
         fetchGetActive()
@@ -137,7 +138,7 @@
     }
 
     const tableHead = [
-        {Id: 1, title: 'No', jsonData: 'id'},
+        {Id: 1, title: 'No', jsonData: 'no'},
         {Id: 2, title: 'User Role', jsonData: 'role_name'},
         {Id: 3, title: 'Actions'}
     ]
@@ -225,10 +226,17 @@
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
 
         <div class="relative w-full">
+
           <table v-if="sortedData.length > 0"  class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
 
             <thead class="text-center font-Montserrat text-sm font-bold h-10">
               <tr class="">
+
+                <th>
+                  <div class="flex justify-center">
+                    <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                  </div>
+                </th>
 
                 <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
                   <span class="flex justify-center items-center gap-1">
@@ -249,8 +257,14 @@
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
+                  
                   <td>
-                    {{ index + 1 + (paginateIndex * pageMultiplierReactive) }}                  </td>
+                    <input type="checkbox" name="chk">
+                  </td>
+
+                  <td>
+                    {{ data.no }}
+                  </td>
                   <td>
                     {{ data.role_name }}
                   </td>

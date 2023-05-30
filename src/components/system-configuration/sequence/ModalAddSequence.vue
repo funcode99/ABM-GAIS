@@ -98,7 +98,6 @@
 
   // const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
 
-
 </script>
 
 <template>
@@ -158,8 +157,7 @@
                 <!-- Nama -->
                 <div :class="columnClass">
                 
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm">
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
                     Nama<span class="text-red">*</span>
                 </label>
 
@@ -170,6 +168,7 @@
                   :class="inputStylingClass"
                   required
                 />
+
                 </div>
 
                 <!-- Sequence Size -->

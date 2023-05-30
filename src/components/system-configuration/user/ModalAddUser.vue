@@ -75,7 +75,7 @@
   const fetchSite = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.get('/site')
+    const api = await Api.get('/site/get_data')
     responseSiteArray.value = api.data.data
   }
 
@@ -144,18 +144,18 @@
         <form class="pr-4 modal-box-inner-inner" @submit.prevent="submitUser">
 
                 <div class="mb-6">
-                <span>Employee?<span class="text-red-star">*</span></span>
-                <div class="flex gap-2 pt-2">
-                  <div class="flex gap-1">
-                    <!-- fill the same name attribute for individual select -->
-                    <input type="radio" name="employee" v-model="isEmployee" :value="true" class="border border-black w-[26px] h-[26px]" required>
-                    <label for="">Yes</label>
+                  <span>Employee?<span class="text-red-star">*</span></span>
+                  <div class="flex gap-2 pt-2">
+                    <div class="flex gap-1">
+                      <!-- fill the same name attribute for individual select -->
+                      <input type="radio" name="employee" v-model="isEmployee" :value="true" class="border border-black w-[26px] h-[26px]" required>
+                      <label for="">Yes</label>
+                    </div>
+                    <div class="flex gap-1">
+                      <input type="radio" name="employee" v-model="isEmployee" :value="false" class="border border-black w-[26px] h-[26px]" required>
+                      <label for="">No</label>
+                    </div>
                   </div>
-                  <div class="flex gap-1">
-                    <input type="radio" name="employee" v-model="isEmployee" :value="false" class="border border-black w-[26px] h-[26px]" required>
-                    <label for="">No</label>
-                  </div>
-                </div>
                 </div>
     
                 <div class="mb-6">
@@ -290,7 +290,6 @@
                   class="mt-6 pt-5"
                   @closeEdit="isVisible = false"
                 />
-
           
         </form>
 

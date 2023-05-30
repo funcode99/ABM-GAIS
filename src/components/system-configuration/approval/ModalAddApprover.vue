@@ -38,6 +38,8 @@
   let menu = ref('')
   let document = ref('')
   let company = ref('')
+  let minCA = ref(0)
+  let maxCA = ref(0)
 
   const fetchApproverAuthorities = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
@@ -118,8 +120,6 @@
 
   }
 
-  const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
-
   const resetInput = () => {
     matrixName.value = ''
     company.value = ''
@@ -136,6 +136,10 @@
     }
   })
 
+  const rowClass = 'flex justify-between items-center gap-3 my-3'
+  const columnClass = 'flex flex-col flex-1'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+
 </script>
 
 <template>
@@ -149,12 +153,13 @@
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
         
-      <main >
+      <main>
 
           <modalHeader
             @closeVisibility="isVisible = false"
             title="New Matrix"
           />
+
           <!-- px-8 -->
           <form class="pr-4 modal-box-inner-inner" @submit.prevent="saveField">
 
@@ -186,6 +191,7 @@
                 </div>
               </div>
       
+              <!-- Document -->
               <div class="mb-3 flex items-center">
                 <div class="flex flex-col w-full">
                   <label class="block mb-2 font-JakartaSans font-medium text-sm">
@@ -198,7 +204,31 @@
                   </select>
                 </div>
               </div>
+
+              <div :class="rowClass">
+                  <div :class="columnClass">
+                    <label>
+                      Minimum Amount (CA)
+                    </label>
+                    <input
+                      v-model="minCA"
+                      placeholder="Amount"
+                      :class="inputStylingClass"
+                    />
+                  </div>
+                  <div :class="columnClass">
+                    <label>
+                      Maximum Amount (CA)
+                    </label>
+                    <input 
+                      v-model="maxCA"
+                      placeholder="Amount"
+                      :class="inputStylingClass"
+                    />
+                  </div>
+              </div>
       
+              <!-- Company -->
               <div class="mb-3 flex items-center">
                 <div class="flex flex-col w-full">
                   <label class="block mb-2 font-JakartaSans font-medium text-sm">

@@ -1,19 +1,21 @@
 <script setup>
   import { Modal } from 'usemodal-vue3'
   
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import editIcon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import checkIcon from '@/assets/checkmark.png'
-import closeIcon from '@/assets/close-window.png'
+  import iconPlus from "@/assets/navbar/icon_plus.svg";
+  import editIcon from "@/assets/navbar/edit_icon.svg";
+  import deleteicon from "@/assets/navbar/delete_icon.svg";
+  import checkIcon from '@/assets/checkmark.png'
+  import closeIcon from '@/assets/close-window.png'
+
+  import modalHeader from "@/components/modal/modalHeader.vue"
+  import modalFooter from "@/components/modal/modalFooter.vue"
  
-// tiap kali scrollTop error pasti itu karena ref nya belum di import
-import { ref, onBeforeMount } from 'vue'
+  // tiap kali scrollTop error pasti itu karena ref nya belum di import
+  import { ref, onBeforeMount } from 'vue'
 
-import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+  import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
 
-import Api from '@/utils/Api'
+  import Api from '@/utils/Api'
 
   const formEditState = useFormEditStore()
 
@@ -28,7 +30,17 @@ import Api from '@/utils/Api'
   let company = ref(props.formContent[1])
   let menu = ref(props.formContent[2])
   let document = ref(props.formContent[3])
-  let idMatrix = ref(props.formContent[5])
+  let idMatrix = props.formContent[4]
+  let indexNumber = ref(props.formContent[5])
+  let idMatrixActual = ref(null)
+  
+    if(props.formContent[4] == undefined) {
+      console.log('array detail tidak ada')
+    } else {
+        idMatrixActual.value = idMatrix[0].id_matrix
+        // 3, 26 adalah id_detail nya
+        console.log(idMatrixActual.value)
+    }
 
   let authorities = ref('')
   const emits = defineEmits('fetchApproval')
@@ -66,17 +78,10 @@ import Api from '@/utils/Api'
       formEditState.approval.companyId = company.value
       formEditState.approval.menuId = menu.value
       formEditState.approval.codeDocumentId = document.value
-
-      isVisible.value = !isVisible.value
+      // isVisible.value = !isVisible.value
   }
 
   const saveApproverLines = async (data, idx, matrixId) => {
-
-    // console.log(data[idx].id_approval_auth)
-    // console.log(data[idx].level)
-    // console.log(matrixId)
-
-    // console.log(props.formContent[4])
 
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -85,12 +90,15 @@ import Api from '@/utils/Api'
       level: data[idx].level,
       id_approval_auth: data[idx].id_approval_auth
     })
-    data[idx].isPosted = true
+
+    data[idx].isPosted = undefined
     console.log('approval telah ditambahkan!')
 
-    // emits('fetchApproval')
-    // console.log(props.formContent[4])
+  }
 
+  const editApproverLines = async () => {
+    console.log('masuk ke edit approver lines')
+    // emits('editApprover')
   }
 
   let currentAuthoritiesId = ref()
@@ -112,7 +120,7 @@ import Api from '@/utils/Api'
 
   const removeField = async (index, fieldType) => {
 
-    console.log(fieldType[index].id_detail)
+    // console.log(fieldType[index].id_detail)
     // console.log(props.formContent[4])
 
     if(fieldType[index].id_detail) {
@@ -138,10 +146,7 @@ import Api from '@/utils/Api'
   
   }
 
-  
-
   const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
-
 
   const responseExample = [
       {
@@ -175,23 +180,21 @@ import Api from '@/utils/Api'
 <template>
   
   <button @click="isVisible = !isVisible">
-    <img :src=editIcon alt="">
+    <img :src=editIcon alt="edit icon">
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight"> 
   
-    <div>
+    <main>
 
-      <div class="sticky top-0 z-50 text-white bg-[#015289]">
-          <button @click="isVisible = false" class="cursor-pointer absolute right-3 top-3">
-            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-          </button>
-          <p class="font-JakartaSans text-2xl font-semibold mx-4 py-2 text-left">Edit Matrix</p>
-      </div>
+      <modalHeader
+            @closeVisibility="isVisible = false"
+            title="Edit Matrix"
+      />
 
-      <main class="modal-box-inner-inner">
+      <form class="modal-box-inner-inner px-3" @submit.prevent="saveField">
 
-        <div class="px-8 my-3 text-left">
+        <div class="my-3 text-left">
             
           <div class="mb-3 text-left w-full">
               <label
@@ -260,7 +263,8 @@ import Api from '@/utils/Api'
           
         </div>
 
-        <div class="px-3">
+        <!-- approver lines area -->
+        <div>
 
           <h1 class="font-medium text-left">Approver Lines <span>*</span> </h1>
           <hr class="border border-black">
@@ -321,10 +325,11 @@ import Api from '@/utils/Api'
                   <td>
                     <input type="text" class="px-2" v-model="input.approverName" />
                   </td>
-    
-                  <!-- awalnya semua akan tampil seperti ini -->
-                  <td v-if="input.isPosted !== false" class="flex flex-wrap gap-4 justify-center">
-                    <button @click="input.isPosted = false">
+ 
+                  <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
+                  <td v-if="input.isPosted === undefined && input.isEdit != false" class="flex flex-wrap gap-4 justify-center">
+                    edit
+                    <button @click="input.isEdit = false">
                       <img :src="editIcon" class="w-6 h-6" />
                     </button>
                     <button  @click="removeField(index, approverLines)">
@@ -332,9 +337,32 @@ import Api from '@/utils/Api'
                     </button>
                   </td>
 
-                  <!-- saat ingin edit atau add baris baru akan muncul seperti ini -->
+                  <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
                   <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
-                    <button @click="saveApproverLines(approverLines, index, idMatrix)">
+                    add
+                    <button @click="input.isPosted = true">
+                      <img :src="editIcon" class="w-6 h-6" />
+                    </button>
+                    <button @click="removeField(index, approverLines)">
+                      <img :src="deleteicon" class="w-6 h-6" />
+                    </button>
+                  </td>
+
+                  <!-- berisi fungsi untuk mengganti -->
+                  <td v-if="input.isEdit === false" class="flex flex-wrap gap-4 justify-center">
+                    fungsi edit
+                    <button @click="editApproverLines() ">
+                      <img :src="checkIcon" class="w-5 h-5" />
+                    </button>
+                    <button @click="removeField(index, approverLines)">
+                      <img :src="closeIcon" class="w-5 h-5" />
+                    </button>
+                  </td>
+
+                  <!-- berisi fungsi untuk menambahkan -->
+                  <td v-if="input.isPosted === true" class="flex flex-wrap gap-4 justify-center">
+                    fungsi add
+                    <button @click="saveApproverLines(approverLines, index, idMatrixActual)">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
                     <button @click="removeField(index, approverLines)">
@@ -360,26 +388,14 @@ import Api from '@/utils/Api'
           
         </div>
 
-        <div class="sticky bottom-0 bg-white pt-2 pb-5 px-4 pr-3">
-            <div className="divider m-0 pb-4"></div>
-            <div class="flex justify-end gap-4">
-              <button
-              @click="isVisible = false"
-                class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-                >
-                Cancel
-              </button>
-              <button @click="saveField">
-                <button @click="$emit('editApprover')" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]">
-                  Save
-                </button>
-              </button>
-            </div>
-        </div>
+        <modalFooter
+          class="mt-3 pt-2 pb-5"
+          @closeEdit="isVisible = false"
+        />
 
-      </main>
+      </form>
 
-    </div>
+    </main>
   
   </Modal>
 
@@ -392,9 +408,9 @@ th span {
 }
 
 .modal-box-inner-inner {
-  --tw-scale-x: 1;
+  max-height: 500px !important;
+  --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
-  height: 470px;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -404,7 +420,7 @@ th span {
 }
 
 :deep(.modal-vue3-content) {
-  max-height: 490px !important;
+  max-height: 550px !important;
   max-width: 600px !important; 
 }
 

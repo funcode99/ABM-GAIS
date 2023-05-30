@@ -61,7 +61,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'id'},
+      {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Matrix Name', jsonData: 'approval_name'},
       {Id: 3, title: 'Menu', jsonData: 'menu'},
       {Id: 4, title: 'Actions'}
@@ -190,15 +190,6 @@
         }
       })
 
-
-      // Api.delete(`/approval/delete_data_approval/${event}`)
-      // fetch()
-      // if (sortedData.value.length == 1) {
-      //   router.go()
-      // } else {
-      //   fetch()
-      // }
-
     }
 
     const getData = () => {
@@ -258,7 +249,7 @@
                       <input type="checkbox" name="chk">
                     </td>
                     <td>
-                      {{ index + 1 }} 
+                      {{ data.no }} 
                     </td>
                     <td>
                       {{ data.approval_name }}
@@ -267,7 +258,7 @@
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data.detail]" />
+                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data?.detail, index]" />
                       <!-- approval authorities nya gaboleh kosong, karena akan dikirim sebagai props -->
                       <!-- {{ index }} -->
                      <!-- {{ data.detail[index] }} -->

@@ -6,6 +6,8 @@
   import Swal from "sweetalert2"
   import Api from '@/utils/Api'
 
+  import Multiselect from '@vueform/multiselect'
+
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
@@ -36,6 +38,7 @@
   const submit = () => {
 
     try {     
+      
         if(sequence) {
           sequence.value = 1
         } else {
@@ -47,20 +50,14 @@
         formState.menu.sequence = sequence.value
         formState.menu.url = url.value
         formState.menu.icon = file.value
+        formState.menu.companyId = companyIdArray.value
 
         // active / disable only value
         formState.menu.idStatusMenu = idStatusMenu.value
         // formState.menu.parentId = idParent.value
 
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: "Your work has been saved",
-          showConfirmButton: false,
-          timer: 1500,
-        })
-
         emits('addMenu')
+        isVisible.value = false
 
     } catch (error) {
         console.error(error)
@@ -69,6 +66,7 @@
   }
 
   onBeforeMount(() => {
+    fetchCompany()
     getMenuStatus()
   })
 
@@ -79,12 +77,6 @@
   }
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
-
-  let tags = ref([])
-
-  const addNewTagField = (newTags) => {
-    tags.value = newTags
-  }
 
   const resetInput = () => {
       menuName.value = ''
@@ -105,6 +97,18 @@
     }
   })
 
+  let companyData = ref(null)
+  let companyIdArray = ref(null)
+  const fetchCompany = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/company/get");
+    companyData = res.data.data
+    companyData.map((item) => {
+      item.value = item.id
+    })
+  }
+
 </script>
 
 <template>
@@ -118,7 +122,7 @@
         <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
 
             <main>
-              
+
               <modalHeader
                 @closeVisibility="isVisible = false"
                 title="New Menu"
@@ -169,16 +173,39 @@
                         </option>
                     </select>
                   </div>
-      
-                  <div class="mb-3 ">
-                    <h1>Company</h1>
-                    <vue3-tags-input 
-                      :class="inputStylingClass"
-                      @on-tags-changed="addNewTagField"
-                      :tags="tags"
-                      placeholder="input tags" 
-                      />
-                  </div>
+                  <h1>Company</h1>
+                  <Multiselect
+                    v-model="companyIdArray"
+                    mode="tags"
+                    placeholder="Select companies"
+                    track-by="company_name"
+                    label="company_name"
+                    :close-on-select="false"
+                    :searchable="true"
+                    :options="companyData"
+                    >
+                    
+                    <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                      <div
+                        class="multiselect-tag is-user"
+                        :class="{
+                          'is-disabled': disabled
+                        }"
+                      >
+                        {{ option.company_name }}
+                        <span
+                          v-if="!disabled"
+                          class="multiselect-tag-remove"
+                          @click="handleTagRemove(option, $event)"
+                        >
+                          <span class="multiselect-tag-remove-icon"></span>
+                        </span>
+                      </div>
+                    </template>
+
+                  </Multiselect>
+
+                  <div class="mb-3"></div>
         
                   <div class="mb-3 text-left">
                       <h1>Sort</h1>
@@ -219,7 +246,6 @@
                     maxlength="5" 
                     placeholder="Sequence Code" 
                     class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
-                    required 
                     />
       
                   </div>
@@ -256,4 +282,32 @@
   overflow-y: auto !important;
 }
 
+.multiselect-tag.is-user {
+  padding: 5px 8px;
+  border-radius: 22px;
+  background: #35495e;
+  margin: 3px 3px 8px;
+}
+
+.multiselect-tag.is-user img {
+  width: 18px;
+  border-radius: 50%;
+  height: 18px;
+  margin-right: 8px;
+  border: 2px solid #ffffffbf;
+}
+
+.multiselect-tag.is-user i:before {
+  color: #ffffff;
+  border-radius: 50%;;
+}
+
+.user-image {
+  margin: 0 6px 0 0;
+  border-radius: 50%;
+  height: 22px;
+}
+
 </style>
+
+<style src="@vueform/multiselect/themes/default.css"></style>

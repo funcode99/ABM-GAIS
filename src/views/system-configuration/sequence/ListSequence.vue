@@ -43,7 +43,7 @@
     const onChangePage = (pageOfItem) => {
       paginateIndex.value = pageOfItem - 1;
       showingValue.value = pageOfItem;
-    };
+    }
 
     const selectAll = (checkValue) => { 
       const checkLead = checkValue
@@ -63,7 +63,7 @@
     }
 
     const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'id'},
+      {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Name', jsonData: 'sequence_name'},
       {Id: 3, title: 'Prefix', jsonData: 'prefix'},
       {Id: 4, title: 'Suffix', jsonData: 'suffix'},
@@ -236,7 +236,9 @@
               <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
   
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                  
                   <tr class="">
+
                     <th>
                       <div class="flex justify-center">
                         <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
@@ -262,12 +264,12 @@
                     <tr v-for="(data, index) in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
-                      )" :key="data.No">
+                      )" :key="data.id">
                       <td>
                         <input type="checkbox" name="chk">
                       </td>
                       <td>
-                        {{ index + 1 }} 
+                        {{ data.no }}
                       </td>
                       <td>
                         {{ data.sequence_name }}
