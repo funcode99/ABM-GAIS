@@ -22,7 +22,7 @@ import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
 
-import { ref, onBeforeMount, onMounted, computed } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 
 import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -32,9 +32,11 @@ const formEditState = useFormEditStore();
 
 let companyCode = ref();
 let companyName = ref();
-let companyParentCompany = ref();
+let companyShortName = ref();
+let companyGroup = ref();
+let companyIdVendor = ref();
 let companyLogo = ref();
-let companyVendor = ref();
+let companyCodeErp = ref();
 
 let editCompanyDataId = ref();
 
@@ -50,11 +52,13 @@ const callEditApi = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   await Api.post(`/company/update_data/${editCompanyDataId.value}`, {
-    company_code: formEditState.company.companyCode,
     company_name: formEditState.company.companyName,
-    parent_company: formEditState.company.companyParentCompany,
-    id_vendor: formEditState.company.companyVendor,
+    company_code: formEditState.company.companyCode,
+    group_company: formEditState.company.companyGroup,
+    short_name: formEditState.company.companyShortName,
+    id_vendor: formEditState.company.companyIdVendor,
     logo: formEditState.company.companyLogo,
+    code_erp: formEditState.company.companyCodeErp,
   });
   Swal.fire({
     position: "center",
@@ -241,7 +245,7 @@ const exportToExcel = () => {
     { title: "ID" },
     { title: "Code" },
     { title: "Name" },
-    { title: "Parent" },
+    { title: "Parent Company" },
   ];
 
   // Menambahkan header kolom
@@ -423,11 +427,13 @@ const exportToExcel = () => {
                   <ModalEdit
                     @change-company="editCompany(data.id)"
                     :formContent="[
-                      data.companyCode,
-                      data.companyName,
-                      data.companyParentCompany,
-                      data.companyLogo,
-                      data.companyVendor,
+                      data.company_name,
+                      data.company_code,
+                      data.short_name,
+                      data.group_company,
+                      data.id_vendor,
+                      data.logo,
+                      data.code_erp,
                     ]"
                   />
                   <button @click="deleteCompany(data.id)">

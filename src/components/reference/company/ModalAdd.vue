@@ -31,6 +31,7 @@ const file = ref({});
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
+let iconfilename = ref(null);
 
 //for get parent company in select
 const fetchParentCompany = async () => {
@@ -56,27 +57,29 @@ onMounted(() => {
   fetchVendors();
 });
 
-//for image logo
-// const onFileSelected = (event) => {
-//   const file = event.target.files[0];
-//   selectedImage.value = file ? file : null;
-// };
-
+// for image logo
 const onFileSelected = (event) => {
   const file = event.target.files[0];
-  if (file) {
-    // Menampilkan notifikasi berhasil jika gambar dipilih
-    Swal.fire({
-      icon: "success",
-      title: "Image selected",
-      text: "The image has been successfully selected.",
-      confirmButtonText: "OK",
-    });
-    selectedImage.value = file;
-  } else {
-    selectedImage.value = null;
-  }
+  selectedImage.value = file ? file : null;
+  iconfilename = file.name;
+  // console.log(selectedImage)
 };
+
+// const onFileSelected = (event) => {
+//   const file = event.target.files[0];
+//   if (file) {
+//     // Menampilkan notifikasi berhasil jika gambar dipilih
+//     Swal.fire({
+//       icon: "success",
+//       title: "Image selected",
+//       text: "The image has been successfully selected.",
+//       confirmButtonText: "OK",
+//     });
+//     selectedImage.value = file;
+//   } else {
+//     selectedImage.value = null;
+//   }
+// };
 
 const saveCompany = async () => {
   isAdding.value = true;
@@ -192,6 +195,7 @@ watch(isVisible, () => {
             placeholder="Name Company"
             required
             v-model="shortName"
+            maxlength="5"
           />
         </div>
         <div class="mb-6 w-full px-4">
@@ -206,7 +210,6 @@ watch(isVisible, () => {
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Group Company"
             required
-            maxlength="5"
             v-model="grupCompany"
           />
         </div>
@@ -228,39 +231,9 @@ watch(isVisible, () => {
               accept="image/*"
               @change="onFileSelected"
             />
-            <label for="logo_company">
+            <label class="py-2" for="logo_company">
               <span
-                class="font-JakartaSans font-medium text-sm cursor-pointer mx-4"
-                >Logo</span
-              >
-              <img
-                :src="iconUpload"
-                class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              />
-            </label>
-          </div>
-        </div>
-
-        <!-- <div class="mb-6 w-full px-4">
-          <div
-            for="logo_company"
-            class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
-          >
-            Logo Company
-            <span class="text-red">*</span>
-          </div>
-          <div class="relative border border-slate-300 rounded-lg py-2">
-            <input
-              type="file"
-              name="logo"
-              id="logo_company"
-              class="hidden border"
-              accept="image/*"
-              @change="onFileSelected"
-            />
-            <label for="logo_company">
-              <span
-                class="font-JakartaSans font-medium text-sm cursor-pointer mx-4"
+                class="font-JakartaSans hidden font-medium text-sm cursor-pointer mx-4"
                 >{{ selectedImage || "Logo Company" }}</span
               >
               <img
@@ -268,8 +241,12 @@ watch(isVisible, () => {
                 class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
               />
             </label>
+            <div v-if="iconfilename != null" class="pl-2">
+              {{ iconfilename }}
+            </div>
+            <div v-else class="pl-2 font-JakartaSans font-medium text-sm">Logo</div>
           </div>
-        </div> -->
+        </div>
 
         <div class="mb-6 w-full px-4">
           <label
