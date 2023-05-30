@@ -71,7 +71,7 @@
   let sort = ref(props.formContent[2])
   let filename = ref(props.formContent[3])
   const file = ref()
-  let sequence = ref(true)
+  let sequence = ref(false)
   let sequenceCode = ref('')
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'

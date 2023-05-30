@@ -281,7 +281,6 @@
                       </span>
                     </th>
     
-    
                   </tr>
                 </thead>
     
@@ -289,7 +288,7 @@
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
               
-                      <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
+                      <tr v-for="data in sortedDataReactive" :key="data.id">
                         <td>
                           <input type="checkbox" name="chk">
                         </td>
@@ -315,7 +314,7 @@
   
                         <td class="flex flex-wrap justify-center h-full gap-4 relative">
                           <div class="flex items-center absolute top-0 bottom-0">
-                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon]" />
+                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon, data.id_company, data.parent]" />
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>

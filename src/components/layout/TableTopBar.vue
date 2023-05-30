@@ -110,7 +110,7 @@ onBeforeMount(() => {
         class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4"
       >
         <!-- sort company filter -->
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col gap-1">
           <p class="capitalize font-Fira text-xs text-black font-medium">
             Company
           </p>
@@ -125,10 +125,11 @@ onBeforeMount(() => {
         </div>
 
         <div
-          class="flex items-center gap-4"
+          class="flex flex-col gap-1"
           :class="[$route.path == '/user' ? 'inline' : 'hidden']"
         >
-          <p class="capitalize font-Fira text-xs text-black font-medium">
+          
+        <p class="capitalize font-Fira text-xs text-black font-medium">
             Role
           </p>
 
@@ -139,6 +140,7 @@ onBeforeMount(() => {
               {{ data.role_name }}
             </option>
           </select>
+
         </div>
 
         <!-- filter & reset button -->
@@ -196,45 +198,61 @@ onBeforeMount(() => {
 
     </div>
 
-    <!-- Search for Role -->
-    <div class="flex flex-wrap items-center px-4 py-2 gap-y-2" v-if="$route.path === '/role'">
+      <div class="flex" v-if="$route.path === '/role'">
 
-      <div class="sm:flex-1"></div>
-
-      <!-- searchbar -->
-      <div class="py-2 flex md:mx-0">
-        <div class="relative block">
-          <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-            <svg
-              aria-hidden="true"
-              class="w-5 h-5 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              ></path>
-            </svg>
-          </span>
-          <input
-            type="text"
-            placeholder="Search..."
-            class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            v-model="search"
-            @keyup="$emit('doSearch', search)"
-          />
+        <!-- showing -->
+        <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+          <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+  
+          <select
+            class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+            v-model="pageMultiplier"
+            @change="$emit('changeShowing', pageMultiplierReactive)"
+          >
+            <option>10</option>
+            <option>25</option>
+            <option>50</option>
+            <option>75</option>
+            <option>100</option>
+          </select>
         </div>
+
+        <div class="sm:flex-1"></div>
+
+        <!-- searchbar -->
+        <div class="py-2 flex md:mx-0 px-4">
+          <div class="relative block">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+              <svg
+                aria-hidden="true"
+                class="w-5 h-5 text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </span>
+            <input
+              type="text"
+              placeholder="Search..."
+              class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              v-model="search"
+              @keyup="$emit('doSearch', search)"
+            />
+          </div>
+        </div>
+      
       </div>
 
-    </div>
-
     <!-- SHOWING -->
-    <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+    <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4" v-else>
       <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
       <select
         class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
