@@ -260,7 +260,7 @@ const fetchEmployee = async () => {
       <tableContainer>
         <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <!-- <div
+          <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
             <p
@@ -268,19 +268,19 @@ const fetchEmployee = async () => {
             >
               Employee
             </p>
-            <div class="flex gap-4">
+            <!-- <div class="flex gap-4">
               <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
-            </div>
-          </div> -->
+            </div> -->
+          </div>
 
           <!-- SORT & SEARCH -->
           <div
-            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 pt-4"
+            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4"
           >
             <div class="flex flex-wrap items-center gap-4">
               <div>
