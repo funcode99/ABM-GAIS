@@ -70,8 +70,9 @@ const fetchGetSite = async () => {
   try {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/site/");
+    const res = await Api.get("/site/get_data");
     Site.value = res.data.data;
+    // console.log(res.data.data);
   } catch (error) {
     console.error("Error fetching sites:", error);
   }
@@ -94,12 +95,6 @@ watch(isVisible, () => {
     currentbrandIdSite.value = props.formContent[2];
   }
 });
-
-const resetForm = () => {
-  currentbrandName.value = originalbrandName.value;
-  selectedCompanyId.value = originalbrandIdCompany.value;
-  selectedSiteId.value = originalbrandIdSite.value;
-};
 </script>
 
 <template>
@@ -109,9 +104,9 @@ const resetForm = () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader @closeVisibility="isVisible = false" />
+      <modalHeader @closeVisibility="isVisible = false" title="Edit Brand" />
 
-      <form>
+      <form @submit.prevent="submitEdit" class="pt-4">
         <div class="mb-6 text-start w-full px-4">
           <label
             class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -171,13 +166,7 @@ const resetForm = () => {
           />
         </div>
 
-        <modalFooter
-          @closeEdit="resetForm()"
-          @submitEditForm="
-            submitEdit();
-            $emit('changeBrand');
-          "
-        />
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>
