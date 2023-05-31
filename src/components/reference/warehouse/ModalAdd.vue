@@ -33,7 +33,7 @@ const fetchGetCompany = async () => {
 const fetchGetSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/");
+  const res = await Api.get("/site/get_data");
   Site.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
@@ -99,10 +99,7 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader
-        @closeVisibility="isVisible = false"
-        title="New Warehouse"
-      />
+      <modalHeader @closeVisibility="isVisible = false" title="New Warehouse" />
 
       <form class="pt-4" @submit.prevent="saveWarehouse">
         <div class="mb-6 w-full px-4">
@@ -158,7 +155,6 @@ watch(isVisible, () => {
         </div>
 
         <modalFooter @closeEdit="isVisible = false" />
-        
       </form>
     </main>
   </Modal>
