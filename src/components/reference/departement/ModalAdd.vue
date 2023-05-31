@@ -85,7 +85,7 @@ const callAddApi = async () => {
       departement_name: departementName.value,
       cost_center: costCenter.value,
       profit_center: profitCenter.value,
-      id_gl_account: GlAccount.value,
+      id_gl_account: selectedGlAccount.value,
       is_active: status.value,
       id_division: Division.value,
       departement_head: departementHead.value,
@@ -252,7 +252,7 @@ watch(isVisible, () => {
             >
               <option disabled selected>Account</option>
               <option v-for="account in GlAccount" :value="account.id">
-                {{ account.gl_account }}
+                {{ account.gl_name }}
               </option>
             </select>
           </div>
