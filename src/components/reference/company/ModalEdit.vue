@@ -151,7 +151,6 @@ const resetForm = () => {
             >Code<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentcompanyCode"
             type="text"
             id="name"
@@ -167,7 +166,6 @@ const resetForm = () => {
             >Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentcompanyName"
             type="text"
             id="name"
@@ -183,7 +181,6 @@ const resetForm = () => {
             >Short Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentcompanyShortName"
             type="text"
             id="name"
@@ -199,7 +196,6 @@ const resetForm = () => {
             >Group Company<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentcompanyGroup"
             type="text"
             id="name"
@@ -232,10 +228,7 @@ const resetForm = () => {
               >
                 {{ iconfilename }}
               </div>
-              <div
-                v-else
-                class="px-5 font-JakartaSans font-medium text-sm"
-              >
+              <div v-else class="px-5 font-JakartaSans font-medium text-sm">
                 {{ selectedImage || "Logo Company" }}
               </div>
               <img

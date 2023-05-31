@@ -153,7 +153,6 @@ const resetForm = () => {
             >Hotel Code<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currenthotelCode"
             type="text"
             id="name"
@@ -169,7 +168,6 @@ const resetForm = () => {
             >Hotel Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currenthotelName"
             type="text"
             id="name"
@@ -185,7 +183,6 @@ const resetForm = () => {
             >Address<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currenthotelAddress"
             type="text"
             id="name"
@@ -237,7 +234,6 @@ const resetForm = () => {
             >Email<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currenthotelEmail"
             type="email"
             id="name"
@@ -253,7 +249,6 @@ const resetForm = () => {
             >Phone Number<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currenthotelPhoneNumber"
             type="number"
             id="name"
