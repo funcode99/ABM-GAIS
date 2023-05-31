@@ -7,39 +7,33 @@ import { Modal } from "usemodal-vue3";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
+import Multiselect from "@vueform/multiselect";
+
 import { ref, onMounted, watch } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "zona-saved"]);
 
-let selectedCompany = ref("Company");
-let Company = ref("");
-let selectedCity = ref("");
 let zonaName = ref("");
-let City = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-const selectedCityTags = ref([]);
-const tags = ref([]);
-const tag = ref("");
-
-const handleSelectedTag = (tag) => {
-  tags.value.push(tag);
-  selectedCityTags.value.push(tag.id);
-};
-
-const handleChangeTag = (tags) => {
-  tags.value = tags;
-};
+let companyData = ref(null);
+let companyIdArray = ref(null);
+let cityData = ref(null);
+let cityIdArray = ref(null);
 
 //for get city in input
 const fetchCity = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/city/");
-  City.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  cityData = res.data.data;
+  // console.log("ini data city" + JSON.stringify(res.data.data));
+  cityData.map((item) => {
+    item.value = item.id;
+  });
+  // console.log("Data company setelah perubahan:", cityData);
 };
 
 //for get company in input
@@ -47,8 +41,12 @@ const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  companyData = res.data.data;
+  // console.log("ini data company" + JSON.stringify(res.data.data));
+  companyData.map((item) => {
+    item.value = item.id;
+  });
+  // console.log("Data company setelah perubahan:", companyData);
 };
 
 onMounted(() => {
@@ -66,23 +64,11 @@ const callAddApi = async () => {
   try {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
     await Api.post(`/zona/store`, {
       zona_name: zonaName.value,
-      id_city: selectedCityTags.value,
-      // id_company: selectedCompany.value,
+      id_city: cityIdArray.value,
+      id_company: companyIdArray.value,
     });
-
-    // const payload = {
-    //   zona_name: zonaName.value,
-    //   id_city: selectedCityTags.value,
-    // };
-
-    // console.log("ini payload:" + JSON.stringify(payload));
-
-    // Reset nilai input
-    // zonaName.value = "";
-    // selectedCityTags.value = [];
 
     Swal.fire({
       position: "center",
@@ -100,8 +86,8 @@ const callAddApi = async () => {
 
 const resetInput = () => {
   zonaName.value = "";
-  // selectedCompany.value = "Company";
-  selectedCityTags.value = "Site";
+  cityIdArray.value = [];
+  companyIdArray.value = [];
 };
 
 watch(isVisible, () => {
@@ -125,23 +111,46 @@ watch(isVisible, () => {
     <main>
       <modalHeader @closeVisibility="isVisible = false" title="New Zona" />
 
-      <form class="pt-4" @submit.prevent="saveZona">
+      <form class="pt-4 modal-box-inner-zona" @submit.prevent="saveZona">
         <div class="mb-6 w-full px-4">
           <label
             for="company"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
-          <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            required
-            v-model="selectedCompany"
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            id="company"
+            v-model="companyIdArray"
+            mode="tags"
+            placeholder="Select Company"
+            track-by="company_name"
+            label="company_name"
+            :close-on-select="false"
+            :searchable="true"
+            :options="companyData"
           >
-            <option disabled selected>Company</option>
-            <option v-for="company in Company" :value="company.id">
-              {{ company.company_name }}
-            </option>
-          </select>
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
+              >
+                {{ option.company_name }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
         </div>
 
         <div class="mb-6 w-full px-4">
@@ -168,31 +177,37 @@ watch(isVisible, () => {
           >
           <div
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            id="city"
+            v-model="cityIdArray"
+            mode="tags"
+            placeholder="Select City"
+            track-by="city_name"
+            label="city_name"
+            :close-on-select="false"
+            :searchable="true"
+            :options="cityData"
           >
-            <vue3-tags-input
-              v-model:tags="tags"
-              v-model="tag"
-              :select="true"
-              :select-items="City"
-              @on-select="handleSelectedTag"
-              @on-tags-changed="handleChangeTag"
-              placeholder="Select the tag"
-            >
-              <template
-                #item="{ tag, index }"
-                v-model="selectedCity"
-                v-for="city in City"
-                :value="Array(city.id)"
-                :key="city.id"
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
               >
-                {{ tag.city_name }}
-              </template>
-              <template #no-data> No Data </template>
-              <template #select-item="tag">
-                {{ tag.city_name }}
-              </template>
-            </vue3-tags-input>
-          </div>
+                {{ option.city_name }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
         </div>
 
         <modalFooter @closeEdit="isVisible = false" />
@@ -205,5 +220,17 @@ watch(isVisible, () => {
 :deep(.modal-vue3-content) {
   max-height: 400px !important;
   max-width: 510px !important;
+}
+
+.modal-box-inner-zona {
+  max-height: 340px !important;
+  --tw-scale-x: 1;
+  --tw-scale-y: 1;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 </style>
