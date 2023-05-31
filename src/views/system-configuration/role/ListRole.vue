@@ -30,10 +30,8 @@
 
     // import untuk table
     let sortedData = ref([])
-    // let sortedDataReactive = computed(() => sortedData.value)
     let sortedbyASC = true
     let instanceArray = []
-    // let lengthCounter = 0
 
     let editRoleDataId = ref()
 
@@ -50,7 +48,6 @@
     }
 
     const deleteData = (event) => {
-
 
       Swal.fire({
         title:
@@ -123,7 +120,7 @@
         })
         fetchGetActive()
         fetch()
-        
+
     }
 
     const addRole = async () => {
@@ -159,6 +156,28 @@
       } else {
         sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
         sortedbyASC = true
+      }
+    }
+
+    const selectAll = (checkValue) => { 
+      const checkLead = checkValue
+      if(checkLead == true) {
+        let check = document.getElementsByName('chk')
+        for(let i=0; i<check.length; i++) {  
+            if(check[i].type=='checkbox')  
+            check[i].checked=true;  
+        }
+        deleteArray.value = []
+        sortedData.value.map((item) => {
+          deleteArray.value.push(item.id)
+        })
+      } else {
+        let check = document.getElementsByName('chk')
+        for(let i=0; i<check.length; i++) {  
+            if(check[i].type=='checkbox')  
+            check[i].checked=false;  
+          }
+          deleteArray.value = []
       }
     }
 
@@ -213,6 +232,62 @@
       fetch()
       fetchGetActive()
     })
+
+    let deleteArray = ref([])
+    const deleteCheckedArray = () => {
+
+      Swal.fire({
+        title:
+          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+        iconHtml: `<img src="${icondanger}" />`,
+        showCloseButton: true,
+        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+        showCancelButton: true,
+        buttonsStyling: false,
+        cancelButtonText: "Cancel",
+        customClass: {
+          cancelButton: "swal-cancel-button",
+          confirmButton: "swal-confirm-button",
+        },
+        reverseButtons: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      })
+        
+      .then((result) => {
+        if (result.isConfirmed) {
+
+        deleteArray.value.map((item) => {
+          Api.delete(`/role/delete_data/${item}`)
+        })
+          
+        Swal.fire({
+              title: "Successfully",
+              text: "Data has been deleted.",
+              icon: "success",
+              showCancelButton: false,
+              confirmButtonColor: "#015289",
+              showConfirmButton: false,
+              timer: 1500,
+        });
+
+        if (sortedData.value.length == 1) {
+          fetch()
+          } else {
+          fetch()
+        }
+
+        deleteArray.value = []
+
+        } else {
+          return
+        }
+
+      })
+
+    }
   
 </script>
 
@@ -227,9 +302,19 @@
       <Sidebar class="flex-none" />
 
       <tableContainer>
-        
+
+          <!-- {{ deleteArray }} -->
+
         <!-- table box -->
-        <TableTopBar :title="'Role'" @increase-role="addRole" @do-search="filteredItems" @change-showing="fillPageMultiplier" modalAddType="role" />
+        <TableTopBar 
+          :title="'Role'" 
+          :numberSelected="deleteArray.length" 
+          @delete-selected-data="deleteCheckedArray()" 
+          @increase-role="addRole" 
+          @do-search="filteredItems" 
+          @change-showing="fillPageMultiplier" 
+          modalAddType="role" 
+          />
 
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
@@ -262,13 +347,13 @@
             <tbody>
 
               <!-- sortir nya harus sama dengan key yang di data dummy -->
-                <tr v-for="(data, index) in sortedData.slice(
+                <tr v-for="data in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
                   
                   <td>
-                    <input type="checkbox" name="chk">
+                    <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                   </td>
 
                   <td>

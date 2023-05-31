@@ -1,15 +1,15 @@
 <script setup>
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import icon_receive from "@/assets/icon-receive.svg";
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import icon_receive from "@/assets/icon-receive.svg"
 
-import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue";
-import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue";
-import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
-import ModalAddSequence from "@/components/system-configuration/sequence/ModalAddSequence.vue";
-import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue";
+import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue"
+import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue"
+import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue"
+import ModalAddSequence from "@/components/system-configuration/sequence/ModalAddSequence.vue"
+import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue"
 
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount } from "vue"
 
 import Api from "@/utils/Api";
 import { useRouter } from 'vue-router'
@@ -23,6 +23,7 @@ let pageMultiplierReactive = computed(() => pageMultiplier.value);
 const props = defineProps({
   title: String,
   modalAddType: String,
+  numberSelected: Number
 });
 
 let companyData = ref([]);
@@ -57,6 +58,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
+
   <div class="bg-white rounded-t-xl relative custom-card">
 
     <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
@@ -68,6 +70,17 @@ onBeforeMount(() => {
       </p>
 
       <div class="flex items-center gap-4">
+
+        <div v-if="props.numberSelected > 0" class="flex gap-2 items-center">
+          <h1 class="font-semibold">
+            {{ props.numberSelected }} Selected
+          </h1>
+          <button @click="$emit('deleteSelectedData')" class="bg-[#f4446c] py-3 px-4 text-xs rounded-lg text-white">
+            Delete Selected 
+          </button>
+        </div>
+
+
         <!-- modal add ini perlu di segregasi -->
         <ModalAddMenu
           @add-menu="$emit('increaseMenu')"
@@ -97,6 +110,7 @@ onBeforeMount(() => {
           <img :src="icon_receive" class="w-6 h-6" />
         </button>
       </div>
+      
     </div>
 
     <!-- SORT & SEARCH -->
@@ -271,6 +285,7 @@ onBeforeMount(() => {
     </div>
 
   </div>
+
 </template>
 
 <style scoped>

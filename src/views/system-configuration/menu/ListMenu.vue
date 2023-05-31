@@ -6,7 +6,6 @@
 
     import Swal from "sweetalert2"
     import Api from '@/utils/Api'
-    import router from '@/router'
     
     // import untuk approval table
     import { ref, onBeforeMount, computed } from 'vue'
@@ -176,12 +175,17 @@
             if(check[i].type=='checkbox')  
             check[i].checked=true;  
         }
+        deleteArray.value = []
+        sortedData.value.map((item) => {
+          deleteArray.value.push(item.id)
+        })
       } else {
         let check = document.getElementsByName('chk')
         for(let i=0; i<check.length; i++) {  
             if(check[i].type=='checkbox')  
-            check[i].checked=false;  
-        }
+            check[i].checked=false
+          }
+        deleteArray.value = []
       }
     }
 
@@ -240,6 +244,62 @@
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
+    let deleteArray = ref([])
+    const deleteCheckedArray = () => {
+
+      Swal.fire({
+        title:
+          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+        iconHtml: `<img src="${icondanger}" />`,
+        showCloseButton: true,
+        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+        showCancelButton: true,
+        buttonsStyling: false,
+        cancelButtonText: "Cancel",
+        customClass: {
+          cancelButton: "swal-cancel-button",
+          confirmButton: "swal-confirm-button",
+        },
+        reverseButtons: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      })
+        
+      .then((result) => {
+        if (result.isConfirmed) {
+
+        deleteArray.value.map((item) => {
+          Api.delete(`/role/delete_data/${item}`)
+        })
+          
+        Swal.fire({
+              title: "Successfully",
+              text: "Data has been deleted.",
+              icon: "success",
+              showCancelButton: false,
+              confirmButtonColor: "#015289",
+              showConfirmButton: false,
+              timer: 1500,
+        });
+
+        if (sortedData.value.length == 1) {
+          fetch()
+          } else {
+          fetch()
+        }
+
+        deleteArray.value = []
+
+        } else {
+          return
+        }
+
+      })
+
+    }
+
 </script>
 
 <template>
@@ -255,18 +315,29 @@
 
       <tableContainer>
 
+        <!-- {{ deleteArray }} -->
+
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
-        <TableTopBar title="Menu" @increase-menu="addNewMenu " @do-search="filteredItems" modalAddType="menu" />
+        <TableTopBar 
+          title="Menu" 
+          :numberSelected="deleteArray.length" 
+          @delete-selected-data="deleteCheckedArray()" 
+          @increase-menu="addNewMenu " 
+          @do-search="filteredItems" 
+          modalAddType="menu" 
+          />
         
         <!-- actual table -->
-          <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
+        <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
             <div class="block overflow-x-auto overflow-y-hidden">
               
               <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
     
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                  
                   <tr class="">
+
                     <th>
                       <div class="flex justify-center">
                         <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
@@ -283,15 +354,16 @@
                     </th>
     
                   </tr>
+                  
                 </thead>
     
                 <tbody>
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
               
-                      <tr v-for="data in sortedDataReactive" :key="data.id">
+                      <tr v-for="data in sortedData" :key="data.id">
                         <td>
-                          <input type="checkbox" name="chk">
+                          <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                         </td>
                         <td>
                           {{ data.no }} 
@@ -380,7 +452,7 @@
                 />
               </div>
   
-          </div>
+        </div>
 
       </tableContainer>
 
