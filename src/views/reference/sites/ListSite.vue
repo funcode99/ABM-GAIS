@@ -498,7 +498,7 @@ const exportToExcel = () => {
                 </td>
                 <td style="width: 5%">{{ data.no }}</td>
                 <td style="width: 10%">{{ data.site_code }}</td>
-                <td style="width: 42%">
+                <td style="width: 45%">
                   <span
                     :class="[
                       'readmore-text',
@@ -508,17 +508,8 @@ const exportToExcel = () => {
                     {{ data.site_name }}
                   </span>
                 </td>
-                <td style="width: 25%">
-                  <span
-                    :class="[
-                      'readmore-text',
-                      showFullText[data.id] ? 'show-full' : '',
-                    ]"
-                  >
-                    {{ data.company_name }}
-                  </span>
-                </td>
-                <td class="flex gap-4 justify-center">
+                <td style="width: 20%">{{ data.company_name }}</td>
+                <td class="flex flex-wrap gap-2 justify-center">
                   <ModalView
                     @view-site="viewSite(data.id)"
                     :formContent="[
