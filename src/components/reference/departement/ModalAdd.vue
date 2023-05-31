@@ -4,43 +4,45 @@ import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { Modal } from "usemodal-vue3";
 
-import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
+import Multiselect from "@vueform/multiselect";
+
 import { ref, onMounted, watch } from "vue";
 
-const emits = defineEmits(["unlockScrollbar", "departement-saved"]);
+const emits = defineEmits(["unlockScrollbar", "departementSaved"]);
 
-const tags = ref([]);
-const selectedDivisionTags = ref([]);
-let isOpenModal = ref(false);
-let selectedCompany = ref("Company");
-let Company = ref();
-let selectedGlAccount = ref("Account");
-let GlAccount = ref();
-let nameDepartement = ref("");
+let departemenCode = ref("");
+let departementName = ref("");
 let costCenter = ref("");
 let profitCenter = ref("");
+let selectedGlAccount = ref("Account");
+let GlAccount = ref("");
 let status = ref("Status");
+let Division = ref([]);
+let divisionArray = ref(null);
 let departementHead = ref("Name");
 let Employee = ref("");
-let division = ref("");
-let idDivision = ref("");
-let departementCode = ref("");
-let idGlAccount = ref("");
 
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-//for get company in select
-const fetchCompany = async () => {
+let companyData = ref(null);
+let companyIdArray = ref(null);
+
+//for get company in input
+const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  companyData = res.data.data;
+  // console.log("ini data company" + JSON.stringify(res.data.data));
+  companyData.map((item) => {
+    item.value = item.id;
+  });
+  // console.log("Data company setelah perubahan:", companyData);
 };
 
 //for get gl account in select
@@ -57,22 +59,17 @@ const fetchEmployee = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/employee/get/");
-  Employee.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  Employee.value = res.data.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data.data));
 };
 
 onMounted(() => {
-  fetchCompany();
+  fetchGetCompany();
   fetchGlAccount();
   fetchEmployee();
 });
 
-const handleChangeTag = (tags) => {
-  tags.value = tags;
-  selectedDivisionTags.value.push(tags);
-};
-
-const saveDepartement = async () => {
+const saveZona = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
@@ -82,41 +79,17 @@ const callAddApi = async () => {
   try {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    // const payload = {
-    //   departement_name: nameDepartement.value,
-    //   id_company: selectedCompany.value,
-    //   cost_center: costCenter.value,
-    //   is_active: status.value,
-    //   profit_center: profitCenter.value,
-    //   departement_head: departementHead.value,
-    //   division: selectedDivisionTags.value,
-    // };
-
-    // console.log("ini payload:" + JSON.stringify(payload));
-
     await Api.post(`/department/store`, {
-      departement_name: nameDepartement.value,
-      id_company: selectedCompany.value,
+      id_company: companyIdArray.value,
+      departement_code: departemenCode.value,
+      departement_name: departementName.value,
       cost_center: costCenter.value,
-      is_active: status.value,
       profit_center: profitCenter.value,
+      id_gl_account: GlAccount.value,
+      is_active: status.value,
+      id_division: Division.value,
       departement_head: departementHead.value,
-      division: selectedDivisionTags.value,
-      id_division: idDivision.value,
-      departement_code: departementCode.value,
-      id_gl_account: idGlAccount.value,
-      // };
     });
-
-    // Reset nilai input
-    // nameDepartement.value = "";
-    // selectedCompany.value = "";
-    // costCenter.value = "";
-    // status.value = "";
-    // profitCenter.value = "";
-    // departementHead.value = "";
-    // selectedDivisionTags.value = [];
 
     Swal.fire({
       position: "center",
@@ -126,23 +99,14 @@ const callAddApi = async () => {
       timer: 1500,
     });
 
-    emits("departement-saved");
+    emits("departementSaved");
   } catch (error) {
     console.log(error);
   }
 };
 
 const resetInput = () => {
-  nameDepartement.value = "";
-  selectedCompany.value = "Company";
-  costCenter.value = "";
-  status.value = "";
-  profitCenter.value = "";
-  departementHead.value = "";
-  selectedDivisionTags.value = "Division";
-  idDivision.value = "";
-  departementCode.value = "";
-  idGlAccount.value = "";
+  companyIdArray.value = [];
 };
 
 watch(isVisible, () => {
@@ -164,80 +128,83 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader
-        @closeVisibility="isVisible = false"
-        title="New Departement"
-      />
+      <modalHeader @closeVisibility="isVisible = false" title="New Zona" />
 
-      <form
-        class="modal-box-inner-departement"
-        @submit.prevent="saveDepartement"
-      >
-        <div class="w-full">
-          <div class="mb-6 w-full px-4">
-            <label
-              for="company"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
-            >
-            <!-- <select
-              class="bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-              v-model="selectedCompany"
-            >
-              <option disabled selected>Company</option>
-              <option v-for="company in Company" :value="company.id">
-                {{ company.company_name }}
-              </option>
-            </select> -->
-            <Multiselect
-                v-model="companyIdArray"
-                mode="tags"
-                placeholder="Select companies"
-                track-by="company_name"
-                label="company_name"
-                :close-on-select="false"
-                :searchable="true"
-                :options="companyData"
+      <form class="pt-4 modal-box-inner-zona" @submit.prevent="saveZona">
+        <div class="mb-6 w-full px-4">
+          <label
+            for="company"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Company<span class="text-red">*</span></label
+          >
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            id="company"
+            v-model="companyIdArray"
+            mode="tags"
+            placeholder="Select Company"
+            track-by="company_name"
+            label="company_name"
+            :close-on-select="false"
+            :searchable="true"
+            :options="companyData"
+          >
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
               >
-                <template v-slot:tag="{ option, handleTagRemove, disabled }">
-                  <div
-                    class="multiselect-tag is-user"
-                    :class="{
-                      'is-disabled': disabled,
-                    }"
-                  >
-                    {{ option.company_name }}
-                    <span
-                      v-if="!disabled"
-                      class="multiselect-tag-remove"
-                      @click="handleTagRemove(option, $event)"
-                    >
-                      <span class="multiselect-tag-remove-icon"></span>
-                    </span>
-                  </div>
-                </template>
-              </Multiselect>
-          </div>
+                {{ option.company_name }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
+        </div>
+
+        <div class="mb-6 w-full px-4">
+          <label
+            for="code"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Departement Code<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            name="name"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Departement Code"
+            required
+            v-model="departemenCode"
+          />
         </div>
 
         <div class="mb-6 w-full px-4">
           <label
             for="name"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Name<span class="text-red">*</span></label
+            >Departement Name<span class="text-red">*</span></label
           >
           <input
             type="text"
             name="name"
-            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Name Departement"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Departement Name"
             required
-            v-model="nameDepartement"
+            v-model="departementName"
           />
         </div>
 
-        <div class="flex justify-between px-4 items-center gap-2">
+        <div class="flex justify-between px-4 items-center">
           <div class="mb-6 w-full">
             <label
               for="cost_center"
@@ -247,14 +214,14 @@ watch(isVisible, () => {
             <input
               type="text"
               name="name"
-              class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Cost Center"
               required
               v-model="costCenter"
             />
           </div>
 
-          <div class="mb-6 w-full ml-6">
+          <div class="mb-6 w-full ml-5 overflow-x-hidden">
             <label
               for="profit"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -263,7 +230,7 @@ watch(isVisible, () => {
             <input
               type="text"
               name="name"
-              class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Profit Center"
               required
               v-model="profitCenter"
@@ -271,7 +238,7 @@ watch(isVisible, () => {
           </div>
         </div>
 
-        <div class="flex justify-between px-4 items-center gap-2">
+        <div class="flex justify-between px-4 items-center">
           <div class="mb-6 w-full">
             <label
               for="glaccount"
@@ -290,7 +257,7 @@ watch(isVisible, () => {
             </select>
           </div>
 
-          <div class="mb-6 w-full ml-6">
+          <div class="mb-6 w-full ml-5">
             <label
               for="status"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -308,7 +275,7 @@ watch(isVisible, () => {
           </div>
         </div>
 
-        <div class="flex justify-between items-start gap-2 px-4">
+        <div class="flex justify-between items-start px-4">
           <div class="mb-6 w-full text-start">
             <label
               for="Division"
@@ -318,43 +285,19 @@ watch(isVisible, () => {
             <div
               class="block bg-white w-full lg:w-[220px] md:w-52 border border-slate-300 rounded-md shadow-sm"
             >
-              <!-- <vue3-tags-input
-                  :tags="tags"
-                  placeholder="enter some tags"
-                  @on-tags-changed="handleChangeTag"
-                /> -->
               <Multiselect
-                v-model="companyIdArray"
+                v-model="Division"
                 mode="tags"
-                placeholder="Select companies"
-                track-by="company_name"
-                label="company_name"
                 :close-on-select="false"
                 :searchable="true"
-                :options="companyData"
-              >
-                <template v-slot:tag="{ option, handleTagRemove, disabled }">
-                  <div
-                    class="multiselect-tag is-user"
-                    :class="{
-                      'is-disabled': disabled,
-                    }"
-                  >
-                    {{ option.company_name }}
-                    <span
-                      v-if="!disabled"
-                      class="multiselect-tag-remove"
-                      @click="handleTagRemove(option, $event)"
-                    >
-                      <span class="multiselect-tag-remove-icon"></span>
-                    </span>
-                  </div>
-                </template>
-              </Multiselect>
+                :create-option="true"
+                :options="divisionArray"
+                placeholder="Division"
+              />
             </div>
           </div>
 
-          <div class="mb-6 w-full text-start ml-6">
+          <div class="mb-6 w-full text-start ml-5">
             <label
               for="departementhead"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -366,9 +309,9 @@ watch(isVisible, () => {
               v-model="departementHead"
             >
               <option disabled selected>Name</option>
-              <!-- <option v-for="name in Employee" :value="name.employee_name">
+              <option v-for="name in Employee" :value="name.id">
                 {{ name.employee_name }}
-              </option> -->
+              </option>
             </select>
           </div>
         </div>
@@ -385,10 +328,10 @@ watch(isVisible, () => {
   max-width: 510px !important;
 }
 
-.modal-box-inner-departement {
-  height: 360px;
+.modal-box-inner-zona {
+  max-height: 340px !important;
   --tw-scale-x: 1;
-  --tw-scale-y: 0.9;
+  --tw-scale-y: 1;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
