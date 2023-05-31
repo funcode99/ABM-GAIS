@@ -4,11 +4,13 @@ export const useFormEditStore = defineStore('add-form', {
     state: () => {
         return {
             company: {
-                companyCode: '',
                 companyName: '',
-                companyParentCompany: '',
+                companyCode: '',
+                companyGroup: '',
+                companyShortName: '',
+                companyIdVendor: '',
                 companyLogo: '',
-                companyVendor: '',
+                companyCodeErp: '',
             },
         }
     }

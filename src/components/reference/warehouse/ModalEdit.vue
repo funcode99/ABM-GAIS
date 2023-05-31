@@ -66,7 +66,7 @@ const fetchGetCompany = async () => {
 const fetchGetSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/");
+  const res = await Api.get("/site/get_data");
   Site.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };

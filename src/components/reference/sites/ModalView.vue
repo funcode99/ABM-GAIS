@@ -23,6 +23,8 @@ let siteName = ref("");
 let siteIdCompany = ref("");
 let siteCode = ref();
 let selectedCompanyId = ref(props.formContent[1] || null);
+let Warehouse = ref("");
+let selectedWarehouse = ref("Warehouse");
 
 const props = defineProps({
   formContent: Array,
@@ -95,10 +97,10 @@ const resetForm = () => {
           isVisible = false;
           resetForm();
         "
-        title="Edit Site"
+        title="View Site"
       />
 
-      <form class="pt-4" @submit.prevent="submitEdit">
+      <form class="modal-box-inner-site" @submit.prevent="submitEdit">
         <div class="mb-6 text-start w-full px-4">
           <label
             for="company"
@@ -106,7 +108,7 @@ const resetForm = () => {
             >Company<span class="text-red">*</span></label
           >
           <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            class="cursor-not-allowed font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
             v-model="selectedCompanyId"
             disabled
@@ -132,6 +134,7 @@ const resetForm = () => {
             :class="inputStylingClass"
             required
             disabled
+            class="cursor-not-allowed"
           />
         </div>
 
@@ -149,6 +152,7 @@ const resetForm = () => {
             :class="inputStylingClass"
             required
             disabled
+            class="cursor-not-allowed"
           />
         </div>
       </form>
@@ -158,7 +162,19 @@ const resetForm = () => {
 
 <style scoped>
 :deep(.modal-vue3-content) {
-  max-height: 330px !important;
+  max-height: 300px !important;
   max-width: 510px !important;
+}
+
+.modal-box-inner-site {
+  height: 360px;
+  --tw-scale-x: 1;
+  --tw-scale-y: 0.9;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
 }
 </style>
