@@ -5,6 +5,10 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/departement/ModalAdd.vue";
 import ModalEdit from "@/components/reference/departement/ModalEdit.vue";
 
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
+
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -16,6 +20,8 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
+
+import { Workbook } from "exceljs";
 
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
@@ -30,7 +36,10 @@ let Company = ref("");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
-let lockScrollbar = ref(false);
+let sortAscending = true;
+let sortedDataReactive = computed(() => sortedData.value);
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
 let showingValue = ref(1);
@@ -46,11 +55,11 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByCompany = () => {
-  if (selectedCompany.value === "") {
+  if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.company === selectedCompany.value
+      (item) => item.id_company === selectedCompany.value
     );
   }
 };
@@ -63,27 +72,53 @@ const resetData = () => {
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
+  const check = document.getElementsByName("checks");
+  const btnDelete = document.getElementById("btnDelete");
+
+  if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type === "checkbox") {
+        check[i].checked = true;
+      }
     }
+    btnDelete.style.display = "block";
   } else {
-    let check = document.getElementsByName("checks");
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type === "checkbox") {
+        check[i].checked = false;
+      }
     }
+    btnDelete.style.display = "none";
+  }
+};
+
+const deleteDataInCeklis = () => {
+  const check = document.getElementsByName("checks");
+  for (let i = 0; i < check.length; i++) {
+    if (check[i].type === "checkbox" && check[i].checked) {
+      // Lakukan tindakan penghapusan data yang sesuai di sini
+      const row = check[i].parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  }
+
+  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
+  const btnDelete = document.getElementById("btnDelete");
+  const checkedCheckboxes = document.querySelectorAll(
+    'input[name="checks"]:checked'
+  );
+  if (checkedCheckboxes.length === 0) {
+    btnDelete.style.display = "none";
   }
 };
 
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Name", jsonData: "name_departement" },
+  { Id: 2, title: "Name", jsonData: "departement_name" },
   { Id: 3, title: "Cost Center", jsonData: "cost_center" },
-  { Id: 4, title: "Status", jsonData: "status" },
-  { Id: 5, title: "Departement Head", jsonData: "name_departement_head" },
+  { Id: 4, title: "Status", jsonData: "status_name" },
+  { Id: 5, title: "Departement Head", jsonData: "departement_head" },
   { Id: 6, title: "Actions" },
 ];
 
@@ -109,13 +144,11 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.name_departement.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name_departement_head.toLowerCase().indexOf(search.toLowerCase()) >
-        -1);
+    (item.departement_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.departement_head.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.name_departement.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name_departement_head.toLowerCase().indexOf(search.toLowerCase()) >
-        -1)
+      (item.departement_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.departement_head.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -193,26 +226,59 @@ const deleteDepartement = async (id) => {
     }
   });
 };
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Departement Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "Name" },
+    { title: "Cost Center" },
+    { title: "Status" },
+    { title: "Departement Head" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.departement_name;
+    worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
+    worksheet.getCell(rowIndex + 2, 5).value = data.departement_head;
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "departememt_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full this h-[100vh]"
-    :class="lockScrollbar === true ? 'fixed' : ''"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white rounded-t-xl custom-card">
+      <tableContainer>
+        <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -223,12 +289,18 @@ const deleteDepartement = async (id) => {
               Departement
             </p>
             <div class="flex gap-4">
-              <ModalAdd
-                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                @departement-saved="departement - saved"
-              />
+              <button
+                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                id="btnDelete"
+                style="display: none"
+                @click="deleteDataInCeklis()"
+              >
+                Delete
+              </button>
+              <ModalAdd @departement-saved="fetchDepartement" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
@@ -327,72 +399,118 @@ const deleteDepartement = async (id) => {
           </div>
 
           <!-- TABLE -->
-          <div
-            class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
-          >
-            <div class="block overflow-x-auto">
-              <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
-              >
-                <thead
-                  class="text-center font-JakartaSans text-sm font-bold h-10"
+          <tableData v-if="sortedData.length > 0">
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
+
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
                 >
-                  <tr>
-                    <th>
-                      <div class="flex justify-center">
-                        <input
-                          type="checkbox"
-                          name="checked"
-                          @click="selectAll((checkList = !checkList))"
-                        />
-                      </div>
-                    </th>
+                  <span class="flex justify-center items-center gap-1">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </span>
+                </th>
+              </tr>
+            </thead>
 
-                    <th
-                      v-for="data in tableHead"
-                      :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer"
-                      @click="sortList(`${data.jsonData}`)"
-                    >
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }}
-                        <button>
-                          <img :src="arrowicon" class="w-[9px] h-3" />
-                        </button>
-                      </span>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr
-                    class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
-                    :key="data.id"
+            <tbody>
+              <tr
+                class="font-JakartaSans font-normal text-sm"
+                v-for="(data, index) in sortedData.slice(
+                  paginateIndex * pageMultiplierReactive,
+                  (paginateIndex + 1) * pageMultiplierReactive
+                )"
+                :key="data.id"
+              >
+                <td style="width: 5%">
+                  <input type="checkbox" name="checks" />
+                </td>
+                <td style="width: 5%">{{ data.no }}</td>
+                <td style="width: 42%">
+                  <span
+                    :class="[
+                      'readmore-text',
+                      showFullText[data.id] ? 'show-full' : '',
+                    ]"
                   >
-                    <td>
-                      <input type="checkbox" name="checks" />
-                    </td>
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ data.departement_name }}</td>
-                    <td>{{ data.cost_center }}</td>
-                    <td>{{ data.status_name }}</td>
-                    <td>{{ data.departement_head }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEdit
-                        @unlock-scrollbar="lockScrollbar = !lockScrollbar"
+                    {{ data.departement_name }}
+                  </span>
+                </td>
+                <td style="width: 10%">{{ data.cost_center }}</td>
+                <td style="width: 10%">{{ data.status_name }}</td>
+                <td style="width: 20%">{{ data.departement_head }}</td>
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <ModalEdit />
+                  <button @click="deleteDepartement(data.id)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </tableData>
+
+          <div v-else>
+            <tableData>
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="checked"
+                        @click="selectAll((checkList = !checkList))"
                       />
-                      <button @click="deleteDepartement(data.id)">
-                        <img :src="deleteicon" class="w-6 h-6" />
+                    </div>
+                  </th>
+
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                      <button v-if="data.jsonData" class="ml-2">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
                       </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="6"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                    Tidak Ada Data
+                  </td>
+                </tr>
+              </tbody>
+            </tableData>
           </div>
 
           <!-- PAGINATION -->
@@ -411,22 +529,18 @@ const deleteDepartement = async (id) => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
-        </div>
-      </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+        </tableTop>
+      </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-
 th {
   padding: 2px;
   text-align: left;
@@ -451,5 +565,20 @@ tr th {
 
 .this {
   overflow-x: hidden;
+}
+
+.readmore-text {
+  display: inline-block;
+  max-width: 200px; /* Atur sesuai kebutuhan */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 400px;
+  white-space: nowrap;
+  word-break: break-word;
 }
 </style>
