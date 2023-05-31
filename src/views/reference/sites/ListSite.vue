@@ -518,7 +518,7 @@ const exportToExcel = () => {
                     {{ data.company_name }}
                   </span>
                 </td>
-                <td class="flex flex-wrap gap-4 justify-center">
+                <td class="flex gap-4 justify-center">
                   <ModalView
                     @view-site="viewSite(data.id)"
                     :formContent="[
