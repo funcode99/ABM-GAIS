@@ -4,7 +4,7 @@
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
-  import { ref, onBeforeMount } from 'vue'
+  import { ref, onBeforeMount, watch } from 'vue'
   import { Modal } from 'usemodal-vue3'
   import Api from '@/utils/Api'
   import Multiselect from '@vueform/multiselect'
@@ -14,7 +14,8 @@
   let formState = useFormEditStore()
 
   let statusMenu = ref(null)
-  let idStatusMenu = ref(0)
+  let idStatusMenu = ref(props.formContent[6] == 'Active' ? 1 : 0)
+  let menuData = ref(null)
 
   const emits = defineEmits('changeMenu')
 
@@ -41,6 +42,7 @@
         formState.menu.icon = file.value
         formState.menu.idStatusMenu = idStatusMenu.value
         formState.menu.companyId = companyIdArray.value
+        formState.menu.parentId = ParentId.value
 
         emits('changeMenu')
 
@@ -77,18 +79,16 @@
   const file = ref()
   let sequence = ref(false)
   let sequenceCode = ref('')
+  let ParentId = ref(null)
 
   let companyIdObject = ref(props.formContent[4])
   let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
   let companyIdArray = ref([])
   let companyData = ref(null)
 
-  console.log(companyIdObject.value)
-  console.log(companyIdObjectKeys.value)
+  // console.log(companyIdObject.value)
+  // console.log(companyIdObjectKeys.value)
   companyIdObjectKeys.value.map((item) => {
-
-    // string
-    // console.log(typeof item) 
 
     let number = Number(item)
     
@@ -98,7 +98,7 @@
 
   })
 
-  console.log(companyIdArray.value)
+  // console.log(companyIdArray.value)
 
   const fetchCompany = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
@@ -109,6 +109,24 @@
       item.value = item.id
     })
   }
+
+  const fetchMenuData = async () => {
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/menu/get/')
+        menuData.value = api.data.data.data
+      } catch (error) {
+        console.log(error)
+        // status.value = error.response.status
+        // message.value = error.response.data.message
+      }
+  }
+
+  watch(isVisible, () => {
+    fetchCompany()
+    fetchMenuData()
+  })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -124,7 +142,7 @@
   <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
 
       <main>
-        
+
         <modalHeader
           @closeVisibility="isVisible = false"
           title="Edit Menu"
@@ -174,9 +192,10 @@
       
             <div class="mb-3 text-left">
                 <h1>Parent Menu</h1>
-                <select :class="inputStylingClass">
-                    <option>Travel Management System</option>
-                    <option>Option A</option>
+                <select :class="inputStylingClass" v-model="ParentId">
+                  <option v-for="data in menuData" :key="data.id" :value="data.id">
+                    {{ data.menu }}
+                  </option>
                 </select>
             </div>
     

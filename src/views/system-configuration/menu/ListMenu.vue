@@ -29,9 +29,8 @@
 
     let instanceArray = []
     let sortedData = ref([])
-    let sortedDataReactive = computed(() => sortedData.value)
+    let menuData = ref([])
     let sortedbyASC = true
-    let lengthCounter = 0
     let editDataId = ref(0)
 
     //for paginations
@@ -117,7 +116,7 @@
       {
         menu: formState.menu.menuName,
         sort: formState.menu.sort,
-        parent_id: null,
+        parent_id: formState.menu.parentId,
         id_status_menu: formState.menu.idStatusMenu,
         use_sequence: formState.menu.sequence,
         description: 'kosong',
@@ -125,7 +124,7 @@
         icon: formState.menu.icon,
         id_company: formState.menu.companyId
       })
-      console.log(api)
+      // console.log(api)
         Swal.fire({
           position: "center",
           icon: "success",
@@ -217,6 +216,7 @@
         const api = await Api.get('/menu/get/')
         instanceArray = api.data.data.data
         sortedData.value = instanceArray
+        menuData.value = instanceArray
         lengthCounter = sortedData.value.length
       } catch (error) {
         console.log(error)
@@ -271,7 +271,7 @@
         if (result.isConfirmed) {
 
         deleteArray.value.map((item) => {
-          Api.delete(`/role/delete_data/${item}`)
+          Api.delete(`/menu/delete_data/${item}`)
         })
           
         Swal.fire({
@@ -374,10 +374,10 @@
   
                         <td class="">
                           <!-- <img class="w-16 h-16" :src="data.icon_path" /> -->
-                          {{ data.parent_id }}
+                          {{ data.parent }}
                         </td>
   
-                        <td v-if="data.id_status_menu == 1">
+                        <td v-if="data.status_name == 'Active'">
                           Active
                         </td>
   
@@ -387,7 +387,15 @@
   
                         <td class="flex flex-wrap justify-center h-full gap-4 relative">
                           <div class="flex items-center absolute top-0 bottom-0">
-                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[data.menu, data.url, data.sort, data.icon, data.comp_array, data.parent]" />
+                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[
+                              data.menu, 
+                              data.url, 
+                              data.sort, 
+                              data.icon, 
+                              data.comp_array, 
+                              data.parent, 
+                              data.status_name
+                            ]" />
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>

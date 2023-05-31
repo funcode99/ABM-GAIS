@@ -241,7 +241,7 @@
         if (result.isConfirmed) {
 
         deleteArray.value.map((item) => {
-          Api.delete(`/role/delete_data/${item}`)
+          Api.delete(`/sequence/delete_data/${item}`)
         })
           
         Swal.fire({
