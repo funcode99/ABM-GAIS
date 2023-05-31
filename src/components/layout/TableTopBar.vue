@@ -100,14 +100,16 @@ onBeforeMount(() => {
     </div>
 
     <!-- SORT & SEARCH -->
-    <div class="flex flex-wrap items-center px-4 py-2 gap-y-2" v-if="$route.path !== '/role'">
+    <div class="flex flex-wrap items-end px-4 py-2 gap-y-2" v-if="$route.path !== '/role'">
 
       <!-- sort company -->
       <div
-        class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4"
+        class="flex items-end flex-wrap gap-4"
       >
+
         <!-- sort company filter -->
         <div class="flex flex-col gap-1">
+
           <p class="capitalize font-Fira text-xs text-black font-medium">
             Company
           </p>
@@ -121,6 +123,7 @@ onBeforeMount(() => {
           </select>
         </div>
 
+        <!-- show role on user table page -->
         <div
           class="flex flex-col gap-1"
           :class="[$route.path == '/user' ? 'inline' : 'hidden']"
@@ -141,7 +144,7 @@ onBeforeMount(() => {
         </div>
 
         <!-- filter & reset button -->
-        <div class="flex gap-4 flex-wrap items-center">
+        <div class="flex gap-4 flex-wrap">
           <button
             class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
           >
@@ -159,12 +162,14 @@ onBeforeMount(() => {
             Reset
           </button>
         </div>
+
       </div>
 
       <div class="sm:flex-1"></div>
 
       <!-- searchbar -->
-      <div class="py-2 flex md:mx-0">
+      <div class="pt-2 flex md:mx-0">
+
         <div class="relative block">
           <span class="absolute inset-y-0 left-0 flex items-center pl-2">
             <svg
@@ -191,6 +196,7 @@ onBeforeMount(() => {
             @keyup="$emit('doSearch', search)"
           />
         </div>
+        
       </div>
 
     </div>

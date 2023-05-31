@@ -108,13 +108,22 @@
     }
 
     const callEditApi = async () => {
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         let api = await Api.post(`/role/update_data/${editRoleDataId.value}`, {
           role_name: formEditState.role.roleName
         })
+        Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Your work has been saved",
+        showConfirmButton: false,
+        timer: 1500,
+        })
         fetchGetActive()
         fetch()
+        
     }
 
     const addRole = async () => {
