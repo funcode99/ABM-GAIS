@@ -39,8 +39,8 @@ const originalsiteCode = ref(props.formContent[2]);
 const submitEdit = () => {
   isAdding.value = true;
 
-  if (!formEditState.brand) {
-    formEditState.brand = {}; // Inisialisasi objek jika belum ada
+  if (!formEditState.site) {
+    formEditState.site = {}; // Inisialisasi objek jika belum ada
   }
 
   formEditState.site.siteName = currentsiteName.value;
