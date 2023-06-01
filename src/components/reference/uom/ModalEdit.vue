@@ -1,8 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
@@ -25,7 +25,7 @@ const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.uom) {
-    formEditState.uom = {}
+    formEditState.uom = {};
   }
 
   formEditState.uom.uomName = uomName.value;
@@ -53,11 +53,7 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-
-      <modalHeader 
-        @closeVisibility="isVisible = false"
-        title="Edit UOM"
-      />
+      <modalHeader @closeVisibility="isVisible = false" title="Edit UOM" />
 
       <form @submit.prevent="submitEdit" class="pt-4">
         <div class="mb-6 text-start w-full px-4">
@@ -67,7 +63,6 @@ watch(isVisible, () => {
             >UOM Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="uomName"
             type="text"
             id="name"
@@ -77,10 +72,7 @@ watch(isVisible, () => {
         </div>
 
         <!-- @submitEditForm="submitEdit()" -->
-        <modalFooter
-          @closeEdit="isVisible = false"
-        />
-
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>

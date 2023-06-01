@@ -1,8 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
@@ -51,22 +51,18 @@ const inputStylingClass =
 </script>
 
 <template>
-
   <button @click="isVisible = !isVisible">
     <img :src="editicon" alt="edit icon" />
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-
     <main>
-
-      <modalHeader 
+      <modalHeader
         @closeVisibility="isVisible = false"
         title="Edit GL Account"
       />
 
       <form class="pt-4" @submit.prevent="submitEdit">
-
         <div class="mb-6 text-start w-full px-4">
           <label
             for="gl_account"
@@ -74,7 +70,6 @@ const inputStylingClass =
             >GL Account<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="glAccountCode"
             type="text"
             id="name"
@@ -90,7 +85,6 @@ const inputStylingClass =
             >GL Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="glAccountName"
             type="text"
             id="name"
@@ -99,14 +93,9 @@ const inputStylingClass =
           />
         </div>
 
-        <modalFooter
-          @closeEdit="isVisible = false"
-        />
-
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
-
     </main>
-
   </Modal>
 </template>
 

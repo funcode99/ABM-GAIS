@@ -18,9 +18,9 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
+let siteName = ref("");
 let selectedCompany = ref("Company");
 let Company = ref("");
-let siteName = ref("");
 let siteIdCompany = ref("");
 let siteCode = ref();
 let selectedCompanyId = ref(props.formContent[1] || null);
@@ -39,8 +39,8 @@ const originalsiteCode = ref(props.formContent[2]);
 const submitEdit = () => {
   isAdding.value = true;
 
-  if (!formEditState.brand) {
-    formEditState.brand = {}; // Inisialisasi objek jika belum ada
+  if (!formEditState.site) {
+    formEditState.site = {}; // Inisialisasi objek jika belum ada
   }
 
   formEditState.site.siteName = currentsiteName.value;
@@ -125,7 +125,6 @@ const resetForm = () => {
             >Site Code<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentsiteCode"
             type="text"
             id="name"
@@ -141,7 +140,6 @@ const resetForm = () => {
             >Site Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentsiteName"
             type="text"
             id="name"

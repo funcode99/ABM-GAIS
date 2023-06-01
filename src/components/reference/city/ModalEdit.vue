@@ -1,8 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
@@ -56,7 +56,6 @@ const inputStylingClass =
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-
       <modalHeader @closeVisibility="isVisible = false" title="Edit City" />
 
       <form @submit.prevent="submitEdit" class="pt-4">
@@ -67,7 +66,6 @@ const inputStylingClass =
             >City Code<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="cityCode"
             type="text"
             id="name"
@@ -83,7 +81,6 @@ const inputStylingClass =
             >City Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="cityName"
             type="text"
             id="name"
@@ -92,12 +89,8 @@ const inputStylingClass =
           />
         </div>
 
-        <modalFooter
-          @closeEdit="isVisible = false"
-        />
-
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
-      
     </main>
   </Modal>
 </template>

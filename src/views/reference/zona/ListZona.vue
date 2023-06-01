@@ -25,8 +25,10 @@ import { Workbook } from "exceljs";
 
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
+import { useFormEditStore } from "@/stores/reference/zona/edit-modal.js";
 
 const sidebar = useSidebarStore();
+let formEditState = useFormEditStore();
 
 //for sort & search
 const search = ref("");
@@ -46,6 +48,33 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+let editZonaDataid = ref();
+
+//for edit
+const editZona = async (data) => {
+  editZonaDataid.value = data;
+  setTimeout(callEditApi, 500);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/zona/update_data/${editZonaDataid.value}`, {
+    id_company: formEditState.zona.zonaIdCompany,
+    zona_name: formEditState.zona.zonaName,
+    id_city: formEditState.zona.zonaIdCity,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchZona();
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -142,15 +171,12 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    const zonaNameMatch =
-      item.zona_name.toLowerCase().indexOf(search.toLowerCase()) > -1;
-    const cityNameMatch =
-      item.city &&
-      item.city.some(
-        (city) =>
-          city.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1
-      );
-    return zonaNameMatch || cityNameMatch;
+    (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    return (
+      (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+    );
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
@@ -454,8 +480,8 @@ const exportToExcel = () => {
                 </td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
-                    @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                     @change-zona="editZona(data.id)"
+                    :formContent="[data.id_company, data.zona, data.id_city]"
                   />
                   <button @click="deleteZona(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />

@@ -157,7 +157,6 @@ watch(isVisible, () => {
             >Brand Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentbrandName"
             type="text"
             id="name"

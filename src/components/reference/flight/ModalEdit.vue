@@ -1,8 +1,8 @@
 <script setup>
 import editIcon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
@@ -52,7 +52,6 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-  
       <modalHeader
         @closeVisibility="isVisible = false"
         title="Edit Flight Class"
@@ -68,7 +67,6 @@ watch(isVisible, () => {
           </label>
 
           <input
-            @keydown.enter="submitEdit"
             v-model="flightClassName"
             type="text"
             id="name"
@@ -77,10 +75,7 @@ watch(isVisible, () => {
           />
         </div>
 
-        <modalFooter
-          @closeEdit="isVisible = false"
-        />
-
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>

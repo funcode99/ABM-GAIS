@@ -1,8 +1,8 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
@@ -59,11 +59,7 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-
-      <modalHeader
-        @closeVisibility="isVisible = false"
-        title="Edit Currency"
-      />
+      <modalHeader @closeVisibility="isVisible = false" title="Edit Currency" />
 
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
@@ -73,7 +69,6 @@ watch(isVisible, () => {
             >Currency<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currencyName"
             type="text"
             id="name"
@@ -89,7 +84,6 @@ watch(isVisible, () => {
             >Symbol<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currencySymbol"
             type="text"
             id="name"
@@ -105,7 +99,6 @@ watch(isVisible, () => {
             >Code<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currencyCode"
             type="text"
             id="name"
@@ -114,10 +107,7 @@ watch(isVisible, () => {
           />
         </div>
 
-        <modalFooter
-          @closeEdit="isVisible = false"
-        />
-
+        <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>

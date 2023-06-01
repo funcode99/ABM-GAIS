@@ -155,7 +155,6 @@ const resetForm = () => {
             >Warehouse Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentwarehouseName"
             type="text"
             id="name"
