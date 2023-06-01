@@ -3,7 +3,6 @@
   import { ref, onBeforeMount, watch } from 'vue'
 
   import { Modal } from "usemodal-vue3"
-  import Swal from "sweetalert2"
   import Api from '@/utils/Api'
 
   import Multiselect from '@vueform/multiselect'
@@ -22,11 +21,12 @@
   let menuName = ref('')
   let url = ref('')
   let idStatusMenu = ref(0)
-  let idParent = ref(1)
+  let ParentId = ref(null)
   let sort = ref(1)
   let sequence = ref(false)
   let sequenceCode = ref('')
   const file = ref({})
+  let menuData = ref([])
 
   // buat ngisi dropdown status
   let statusMenu = ref(null)
@@ -54,7 +54,7 @@
 
         // active / disable only value
         formState.menu.idStatusMenu = idStatusMenu.value
-        // formState.menu.parentId = idParent.value
+        formState.menu.parentId = ParentId.value
 
         emits('addMenu')
         isVisible.value = false
@@ -67,6 +67,7 @@
 
   onBeforeMount(() => {
     fetchCompany()
+    fetchMenuData()
     getMenuStatus()
   })
 
@@ -82,19 +83,24 @@
       menuName.value = ''
       url.value = ''
       idStatusMenu.value = 0
-      idParent.value = 1
+      ParentId.value = null
       sort.value = 1
       sequence.value = false
       sequenceCode.value = ''
       file.value = {}
+      companyIdArray.value = []
   }
 
   watch(isVisible, () => {
+    
     if(isAdding.value == true) {
       isAdding.value = false
     } else {
       resetInput()
     }
+
+    fetchMenuData()
+
   })
 
   let companyData = ref(null)
@@ -107,6 +113,19 @@
     companyData.map((item) => {
       item.value = item.id
     })
+  }
+
+  const fetchMenuData = async () => {
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get('/menu/get/')
+        menuData.value = api.data.data.data
+      } catch (error) {
+        console.log(error)
+        // status.value = error.response.status
+        // message.value = error.response.data.message
+      }
   }
 
 </script>
@@ -159,9 +178,10 @@
         
                   <div class="mb-3 text-left">
                       <h1>Parent Menu</h1>
-                      <select :class="inputStylingClass">
-                          <option>Travel Management System</option>
-                          <option>Option A</option>
+                      <select :class="inputStylingClass" v-model="ParentId">
+                          <option v-for="data in menuData" :key="data.id" :value="data.id">
+                            {{ data.menu }}
+                          </option>
                       </select>
                   </div>
         

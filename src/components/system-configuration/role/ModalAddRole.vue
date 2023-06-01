@@ -6,7 +6,6 @@
   import modalFooter from "@/components/modal/modalFooter.vue"
 
   import { Modal } from "usemodal-vue3"
-  import Swal from "sweetalert2"
 
   import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
 
@@ -61,12 +60,12 @@
 
             <modalHeader
               @closeVisibility="isVisible = false"
-              title="New User"
+              title="New Role"
             />
 
-            <form class="pt-4 px-8" @submit.prevent="submitRole">
+            <form class="pt-4 px-1" @submit.prevent="submitRole">
 
-              <div class="mb-3">
+              <div class="mb-3 px-3">
                 <label
                   for="name"
                   class="block mb-2 font-JakartaSans font-medium text-sm"

@@ -1,15 +1,15 @@
 <script setup>
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import icon_receive from "@/assets/icon-receive.svg";
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import icon_receive from "@/assets/icon-receive.svg"
 
-import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue";
-import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue";
-import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue";
-import ModalAddSequence from "@/components/system-configuration/sequence/ModalAddSequence.vue";
-import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue";
+import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue"
+import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue"
+import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vue"
+import ModalAddSequence from "@/components/system-configuration/sequence/ModalAddSequence.vue"
+import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue"
 
-import { ref, computed, onBeforeMount } from "vue";
+import { ref, computed, onBeforeMount } from "vue"
 
 import Api from "@/utils/Api";
 import { useRouter } from 'vue-router'
@@ -23,6 +23,7 @@ let pageMultiplierReactive = computed(() => pageMultiplier.value);
 const props = defineProps({
   title: String,
   modalAddType: String,
+  numberSelected: Number
 });
 
 let companyData = ref([]);
@@ -57,6 +58,7 @@ onBeforeMount(() => {
 </script>
 
 <template>
+
   <div class="bg-white rounded-t-xl relative custom-card">
 
     <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
@@ -68,6 +70,17 @@ onBeforeMount(() => {
       </p>
 
       <div class="flex items-center gap-4">
+
+        <div v-if="props.numberSelected > 0" class="flex gap-2 items-center">
+          <h1 class="font-semibold">
+            {{ props.numberSelected }} Selected
+          </h1>
+          <button @click="$emit('deleteSelectedData')" class="bg-[#f4446c] py-3 px-4 text-xs rounded-lg text-white">
+            Delete Selected 
+          </button>
+        </div>
+
+
         <!-- modal add ini perlu di segregasi -->
         <ModalAddMenu
           @add-menu="$emit('increaseMenu')"
@@ -97,17 +110,20 @@ onBeforeMount(() => {
           <img :src="icon_receive" class="w-6 h-6" />
         </button>
       </div>
+      
     </div>
 
     <!-- SORT & SEARCH -->
-    <div class="flex flex-wrap items-center px-4 py-2 gap-y-2" v-if="$route.path !== '/role'">
+    <div class="flex flex-wrap items-end px-4 py-2 gap-y-2" v-if="$route.path !== '/role'">
 
       <!-- sort company -->
       <div
-        class="flex flex-wrap md:grid md:grid-flow-col md:auto-cols-max items-center gap-4"
+        class="flex items-end flex-wrap gap-4"
       >
+
         <!-- sort company filter -->
         <div class="flex flex-col gap-1">
+
           <p class="capitalize font-Fira text-xs text-black font-medium">
             Company
           </p>
@@ -121,6 +137,7 @@ onBeforeMount(() => {
           </select>
         </div>
 
+        <!-- show role on user table page -->
         <div
           class="flex flex-col gap-1"
           :class="[$route.path == '/user' ? 'inline' : 'hidden']"
@@ -141,7 +158,7 @@ onBeforeMount(() => {
         </div>
 
         <!-- filter & reset button -->
-        <div class="flex gap-4 flex-wrap items-center">
+        <div class="flex gap-4 flex-wrap">
           <button
             class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
           >
@@ -159,12 +176,14 @@ onBeforeMount(() => {
             Reset
           </button>
         </div>
+
       </div>
 
       <div class="sm:flex-1"></div>
 
       <!-- searchbar -->
-      <div class="py-2 flex md:mx-0">
+      <div class="pt-2 flex md:mx-0">
+
         <div class="relative block">
           <span class="absolute inset-y-0 left-0 flex items-center pl-2">
             <svg
@@ -191,6 +210,7 @@ onBeforeMount(() => {
             @keyup="$emit('doSearch', search)"
           />
         </div>
+        
       </div>
 
     </div>
@@ -265,6 +285,7 @@ onBeforeMount(() => {
     </div>
 
   </div>
+
 </template>
 
 <style scoped>

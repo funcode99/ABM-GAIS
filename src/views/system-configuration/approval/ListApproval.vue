@@ -51,12 +51,17 @@
             if(check[i].type=='checkbox')  
             check[i].checked=true;  
         }
+        deleteArray.value = []
+        sortedData.value.map((item) => {
+          deleteArray.value.push(item.id)
+        })
       } else {
         let check = document.getElementsByName('chk')
         for(let i=0; i<check.length; i++) {  
             if(check[i].type=='checkbox')  
             check[i].checked=false;  
         }
+        deleteArray.value = []
       }
     }
 
@@ -196,6 +201,62 @@
       console.log('mengambil kembali data')
       fetch()
     }
+
+    let deleteArray = ref([])
+    const deleteCheckedArray = () => {
+
+      Swal.fire({
+        title:
+          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+        iconHtml: `<img src="${icondanger}" />`,
+        showCloseButton: true,
+        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+        showCancelButton: true,
+        buttonsStyling: false,
+        cancelButtonText: "Cancel",
+        customClass: {
+          cancelButton: "swal-cancel-button",
+          confirmButton: "swal-confirm-button",
+        },
+        reverseButtons: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      })
+        
+      .then((result) => {
+        if (result.isConfirmed) {
+
+        deleteArray.value.map((item) => {
+          Api.delete(`/menu/delete_data/${item}`)
+        })
+          
+        Swal.fire({
+              title: "Successfully",
+              text: "Data has been deleted.",
+              icon: "success",
+              showCancelButton: false,
+              confirmButtonColor: "#015289",
+              showConfirmButton: false,
+              timer: 1500,
+        });
+
+        if (sortedData.value.length == 1) {
+          fetch()
+          } else {
+          fetch()
+        }
+
+        deleteArray.value = []
+
+        } else {
+          return
+        }
+
+      })
+
+    }
   
 </script>
 
@@ -211,8 +272,18 @@
       <Sidebar class="flex-none" />
 
       <tableContainer>
+
+        <!-- {{ deleteArray }} -->
         
-        <TableTopBar @do-search="filteredItems" :title="'Approval'" @increase-approver="addNewApprover" @change-showing="fillPageMultiplier" modalAddType="approval" />
+        <TableTopBar 
+          :title="'Approval'" 
+          :numberSelected="deleteArray.length" 
+          @delete-selected-data="deleteCheckedArray()"   
+          @do-search="filteredItems" 
+          @increase-approver="addNewApprover" 
+          @change-showing="fillPageMultiplier" 
+          modalAddType="approval" 
+        />
         
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
           
@@ -246,7 +317,7 @@
 
                   <tr v-for="(data, index) in sortedData" :key="data.id">
                     <td>
-                      <input type="checkbox" name="chk">
+                      <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                     </td>
                     <td>
                       {{ data.no }} 

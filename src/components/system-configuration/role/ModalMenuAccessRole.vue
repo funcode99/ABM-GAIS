@@ -124,32 +124,6 @@ watch(isVisible, () => {
               </table>
               
           </div>
-      
-          <!-- <div class="sticky right-4 bottom-0 z-50 bg-white px-10 pt-2 pb-4">
-
-              <div className="divider m-0 pb-4"></div>
-
-              <div class="flex justify-end gap-4">
-
-                <button
-                  @click="isVisible = false"
-                  class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
-                  >
-                  Cancel
-                </button>
-
-                <button
-                @click="submitAccess"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-                >
-                  <button @click="isVisible = false">
-                    Save
-                  </button>
-                </button>
-
-              </div>
-
-          </div> -->
           
           <modalFooter
             class="mt-6 pt-5"
@@ -165,7 +139,7 @@ watch(isVisible, () => {
 <style scoped>
 
 .modal-box-inner-inner {
-  height: 100%;
+  max-height: 500px !important;
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -177,7 +151,7 @@ watch(isVisible, () => {
 }
 
 :deep(.modal-vue3-content) {
-  height: 400px !important;
+  max-height: 550px !important;
 }
 
 </style>

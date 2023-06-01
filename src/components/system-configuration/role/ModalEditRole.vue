@@ -1,11 +1,13 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
 import editIcon from "@/assets/navbar/edit_icon.svg";
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
 import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+
+  import modalHeader from "@/components/modal/modalHeader.vue"
+  import modalFooter from "@/components/modal/modalFooter.vue"
 
 let formEditState = useFormEditStore()
 
@@ -56,17 +58,10 @@ watch(isVisible, () => {
 
     <main>
 
-        <div class="sticky top-0 z-50 bg-[#015289]">
-          <button
-            @click="isVisible = false"
-            class="cursor-pointer absolute right-3 top-0 lg:top-3"
-          >
-            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-          </button>
-          <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start">
-            Edit Role
-          </p>
-        </div>
+        <modalHeader
+          @closeVisibility="isVisible = false"
+          title="Edit Role"
+        />
 
         <form class="modal-box-inner-inner" @submit.prevent="submitEdit">
 
@@ -78,8 +73,9 @@ watch(isVisible, () => {
                 Role <span class="text-red">*</span>
               </span>
   
+              <!-- gak perlu pakai ini lagi -->
+              <!-- @keydown.enter="submitEdit" -->
                 <input
-                  @keydown.enter="submitEdit"
                   v-model="currentRoleName"
                   type="text"
                   id="name"
@@ -90,8 +86,13 @@ watch(isVisible, () => {
   
             </div>
           </div>
+
+              <modalFooter
+                class="mt-6 pt-5 pb-2"
+                @closeEdit="isVisible = false"
+              />
     
-          <div class="sticky bottom-0 bg-white">
+          <!-- <div class="sticky bottom-0 bg-white">
               <div class="flex justify-end gap-4 mr-4">
                 
                 <label
@@ -111,7 +112,7 @@ watch(isVisible, () => {
                 </button>
   
             </div>
-          </div>
+          </div> -->
           
         </form>
       
