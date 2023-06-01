@@ -145,7 +145,7 @@ const fetchReimbursement = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/reimbursement/");
-  instanceArray = res.data.data;
+  instanceArray = res.data.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 };
@@ -372,7 +372,7 @@ const exportToExcel = () => {
                     {{ data.reimbursement_type }}
                   </span>
                 </td>
-                <td style="width: 20%">{{ data.reimbursement_parent }}</td>
+                <td style="width: 20%">{{ data.parent }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit />
                   <button @click="deleteReimbursement(data.id)">
@@ -420,7 +420,7 @@ const exportToExcel = () => {
               <tbody>
                 <tr>
                   <td
-                    colspan="4"
+                    colspan="5"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Tidak Ada Data

@@ -30,7 +30,7 @@ let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
 let companyData = ref(null);
-let companyIdArray = ref(null);
+let companyIdArray = ref([]);
 
 //for get company in input
 const fetchGetCompany = async () => {
@@ -69,7 +69,7 @@ onMounted(() => {
   fetchEmployee();
 });
 
-const saveZona = async () => {
+const saveDepartement = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
@@ -87,7 +87,7 @@ const callAddApi = async () => {
       profit_center: profitCenter.value,
       id_gl_account: selectedGlAccount.value,
       is_active: status.value,
-      id_division: Division.value,
+      id_division: Division.value.join(","),
       departement_head: departementHead.value,
     });
 
@@ -128,9 +128,12 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader @closeVisibility="isVisible = false" title="New Zona" />
+      <modalHeader
+        @closeVisibility="isVisible = false"
+        title="New Departement"
+      />
 
-      <form class="pt-4 modal-box-inner-zona" @submit.prevent="saveZona">
+      <form class="pt-4 modal-box-inner-zona" @submit.prevent="saveDepartement">
         <div class="mb-6 w-full px-4">
           <label
             for="company"
@@ -221,7 +224,7 @@ watch(isVisible, () => {
             />
           </div>
 
-          <div class="mb-6 w-full ml-5 overflow-x-hidden">
+          <div class="mb-6 w-full ml-2 overflow-x-hidden">
             <label
               for="profit"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -257,7 +260,7 @@ watch(isVisible, () => {
             </select>
           </div>
 
-          <div class="mb-6 w-full ml-5">
+          <div class="mb-6 w-full ml-2 overflow-x-hidden">
             <label
               for="status"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -297,7 +300,7 @@ watch(isVisible, () => {
             </div>
           </div>
 
-          <div class="mb-6 w-full text-start ml-5">
+          <div class="mb-6 w-full text-start ml-2 overflow-x-hidden">
             <label
               for="departementhead"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -316,7 +319,7 @@ watch(isVisible, () => {
           </div>
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>
