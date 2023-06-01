@@ -26,7 +26,10 @@ import { Workbook } from "exceljs";
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
+import { useFormEditStore } from "@/stores/reference/departement/edit-modal.js";
+
 const sidebar = useSidebarStore();
+let formEditState = useFormEditStore();
 
 //for sort & search
 const search = ref("");
@@ -46,6 +49,39 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+let editDepartementDataid = ref();
+
+//for edit
+const editDepartement = async (data) => {
+  editDepartementDataid.value = data;
+  setTimeout(callEditApi, 500);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`department/update_data/${editDepartementDataid.value}`, {
+    id_company: formEditState.departement.departementIdCompany,
+    departement_code: formEditState.departement.departementCode,
+    departement_name: formEditState.departement.departementName,
+    cost_center: formEditState.departement.departementCostCenter,
+    profit_center: formEditState.departement.departementProfitCenter,
+    id_gl_account: formEditState.departement.departementGlAccount,
+    is_active: formEditState.departement.departementStatus,
+    id_division: formEditState.departement.departementDivision,
+    departement_head: formEditState.departement.departementHead,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchDepartement();
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -457,7 +493,20 @@ const exportToExcel = () => {
                 <td style="width: 10%">{{ data.status_name }}</td>
                 <td style="width: 20%">{{ data.departement_head }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit />
+                  <ModalEdit
+                    @change-departement="editDepartement(data.id)"
+                    :formContent="[
+                      data.id_company,
+                      data.departement_code,
+                      data.departement_name,
+                      data.cost_center,
+                      data.profit_center,
+                      data.id_gl_account,
+                      data.is_active,
+                      data.id_division,
+                      data.departement_head,
+                    ]"
+                  />
                   <button @click="deleteDepartement(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>

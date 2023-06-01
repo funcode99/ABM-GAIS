@@ -255,7 +255,7 @@ watch(isVisible, () => {
             >
               <option disabled selected>Account</option>
               <option v-for="account in GlAccount" :value="account.id">
-                {{ account.gl_name }}
+                {{ account.gl_account }}
               </option>
             </select>
           </div>
