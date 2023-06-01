@@ -23,7 +23,6 @@
   let modalPaddingHeight = '25vh'
 
   let sortedData = ref([])
-  let instanceArray = []
   let sortedDataReactive = computed(() => sortedData.value)
 
 
@@ -97,29 +96,36 @@ watch(isVisible, () => {
                   </tr>
                 </thead>
       
-                <thead>
-                  <tr>
-                    <th class="text-[12px]">
-                        Travel Management System
-                    </th>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead>
-      
-                <tbody>
-                    <tr v-for="data in sortedDataReactive" :key="data.Id">
+         
+                  <tbody v-for="data in sortedDataReactive" :key="data.Id">
+                    
+                    <tr>
                       <th>
                         {{ data.menu }}
                       </th>
-                      <th class="text-center">
-                        <input type="checkbox" :value="data.id" v-model="writeValue">
-                      </th>
-                      <th class="text-center">
-                        <input type="checkbox" :value="data.id" v-model="readValue">
-                      </th>
+                      <th></th>
+                      <th></th>
                     </tr>
-                </tbody>
+
+                    <tr v-for="inner in data.child">
+                      
+                          <th>
+                            {{ inner.menu }}
+                          </th>
+                          
+                          <th class="text-center">
+                            <input type="checkbox" :value="inner.id" v-model="writeValue">
+                          </th>
+  
+                          <th class="text-center">
+                            <input type="checkbox" :value="inner.id" v-model="readValue">
+                          </th>
+  
+                    </tr>
+
+                  </tbody>
+                
+
       
               </table>
               
@@ -148,7 +154,7 @@ watch(isVisible, () => {
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   
-    overflow-y: auto;
+  overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 

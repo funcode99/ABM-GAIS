@@ -42,7 +42,7 @@
     else {
       idMatrix.map((item, index) => {
           if(index == idMatrix.length-1) {
-            console.log('ini adalah index terakhir ' + index)
+            // console.log('ini adalah index terakhir ' + index)
           }
           else {
             dropdownRemoveList.value.push(item.id_approval_auth)
@@ -297,13 +297,17 @@
     
                 <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
   
-                  <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
+                  <!-- <td v-if="input.level != 0 ? input.level = input.id_approval_auth : ''">
                     {{ input.level }} 
-                  </td>
+                  </td> -->
   
                   <!-- sudah betul -->
                   <td v-if="input.level == undefined">
                     0
+                  </td>
+
+                  <td v-else>
+                    {{ index + 1 }}
                   </td>
     
                   <!-- event listener gak ngaruh di option -->
