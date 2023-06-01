@@ -33,8 +33,6 @@
           sequence.value = 0
         }
 
-        // console.log(companyIdArray.value)
-
         formState.menu.menuName = menuName.value
         formState.menu.sort = sort.value
         formState.menu.sequence = sequence.value
@@ -65,7 +63,6 @@
   }
 
   let isVisible = ref(false)
-  let type = '' 
   let modalPaddingHeight = '25vh'
 
   const props = defineProps({
@@ -79,26 +76,23 @@
   const file = ref()
   let sequence = ref(false)
   let sequenceCode = ref('')
+  // let ParentId = ref(props.formContent[5])
   let ParentId = ref(null)
 
   let companyIdObject = ref(props.formContent[4])
   let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
-  let companyIdArray = ref([])
+  let companyIdArray = ref(null)
   let companyData = ref(null)
 
-  // console.log(companyIdObject.value)
-  // console.log(companyIdObjectKeys.value)
-  companyIdObjectKeys.value.map((item) => {
-
-    let number = Number(item)
-    
-    if(Number.isInteger(number)) {
-      companyIdArray.value.push(item)
+  companyIdObjectKeys.value.map((item, index) => {
+    if(item == '{') {
+      companyIdObjectKeys.value[index] = '['
+    } else if (item == '}') {
+      companyIdObjectKeys.value[index] = ']'
     }
-
   })
 
-  // console.log(companyIdArray.value)
+  companyIdArray.value = JSON.parse(companyIdObjectKeys.value.join(''))
 
   const fetchCompany = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
@@ -123,9 +117,17 @@
       }
   }
 
+  const resetInput = () => {
+      menuName.value = props.formContent[0]
+      url.value = props.formContent[1]
+      sort.value = props.formContent[2]
+      filename.value = props.formContent[3]
+  }
+
   watch(isVisible, () => {
     fetchCompany()
     fetchMenuData()
+    resetInput()
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
@@ -139,7 +141,10 @@
         <img :src=editIcon alt="">
     </button>
   
-  <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+
+      <!-- {{ companyIdObject }}
+      {{ companyIdObjectKeys }} -->
 
       <main>
 
@@ -209,6 +214,7 @@
             </div>
     
             <div class="mb-3 text-left"></div>
+                  
                   <h1>Company</h1>
                   <Multiselect
                     v-model="companyIdArray"
@@ -240,6 +246,7 @@
                     </template>
 
                   </Multiselect>
+
             <div class="mb-3"></div>
     
             <div class="mb-3 text-left">
@@ -304,7 +311,6 @@
 
 :deep(.modal-vue3-content) {
   max-height: 550px !important;
-  overflow-y: auto !important;
 }
 
 .modal-box-inner-inner {

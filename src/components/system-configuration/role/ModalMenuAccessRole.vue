@@ -139,19 +139,19 @@ watch(isVisible, () => {
 <style scoped>
 
 .modal-box-inner-inner {
+
   max-height: 500px !important;
+  
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-  overflow-y: auto;
+  
+    overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
-}
 
-:deep(.modal-vue3-content) {
-  max-height: 550px !important;
 }
 
 </style>

@@ -95,13 +95,6 @@
         }
       })
 
-    //  await Api.delete(`/menu/delete_data/${event}`)
-    //   if (sortedData.value.length == 1) {
-    //     router.go()
-    //   } else {
-    //     fetch()
-    //   }
-
     }
 
     const addNewMenu = async () => {
@@ -124,7 +117,6 @@
         icon: formState.menu.icon,
         id_company: formState.menu.companyId
       })
-      // console.log(api)
         Swal.fire({
           position: "center",
           icon: "success",
@@ -158,7 +150,15 @@
         id_status_menu: formEditState.menu.idStatusMenu,
         id_company: formEditState.menu.companyId
       })
-      console.log(api)
+
+      Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been edited",
+          showConfirmButton: false,
+          timer: 1500,
+      })
+
       fetch()        
       } catch (error) {
         console.log(error)
@@ -217,11 +217,10 @@
         instanceArray = api.data.data.data
         sortedData.value = instanceArray
         menuData.value = instanceArray
-        lengthCounter = sortedData.value.length
       } catch (error) {
         console.log(error)
-        status.value = error.response.status
-        message.value = error.response.data.message
+        // status.value = error.response.status
+        // message.value = error.response.data.message
       }
     }
 
@@ -236,7 +235,6 @@
           return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
-      lengthCounter = sortedData.value.length
       onChangePage(1)
     }
 
@@ -336,7 +334,7 @@
     
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
                   
-                  <tr class="">
+                  <tr>
 
                     <th>
                       <div class="flex justify-center">

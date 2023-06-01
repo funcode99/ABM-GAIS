@@ -18,13 +18,9 @@
   // ini fieldType nya
   let approverLines = ref([])
 
-  // let level = 0
-  // let authoritiesValue = ''
-  // let approverName = ''
-
   let isVisible = ref(false)
   let isAdding = ref(false)
-  let modalPaddingHeight = "25vh"
+  let modalPaddingHeight = "15vh"
   const emits = defineEmits('addApprover')
 
   // for get Menu Dropdown
@@ -281,26 +277,13 @@
                     <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
                       
                       <!-- nilai awalnya PM -->
-                      <td v-if="input.id_approval_auth === 1 ? input.level = 1 : ''">
-                          1
-                      </td>
-                      <td v-if="input.id_approval_auth === 2 ? input.level = 2 : ''" >
-                        2
-                      </td>
-                      <td v-if="input.id_approval_auth === 3 ? input.level = 3 : ''">
-                        3
-                      </td>
-                      <td v-if="input.id_approval_auth === 4 ? input.level = 4 : ''">
-                        4
-                      </td>
-                      <td v-if="input.id_approval_auth === 5 ? input.level = 5 : ''">
-                        5
-                      </td>
-                      <td v-if="input.id_approval_auth === 6 ? input.level = 6 : ''">
-                        6
-                      </td>
+                      
                       <td v-if="input.id_approval_auth == ''">
                         0
+                      </td>
+
+                      <td v-else>
+                        {{ index + 1 }}
                       </td>
         
                       <td>
@@ -371,7 +354,6 @@ th span {
 
 :deep(.modal-vue3-content) {
   max-height: 550px !important;
-  overflow-y: auto !important;
 }
 
 </style>

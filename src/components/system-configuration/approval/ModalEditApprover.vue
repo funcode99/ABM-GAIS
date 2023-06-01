@@ -24,7 +24,7 @@
   })
 
   let isVisible = ref(false)
-  let modalPaddingHeight = '25vh'
+  let modalPaddingHeight = '15vh'
 
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])
@@ -34,12 +34,21 @@
   let indexNumber = ref(props.formContent[5])
   let idMatrixActual = ref(null)
   
+  let dropdownRemoveList = ref([])
+
     if(props.formContent[4] == undefined) {
       console.log('array detail tidak ada')
-    } else {
-        idMatrixActual.value = idMatrix[0].id_matrix
-        // 3, 26 adalah id_detail nya
-        console.log(idMatrixActual.value)
+    } 
+    else {
+      idMatrix.map((item, index) => {
+          if(index == idMatrix.length-1) {
+            console.log('ini adalah index terakhir ' + index)
+          }
+          else {
+            dropdownRemoveList.value.push(item.id_approval_auth)
+          }
+      })
+      idMatrixActual.value = idMatrix[0].id_matrix
     }
 
   let authorities = ref('')
@@ -49,18 +58,6 @@
   let addAuthoritiesData = ref([])
 
   let levelValue = ref()
-
-  let dropdownRemoveList = ref([])
-
-  let instanceArrayFetch = []
-
-  const fetch = async () => {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const api = await Api.get('/approval/get_approval')
-        instanceArrayFetch = api.data.data
-        // approverLines.value = instanceArray
-  }
 
   const fetchApproverAuthorities = async () => {
 
@@ -269,7 +266,7 @@
           <h1 class="font-medium text-left">Approver Lines <span>*</span> </h1>
           <hr class="border border-black">
   
-          <div class="overflow-x-auto">
+          <div class="overflow-x-hidden">
             <table
               class="table table-zebra table-compact border rounded-lg w-full"
               :class="approverLines.length == 0 ? 'w-full' : ''"
@@ -409,8 +406,8 @@ th span {
 
 .modal-box-inner-inner {
   max-height: 500px !important;
-  --tw-scale-x: 0.9;
-  --tw-scale-y: 0.9;
+  --tw-scale-x: 0.98;
+  --tw-scale-y: 0.95;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
     scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -421,6 +418,7 @@ th span {
 
 :deep(.modal-vue3-content) {
   max-height: 550px !important;
+  width: 550px !important;
   max-width: 600px !important; 
 }
 

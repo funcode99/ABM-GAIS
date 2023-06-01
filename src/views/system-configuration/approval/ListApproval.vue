@@ -330,10 +330,6 @@
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data?.detail, index]" />
-                      <!-- approval authorities nya gaboleh kosong, karena akan dikirim sebagai props -->
-                      <!-- {{ index }} -->
-                     <!-- {{ data.detail[index] }} -->
-                      <!-- <ModalDelete @confirm-delete="deleteData(data.id)" /> -->
                       <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
