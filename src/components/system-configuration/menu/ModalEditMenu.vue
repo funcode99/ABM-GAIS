@@ -77,7 +77,6 @@
   let sequence = ref(false)
   let sequenceCode = ref('')
   let ParentId = ref(props.formContent[5])
-  // let ParentId = ref(null)
 
   let companyIdObject = ref(props.formContent[4])
   let companyIdObjectKeys = ref(Object.values(companyIdObject.value))

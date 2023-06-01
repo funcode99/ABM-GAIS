@@ -117,6 +117,7 @@
         icon: formState.menu.icon,
         id_company: formState.menu.companyId
       })
+      console.log(api)
         Swal.fire({
           position: "center",
           icon: "success",
@@ -359,7 +360,10 @@
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
               
-                      <tr v-for="data in sortedData" :key="data.id">
+                      <tr v-for="data in sortedData.slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )" :key="data.id">
                         <td>
                           <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                         </td>
@@ -391,7 +395,7 @@
                               data.sort, 
                               data.icon, 
                               data.comp_array, 
-                              data.parent, 
+                              data.parent_id, 
                               data.status_name
                             ]" />
                             <button @click="deleteData(data.id)">
