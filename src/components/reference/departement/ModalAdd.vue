@@ -272,8 +272,8 @@ watch(isVisible, () => {
               v-model="status"
             >
               <option disabled selected>Status</option>
-              <option>Active</option>
-              <option>Non Active</option>
+              <option value="1">Active</option>
+              <option value="0">Non Active</option>
             </select>
           </div>
         </div>
