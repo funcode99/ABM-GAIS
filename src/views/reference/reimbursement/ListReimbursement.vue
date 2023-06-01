@@ -260,7 +260,7 @@ const exportToExcel = () => {
               >
                 Delete
               </button>
-              <ModalAdd />
+              <ModalAdd @reimbursement-saved="fetchReimbursement"/>
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
