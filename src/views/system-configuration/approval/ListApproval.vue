@@ -29,6 +29,8 @@
     const editApprovalId = ref()
 
     let sortedData = ref([])
+    let sortedDataReactive = computed(() => sortedData.value)
+
     let sortedbyASC = true
     let instanceArray = []
 
@@ -315,7 +317,7 @@
 
                 <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                  <tr v-for="(data, index) in sortedData" :key="data.id">
+                  <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
                     <td>
                       <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                     </td>

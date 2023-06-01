@@ -80,6 +80,8 @@
 
   const saveApproverLines = async (data, idx, matrixId) => {
 
+    console.log(data[idx].level)
+
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
     const api = await Api.post('/approval/store_approval_detail', {
@@ -117,9 +119,6 @@
 
   const removeField = async (index, fieldType) => {
 
-    // console.log(fieldType[index].id_detail)
-    // console.log(props.formContent[4])
-
     if(fieldType[index].id_detail) {
       
       console.log('masuk ke api')
@@ -129,30 +128,19 @@
       const api = await Api.delete(`/approval/delete_data_approval_detail/${fieldType[index].id_detail}`)
 
       console.log('approval berhasil dihapus')
+      emits('fetchApproval')
       
     }
 
-    fetch()
+    console.log('setelah masuk ke api')
 
     fieldType.splice(index, 1)
     dropdownRemoveList.value.splice(index-1, 1)
     dropdownRemoveList.value.splice(index+1, 1)
-
-    // emits('fetchApproval')
-    // console.log(props.formContent[4])
   
   }
 
   const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
-
-  const responseExample = [
-      {
-        id_role: 1,
-        role_name: 'Admin',
-        write_menu : ['Request Trip', 'Settlement', 'Cash Advance Travel', 'Cash Advance Non Travel', 'Claim/Reimbursement', 'Pool Car Management', 'List Pool Car'],
-        delete_menu : ['Cash Advance Non Travel', 'Claim/Reimbursement', 'Pool Car Management', 'List Pool Car'],
-      }
-  ]
 
   // for get Menu Dropdown
   let instanceArray = []
@@ -302,7 +290,7 @@
                   </td> -->
   
                   <!-- sudah betul -->
-                  <td v-if="input.level == undefined">
+                  <td v-if="input.level == undefined ? input.level = input.id_approval_auth : ''">
                     0
                   </td>
 

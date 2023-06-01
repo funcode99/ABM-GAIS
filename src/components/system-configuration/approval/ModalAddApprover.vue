@@ -37,6 +37,8 @@
   let minCA = ref(0)
   let maxCA = ref(0)
 
+  let dropdownRemoveList = ref([])
+
   const fetchApproverAuthorities = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -82,16 +84,26 @@
     fetchApproverAuthorities()
   })
 
-  const addField = (fieldType) => {
+  let currentAuthoritiesId = ref()
+
+  const addField = (fieldType, isi) => {
+
+    if(isi) {
+      dropdownRemoveList.value.push(isi)
+    }
+
       fieldType.push({
             level : 1,
             id_approval_auth : authorities.value,
             // approverName : ''
-  })
-  }
+    })
+
+}
 
   const removeField = (index, fieldType) => {
-          fieldType.splice(index, 1)
+    fieldType.splice(index, 1)
+    dropdownRemoveList.value.splice(index-1, 1)
+    dropdownRemoveList.value.splice(index+1, 1)
   }
 
   const saveField = () => {
@@ -287,11 +299,20 @@
                       </td>
         
                       <td>
-                        <select v-model="input.id_approval_auth">
-                          <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id">
+                        <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false">
+                          <option 
+                            v-for="data in addAuthoritiesData" 
+                            :key="data.id" 
+                            :value="data.id" 
+                            :hidden="dropdownRemoveList.includes(data.id) ? true : false"
+                          >
                             {{ data.auth_name }}
                           </option>
                         </select>
+                      </td>
+
+                      <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
+    
                       </td>
         
                       <td>
@@ -310,7 +331,7 @@
                       <td></td>
                       <td></td>
                       <td class="flex justify-center">
-                        <img @click="addField(approverLines)" class="cursor-pointer" :src="iconPlus" alt="">
+                        <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
                       </td>
                     </tr>
         
