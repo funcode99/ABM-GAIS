@@ -173,6 +173,13 @@
           id_site: formState.user.siteId,
           name: formState.user.fullname,
         })
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
+        })
         fetch()
     }
 
@@ -196,6 +203,13 @@
           id_company: formEditState.user.companyId,
           id_site: formEditState.user.siteId,
         })
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been edited",
+          showConfirmButton: false,
+          timer: 1500,
+        })
         fetch()
     }
  
@@ -208,7 +222,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get('/users')      
-        instanceArray = api.data.data.data
+        instanceArray = api.data.data
         console.log(instanceArray)
         sortedData.value = instanceArray
       } catch(error) {

@@ -15,7 +15,7 @@
 
   let isVisible = ref(false)
   let isAdding = ref(false)
-  let modalPaddingHeight = "25vh"
+  let modalPaddingHeight = "10vh"
   const emits = defineEmits('addMenu')
 
   let menuName = ref('')
@@ -159,21 +159,21 @@
                   </div>
         
                   <div class="mb-3">
-                    <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       URL<span class="text-red-star">*</span>
                     </label>
                     <input
                     :class="inputStylingClass"
-                    v-model="url" type="text" id="name" placeholder="URL" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+                    v-model="url" type="text" placeholder="URL" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
                   </div>
         
                   <div class="mb-3">
-                    <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       Icon<span class="text-red-star">*</span>
                     </label>
                     <input
                     :class="inputStylingClass"
-                    @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
                   </div>
         
                   <div class="mb-3 text-left">
@@ -255,7 +255,7 @@
         
                   <div class="mb-3" v-if="sequence">
       
-                    <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       Sequence Code<span class="text-red-star">*</span>
                     </label>
       

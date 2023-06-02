@@ -62,9 +62,12 @@ const inputStylingClass =
         title="Edit GL Account"
       />
 
-      <form class="pt-4" @submit.prevent="submitEdit">
+      <form class="pt-4" @submit.prevent="submitEdit" name="editGLAccount">
+        
         <div class="mb-6 text-start w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="gl_account"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >GL Account<span class="text-red">*</span></label
           >
           <input
@@ -76,7 +79,9 @@ const inputStylingClass =
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="gl_name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >GL Name<span class="text-red">*</span></label
           >
           <input

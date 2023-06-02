@@ -29,6 +29,8 @@
     const editApprovalId = ref()
 
     let sortedData = ref([])
+    let sortedDataReactive = computed(() => sortedData.value)
+
     let sortedbyASC = true
     let instanceArray = []
 
@@ -122,7 +124,16 @@
           id_company: formState.approval.companyId,
           id_menu: formState.approval.menuId,
           id_code_document: formState.approval.codeDocumentId,
-          array_detail: formState.approval.arrayDetail
+          array_detail: formState.approval.arrayDetail,
+          min_ammount: formState.approval.minCA,
+          max_ammount: formState.approval.maxCA
+        })
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
         })
         fetch()
     }
@@ -140,7 +151,16 @@
           id_company: formEditState.approval.companyId,
           id_menu: formEditState.approval.menuId,
           id_code_document: formEditState.approval.codeDocumentId,
-          array_detail: formEditState.approval.arrayDetail
+          array_detail: formEditState.approval.arrayDetail,
+          min_ammount: formState.approval.minCA,
+          max_ammount: formState.approval.maxCA
+        })
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been edited",
+          showConfirmButton: false,
+          timer: 1500,
         })
         fetch()
     }
@@ -315,7 +335,7 @@
 
                 <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                  <tr v-for="(data, index) in sortedData" :key="data.id">
+                  <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
                     <td>
                       <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                     </td>
@@ -329,7 +349,17 @@
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" :formContent="[data.approval_name, data.id_company, data.id_menu, data.id_code_document, data?.detail, index]" />
+                      <ModalEditApproval @changeMatrix="" @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" 
+                      :formContent="[
+                        data.approval_name, 
+                        data.id_company, 
+                        data.id_menu, 
+                        data.id_code_document, 
+                        data?.detail, 
+                        index,
+                        data.min_ammount,
+                        data.max_ammount
+                      ]" />
                       <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>

@@ -117,6 +117,7 @@
         icon: formState.menu.icon,
         id_company: formState.menu.companyId
       })
+      console.log(api)
         Swal.fire({
           position: "center",
           icon: "success",
@@ -214,7 +215,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get('/menu/get/')
-        instanceArray = api.data.data.data
+        instanceArray = api.data.data
         sortedData.value = instanceArray
         menuData.value = instanceArray
       } catch (error) {
@@ -359,7 +360,10 @@
     
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
               
-                      <tr v-for="data in sortedData" :key="data.id">
+                      <tr v-for="data in sortedData.slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )" :key="data.id">
                         <td>
                           <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                         </td>
@@ -383,21 +387,19 @@
                           Disabled
                         </td>
   
-                        <td class="flex flex-wrap justify-center h-full gap-4 relative">
-                          <div class="flex items-center absolute top-0 bottom-0">
+                        <td class="flex flex-wrap gap-4 justify-center">
                             <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[
                               data.menu, 
                               data.url, 
                               data.sort, 
                               data.icon, 
                               data.comp_array, 
-                              data.parent, 
+                              data.parent_id, 
                               data.status_name
                             ]" />
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>
-                          </div>
                         </td>
                         
                       </tr>

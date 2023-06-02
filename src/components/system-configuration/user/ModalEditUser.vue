@@ -12,7 +12,7 @@
 
     let isVisible = ref(false)
     let isAdding = ref(false)
-    let modalPaddingHeight = '25vh'
+    let modalPaddingHeight = '10vh'
 
     const props = defineProps({
       formContent: Array

@@ -19,8 +19,7 @@
   })
 
   let isVisible = ref(false)
-  let type = '' 
-  let modalPaddingHeight = '25vh'
+  let modalPaddingHeight = '10vh'
 
   let sortedData = ref([])
   let sortedDataReactive = computed(() => sortedData.value)
@@ -74,7 +73,7 @@ watch(isVisible, () => {
     <img :src=roleIcon class="w-[27px] h-[27px]" alt="">
   </button>
 
-  <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
 
         <modalHeader
           @closeVisibility="isVisible = false"
@@ -124,15 +123,13 @@ watch(isVisible, () => {
                     </tr>
 
                   </tbody>
-                
-
       
               </table>
               
           </div>
           
           <modalFooter
-            class="mt-6 pt-5"
+            class="mt-6 pt-5 z-50"
             @closeEdit="isVisible = false"
           />
 
@@ -146,7 +143,7 @@ watch(isVisible, () => {
 
 .modal-box-inner-inner {
 
-  max-height: 500px !important;
+  max-height: 400px !important;
   
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;

@@ -67,7 +67,10 @@ import { Switch } from '@headlessui/vue'
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get('/zona/get')
-      optionDataZona.value = api.data.data
+      optionDataZona.value = api.data.data.data
+      console.log(api)
+      // gak boleh dicampur string
+      console.log(optionDataZona.value)
     }
 
     const fetchFlight = async () => {
@@ -95,7 +98,7 @@ import { Switch } from '@headlessui/vue'
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get('/job_band')
-      optionDataJobBand.value = api.data.data
+      optionDataJobBand.value = api.data.data.data
     }
 
     const fetchTypeOfTransportation = async () => {
@@ -136,7 +139,7 @@ import { Switch } from '@headlessui/vue'
     let isVisibleAccomodation = ref(false)
     let isVisibleCashAdvance = ref(false)
 
-    let type = '' 
+
     let modalPaddingHeight = 50
 
     let formStep = ref(0)
@@ -844,8 +847,8 @@ import { Switch } from '@headlessui/vue'
                     <div :class="columnClass">
                       <span>Zona<span class="text-red-star">*</span></span>
                       <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Zona" v-model="zona" required>
-                        <option v-for="data in optionDataZona" :value="data.id">
-                          {{ data.zona_name }}
+                        <option v-for="data in optionDataZona" :value="data?.id">
+                          {{ data.zona }}
                         </option>
                       </select>
                     </div>
@@ -964,44 +967,44 @@ import { Switch } from '@headlessui/vue'
               <!-- step 4 form Airlines -->
               <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
 
-              <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                + Add Airlines
-              </button>
+                <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  + Add Airlines
+                </button>
 
-              <div class="overflow-x-auto mt-5">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
-                        {{ data.title }}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
-                      <td>
-                        {{ data.name }}
-                      </td>
-                      <td>
-                        {{ data.departure }}
-                      </td>
-                      <td>
-                        {{ data.arrival }}
-                      </td>
-                      <td>
-                        {{ data.flightNumber }}
-                      </td>
-                      <td>
-                        {{ data.flightRegion }}
-                      </td>
-                      <td>
-                        {{ data.status }}
-                      </td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                <div class="overflow-x-auto mt-5">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
+                          {{ data.title }}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+                        <td>
+                          {{ data.name }}
+                        </td>
+                        <td>
+                          {{ data.departure }}
+                        </td>
+                        <td>
+                          {{ data.arrival }}
+                        </td>
+                        <td>
+                          {{ data.flightNumber }}
+                        </td>
+                        <td>
+                          {{ data.flightRegion }}
+                        </td>
+                        <td>
+                          {{ data.status }}
+                        </td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
               </div>
 
@@ -1770,7 +1773,7 @@ import { Switch } from '@headlessui/vue'
     </div>
 
     <!-- Modal step 3 form modal Add Guest as Traveller -->
-    <Modal type="clean" v-model:visible="isVisibleGuest" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+    <Modal type="clean" v-model:visible="isVisibleGuest" v-model:offsetTop="modalPaddingHeight">
 
     <modalHeader @close-click="isVisibleGuest = false" :title="'Guest as Traveller'" />
 
@@ -1929,7 +1932,7 @@ import { Switch } from '@headlessui/vue'
     </Modal>
 
     <!-- Modal step 4 form modal Add Airlines -->
-    <Modal type="clean" v-model:visible="isVisibleAirlines" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+    <Modal type="clean" v-model:visible="isVisibleAirlines" v-model:offsetTop="modalPaddingHeight">
 
     <modalHeader @close-click="isVisibleAirlines = false" :title="'Airlines'" />
 
@@ -2117,7 +2120,7 @@ import { Switch } from '@headlessui/vue'
     </Modal>
 
     <!-- Modal step 5 form modal Add Taxi Voucher -->
-    <Modal type="clean" v-model:visible="isVisibleTaxiVoucher" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+    <Modal type="clean" v-model:visible="isVisibleTaxiVoucher" v-model:offsetTop="modalPaddingHeight">
 
     <modalHeader @close-click="isVisibleTaxiVoucher = false" :title="'Taxi Voucher'" />
 
@@ -2231,7 +2234,7 @@ import { Switch } from '@headlessui/vue'
     </Modal>
 
     <!-- Modal step 6 form modal Add Other Transportation -->
-    <Modal type="clean" v-model:visible="isVisibleOtherTransportation" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+    <Modal type="clean" v-model:visible="isVisibleOtherTransportation" v-model:offsetTop="modalPaddingHeight">
 
     <modalHeader @close-click="isVisibleOtherTransportation = false" :title="'Other Transportation'" />
 
@@ -2341,7 +2344,7 @@ import { Switch } from '@headlessui/vue'
     </Modal>
 
     <!-- Modal step 7 form modal Add Accomodation -->
-    <Modal type="clean" v-model:visible="isVisibleAccomodation" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+    <Modal type="clean" v-model:visible="isVisibleAccomodation" v-model:offsetTop="modalPaddingHeight">
 
       <modalHeader @close-click="isVisibleAccomodation = false" :title="'Accomodation'" />
 
@@ -2555,7 +2558,7 @@ import { Switch } from '@headlessui/vue'
     </Modal>
 
     <!-- Modal step 8 form modal Add Cash Advance -->
-    <Modal type="clean" v-model:visible="isVisibleCashAdvance" v-model:title="type" v-model:offsetTop="modalPaddingHeight">
+    <Modal type="clean" v-model:visible="isVisibleCashAdvance" v-model:offsetTop="modalPaddingHeight">
 
       <modalHeader @close-click="isVisibleCashAdvance = false" :title="'Cash Advance'" />
 
