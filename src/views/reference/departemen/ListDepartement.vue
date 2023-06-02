@@ -490,7 +490,7 @@ const exportToExcel = () => {
                 </td>
                 <!-- <td style="width: 10%">{{ data.cost_center }}</td> -->
                 <td style="width: 10%">{{ data.status_name }}</td>
-                <td style="width: 20%">{{ data.departement_head }}</td>
+                <td style="width: 20%">{{ data.departement_head_name }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
                     @change-departement="editDepartement(data.id)"

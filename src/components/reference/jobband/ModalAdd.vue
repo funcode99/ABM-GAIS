@@ -24,6 +24,20 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
+//for inner table
+let zonaTlk = ref("");
+
+let editDataId = ref(null);
+
+//for get tlk data in table
+const fetchGetTlk = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/zona_job/get/");
+  zonaTlk.value = res.data.data;
+  console.log("ini data tlk " + JSON.stringify(res.data.data));
+};
+
 //for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -45,6 +59,7 @@ const fetchGetFlightClass = async () => {
 onMounted(() => {
   fetchGetCompany();
   fetchGetFlightClass();
+  fetchGetTlk();
 });
 
 const saveJobBand = async () => {
@@ -106,14 +121,12 @@ watch(isVisible, () => {
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-    <main>
+    <main class="modal-box-inner-jobband">
       <modalHeader @closeVisibility="isVisible = false" title="New Job Band" />
 
-      <form class="pt-4 modal-box-inner-jobband" @submit.prevent="saveJobBand">
+      <form class="pt-4" @submit.prevent="saveJobBand">
         <div class="mb-6 w-full px-4">
-          <label
-            for="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
           <select
@@ -129,14 +142,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="jobband"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Job Band<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="jobband"
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Job Band"
             required
@@ -145,14 +155,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="hotel"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Hotel Fare<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="hotel"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Hotel Fare"
             required
@@ -161,14 +168,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="meal"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Meals Rate<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="meal"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Meal Rate"
             required
@@ -177,9 +181,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="flight"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Flight<span class="text-red">*</span></label
           >
           <select
@@ -193,87 +195,55 @@ watch(isVisible, () => {
             </option>
           </select>
         </div>
-
-        <!-- INNER TABLE -->
-        <h1 class="text-base font-JakartaSans font-bold py-2 px-4">TLK</h1>
-        <div class="px-4 pb-10">
-          <table
-            class="table table-zebra table-compact border w-full rounded-lg"
-          >
-            <thead class="text-center font-JakartaSans text-sm font-bold">
-              <tr>
-                <th class="relative">
-                  <span class="flex justify-center">Zona</span>
-                  <button class="absolute right-0 top-0 bottom-0">
-                    <img :src="arrowicon" class="w-[9px] h-3" />
-                  </button>
-                </th>
-                <th class="relative">
-                  <span class="flex justify-center">Gross/Hari</span>
-                  <button class="absolute right-1 top-0 bottom-0">
-                    <img :src="arrowicon" class="w-[9px] h-3" />
-                  </button>
-                </th>
-                <th class="flex justify-center">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody class="bg-[#F5F5F5]">
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>A</td>
-                <td>569.000</td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>B</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>C</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>D</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr class="font-JakartaSans font-normal text-sm">
-                <td>E</td>
-                <td></td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button>
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <modalFooter @closeEdit="isVisible = false" />
       </form>
+
+      <!-- INNER TABLE -->
+      <h1 class="text-base font-JakartaSans font-bold py-2 px-4">TLK</h1>
+      <div class="px-4 pb-10">
+        <table class="table table-zebra table-compact border w-full rounded-lg">
+          <thead class="text-center font-JakartaSans text-sm font-bold">
+            <tr>
+              <th class="relative bg-blue">
+                <span class="text-center items-center text-white capitalize"
+                  >Zona</span
+                >
+              </th>
+              <th class="relative bg-blue">
+                <span class="text-center items-center text-white capitalize"
+                  >Gross/Hari</span
+                >
+              </th>
+              <th class="relative bg-blue">
+                <span class="text-center items-center text-white capitalize"
+                  >Action</span
+                >
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="bg-[#F5F5F5]">
+            <tr
+              class="font-JakartaSans font-normal text-sm"
+              v-for="data in zonaTlk"
+              :key="data.id"
+            >
+              <td class="text-center items-center">
+                {{ data.zona_name }}
+              </td>
+              <td class="text-center items-center">
+                {{ data.tlk_rate }}
+              </td>
+              <td class="flex justify-center items-center">
+                <button>
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <modalFooter @closeEdit="isVisible = false" />
     </main>
   </Modal>
 </template>
@@ -292,7 +262,11 @@ watch(isVisible, () => {
 }
 
 :deep(.modal-vue3-content) {
-  max-height: 400px !important;
+  max-height: 330px !important;
   max-width: 510px !important;
+}
+
+:deep(.modal-vue3-body) {
+  margin-top: -4% !important;
 }
 </style>

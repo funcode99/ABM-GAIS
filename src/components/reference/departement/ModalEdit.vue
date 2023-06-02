@@ -132,7 +132,7 @@ const resetInput = () => {
   currentDepartementProfitCenter.value = originalFormContent[3];
   selectedDepartementGlAccount.value = originalFormContent[4];
   selectedStatusTypeId.value = originalFormContent[5];
-  divisionIdArray.value = [...originalFormContent[7]];
+  // divisionIdArray.value = [...originalFormContent[7]];
   selectedDepartementHead.value = originalFormContent[6];
 };
 
