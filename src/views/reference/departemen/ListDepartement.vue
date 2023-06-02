@@ -179,11 +179,14 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.departement_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.departement_head.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    const departementName = item.departement_name.toLowerCase();
+    const departementHead =
+      typeof item.departement_head === "string"
+        ? item.departement_head.toLowerCase()
+        : "";
     return (
-      (item.departement_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.departement_head.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      departementName.indexOf(search.toLowerCase()) > -1 ||
+      departementHead.indexOf(search.toLowerCase()) > -1
     );
   });
   sortedData.value = filteredR;
@@ -271,7 +274,7 @@ const exportToExcel = () => {
     { title: "Nomor" },
     { title: "ID" },
     { title: "Name" },
-    { title: "Cost Center" },
+    // { title: "Cost Center" },
     { title: "Status" },
     { title: "Departement Head" },
   ];
@@ -286,8 +289,8 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.departement_name;
-    worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
-    worksheet.getCell(rowIndex + 2, 5).value = data.departement_head;
+    // worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
+    worksheet.getCell(rowIndex + 2, 4).value = data.departement_head_name;
   });
 
   // Menyimpan workbook menjadi file Excel
