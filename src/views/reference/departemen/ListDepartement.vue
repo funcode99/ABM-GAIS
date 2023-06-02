@@ -152,10 +152,10 @@ const deleteDataInCeklis = () => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Name", jsonData: "departement_name" },
-  { Id: 3, title: "Cost Center", jsonData: "cost_center" },
-  { Id: 4, title: "Status", jsonData: "status_name" },
-  { Id: 5, title: "Departement Head", jsonData: "departement_head" },
-  { Id: 6, title: "Actions" },
+  // { Id: 3, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 3, title: "Status", jsonData: "status_name" },
+  { Id: 4, title: "Departement Head", jsonData: "departement_head" },
+  { Id: 5, title: "Actions" },
 ];
 
 //for sort
@@ -489,7 +489,7 @@ const exportToExcel = () => {
                     {{ data.departement_name }}
                   </span>
                 </td>
-                <td style="width: 10%">{{ data.cost_center }}</td>
+                <!-- <td style="width: 10%">{{ data.cost_center }}</td> -->
                 <td style="width: 10%">{{ data.status_name }}</td>
                 <td style="width: 20%">{{ data.departement_head }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">

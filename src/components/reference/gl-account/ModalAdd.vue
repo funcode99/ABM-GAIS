@@ -77,46 +77,35 @@ watch(isVisible, () => {
         title="New GL Account"
       />
 
-        <form class="pt-4" @submit.prevent="saveGlAccount">
+      <form class="pt-4" @submit.prevent="saveGlAccount">
+        <div class="mb-6 w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >GL Account<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="GL Account"
+            required
+            v-model="GlAccount"
+          />
+        </div>
 
-            <div class="mb-6 w-full px-4">
-              <label
-                for="gl_account"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >GL Account<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                name="gl_account"
-                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="GL Account"
-                required
-                v-model="GlAccount"
-              />
-            </div>
+        <div class="mb-6 w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >GL Name<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="GL Name"
+            required
+            v-model="GlName"
+          />
+        </div>
 
-            <div class="mb-6 w-full px-4">
-              <label
-                for="gl_name"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >GL Name<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                name="gl_name"
-                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="GL Name"
-                required
-                v-model="GlName"
-              />
-            </div>
-        
-            <modalFooter
-              @closeEdit="isVisible = false"
-            />
-    
-        </form>
-
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
+      </form>
     </main>
   </Modal>
 </template>
