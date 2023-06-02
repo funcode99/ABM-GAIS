@@ -83,7 +83,6 @@ const callAddApi = async () => {
       id_company: companyIdArray.value,
       departement_code: departemenCode.value,
       departement_name: departementName.value,
-      cost_center: costCenter.value,
       profit_center: profitCenter.value,
       id_gl_account: selectedGlAccount.value,
       is_active: status.value,
@@ -107,12 +106,17 @@ const callAddApi = async () => {
 
 const resetInput = () => {
   companyIdArray.value = [];
+  departemenCode.value = "";
+  departementName.value = "";
+  profitCenter.value = "";
+  selectedGlAccount.value = "Account";
+  status.value = "Status";
+  Division.value = [];
+  selectedDepartementHead.value = "Name";
 };
 
-watch(isVisible, () => {
-  if (isAdding.value == true) {
-    isAdding.value = false;
-  } else {
+watch(isVisible, (newValue) => {
+  if (newValue) {
     resetInput();
   }
 });
@@ -198,32 +202,17 @@ watch(isVisible, () => {
           />
         </div>
 
-        <div class="flex justify-between px-4 items-center">
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Cost Center<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Cost Center"
-              required
-              v-model="costCenter"
-            />
-          </div>
-
-          <div class="mb-6 w-full ml-2 overflow-x-hidden">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Profit Center<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Profit Center"
-              required
-              v-model="profitCenter"
-            />
-          </div>
+        <div class="mb-6 w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Profit Center<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Profit Center"
+            required
+            v-model="profitCenter"
+          />
         </div>
 
         <div class="flex justify-between px-4 items-center">

@@ -45,24 +45,13 @@ companyIdObjectKeys.value.map((item) => {
   }
 });
 
-let divisionIdObject = ref(props.formContent[7]);
-// let divisionIdObjectKeys = ref(Object.values(divisionIdObject.value));
-
-// divisionIdObjectKeys.value.map((item) => {
-//   let number = Number(item);
-
-//   if (Number.isInteger(number)) {
-//     divisionIdArray.value.push(item);
-//   }
-// });
-
 let currentDepartementCode = ref(props.formContent[1]);
 let currentDepartementName = ref(props.formContent[2]);
-let currentDepartementCostCenter = ref(props.formContent[3]);
-let currentDepartementProfitCenter = ref(props.formContent[4]);
-let selectedDepartementGlAccount = ref(props.formContent[5]);
-let selectedStatusTypeId = ref(props.formContent[6]);
-let selectedDepartementHead = ref(props.formContent[8]);
+// let currentDepartementCostCenter = ref(props.formContent[3]);
+let currentDepartementProfitCenter = ref(props.formContent[3]);
+let selectedDepartementGlAccount = ref(props.formContent[4]);
+let selectedStatusTypeId = ref(props.formContent[5]);
+let selectedDepartementHead = ref(props.formContent[6]);
 
 //for get company in input
 const fetchGetCompany = async () => {
@@ -79,14 +68,11 @@ const fetchGetCompany = async () => {
 
 //for get gl account in select
 const fetchGlAccount = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/gl_account/");
-    GlAccount.value = res.data.data;
-  } catch (error) {
-    console.error(error);
-  }
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/gl_account/");
+  GlAccount.value = res.data.data;
+  // console.log("ini data gl account" + JSON.stringify(res.data.data));
 };
 
 //for get employee in select
@@ -94,7 +80,7 @@ const fetchEmployee = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/employee/get/");
-  Employee.value = res.data.data.data;
+  Employee.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data.data));
 };
 
@@ -118,8 +104,6 @@ const submitEdit = () => {
   formEditState.departement.departementIdCompany = companyIdArray.value;
   formEditState.departement.departementCode = currentDepartementCode.value;
   formEditState.departement.departementName = currentDepartementName.value;
-  formEditState.departement.departementCostCenter =
-    currentDepartementCostCenter.value;
   formEditState.departement.departementProfitCenter =
     currentDepartementProfitCenter.value;
   formEditState.departement.departementGlAccount =
@@ -128,9 +112,9 @@ const submitEdit = () => {
   formEditState.departement.departementDivision = divisionIdArray.value;
   formEditState.departement.departementHead = selectedDepartementHead.value;
 
-  // console.log(
-  //   "nilai gl account" + JSON.stringify(selectedDepartementGlAccount)
-  // );
+  console.log(
+    "nilai gl account" + JSON.stringify(selectedDepartementGlAccount)
+  );
 
   isVisible.value = false;
   emits("changeDepartement"); // Memanggil event 'changeZona'
@@ -139,17 +123,24 @@ const submitEdit = () => {
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
-// const resetInput = () => {
-//   currentZonaName.value = props.formContent[1];
-//   companyIdArray.value = [...props.formContent[0]];
-//   cityIdArray.value = [...props.formContent[2]];
-// };
+const resetInput = () => {
+  const originalFormContent = props.formContent;
 
-// watch(isVisible, (newValue) => {
-//   if (newValue) {
-//     resetInput();
-//   }
-// });
+  companyIdArray.value = [...originalFormContent[0]];
+  currentDepartementCode.value = originalFormContent[1];
+  currentDepartementName.value = originalFormContent[2];
+  currentDepartementProfitCenter.value = originalFormContent[3];
+  selectedDepartementGlAccount.value = originalFormContent[4];
+  selectedStatusTypeId.value = originalFormContent[5];
+  divisionIdArray.value = [...originalFormContent[7]];
+  selectedDepartementHead.value = originalFormContent[6];
+};
+
+watch(isVisible, (newValue) => {
+  if (newValue) {
+    resetInput();
+  }
+});
 </script>
 
 <template>
@@ -209,7 +200,7 @@ const inputStylingClass =
           >
           <input
             type="text"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            :class="inputStylingClass"
             placeholder="Departement Code"
             required
             v-model="currentDepartementCode"
@@ -222,39 +213,24 @@ const inputStylingClass =
           >
           <input
             type="text"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            :class="inputStylingClass"
             placeholder="Departement Name"
             required
             v-model="currentDepartementName"
           />
         </div>
 
-        <div class="flex justify-between px-4 items-center text-start">
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Cost Center<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Cost Center"
-              required
-              v-model="currentDepartementCostCenter"
-            />
-          </div>
-
-          <div class="mb-6 w-full ml-2 overflow-x-hidden">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Profit Center<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Profit Center"
-              required
-              v-model="currentDepartementProfitCenter"
-            />
-          </div>
+        <div class="mb-6 w-full px-4 text-start">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Profit Center<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            :class="inputStylingClass"
+            placeholder="Profit Center"
+            required
+            v-model="currentDepartementProfitCenter"
+          />
         </div>
 
         <div class="flex justify-between px-4 items-center text-start">
