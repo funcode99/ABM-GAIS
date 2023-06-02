@@ -17,7 +17,7 @@
 
   let isVisible = ref(false)
   let type = '' 
-  let modalPaddingHeight = '25vh'
+  let modalPaddingHeight = '10vh'
   const emits = defineEmits('changeSequence')
 
   let menuSequenceName = ref(props.formContent[0])

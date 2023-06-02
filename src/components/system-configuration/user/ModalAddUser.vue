@@ -13,7 +13,7 @@
 
   let isVisible = ref(false)
   let isAdding = ref(false)
-  let modalPaddingHeight = "25vh"
+  let modalPaddingHeight = "10vh"
   const emits = defineEmits('addUser')
 
   let fullname = ref('')

@@ -13,7 +13,7 @@
 
   let isVisible = ref(false)
   let isAdding = ref(false)
-  let modalPaddingHeight = "25vh"
+  let modalPaddingHeight = "10vh"
   const emits = defineEmits('addRole')
 
   let newRole = ref('')
@@ -66,15 +66,13 @@
             <form class="pt-4 px-1" @submit.prevent="submitRole">
 
               <div class="mb-3 px-3">
-                <label
-                  for="name"
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Role<span class="text-red">*</span></label>
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                  Role<span class="text-red">*</span>
+                </label>
                 <input
                   @keydown.enter="submitRole"
                   v-model="newRole"
                   type="text"
-                  id="name"
                   placeholder="Role"
                   :class="inputStylingClass"
                   required

@@ -13,7 +13,7 @@ let formEditState = useFormEditStore()
 
 let isVisible = ref(false)
 let isAdding = ref(false)
-let modalPaddingHeight = '25vh'
+let modalPaddingHeight = '10vh'
 const emits = defineEmits('changeRole')
 
 const props = defineProps({
@@ -78,11 +78,10 @@ watch(isVisible, () => {
                 <input
                   v-model="currentRoleName"
                   type="text"
-                  id="name"
                   placeholder="Role"
                   :class="inputStylingClass"
                   required
-                  />
+                />
   
             </div>
           </div>
@@ -91,28 +90,6 @@ watch(isVisible, () => {
                 class="mt-6 pt-5 pb-2"
                 @closeEdit="isVisible = false"
               />
-    
-          <!-- <div class="sticky bottom-0 bg-white">
-              <div class="flex justify-end gap-4 mr-4">
-                
-                <label
-                  @click="isVisible = !isVisible"
-                  for="add-user-modal"
-                  class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]">
-                  Cancel
-                </label>
-  
-                <button @click="submitEdit">
-                  <button
-                  @click="$emit('changeRole')"
-                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
-                >
-                  Save
-                </button>
-                </button>
-  
-            </div>
-          </div> -->
           
         </form>
       

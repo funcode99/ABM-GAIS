@@ -20,7 +20,7 @@
 
   let isVisible = ref(false)
   let isAdding = ref(false)
-  let modalPaddingHeight = "15vh"
+  let modalPaddingHeight = "10vh"
   const emits = defineEmits('addApprover')
 
   // for get Menu Dropdown
@@ -51,7 +51,7 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data.data
+      instanceArray = api.data.data
       addMenuData.value = instanceArray
       menu.value = addMenuData.value[0].id
   }
@@ -115,6 +115,8 @@
           formState.approval.menuId = menu.value
           formState.approval.codeDocumentId = document.value
           formState.approval.arrayDetail = approverLines.value
+          formState.approval.minCA = minCA.value
+          formState.approval.maxCA = maxCA.value
 
           Swal.fire({
             position: "center",

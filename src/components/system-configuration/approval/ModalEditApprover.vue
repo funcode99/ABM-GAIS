@@ -24,17 +24,32 @@
   })
 
   let isVisible = ref(false)
-  let modalPaddingHeight = '15vh'
+  let modalPaddingHeight = '10vh'
 
   let matrixName = ref(props.formContent[0])
   let company = ref(props.formContent[1])
   let menu = ref(props.formContent[2])
   let document = ref(props.formContent[3])
   let idMatrix = props.formContent[4]
-  let indexNumber = ref(props.formContent[5])
   let idMatrixActual = ref(null)
+  let minCA = ref(props.formContent[6])
+  let maxCA = ref(props.formContent[7])
+  let addCompanyData = ref([])
+  let addDocumentData = ref([])
+  const emits = defineEmits(['changeMatrix', 'fetchApproval', 'editApprover'])
   
   let dropdownRemoveList = ref([])
+  let authorities = ref('')
+  let approverLines = ref(props.formContent[4] || [])
+  let addAuthoritiesData = ref([])
+  let levelValue = ref()
+  let currentAuthoritiesId = ref()  
+  let instanceArray = []
+  let addData = ref([])
+
+  const rowClass = 'flex justify-between items-center gap-3 my-3'
+  const columnClass = 'flex flex-col flex-1'
+  const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
     if(props.formContent[4] == undefined) {
       console.log('array detail tidak ada')
@@ -51,13 +66,6 @@
       idMatrixActual.value = idMatrix[0].id_matrix
     }
 
-  let authorities = ref('')
-  const emits = defineEmits('fetchApproval')
-
-  let approverLines = ref(props.formContent[4] || [])
-  let addAuthoritiesData = ref([])
-
-  let levelValue = ref()
 
   const fetchApproverAuthorities = async () => {
 
@@ -75,7 +83,10 @@
       formEditState.approval.companyId = company.value
       formEditState.approval.menuId = menu.value
       formEditState.approval.codeDocumentId = document.value
-      // isVisible.value = !isVisible.value
+      formEditState.approval.minCA = minCA.value
+      formEditState.approval.maxCA = maxCA.value
+      isVisible.value = false
+      emits('editApprover')
   }
 
   const saveApproverLines = async (data, idx, matrixId) => {
@@ -99,8 +110,6 @@
     console.log('masuk ke edit approver lines')
     // emits('editApprover')
   }
-
-  let currentAuthoritiesId = ref()
 
   const addField = (fieldType, isi) => {
 
@@ -140,23 +149,34 @@
   
   }
 
-  const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
-
-  // for get Menu Dropdown
-  let instanceArray = []
-  let addData = ref([])
-
   const fetchMenu = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data.data
+      instanceArray = api.data.data
       addData.value = instanceArray
+  }
+
+  const fetchCompany = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/company/get")
+    instanceArray = res.data.data
+    addCompanyData.value = instanceArray
+  }
+
+  const fetchDocument = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const res = await Api.get("/request_trip/get_document_code")
+    instanceArray = res.data.data
+    addDocumentData.value = instanceArray
   }
 
   onBeforeMount(() => {
     fetchMenu()
+    fetchCompany()
+    fetchDocument()
     fetchApproverAuthorities()
   })
 
@@ -173,8 +193,8 @@
     <main>
 
       <modalHeader
-            @closeVisibility="isVisible = false"
-            title="Edit Matrix"
+        @closeVisibility="isVisible = false"
+        title="Edit Matrix"
       />
 
       <form class="modal-box-inner-inner px-3" @submit.prevent="saveField">
@@ -213,34 +233,45 @@
               <label class="block mb-2 font-JakartaSans font-medium text-sm">
                 Document<span class="text-red">*</span>
               </label>
-              <select v-model="document" :class="inputStylingClass">
-                <option>
-                  1
-                </option>
-                <option>
-                  2
-                </option>
-                <option>
-                  3
-                </option>
+              <select v-model="document" :class="inputStylingClass" required>
+                    <option v-for="data in addDocumentData" :key="data.id" :value="data.id">
+                      {{ data.document_name }}
+                    </option>
               </select>
             </div>
           </div>
+
+          <div :class="rowClass">
+                  <div :class="columnClass">
+                    <label>
+                      Minimum Amount (CA)
+                    </label>
+                    <input
+                      v-model="minCA"
+                      placeholder="Amount"
+                      :class="inputStylingClass"
+                    />
+                  </div>
+                  <div :class="columnClass">
+                    <label>
+                      Maximum Amount (CA)
+                    </label>
+                    <input 
+                      v-model="maxCA"
+                      placeholder="Amount"
+                      :class="inputStylingClass"
+                    />
+                  </div>
+              </div>
   
           <div class="mb-3 flex items-center text-left">
             <div class="flex flex-col w-full">
               <label class="block mb-2 font-JakartaSans font-medium text-sm">
                 Company<span class="text-red">*</span>
               </label>
-              <select v-model="company" :class="inputStylingClass">
-                <option>
-                  1
-                </option>
-                <option>
-                  2
-                </option>
-                <option>
-                  3
+              <select v-model="company" :class="inputStylingClass" required>
+                <option v-for="data in addCompanyData" :key="data.id" :value="data.id">
+                  {{ data.company_name }}
                 </option>
               </select>
             </div>

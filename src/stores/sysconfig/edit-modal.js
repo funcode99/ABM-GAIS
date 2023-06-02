@@ -33,7 +33,9 @@ export const useFormEditStore = defineStore('add-form', {
                 companyId: 1,
                 menuId: 1,
                 codeDocumentId: 1,
-                arrayDetail: null
+                arrayDetail: null,
+                minCA: 0,
+                maxCA: 0
             },
             sequence: {
                 sequenceName: '',

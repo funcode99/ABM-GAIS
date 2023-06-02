@@ -13,7 +13,7 @@
 
   let isVisible = ref(false)
   let isAdding = ref(false)
-  let modalPaddingHeight = "25vh"
+  let modalPaddingHeight = "10vh"
   const emits = defineEmits('addSequence')
 
   let menuSequenceName = ref('')
@@ -123,8 +123,7 @@
   
                 <!-- Company -->
                 <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm">
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
                     Company<span class="text-red">*</span>
                 </label>
                 <select v-model="company" :class="inputStylingClass" required>
@@ -136,8 +135,7 @@
 
                 <!-- Next Value -->
                 <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm">
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
                     Next Value<span class="text-red">*</span>
                 </label>
                 <input
@@ -173,10 +171,9 @@
 
                 <!-- Sequence Size -->
                 <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Sequence Size<span class="text-red">*</span></label
-                >
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >Sequence Size<span class="text-red">*</span>
+                </label>
                 <input
                   v-model="sequenceSize"
                   type="text"
@@ -193,12 +190,9 @@
                 <!-- Menu -->
                 <div :class="columnClass">
                   <div class="w-full">
-                    <label
-                      for="company"
-                      class="block mb-2 font-JakartaSans font-medium text-sm"
-                      id="company"
-                      >Menu<span class="text-red">*</span></label
-                    >
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                      >Menu<span class="text-red">*</span>
+                    </label>
                     <select v-model="menu" :class="inputStylingClass" required>
                       <option v-for="data in addMenuData" :key="data.id" :value="data.id">
                         {{ data.menu }}
@@ -210,12 +204,9 @@
                 <!-- Recycle By -->
                 <div :class="columnClass">
                   <div>
-                    <label
-                      for="company"
-                      class="block mb-2 font-JakartaSans font-medium text-sm"
-                      id="company"
-                      >Recycle by<span class="text-red">*</span></label
-                    >
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                      >Recycle by<span class="text-red">*</span>
+                    </label>
                     <select v-model="recycleBy" :class="inputStylingClass" required>
                       <option value="W">Weekly</option>
                       <option value="M">Month</option>
@@ -230,8 +221,7 @@
 
                 <!-- Prefix -->
                 <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm">
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
                   Prefix<span class="text-red">*</span>
                 </label>
                 <input
@@ -245,14 +235,12 @@
 
                 <!-- Suffix -->
                 <div :class="columnClass">
-                  <label
-                    class="block mb-2 font-JakartaSans font-medium text-sm">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm">
                       Suffix<span class="text-red">*</span>
                   </label>
                   <input
                     v-model="suffix"
                     type="text"
-                    id="name"
                     placeholder="Suffix"
                     :class="inputStylingClass"
                     required
@@ -270,7 +258,6 @@
                   <input
                     v-model="sequenceCode"
                     type="text"
-                    id="name"
                     placeholder="Sequence Code"
                     :class="inputStylingClass"
                     required

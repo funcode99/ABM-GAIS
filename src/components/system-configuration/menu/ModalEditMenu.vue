@@ -63,7 +63,7 @@
   }
 
   let isVisible = ref(false)
-  let modalPaddingHeight = '25vh'
+  let modalPaddingHeight = '10vh'
 
   const props = defineProps({
     formContent: Array
@@ -166,17 +166,17 @@
             </div>
     
             <div class="mb-3">
-                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                   URL<span class="text-red-star">*</span>
                 </label>
                 <input
                 :class="inputStylingClass"
-                v-model="url" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+                v-model="url" type="text" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
             </div>
     
             <div class="mb-3">
     
-                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                   Icon<span class="text-red-star">*</span>
                 </label>
     
@@ -276,7 +276,7 @@
     
             <div class="mb-3" v-if="sequence">
               
-              <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                     Sequence Code<span class="text-red-star">*</span>
               </label>
     

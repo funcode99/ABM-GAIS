@@ -7,13 +7,12 @@
 
           <div class="flex justify-end gap-4 mr-3">
 
-            <label
+            <button
               @click="$emit('closeEdit')"
-              for="modal-edit-pagu"
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
               >
               Cancel
-            </label>
+            </button>
 
             <button
               type="submit"
