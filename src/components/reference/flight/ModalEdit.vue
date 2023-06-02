@@ -59,23 +59,19 @@ watch(isVisible, () => {
 
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            for="flight"
-          >
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
             Flight Class<span class="text-red">*</span>
           </label>
 
           <input
             v-model="flightClassName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

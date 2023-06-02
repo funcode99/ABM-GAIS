@@ -260,7 +260,7 @@ const exportToExcel = () => {
               >
                 Delete
               </button>
-              <ModalAdd @reimbursement-saved="fetchReimbursement"/>
+              <ModalAdd @reimbursement-saved="fetchReimbursement" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
@@ -372,7 +372,7 @@ const exportToExcel = () => {
                     {{ data.reimbursement_type }}
                   </span>
                 </td>
-                <td style="width: 20%">{{ data.parent }}</td>
+                <td style="width: 20%">{{ data.reimbursement_parent }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit />
                   <button @click="deleteReimbursement(data.id)">

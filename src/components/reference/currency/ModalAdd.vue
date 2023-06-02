@@ -1,6 +1,6 @@
 <script setup>
-  import modalHeader from "@/components/modal/modalHeader.vue"
-  import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { Modal } from "usemodal-vue3";
 import Swal from "sweetalert2";
@@ -8,15 +8,15 @@ import Api from "@/utils/Api";
 
 import { ref, watch } from "vue";
 
-  let newCurrency = ref("");
-  let CurrencySymbol = ref("");
-  let CurrencyCode = ref("");
-  let isVisible = ref(false)
-  let isAdding = ref(false)
-  let modalPaddingHeight = "25vh"
-  const emits = defineEmits(["unlockScrollbar", "currency-saved"]);
-  
-  const resetInput = () => {
+let newCurrency = ref("");
+let CurrencySymbol = ref("");
+let CurrencyCode = ref("");
+let isVisible = ref(false);
+let isAdding = ref(false);
+let modalPaddingHeight = "25vh";
+const emits = defineEmits(["unlockScrollbar", "currency-saved"]);
+
+const resetInput = () => {
   newCurrency.value = "";
   CurrencySymbol.value = "";
   CurrencyCode.value = "";
@@ -74,69 +74,49 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-
-      <modalHeader
-        @closeVisibility="isVisible = false"
-        title="New Currency"
-      />
+      <modalHeader @closeVisibility="isVisible = false" title="New Currency" />
 
       <form class="pt-4" @submit.prevent="saveCurrency">
-          
-          <div class="mb-6 px-4 w-full">
-            <label
-              for="currency"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Currency<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="currency"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Currency"
-              required
-              v-model="newCurrency"
-              @keyup.enter="$emit('currency-saved')"
-            />
-          </div>
-
-          <div class="mb-6 px-4 w-full">
-            <label
-              for="symbol"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Symbol<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="symbol"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Symbol"
-              required
-              v-model="CurrencySymbol"
-              @keyup.enter="$emit('currency-saved')"
-            />
-          </div>
-
-          <div class="mb-6 px-4 w-full">
-            <label
-              for="code"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Code<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="code"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Code"
-              required
-              v-model="CurrencyCode"
-              @keyup.enter="$emit('currency-saved')"
-            />
-          </div>
-
-          <modalFooter
-            @closeEdit="isVisible = false"
+        <div class="mb-6 px-4 w-full">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Currency<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Currency"
+            required
+            v-model="newCurrency"
           />
+        </div>
 
+        <div class="mb-6 px-4 w-full">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Symbol<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Symbol"
+            required
+            v-model="CurrencySymbol"
+          />
+        </div>
+
+        <div class="mb-6 px-4 w-full">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Code<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Code"
+            required
+            v-model="CurrencyCode"
+          />
+        </div>
+
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

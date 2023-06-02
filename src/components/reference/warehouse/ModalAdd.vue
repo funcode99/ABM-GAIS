@@ -103,9 +103,7 @@ watch(isVisible, () => {
 
       <form class="pt-4" @submit.prevent="saveWarehouse">
         <div class="mb-6 w-full px-4">
-          <label
-            for="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
           <select
@@ -121,9 +119,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="site"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Site<span class="text-red">*</span></label
           >
           <select
@@ -139,14 +135,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="warehouse"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Warehouse Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="warehouse"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Warehouse Name"
             required
@@ -154,7 +147,7 @@ watch(isVisible, () => {
           />
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

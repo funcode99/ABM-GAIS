@@ -132,20 +132,13 @@ watch(isVisible, () => {
     <main>
       <modalHeader @closeVisibility="isVisible = false" title="New Company" />
 
-      <form
-        class="pt-4 modal-box-inner-company"
-        @submit.prevent="saveCompany"
-        @keydown.enter="saveCompany"
-      >
+      <form class="pt-4 modal-box-inner-company" @submit.prevent="saveCompany">
         <div class="mb-6 w-full px-4">
-          <label
-            for="code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="code"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Code"
             required
@@ -153,14 +146,11 @@ watch(isVisible, () => {
           />
         </div>
         <div class="mb-6 w-full px-4">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="name"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Name Company"
             required
@@ -168,14 +158,11 @@ watch(isVisible, () => {
           />
         </div>
         <div class="mb-6 w-full px-4">
-          <label
-            for="shortname"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Short Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="name"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Name Company"
             required
@@ -184,14 +171,11 @@ watch(isVisible, () => {
           />
         </div>
         <div class="mb-6 w-full px-4">
-          <label
-            for="parent_company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Group Company<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="name"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Group Company"
             required
@@ -201,7 +185,6 @@ watch(isVisible, () => {
 
         <div class="mb-6 w-full px-4">
           <div
-            for="logo_company"
             class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
           >
             Logo Company
@@ -210,7 +193,6 @@ watch(isVisible, () => {
           <div class="relative border border-slate-300 rounded-lg">
             <input
               type="file"
-              name="logo"
               id="logo_company"
               class="hidden border"
               accept="image/*"
@@ -226,7 +208,10 @@ watch(isVisible, () => {
                 class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
               />
             </label>
-            <div v-if="iconfilename != null" class="px-5 py-2 font-JakartaSans font-medium text-sm">
+            <div
+              v-if="iconfilename != null"
+              class="px-5 py-2 font-JakartaSans font-medium text-sm"
+            >
               {{ iconfilename }}
             </div>
             <div v-else class="px-4 py-2 font-JakartaSans font-medium text-sm">
@@ -236,9 +221,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="vendor"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Vendor Airlines<span class="text-red">*</span></label
           >
           <select
@@ -254,16 +237,13 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="erp"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >ERP<span class="text-red">*</span></label
           >
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
             v-model="selectedCodeErp"
-            @keyup.enter="$emit('company-saved')"
           >
             <option disabled selected>ERP</option>
             <option>SAP</option>

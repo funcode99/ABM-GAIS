@@ -27,12 +27,12 @@ const fetchJobBand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/job_band/");
-  jobBandData = res.data.data.data;
-  console.log("ini data jobBandData" + JSON.stringify(res.data.data.data));
+  jobBandData = res.data.data;
+  // console.log("ini data jobBandData" + JSON.stringify(res.data.data));
   jobBandData.map((item) => {
     item.value = item.id;
   });
-  console.log("Data jobBandData setelah perubahan:", jobBandData);
+  // console.log("Data jobBandData setelah perubahan:", jobBandData);
 };
 
 onMounted(() => {
@@ -104,14 +104,11 @@ watch(isVisible, () => {
         @submit.prevent="saveReimbursement"
       >
         <div class="mb-6 w-full px-4">
-          <label
-            for="reimbursement_type"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Reimbursement Type<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="reimbursement_type"
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Reimbursement Type"
             required
@@ -120,14 +117,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="parent_type"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Parent Type<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="reimbursement_type"
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Reimbursement Type"
             required
@@ -136,13 +130,10 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="job_band"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Job Band<span class="text-red">*</span></label
           >
           <Multiselect
-            id="job_band"
             v-model="jobBandIdArray"
             mode="tags"
             placeholder="Select Job Band"

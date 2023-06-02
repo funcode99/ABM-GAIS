@@ -214,7 +214,7 @@ const fetchDepartement = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/department/");
-  instanceArray = res.data.data.data;
+  instanceArray = res.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
   // console.log(instanceArray);

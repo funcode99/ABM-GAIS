@@ -102,9 +102,7 @@ const resetForm = () => {
 
       <form class="modal-box-inner-site" @submit.prevent="submitEdit">
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
           <select
@@ -121,16 +119,13 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="sitecode"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Site Code<span class="text-red">*</span></label
           >
           <input
             @keydown.enter="submitEdit"
             v-model="currentsiteCode"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
             disabled
@@ -139,16 +134,13 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="site"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Site Name<span class="text-red">*</span></label
           >
           <input
             @keydown.enter="submitEdit"
             v-model="currentsiteName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
             disabled

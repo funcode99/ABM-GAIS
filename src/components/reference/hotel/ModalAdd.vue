@@ -120,45 +120,37 @@ watch(isVisible, () => {
       <form
         class="pt-4 modal-box-inner-hotel"
         @submit.prevent="saveHotel"
-        @keydown.enter="saveHotel"
       >
         <div class="mb-6 px-4 w-full">
           <label
-            for="hotel_code"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Hotel Code<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="hotel_code"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Hotel Name"
             required
             v-model="HotelCode"
-            @keyup.enter="$emit('hotel-saved')"
           />
         </div>
 
         <div class="mb-6 px-4 w-full">
           <label
-            for="hotel_name"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Hotel Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="hotel_name"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Hotel Name"
             required
             v-model="HotelName"
-            @keyup.enter="$emit('hotel-saved')"
           />
         </div>
 
         <div class="mb-6 px-4 w-full">
           <label
-            for="address"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Address<span class="text-red">*</span></label
           >
@@ -169,13 +161,11 @@ watch(isVisible, () => {
             placeholder="Address"
             required
             v-model="Address"
-            @keyup.enter="$emit('hotel-saved')"
           />
         </div>
 
         <div class="mb-6 w-full px-4">
           <label
-            for="type"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Type<span class="text-red">*</span></label
           >
@@ -193,7 +183,6 @@ watch(isVisible, () => {
 
         <div class="mb-6 w-full px-4">
           <label
-            for="city"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >City<span class="text-red">*</span></label
           >
@@ -211,41 +200,34 @@ watch(isVisible, () => {
 
         <div class="mb-6 px-4 w-full">
           <label
-            for="email"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Email<span class="text-red">*</span></label
           >
           <input
             type="email"
-            name="email"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Email"
             required
             v-model="Email"
-            @keyup.enter="$emit('hotel-saved')"
           />
         </div>
 
         <div class="mb-6 px-4 w-full">
           <label
-            for="phone_number"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Phone Number<span class="text-red">*</span></label
           >
           <input
             type="number"
-            name="phone"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Phone Number"
             required
             v-model="phoneNumber"
-            @keyup.enter="$emit('hotel-saved')"
           />
         </div>
 
         <div class="mb-6 w-full px-4">
           <label
-            for="rating"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >Rating<span class="text-red">*</span></label
           >

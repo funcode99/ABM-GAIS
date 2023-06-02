@@ -57,22 +57,18 @@ watch(isVisible, () => {
 
       <form @submit.prevent="submitEdit" class="pt-4">
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="uom"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >UOM Name<span class="text-red">*</span></label
           >
           <input
             v-model="uomName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
-        <!-- @submitEditForm="submitEdit()" -->
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

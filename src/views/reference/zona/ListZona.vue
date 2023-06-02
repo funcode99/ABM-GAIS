@@ -205,7 +205,7 @@ const fetchZona = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/zona/get/");
-  instanceArray = res.data.data.data;
+  instanceArray = res.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 };

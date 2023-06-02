@@ -1,6 +1,6 @@
 <script setup>
-  import modalHeader from "@/components/modal/modalHeader.vue"
-  import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { Modal } from "usemodal-vue3";
 
@@ -75,22 +75,15 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-
-      <modalHeader
-        @closeVisibility="isVisible = false"
-        title="New City"
-      />
+      <modalHeader @closeVisibility="isVisible = false" title="New City" />
 
       <form class="pt-4" @submit.prevent="saveCity">
         <div class="mb-6 w-full px-4">
-          <label
-            for="city_code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >City Code<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="city_code"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="City Code"
             required
@@ -99,14 +92,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="city_name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >City Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="city_name"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="City Name"
             required
@@ -114,10 +104,7 @@ watch(isVisible, () => {
           />
         </div>
 
-        <modalFooter
-            @closeEdit="isVisible = false"
-          />
-
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

@@ -108,10 +108,7 @@ watch(isVisible, () => {
 
       <form @submit.prevent="submitEdit" class="pt-4">
         <div class="mb-6 text-start w-full px-4">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            for="company"
-          >
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
             Company
           </label>
           <select
@@ -131,10 +128,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            for="site"
-          >
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
             Site<span class="text-red">*</span>
           </label>
 
@@ -152,20 +146,18 @@ watch(isVisible, () => {
 
         <div class="mb-6 w-full px-4">
           <label
-            for="brand"
             class="block mb-2 font-JakartaSans font-medium text-sm text-start"
             >Brand Name<span class="text-red">*</span></label
           >
           <input
             v-model="currentbrandName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

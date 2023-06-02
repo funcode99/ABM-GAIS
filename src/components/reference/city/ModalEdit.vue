@@ -60,36 +60,30 @@ const inputStylingClass =
 
       <form @submit.prevent="submitEdit" class="pt-4">
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="city_code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >City Code<span class="text-red">*</span></label
           >
           <input
             v-model="cityCode"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="city_name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >City Name<span class="text-red">*</span></label
           >
           <input
             v-model="cityName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

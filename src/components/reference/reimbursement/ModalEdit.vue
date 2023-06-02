@@ -8,7 +8,6 @@ const emits = defineEmits(["unlockScrollbar"]);
 <template>
   <label
     @click="this.$emit('unlockScrollbar')"
-    for="modal-edit-reimbursement"
     class="cursor-pointer"
     ><img :src="editicon" class="w-6 h-6"
   /></label>
@@ -19,7 +18,7 @@ const emits = defineEmits(["unlockScrollbar"]);
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
-          for="modal-edit-reimbursement"
+    
           class="cursor-pointer absolute right-3 top-0 lg:top-3"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
@@ -84,7 +83,7 @@ const emits = defineEmits(["unlockScrollbar"]);
             <div class="flex justify-end gap-4 mr-6">
               <label
                 @click="this.$emit('unlockScrollbar')"
-                for="modal-edit-reimbursement"
+          
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 >Cancel</label
               >

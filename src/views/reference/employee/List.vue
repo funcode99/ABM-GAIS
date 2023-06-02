@@ -155,7 +155,7 @@ const fetchEmployee = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/employee/get/");
   // console.log("ini data employe" + JSON.stringify(res.data.data.data));
-  instanceArray = res.data.data.data;
+  instanceArray = res.data.data;
   // console.log("ini data instance array" + JSON.stringify(instanceArray));
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
