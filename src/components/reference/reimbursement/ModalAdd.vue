@@ -52,7 +52,7 @@ const callAddApi = async () => {
     await Api.post(`/reimbursement/store`, {
       reimbursement_type: reimbursementType.value,
       reimbursement_parent: parentType.value,
-      id_band_job: jobBandIdArray.value.join(","),
+      id_band_job: jobBandIdArray.value,
     });
 
     Swal.fire({
@@ -73,6 +73,7 @@ const resetInput = () => {
   reimbursementType.value = "";
   parentType.value = "";
   jobBandIdArray.value = [];
+  // selectedJobBand.value = "Job Band";
 };
 
 watch(isVisible, () => {
@@ -128,11 +129,13 @@ watch(isVisible, () => {
             v-model="parentType"
           />
         </div>
-
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Job Band<span class="text-red">*</span></label
           >
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
           <Multiselect
             v-model="jobBandIdArray"
             mode="tags"
@@ -162,7 +165,6 @@ watch(isVisible, () => {
             </template>
           </Multiselect>
         </div>
-
         <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
@@ -171,7 +173,7 @@ watch(isVisible, () => {
 
 <style scoped>
 :deep(.modal-vue3-content) {
-  max-height: 400px !important;
+  max-height: 700px !important;
   max-width: 510px !important;
 }
 .modal-box-inner-reimbursement {

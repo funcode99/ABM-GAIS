@@ -24,7 +24,10 @@ import { Workbook } from "exceljs";
 import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
+import { useFormEditStore } from "@/stores/reference/reimbursement/edit-modal.js";
+
 const sidebar = useSidebarStore();
+let formEditState = useFormEditStore();
 
 //for sort & search
 const search = ref("");
@@ -42,6 +45,36 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+let editReimbursementDataid = ref();
+
+//for edit
+const editReimbursement = async (data) => {
+  editReimbursementDataid.value = data;
+  setTimeout(callEditApi, 500);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(
+    `/reimbursement/update_data/${editReimbursementDataid.value}`,
+    {
+      reimbursement_type: formEditState.reimbursement.reimbursementType,
+      reimbursement_parent: formEditState.reimbursement.reimbursementParent,
+      id_band_job: formEditState.reimbursement.reimbursementIdJobBand,
+    }
+  );
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchReimbursement();
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -374,7 +407,14 @@ const exportToExcel = () => {
                 </td>
                 <td style="width: 20%">{{ data.reimbursement_parent }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit />
+                  <ModalEdit
+                    @change-reimbursement="editReimbursement(data.id)"
+                    :formContent="[
+                      data.reimbursement_type,
+                      data.reimbursement_parent,
+                      data.id_band_job,
+                    ]"
+                  />
                   <button @click="deleteReimbursement(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>
