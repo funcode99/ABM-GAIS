@@ -39,8 +39,30 @@ const editData = (id, value) => {
   isEditing.value = true;
 };
 
-const saveData = () => {
+const saveData = async () => {
   // Lakukan logika penyimpanan data ke backend atau tindakan lain yang diperlukan untuk menyimpan perubahan data
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    await Api.post(`/zona_job/update_data/`, {
+      id_zona: editDataValue.id_zona,
+      id_job_band: editDataValue.id_job_band,
+      meals_rate: editDataValue.meals_rate,
+    });
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    emits("jobbandtlk-saved");
+  } catch (error) {
+    console.log(error);
+  }
 
   // Setelah berhasil menyimpan data, atur kembali variabel editDataIdTlk, editDataValue, dan isEditing ke nilai awal
   editDataIdTlk.value = null;
@@ -61,7 +83,7 @@ const fetchGetTlk = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/zona_job/get/");
   zonaTlk.value = res.data.data;
-  console.log("ini data tlk " + JSON.stringify(res.data.data));
+  // console.log("ini data tlk " + JSON.stringify(res.data.data));
 };
 
 //for get company in select
