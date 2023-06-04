@@ -1,5 +1,5 @@
 <script setup>
-
+  const emits = defineEmits(['closeEdit'])
 </script>
 
 <template>
@@ -7,8 +7,10 @@
 
           <div class="flex justify-end gap-4 mr-3">
 
+            <!-- ngirim emit dengan cara enter, kampret emang, gaboleh type submit emang nih button -->
             <button
-              @click="$emit('closeEdit')"
+              type="button"
+              @click="emits('closeEdit')"
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
               >
               Cancel

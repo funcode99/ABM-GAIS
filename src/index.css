@@ -42,29 +42,20 @@
 }
 
 .modal-vue3-content {
-  
   border-radius: 16px !important;
-
   height: fit-content;
   width: 100%;
-
-  /* max-height: 500px;
-  max-width: 500px;  */
-  
   overflow-x: hidden !important;
   overflow-y: hidden !important;
   overscroll-behavior: contain !important;
-
 }
 
 .modal-vue3-body {
-
   background-color: #fff !important;
   border-radius: 16px;
   overflow: hidden !important;
   padding: 0px 0px !important;
   max-height: 100% !important;
-
 }
 
 .modal-vue3-wrap {

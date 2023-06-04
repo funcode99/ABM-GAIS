@@ -8,7 +8,7 @@
     import Api from '@/utils/Api'
     
     // import untuk approval table
-    import { ref, onBeforeMount, computed } from 'vue'
+    import { ref, onBeforeMount, computed, Suspense } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
@@ -330,96 +330,19 @@
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
             <div class="block overflow-x-auto overflow-y-hidden">
-              
-              <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
-    
-                <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                  
-                  <tr>
 
-                    <th>
-                      <div class="flex justify-center">
-                        <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-                      </div>
-                    </th>
-    
-                    <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }} 
-                        <button class="">
-                          <img :src="arrowicon" class="w-[9px] h-3" />
-                        </button>
-                      </span>
-                    </th>
-    
-                  </tr>
-                  
-                </thead>
-    
-                <tbody>
-    
-                  <!-- sortir nya harus sama dengan key yang di data dummy -->
-              
-                      <tr v-for="data in sortedData.slice(
-                        paginateIndex * pageMultiplierReactive,
-                        (paginateIndex + 1) * pageMultiplierReactive
-                      )" :key="data.id">
-                        <td>
-                          <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
-                        </td>
-                        <td>
-                          {{ data.no }} 
-                        </td>
-                        <td>
-                          {{ data.menu }}
-                        </td>
-  
-                        <td class="">
-                          <!-- <img class="w-16 h-16" :src="data.icon_path" /> -->
-                          {{ data.parent }}
-                        </td>
-  
-                        <td v-if="data.status_name == 'Active'">
-                          Active
-                        </td>
-  
-                        <td v-else>
-                          Disabled
-                        </td>
-  
-                        <td class="flex flex-wrap gap-4 justify-center">
-                            <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[
-                              data.menu, 
-                              data.url, 
-                              data.sort, 
-                              data.icon, 
-                              data.comp_array, 
-                              data.parent_id, 
-                              data.status_name
-                            ]" />
-                            <button @click="deleteData(data.id)">
-                              <img :src="deleteicon" class="w-6 h-6" />
-                            </button>
-                        </td>
-                        
-                      </tr>
-    
-                      <!-- tr gak boleh di dalam div ternyata, kalo enggak hasil nya bakal berantakan -->
+                  <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
+
+                    <thead class="text-center font-Montserrat text-sm font-bold h-10">
                       
-                </tbody>
-                    
-              </table>
+                      <tr>
     
-              <div v-else>
-  
-                <table class="table table-zebra table-compact border h-full w-full rounded-lg">
-                  <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                      <tr class="">
                         <th>
                           <div class="flex justify-center">
                             <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
                           </div>
-                        </th>    
+                        </th>
+        
                         <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
                           <span class="flex justify-center items-center gap-1">
                             {{ data.title }} 
@@ -428,17 +351,195 @@
                             </button>
                           </span>
                         </th>
+        
                       </tr>
-                  </thead>
-  
-                </table>
-  
-                <div class="text-center py-5">
-                  <h1>{{ status }}</h1>
-                  <h1>{{ message }}</h1>
-                </div>
-  
-              </div>
+                      
+                    </thead>
+        
+                    <tbody>
+        
+                      <!-- sortir nya harus sama dengan key yang di data dummy -->
+                  
+                          <tr v-for="data in sortedData.slice(
+                            paginateIndex * pageMultiplierReactive,
+                            (paginateIndex + 1) * pageMultiplierReactive
+                          )" :key="data.id">
+                            <td>
+                              <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
+                            </td>
+                            <td>
+                              {{ data.no }} 
+                            </td>
+                            <td>
+                              {{ data.menu }}
+                            </td>
+      
+                            <td class="">
+                              <!-- <img class="w-16 h-16" :src="data.icon_path" /> -->
+                              {{ data.parent }}
+                            </td>
+      
+                            <td v-if="data.status_name == 'Active'">
+                              Active
+                            </td>
+      
+                            <td v-else>
+                              Disabled
+                            </td>
+      
+                            <td class="flex flex-wrap gap-4 justify-center">
+                                <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[
+                                  data.menu, 
+                                  data.url, 
+                                  data.sort, 
+                                  data.icon, 
+                                  data.comp_array, 
+                                  data.parent_id, 
+                                  data.status_name
+                                ]" />
+                                <button @click="deleteData(data.id)">
+                                  <img :src="deleteicon" class="w-6 h-6" />
+                                </button>
+                            </td>
+                            
+                          </tr>
+        
+                          <!-- tr gak boleh di dalam div ternyata, kalo enggak hasil nya bakal berantakan -->
+                          
+                    </tbody>
+                        
+                  </table>
+                  
+                  <div v-else>
+      
+                    <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+                      <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                          <tr class="">
+                            <th>
+                              <div class="flex justify-center">
+                                <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                              </div>
+                            </th>    
+                            <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                              <span class="flex justify-center items-center gap-1">
+                                {{ data.title }} 
+                                <button class="">
+                                  <img :src="arrowicon" class="w-[9px] h-3" />
+                                </button>
+                              </span>
+                            </th>
+                          </tr>
+                      </thead>
+                      <tbody class="animate-pulse">
+                        <tr>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                          <td>
+                            <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    
+                    <!-- <div class="text-center py-5">
+                      <h1>{{ status }}</h1>
+                      <h1>{{ message }}</h1>
+                    </div> -->
+      
+                  </div> 
     
             </div>
   

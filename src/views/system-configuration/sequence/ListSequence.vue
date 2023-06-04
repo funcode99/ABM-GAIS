@@ -304,7 +304,8 @@
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
               
             <div class="block overflow-x-auto">
-              <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
+              
+              <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
   
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
                   
@@ -365,6 +366,148 @@
                 </tbody>
                 
               </table>
+
+              <div v-else>
+      
+      <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+        <thead class="text-center font-Montserrat text-sm font-bold h-10">
+            <tr class="">
+              <th>
+                <div class="flex justify-center">
+                  <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                </div>
+              </th>    
+              <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                <span class="flex justify-center items-center gap-1">
+                  {{ data.title }} 
+                  <button class="">
+                    <img :src="arrowicon" class="w-[9px] h-3" />
+                  </button>
+                </span>
+              </th>
+            </tr>
+        </thead>
+        <tbody class="animate-pulse">
+          <tr>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+            <td>
+              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
             </div>
   
               <!-- PAGINATION -->

@@ -72,11 +72,16 @@ import StockOpnameATKView from '@/views/facility-services/atk-supplies/stock-opn
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
 import avoidduplicatedropdown from '@/views/experiment/avoidduplicatedropdown.vue'
+import experimentPage from '@/views/experiment/experiment.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
 
+    {
+      path: '/experiment',
+      component: experimentPage
+    },
     {
       path: '/addfield',
       // component: addinputfield,
