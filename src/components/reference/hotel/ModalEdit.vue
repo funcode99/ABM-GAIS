@@ -20,7 +20,6 @@ let isAdding = ref(false);
 
 let selectedType = ref("Type");
 let selectedCity = ref("City");
-// let selectedRating = ref("Rating");
 let HotelType = ref("");
 let City = ref("");
 let HotelCode = ref("");
@@ -147,54 +146,43 @@ const resetForm = () => {
 
       <form class="pt-4 modal-box-inner-hotel" @submit.prevent="submitEdit">
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="hotel_code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Hotel Code<span class="text-red">*</span></label
           >
           <input
             v-model="currenthotelCode"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="hotel_name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Hotel Name<span class="text-red">*</span></label
           >
           <input
             v-model="currenthotelName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="address"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Address<span class="text-red">*</span></label
           >
           <input
             v-model="currenthotelAddress"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="type"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Type<span class="text-red">*</span></label
           >
           <select
@@ -210,9 +198,7 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="city"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >City<span class="text-red">*</span></label
           >
           <select
@@ -228,39 +214,31 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="email"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Email<span class="text-red">*</span></label
           >
           <input
             v-model="currenthotelEmail"
             type="email"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="phone_number"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Phone Number<span class="text-red">*</span></label
           >
           <input
             v-model="currenthotelPhoneNumber"
             type="number"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="rating"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Rating<span class="text-red">*</span></label
           >
           <select
@@ -282,7 +260,7 @@ const resetForm = () => {
             isVisible = false;
             resetForm();
           "
-          class="pb-2"
+          
         />
       </form>
     </main>

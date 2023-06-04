@@ -63,51 +63,42 @@ watch(isVisible, () => {
 
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="currency"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Currency<span class="text-red">*</span></label
           >
           <input
             v-model="currencyName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="symbol"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Symbol<span class="text-red">*</span></label
           >
           <input
             v-model="currencySymbol"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
           >
           <input
             v-model="currencyCode"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

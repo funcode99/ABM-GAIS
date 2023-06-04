@@ -62,13 +62,11 @@ const inputStylingClass =
         title="Edit GL Account"
       />
 
-      <form class="pt-4" @submit.prevent="submitEdit" name="editGLAccount">
-        
+      <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 text-start w-full px-4">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >GL Account<span class="text-red">*</span>          
-          </label>
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >GL Account<span class="text-red">*</span></label
+          >
           <input
             v-model="glAccountCode"
             type="text"
@@ -78,10 +76,9 @@ const inputStylingClass =
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
-            >GL Name<span class="text-red">*</span>
-          </label>
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >GL Name<span class="text-red">*</span></label
+          >
           <input
             v-model="glAccountName"
             type="text"
@@ -90,7 +87,7 @@ const inputStylingClass =
           />
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

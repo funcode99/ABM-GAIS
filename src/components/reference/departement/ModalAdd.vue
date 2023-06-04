@@ -22,7 +22,7 @@ let GlAccount = ref("");
 let status = ref("Status");
 let Division = ref([]);
 let divisionArray = ref(null);
-let departementHead = ref("Name");
+let selectedDepartementHead = ref("Name");
 let Employee = ref("");
 
 let isVisible = ref(false);
@@ -30,7 +30,7 @@ let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
 let companyData = ref(null);
-let companyIdArray = ref(null);
+let companyIdArray = ref([]);
 
 //for get company in input
 const fetchGetCompany = async () => {
@@ -59,8 +59,8 @@ const fetchEmployee = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/employee/get/");
-  Employee.value = res.data.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data.data));
+  Employee.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 onMounted(() => {
@@ -69,7 +69,7 @@ onMounted(() => {
   fetchEmployee();
 });
 
-const saveZona = async () => {
+const saveDepartement = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
@@ -83,12 +83,11 @@ const callAddApi = async () => {
       id_company: companyIdArray.value,
       departement_code: departemenCode.value,
       departement_name: departementName.value,
-      cost_center: costCenter.value,
       profit_center: profitCenter.value,
       id_gl_account: selectedGlAccount.value,
       is_active: status.value,
-      id_division: Division.value,
-      departement_head: departementHead.value,
+      id_division: Division.value.join(","),
+      departement_head: selectedDepartementHead.value,
     });
 
     Swal.fire({
@@ -107,12 +106,17 @@ const callAddApi = async () => {
 
 const resetInput = () => {
   companyIdArray.value = [];
+  departemenCode.value = "";
+  departementName.value = "";
+  profitCenter.value = "";
+  selectedGlAccount.value = "Account";
+  status.value = "Status";
+  Division.value = [];
+  selectedDepartementHead.value = "Name";
 };
 
-watch(isVisible, () => {
-  if (isAdding.value == true) {
-    isAdding.value = false;
-  } else {
+watch(isVisible, (newValue) => {
+  if (newValue) {
     resetInput();
   }
 });
@@ -128,13 +132,14 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader @closeVisibility="isVisible = false" title="New Zona" />
+      <modalHeader
+        @closeVisibility="isVisible = false"
+        title="New Departement"
+      />
 
-      <form class="pt-4 modal-box-inner-zona" @submit.prevent="saveZona">
+      <form class="pt-4 modal-box-inner-zona" @submit.prevent="saveDepartement">
         <div class="mb-6 w-full px-4">
-          <label
-            for="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
           <div
@@ -142,7 +147,6 @@ watch(isVisible, () => {
           ></div>
 
           <Multiselect
-            id="company"
             v-model="companyIdArray"
             mode="tags"
             placeholder="Select Company"
@@ -173,14 +177,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Departement Code<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="name"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Departement Code"
             required
@@ -189,14 +190,11 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Departement Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="name"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Departement Name"
             required
@@ -204,45 +202,22 @@ watch(isVisible, () => {
           />
         </div>
 
-        <div class="flex justify-between px-4 items-center">
-          <div class="mb-6 w-full">
-            <label
-              for="cost_center"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Cost Center<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="name"
-              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Cost Center"
-              required
-              v-model="costCenter"
-            />
-          </div>
-
-          <div class="mb-6 w-full ml-5 overflow-x-hidden">
-            <label
-              for="profit"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Profit Center<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="name"
-              class="font-JakartaSans block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Profit Center"
-              required
-              v-model="profitCenter"
-            />
-          </div>
+        <div class="mb-6 w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Profit Center<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Profit Center"
+            required
+            v-model="profitCenter"
+          />
         </div>
 
         <div class="flex justify-between px-4 items-center">
           <div class="mb-6 w-full">
-            <label
-              for="glaccount"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >GL Account<span class="text-red">*</span></label
             >
             <select
@@ -252,15 +227,13 @@ watch(isVisible, () => {
             >
               <option disabled selected>Account</option>
               <option v-for="account in GlAccount" :value="account.id">
-                {{ account.gl_name }}
+                {{ account.gl_account }}
               </option>
             </select>
           </div>
 
-          <div class="mb-6 w-full ml-5">
-            <label
-              for="status"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
+          <div class="mb-6 w-full ml-2 overflow-x-hidden">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Status<span class="text-red">*</span></label
             >
             <select
@@ -269,17 +242,15 @@ watch(isVisible, () => {
               v-model="status"
             >
               <option disabled selected>Status</option>
-              <option>Active</option>
-              <option>Non Active</option>
+              <option value="1">Active</option>
+              <option value="0">Non Active</option>
             </select>
           </div>
         </div>
 
         <div class="flex justify-between items-start px-4">
           <div class="mb-6 w-full text-start">
-            <label
-              for="Division"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Division<span class="text-red">*</span></label
             >
             <div
@@ -297,16 +268,14 @@ watch(isVisible, () => {
             </div>
           </div>
 
-          <div class="mb-6 w-full text-start ml-5">
-            <label
-              for="departementhead"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
+          <div class="mb-6 w-full text-start ml-2 overflow-x-hidden">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Departemen Head<span class="text-red">*</span></label
             >
             <select
               class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               required
-              v-model="departementHead"
+              v-model="selectedDepartementHead"
             >
               <option disabled selected>Name</option>
               <option v-for="name in Employee" :value="name.id">
@@ -316,7 +285,7 @@ watch(isVisible, () => {
           </div>
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

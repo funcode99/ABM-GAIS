@@ -145,60 +145,48 @@ const resetForm = () => {
 
       <form class="modal-box-inner-company" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
           >
           <input
             v-model="currentcompanyCode"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Name<span class="text-red">*</span></label
           >
           <input
             v-model="currentcompanyName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="shortname"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Short Name<span class="text-red">*</span></label
           >
           <input
             v-model="currentcompanyShortName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="grupcompany"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Group Company<span class="text-red">*</span></label
           >
           <input
             v-model="currentcompanyGroup"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
@@ -206,7 +194,6 @@ const resetForm = () => {
 
         <div class="mb-6 w-full px-4 text-start">
           <div
-            for="logo_company"
             class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
           >
             Logo Company
@@ -216,12 +203,11 @@ const resetForm = () => {
             <input
               type="file"
               name="logo"
-              id="logo_company"
               class="hidden border"
               accept="image/*"
               @change="onFileSelected"
             />
-            <label class="py-2" for="logo_company">
+            <label class="py-2">
               <div
                 v-if="iconfilename != null"
                 class="px-5 py-2 font-JakartaSans font-medium text-sm"
@@ -240,9 +226,7 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="vendor"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Vendor Airlines<span class="text-red">*</span></label
           >
           <select
@@ -258,9 +242,7 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="erp"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >ERP<span class="text-red">*</span></label
           >
           <select

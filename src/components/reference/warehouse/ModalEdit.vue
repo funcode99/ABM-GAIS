@@ -113,9 +113,7 @@ const resetForm = () => {
 
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
           <select
@@ -131,9 +129,7 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="site"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Site<span class="text-red">*</span></label
           >
           <select
@@ -149,15 +145,12 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label
-            for="warehouse"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Warehouse Name<span class="text-red">*</span></label
           >
           <input
             v-model="currentwarehouseName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
           />
@@ -168,6 +161,7 @@ const resetForm = () => {
             isVisible = false;
             resetForm();
           "
+          class="pb-2"
         />
       </form>
     </main>

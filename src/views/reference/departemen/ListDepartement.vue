@@ -26,7 +26,10 @@ import { Workbook } from "exceljs";
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
+import { useFormEditStore } from "@/stores/reference/departement/edit-modal.js";
+
 const sidebar = useSidebarStore();
+let formEditState = useFormEditStore();
 
 //for sort & search
 const search = ref("");
@@ -46,6 +49,38 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+let editDepartementDataid = ref();
+
+//for edit
+const editDepartement = async (data) => {
+  editDepartementDataid.value = data;
+  setTimeout(callEditApi, 500);
+};
+
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`department/update_data/${editDepartementDataid.value}`, {
+    id_company: formEditState.departement.departementIdCompany,
+    departement_code: formEditState.departement.departementCode,
+    departement_name: formEditState.departement.departementName,
+    profit_center: formEditState.departement.departementProfitCenter,
+    id_gl_account: formEditState.departement.departementGlAccount,
+    is_active: formEditState.departement.departementStatus,
+    id_division: formEditState.departement.departementDivision,
+    departement_head: formEditState.departement.departementHead,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchDepartement();
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -116,10 +151,10 @@ const deleteDataInCeklis = () => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Name", jsonData: "departement_name" },
-  { Id: 3, title: "Cost Center", jsonData: "cost_center" },
-  { Id: 4, title: "Status", jsonData: "status_name" },
-  { Id: 5, title: "Departement Head", jsonData: "departement_head" },
-  { Id: 6, title: "Actions" },
+  // { Id: 3, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 3, title: "Status", jsonData: "status_name" },
+  { Id: 4, title: "Departement Head", jsonData: "departement_head" },
+  { Id: 5, title: "Actions" },
 ];
 
 //for sort
@@ -144,11 +179,14 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.departement_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.departement_head.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    const departementName = item.departement_name.toLowerCase();
+    const departementHead =
+      typeof item.departement_head === "string"
+        ? item.departement_head.toLowerCase()
+        : "";
     return (
-      (item.departement_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.departement_head.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      departementName.indexOf(search.toLowerCase()) > -1 ||
+      departementHead.indexOf(search.toLowerCase()) > -1
     );
   });
   sortedData.value = filteredR;
@@ -178,7 +216,7 @@ const fetchDepartement = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/department/");
-  instanceArray = res.data.data.data;
+  instanceArray = res.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
   // console.log(instanceArray);
@@ -236,7 +274,7 @@ const exportToExcel = () => {
     { title: "Nomor" },
     { title: "ID" },
     { title: "Name" },
-    { title: "Cost Center" },
+    // { title: "Cost Center" },
     { title: "Status" },
     { title: "Departement Head" },
   ];
@@ -251,8 +289,8 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.departement_name;
-    worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
-    worksheet.getCell(rowIndex + 2, 5).value = data.departement_head;
+    // worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
+    worksheet.getCell(rowIndex + 2, 4).value = data.departement_head_name;
   });
 
   // Menyimpan workbook menjadi file Excel
@@ -453,11 +491,23 @@ const exportToExcel = () => {
                     {{ data.departement_name }}
                   </span>
                 </td>
-                <td style="width: 10%">{{ data.cost_center }}</td>
+                <!-- <td style="width: 10%">{{ data.cost_center }}</td> -->
                 <td style="width: 10%">{{ data.status_name }}</td>
-                <td style="width: 20%">{{ data.departement_head }}</td>
+                <td style="width: 20%">{{ data.departement_head_name }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit />
+                  <ModalEdit
+                    @change-departement="editDepartement(data.id)"
+                    :formContent="[
+                      data.id_company,
+                      data.departement_code,
+                      data.departement_name,
+                      data.profit_center,
+                      data.id_gl_account,
+                      data.is_active,
+                      data.id_division,
+                      data.departement_head,
+                    ]"
+                  />
                   <button @click="deleteDepartement(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>

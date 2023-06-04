@@ -128,9 +128,7 @@ watch(isVisible, (newValue) => {
 
       <form class="pt-4 modal-box-inner-zona" @submit.prevent="submitEdit">
         <div class="mb-6 w-full px-4 text-start">
-          <label
-            for="company"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
           <div
@@ -138,7 +136,6 @@ watch(isVisible, (newValue) => {
           ></div>
 
           <Multiselect
-            id="company"
             v-model="companyIdArray"
             mode="tags"
             placeholder="Select Company"
@@ -169,14 +166,11 @@ watch(isVisible, (newValue) => {
         </div>
 
         <div class="mb-6 w-full px-4 text-start">
-          <label
-            for="zona"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Zona<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="zona"
             placeholder="Zona"
             required
             v-model="currentZonaName"
@@ -185,9 +179,7 @@ watch(isVisible, (newValue) => {
         </div>
 
         <div class="mb-6 w-full px-4 text-start">
-          <label
-            for="city"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >City<span class="text-red">*</span></label
           >
           <div
@@ -195,7 +187,6 @@ watch(isVisible, (newValue) => {
           ></div>
 
           <Multiselect
-            id="city"
             v-model="cityIdArray"
             mode="tags"
             placeholder="Select City"
@@ -225,7 +216,7 @@ watch(isVisible, (newValue) => {
           </Multiselect>
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>

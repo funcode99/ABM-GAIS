@@ -1,111 +1,187 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
-const emits = defineEmits(["unlockScrollbar"]);
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
+
+import Api from "@/utils/Api";
+
+import Multiselect from "@vueform/multiselect";
+
+import { ref, onMounted, watch } from "vue";
+import { Modal } from "usemodal-vue3";
+
+import { useFormEditStore } from "@/stores/reference/reimbursement/edit-modal.js";
+
+const emits = defineEmits(["unlockScrollbar", "changeReimbursement"]);
+
+let formEditState = useFormEditStore();
+let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
+
+let jobBandData = ref(null);
+let jobBandIdArray = ref([]);
+
+let jobBandIdObject = ref(props.formContent[2]);
+let jobBandIdObjectKeys = ref(Object.values(jobBandIdObject.value));
+
+let currentReimbursementType = ref(props.formContent[0]);
+let currentReimbursementParentType = ref(props.formContent[1]);
+
+jobBandIdObjectKeys.value.map((item) => {
+  let number = Number(item);
+
+  if (Number.isInteger(number)) {
+    jobBandIdArray.value.push(item);
+  }
+});
+
+const props = defineProps({
+  formContent: Array,
+});
+
+const submitEdit = () => {
+  isAdding.value = true;
+
+  if (!formEditState.reimbursement) {
+    formEditState.reimbursement = {}; // Inisialisasi objek jika belum ada
+  }
+
+  formEditState.reimbursement.reimbursementType =
+    currentReimbursementType.value;
+  formEditState.reimbursement.reimbursementParent =
+    currentReimbursementParentType.value;
+  formEditState.reimbursement.reimbursementIdJobBand = jobBandIdArray.value;
+
+  // console.log("nilai zona name" + JSON.stringify(currentZonaName));
+
+  isVisible.value = false;
+  emits("changeReimbursement"); // Memanggil event 'changeZona'
+};
+
+//for get city in input
+const fetchJobBand = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/job_band/");
+  jobBandData = res.data.data;
+  // console.log("ini data jobBandData" + JSON.stringify(res.data.data));
+  jobBandData.map((item) => {
+    item.value = item.id;
+  });
+  // console.log("Data jobBandData setelah perubahan:", jobBandData);
+};
+
+onMounted(() => {
+  fetchJobBand();
+});
+
+const inputStylingClass =
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+
+const resetInput = () => {
+  currentReimbursementType.value = props.formContent[0];
+  currentReimbursementParentType.value = props.formContent[1];
+  jobBandIdArray.value = [...props.formContent[2]];
+};
+
+watch(isVisible, (newValue) => {
+  if (newValue) {
+    resetInput();
+  }
+});
 </script>
 
 <template>
-  <label
-    @click="this.$emit('unlockScrollbar')"
-    for="modal-edit-reimbursement"
-    class="cursor-pointer"
-    ><img :src="editicon" class="w-6 h-6"
-  /></label>
+  <button @click="isVisible = !isVisible">
+    <img :src="editicon" alt="edit icon" />
+  </button>
 
-  <input type="checkbox" id="modal-edit-reimbursement" class="modal-toggle" />
-  <div class="modal">
-    <div class="modal-box relative">
-      <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label
-          @click="this.$emit('unlockScrollbar')"
-          for="modal-edit-reimbursement"
-          class="cursor-pointer absolute right-3 top-0 lg:top-3"
-        >
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
-        <p
-          class="font-JakartaSans text-sm lg:text-2xl font-semibold text-white mx-4 py-2 text-start"
-        >
-          Edit Reimbursement Type
-        </p>
-      </nav>
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+    <main>
+      <modalHeader
+        @closeVisibility="isVisible = false"
+        title="Edit Reimbursement Type"
+      />
 
-      <main class="modal-box-inner-reimbursement">
-        <form class="pt-4">
-          <div class="mb-6 mr-6 text-start w-full px-4">
-            <label
-              for="reimbursement_type"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Reimbursement Type<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="reimbursement_type"
-              class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Reimbursement Type"
-              required
-            />
-          </div>
+      <form
+        class="pt-4 modal-box-inner-reimbursement"
+        @submit.prevent="submitEdit"
+      >
+        <div class="mb-6 mr-6 text-start w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Reimbursement Type<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            placeholder="Reimbursement Type"
+            required
+            :class="inputStylingClass"
+            v-model="currentReimbursementType"
+          />
+        </div>
 
-          <div class="mb-6 text-start w-full px-4">
-            <label
-              for="parent_type"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Parent Type<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-            >
-              <option disabled selected>Type</option>
-              <option>Type A</option>
-              <option>Type B</option>
-            </select>
-          </div>
+        <div class="mb-6 text-start w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Parent Type<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            placeholder="Reimbursement Type"
+            required
+            :class="inputStylingClass"
+            v-model="currentReimbursementParentType"
+          />
+        </div>
 
-          <div class="mb-6 text-start w-full px-4">
-            <label
-              for="job_band"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Job Band<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-            >
-              <option disabled selected>Job Band</option>
-              <option>Job Band A</option>
-              <option>Job Band B</option>
-            </select>
-          </div>
-
-          <div class="sticky bottom-0 bg-white">
-            <div class="flex justify-end gap-4 mr-6">
-              <label
-                @click="this.$emit('unlockScrollbar')"
-                for="modal-edit-reimbursement"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                >Cancel</label
+        <div class="mb-6 text-start w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Job Band<span class="text-red">*</span></label
+          >
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+          <Multiselect
+            v-model="jobBandIdArray"
+            mode="tags"
+            placeholder="Select Job Band"
+            track-by="band_job_name"
+            label="band_job_name"
+            :close-on-select="false"
+            :searchable="true"
+            :options="jobBandData"
+          >
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
               >
-              <button
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </form>
-      </main>
-    </div>
-  </div>
+                {{ option.band_job_name }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
+        </div>
+
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
+      </form>
+    </main>
+  </Modal>
 </template>
 
 <style scoped>
-.modal-box {
-  padding: 0;
-  overflow-y: hidden;
-  overscroll-behavior: contain;
+:deep(.modal-vue3-content) {
+  max-height: 400px !important;
+  max-width: 510px !important;
 }
 
 .modal-box-inner-reimbursement {

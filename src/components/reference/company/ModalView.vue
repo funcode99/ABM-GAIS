@@ -144,16 +144,13 @@ const resetForm = () => {
 
       <form class="modal-box-inner-company" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="code"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
           >
           <input
             @keydown.enter="submitEdit"
             v-model="currentcompanyCode"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
             disabled
@@ -162,16 +159,13 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="name"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Name<span class="text-red">*</span></label
           >
           <input
             @keydown.enter="submitEdit"
             v-model="currentcompanyName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
             disabled
@@ -180,16 +174,13 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="shortname"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Short Name<span class="text-red">*</span></label
           >
           <input
             @keydown.enter="submitEdit"
             v-model="currentcompanyShortName"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
             disabled
@@ -198,16 +189,13 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start px-4 w-full cursor">
-          <label
-            for="grupcompany"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Group Company<span class="text-red">*</span></label
           >
           <input
             @keydown.enter="submitEdit"
             v-model="currentcompanyGroup"
             type="text"
-            id="name"
             :class="inputStylingClass"
             required
             disabled
@@ -217,7 +205,6 @@ const resetForm = () => {
 
         <div class="mb-6 w-full px-4 text-start">
           <div
-            for="logo_company"
             class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
           >
             Logo Company
@@ -226,14 +213,12 @@ const resetForm = () => {
           <div class="relative border border-slate-300 rounded-lg py-2">
             <input
               type="file"
-              name="logo"
-              id="logo_company"
               class="hidden disabled"
               accept="image/*"
               @change="onFileSelected"
               disabled
             />
-            <label class="py-2" for="logo_company">
+            <label class="py-2">
               <div v-if="iconfilename != null" class="pl-2">
                 {{ iconfilename }}
               </div>
@@ -252,9 +237,7 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label
-            for="vendor"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Vendor Airlines<span class="text-red">*</span></label
           >
           <select
@@ -271,9 +254,7 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label
-            for="erp"
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >ERP<span class="text-red">*</span></label
           >
           <select

@@ -1,6 +1,6 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { Modal } from "usemodal-vue3";
 import Swal from "sweetalert2";
@@ -59,7 +59,6 @@ watch(isVisible, () => {
 </script>
 
 <template>
-
   <button
     @click="isVisible = true"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
@@ -67,25 +66,18 @@ watch(isVisible, () => {
     + Add New
   </button>
 
-  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight"> 
-
+  <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
+      <modalHeader @closeVisibility="isVisible = false" title="New UOM" />
 
-      <modalHeader
-        @closeVisibility="isVisible = false"
-        title="New UOM"
-      />
-  
       <form class="pt-4" @submit.prevent="saveUom">
         <div class="mb-6 w-full px-4">
           <label
-            for="uom"
             class="block mb-2 font-JakartaSans font-medium text-sm"
             >UOM Name<span class="text-red">*</span></label
           >
           <input
             type="text"
-            name="uom"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="UOM Name"
             required
@@ -93,16 +85,10 @@ watch(isVisible, () => {
           />
         </div>
 
-        <modalFooter
-          @closeEdit="isVisible = false"
-        />
-        
+        <modalFooter @closeEdit="isVisible = false" class="pb-2"/>
       </form>
-
     </main>
-
   </Modal>
-  
 </template>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <script setup>
-  import modalHeader from "@/components/modal/modalHeader.vue"
-  import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { Modal } from "usemodal-vue3";
 
@@ -68,37 +68,27 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      
-        <modalHeader
-          @closeVisibility="isVisible = false"
-          title="New Flight Class"
-        />
-  
-        <form class="pt-4" @submit.prevent="saveFlightClass">
-  
-          <div class="mb-6 px-4 w-full">
-            <label
-              for="flight"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Flight Class<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              name="flight"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Flight Class"
-              required
-              v-model="newFlightClass"
-            />
-          </div>
-  
-        <modalFooter
-          @closeEdit="isVisible = false"
-        />
+      <modalHeader
+        @closeVisibility="isVisible = false"
+        title="New Flight Class"
+      />
 
+      <form class="pt-4" @submit.prevent="saveFlightClass">
+        <div class="mb-6 px-4 w-full">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Flight Class<span class="text-red">*</span></label
+          >
+          <input
+            type="text"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Flight Class"
+            required
+            v-model="newFlightClass"
+          />
+        </div>
 
-        </form>
-
+        <modalFooter @closeEdit="isVisible = false" class="pb-2"/>
+      </form>
     </main>
   </Modal>
 </template>
