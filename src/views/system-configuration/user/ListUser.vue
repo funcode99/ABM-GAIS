@@ -347,7 +347,7 @@
                         Actions
                       </span>
                     </th>
-
+<!--  -->
                   </tr>
                 </thead>
 
