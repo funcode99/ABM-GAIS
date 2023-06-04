@@ -1,5 +1,7 @@
 <script setup>
 import editicon from "@/assets/navbar/edit_icon.svg";
+import iconceklis from "@/assets/checkmark.png";
+import iconcancel from "@/assets/close-window.png";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
@@ -27,7 +29,53 @@ let isAdding = ref(false);
 //for inner table
 let zonaTlk = ref("");
 
-let editDataId = ref(null);
+let editDataIdTlk = ref(null);
+let editDataValue = ref(null);
+let isEditing = ref(false);
+
+const editData = (id, value) => {
+  editDataIdTlk.value = id;
+  editDataValue.value = value;
+  isEditing.value = true;
+};
+
+const saveData = async () => {
+  // Lakukan logika penyimpanan data ke backend atau tindakan lain yang diperlukan untuk menyimpan perubahan data
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    await Api.post(`/zona_job/update_data/`, {
+      id_zona: editDataValue.id_zona,
+      id_job_band: editDataValue.id_job_band,
+      meals_rate: editDataValue.meals_rate,
+    });
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    emits("jobbandtlk-saved");
+  } catch (error) {
+    console.log(error);
+  }
+
+  // Setelah berhasil menyimpan data, atur kembali variabel editDataIdTlk, editDataValue, dan isEditing ke nilai awal
+  editDataIdTlk.value = null;
+  editDataValue.value = null;
+  isEditing.value = false;
+};
+
+const cancelEdit = () => {
+  // Batalkan edit dan atur kembali variabel editDataIdTlk, editDataValue, dan isEditing ke nilai awal
+  editDataIdTlk.value = null;
+  editDataValue.value = null;
+  isEditing.value = false;
+};
 
 //for get tlk data in table
 const fetchGetTlk = async () => {
@@ -35,7 +83,7 @@ const fetchGetTlk = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/zona_job/get/");
   zonaTlk.value = res.data.data;
-  console.log("ini data tlk " + JSON.stringify(res.data.data));
+  // console.log("ini data tlk " + JSON.stringify(res.data.data));
 };
 
 //for get company in select
@@ -227,16 +275,36 @@ watch(isVisible, () => {
               v-for="data in zonaTlk"
               :key="data.id"
             >
-              <td class="text-center items-center">
+              <td class="text-center items-center" style="width: 20%">
                 {{ data.zona_name }}
               </td>
-              <td class="text-center items-center">
-                {{ data.tlk_rate }}
+              <td class="text-center items-center" style="width: 60%">
+                <input
+                  v-if="editDataIdTlk === data.id"
+                  type="text"
+                  v-model="editDataValue"
+                  class="text-center items-center border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                />
+                <span v-else>{{ data.tlk_rate }}</span>
               </td>
               <td class="flex justify-center items-center">
-                <button>
-                  <img :src="editicon" class="w-6 h-6" />
+                <button
+                  @click="
+                    editDataIdTlk === data.id
+                      ? saveData()
+                      : editData(data.id, data.tlk_rate)
+                  "
+                >
+                  <img
+                    :src="editDataIdTlk === data.id ? iconceklis : editicon"
+                    class="w-6 h-6"
+                  />
                 </button>
+                <template v-if="editDataIdTlk === data.id">
+                  <button @click="cancelEdit">
+                    <img :src="iconcancel" class="w-6 h-6" />
+                  </button>
+                </template>
               </td>
             </tr>
           </tbody>

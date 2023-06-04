@@ -6,6 +6,8 @@ import modalHeader from "@/components/modal/modalHeader.vue";
 
 import Api from "@/utils/Api";
 
+import Multiselect from "@vueform/multiselect";
+
 import { ref, watch, onMounted } from "vue";
 import { Modal } from "usemodal-vue3";
 import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
@@ -36,6 +38,9 @@ let iconfilename = ref(null);
 let selectedVendorId = ref(props.formContent[4] || null);
 let selectedImage = ref(props.formContent[5] || null);
 let selectedCodeErpId = ref(props.formContent[6] || null);
+
+let siteData = ref(null);
+let siteIdArray = ref(null);
 
 const file = ref({});
 
@@ -87,8 +92,22 @@ const fetchVendors = async () => {
   // console.log("ini data vendor" + JSON.stringify(res.data.data));
 };
 
+//for get site in multiselect
+const fetchSite = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  siteData = res.data.data;
+  console.log("ini data city" + JSON.stringify(res.data.data));
+  siteData.map((item) => {
+    item.value = item.id;
+  });
+  console.log("Data company setelah perubahan:", siteData);
+};
+
 onMounted(() => {
   fetchVendors();
+  fetchSite();
 });
 
 //for image logo
@@ -267,6 +286,44 @@ const resetForm = () => {
             <option>SAP</option>
             <option>RAMCO</option>
           </select>
+        </div>
+
+        <div class="mb-6 w-full px-4 text-start">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Site<span class="text-red">*</span></label
+          >
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            v-model="siteIdArray"
+            mode="tags"
+            placeholder="Select Site"
+            track-by="site_name"
+            label="site_name"
+            :close-on-select="false"
+            :searchable="true"
+            :options="siteData"
+          >
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
+              >
+                {{ option.site_name }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
         </div>
       </form>
     </main>
