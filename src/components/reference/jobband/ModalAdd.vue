@@ -1,7 +1,6 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg";
-import iconceklis from "@/assets/checkmark.png";
-import iconcancel from "@/assets/close-window.png";
+import iconPlus from "@/assets/navbar/icon_plus.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
@@ -27,63 +26,28 @@ let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
 //for inner table
-let zonaTlk = ref("");
+let instanceArray = [];
+let approverLines = ref([]);
+let authorities = ref("");
+let currentAuthoritiesId = ref();
+let dropdownRemoveList = ref([]);
+let addZona = ref([]);
 
-let editDataIdTlk = ref(null);
-let editDataValue = ref(null);
-let isEditing = ref(false);
-
-const editData = (id, value) => {
-  editDataIdTlk.value = id;
-  editDataValue.value = value;
-  isEditing.value = true;
-};
-
-const saveData = async () => {
-  // Lakukan logika penyimpanan data ke backend atau tindakan lain yang diperlukan untuk menyimpan perubahan data
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    await Api.post(`/zona_job/update_data/`, {
-      id_zona: editDataValue.id_zona,
-      id_job_band: editDataValue.id_job_band,
-      meals_rate: editDataValue.meals_rate,
-    });
-
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-
-    emits("jobbandtlk-saved");
-  } catch (error) {
-    console.log(error);
+const addField = (fieldType, isi) => {
+  if (isi) {
+    dropdownRemoveList.value.push(isi);
   }
 
-  // Setelah berhasil menyimpan data, atur kembali variabel editDataIdTlk, editDataValue, dan isEditing ke nilai awal
-  editDataIdTlk.value = null;
-  editDataValue.value = null;
-  isEditing.value = false;
+  fieldType.push({
+    id_zona: authorities.value,
+    tlk_rate: "",
+  });
 };
 
-const cancelEdit = () => {
-  // Batalkan edit dan atur kembali variabel editDataIdTlk, editDataValue, dan isEditing ke nilai awal
-  editDataIdTlk.value = null;
-  editDataValue.value = null;
-  isEditing.value = false;
-};
-
-//for get tlk data in table
-const fetchGetTlk = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona_job/get/");
-  zonaTlk.value = res.data.data;
-  // console.log("ini data tlk " + JSON.stringify(res.data.data));
+const removeField = (index, fieldType) => {
+  fieldType.splice(index, 1);
+  dropdownRemoveList.value.splice(index - 1, 1);
+  dropdownRemoveList.value.splice(index + 1, 1);
 };
 
 //for get company in select
@@ -104,10 +68,21 @@ const fetchGetFlightClass = async () => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
+//for get zona
+const fetchGetZona = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/zona/get/");
+  instanceArray = res.data.data;
+  addZona.value = instanceArray;
+  // console.log("ini data zona" + JSON.stringify(res.data.data));
+  // console.log("ini instance array" +JSON.stringify(instanceArray));
+};
+
 onMounted(() => {
   fetchGetCompany();
   fetchGetFlightClass();
-  fetchGetTlk();
+  fetchGetZona();
 });
 
 const saveJobBand = async () => {
@@ -121,12 +96,13 @@ const callAddApi = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-    await Api.post(`/warehouse/store`, {
+    await Api.post(`/job_band/store`, {
       band_job_name: jobBandName.value,
       hotel_fare: hotelFare.value,
       meals_rate: mealsRate.value,
       id_company: selectedCompany.value,
       id_flight_class: selectedFlightClass.value,
+      array_detail: approverLines.value,
     });
 
     Swal.fire({
@@ -149,6 +125,7 @@ const resetInput = () => {
   mealsRate.value = "";
   selectedCompany.value = "Company";
   selectedFlightClass.value = "Flight";
+  approverLines.value = [];
 };
 
 watch(isVisible, () => {
@@ -195,7 +172,7 @@ watch(isVisible, () => {
           >
           <input
             type="text"
-            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Job Band"
             required
             v-model="jobBandName"
@@ -224,7 +201,7 @@ watch(isVisible, () => {
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Meal Rate"
             required
-            v-model="meals_rate"
+            v-model="mealsRate"
           />
         </div>
 
@@ -243,75 +220,101 @@ watch(isVisible, () => {
             </option>
           </select>
         </div>
-      </form>
 
-      <!-- INNER TABLE -->
-      <h1 class="text-base font-JakartaSans font-bold py-2 px-4">TLK</h1>
-      <div class="px-4 pb-10">
-        <table class="table table-zebra table-compact border w-full rounded-lg">
-          <thead class="text-center font-JakartaSans text-sm font-bold">
-            <tr>
-              <th class="relative bg-blue">
-                <span class="text-center items-center text-white capitalize"
-                  >Zona</span
-                >
-              </th>
-              <th class="relative bg-blue">
-                <span class="text-center items-center text-white capitalize"
-                  >Gross/Hari</span
-                >
-              </th>
-              <th class="relative bg-blue">
-                <span class="text-center items-center text-white capitalize"
-                  >Action</span
-                >
-              </th>
-            </tr>
-          </thead>
+        <!-- INNER TABLE -->
+        <h1 class="text-base font-JakartaSans font-bold py-2 px-4">TLK</h1>
+        <div class="px-4 pb-10">
+          <table
+            class="table table-zebra table-compact border w-full rounded-lg"
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold">
+              <tr>
+                <th class="relative bg-blue">
+                  <span class="text-center items-center text-white capitalize"
+                    >Zona</span
+                  >
+                </th>
+                <th class="relative bg-blue">
+                  <span class="text-center items-center text-white capitalize"
+                    >Gross/Hari</span
+                  >
+                </th>
+                <th class="relative bg-blue">
+                  <span class="text-center items-center text-white capitalize"
+                    >Action</span
+                  >
+                </th>
+              </tr>
+            </thead>
 
-          <tbody class="bg-[#F5F5F5]">
-            <tr
-              class="font-JakartaSans font-normal text-sm"
-              v-for="data in zonaTlk"
-              :key="data.id"
-            >
-              <td class="text-center items-center" style="width: 20%">
-                {{ data.zona_name }}
-              </td>
-              <td class="text-center items-center" style="width: 60%">
-                <input
-                  v-if="editDataIdTlk === data.id"
-                  type="text"
-                  v-model="editDataValue"
-                  class="text-center items-center border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                />
-                <span v-else>{{ data.tlk_rate }}</span>
-              </td>
-              <td class="flex justify-center items-center">
-                <button
-                  @click="
-                    editDataIdTlk === data.id
-                      ? saveData()
-                      : editData(data.id, data.tlk_rate)
+            <tbody class="bg-[#F5F5F5]">
+              <tr
+                class="font-JakartaSans font-normal text-sm"
+                v-for="(input, index) in approverLines"
+                :key="`phoneInput-${index}`"
+              >
+                <td class="text-center justify-center">
+                  <select
+                    v-model="input.id_zona"
+                    :id="index"
+                    :disabled="approverLines.length - 1 > index ? true : false"
+                    class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                  >
+                    <option
+                      v-for="data in addZona"
+                      :key="data.id"
+                      :value="data.id"
+                      :disabled="
+                        dropdownRemoveList.includes(data.id) ? true : false
+                      "
+                    >
+                      {{ data.zona }}
+                    </option>
+                  </select>
+                </td>
+
+                <td
+                  v-if="
+                    input.level != 'R'
+                      ? (currentAuthoritiesId = input.id_zona)
+                      : ''
                   "
-                >
-                  <img
-                    :src="editDataIdTlk === data.id ? iconceklis : editicon"
-                    class="w-6 h-6"
-                  />
-                </button>
-                <template v-if="editDataIdTlk === data.id">
-                  <button @click="cancelEdit">
-                    <img :src="iconcancel" class="w-6 h-6" />
-                  </button>
-                </template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                  class="hidden"
+                ></td>
 
-      <modalFooter @closeEdit="isVisible = false" />
+                <td class="text-center justify-center">
+                  <input
+                    type="text"
+                    class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                    v-model="input.tlk_rate"
+                  />
+                </td>
+
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <button @click="removeField(index, approverLines)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
+              </tr>
+
+              <tr>
+                <td></td>
+                <td></td>
+                <td class="flex justify-center">
+                  <img
+                    class="cursor-pointer w-6 h-6"
+                    :src="iconPlus"
+                    alt=""
+                    @click="addField(approverLines, currentAuthoritiesId)"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <modalFooter @closeEdit="isVisible = false" />
+      </form>
     </main>
   </Modal>
 </template>
