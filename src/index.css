@@ -37,6 +37,10 @@
   border-color: #015289;
 }
 
+.modal-vue3-wrap {
+  margin: -8px;
+}
+
 .modal-vue3-wrap div:nth-child(2) {
   overflow-y: hidden !important;
 }
@@ -47,7 +51,7 @@
   width: 100%;
   overflow-x: hidden !important;
   overflow-y: hidden !important;
-  overscroll-behavior: contain !important;
+  overscroll-behavior: contain !important;  
 }
 
 .modal-vue3-body {
@@ -58,11 +62,7 @@
   max-height: 100% !important;
 }
 
-.modal-vue3-wrap {
-  display: flex;
-  flex-wrap: nowrap;
-  margin: -8px;
-}
+
 
 .modal-vue3-header,
 .modal-vue3-footer {

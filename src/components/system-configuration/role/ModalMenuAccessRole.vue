@@ -24,7 +24,6 @@
   let sortedData = ref([])
   let sortedDataReactive = computed(() => sortedData.value)
 
-
 const menuHeadTable = [
   {Id: 1, title: 'Write'},
   {Id: 2, title: 'Read'},
