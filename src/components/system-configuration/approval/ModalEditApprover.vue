@@ -328,6 +328,9 @@
                   <td v-else>
                     {{ index + 1 }}
                   </td>
+
+                  <td class="hidden" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
+                  </td>
     
                   <!-- event listener gak ngaruh di option -->
                   <td>

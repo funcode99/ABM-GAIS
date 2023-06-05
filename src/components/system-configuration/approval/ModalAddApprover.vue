@@ -285,6 +285,8 @@
                       <th class="flex justify-center">Actions</th>
                     </tr>
                   </thead>
+
+                  <!-- {{ approverLines }} -->
         
                   <tbody class="bg-[#F5F5F5]">
         
@@ -298,6 +300,9 @@
 
                       <td v-else>
                         {{ index + 1 }}
+                      </td>
+
+                      <td class="hidden" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
                       </td>
         
                       <td>
