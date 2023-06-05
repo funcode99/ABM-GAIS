@@ -369,10 +369,12 @@
                         {{ data.username }}
                       </td>
                       <td>
-                        {{ data.id_role }}
+                        <!-- {{ data.id_role }} -->
+                        {{ data.role_name }}
                       </td>
                       <td>
-                        {{ data.id_approval_auth }}
+                        <!-- {{ data.id_approval_auth }} -->
+                        {{ data.auth_name }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
                         <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[data.username, data.email, data.id_approval_auth, data.id_role, data.id_company, data.id_site, data.is_employee, data.name]" />
