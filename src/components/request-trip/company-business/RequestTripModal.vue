@@ -6,13 +6,8 @@ import iconClose from "@/assets/navbar/icon_close.svg"
 import arrow from '@/assets/arrow-multi-step-form.png'
 import check from '@/assets/step-done-check.png'
 
-import Airline1 from '@/assets/airlines-1.png'
-import Airline2 from '@/assets/airlines-2.png'
-
 
 import modalHeader from '@/components/modal/modalHeader.vue'
-import confirmationButton from '@/components/molecules/confirmationButton.vue'
-// import checkButton from '@/components/molecules/checkButton.vue'
 
 import guestAsTravellerForm from '@/components/request-trip/modal-step-form/guest-as-traveller-form.vue'
 import airlinesForm from '@/components/request-trip/modal-step-form/airlines-form.vue'
@@ -560,39 +555,38 @@ import { Modal } from 'usemodal-vue3'
         <div class="flex justify-center pt-3 px-[10px] gap-x-[19px] h-[100px]">
   
           <!-- step 1 circle -->
-          <div :class="[formStep > 0 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+          <div :class="[formStep > 0 ? 'bg-[#fff]' : formStep === 0 ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
             <h1 class="mt-11 w-11 font-medium text-[10px]">Requester Info</h1>
             <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5">
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 0 ? 'block' : 'hidden'">
           </div>
-  
           <!-- step 2 circle -->
-          <div class="overflow-hidden" :class="[formStep > 1 ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+          <div class="overflow-hidden" :class="[formStep > 1 ? 'bg-[#fff]' : formStep === 1 ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
               <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 1 ? 'block' : 'hidden'">
               <!-- absolute top-[14px] bottom-0 right-[-19px]  -->
               <h1 class="mt-11 w-11 font-medium text-[10px] text-black fixed">Purpose of Trip</h1>
           </div>
-          <img :class="formStep > 2 ? '' : 'hidden'" :src="arrow" class="h-5 w-5 mt-[14px] mr-[-19px] ml-[-19px]">
+          <img :src="arrow" class="h-5 w-5 mt-[14px] mr-[-19px] ml-[-19px]">
 
-          <div v-if="requestType[1] == 'Company Business'" v-for="data in companyBusinessStepList" :class="[formStep > data.id ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+          <div v-if="requestType[1] == 'Company Business'" v-for="data in companyBusinessStepList" :class="[formStep > data.id ? 'bg-[#fff]' : formStep === data.id ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
             <h1 class="mt-11 w-11 font-medium text-[10px]">{{ data.title }}</h1>
             <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" :class="data.id == 7 ? 'hidden' : 'block'">
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > data.id ? 'block' : 'hidden'">
           </div>
 
-          <div v-if="requestType[1] == 'Site Visit'" v-for="data in companyBusinessStepList" :class="[formStep > data.id ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+          <div v-if="requestType[1] == 'Site Visit'" v-for="data in companyBusinessStepList" :class="[formStep > data.id ? 'bg-[#fff]' : formStep === data.id ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
             <h1 class="mt-11 w-11 font-medium text-[10px]">{{ data.title }}</h1>
             <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" :class="data.id == 7 ? 'hidden' : 'block'">
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > data.id ? 'block' : 'hidden'">
           </div>
 
-          <div v-if="requestType[1] == 'Field Break'" v-for="data in fieldBreakStepList" :class="[formStep > data.id ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+          <div v-if="requestType[1] == 'Field Break'" v-for="data in fieldBreakStepList" :class="[formStep > data.id ? 'bg-[#fff]' : formStep === data.id ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
             <h1 class="mt-11 w-11 font-medium text-[10px]">{{ data.title }}</h1>
             <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" :class="data.id == 4 ? 'hidden' : 'block'">
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > data.id ? 'block' : 'hidden'">
           </div>
 
-          <div v-if="requestType[1] == 'Taxi Voucher'" v-for="data in taxiVoucherStepList" :class="[formStep > data.id ? 'bg-[#fff]' : 'bg-[#d9d9d9]', circleStepBasicStylingClass]">
+          <div v-if="requestType[1] == 'Taxi Voucher'" v-for="data in taxiVoucherStepList" :class="[formStep > data.id ? 'bg-[#fff]' : formStep === data.id ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
             <h1 class="mt-11 w-11 font-medium text-[10px]">{{ data.title }}</h1>
             <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" :class="data.id == 3 ? 'hidden' : 'block'">
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > data.id ? 'block' : 'hidden'">
@@ -634,8 +628,8 @@ import { Modal } from 'usemodal-vue3'
           <!-- modal body step 1 & 2 -->
           <div :class="formStep == 0 ? 'h-[250px]' : 'max-h-[500px]' ">
   
-              {{requestType}}
-              {{stepCounter}}
+              <!-- {{requestType}}
+              {{stepCounter}} -->
 
               <!-- step 1 form Requestor Info -->
               <div class="text-left" :class="formStep == 0 ? 'block' : 'hidden'">
@@ -961,7 +955,7 @@ import { Modal } from 'usemodal-vue3'
                             {{ data.status }}
                           </td>
                           <td>
-                            
+                              
                           </td>
                         </tr>
                       </tbody>
@@ -1204,6 +1198,9 @@ import { Modal } from 'usemodal-vue3'
                               <td>
                                 {{ data.status }}
                               </td>
+                              <td>
+
+                              </td>
                           </tr>
                         </tbody>
                       </table>
@@ -1249,6 +1246,9 @@ import { Modal } from 'usemodal-vue3'
                             </td>
                             <td>
                               {{ data.status }}
+                            </td>
+                            <td>
+
                             </td>
                           </tr>
                         </tbody>
@@ -1491,6 +1491,7 @@ import { Modal } from 'usemodal-vue3'
                             <td>
                               {{ data.status }}
                             </td>
+                            <td></td>
                           </tr>
                         </tbody>
                       </table>
@@ -1599,6 +1600,7 @@ import { Modal } from 'usemodal-vue3'
             <td>
               {{ data.status }}
             </td>
+            <td></td>
         </tr>
       </tbody>
     </table>
