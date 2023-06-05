@@ -125,7 +125,8 @@ const resetInput = () => {
   mealsRate.value = "";
   selectedCompany.value = "Company";
   selectedFlightClass.value = "Flight";
-  approverLines.value = [];
+  // approverLines.value = [];
+  // jika zona name hanya sekali dipakai oleh user dan tidak bisa dipakai lagi, aktifkan approvallines
 };
 
 watch(isVisible, () => {

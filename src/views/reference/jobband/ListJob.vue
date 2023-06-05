@@ -495,7 +495,7 @@ const exportToExcel = () => {
                       data.meals_rate,
                       data.id_company,
                       data.id_flight_class,
-                      data?.array_detail,
+                      data?.detail,
                       index,
                     ]"
                   />
