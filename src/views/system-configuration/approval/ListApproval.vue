@@ -573,7 +573,7 @@
   }
 
   .table-zebra tbody tr:hover td {
-    background-color: grey;
+    background-color: rgb(193, 192, 192);
   }
 
 </style>

@@ -28,18 +28,17 @@
   let nextValue = ref(props.formContent[5])
   let menu = ref(props.formContent[6])
   let company = ref(props.formContent[7])
+  let sequenceCode = ref(props.formContent[8])
 
   let instanceArray = []
   let addMenuData = ref([])
   let addCompanyData = ref([])
 
-
-
   const fetchMenu = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data.data
+      instanceArray = api.data.data
       addMenuData.value = instanceArray
       menu.value = addMenuData.value[0].id
   }
@@ -64,6 +63,7 @@
     formEditState.sequence.recycle = recycleBy.value
     formEditState.sequence.nextValue = nextValue.value
     formEditState.sequence.company = company.value
+    formEditState.sequence.sequenceCode = sequenceCode.value
     isVisible.value = false
     emits('changeSequence')
   }
@@ -76,11 +76,13 @@
     recycleBy.value = props.formContent[4]
     nextValue.value = props.formContent[5]
     menu.value = props.formContent[6]
+    company.value = props.formContent[7]
+    sequenceCode.value = props.formContent[8]
   })
 
   const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'
-  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
   // const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
@@ -102,133 +104,6 @@
           />
 
           <form class="pr-4 modal-box-inner-inner text-left" @submit.prevent="submitEdit">
-
-            <!-- <div :class="rowClass">
-  
-              <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Nama<span class="text-red">*</span></label
-                >
-                <input
-                  v-model="menuSequenceName"
-                  type="text"
-                  placeholder="Nama Sequence"
-                  :class="inputStylingClass"
-                  required
-                />
-              </div>
-  
-              <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Next Value<span class="text-red">*</span></label
-                >
-                <input
-                  v-model="nextValue"
-                  type="text"
-                  id="name"
-                  placeholder="Next Value"
-                  :class="inputStylingClass"
-                  required
-                />
-              </div>
-  
-            </div>
-  
-            <div :class="rowClass">
-
-              <div :class="columnClass">
-                <div class="w-full">
-                  <label
-                    for="company"
-                    class="block mb-2 font-JakartaSans font-medium text-sm"
-                    id="company"
-                    >Menu<span class="text-red">*</span></label
-                  >
-                  <select v-model="menu" :class="inputStylingClass" required>
-                    <option v-for="data in addMenuData" :key="data.id" :value="data.id">
-                      {{ data.menu }}
-                    </option>
-                  </select>
-                </div>
-              </div>
-  
-              <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Sequence Size<span class="text-red">*</span></label
-                >
-                <input
-                  v-model="sequenceSize"
-                  type="text"
-                  placeholder="Sequence Size"
-                  :class="inputStylingClass"
-                  required
-                />
-              </div>
-
-            </div>
-  
-            <div :class="rowClass">
-              
-              <div :class="columnClass">
-                <div class="w-full">
-                  
-                  <label
-                    for="company"
-                    class="block mb-2 font-JakartaSans font-medium text-sm"
-                    id="company"
-                    >Recycle by<span class="text-red">*</span>
-                  </label>
-                  
-                  <select v-model="recycleBy" :class="inputStylingClass" required>
-                    <option value="W">Weekly</option>
-                    <option value="M">Month</option>
-                    <option value="Y">Year</option>
-                  </select>
-
-                </div>
-              </div>
-              
-              <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Prefix<span class="text-red">*</span>
-                </label>
-                <input
-                  v-model="prefix"
-                  type="text"
-                  placeholder="Prefix"
-                  :class="inputStylingClass"
-                  required
-                />
-              </div>
-  
-            </div>
-    
-            <div :class="rowClass">
-              
-              <div :class="columnClass">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >
-                  Suffix<span class="text-red">*</span>
-                </label>
-                <input
-                  v-model="suffix"
-                  type="text"
-                  id="name"
-                  placeholder="Suffix"
-                  :class="inputStylingClass"
-                  required
-                />
-              </div>
-
-              <div class="w-full flex-1">
-              </div>
-
-            </div> -->
 
                 <div :class="rowClass">
                   
@@ -324,11 +199,9 @@
                       <label
                         for="company"
                         class="block mb-2 font-JakartaSans font-medium text-sm"
-                        id="company"
-                        >Recycle by<span class="text-red">*</span></label
-                      >
-                      <select v-model="recycleBy" :class="inputStylingClass" required>
-                        <option value="W">Weekly</option>
+                        >Recycle by<span class="text-red">*</span>
+                      </label>
+                      <select id="company" v-model="recycleBy" :class="inputStylingClass" required>
                         <option value="M">Month</option>
                         <option value="Y">Year</option>
                       </select>
@@ -375,16 +248,17 @@
                 <div :class="rowClass">
 
                   <div :class="columnClass">
-                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                    <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm">
                         Sequence Code<span class="text-red">*</span>
                     </label>
                     <input
+                      id="sequence_code"
                       v-model="sequenceCode"
                       type="text"
-                      id="name"
                       placeholder="Sequence Code"
                       :class="inputStylingClass"
                       required
+                      disabled
                     />
                   </div>
 

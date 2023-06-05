@@ -187,7 +187,15 @@
         suffix: formState.sequence.suffix,
         id_menu: formState.sequence.menuId,
         id_company: formState.sequence.company,
-        sequence_size: formState.sequence.sequenceSize
+        sequence_size: formState.sequence.sequenceSize,
+        code_sequence: formState.sequence.sequenceCode
+      })
+      Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been saved",
+          showConfirmButton: false,
+          timer: 1500,
       })
       fetch()
     }
@@ -210,6 +218,13 @@
           id_menu: formEditState.sequence.menuId,
           id_company: formEditState.sequence.company,
           sequence_size: formEditState.sequence.sequenceSize
+        })
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your work has been edited",
+          showConfirmButton: false,
+          timer: 1500,
         })
         fetch()
     }
@@ -356,7 +371,17 @@
                         {{ data.sequence_size }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditSequence @change-sequence="editExistingSequence(data.id)" :formContent="[data.sequence_name, data.prefix, data.suffix, data.sequence_size, data.recycle, data.next_value, data.id_menu, data.id_company]" />
+                        <ModalEditSequence @change-sequence="editExistingSequence(data.id)" :formContent="[
+                          data.sequence_name, 
+                          data.prefix, 
+                          data.suffix, 
+                          data.sequence_size, 
+                          data.recycle, 
+                          data.next_value, 
+                          data.id_menu, 
+                          data.id_company,
+                          data.code_sequence
+                        ]" />
                         <button @click="deleteData(data.id)">
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
@@ -559,7 +584,7 @@
   }
 
   .table-zebra tbody tr:hover td {
-    background-color: grey;
+    background-color: rgb(193, 192, 192);
   }
 
 </style>

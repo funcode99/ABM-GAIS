@@ -75,7 +75,7 @@
   let filename = ref(props.formContent[3])
   const file = ref()
   let sequence = ref(false)
-  let sequenceCode = ref('')
+  let sequenceCode = ref(props.formContent[7])
   let ParentId = ref(props.formContent[5])
 
   let companyIdObject = ref(props.formContent[4])
@@ -108,7 +108,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get('/menu/get/')
-        menuData.value = api.data.data.data
+        menuData.value = api.data.data
       } catch (error) {
         console.log(error)
         // status.value = error.response.status
@@ -129,7 +129,7 @@
     resetInput()
   })
 
-  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -157,100 +157,96 @@
           <div class="text-left">
     
             <div class="mb-3">
-                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              <label for="menu_name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                   Menu Name<span class="text-red-star">*</span>
-                </label>
-                <input
-                :class="inputStylingClass"
-                v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-            </div>
-    
-            <div class="mb-3">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                  URL<span class="text-red-star">*</span>
-                </label>
-                <input
-                :class="inputStylingClass"
-                v-model="url" type="text" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-            </div>
-    
-            <div class="mb-3">
-    
-                <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                  Icon<span class="text-red-star">*</span>
-                </label>
-    
-                <div class="flex flex-col">
-    
-                  <input
+              </label>
+              <input
+                  id="menu_name"
                   :class="inputStylingClass"
-                  @change="updatePhoto" type="file" accept="image/*" id="name" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
-      
-                  <h1 class="text-left">
+                  v-model="menuName" type="text" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required 
+              />
+            </div>
+    
+            <div class="mb-3">
+              <label for="url" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  URL<span class="text-red-star">*</span>
+              </label>
+              <input
+                  id="url"
+                  :class="inputStylingClass"
+                  v-model="url" type="text" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required 
+              />
+            </div>
+    
+            <div class="mb-3 flex flex-col">
+              <label for="icon" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                  Icon<span class="text-red-star">*</span>
+              </label>
+              <input
+                    id="icon"
+                    :class="inputStylingClass"
+                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required 
+              />
+              <h1 class="text-left">
                     Your current icon = {{ filename }}
-                  </h1>
-    
-                </div>
-    
+              </h1>
             </div>
       
             <div class="mb-3 text-left">
-                <h1>Parent Menu</h1>
-                <select :class="inputStylingClass" v-model="ParentId">
+              <label for="parent_menu">Parent Menu</label>
+              <select id="parent_menu" :class="inputStylingClass" v-model="ParentId">
                   <option v-for="data in menuData" :key="data.id" :value="data.id">
                     {{ data.menu }}
                   </option>
-                </select>
+              </select>
             </div>
     
             <div class="mb-3 text-left">
-                <h1>Status</h1>
-                <select :class="inputStylingClass" v-model="idStatusMenu">
+              <label for="status_menu">Status</label>
+              <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
                     <option v-for="data in statusMenu" :key="data.id" :value="data.code">
                       {{ data.status }}
                     </option>
-                </select>
+              </select>
             </div>
     
-            <div class="mb-3 text-left"></div>
-                  
-                  <h1>Company</h1>
-                  <Multiselect
-                    v-model="companyIdArray"
-                    mode="tags"
-                    placeholder="Select companies"
-                    track-by="company_name"
-                    label="company_name"
-                    :close-on-select="false"
-                    :searchable="true"
-                    :options="companyData"
+            <div class="my-3 text-left">
+              <h1>Company</h1>
+              <Multiselect
+                v-model="companyIdArray"
+                mode="tags"
+                placeholder="Select companies"
+                track-by="company_name"
+                label="company_name"
+                :close-on-select="false"
+                :searchable="true"
+                :options="companyData"
+                >
+                
+                <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                  <div
+                    class="multiselect-tag is-user"
+                    :class="{
+                      'is-disabled': disabled
+                    }"
+                  >
+                    {{ option.company_name }}
+                    <span
+                      v-if="!disabled"
+                      class="multiselect-tag-remove"
+                      @click="handleTagRemove(option, $event)"
                     >
-                    
-                    <template v-slot:tag="{ option, handleTagRemove, disabled }">
-                      <div
-                        class="multiselect-tag is-user"
-                        :class="{
-                          'is-disabled': disabled
-                        }"
-                      >
-                        {{ option.company_name }}
-                        <span
-                          v-if="!disabled"
-                          class="multiselect-tag-remove"
-                          @click="handleTagRemove(option, $event)"
-                        >
-                          <span class="multiselect-tag-remove-icon"></span>
-                        </span>
-                      </div>
-                    </template>
-
-                  </Multiselect>
-
-            <div class="mb-3"></div>
+                      <span class="multiselect-tag-remove-icon"></span>
+                    </span>
+                  </div>
+                </template>
+  
+              </Multiselect>
+            </div>
     
             <div class="mb-3 text-left">
-                  <h1>Sort</h1>
-                  <select :class="inputStylingClass" v-model="sort">
+              <label for="sort">Sort</label>
+              <select id="sort" :class="inputStylingClass" v-model="sort">
                       <option>1</option>
                       <option>2</option>
                       <option>3</option>
@@ -266,21 +262,22 @@
                       <option>13</option>
                       <option>14</option>
                       <option>15</option>
-                  </select>
+              </select>
             </div>
       
             <div class="flex gap-2 mb-2">
-                  <input type="checkbox" v-model="sequence">
-                  <h1>Use Sequence</h1>
+              <input type="checkbox" v-model="sequence">
+              <h1>Use Sequence</h1>
             </div>
     
             <div class="mb-3" v-if="sequence">
               
-              <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+              <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                     Sequence Code<span class="text-red-star">*</span>
               </label>
     
               <input
+                  id="sequence_code"
                   :class="inputStylingClass"
                   v-model="sequenceCode" 
                   type="text"

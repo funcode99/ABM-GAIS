@@ -9,7 +9,7 @@ export const useFormEditStore = defineStore('add-form', {
                 idStatusMenu: 1, 
                 parentId: 1,
                 sequence: '',
-                description: 'Kosong',
+                sequenceCode: '',
                 url: '',
                 icon: {},
                 companyId: null
@@ -26,7 +26,8 @@ export const useFormEditStore = defineStore('add-form', {
                 siteId: 0
             },
             role: {
-                roleName: ''
+                roleName: '',
+                roleCode: ''
             },
             approval: {
                 matrixName: '',
@@ -38,6 +39,7 @@ export const useFormEditStore = defineStore('add-form', {
                 maxCA: 0
             },
             sequence: {
+                sequenceCode: '',
                 sequenceName: '',
                 sequenceSize: 1,
                 recycle: '',

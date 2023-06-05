@@ -148,7 +148,7 @@
 
   const rowClass = 'flex justify-between items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'
-  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -175,13 +175,13 @@
 
               <!-- bagian atas -->
               <div class="mb-3">
-                <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm">
+                <label for="matrix_name" class="block mb-2 font-JakartaSans font-medium text-sm">
                   Nama Matrix<span class="text-red">*</span>
                 </label>
                 <input
                   v-model="matrixName"
                   type="text"
-                  id="name"
+                  id="matrix_name"
                   placeholder="Nama Matrix"
                   :class="inputStylingClass"
                   required
@@ -190,10 +190,10 @@
       
               <div class="mb-3 flex items-center">
                 <div class="flex flex-col w-full">
-                  <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                  <label for="menu" class="block mb-2 font-JakartaSans font-medium text-sm">
                     Menu<span class="text-red">*</span>
                   </label>
-                  <select v-model="menu" :class="inputStylingClass" required>
+                  <select id="menu" v-model="menu" :class="inputStylingClass" required>
                     <option v-for="data in addMenuData" :key="data.id" :value="data.id">
                       {{ data.menu }}
                     </option>
@@ -204,10 +204,10 @@
               <!-- Document -->
               <div class="mb-3 flex items-center">
                 <div class="flex flex-col w-full">
-                  <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                  <label for="document" class="block mb-2 font-JakartaSans font-medium text-sm">
                     Document<span class="text-red">*</span>
                   </label>
-                  <select v-model="document" :class="inputStylingClass" required>
+                  <select id="document" v-model="document" :class="inputStylingClass" required>
                     <option v-for="data in addDocumentData" :key="data.id" :value="data.id">
                       {{ data.document_name }}
                     </option>
@@ -217,20 +217,22 @@
 
               <div :class="rowClass">
                   <div :class="columnClass">
-                    <label>
+                    <label for="minCA">
                       Minimum Amount (CA)
                     </label>
                     <input
+                      id="minCA"
                       v-model="minCA"
                       placeholder="Amount"
                       :class="inputStylingClass"
                     />
                   </div>
                   <div :class="columnClass">
-                    <label>
+                    <label for="maxCA">
                       Maximum Amount (CA)
                     </label>
                     <input 
+                      id="maxCA"
                       v-model="maxCA"
                       placeholder="Amount"
                       :class="inputStylingClass"
@@ -241,10 +243,10 @@
               <!-- Company -->
               <div class="mb-3 flex items-center">
                 <div class="flex flex-col w-full">
-                  <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                  <label for="company" class="block mb-2 font-JakartaSans font-medium text-sm">
                     Company<span class="text-red">*</span>
                   </label>
-                  <select v-model="company" :class="inputStylingClass" required>
+                  <select id="company" v-model="company" :class="inputStylingClass" required>
                     <option v-for="data in addCompanyData" :key="data.id" :value="data.id">
                       {{ data.company_name }}
                     </option>

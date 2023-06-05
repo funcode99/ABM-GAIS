@@ -93,9 +93,8 @@ watch(isVisible, () => {
                     </th>
                   </tr>
                 </thead>
-      
          
-                  <tbody v-for="data in sortedDataReactive" :key="data.Id">
+                <tbody v-for="data in sortedDataReactive" :key="data.Id">
                     
                     <tr>
                       <th>
@@ -121,7 +120,7 @@ watch(isVisible, () => {
   
                     </tr>
 
-                  </tbody>
+                </tbody>
       
               </table>
               

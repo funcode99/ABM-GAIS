@@ -112,6 +112,7 @@
         parent_id: formState.menu.parentId,
         id_status_menu: formState.menu.idStatusMenu,
         use_sequence: formState.menu.sequence,
+        code_sequence: formState.menu.sequenceCode,
         description: 'kosong',
         url: formState.menu.url,
         icon: formState.menu.icon,
@@ -395,7 +396,8 @@
                                   data.icon, 
                                   data.comp_array, 
                                   data.parent_id, 
-                                  data.status_name
+                                  data.status_name,
+                                  data.code_sequence
                                 ]" />
                                 <button @click="deleteData(data.id)">
                                   <img :src="deleteicon" class="w-6 h-6" />
@@ -593,7 +595,7 @@
   }
 
   .table-zebra tbody tr:hover td {
-    background-color: grey;
+    background-color: rgb(193, 192, 192);
   }
 
 </style>

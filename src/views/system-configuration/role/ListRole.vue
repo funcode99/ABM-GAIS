@@ -109,7 +109,8 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         let api = await Api.post(`/role/update_data/${editRoleDataId.value}`, {
-          role_name: formEditState.role.roleName
+          role_name: formEditState.role.roleName,
+          code_role: formEditState.role.roleCode
         })
         Swal.fire({
         position: "center",
@@ -128,11 +129,14 @@
     } 
 
     const callAddApi = async () => {
+
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       await Api.post(`/role/store`, {
-        role_name: formState.role.roleName
+        role_name: formState.role.roleName,
+        code_role: formState.role.roleCode
       })
+
       Swal.fire({
       position: "center",
       icon: "success",
@@ -228,7 +232,6 @@
 
     onBeforeMount(async () => {
       getSessionForSidebar()
-      // sortedData.value gak dianggap sebagai array lagi
       fetch()
       fetchGetActive()
     })
@@ -303,8 +306,6 @@
 
       <tableContainer>
 
-          <!-- {{ deleteArray }} -->
-
         <!-- table box -->
         <TableTopBar 
           :title="'Role'" 
@@ -365,7 +366,7 @@
                   <td class="flex flex-wrap gap-4 justify-center">
                     <!-- kalo tanpa value isi nya array kosong -->
                     <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" />
-                    <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name]" />
+                    <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name, data.code_role]" />
                     <button @click="deleteData(data.id)">
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
@@ -553,7 +554,7 @@
   }
 
   .table-zebra tbody tr:hover td {
-    background-color: grey;
+    background-color: rgb(193, 192, 192);
   }
 
 

@@ -17,21 +17,22 @@
   const emits = defineEmits('addRole')
 
   let newRole = ref('')
+  let newRoleCode = ref('')
 
   const submitRole = () => {
-    // isAdding.value = true
-    isVisible.value = false
-
-    // saat isVisible diubah gak langsung direset
-    // console.log(newRole.value)
+    isAdding.value = true
     formState.role.roleName = newRole.value
+    formState.role.roleCode = newRoleCode.value
     emits('addRole')
+    isVisible.value = false
+   
   }
 
-  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
   const resetInput = () => {
     newRole.value = ''
+    newRoleCode.value = ''
   }
 
   watch(isVisible, () => {
@@ -67,14 +68,28 @@
             <form class="pt-4 px-1" @submit.prevent="submitRole">
 
               <div class="mb-3 px-3">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                <label for="role" class="block mb-2 font-JakartaSans font-medium text-sm">
                   Role<span class="text-red">*</span>
                 </label>
                 <input
-                  @keydown.enter="submitRole"
+                  id="role"
                   v-model="newRole"
                   type="text"
                   placeholder="Role"
+                  :class="inputStylingClass"
+                  required
+                />
+              </div>
+
+              <div class="mb-3 px-3">
+                <label for="role_code" class="block mb-2 font-JakartaSans font-medium text-sm">
+                  Role Code<span class="text-red">*</span>
+                </label>
+                <input
+                  id="role_code"
+                  v-model="newRoleCode"
+                  type="text"
+                  placeholder="Role Code"
                   :class="inputStylingClass"
                   required
                 />
@@ -93,12 +108,3 @@
 
 
 </template>
-
-<style scoped>
-
-:deep(.modal-vue3-content) {
-  /* max-height: 210px !important; */
-  /* max-width: 510px !important; */
-}
-
-</style>

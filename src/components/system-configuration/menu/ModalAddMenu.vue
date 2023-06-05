@@ -48,6 +48,7 @@
         formState.menu.menuName = menuName.value
         formState.menu.sort = sort.value
         formState.menu.sequence = sequence.value
+        formState.menu.sequenceCode = sequenceCode.value
         formState.menu.url = url.value
         formState.menu.icon = file.value
         formState.menu.companyId = companyIdArray.value
@@ -77,7 +78,7 @@
         statusMenu.value = getStatus
   }
 
-  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
   const resetInput = () => {
       menuName.value = ''
@@ -120,7 +121,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get('/menu/get/')
-        menuData.value = api.data.data.data
+        menuData.value = api.data.data
       } catch (error) {
         console.log(error)
         // status.value = error.response.status
@@ -150,35 +151,35 @@
               <form class="pr-4 modal-box-inner-inner" @submit.prevent="submit">
 
                   <div class="mb-3">
-                    <label for="name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    <label for="menu_name" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       Menu Name<span class="text-red-star">*</span>
                     </label>
                     <input
                     :class="inputStylingClass"
-                    v-model="menuName" type="text" id="name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+                    v-model="menuName" type="text" id="menu_name" placeholder="Nama Menu" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
                   </div>
         
                   <div class="mb-3">
-                    <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    <label for="url" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       URL<span class="text-red-star">*</span>
                     </label>
                     <input
                     :class="inputStylingClass"
-                    v-model="url" type="text" placeholder="URL" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+                    v-model="url" id="url" type="text" placeholder="URL" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
                   </div>
         
                   <div class="mb-3">
-                    <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    <label for="icon" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       Icon<span class="text-red-star">*</span>
                     </label>
                     <input
                     :class="inputStylingClass"
-                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
+                    @change="updatePhoto" id="icon" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required />
                   </div>
         
                   <div class="mb-3 text-left">
-                      <h1>Parent Menu</h1>
-                      <select :class="inputStylingClass" v-model="ParentId">
+                      <label for="parent_menu">Parent Menu</label>
+                      <select id="parent_menu" :class="inputStylingClass" v-model="ParentId">
                           <option v-for="data in menuData" :key="data.id" :value="data.id">
                             {{ data.menu }}
                           </option>
@@ -186,50 +187,53 @@
                   </div>
         
                   <div class="mb-3 text-left">
-                    <h1>Status</h1>
-                    <select :class="inputStylingClass" v-model="idStatusMenu">
+                    <label for="status_menu">Status</label>
+                    <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
                         <option v-for="data in statusMenu" :key="data.id" :value="data.code">
                           {{ data.status }}
                         </option>
                     </select>
                   </div>
-                  <h1>Company</h1>
-                  <Multiselect
-                    v-model="companyIdArray"
-                    mode="tags"
-                    placeholder="Select companies"
-                    track-by="company_name"
-                    label="company_name"
-                    :close-on-select="false"
-                    :searchable="true"
-                    :options="companyData"
-                    >
-                    
-                    <template v-slot:tag="{ option, handleTagRemove, disabled }">
-                      <div
-                        class="multiselect-tag is-user"
-                        :class="{
-                          'is-disabled': disabled
-                        }"
+
+                  <div class="my-3">
+
+                    <h1>Company</h1>
+                    <Multiselect
+                      v-model="companyIdArray"
+                      mode="tags"
+                      placeholder="Select companies"
+                      track-by="company_name"
+                      label="company_name"
+                      :close-on-select="false"
+                      :searchable="true"
+                      :options="companyData"
                       >
-                        {{ option.company_name }}
-                        <span
-                          v-if="!disabled"
-                          class="multiselect-tag-remove"
-                          @click="handleTagRemove(option, $event)"
+                      
+                      <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                        <div
+                          class="multiselect-tag is-user"
+                          :class="{
+                            'is-disabled': disabled
+                          }"
                         >
-                          <span class="multiselect-tag-remove-icon"></span>
-                        </span>
-                      </div>
-                    </template>
+                          {{ option.company_name }}
+                          <span
+                            v-if="!disabled"
+                            class="multiselect-tag-remove"
+                            @click="handleTagRemove(option, $event)"
+                          >
+                            <span class="multiselect-tag-remove-icon"></span>
+                          </span>
+                        </div>
+                      </template>
 
-                  </Multiselect>
-
-                  <div class="mb-3"></div>
+                    </Multiselect>
+                  
+                  </div>
         
                   <div class="mb-3 text-left">
-                      <h1>Sort</h1>
-                      <select :class="inputStylingClass" v-model="sort">
+                      <label for="sort">Sort</label>
+                      <select id="sort" :class="inputStylingClass" v-model="sort">
                           <option>1</option>
                           <option>2</option>
                           <option>3</option>
@@ -255,11 +259,12 @@
         
                   <div class="mb-3" v-if="sequence">
       
-                    <label class="block mb-2 font-JakartaSans font-medium text-sm text-left">
+                    <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       Sequence Code<span class="text-red-star">*</span>
                     </label>
       
                     <input
+                    id="sequence_code"
                     :class="inputStylingClass"
                     v-model="sequenceCode" 
                     type="text"
@@ -271,8 +276,8 @@
                   </div>
 
                   <modalFooter
-                      class="mt-6 pt-5"
-                      @closeEdit="isVisible = false"
+                    class="mt-6 pt-5"
+                    @closeEdit="isVisible = false"
                   />
 
               </form>

@@ -46,14 +46,6 @@
     formState.user.companyId = company.value
     formState.user.siteId = location.value
 
-    Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Your work has been saved",
-        showConfirmButton: false,
-        timer: 1500,
-    })
-
     emits('addUser')
 
   }
@@ -120,7 +112,7 @@
     }
   })
 
-  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -159,11 +151,12 @@
                 </div>
     
                 <div class="mb-6">
-                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                            Username<span class="text-red">*</span>
+                    <label for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
+                        Username<span class="text-red">*</span>
                     </label>
     
                     <input
+                        id="username"
                         v-if="!isEmployee"
                         v-model="username"
                         type="text"
@@ -172,7 +165,7 @@
                         required
                     />
     
-                    <select v-if="isEmployee" v-model="username" :class="inputStylingClass">
+                    <select id="username" v-if="isEmployee" v-model="username" :class="inputStylingClass">
                       <option v-for="data in responseEmployeeArray" :key="data.id" :value="data.employee_name">
                         {{ data.employee_name }}
                       </option>
@@ -182,10 +175,12 @@
     
                 <div class="mb-6">
                   <label
+                    for="email"
                     class="block mb-2 font-JakartaSans font-medium text-sm">
                     Email<span class="text-red">*</span>
                   </label>
                   <input
+                    id="email"
                     v-model="email"
                     type="text"
                     placeholder="Email"
@@ -195,11 +190,12 @@
                 </div>
     
                 <div class="mb-6">
-                <label
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Passwords<span class="text-red">*</span></label
+                <label for="password" class="block mb-2 font-JakartaSans font-medium text-sm"
                 >
+                  Passwords<span class="text-red">*</span>
+                </label>
                 <input
+                  id="password"
                   v-model="password"
                   type="password"
                   placeholder="Passwords"
@@ -209,13 +205,13 @@
                 </div>
     
                 <div class="mb-6 flex flex-col text-left justify-start">
-                  <span
+                  <label
                     for="company"
                     class="block mb-2 font-JakartaSans font-medium text-sm"
-                    id="company">
+                  >
                     User Role<span class="text-red">*</span>
-                  </span>
-                  <select :class="inputStylingClass" v-model="role" required>
+                  </label>
+                  <select id="company" :class="inputStylingClass" v-model="role" required>
                     <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]">
                       {{ data.role_name }}
                     </option>
@@ -240,22 +236,24 @@
     
                 <div class="mb-6">
                   <label
-                      for="name"
+                      for="approval_authorities"
                       class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       Approval Authorities<span class="text-red">*</span> 
                   </label>
     
                     <!-- ambil value selected nya -->
+                    <!-- :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
+                      :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''" -->
+
                     <div class="grid grid-cols-3">
                       <div 
-                      v-for="name in responseAuthoritiesArray" 
-                      :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
-                      :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''"
-                      :key="name.id"
+                        v-for="name in responseAuthoritiesArray" 
+                        :key="name.id"
                       >
-                      <div class="flex items-center gap-2" 
+                        <div class="flex items-center gap-2" 
                         :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' ) ? 'hidden' : '' " >
                             <input 
+                            id="approval_authorities"
                             type="checkbox" 
                             :id="name.id" 
                             @click="selected = name.id" 
@@ -269,21 +267,27 @@
                 </div>
     
                 <div class="mb-6 flex flex-col gap-2">
-                    <span class="text-sm">Company <span class="text-red-star">*</span></span>
-                    <select v-model="company" :class="inputStylingClass">
+                  
+                    <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
+                    
+                    <select id="company" v-model="company" :class="inputStylingClass">
                       <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" >
                         {{ data.company_name }}
                       </option>
                     </select>
+
                 </div>
     
                 <div class="mb-6 flex flex-col gap-2">
-                    <span class="text-sm">Location <span class="text-red-star">*</span></span>
-                    <select v-model="location" :class="inputStylingClass">
+
+                    <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+                    
+                    <select id="location" v-model="location" :class="inputStylingClass">
                       <option v-for="data in responseSiteArray" :key="data.id" :value="data.id" >
                           {{ data.site_name }}
                       </option>
                     </select>
+
                 </div>
 
                 <modalFooter

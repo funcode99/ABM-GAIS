@@ -377,7 +377,17 @@
                         {{ data.auth_name }}
                       </td>
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[data.username, data.email, data.id_approval_auth, data.id_role, data.id_company, data.id_site, data.is_employee, data.name]" />
+                        <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[
+                          data.username, 
+                          data.email, 
+                          data.id_approval_auth, 
+                          data.id_role, 
+                          data.id_company, 
+                          data.id_site, 
+                          data.is_employee, 
+                          data.name,
+                          data.id_employee
+                          ]" />
                         <button @click="deleteData(data.id)">
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
@@ -570,7 +580,7 @@
   }
 
   .table-zebra tbody tr:hover td {
-    background-color: grey;
+    background-color: rgb(193, 192, 192);
   }
 
 </style>

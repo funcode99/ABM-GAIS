@@ -25,8 +25,9 @@
     let role = ref([props.formContent[3], null])
     let company = ref(props.formContent[4])
     let location = ref(props.formContent[5])
-    let isEmployee = ref(props.formContent[6])
+    let isEmployee = ref(props.formContent[6] == 1 ? true : false)
     let fullname = ref(props.formContent[7])
+    let usernameEmployee = ref(props.formContent[8])
 
     const submitEdit = () => {
 
@@ -42,7 +43,7 @@
       isVisible.value = false
     }
 
-    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
+    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
     let responseRoleArray = ref([])
     let responseCompanyArray = ref([])
@@ -90,6 +91,7 @@
       fetchCompany()
       fetchSite()
       fetchAuthorities()
+      fetchEmployee()
     })
 
     const resetInput = () => {
@@ -100,7 +102,7 @@
       role.value = [props.formContent[3], null]
       company.value = props.formContent[4]
       location.value = props.formContent[5]
-      isEmployee.value = props.formContent[6]
+      isEmployee.value = props.formContent[6] == 1 ? true : false 
       fullname.value = props.formContent[7]
     }
 
@@ -147,10 +149,13 @@
           </div>
   
           <div class="mb-6">
-              <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                      Username<span class="text-red">*</span>
+
+              <label for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
+                  Username<span class="text-red">*</span>
               </label>
+
               <input
+                  id="username"
                   v-if="!isEmployee"
                   v-model="username"
                   type="text"
@@ -159,88 +164,107 @@
                   required
               />
   
-              <select v-if="isEmployee" v-model="username" :class="inputStylingClass">
-                <option v-for="data in responseEmployeeArray" :key="data.id" :value="data.employee_name">
+              <select v-if="isEmployee" v-model="usernameEmployee" :class="inputStylingClass">
+                <option v-for="data in responseEmployeeArray" :key="data.id" :value="data.id">
                   {{ data.employee_name }}
                 </option>
               </select>
+
           </div>
   
           <div class="mb-6">
+            
             <label
+              for="email"
               class="block mb-2 font-JakartaSans font-medium text-sm">
               Email<span class="text-red">*</span>
             </label>
+
             <input
+              id="email"
               v-model="email"
               type="text"
               placeholder="Email"
               :class=inputStylingClass
               required
             />
+
           </div>
   
           <div class="mb-6">
+            
             <label
+              for="password"
               class="block mb-2 font-JakartaSans font-medium text-sm">
               Passwords<span class="text-red">*</span>
             </label>
+
             <input
+              id="password"
               v-model="password"
               type="password"
               placeholder="Passwords"
               :class="inputStylingClass"
               required
             />
+
           </div>
   
           <div class="mb-6 flex flex-col text-left justify-start">
-            <span
+
+            <label for="user_role"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >User Role<span class="text-red">*</span>
-            </span>
-            <select :class="inputStylingClass" v-model="role" required>
+            </label>
+
+            <select id="user_role" :class="inputStylingClass" v-model="role" required>
               <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]" :selected="data.id == role[0] ? true : false">
                 {{ data.role_name }}
               </option>
             </select>
+
           </div>
   
           <div v-if="role[1] == 'Driver' " class="mb-6 flex flex-col text-left justify-start">
-              <span
-                for="company"
+              <label
+                for="full_name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                id="company">
+              >
                 Full Name<span class="text-red">*</span>
-              </span>
+              </label>
               <input
-                    v-model="fullname"
-                    type="text"
-                    placeholder="Full Name"
-                    :class="inputStylingClass"
-                    required
-                />
+                id="full_name"
+                v-model="fullname"
+                type="text"
+                placeholder="Full Name"
+                :class="inputStylingClass"
+                required
+              />
           </div>
   
           <div class="mb-6">
+
             <label
-                for="name"
-                class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-                >
+              for="approval_authorities"
+              class="block mb-2 font-JakartaSans font-medium text-sm text-left"
+            >
                 Approval Authorities<span class="text-red">*</span>
             </label>
   
+            <!-- :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
+                :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''" -->
             <!-- ambil value selected nya -->
+
             <div class="grid grid-cols-3">
                 <div 
                 v-for="name in responseAuthoritiesArray" 
-                :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
-                :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''"
+          
                 :key="name.id"
                 >
                 <div class="flex items-center gap-2" 
                   :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' )  ? 'hidden' : ''" >
                       <input
+                      id="approval_authorities"
                       type="checkbox" 
                       :id="name.auth_name" 
                       @click="selected = name.id" 
@@ -254,8 +278,8 @@
           </div>
   
           <div class="mb-6 flex flex-col gap-2">
-              <span class="text-sm">Company <span class="text-red-star">*</span> </span>
-              <select v-model="company" :class="inputStylingClass">
+              <label for="company" class="text-sm">Company <span class="text-red-star">*</span> </label>
+              <select id="company" v-model="company" :class="inputStylingClass">
                 <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" :selected="data.id == company ? true : false" >
                   {{ data.company_name }}
                 </option>
@@ -263,8 +287,8 @@
           </div>
   
           <div class="mb-6 flex flex-col gap-2">
-              <span class="text-sm">Location <span class="text-red-star">*</span></span>
-              <select v-model="location" :class="inputStylingClass">
+              <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+              <select id="location" v-model="location" :class="inputStylingClass">
                 <option v-for="data in responseSiteArray" :key="data.id" :value="data.id" >
                     {{ data.site_name }}
                 </option>
