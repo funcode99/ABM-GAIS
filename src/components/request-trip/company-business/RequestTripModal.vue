@@ -447,7 +447,7 @@ import { Modal } from 'usemodal-vue3'
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get('/zona/get')
-      optionDataZona.value = api.data.data.data
+      optionDataZona.value = api.data.data
       // console.log(api)
       // gak boleh dicampur string
       // console.log(optionDataZona.value)
@@ -599,37 +599,36 @@ import { Modal } from 'usemodal-vue3'
 
       <!-- masih company business, harus dipecah ke form lain nya juga -->
       <!-- place all button add here -->
-      <button v-if="formStep == 2 && requestType[1] == 'Company Business'" @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <!-- button nya dikeluarin agar tidak ikut kena scroll overflow -->
+      <button v-if="formStep == 2 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
           + Add Guest
       </button>
 
-      <button v-if="formStep == 3 && requestType[1] == 'Company Business'" @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 3 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
           + Add Airlines
       </button>
 
-      <button v-if="formStep == 4 && requestType[1] == 'Company Business'" @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 4 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
           + Add Taxi Voucher
       </button>
 
-      <button v-if="formStep == 5 && requestType[1] == 'Company Business'" @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 5 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
           + Add Other Transportation
       </button>
 
-      <button v-if="formStep == 6 && requestType[1] == 'Company Business'" @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 6 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
           + Add Accomodation
       </button>
 
-      <button v-if="formStep == 7 && requestType[1] == 'Company Business'" @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 7 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
         + Add Cash Advance
       </button>
 
+      <!-- for table -->
       <div class="modal-box-inner-inner mt-4">
 
           <!-- modal body step 1 & 2 -->
           <div :class="formStep == 0 ? 'h-[250px]' : 'max-h-[500px]' ">
-  
-              <!-- {{requestType}}
-              {{stepCounter}} -->
 
               <!-- step 1 form Requestor Info -->
               <div class="text-left" :class="formStep == 0 ? 'block' : 'hidden'">
@@ -777,7 +776,7 @@ import { Modal } from 'usemodal-vue3'
                 
               </div>
 
-              <!-- step 3 and so on -->
+              <!-- step 3 and so on, contain of table -->
               <div class="pb-[80px]" v-if="requestType[1] == 'Company Business'">
   
                 <!-- step 3 form Traveller -->
@@ -1054,10 +1053,6 @@ import { Modal } from 'usemodal-vue3'
   
                   <!-- step 3 form Traveller -->
                   <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
-  
-                    <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                    + Add Guest
-                    </button>
     
                     <div class="overflow-x-auto mt-5">
 
@@ -1114,10 +1109,6 @@ import { Modal } from 'usemodal-vue3'
   
                   <!-- step 4 form Airlines -->
                   <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
-  
-                    <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                      + Add Airlines
-                    </button>
     
                     <div class="overflow-x-auto mt-5">
                       <table class="table">
@@ -1158,10 +1149,6 @@ import { Modal } from 'usemodal-vue3'
   
                   <!-- step 5 form Taxi Voucher -->
                   <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
-  
-                    <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                      + Add Taxi Voucher
-                    </button>
     
                     <div class="overflow-x-auto mt-5">
                       <table class="table">
@@ -1210,10 +1197,6 @@ import { Modal } from 'usemodal-vue3'
   
                   <!-- step 6 form Other Transportation -->
                   <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
-  
-                    <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                      + Add Other Transportation
-                    </button>
     
                     <div class="overflow-x-auto mt-5">
                       <table class="table">
@@ -1260,92 +1243,84 @@ import { Modal } from 'usemodal-vue3'
                   <!-- step 7 form Accomodation -->
                   <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
   
-                  <button @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                    + Add Accomodation
-                  </button>
-  
-                  <div class="overflow-x-auto mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
-                          <td>
-                            {{ data.name }}
-                          </td>
-                          <td>
-                            {{ data.hotelName }}
-                          </td>
-                          <td>
-                            {{ data.checkIn }}
-                          </td>
-                          <td>
-                            {{ data.checkOut }}
-                          </td>
-                          <td>
-                            {{ data.city }}
-                          </td>
-                          <td>
-                            {{ data.type }}
-                          </td>
-                          <td>
-                            {{ data.sharingWith }}
-                          </td>
-                          <td>
-                            {{ data.status }}
-                          </td>
-                          <td>
-  
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                    <div class="overflow-x-auto mt-5">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
+                              {{ data.title }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
+                            <td>
+                              {{ data.name }}
+                            </td>
+                            <td>
+                              {{ data.hotelName }}
+                            </td>
+                            <td>
+                              {{ data.checkIn }}
+                            </td>
+                            <td>
+                              {{ data.checkOut }}
+                            </td>
+                            <td>
+                              {{ data.city }}
+                            </td>
+                            <td>
+                              {{ data.type }}
+                            </td>
+                            <td>
+                              {{ data.sharingWith }}
+                            </td>
+                            <td>
+                              {{ data.status }}
+                            </td>
+                            <td>
+    
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
   
                   </div>
   
                   <!-- step 8 form -->
                   <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
   
-                  <button @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                    + Add Cash Advance
-                  </button>
-  
-                  <div class="overflow-x-auto mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadCashAdvance" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in tableBodyCashAdvance" :key="data.id">
-                          <td>
-                            {{ data.caNo }}
-                          </td>
-                          <td>
-                            {{ data.total }}
-                          </td>
-                          <td>
-                            {{ data.notes }}
-                          </td>
-                          <td>
-                            {{ data.status }}
-                          </td>
-                          <td>
-                            
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                    <div class="overflow-x-auto mt-5">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th v-for="data in tableHeadCashAdvance" :key="data.id">
+                              {{ data.title }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="data in tableBodyCashAdvance" :key="data.id">
+                            <td>
+                              {{ data.caNo }}
+                            </td>
+                            <td>
+                              {{ data.total }}
+                            </td>
+                            <td>
+                              {{ data.notes }}
+                            </td>
+                            <td>
+                              {{ data.status }}
+                            </td>
+                            <td>
+                              
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
   
                   </div>
   
@@ -1506,105 +1481,105 @@ import { Modal } from 'usemodal-vue3'
                   <!-- step 3 form Traveller -->
                   <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
   
-                <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-                  + Add Guest
-                </button>
-  
-                  <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadTravellers" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyTravellers" :key="data.id">
-                            <td>
-                              {{ data.name }}
-                            </td>
-                            <td>
-                              {{ data.sn }}
-                            </td>
-                            <td>
-                              {{ data.gender }}
-                            </td>
-                            <td>
-                              {{ data.contactNo }}
-                            </td>
-                            <td>
-                              {{ data.department }}
-                            </td>
-                            <td>
-                              {{ data.company }}
-                            </td>
-                            <td>
-                              {{ data.type }}
-                            </td>
-                            <td>
-                              {{ data.maxHotelFare }}
-                            </td>
-                            <td>
-                              {{ data.flightClass }}
-                            </td>
-                            <td>
-  
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                  </div>
+                    <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                      + Add Guest
+                    </button>
+      
+                      <div class="overflow-x-auto mt-5">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th v-for="data in tableHeadTravellers" :key="data.id">
+                                  {{ data.title }}
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr v-for="data in tableBodyTravellers" :key="data.id">
+                                <td>
+                                  {{ data.name }}
+                                </td>
+                                <td>
+                                  {{ data.sn }}
+                                </td>
+                                <td>
+                                  {{ data.gender }}
+                                </td>
+                                <td>
+                                  {{ data.contactNo }}
+                                </td>
+                                <td>
+                                  {{ data.department }}
+                                </td>
+                                <td>
+                                  {{ data.company }}
+                                </td>
+                                <td>
+                                  {{ data.type }}
+                                </td>
+                                <td>
+                                  {{ data.maxHotelFare }}
+                                </td>
+                                <td>
+                                  {{ data.flightClass }}
+                                </td>
+                                <td>
+      
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                      </div>
   
                   </div>
   
                   <!-- step 4 form Taxi Voucher -->
                   <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
   
-  <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
-    + Add Taxi Voucher
-  </button>
+                    <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                      + Add Taxi Voucher
+                    </button>
   
-  <div class="overflow-x-auto mt-5">
-    <table class="table">
-      <thead>
-        <tr>
-          <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
-            {{ data.title }}
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
-            <td>
-              {{ data.name }}
-            </td>
-            <td>
-              {{ data.date }}
-            </td>
-            <td>
-              {{ data.departure }}
-            </td>
-            <td>
-              {{ data.arrival }}
-            </td>
-            <td>
-              {{ data.amount }}
-            </td>
-            <td>
-              {{ data.accountName }}
-            </td>
-            <td>
-              {{ data.remarks }}
-            </td>
-            <td>
-              {{ data.status }}
-            </td>
-            <td></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+                    <div class="overflow-x-auto mt-5">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
+                              {{ data.title }}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
+                              <td>
+                                {{ data.name }}
+                              </td>
+                              <td>
+                                {{ data.date }}
+                              </td>
+                              <td>
+                                {{ data.departure }}
+                              </td>
+                              <td>
+                                {{ data.arrival }}
+                              </td>
+                              <td>
+                                {{ data.amount }}
+                              </td>
+                              <td>
+                                {{ data.accountName }}
+                              </td>
+                              <td>
+                                {{ data.remarks }}
+                              </td>
+                              <td>
+                                {{ data.status }}
+                              </td>
+                              <td></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
   
                   </div>
   
@@ -1616,6 +1591,7 @@ import { Modal } from 'usemodal-vue3'
 
       <!-- change step button -->
       <div class="fixed left-0 right-0 bg-white bottom-0 px-5 py-2">
+
           <div class="flex justify-between font-bold">
 
               <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
@@ -1634,6 +1610,7 @@ import { Modal } from 'usemodal-vue3'
               </button>
 
           </div>
+          
       </div>
 
     </Modal>
@@ -1677,6 +1654,7 @@ import { Modal } from 'usemodal-vue3'
 }
 
 :deep(.modal-vue3-content) {
+  min-width: 650px !important;
   width: fit-content !important;
   height: fit-content !important;
 }
