@@ -25,9 +25,39 @@ import { Workbook } from "exceljs";
 
 import { ref, onBeforeMount, onMounted, computed } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/jobband/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+
+const editJobbandId = ref();
+
+const editJobband = async (data) => {
+  editJobbandId.value = data;
+  setTimeout(callEditApi, 500);
+};
+
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/job_band/update_data/${editJobbandId.value}`, {
+    band_job_name: formEditState.jobBand.jobBandName,
+    hotel_fare: formEditState.jobBand.jobBandHotelFare,
+    meals_rate: formEditState.jobBand.jobBandMealrate,
+    id_company: formEditState.jobBand.jobBandIdCompany,
+    id_flight_class: formEditState.jobBand.jobBandIdFlight,
+    array_detail: formState.jobBand.arrayDetail,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been edited",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchJobBand();
+};
 
 //for sort & search
 const search = ref("");
@@ -434,11 +464,11 @@ const exportToExcel = () => {
             <tbody>
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData.slice(
+                v-for="(data, index) in sortedData.slice(
                   paginateIndex * pageMultiplierReactive,
                   (paginateIndex + 1) * pageMultiplierReactive
                 )"
-                :key="data.no"
+                :key="data.id"
               >
                 <td style="width: 5%">
                   <input type="checkbox" name="checks" />
@@ -457,7 +487,18 @@ const exportToExcel = () => {
                 <td style="width: 20%">{{ data.hotel_fare }}</td>
                 <td style="width: 20%">{{ data.meals_rate }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit />
+                  <ModalEdit
+                    @edit-JobBand="editJobband(data.id)"
+                    :formContent="[
+                      data.band_job_name,
+                      data.hotel_fare,
+                      data.meals_rate,
+                      data.id_company,
+                      data.id_flight_class,
+                      data?.array_detail,
+                      index,
+                    ]"
+                  />
                   <button @click="deleteJobBand(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>

@@ -264,7 +264,7 @@ watch(isVisible, () => {
                       v-for="data in addZona"
                       :key="data.id"
                       :value="data.id"
-                      :disabled="
+                      :hidden="
                         dropdownRemoveList.includes(data.id) ? true : false
                       "
                     >
