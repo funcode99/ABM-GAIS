@@ -50,7 +50,7 @@ let addAuthoritiesData = ref([]);
 let levelValue = ref();
 
 if (props.formContent[5] == undefined) {
-  console.log("array detail tidak ada");
+  // console.log("array detail tidak ada");
 } else {
   idMatrix.map((item, index) => {
     if (index == idMatrix.length - 1) {
@@ -70,9 +70,9 @@ const fetchApproverAuthorities = async () => {
   addAuthoritiesData.value = instanceArray;
   authorities.value = addAuthoritiesData.value[0].level;
   levelValue.value = addAuthoritiesData.value[0].level;
-  console.log(
-    "ini data instance array addAuthoritiesData" + JSON.stringify(instanceArray)
-  );
+  // console.log(
+  //   "ini data instance array addAuthoritiesData" + JSON.stringify(instanceArray)
+  // );
   // console.log("ini data authorities" + JSON.stringify(authorities));
   // console.log("ini data level" + JSON.stringify(levelValue));
 };
@@ -88,7 +88,7 @@ const saveField = () => {
 };
 
 const saveApproverLines = async (data, jobbandId, mealsRate, idx) => {
-  console.log(jobbandId);
+  // console.log(jobbandId);
 
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;

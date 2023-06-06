@@ -7,6 +7,7 @@ import modalFooter from "@/components/modal/modalFooter.vue";
 
 import { Modal } from "usemodal-vue3";
 
+import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
@@ -24,6 +25,9 @@ let FlightClass = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
+
+let companyData = ref(null);
+let companyIdArray = ref(null);
 
 //for inner table
 let instanceArray = [];
@@ -50,13 +54,17 @@ const removeField = (index, fieldType) => {
   dropdownRemoveList.value.splice(index + 1, 1);
 };
 
-//for get company in select
+//for get company in input
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  companyData = res.data.data;
+  // console.log("ini data company" + JSON.stringify(res.data.data));
+  companyData.map((item) => {
+    item.value = item.id;
+  });
+  // console.log("Data company setelah perubahan:", companyData);
 };
 
 //for get site in select
@@ -98,9 +106,9 @@ const callAddApi = async () => {
 
     await Api.post(`/job_band/store`, {
       band_job_name: jobBandName.value,
-      hotel_fare: hotelFare.value,
-      meals_rate: mealsRate.value,
-      id_company: selectedCompany.value,
+      hotel_fare: hotelFare.value.replace(/\./g, ""),
+      meals_rate: mealsRate.value.replace(/\./g, ""),
+      id_company: companyIdArray.value,
       id_flight_class: selectedFlightClass.value,
       array_detail: approverLines.value,
     });
@@ -123,10 +131,9 @@ const resetInput = () => {
   jobBandName.value = "";
   hotelFare.value = "";
   mealsRate.value = "";
-  selectedCompany.value = "Company";
+  companyIdArray.value = [];
   selectedFlightClass.value = "Flight";
-  // approverLines.value = [];
-  // jika zona name hanya sekali dipakai oleh user dan tidak bisa dipakai lagi, aktifkan approvallines
+  approverLines.value = [];
 };
 
 watch(isVisible, () => {
@@ -136,6 +143,40 @@ watch(isVisible, () => {
     resetInput();
   }
 });
+
+function formatCurrency() {
+  hotelFare.value = hotelFare.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
+  mealsRate.value = mealsRate.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
+
+  if (hotelFare.value === "" || hotelFare.value === "0") {
+    hotelFare.value = "";
+  } else {
+    const formattedHotelFare = parseFloat(hotelFare.value.replace(/\./g, ""));
+    hotelFare.value = formattedHotelFare.toLocaleString("id-ID");
+    // Kirim formattedHotelFare ke API sebagai hotel fare
+  }
+
+  if (mealsRate.value === "" || mealsRate.value === "0") {
+    mealsRate.value = "";
+  } else {
+    const formattedMealsRate = parseFloat(mealsRate.value.replace(/\./g, ""));
+    mealsRate.value = formattedMealsRate.toLocaleString("id-ID");
+    // Kirim formattedMealsRate ke API sebagai meals rate
+  }
+
+  // approverLines.value.forEach((input) => {
+  //   if (input.tlk_rate) {
+  //     input.tlk_rate = input.tlk_rate.replace(/\D/g, ""); // Menghapus semua karakter non-digit
+  //     if (input.tlk_rate === "" || input.tlk_rate === "0") {
+  //       input.tlk_rate = "";
+  //     } else {
+  //       const formattedTlkRate = parseFloat(input.tlk_rate.replace(/\./g, ""));
+  //       input.tlk_rate = formattedTlkRate.toLocaleString("id-ID"); // Hapus .toLocaleString("id-ID") di sini
+  //       // Kirim formattedTlkRate ke API sebagai tlk_rate
+  //     }
+  //   }
+  // });
+}
 </script>
 
 <template>
@@ -155,16 +196,38 @@ watch(isVisible, () => {
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
           >
-          <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            required
-            v-model="selectedCompany"
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            v-model="companyIdArray"
+            mode="tags"
+            placeholder="Select Company"
+            track-by="company_name"
+            label="company_name"
+            :close-on-select="false"
+            :searchable="true"
+            :options="companyData"
           >
-            <option disabled selected>Company</option>
-            <option v-for="company in Company" :value="company.id">
-              {{ company.company_name }}
-            </option>
-          </select>
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
+              >
+                {{ option.company_name }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
         </div>
 
         <div class="mb-6 w-full px-4">
@@ -190,6 +253,7 @@ watch(isVisible, () => {
             placeholder="Hotel Fare"
             required
             v-model="hotelFare"
+            @input="formatCurrency"
           />
         </div>
 
@@ -203,6 +267,7 @@ watch(isVisible, () => {
             placeholder="Meal Rate"
             required
             v-model="mealsRate"
+            @input="formatCurrency"
           />
         </div>
 
