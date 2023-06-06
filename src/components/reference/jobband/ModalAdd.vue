@@ -164,18 +164,18 @@ function formatCurrency() {
     // Kirim formattedMealsRate ke API sebagai meals rate
   }
 
-  // approverLines.value.forEach((input) => {
-  //   if (input.tlk_rate) {
-  //     input.tlk_rate = input.tlk_rate.replace(/\D/g, ""); // Menghapus semua karakter non-digit
-  //     if (input.tlk_rate === "" || input.tlk_rate === "0") {
-  //       input.tlk_rate = "";
-  //     } else {
-  //       const formattedTlkRate = parseFloat(input.tlk_rate.replace(/\./g, ""));
-  //       input.tlk_rate = formattedTlkRate.toLocaleString("id-ID"); // Hapus .toLocaleString("id-ID") di sini
-  //       // Kirim formattedTlkRate ke API sebagai tlk_rate
-  //     }
-  //   }
-  // });
+  approverLines.value.forEach((input) => {
+    if (input.tlk_rate) {
+      input.tlk_rate = input.tlk_rate.replace(/\D/g, ""); // Menghapus semua karakter non-digit
+      if (input.tlk_rate === "" || input.tlk_rate === "0") {
+        input.tlk_rate = "";
+      } else {
+        const formattedTlkRate = parseFloat(input.tlk_rate.replace(/\./g, ""));
+        input.tlk_rate = formattedTlkRate.toLocaleString("id-ID");
+        // Kirim formattedTlkRate ke API sebagai tlk_rate
+      }
+    }
+  });
 }
 </script>
 
@@ -353,6 +353,7 @@ function formatCurrency() {
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                     v-model="input.tlk_rate"
+                    @input="formatCurrency"
                   />
                 </td>
 
