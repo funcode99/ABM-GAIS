@@ -484,8 +484,8 @@ const exportToExcel = () => {
                     {{ data.band_job_name }}
                   </span>
                 </td>
-                <td style="width: 20%">{{ data.hotel_fare }}</td>
-                <td style="width: 20%">{{ data.meals_rate }}</td>
+                <td style="width: 20%">{{ parseFloat(data.hotel_fare).toLocaleString('id-ID') }}</td>
+                <td style="width: 20%">{{ parseFloat(data.meals_rate).toLocaleString('id-ID') }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
                     @edit-JobBand="editJobband(data.id)"
