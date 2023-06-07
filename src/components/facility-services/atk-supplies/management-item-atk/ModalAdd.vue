@@ -1,10 +1,143 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
+import iconPlus from "@/assets/navbar/icon_plus.svg";
 import icondanger from "@/assets/icon-danger-circle.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+import { ref, onMounted, watch } from "vue";
+import Api from "@/utils/Api";
+import { useMenuAccessStore } from '@/stores/savemenuaccess'
+import { resetTracking } from "@vue/reactivity";
+
+
+let selectedCompany = ref("Company");
+let selectedSite = ref("Site");
+let selectedWarehouse = ref("Warehouse")
+let selectedUOM = ref("UOM")
+let selectedBrand = ref("Brand")
+let brandName = ref("");
+let Company = ref("");
+let Site = ref("");
+let Warehouse = ref("");
+let UOM = ref("")
+let idItems = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let remark = ref("")
+const itemsTable = ref([])
 
 const emits = defineEmits(["unlockScrollbar"]);
+const menuAccess = useMenuAccessStore()
+
+const props = defineProps({
+  roleId: Number,
+  roleAccess: Array
+})
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const fetchGetCompanyID = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  // const id_company = JSON.parse(localStorage.getItem("id_company"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const fetchUOM = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/uom");
+  UOM.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+//for get site in select
+// const fetchGetSite = async () => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const res = await Api.get("/site/get_data");
+//   Site.value = res.data.data;
+//   // console.log("ini data parent" + JSON.stringify(res.data.data));
+// };
+const changeCompany = async (id_company) => {
+  fetchBrandCompany(id_company)
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  // console.log(res)
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchBrandCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  // console.log(res)
+  Brand.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeSite = async (id_site) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+//get kondisi local storage
+const fetchCondition = async () => {
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  const id_role = JSON.parse(localStorage.getItem("id_role"));
+  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+};
+
+const generateNumber = async () => {
+  idItems.value = Math.floor(100000000 + Math.random() * 900000000);
+};
+const addItem = async () => {
+
+  itemsTable.value.push({
+    company: selectedCompany.value,
+    site: selectedSite.value,
+    warehouse: selectedWarehouse.value,
+    uom: selectedUOM.value,
+    idItems: idItems.value,
+    alertQuanti : alertQuantity.value,
+    itemName: itemNames.value,
+    remarks:remark.value,
+    brand:selectedBrand.value
+  })
+  reset()
+  return itemsTable
+};
+const removeItems = async (id) => {
+
+itemsTable.value.splice(id,1)
+// return itemsTable
+}
+const reset = async () => {
+  selectedCompany.value = ''
+  selectedSite.value = ''
+  selectedWarehouse.value = ''
+  selectedUOM.value = ''
+  idItems.value = ''
+  alertQuantity.value = ''
+  itemNames.value = ''
+  remark.value = ''
+  selectedBrand.value = ''
+};
+onMounted(() => {
+  fetchCondition()
+  fetchUOM()
+});
 </script>
 
 <template>
@@ -17,7 +150,7 @@ const emits = defineEmits(["unlockScrollbar"]);
 
   <input type="checkbox" id="my-modal-item-atk" class="modal-toggle" />
   <div class="modal">
-    <div class="modal-box relative">
+    <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
@@ -39,7 +172,6 @@ const emits = defineEmits(["unlockScrollbar"]);
       </div>
 
       <main class="modal-box-inner-brand pb-14">
-        <form>
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
@@ -47,63 +179,47 @@ const emits = defineEmits(["unlockScrollbar"]);
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Company<span class="text-red">*</span></label
               >
-              <input
-                type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Company"
-                required
-              />
-            </div>
-            <div class="mb-6 w-full">
-              <label
-                for="brand"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Brand<span class="text-red">*</span></label
-              >
               <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
+                v-model="selectedCompany"
+                @change="changeCompany(selectedCompany)"
               >
-                <option disabled selected>Select Brand</option>
-                <option>Brand A</option>
-                <option>Brand B</option>
+                <option disabled selected>Company</option>
+                <option v-for="(company,i) in Company" :key="i" :value="company.id">
+                  {{ company.company_name }}
+                </option>
               </select>
             </div>
-          </div>
-
-          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="site"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Site<span class="text-red">*</span></label
               >
-              <input
-                type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Site"
-                required
-              />
-            </div>
-            <div class="mb-6 w-full">
-              <label
-                for="uom"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >UOM<span class="text-red">*</span></label
-              >
               <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
+                v-model="selectedSite"
+                @change="changeSite(selectedSite)"
               >
-                <option disabled selected>Select UOM</option>
-                <option>UOM A</option>
-                <option>UOM B</option>
+                <option disabled selected>Site</option>
+                <option v-for="(site,i) in Site" :key="i" :value="site.id">
+                  {{ site.site_name }}
+                </option>
               </select>
             </div>
           </div>
-
+          <div class="flex justify-between px-6 items-center gap-2">
+            <div class="mb-6 w-full">
+              <label
+                for="detail"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Details</label
+              >
+             <hr />
+            </div>
+          </div>
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
@@ -112,13 +228,40 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Warehouse<span class="text-red">*</span></label
               >
               <select
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
+                v-model="selectedWarehouse"
               >
-                <option disabled selected>Select Warehouse</option>
-                <option>Warehouse A</option>
-                <option>Warehouse B</option>
+                <option disabled selected>Warehouse</option>
+                <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
+                  {{ warehouse.warehouse_name }}
+                </option>
               </select>
+            </div>
+            <div class="mb-6 w-full">
+              <label
+                for="uom"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >UOM<span class="text-red">*</span></label
+              >
+              <select
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedUOM"
+              >
+                <option disabled selected>UOM</option>
+                <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
+                  {{ uom.uom_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="flex justify-between px-6 items-center gap-2">
+            <div class="flex items-center border-b border-teal-500 py-2 mb-6 w-full">
+              <input class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" v-model="idItems" maxlength="9" type="number" placeholder="ID Item" aria-label="Full name">
+              <button class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded" type="button" @click="generateNumber">
+                <img :src="iconPlus" class="w-[10px] h-[10px]" />
+              </button>
             </div>
             <div class="mb-6 w-full">
               <label
@@ -127,9 +270,9 @@ const emits = defineEmits(["unlockScrollbar"]);
                 >Alert Quantity<span class="text-red">*</span></label
               >
               <input
-                type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                type="number"
+                v-model="alertQuantity"
+                class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Alert Quantity"
                 required
               />
@@ -139,35 +282,18 @@ const emits = defineEmits(["unlockScrollbar"]);
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
-                for="id_item"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >ID Item<span class="text-red">*</span></label
-              >
-              <input
-                type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="ID Item"
-                required
-              />
-            </div>
-            <div class="mb-6 w-full">
-              <label
                 for="item_name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Item Name<span class="text-red">*</span></label
               >
               <input
                 type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                v-model="itemNames"
+                class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Item Name"
                 required
               />
             </div>
-          </div>
-
-          <div class="flex justify-start px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="id_item"
@@ -176,31 +302,49 @@ const emits = defineEmits(["unlockScrollbar"]);
               >
               <textarea
                 type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="ID Item"
+                v-model="remark"
+                class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Remarks"
                 required
               />
             </div>
           </div>
 
+          <div class="flex justify-start px-6 items-center gap-2">
+            <div class="mb-6 w-full">
+              <label
+                for="uom"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Brand<span class="text-red">*</span></label
+              >
+              <select
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedBrand"
+              >
+                <option disabled selected>Brand</option>
+                <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
+                  {{ brand.brand_name }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-6 w-full"></div>
+          </div>
+
           <div class="flex justify-center py-2">
             <button
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+              @click="addItem"
             >
               Add
             </button>
           </div>
-        </form>
 
         <!-- INNER TABLE -->
         <div class="inner-table px-6">
           <table class="table table-compact w-full">
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                ></th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
@@ -244,21 +388,17 @@ const emits = defineEmits(["unlockScrollbar"]);
               </tr>
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
-              <tr class="h-16">
-                <th class="border border-[#B9B9B9]"></th>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
+              <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
+                <td class="border border-[#B9B9B9]">{{ items.warehouse }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.idItems }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.itemName }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.brand }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.uom }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.alertQuanti }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">
-                    <button>
-                      <img :src="editicon" class="w-6 h-6" />
-                    </button>
-                    <button>
+                    <button @click="removeItems(i)">
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
                   </div>
