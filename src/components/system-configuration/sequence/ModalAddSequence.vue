@@ -37,7 +37,6 @@ let addCompanyData = ref([]);
       addMenuData.value = instanceArray
       // menu.value = addMenuData.value[0].id
   }
-});
 
   const fetchCompany = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
@@ -360,6 +359,14 @@ let addCompanyData = ref([]);
                 <span>:</span>
                 <span>Menu Code</span>
               </div>
+          
+            </div>
+        
+          </div>
+
+        </div>
+
+      </div>
 
             </form>
 
