@@ -181,14 +181,13 @@
       const api = await Api.post('/sequence/store', 
       {
         sequence_name:  formState.sequence.sequenceName,
+        sequence_size: formState.sequence.sequenceSize,
         recycle:  formState.sequence.recycle,
         next_value: formState.sequence.nextValue,
         prefix: formState.sequence.prefix,
         suffix: formState.sequence.suffix,
         id_menu: formState.sequence.menuId,
         id_company: formState.sequence.company,
-        sequence_size: formState.sequence.sequenceSize,
-        code_sequence: formState.sequence.sequenceCode
       })
       Swal.fire({
           position: "center",
@@ -211,13 +210,13 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         await Api.post(`/sequence/update_data/${editSequenceDataId.value}`, {
           sequence_name: formEditState.sequence.sequenceName,
+          sequence_size: formEditState.sequence.sequenceSize,
           recycle: formEditState.sequence.recycle,
           next_value: formEditState.sequence.nextValue,
           prefix: formEditState.sequence.prefix,
           suffix: formEditState.sequence.suffix,
           id_menu: formEditState.sequence.menuId,
           id_company: formEditState.sequence.company,
-          sequence_size: formEditState.sequence.sequenceSize
         })
         Swal.fire({
           position: "center",

@@ -192,7 +192,7 @@
               </h1>
             </div>
       
-            <div class="mb-3 text-left">
+            <div class="mb-3 text-left flex flex-col gap-1">
               <label for="parent_menu">Parent Menu</label>
               <select id="parent_menu" :class="inputStylingClass" v-model="ParentId">
                   <option v-for="data in menuData" :key="data.id" :value="data.id">
@@ -201,7 +201,7 @@
               </select>
             </div>
     
-            <div class="mb-3 text-left">
+            <div class="mb-3 text-left flex flex-col gap-1">
               <label for="status_menu">Status</label>
               <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
                     <option v-for="data in statusMenu" :key="data.id" :value="data.code">
@@ -210,7 +210,7 @@
               </select>
             </div>
     
-            <div class="my-3 text-left">
+            <div class="my-3 text-left flex flex-col gap-1">
               <h1>Company</h1>
               <Multiselect
                 v-model="companyIdArray"
@@ -244,7 +244,7 @@
               </Multiselect>
             </div>
     
-            <div class="mb-3 text-left">
+            <div class="mb-3 text-left flex flex-col gap-1">
               <label for="sort">Sort</label>
               <select id="sort" :class="inputStylingClass" v-model="sort">
                       <option>1</option>

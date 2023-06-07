@@ -21,7 +21,6 @@
   let nextValue = ref('')
   let menu = ref('')
   let sequenceSize = ref('')
-  let sequenceCode = ref('')
   let prefix = ref('')
   let recycleBy = ref('W')
   let suffix = ref('')
@@ -36,7 +35,7 @@
       const api = await Api.get('/menu/get')      
       instanceArray = api.data.data
       addMenuData.value = instanceArray
-      menu.value = addMenuData.value[0].id
+      // menu.value = addMenuData.value[0].id
   }
 
   const fetchCompany = async () => {
@@ -62,7 +61,6 @@
     formState.sequence.prefix = prefix.value
     formState.sequence.suffix = suffix.value
     formState.sequence.menuId = menu.value
-    formState.sequence.sequenceCode = sequenceCode.value
 
     Swal.fire({
         position: "center",
@@ -84,7 +82,6 @@
     prefix.value = ''
     suffix.value = ''
     recycleBy.value = 'W'
-    sequenceCode.value = ''
     company.value = ''
   }
 
@@ -146,7 +143,6 @@
                     id="next_value"
                     v-model="nextValue"
                     type="text"
-                    id="name"
                     placeholder="Next Value"
                     :class="inputStylingClass"
                     required
@@ -264,14 +260,13 @@
                   <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm">
                       Sequence Code<span class="text-red">*</span>
                   </label>
-                  <input
-                    id="sequence_code"
-                    v-model="sequenceCode"
-                    type="text"
-                    placeholder="Sequence Code"
-                    :class="inputStylingClass"
-                    required
-                  />
+
+                  <select for="sequence_code" v-model="menu" disabled>
+                    <option v-for="data in addMenuData" :key="data.id" :value="data.id" :class="inputStylingClass">
+                      {{ data.code_sequence }}
+                    </option>
+                  </select>
+
                 </div>
 
                 <div :class="columnClass">
@@ -330,7 +325,6 @@
               </div>
 
             </form>
-
 
           </main>
 
