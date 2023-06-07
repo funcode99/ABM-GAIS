@@ -31,32 +31,44 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const formEditState = useFormEditStore();
 
-const editJobbandId = ref();
+let editJobBandDataid = ref();
 
-const editJobband = async (data) => {
-  editJobbandId.value = data;
+//for edit
+const editJobBand = async (data) => {
+  editJobBandDataid.value = data;
   setTimeout(callEditApi, 500);
+  console.log(data);
 };
 
 const callEditApi = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  await Api.post(`/job_band/update_data/${editJobbandId.value}`, {
-    band_job_name: formEditState.jobBand.jobBandName,
-    hotel_fare: formEditState.jobBand.jobBandHotelFare,
-    meals_rate: formEditState.jobBand.jobBandMealrate,
-    id_company: formEditState.jobBand.jobBandIdCompany,
-    id_flight_class: formEditState.jobBand.jobBandIdFlight,
-    array_detail: formState.jobBand.arrayDetail,
-  });
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: "Your work has been edited",
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  fetchJobBand();
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+    const response = await Api.post(
+      `/job_band/update_data/${editJobBandDataid.value}`,
+      {
+        band_job_name: formEditState.jobBand.jobBandName,
+        hotel_fare: parseInt(formEditState.jobBand.jobBandHotelFare),
+        meals_rate: parseInt(formEditState.jobBand.jobBandMealrate),
+        id_company: formEditState.jobBand.jobBandIdCompany,
+        id_flight_class: parseInt(formEditState.jobBand.jobBandIdFlight),
+      }
+    );
+
+    // console.log("Response:", response.data);
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    fetchJobBand();
+  } catch (error) {
+    console.error("Error:", error);
+  }
 };
 
 //for sort & search
@@ -484,19 +496,21 @@ const exportToExcel = () => {
                     {{ data.band_job_name }}
                   </span>
                 </td>
-                <td style="width: 20%">{{ data.hotel_fare }}</td>
-                <td style="width: 20%">{{ data.meals_rate }}</td>
+                <td style="width: 20%">
+                  {{ parseFloat(data.hotel_fare).toLocaleString("id-ID") }}
+                </td>
+                <td style="width: 20%">
+                  {{ parseFloat(data.meals_rate).toLocaleString("id-ID") }}
+                </td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
-                    @edit-JobBand="editJobband(data.id)"
+                    @change-jobband="editJobBand(data.id)"
                     :formContent="[
                       data.band_job_name,
                       data.hotel_fare,
                       data.meals_rate,
                       data.id_company,
                       data.id_flight_class,
-                      data?.detail,
-                      index,
                     ]"
                   />
                   <button @click="deleteJobBand(data.id)">
