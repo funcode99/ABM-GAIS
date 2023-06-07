@@ -292,9 +292,9 @@
     }
 
     const filterTable = async (id, roleId) => {
-      console.log(id)
-      console.log(roleId)
-      console.log('masuk ke filter table')
+      // console.log(id)
+      // console.log(roleId)
+      // console.log('masuk ke filter table')
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)
@@ -330,8 +330,9 @@
           @delete-selected-data="deleteCheckedArray()"
           @increase-user="addNewUser" 
           @do-search="filteredItems"
+          @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
-          @change-showing="fillPageMultiplier" 
+          @reset-table="fetch"
           modalAddType="user" 
         />
 

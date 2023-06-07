@@ -333,13 +333,14 @@
         <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
         <TableTopBar 
           title="Menu" 
+          modalAddType="menu" 
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()" 
           @increase-menu="addNewMenu " 
           @do-search="filteredItems"
-          @filter-table="filterTable"
           @change-showing="fillPageMultiplier"
-          modalAddType="menu" 
+          @filter-table="filterTable"
+          @reset-table="fetch"
           />
         
         <!-- actual table -->

@@ -174,6 +174,7 @@ onBeforeMount(() => {
             Filter
           </button>
           <button
+            @click="$emit('resetTable')"
             class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
           >
             <span>

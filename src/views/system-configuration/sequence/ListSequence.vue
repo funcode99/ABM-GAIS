@@ -322,8 +322,9 @@
             @delete-selected-data="deleteCheckedArray()" 
             @do-search="filteredItems" 
             @increase-sequence="addNewSequence" 
-            @filter-table="filterTable"
             @change-showing="fillPageMultiplier" 
+            @filter-table="filterTable"
+            @reset-table="fetch"
             modalAddType="sequence" 
             />
             

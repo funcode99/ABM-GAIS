@@ -317,6 +317,7 @@
         <!-- {{ deleteArray }} -->
         
         <TableTopBar 
+          modalAddType="approval"
           :title="'Approval'" 
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()"   
@@ -324,7 +325,7 @@
           @increase-approver="addNewApprover" 
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
-          modalAddType="approval" 
+          @reset-table="fetch"
         />
         
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
