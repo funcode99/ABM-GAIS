@@ -160,6 +160,7 @@ let addCompanyData = ref([]);
         </div>
 
         <div :class="rowClass">
+          
           <!-- Nama -->
           <div :class="columnClass">
             <label
@@ -179,8 +180,8 @@ let addCompanyData = ref([]);
             />
           </div>
 
-                <!-- Next Value -->
-                <div :class="columnClass">
+          <!-- Next Value -->
+          <div :class="columnClass">
                   <label for="next_value" class="block mb-2 font-JakartaSans font-medium text-sm">
                       Next Value<span class="text-red">*</span>
                   </label>
@@ -192,7 +193,9 @@ let addCompanyData = ref([]);
                     :class="inputStylingClass"
                     required
                   />
-                </div>
+          </div>
+
+        </div>
 
         <div :class="rowClass">
           <!-- Menu -->
@@ -304,71 +307,50 @@ let addCompanyData = ref([]);
         <modalFooter class="mt-6 pt-5 pb-8" @closeEdit="isVisible = false" />
 
         <div class="px-4 pb-4">
-          <div class="flex flex-col gap-2">
-            <h1 class="text-left font-semibold text-sm">
-              Sequence Format Info (Prefix & Suffix)
-            </h1>
-            <hr class="border border-black" />
-            <!-- place = justify + align -->
-            <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
-              <div class="justify-self-start">
-                <span>%(year)</span>
-                <span>:</span>
-                <span>Year including century</span>
-              </div>
-              <div class="justify-self-start">
-                <span>%(year-only)</span>
-                <span>:</span>
-                <span>Year Only</span>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
-              <div class="place-self-start">
-                <span>%(month)</span>
-                <span>:</span>
-                <span>Month including century</span>
-              </div>
-              <div class="place-self-start">
-                <span>%(department)</span>
-                <span>:</span>
-                <span>Department Code</span>
-              </div>
-
-              <div :class="rowClass">
-
-                <div :class="columnClass">
-                  <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm">
-                      Sequence Code<span class="text-red">*</span>
-                  </label>
-
-                  <select for="sequence_code" v-model="menu" disabled>
-                    <option v-for="data in addMenuData" :key="data.id" :value="data.id" :class="inputStylingClass">
-                      {{ data.code_sequence }}
-                    </option>
-                  </select>
-
-                </div>
-
-                <div :class="columnClass">
-
-                </div>
-
-              </div>
-              <div class="place-self-start">
-                <span>%(menu)</span>
-                <span>:</span>
-                <span>Menu Code</span>
-              </div>
-          
-            </div>
-        
+      <div class="flex flex-col gap-2">
+        <h1 class="text-left font-semibold text-sm">
+          Sequence Format Info (Prefix & Suffix)
+        </h1>
+        <hr class="border border-black" />
+        <!-- place = justify + align -->
+        <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
+          <div class="justify-self-start">
+            <span>%(year)</span>
+            <span>:</span>
+            <span>Year including century</span>
           </div>
+          <div class="justify-self-start">
+            <span>%(year-only)</span>
+            <span>:</span>
+            <span>Year Only</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
+          <div class="place-self-start">
+            <span>%(month)</span>
+            <span>:</span>
+            <span>Month including century</span>
+          </div>
+          <div class="place-self-start">
+            <span>%(department)</span>
+            <span>:</span>
+            <span>Department Code</span>
+          </div>
+
+          <div class="place-self-start">
+            <span>%(menu)</span>
+            <span>:</span>
+            <span>Menu Code</span>
+          </div>
+      
+        </div>
+    
+      </div>
 
         </div>
 
-      </div>
-
             </form>
+
 
           </main>
 

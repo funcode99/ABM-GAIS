@@ -16,8 +16,10 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-let search = ref("");
-let pageMultiplier = ref(10);
+let search = ref("")
+let companyId = ref(null)
+let roleId = ref(null)
+let pageMultiplier = ref(10)
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 
 const props = defineProps({
@@ -125,13 +127,15 @@ onBeforeMount(() => {
         <div class="flex flex-col gap-1">
 
           <p class="capitalize font-Fira text-xs text-black font-medium">
-            Company
+            Company 
+            <!-- {{ companyId }} -->
           </p>
 
           <select
+            v-model="companyId"
             class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
           >
-            <option v-for="data in companyData" :key="data.id">
+            <option v-for="data in companyData" :value="data.id" :key="data.id">
               {{ data.company_name }}
             </option>
           </select>
@@ -148,9 +152,10 @@ onBeforeMount(() => {
           </p>
 
           <select
+            v-model="roleId"
             class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:tline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
           >
-            <option v-for="data in roleData" :key="data.id">
+            <option v-for="data in roleData" :value="data.id" :key="data.id">
               {{ data.role_name }}
             </option>
           </select>
@@ -160,6 +165,7 @@ onBeforeMount(() => {
         <!-- filter & reset button -->
         <div class="flex gap-4 flex-wrap">
           <button
+            @click="$emit('filterTable',companyId, roleId)"
             class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
           >
             <span>

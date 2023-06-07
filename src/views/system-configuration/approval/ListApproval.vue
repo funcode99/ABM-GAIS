@@ -29,7 +29,6 @@
     const editApprovalId = ref()
 
     let sortedData = ref([])
-    let sortedDataReactive = computed(() => sortedData.value)
 
     let sortedbyASC = true
     let instanceArray = []
@@ -285,6 +284,20 @@
       })
 
     }
+
+
+    const filterTable = async (id) => {
+      console.log(id)
+      console.log('masuk ke filter table')
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get(`/approval/get_approval?filterCompany=${id}`)
+        // console.log(api)
+        // console.log(api.status)
+        statusResponse.value = api.status
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
+    }
   
 </script>
 
@@ -309,7 +322,8 @@
           @delete-selected-data="deleteCheckedArray()"   
           @do-search="filteredItems" 
           @increase-approver="addNewApprover" 
-          @change-showing="fillPageMultiplier" 
+          @change-showing="fillPageMultiplier"
+          @filter-table="filterTable"
           modalAddType="approval" 
         />
         
@@ -491,7 +505,7 @@
 
             </div>
 
-            <div v-if="statusResponse != ''">
+            <div v-else-if="sortedData.length == 0 && statusResponse != ''">
               <table class="table table-zebra table-compact border h-full w-full rounded-lg">
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
                     <tr class="">

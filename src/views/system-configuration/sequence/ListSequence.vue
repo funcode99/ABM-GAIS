@@ -283,6 +283,19 @@
       })
 
     }
+
+    const filterTable = async (id) => {
+      console.log(id)
+      console.log('masuk ke filter table')
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get(`/sequence?filterCompany=${id}`)
+        // console.log(api)
+        // console.log(api.status)
+        // status.value = api.status
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
+    }
   
 </script>
 
@@ -309,6 +322,7 @@
             @delete-selected-data="deleteCheckedArray()" 
             @do-search="filteredItems" 
             @increase-sequence="addNewSequence" 
+            @filter-table="filterTable"
             @change-showing="fillPageMultiplier" 
             modalAddType="sequence" 
             />

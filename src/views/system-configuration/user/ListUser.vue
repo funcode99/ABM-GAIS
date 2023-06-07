@@ -291,6 +291,20 @@
 
     }
 
+    const filterTable = async (id, roleId) => {
+      console.log(id)
+      console.log(roleId)
+      console.log('masuk ke filter table')
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)
+        // console.log(api)
+        // console.log(api.status)
+        // status.value = api.status
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
+    }
+
 </script>
 
 
@@ -315,7 +329,8 @@
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()"
           @increase-user="addNewUser" 
-          @do-search="filteredItems" 
+          @do-search="filteredItems"
+          @filter-table="filterTable"
           @change-showing="fillPageMultiplier" 
           modalAddType="user" 
         />
@@ -323,6 +338,7 @@
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
             
             <div class="block overflow-x-auto">
+
               <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
 
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
@@ -347,7 +363,7 @@
                         Actions
                       </span>
                     </th>
-<!--  -->
+
                   </tr>
                 </thead>
 
@@ -528,6 +544,7 @@
                 </table>
 
               </div>
+
             </div>
 
             <!-- PAGINATION -->

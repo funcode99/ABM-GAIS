@@ -218,7 +218,7 @@
         const api = await Api.get('/menu/get/')
         instanceArray = api.data.data
         sortedData.value = instanceArray
-        menuData.value = instanceArray
+        // menuData.value = instanceArray
       } catch (error) {
         console.log(error)
         // status.value = error.response.status
@@ -300,6 +300,19 @@
 
     }
 
+    const filterTable = async (id) => {
+      console.log(id)
+      console.log('masuk ke filter table')
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        const api = await Api.get(`/menu/get?filter=${id}`)
+        // console.log(api)
+        // console.log(api.status)
+        status.value = api.status
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
+    }
+
 </script>
 
 <template>
@@ -323,7 +336,9 @@
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()" 
           @increase-menu="addNewMenu " 
-          @do-search="filteredItems" 
+          @do-search="filteredItems"
+          @filter-table="filterTable"
+          @change-showing="fillPageMultiplier"
           modalAddType="menu" 
           />
         
@@ -412,7 +427,7 @@
                         
                   </table>
                   
-                  <div v-else>
+                  <div v-else-if="sortedData.length == 0 && status == ''">
       
                     <table class="table table-zebra table-compact border h-full w-full rounded-lg">
                       <thead class="text-center font-Montserrat text-sm font-bold h-10">
@@ -542,6 +557,10 @@
                     </div> -->
       
                   </div> 
+
+                  <div v-else-if="sortedData.length == 0 && status == 200">
+                    Data tidak ditemukan
+                  </div>
     
             </div>
   
