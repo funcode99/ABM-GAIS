@@ -16,88 +16,88 @@ let isAdding = ref(false);
 let modalPaddingHeight = "10vh";
 const emits = defineEmits("addSequence");
 
-let menuSequenceName = ref("");
-let company = ref("");
-let nextValue = ref("");
-let menu = ref("");
-let sequenceSize = ref("");
-let sequenceCode = ref("");
-let prefix = ref("");
-let recycleBy = ref("W");
-let suffix = ref("");
+  let menuSequenceName = ref('')
+  let company = ref('')
+  let nextValue = ref('')
+  let menu = ref('')
+  let sequenceSize = ref('')
+  let prefix = ref('')
+  let recycleBy = ref('W')
+  let suffix = ref('')
 
 let instanceArray = [];
 let addMenuData = ref([]);
 let addCompanyData = ref([]);
 
-const fetchMenu = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("/menu/get");
-  instanceArray = api.data.data;
-  addMenuData.value = instanceArray;
-  menu.value = addMenuData.value[0].id;
-};
-
-const fetchCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  addCompanyData.value = res.data.data;
-};
-
-onBeforeMount(() => {
-  fetchMenu();
-  fetchCompany();
-});
-
-const submitSequence = () => {
-  isVisible.value = !isVisible.value;
-  formState.sequence.sequenceName = menuSequenceName.value;
-  formState.sequence.sequenceSize = sequenceSize.value;
-  formState.sequence.company = company.value;
-  formState.sequence.recycle = recycleBy.value;
-  formState.sequence.nextValue = nextValue.value;
-  formState.sequence.prefix = prefix.value;
-  formState.sequence.suffix = suffix.value;
-  formState.sequence.menuId = menu.value;
-  formState.sequence.sequenceCode = sequenceCode.value;
-
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: "Your work has been saved",
-    showConfirmButton: false,
-    timer: 1500,
-  });
-
-  emits("addSequence");
-};
-
-const resetInput = () => {
-  menuSequenceName.value = "";
-  nextValue.value = "";
-  menu.value = "";
-  sequenceSize.value = "";
-  prefix.value = "";
-  suffix.value = "";
-  recycleBy.value = "W";
-  sequenceCode.value = "";
-  company.value = "";
-};
-
-watch(isVisible, () => {
-  if (isAdding.value == true) {
-    isAdding.value = false;
-  } else {
-    resetInput();
+  const fetchMenu = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/menu/get')      
+      instanceArray = api.data.data
+      addMenuData.value = instanceArray
+      // menu.value = addMenuData.value[0].id
   }
-});
 
-const rowClass = "flex justify-between mx-4 items-center gap-3 my-3";
-const columnClass = "flex flex-col flex-1";
-const inputStylingClass =
-  "py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base";
+  const fetchCompany = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/company/get");
+    addCompanyData.value = res.data.data;
+  }
+
+  onBeforeMount(() => {
+    fetchMenu()
+    fetchCompany()
+  })
+
+  const submitSequence = () => {
+
+    isVisible.value = !isVisible.value
+    formState.sequence.sequenceName = menuSequenceName.value
+    formState.sequence.sequenceSize = sequenceSize.value
+    formState.sequence.company = company.value
+    formState.sequence.recycle = recycleBy.value
+    formState.sequence.nextValue = nextValue.value
+    formState.sequence.prefix = prefix.value
+    formState.sequence.suffix = suffix.value
+    formState.sequence.menuId = menu.value
+
+    Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Your work has been saved",
+        showConfirmButton: false,
+        timer: 1500,
+    })
+
+    emits('addSequence')
+
+  }
+
+  const resetInput = () => {
+    menuSequenceName.value = ''
+    nextValue.value = ''
+    menu.value = ''
+    sequenceSize.value = ''
+    prefix.value = ''
+    suffix.value = ''
+    recycleBy.value = 'W'
+    company.value = ''
+  }
+
+  watch(isVisible, () => {
+    if(isAdding.value == true) {
+      isAdding.value = false
+    } else {
+      resetInput()
+    }
+  })
+
+  const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
+  const columnClass = 'flex flex-col flex-1'
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
+
+  // const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
 
 // const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
 </script>
@@ -179,24 +179,20 @@ const inputStylingClass =
             />
           </div>
 
-          <!-- Sequence Size -->
-          <div :class="columnClass">
-            <label
-              for="sequence_size"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-            >
-              Sequence Size<span class="text-red">*</span>
-            </label>
-            <input
-              id="sequence_size"
-              v-model="sequenceSize"
-              type="text"
-              placeholder="Sequence Size"
-              :class="inputStylingClass"
-              required
-            />
-          </div>
-        </div>
+                <!-- Next Value -->
+                <div :class="columnClass">
+                  <label for="next_value" class="block mb-2 font-JakartaSans font-medium text-sm">
+                      Next Value<span class="text-red">*</span>
+                  </label>
+                  <input
+                    id="next_value"
+                    v-model="nextValue"
+                    type="text"
+                    placeholder="Next Value"
+                    :class="inputStylingClass"
+                    required
+                  />
+                </div>
 
         <div :class="rowClass">
           <!-- Menu -->
@@ -337,24 +333,49 @@ const inputStylingClass =
                 <span>:</span>
                 <span>Department Code</span>
               </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2 font-semibold text-xs">
-              <div class="place-self-start">
-                <span>%(company)</span>
-                <span>:</span>
-                <span>Company Code</span>
+
+              <div :class="rowClass">
+
+                <div :class="columnClass">
+                  <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm">
+                      Sequence Code<span class="text-red">*</span>
+                  </label>
+
+                  <select for="sequence_code" v-model="menu" disabled>
+                    <option v-for="data in addMenuData" :key="data.id" :value="data.id" :class="inputStylingClass">
+                      {{ data.code_sequence }}
+                    </option>
+                  </select>
+
+                </div>
+
+                <div :class="columnClass">
+
+                </div>
+
               </div>
               <div class="place-self-start">
                 <span>%(menu)</span>
                 <span>:</span>
                 <span>Menu Code</span>
               </div>
+          
             </div>
+        
           </div>
+
         </div>
-      </form>
-    </main>
-  </Modal>
+
+      </div>
+
+            </form>
+
+          </main>
+
+
+        </Modal>
+
+
 </template>
 
 <style scoped>

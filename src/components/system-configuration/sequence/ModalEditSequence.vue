@@ -16,9 +16,9 @@
   })
 
   let isVisible = ref(false)
-  let type = '' 
   let modalPaddingHeight = '10vh'
   const emits = defineEmits('changeSequence')
+  let isEditing = ref(false)
 
   let menuSequenceName = ref(props.formContent[0])
   let prefix = ref(props.formContent[1])
@@ -28,7 +28,6 @@
   let nextValue = ref(props.formContent[5])
   let menu = ref(props.formContent[6])
   let company = ref(props.formContent[7])
-  let sequenceCode = ref(props.formContent[8])
 
   let instanceArray = []
   let addMenuData = ref([])
@@ -40,7 +39,6 @@
       const api = await Api.get('/menu/get')      
       instanceArray = api.data.data
       addMenuData.value = instanceArray
-      menu.value = addMenuData.value[0].id
   }
 
   const fetchCompany = async () => {
@@ -56,6 +54,9 @@
   })
 
   const submitEdit = () => {
+
+    isEditing.value = true
+    isVisible.value = false
     formEditState.sequence.sequenceName = menuSequenceName.value
     formEditState.sequence.prefix = prefix.value
     formEditState.sequence.suffix = suffix.value
@@ -63,12 +64,12 @@
     formEditState.sequence.recycle = recycleBy.value
     formEditState.sequence.nextValue = nextValue.value
     formEditState.sequence.company = company.value
-    formEditState.sequence.sequenceCode = sequenceCode.value
-    isVisible.value = false
+    formEditState.sequence.menuId = menu.value
     emits('changeSequence')
+
   }
 
-  watch(isVisible, () => {
+  const resetInput = () => {
     menuSequenceName.value = props.formContent[0]
     prefix.value = props.formContent[1]
     suffix.value = props.formContent[2]
@@ -77,14 +78,20 @@
     nextValue.value = props.formContent[5]
     menu.value = props.formContent[6]
     company.value = props.formContent[7]
-    sequenceCode.value = props.formContent[8]
+  }
+
+  watch(isVisible, () => {
+    if (isEditing.value == true) {
+    isEditing.value = false
+  } else {
+    resetInput()
+  }
+
   })
 
   const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
-
-  // const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -94,7 +101,7 @@
         <img :src="editIcon" class="w-6 h-6" />
     </button>
 
-    <Modal v-model:visible="isVisible" v-model:title='type' v-model:offsetTop="modalPaddingHeight">
+    <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
 
         <main>
 
@@ -248,18 +255,17 @@
                 <div :class="rowClass">
 
                   <div :class="columnClass">
+                    
                     <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm">
                         Sequence Code<span class="text-red">*</span>
                     </label>
-                    <input
-                      id="sequence_code"
-                      v-model="sequenceCode"
-                      type="text"
-                      placeholder="Sequence Code"
-                      :class="inputStylingClass"
-                      required
-                      disabled
-                    />
+
+                    <select for="sequence_code" v-model="menu" disabled>
+                      <option :class="inputStylingClass" v-for="data in addMenuData" :key="data.id" :value="data.id" required>
+                        {{ data.code_sequence }}
+                      </option>
+                    </select>
+
                   </div>
 
                   <div :class="columnClass">

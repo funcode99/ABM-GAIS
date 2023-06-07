@@ -235,23 +235,24 @@
                 </div>
     
                 <div class="mb-6">
+
                   <label
                       for="approval_authorities"
                       class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                      Approval Authorities<span class="text-red">*</span> 
+                      Approval Authorities
                   </label>
     
                     <!-- ambil value selected nya -->
                     <!-- :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
                       :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''" -->
 
-                    <div class="grid grid-cols-3">
+                  <div class="grid grid-cols-3">
                       <div 
                         v-for="name in responseAuthoritiesArray" 
                         :key="name.id"
                       >
-                        <div class="flex items-center gap-2" 
-                        :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' ) ? 'hidden' : '' " >
+                      <!-- :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' ) ? 'hidden' : '' " > -->
+                        <div class="flex items-center gap-2"> 
                             <input 
                             id="approval_authorities"
                             type="checkbox" 
@@ -262,7 +263,7 @@
                             <label>{{ name.auth_name }}</label>
                         </div>
                       </div>
-                    </div>
+                  </div>
     
                 </div>
     

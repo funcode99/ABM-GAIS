@@ -345,7 +345,7 @@
 
                 <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                  <tr v-for="(data, index) in sortedDataReactive" :key="data.id">
+                  <tr v-for="(data, index) in sortedData" :key="data.id">
                     <td>
                       <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                     </td>
@@ -359,7 +359,7 @@
                       {{ data.menu }}
                     </td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @changeMatrix="" @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" 
+                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" 
                       :formContent="[
                         data.approval_name, 
                         data.id_company, 

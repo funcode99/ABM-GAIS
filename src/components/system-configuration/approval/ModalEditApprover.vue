@@ -91,8 +91,6 @@
 
   const saveApproverLines = async (data, idx, matrixId) => {
 
-    console.log(data[idx].level)
-
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
     const api = await Api.post('/approval/store_approval_detail', {
@@ -103,12 +101,29 @@
 
     data[idx].isPosted = undefined
     console.log('approval telah ditambahkan!')
+    emits('fetchApproval')
+    const insertDefault = () => {
+      approverLines.value = props.formContent[4]
+    }
+    setTimeout(insertDefault, 100)
 
   }
 
-  const editApproverLines = async () => {
+  const editApproverLines = async (data, idx, matrixId, id) => {
     console.log('masuk ke edit approver lines')
-    // emits('editApprover')
+
+    const api = await Api.post(`/approval/update_data_approval_detail/${id}`, {
+      id_matrix: matrixId,
+      level: data[idx].level,
+      id_approval_auth: data[idx].id_approval_auth
+    })
+    console.log(api)
+    console.log('approval telah diubah!')
+    emits('fetchApproval')
+    const insertDefault = () => {
+      approverLines.value = props.formContent[4]
+    }
+    setTimeout(insertDefault, 100)
   }
 
   const addField = (fieldType, isi) => {
@@ -286,8 +301,14 @@
           
         </div>
 
+        <div class="w-full">
+          <!-- {{ approverLines }} -->
+        </div>
+
         <!-- approver lines area -->
         <div>
+
+         
 
           <h1 class="font-medium text-left">Approver Lines <span>*</span> </h1>
           <hr class="border border-black">
@@ -337,7 +358,7 @@
     
                   <!-- event listener gak ngaruh di option -->
                   <td>
-                    <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false"  >
+                    <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : input.isEdit === true ? true : false"  >
                       <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
                           {{ data.auth_name }}
                       </option>
@@ -353,45 +374,50 @@
                   </td>
  
                   <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
-                  <td v-if="input.isPosted === undefined && input.isEdit != false" class="flex flex-wrap gap-4 justify-center">
-                    edit
-                    <button @click="input.isEdit = false">
+                  <!-- edit  -->
+                  <td v-if="input.isPosted === undefined && input.isEdit != false" class="flex flex-wrap gap-4 justify-center" >
+                
+                    <button type="button" @click="input.isEdit = false" :class="approverLines.length-1 > index ? 'hidden' : '' ">
                       <img :src="editIcon" class="w-6 h-6" />
                     </button>
-                    <button  @click="removeField(index, approverLines)">
+                    <button type="button" @click="removeField(index, approverLines)" :class="approverLines.length-1 > index ? 'hidden' : '' " >
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
                   </td>
 
                   <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
+                  <!-- add -->
                   <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
-                    add
-                    <button @click="input.isPosted = true">
+               
+                    <button type="button" @click="input.isPosted = true">
                       <img :src="editIcon" class="w-6 h-6" />
                     </button>
-                    <button @click="removeField(index, approverLines)">
+                    <button type="button" @click="removeField(index, approverLines)">
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
                   </td>
 
                   <!-- berisi fungsi untuk mengganti -->
+                  <!-- fungsi edit -->
                   <td v-if="input.isEdit === false" class="flex flex-wrap gap-4 justify-center">
-                    fungsi edit
-                    <button @click="editApproverLines() ">
+                 
+                    <button type="button" @click="editApproverLines(approverLines, index, idMatrixActual, input.id_detail) ">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
-                    <button @click="removeField(index, approverLines)">
+                    <!-- removeField(index, approverLines) -->
+                    <button type="button" @click="input.isEdit = true">
                       <img :src="closeIcon" class="w-5 h-5" />
                     </button>
                   </td>
 
                   <!-- berisi fungsi untuk menambahkan -->
+                  <!-- fungsi add -->
                   <td v-if="input.isPosted === true" class="flex flex-wrap gap-4 justify-center">
-                    fungsi add
-                    <button @click="saveApproverLines(approverLines, index, idMatrixActual)">
+                
+                    <button type='button' @click="saveApproverLines(approverLines, index, idMatrixActual)">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
-                    <button @click="removeField(index, approverLines)">
+                    <button type='button' @click="removeField(index, approverLines)">
                       <img :src="closeIcon" class="w-5 h-5" />
                     </button>
                   </td>
