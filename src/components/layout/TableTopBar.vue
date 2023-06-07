@@ -84,10 +84,12 @@ onBeforeMount(() => {
 
 
         <!-- modal add ini perlu di segregasi -->
+        
         <ModalAddMenu
           @add-menu="$emit('increaseMenu')"
           v-if="props.modalAddType === 'menu'"
         />
+
         <ModalAddUser
           @add-user="$emit('increaseUser')"
           v-if="props.modalAddType === 'user'"
@@ -106,11 +108,13 @@ onBeforeMount(() => {
         />
 
         <button
+          @click="$emit('exportToExcel')"
           v-if="$route.path !== '/role'"
           class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
         >
           <img :src="icon_receive" class="w-6 h-6" />
         </button>
+
       </div>
       
     </div>

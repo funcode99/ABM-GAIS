@@ -12,6 +12,7 @@
     
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
+    import { Workbook } from "exceljs";
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import Swal from "sweetalert2";
     import Api from '@/utils/Api'
@@ -305,6 +306,39 @@
         sortedData.value = instanceArray
     }
 
+    const exportToExcel = () => {
+
+      const workbook = new Workbook()
+      const worksheet = workbook.addWorksheet("Brand Data")
+
+      // Menambahkan header kolom
+      tableHead.forEach((column, index) => {
+        worksheet.getCell(1, index + 1).value = column.title;
+      })
+
+      // Menambahkan data ke baris-baris selanjutnya
+      sortedData.value.forEach((data, rowIndex) => {
+        worksheet.getCell(rowIndex + 2, 1).value = data.no;
+        worksheet.getCell(rowIndex + 2, 2).value = data.username;
+        worksheet.getCell(rowIndex + 2, 3).value = data.role_name;
+        worksheet.getCell(rowIndex + 2, 4).value = data.auth_name;
+      })
+
+      // Menyimpan workbook menjadi file Excel
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "user_data.xlsx";
+        a.click();
+        URL.revokeObjectURL(url);
+      })
+
+    }
+
 </script>
 
 
@@ -325,6 +359,7 @@
            <!-- {{ deleteArray }} -->
 
         <TableTopBar 
+          modalAddType="user"
           :title="'User'" 
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()"
@@ -333,7 +368,7 @@
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
           @reset-table="fetch"
-          modalAddType="user" 
+          @export-to-excel="exportToExcel"
         />
 
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">

@@ -8,7 +8,8 @@
     import Api from '@/utils/Api'
     
     // import untuk approval table
-    import { ref, onBeforeMount, computed, Suspense } from 'vue'
+    import { ref, onBeforeMount, computed } from 'vue'
+    import { Workbook } from "exceljs"
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
@@ -195,7 +196,6 @@
       {Id: 2, title: 'Name', jsonData: 'menu'},
       {Id: 3, title: 'Parent Menu', jsonData: 'parent_id'},
       {Id: 4, title: 'Status', jsonData: 'id_status_menu'},
-      {Id: 5, title: 'Actions'}
     ]
 
     const sortList = (sortBy) => {
@@ -313,6 +313,39 @@
         sortedData.value = instanceArray
     }
 
+    const exportToExcel = () => {
+
+      const workbook = new Workbook()
+      const worksheet = workbook.addWorksheet("Brand Data")
+
+      // Menambahkan header kolom
+      tableHead.forEach((column, index) => {
+        worksheet.getCell(1, index + 1).value = column.title;
+      })
+
+      // Menambahkan data ke baris-baris selanjutnya
+      sortedData.value.forEach((data, rowIndex) => {
+        worksheet.getCell(rowIndex + 2, 1).value = data.no
+        worksheet.getCell(rowIndex + 2, 2).value = data.menu
+        worksheet.getCell(rowIndex + 2, 3).value = data.parent
+        worksheet.getCell(rowIndex + 2, 4).value = data.status_name
+      })
+
+      // Menyimpan workbook menjadi file Excel
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "menu_data.xlsx";
+        a.click();
+        URL.revokeObjectURL(url);
+      })
+
+    }
+
 </script>
 
 <template>
@@ -341,7 +374,8 @@
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
           @reset-table="fetch"
-          />
+          @export-to-excel="exportToExcel"
+        />
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
@@ -366,6 +400,12 @@
                             <button class="">
                               <img :src="arrowicon" class="w-[9px] h-3" />
                             </button>
+                          </span>
+                        </th>
+
+                        <th class="overflow-x-hidden cursor-pointer">
+                          <span class="flex justify-center items-center gap-1">
+                            Actions
                           </span>
                         </th>
         

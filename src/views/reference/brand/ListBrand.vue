@@ -270,12 +270,12 @@ const exportToExcel = () => {
     { title: "ID" },
     { title: "Brand Name" },
     { title: "Company" },
-  ];
+  ]
 
   // Menambahkan header kolom
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
-  });
+  })
 
   // Menambahkan data ke baris-baris selanjutnya
   sortedDataReactive.value.forEach((data, rowIndex) => {
@@ -297,7 +297,8 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-};
+}
+
 </script>
 
 <template>

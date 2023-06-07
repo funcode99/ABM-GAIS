@@ -6,6 +6,7 @@
 
     // import untuk approval table
     import { ref, computed, onBeforeMount } from 'vue'
+    import { Workbook } from "exceljs";
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
 
@@ -69,8 +70,7 @@
     const tableHead = [
       {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Matrix Name', jsonData: 'approval_name'},
-      {Id: 3, title: 'Menu', jsonData: 'menu'},
-      {Id: 4, title: 'Actions'}
+      {Id: 3, title: 'Menu', jsonData: 'menu'}
     ]
 
     const sortList = (sortBy) => {
@@ -285,7 +285,6 @@
 
     }
 
-
     const filterTable = async (id) => {
       console.log(id)
       console.log('masuk ke filter table')
@@ -297,6 +296,39 @@
         statusResponse.value = api.status
         instanceArray = api.data.data
         sortedData.value = instanceArray
+    }
+
+    const exportToExcel = () => {
+
+      const workbook = new Workbook()
+      const worksheet = workbook.addWorksheet("Brand Data")
+
+      // Menambahkan header kolom
+      tableHead.forEach((column, index) => {
+        worksheet.getCell(1, index + 1).value = column.title;
+      })
+
+      // Menambahkan data ke baris-baris selanjutnya
+      sortedData.value.forEach((data, rowIndex) => {
+        worksheet.getCell(rowIndex + 2, 1).value = data.no;
+        // worksheet.getCell(rowIndex + 2, 2).value = data.id;
+        worksheet.getCell(rowIndex + 2, 2).value = data.approval_name;
+        worksheet.getCell(rowIndex + 2, 3).value = data.menu;
+      })
+
+      // Menyimpan workbook menjadi file Excel
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "approval_data.xlsx";
+        a.click();
+        URL.revokeObjectURL(url);
+      })
+
     }
   
 </script>
@@ -326,6 +358,7 @@
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
           @reset-table="fetch"
+          @export-to-excel="exportToExcel"
         />
         
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block">
@@ -350,6 +383,12 @@
                       <button class="">
                         <img :src="arrowicon" class="w-[9px] h-3" />
                       </button>
+                    </span>
+                  </th>
+
+                  <th class="overflow-x-hidden cursor-pointer">
+                    <span class="flex justify-center items-center gap-1">
+                      Actions
                     </span>
                   </th>
 
@@ -389,6 +428,7 @@
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
+
                   </tr>
 
               </tbody>

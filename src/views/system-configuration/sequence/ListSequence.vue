@@ -9,6 +9,7 @@
 
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
+    import { Workbook } from "exceljs"
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
 
@@ -73,7 +74,6 @@
       {Id: 3, title: 'Prefix', jsonData: 'prefix'},
       {Id: 4, title: 'Suffix', jsonData: 'suffix'},
       {Id: 5, title: 'Sequence Size', jsonData: 'sequence_size'},
-      {Id: 6, title: 'Actions'}
     ]
 
     const sortList = (sortBy) => {
@@ -296,6 +296,40 @@
         instanceArray = api.data.data
         sortedData.value = instanceArray
     }
+
+    const exportToExcel = () => {
+
+      const workbook = new Workbook()
+      const worksheet = workbook.addWorksheet("Brand Data")
+
+      // Menambahkan header kolom
+      tableHead.forEach((column, index) => {
+        worksheet.getCell(1, index + 1).value = column.title;
+      })
+
+      // Menambahkan data ke baris-baris selanjutnya
+      sortedData.value.forEach((data, rowIndex) => {
+        worksheet.getCell(rowIndex + 2, 1).value = data.no
+        worksheet.getCell(rowIndex + 2, 2).value = data.sequence_name
+        worksheet.getCell(rowIndex + 2, 3).value = data.prefix
+        worksheet.getCell(rowIndex + 2, 4).value = data.suffix
+        worksheet.getCell(rowIndex + 2, 5).value = data.sequence_size
+      })
+
+      // Menyimpan workbook menjadi file Excel
+      workbook.xlsx.writeBuffer().then((buffer) => {
+        const blob = new Blob([buffer], {
+          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "user_data.xlsx";
+        a.click();
+        URL.revokeObjectURL(url);
+      })
+
+    }
   
 </script>
 
@@ -317,6 +351,7 @@
           <!-- {{ deleteArray }} -->
           
           <TableTopBar 
+            modalAddType="sequence"
             :title="'Sequence'" 
             :numberSelected="deleteArray.length" 
             @delete-selected-data="deleteCheckedArray()" 
@@ -325,7 +360,7 @@
             @change-showing="fillPageMultiplier" 
             @filter-table="filterTable"
             @reset-table="fetch"
-            modalAddType="sequence" 
+            @export-to-excel="exportToExcel"
             />
             
           <!-- actual table -->
@@ -352,6 +387,12 @@
                         <button class="">
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
+                      </span>
+                    </th>
+
+                    <th class="overflow-x-hidden cursor-pointer">
+                      <span class="flex justify-center items-center gap-1">
+                        Actions
                       </span>
                     </th>
   
