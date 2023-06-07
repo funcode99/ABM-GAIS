@@ -23,6 +23,7 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
+//for form
 let Company = ref("");
 let FlightClass = ref();
 let jobBandName = ref(props.formContent[0]);
@@ -30,6 +31,109 @@ let hotelFare = ref(props.formContent[1]);
 let mealsRate = ref(props.formContent[2]);
 let selectedFlightClass = ref(props.formContent[4]);
 
+//for inner table
+let instanceArray = [];
+let idMatrix = props.formContent[5];
+let idMatrixActual = ref(null);
+let authorities = ref("");
+let currentAuthoritiesId = ref();
+let dropdownRemoveList = ref([]);
+let addZona = ref([]);
+// let zonaName = ref(props.formContent[5]);
+let addAuthoritiesData = ref([]);
+let levelValue = ref();
+let approverLines = ref(props.formContent[5] || [])
+
+if (props.formContent[5] == undefined) {
+  console.log("array detail tidak ada");
+} else {
+  idMatrix.map((item, index) => {
+    if (index == idMatrix.length - 1) {
+      console.log("ini adalah index terakhir " + index);
+    } else {
+      dropdownRemoveList.value.push(item.id_tlk);
+    }
+  });
+  idMatrixActual.value = idMatrix[0].id_matrix;
+}
+
+const fetchApproverAuthorities = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/zona_job/get/");
+  instanceArray = res.data.data;
+  addZona.value = instanceArray;
+  authorities.value = addZona.value[0].level;
+  levelValue.value = addZona.value[0].level;
+  // console.log(
+  //   "ini data instance array addAuthoritiesData" + JSON.stringify(instanceArray)
+  // );
+  // console.log("ini data authorities" + JSON.stringify(authorities));
+  // console.log("ini data level" + JSON.stringify(levelValue));
+};
+
+const saveField = () => {
+  formEditState.jobBand.jobBandIdCompany = selectedCompany.value;
+  formEditState.jobBand.jobBandName = jobBandName.value;
+  formEditState.jobBand.jobBandHotelFare = hotelFare.value;
+  formEditState.jobBand.jobBandMealrate = mealsRate.value;
+  formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
+  isVisible.value = false;
+  emits("editJobBand");
+};
+
+const saveApproverLines = async (data, jobbandId, mealsRate, idx) => {
+  // console.log(jobbandId);
+
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post("/zona_job/store", {
+    id_zona: data[idx].id_zona,
+    // id_job_band: jobbandId,
+    tlk_rate: mealsRate,
+  });
+
+  // data[idx].isPosted = undefined;
+  // console.log("tlk telah ditambahkan!");
+};
+
+const editApproverLines = async () => {
+  // console.log("masuk ke edit approver lines");
+  // emits('editApprover')
+};
+
+const addField = (fieldType, isi) => {
+  if (isi) {
+    dropdownRemoveList.value.push(isi);
+  }
+
+  fieldType.push({
+    id_zona: addZona.value,
+    tlk_rate: mealsRate.value,
+    isPosted: false,
+  });
+};
+
+const removeField = async (index, fieldType) => {
+  if (fieldType[index].id_detail) {
+    // console.log("masuk ke api");
+
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    await Api.delete(`/zona_job/delete_data/${fieldType[index].id_detail}`);
+
+    // console.log("tlk berhasil dihapus");
+    emits("savedJobBand");
+  }
+
+  // console.log("setelah masuk ke api");
+
+  fieldType.splice(index, 1);
+  dropdownRemoveList.value.splice(index - 1, 1);
+  dropdownRemoveList.value.splice(index + 1, 1);
+};
+
+//for form
 const formEditState = useFormEditStore();
 
 let companyData = ref(null);
@@ -92,9 +196,22 @@ const fetchGetFlightClass = async () => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
+//for get zona
+const fetchGetZona = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/zona/get/");
+  instanceArray = res.data.data;
+  addZona.value = instanceArray;
+  console.log("ini data zona" + JSON.stringify(res.data.data));
+  console.log("ini instance array" + JSON.stringify(instanceArray));
+};
+
 onMounted(() => {
   fetchGetCompany();
   fetchGetFlightClass();
+  fetchGetZona();
+  fetchApproverAuthorities();
 });
 
 const inputStylingClass =
@@ -289,9 +406,138 @@ const formatCurrency = () => {
             </option>
           </select>
         </div>
-
-        <modalFooter @closeEdit="isVisible = false" />
       </form>
+
+      <!-- INNER TABLE -->
+      <h1 class="text-base font-JakartaSans font-bold py-2 px-4 text-start">
+        TLK
+      </h1>
+      <div class="px-4 pb-10">
+        <table class="table table-zebra table-compact border w-full rounded-lg">
+          <thead class="text-center font-JakartaSans text-sm font-bold">
+            <tr>
+              <th class="relative bg-[#e5e7eb]">
+                <span class="text-black text-center items-center capitalize"
+                  >Zona</span
+                >
+              </th>
+              <th class="relative bg-[#e5e7eb]">
+                <span class="text-center items-center text-black capitalize"
+                  >Gross/Hari</span
+                >
+              </th>
+              <th class="relative bg-[#e5e7eb]">
+                <span class="text-center items-center text-black capitalize"
+                  >Action</span
+                >
+              </th>
+            </tr>
+          </thead>
+
+          <tbody class="bg-[#F5F5F5]">
+            <tr
+              class="font-JakartaSans font-normal text-sm"
+              v-for="(input, index) in approverLines"
+              :key="`${index}`"
+            >
+              <td class="text-center justify-center">
+                <select
+                  v-model="input.id_zona"
+                  :id="index"
+                  :disabled="approverLines.length - 1 > index ? true : false"
+                  class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                >
+                  <option
+                    v-for="data in addZona"
+                    :key="data.id"
+                    :value="data.id"
+                    :hidden="
+                      dropdownRemoveList.includes(data.id) ? true : false
+                    "
+                  >
+                    {{ data.zona_name }}
+                  </option>
+                </select>
+              </td>
+
+              <td
+                v-if="
+                  input.level != 'R'
+                    ? (currentAuthoritiesId = input.id_zona)
+                    : ''
+                "
+                class="hidden"
+              ></td>
+
+              <td class="text-center justify-center">
+                <input
+                  type="text"
+                  class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                  v-model="input.tlk_rate"
+                />
+              </td>
+
+              <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
+              <td
+                v-if="input.isPosted === undefined && input.isEdit != false"
+                class="flex flex-wrap gap-4 justify-center"
+              >
+                <button @click="input.isEdit = false">
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+                <button @click="removeField(index, approverLines)">
+                  <img :src="deleteicon" class="w-6 h-6" />
+                </button>
+              </td>
+
+              <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
+              <td
+                v-if="input.isPosted === false"
+                class="flex flex-wrap gap-4 justify-center"
+              >
+                <button @click="input.isPosted = true">
+                  <img :src="editicon" class="w-6 h-6" />
+                </button>
+                <button @click="removeField(index, approverLines)">
+                  <img :src="deleteicon" class="w-6 h-6" />
+                </button>
+              </td>
+
+              <!-- berisi fungsi untuk mengganti -->
+              <td
+                v-if="input.isEdit === false"
+                class="flex flex-wrap gap-4 justify-center"
+              >
+                <button @click="editApproverLines()">
+                  <img :src="checkIcon" class="w-5 h-5" />
+                </button>
+                <button @click="removeField(index, approverLines)">
+                  <img :src="closeIcon" class="w-5 h-5" />
+                </button>
+              </td>
+
+              <!-- berisi fungsi untuk menambahkan -->
+              <td
+                v-if="input.isPosted === true"
+                class="flex flex-wrap gap-4 justify-center"
+              >
+                <button
+                  @click="
+                    saveApproverLines(approverLines, index, idMatrixActual)
+                  "
+                >
+                  <img :src="checkIcon" class="w-5 h-5" />
+                </button>
+                <button @click="removeField(index, approverLines)">
+                  <img :src="closeIcon" class="w-5 h-5" />
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <modalFooter @closeEdit="isVisible = false" />
     </main>
   </Modal>
 </template>

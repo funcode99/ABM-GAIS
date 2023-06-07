@@ -511,6 +511,8 @@ const exportToExcel = () => {
                       data.meals_rate,
                       data.id_company,
                       data.id_flight_class,
+                      data?.detail,
+                      index,
                     ]"
                   />
                   <button @click="deleteJobBand(data.id)">
@@ -630,7 +632,6 @@ tr th {
   text-overflow: ellipsis;
   transition: max-width 0.3s ease-in-out;
 }
-
 .readmore-text:hover {
   max-width: 400px;
   white-space: nowrap;
