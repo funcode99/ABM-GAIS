@@ -32,6 +32,7 @@ let companyIdArray = ref(null);
 //for inner table
 let instanceArray = [];
 let approverLines = ref([]);
+let approverLinesSaved = ref([]);
 let authorities = ref("");
 let currentAuthoritiesId = ref();
 let dropdownRemoveList = ref([]);
@@ -45,6 +46,7 @@ const addField = (fieldType, isi) => {
   fieldType.push({
     id_zona: authorities.value,
     tlk_rate: "",
+    tlk_rate_api: "",
   });
 };
 
@@ -165,22 +167,18 @@ function formatCurrency() {
   }
 
   approverLines.value.forEach((input) => {
-    if (input.tlk_rate) {
-      input.tlk_rate = input.tlk_rate.replace(/\D/g, ""); // Menghapus semua karakter non-digit
-      if (input.tlk_rate === "" || input.tlk_rate === "0") {
-        input.tlk_rate = "";
+    if (input.tlk_rate_api) {
+      input.tlk_rate_api = input.tlk_rate_api.replace(/\D/g, ""); // Menghapus semua karakter non-digit
+      if (input.tlk_rate_api === "" || input.tlk_rate_api === "0") {
+        input.tlk_rate_api = "";
       } else {
-        const numericValue = parseInt(input.tlk_rate);
-        input.tlk_rate = numericValue.toLocaleString("id-ID");
+        const numericValue = parseInt(input.tlk_rate_api);
+        // console.log(numericValue);
+        input.tlk_rate_api = numericValue.toLocaleString("id-ID");
+        input.tlk_rate = numericValue;
       }
     }
   });
-}
-
-function removeThousandSeparator(input) {
-  if (input.tlk_rate) {
-    input.tlk_rate = input.tlk_rate.replace(/\./g, "");
-  }
 }
 </script>
 
@@ -357,9 +355,8 @@ function removeThousandSeparator(input) {
                   <input
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                    v-model="input.tlk_rate"
+                    v-model="input.tlk_rate_api"
                     @input="formatCurrency"
-                    @blur="removeThousandSeparator(input)"
                   />
                 </td>
 

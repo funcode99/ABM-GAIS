@@ -19,13 +19,16 @@ let Site = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
+let location = ref();
+let responseSiteArray = ref([]);
+let responseEmployeeArray = ref([]);
 
 //for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
-  Company.value = res.data.data;
+  responseEmployeeArray.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -34,7 +37,7 @@ const fetchGetSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/site/get_data");
-  Site.value = res.data.data;
+  responseSiteArray.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -56,8 +59,8 @@ const callAddApi = async () => {
 
     await Api.post(`/warehouse/store`, {
       warehouse_name: warehouseName.value,
-      id_company: selectedCompany.value,
-      id_site: selectedSite.value,
+      id_company: location.value[1],
+      id_site: location.value[0],
     });
 
     Swal.fire({
@@ -78,6 +81,7 @@ const resetInput = () => {
   warehouseName.value = "";
   selectedCompany.value = "Company";
   selectedSite.value = "Site";
+  location.value = "";
 };
 
 watch(isVisible, () => {
@@ -109,11 +113,15 @@ watch(isVisible, () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedCompany"
+            v-model="location"
           >
             <option disabled selected>Company</option>
-            <option v-for="company in Company" :value="company.id">
-              {{ company.company_name }}
+            <option
+              v-for="data in responseSiteArray"
+              :key="data.id"
+              :value="[data.id, data.id_company]"
+            >
+              {{ data.company_name }}
             </option>
           </select>
         </div>
@@ -125,11 +133,15 @@ watch(isVisible, () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedSite"
+            v-model="location"
           >
             <option disabled selected>Site</option>
-            <option v-for="site in Site" :value="site.id">
-              {{ site.site_name }}
+            <option
+              v-for="data in responseSiteArray"
+              :key="data.id"
+              :value="[data.id, data.id_company]"
+            >
+              {{ data.site_name }}
             </option>
           </select>
         </div>

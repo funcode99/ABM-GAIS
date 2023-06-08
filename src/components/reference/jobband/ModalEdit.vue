@@ -17,7 +17,7 @@ import Api from "@/utils/Api";
 import { ref, onMounted, onBeforeMount, watch, computed } from "vue";
 import { useFormEditStore } from "@/stores/reference/jobband/edit-modal.js";
 
-const emits = defineEmits(["unlockScrollbar", "changeJobband"]);
+const emits = defineEmits(["unlockScrollbar", "changeJobband", "fetchJobband"]);
 
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
@@ -33,100 +33,47 @@ let selectedFlightClass = ref(props.formContent[4]);
 
 //for inner table
 let instanceArray = [];
-let idMatrix = props.formContent[5];
 let idMatrixActual = ref(null);
-let authorities = ref("");
 let currentAuthoritiesId = ref();
 let dropdownRemoveList = ref([]);
 let addZona = ref([]);
-// let zonaName = ref(props.formContent[5]);
-let addAuthoritiesData = ref([]);
-let levelValue = ref();
-let approverLines = ref(props.formContent[5] || [])
+let approverLines = ref(props.formContent[5] || []);
 
-if (props.formContent[5] == undefined) {
-  console.log("array detail tidak ada");
-} else {
-  idMatrix.map((item, index) => {
-    if (index == idMatrix.length - 1) {
-      console.log("ini adalah index terakhir " + index);
-    } else {
-      dropdownRemoveList.value.push(item.id_tlk);
-    }
-  });
-  idMatrixActual.value = idMatrix[0].id_matrix;
-}
-
-const fetchApproverAuthorities = async () => {
+const fetchZonaJobband = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/zona_job/get/");
   instanceArray = res.data.data;
   addZona.value = instanceArray;
-  authorities.value = addZona.value[0].level;
-  levelValue.value = addZona.value[0].level;
-  // console.log(
-  //   "ini data instance array addAuthoritiesData" + JSON.stringify(instanceArray)
-  // );
-  // console.log("ini data authorities" + JSON.stringify(authorities));
-  // console.log("ini data level" + JSON.stringify(levelValue));
 };
 
-const saveField = () => {
-  formEditState.jobBand.jobBandIdCompany = selectedCompany.value;
-  formEditState.jobBand.jobBandName = jobBandName.value;
-  formEditState.jobBand.jobBandHotelFare = hotelFare.value;
-  formEditState.jobBand.jobBandMealrate = mealsRate.value;
-  formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
-  isVisible.value = false;
-  emits("editJobBand");
-};
-
-const saveApproverLines = async (data, jobbandId, mealsRate, idx) => {
-  // console.log(jobbandId);
-
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  await Api.post("/zona_job/store", {
-    id_zona: data[idx].id_zona,
-    // id_job_band: jobbandId,
-    tlk_rate: mealsRate,
-  });
-
-  // data[idx].isPosted = undefined;
-  // console.log("tlk telah ditambahkan!");
-};
-
-const editApproverLines = async () => {
-  // console.log("masuk ke edit approver lines");
-  // emits('editApprover')
-};
-
+//untuk menambahkan field
 const addField = (fieldType, isi) => {
   if (isi) {
     dropdownRemoveList.value.push(isi);
   }
 
   fieldType.push({
-    id_zona: addZona.value,
-    tlk_rate: mealsRate.value,
+    id_zona: "",
+    tlk_rate: "",
     isPosted: false,
   });
 };
 
+//untuk menghapus field
 const removeField = async (index, fieldType) => {
   if (fieldType[index].id_detail) {
-    // console.log("masuk ke api");
+    console.log("masuk ke api");
 
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    await Api.delete(`/zona_job/delete_data/${fieldType[index].id_detail}`);
+    const api = await Api.delete(
+      `/zona_job/delete_data/${fieldType[index].id_detail}`
+    );
 
-    // console.log("tlk berhasil dihapus");
-    emits("savedJobBand");
+    console.log("approval berhasil dihapus");
+    emits("fetchApproval");
   }
-
-  // console.log("setelah masuk ke api");
 
   fieldType.splice(index, 1);
   dropdownRemoveList.value.splice(index - 1, 1);
@@ -167,8 +114,6 @@ const submitEdit = () => {
   formEditState.jobBand.jobBandMealrate = mealsRate.value;
   formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
 
-  // console.log("Form Edit State:", formEditState.jobBand); // Tambahkan log ini
-
   isVisible.value = false;
   emits("changeJobband"); // Memanggil event 'changeJobband'
   console.log("Berhasil submit");
@@ -180,11 +125,9 @@ const fetchGetCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   companyData = res.data.data;
-  // console.log("ini data company" + JSON.stringify(res.data.data));
   companyData.map((item) => {
     item.value = item.id;
   });
-  // console.log("Data company setelah perubahan:", companyData);
 };
 
 //for get site in select
@@ -193,25 +136,12 @@ const fetchGetFlightClass = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/flight_class/");
   FlightClass.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-//for get zona
-const fetchGetZona = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona/get/");
-  instanceArray = res.data.data;
-  addZona.value = instanceArray;
-  console.log("ini data zona" + JSON.stringify(res.data.data));
-  console.log("ini instance array" + JSON.stringify(instanceArray));
 };
 
 onMounted(() => {
   fetchGetCompany();
   fetchGetFlightClass();
-  fetchGetZona();
-  fetchApproverAuthorities();
+  fetchZonaJobband();
 });
 
 const inputStylingClass =
@@ -406,138 +336,154 @@ const formatCurrency = () => {
             </option>
           </select>
         </div>
-      </form>
 
-      <!-- INNER TABLE -->
-      <h1 class="text-base font-JakartaSans font-bold py-2 px-4 text-start">
-        TLK
-      </h1>
-      <div class="px-4 pb-10">
-        <table class="table table-zebra table-compact border w-full rounded-lg">
-          <thead class="text-center font-JakartaSans text-sm font-bold">
-            <tr>
-              <th class="relative bg-[#e5e7eb]">
-                <span class="text-black text-center items-center capitalize"
-                  >Zona</span
-                >
-              </th>
-              <th class="relative bg-[#e5e7eb]">
-                <span class="text-center items-center text-black capitalize"
-                  >Gross/Hari</span
-                >
-              </th>
-              <th class="relative bg-[#e5e7eb]">
-                <span class="text-center items-center text-black capitalize"
-                  >Action</span
-                >
-              </th>
-            </tr>
-          </thead>
+        <!-- INNER TABLE -->
+        <h1 class="text-base font-JakartaSans font-bold py-2 px-4 text-start">
+          TLK
+        </h1>
+        <div class="px-4 pb-10">
+          <table
+            class="table table-zebra table-compact border w-full rounded-lg"
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold">
+              <tr>
+                <th class="relative bg-[#e5e7eb]">
+                  <span class="text-black text-center items-center capitalize"
+                    >Zona</span
+                  >
+                </th>
+                <th class="relative bg-[#e5e7eb]">
+                  <span class="text-center items-center text-black capitalize"
+                    >Gross/Hari</span
+                  >
+                </th>
+                <th class="relative bg-[#e5e7eb]">
+                  <span class="text-center items-center text-black capitalize"
+                    >Action</span
+                  >
+                </th>
+              </tr>
+            </thead>
 
-          <tbody class="bg-[#F5F5F5]">
-            <tr
-              class="font-JakartaSans font-normal text-sm"
-              v-for="(input, index) in approverLines"
-              :key="`${index}`"
-            >
-              <td class="text-center justify-center">
-                <select
-                  v-model="input.id_zona"
-                  :id="index"
-                  :disabled="approverLines.length - 1 > index ? true : false"
-                  class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+            <tbody class="bg-[#F5F5F5]">
+              <!-- {{ addZona }} -->
+              <tr
+                class="font-JakartaSans font-normal text-sm"
+                v-for="(input, index) in approverLines"
+                :key="`${index}`"
+              >
+                <td class="text-center justify-center">
+                  <select
+                    v-model="input.id_zona"
+                    :id="index"
+                    :disabled="approverLines.length - 1 > index ? true : false"
+                    class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                  >
+                    <option
+                      v-for="data in addZona"
+                      :key="data.id"
+                      :value="data.id_zona"
+                      :hidden="
+                        dropdownRemoveList.includes(data.id) ? true : false
+                      "
+                    >
+                      {{ data.zona_name }}
+                    </option>
+                  </select>
+                </td>
+
+                <td
+                  v-if="
+                    input.level != 'R'
+                      ? (currentAuthoritiesId = input.id_zona)
+                      : ''
+                  "
+                  class="hidden"
+                ></td>
+
+                <td class="text-center justify-center">
+                  <input
+                    type="text"
+                    class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                    v-model="input.tlk_rate"
+                  />
+                </td>
+
+                <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
+                <td
+                  v-if="input.isPosted === undefined && input.isEdit != false"
+                  class="flex flex-wrap gap-4 justify-center"
                 >
-                  <option
-                    v-for="data in addZona"
-                    :key="data.id"
-                    :value="data.id"
-                    :hidden="
-                      dropdownRemoveList.includes(data.id) ? true : false
+                  <button @click="input.isEdit = false">
+                    <img :src="editicon" class="w-6 h-6" />
+                  </button>
+                  <button @click="removeField(index, approverLines)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
+
+                <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
+                <td
+                  v-if="input.isPosted === false"
+                  class="flex flex-wrap gap-4 justify-center"
+                >
+                  <button @click="input.isPosted = true">
+                    <img :src="editicon" class="w-6 h-6" />
+                  </button>
+                  <button @click="removeField(index, approverLines)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
+
+                <!-- berisi fungsi untuk mengganti -->
+                <td
+                  v-if="input.isEdit === false"
+                  class="flex flex-wrap gap-4 justify-center"
+                >
+                  <button @click="editApproverLines()">
+                    <img :src="checkIcon" class="w-5 h-5" />
+                  </button>
+                  <button @click="removeField(index, approverLines)">
+                    <img :src="closeIcon" class="w-5 h-5" />
+                  </button>
+                </td>
+
+                <!-- berisi fungsi untuk menambahkan -->
+                <td
+                  v-if="input.isPosted === true"
+                  class="flex flex-wrap gap-4 justify-center"
+                >
+                  <button
+                    @click="
+                      saveApproverLines(approverLines, index, idMatrixActual)
                     "
                   >
-                    {{ data.zona_name }}
-                  </option>
-                </select>
-              </td>
+                    <img :src="checkIcon" class="w-5 h-5" />
+                  </button>
+                  <button @click="removeField(index, approverLines)">
+                    <img :src="closeIcon" class="w-5 h-5" />
+                  </button>
+                </td>
+              </tr>
 
-              <td
-                v-if="
-                  input.level != 'R'
-                    ? (currentAuthoritiesId = input.id_zona)
-                    : ''
-                "
-                class="hidden"
-              ></td>
+              <tr>
+                <td></td>
+                <td></td>
+                <td class="flex justify-center">
+                  <img
+                    class="cursor-pointer w-6 h-6"
+                    :src="iconPlus"
+                    alt=""
+                    @click="addField(approverLines, currentAuthoritiesId)"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-              <td class="text-center justify-center">
-                <input
-                  type="text"
-                  class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                  v-model="input.tlk_rate"
-                />
-              </td>
-
-              <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
-              <td
-                v-if="input.isPosted === undefined && input.isEdit != false"
-                class="flex flex-wrap gap-4 justify-center"
-              >
-                <button @click="input.isEdit = false">
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-                <button @click="removeField(index, approverLines)">
-                  <img :src="deleteicon" class="w-6 h-6" />
-                </button>
-              </td>
-
-              <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
-              <td
-                v-if="input.isPosted === false"
-                class="flex flex-wrap gap-4 justify-center"
-              >
-                <button @click="input.isPosted = true">
-                  <img :src="editicon" class="w-6 h-6" />
-                </button>
-                <button @click="removeField(index, approverLines)">
-                  <img :src="deleteicon" class="w-6 h-6" />
-                </button>
-              </td>
-
-              <!-- berisi fungsi untuk mengganti -->
-              <td
-                v-if="input.isEdit === false"
-                class="flex flex-wrap gap-4 justify-center"
-              >
-                <button @click="editApproverLines()">
-                  <img :src="checkIcon" class="w-5 h-5" />
-                </button>
-                <button @click="removeField(index, approverLines)">
-                  <img :src="closeIcon" class="w-5 h-5" />
-                </button>
-              </td>
-
-              <!-- berisi fungsi untuk menambahkan -->
-              <td
-                v-if="input.isPosted === true"
-                class="flex flex-wrap gap-4 justify-center"
-              >
-                <button
-                  @click="
-                    saveApproverLines(approverLines, index, idMatrixActual)
-                  "
-                >
-                  <img :src="checkIcon" class="w-5 h-5" />
-                </button>
-                <button @click="removeField(index, approverLines)">
-                  <img :src="closeIcon" class="w-5 h-5" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <modalFooter @closeEdit="isVisible = false" />
+        <modalFooter @closeEdit="isVisible = false" />
+      </form>
     </main>
   </Modal>
 </template>
