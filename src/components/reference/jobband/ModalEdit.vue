@@ -17,7 +17,7 @@ import Api from "@/utils/Api";
 import { ref, onMounted, onBeforeMount, watch, computed } from "vue";
 import { useFormEditStore } from "@/stores/reference/jobband/edit-modal.js";
 
-const emits = defineEmits(["unlockScrollbar", "changeJobband"]);
+const emits = defineEmits(["unlockScrollbar", "changeJobband", "fetchJobband"]);
 
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
@@ -33,29 +33,11 @@ let selectedFlightClass = ref(props.formContent[4]);
 
 //for inner table
 let instanceArray = [];
-let idMatrix = props.formContent[5];
 let idMatrixActual = ref(null);
-let authorities = ref("");
 let currentAuthoritiesId = ref();
 let dropdownRemoveList = ref([]);
 let addZona = ref([]);
-// let zonaName = ref(props.formContent[5]);
-let addAuthoritiesData = ref([]);
-let levelValue = ref();
 let approverLines = ref(props.formContent[5] || []);
-
-// if (props.formContent[5] == undefined) {
-//   console.log("array detail tidak ada");
-// } else {
-//   idMatrix.map((item, index) => {
-//     if (index == idMatrix.length - 1) {
-//       console.log("ini adalah index terakhir " + index);
-//     } else {
-//       dropdownRemoveList.value.push(item.id_tlk);
-//     }
-//   });
-//   idMatrixActual.value = idMatrix[0].id_matrix;
-// }
 
 const fetchZonaJobband = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -63,59 +45,7 @@ const fetchZonaJobband = async () => {
   const res = await Api.get("/zona_job/get/");
   instanceArray = res.data.data;
   addZona.value = instanceArray;
-  // authorities.value = addZona.value[0].level;
-  // levelValue.value = addZona.value[0].level;
-  // console.log(
-  //   "ini data instance array addAuthoritiesData" + JSON.stringify(instanceArray)
-  // );
-  // console.log("ini data authorities" + JSON.stringify(authorities));
-  // console.log("ini data level" + JSON.stringify(levelValue));
 };
-
-//for get site in select
-// const fetchZonaJobbandById = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-//   const id = 76;
-//   try {
-//     const response = await Api.get(`/zona_job/get_by_job/${id}`);
-//     const dataZona = response.data;
-//     console.log(dataZona);
-//   } catch (error) {
-//     console.error("Terjadi kesalahan:", error);
-//   }
-// };
-
-// const saveField = () => {
-//   formEditState.jobBand.jobBandIdCompany = selectedCompany.value;
-//   formEditState.jobBand.jobBandName = jobBandName.value;
-//   formEditState.jobBand.jobBandHotelFare = hotelFare.value;
-//   formEditState.jobBand.jobBandMealrate = mealsRate.value;
-//   formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
-//   isVisible.value = false;
-//   emits("editJobBand");
-// };
-
-// const saveApproverLines = async (data, jobbandId, mealsRate, idx) => {
-//   // console.log(jobbandId);
-
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   await Api.post("/zona_job/store", {
-//     id_zona: data[idx].id_zona,
-//     // id_job_band: jobbandId,
-//     tlk_rate: mealsRate,
-//   });
-
-//   // data[idx].isPosted = undefined;
-//   // console.log("tlk telah ditambahkan!");
-// };
-
-// const editApproverLines = async () => {
-//   // console.log("masuk ke edit approver lines");
-//   // emits('editApprover')
-// };
 
 //untuk menambahkan field
 const addField = (fieldType, isi) => {
@@ -184,8 +114,6 @@ const submitEdit = () => {
   formEditState.jobBand.jobBandMealrate = mealsRate.value;
   formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
 
-  // console.log("Form Edit State:", formEditState.jobBand); // Tambahkan log ini
-
   isVisible.value = false;
   emits("changeJobband"); // Memanggil event 'changeJobband'
   console.log("Berhasil submit");
@@ -197,11 +125,9 @@ const fetchGetCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   companyData = res.data.data;
-  // console.log("ini data company" + JSON.stringify(res.data.data));
   companyData.map((item) => {
     item.value = item.id;
   });
-  // console.log("Data company setelah perubahan:", companyData);
 };
 
 //for get site in select
@@ -210,26 +136,12 @@ const fetchGetFlightClass = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/flight_class/");
   FlightClass.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-
-//for get zona
-// const fetchGetZona = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/zona/get/");
-//   instanceArray = res.data.data;
-//   addZona.value = instanceArray;
-//   // console.log("ini data zona" + JSON.stringify(res.data.data));
-//   // console.log("ini instance array" + JSON.stringify(instanceArray));
-// };
 
 onMounted(() => {
   fetchGetCompany();
   fetchGetFlightClass();
-  // fetchGetZona();
   fetchZonaJobband();
-  // fetchZonaJobbandById();
 });
 
 const inputStylingClass =
@@ -454,6 +366,7 @@ const formatCurrency = () => {
             </thead>
 
             <tbody class="bg-[#F5F5F5]">
+              <!-- {{ addZona }} -->
               <tr
                 class="font-JakartaSans font-normal text-sm"
                 v-for="(input, index) in approverLines"
@@ -469,7 +382,7 @@ const formatCurrency = () => {
                     <option
                       v-for="data in addZona"
                       :key="data.id"
-                      :value="data.id"
+                      :value="data.id_zona"
                       :hidden="
                         dropdownRemoveList.includes(data.id) ? true : false
                       "

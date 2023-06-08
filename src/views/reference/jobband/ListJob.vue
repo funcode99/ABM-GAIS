@@ -217,6 +217,11 @@ onMounted(() => {
   fetchGetCompany();
 });
 
+const getData = () => {
+  console.log("mengambil kembali data");
+  fetchJobBand();
+};
+
 //get all job band
 const fetchJobBand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -504,6 +509,7 @@ const exportToExcel = () => {
                 </td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
+                    @fetchJobband="getData"
                     @change-jobband="editJobBand(data.id)"
                     :formContent="[
                       data.band_job_name,
@@ -515,7 +521,6 @@ const exportToExcel = () => {
                       index,
                     ]"
                   />
-                  {{ data?.detail }}
                   <button @click="deleteJobBand(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>
