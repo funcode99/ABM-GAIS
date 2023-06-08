@@ -6,15 +6,17 @@
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
-    import deleteicon from "@/assets/navbar/delete_icon.svg";
-    import icondanger from "@/assets/Danger.png";
-    import iconClose from "@/assets/navbar/icon_close.svg";
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import icondanger from "@/assets/Danger.png"
+    import iconClose from "@/assets/navbar/icon_close.svg"
+
+    import exportExcel from '@/utils/exportToExcel.js'
+    import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
     
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
-    import { Workbook } from "exceljs";
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
-    import Swal from "sweetalert2";
+    import Swal from "sweetalert2"
     import Api from '@/utils/Api'
 
     import ModalEditUser from '@/components/system-configuration/user/ModalEditUser.vue'
@@ -28,7 +30,7 @@
     const formEditState = useFormEditStore()
     
     let sortedData = ref([])
-    // let sortedDataReactive = computed(() => sortedData.value)
+    let deleteArray = ref([])
     let sortedbyASC = true
     let instanceArray = []
     let editDataUserId = ref(0)
@@ -38,6 +40,13 @@
     let pageMultiplier = ref(10)
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let paginateIndex = ref(0)
+
+    const tableHead = [
+      {Id: 1, title: 'No', jsonData: 'no'},
+      {Id: 2, title: 'Username', jsonData: 'username'},
+      {Id: 3, title: 'User Role', jsonData: 'id_role'},
+      {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'}
+    ]
 
     //for paginations
     const onChangePage = (pageOfItem) => {
@@ -66,13 +75,6 @@
         deleteArray.value = []
       }
     }
-
-    const tableHead = [
-      {Id: 1, title: 'No', jsonData: 'no'},
-      {Id: 2, title: 'Username', jsonData: 'username'},
-      {Id: 3, title: 'User Role', jsonData: 'id_role'},
-      {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'}
-    ]
 
     const sortList = (sortBy) => {
       if(sortedbyASC) {
@@ -193,8 +195,7 @@
     }
 
     const callEditApi = async () => {
-        console.log(formEditState.user.fullname)
-      const token = JSON.parse(localStorage.getItem('token'))
+        const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.post(`/users/update_data/${editDataUserId.value}`, 
         {
@@ -242,107 +243,20 @@
       fetch()
     })
 
-    let deleteArray = ref([])
     const deleteCheckedArray = () => {
-
-      Swal.fire({
-        title:
-          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-        iconHtml: `<img src="${icondanger}" />`,
-        showCloseButton: true,
-        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-        showCancelButton: true,
-        buttonsStyling: false,
-        cancelButtonText: "Cancel",
-        customClass: {
-          cancelButton: "swal-cancel-button",
-          confirmButton: "swal-confirm-button",
-        },
-        reverseButtons: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      })
-        
-      .then((result) => {
-        if (result.isConfirmed) {
-
-        deleteArray.value.map((item) => {
-          Api.delete(`/users/delete_data/${item}`)
-        })
-          
-        Swal.fire({
-              title: "Successfully",
-              text: "Data has been deleted.",
-              icon: "success",
-              showCancelButton: false,
-              confirmButtonColor: "#015289",
-              showConfirmButton: false,
-              timer: 1500,
-        });
-
-        if (sortedData.value.length == 1) {
-          fetch()
-          } else {
-          fetch()
-        }
-
-        deleteArray.value = []
-
-        } else {
-          return
-        }
-
-      })
-
+      deleteCheckedArrayUtils(deleteArray, 'users', sortedData, fetch)
     }
 
     const filterTable = async (id, roleId) => {
-      // console.log(id)
-      // console.log(roleId)
-      // console.log('masuk ke filter table')
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)
-        // console.log(api)
-        // console.log(api.status)
-        // status.value = api.status
         instanceArray = api.data.data
         sortedData.value = instanceArray
     }
 
     const exportToExcel = () => {
-
-      const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet("User Data")
-
-      // Menambahkan header kolom
-      tableHead.forEach((column, index) => {
-        worksheet.getCell(1, index + 1).value = column.title;
-      })
-
-      // Menambahkan data ke baris-baris selanjutnya
-      sortedData.value.forEach((data, rowIndex) => {
-        worksheet.getCell(rowIndex + 2, 1).value = data.no;
-        worksheet.getCell(rowIndex + 2, 2).value = data.username;
-        worksheet.getCell(rowIndex + 2, 3).value = data.role_name;
-        worksheet.getCell(rowIndex + 2, 4).value = data.auth_name;
-      })
-
-      // Menyimpan workbook menjadi file Excel
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "user_data.xlsx";
-        a.click();
-        URL.revokeObjectURL(url);
-      })
-
+      exportExcel('User Data', tableHead, sortedData, 'no', 'username', 'role_name', 'auth_name')
     }
 
 </script>

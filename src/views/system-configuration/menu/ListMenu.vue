@@ -4,12 +4,14 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
+    import exportExcel from '@/utils/exportToExcel.js'
+    import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
+
     import Swal from "sweetalert2"
     import Api from '@/utils/Api'
     
     // import untuk approval table
     import { ref, onBeforeMount, computed } from 'vue'
-    import { Workbook } from "exceljs"
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
@@ -30,6 +32,7 @@
 
     let instanceArray = []
     let sortedData = ref([])
+    let deleteArray = ref([])
     let menuData = ref([])
     let sortedbyASC = true
     let editDataId = ref(0)
@@ -119,15 +122,17 @@
         icon: formState.menu.icon,
         id_company: formState.menu.companyId
       })
-      console.log(api)
-        Swal.fire({
+
+      Swal.fire({
           position: "center",
           icon: "success",
           title: "Your work has been saved",
           showConfirmButton: false,
           timer: 1500,
-        })
+      })
+
       fetch()
+
     }
 
     const editMenu = async (data) => {
@@ -231,73 +236,12 @@
       fetch()
     })
 
-    const filteredItems = (search) => {
-      sortedData.value = instanceArray
-          const filteredR = sortedData.value.filter(item => {
-          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
-      })
-      sortedData.value = filteredR
-      onChangePage(1)
-    }
-
     const getSessionForSidebar = () => {
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
-    let deleteArray = ref([])
     const deleteCheckedArray = () => {
-
-      Swal.fire({
-        title:
-          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-        iconHtml: `<img src="${icondanger}" />`,
-        showCloseButton: true,
-        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-        showCancelButton: true,
-        buttonsStyling: false,
-        cancelButtonText: "Cancel",
-        customClass: {
-          cancelButton: "swal-cancel-button",
-          confirmButton: "swal-confirm-button",
-        },
-        reverseButtons: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      })
-        
-      .then((result) => {
-        if (result.isConfirmed) {
-
-        deleteArray.value.map((item) => {
-          Api.delete(`/menu/delete_data/${item}`)
-        })
-          
-        Swal.fire({
-              title: "Successfully",
-              text: "Data has been deleted.",
-              icon: "success",
-              showCancelButton: false,
-              confirmButtonColor: "#015289",
-              showConfirmButton: false,
-              timer: 1500,
-        });
-
-        if (sortedData.value.length == 1) {
-          fetch()
-          } else {
-          fetch()
-        }
-
-        deleteArray.value = []
-
-        } else {
-          return
-        }
-
-      })
-
+      deleteCheckedArrayUtils(deleteArray, 'menu', sortedData, fetch)
     }
 
     const filterTable = async (id) => {
@@ -314,40 +258,20 @@
     }
 
     const exportToExcel = () => {
-
-      const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet("Menu Data")
-
-      // Menambahkan header kolom
-      tableHead.forEach((column, index) => {
-        worksheet.getCell(1, index + 1).value = column.title;
-      })
-
-      // Menambahkan data ke baris-baris selanjutnya
-      sortedData.value.forEach((data, rowIndex) => {
-        worksheet.getCell(rowIndex + 2, 1).value = data.no
-        worksheet.getCell(rowIndex + 2, 2).value = data.menu
-        worksheet.getCell(rowIndex + 2, 3).value = data.parent
-        worksheet.getCell(rowIndex + 2, 4).value = data.status_name
-      })
-
-      // Menyimpan workbook menjadi file Excel
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "menu_data.xlsx";
-        a.click();
-        URL.revokeObjectURL(url);
-      })
-
+      exportExcel('Menu Data', tableHead, sortedData, 'no', 'menu', 'parent', 'status_name')
     }
 
     const fillPageMultiplier = (value) => {
       pageMultiplier.value = value
+      onChangePage(1)
+    }
+
+    const filteredItems = (search) => {
+      sortedData.value = instanceArray
+          const filteredR = sortedData.value.filter(item => {
+          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+      })
+      sortedData.value = filteredR
       onChangePage(1)
     }
 

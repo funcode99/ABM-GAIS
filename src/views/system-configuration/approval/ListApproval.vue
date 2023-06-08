@@ -4,9 +4,11 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
+    import exportExcel from '@/utils/exportToExcel.js'
+    import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
+
     // import untuk approval table
     import { ref, computed, onBeforeMount } from 'vue'
-    import { Workbook } from "exceljs";
     import arrowicon from "@/assets/navbar/icon_arrow.svg";
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
 
@@ -30,7 +32,7 @@
     const editApprovalId = ref()
 
     let sortedData = ref([])
-
+    let deleteArray = ref([])
     let sortedbyASC = true
     let instanceArray = []
 
@@ -229,60 +231,8 @@
       fetch()
     }
 
-    let deleteArray = ref([])
     const deleteCheckedArray = () => {
-
-      Swal.fire({
-        title:
-          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-        iconHtml: `<img src="${icondanger}" />`,
-        showCloseButton: true,
-        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-        showCancelButton: true,
-        buttonsStyling: false,
-        cancelButtonText: "Cancel",
-        customClass: {
-          cancelButton: "swal-cancel-button",
-          confirmButton: "swal-confirm-button",
-        },
-        reverseButtons: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      })
-        
-      .then((result) => {
-        if (result.isConfirmed) {
-
-        deleteArray.value.map((item) => {
-          Api.delete(`/menu/delete_data/${item}`)
-        })
-          
-        Swal.fire({
-              title: "Successfully",
-              text: "Data has been deleted.",
-              icon: "success",
-              showCancelButton: false,
-              confirmButtonColor: "#015289",
-              showConfirmButton: false,
-              timer: 1500,
-        });
-
-        if (sortedData.value.length == 1) {
-          fetch()
-          } else {
-          fetch()
-        }
-
-        deleteArray.value = []
-
-        } else {
-          return
-        }
-
-      })
-
+      deleteCheckedArrayUtils(deleteArray, 'approval', sortedData, fetch, 'approval')
     }
 
     const filterTable = async (id) => {
@@ -299,36 +249,7 @@
     }
 
     const exportToExcel = () => {
-
-      const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet("Approval Data")
-
-      // Menambahkan header kolom
-      tableHead.forEach((column, index) => {
-        worksheet.getCell(1, index + 1).value = column.title;
-      })
-
-      // Menambahkan data ke baris-baris selanjutnya
-      sortedData.value.forEach((data, rowIndex) => {
-        worksheet.getCell(rowIndex + 2, 1).value = data.no;
-        // worksheet.getCell(rowIndex + 2, 2).value = data.id;
-        worksheet.getCell(rowIndex + 2, 2).value = data.approval_name;
-        worksheet.getCell(rowIndex + 2, 3).value = data.menu;
-      })
-
-      // Menyimpan workbook menjadi file Excel
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "approval_data.xlsx";
-        a.click();
-        URL.revokeObjectURL(url);
-      })
-
+      exportExcel('Approval Data', tableHead, sortedData, 'no', 'approval_name', 'menu')
     }
 
     const fillPageMultiplier = (value) => {

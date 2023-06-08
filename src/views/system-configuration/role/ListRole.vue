@@ -8,9 +8,9 @@
     import ModalMenuAccessRole from '@/components/system-configuration/role/ModalMenuAccessRole.vue'
 
     import { ref, onBeforeMount, computed } from 'vue'
-    import { Workbook } from "exceljs";
-    import Swal from "sweetalert2"
     import Api from '@/utils/Api'
+    import Swal from "sweetalert2"
+    import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
 
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
@@ -31,8 +31,11 @@
 
     // import untuk table
     let sortedData = ref([])
+    let deleteArray = ref([])
     let sortedbyASC = true
     let instanceArray = []
+    let status = ref('')
+    let message = ref('')
 
     let editRoleDataId = ref()
 
@@ -213,8 +216,7 @@
         sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
-    let status = ref('')
-    let message = ref('')
+
     const fetch = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -236,93 +238,9 @@
       fetchGetActive()
     })
 
-    let deleteArray = ref([])
     const deleteCheckedArray = () => {
-
-      Swal.fire({
-        title:
-          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-        iconHtml: `<img src="${icondanger}" />`,
-        showCloseButton: true,
-        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-        showCancelButton: true,
-        buttonsStyling: false,
-        cancelButtonText: "Cancel",
-        customClass: {
-          cancelButton: "swal-cancel-button",
-          confirmButton: "swal-confirm-button",
-        },
-        reverseButtons: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      })
-        
-      .then((result) => {
-        if (result.isConfirmed) {
-
-        deleteArray.value.map((item) => {
-          Api.delete(`/role/delete_data/${item}`)
-        })
-          
-        Swal.fire({
-              title: "Successfully",
-              text: "Data has been deleted.",
-              icon: "success",
-              showCancelButton: false,
-              confirmButtonColor: "#015289",
-              showConfirmButton: false,
-              timer: 1500,
-        });
-
-        if (sortedData.value.length == 1) {
-          fetch()
-          } else {
-          fetch()
-        }
-
-        deleteArray.value = []
-
-        } else {
-          return
-        }
-
-      })
-
+      deleteCheckedArrayUtils(deleteArray, 'role', sortedData, fetch)
     }
-
-    const exportToExcel = () => {
-
-      const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet("Brand Data")
-
-      // Menambahkan header kolom
-      tableHead.forEach((column, index) => {
-        worksheet.getCell(1, index + 1).value = column.title;
-      })
-
-      // Menambahkan data ke baris-baris selanjutnya
-      sortedData.value.forEach((data, rowIndex) => {
-        worksheet.getCell(rowIndex + 2, 1).value = data.no;
-        // worksheet.getCell(rowIndex + 2, 2).value = data.id;
-        worksheet.getCell(rowIndex + 2, 2).value = data.role_name;
-      })
-
-      // Menyimpan workbook menjadi file Excel
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "role_data.xlsx";
-        a.click();
-        URL.revokeObjectURL(url);
-      })
-
-  }
   
 </script>
 
@@ -346,8 +264,7 @@
           @delete-selected-data="deleteCheckedArray()" 
           @increase-role="addRole" 
           @do-search="filteredItems" 
-          @change-showing="fillPageMultiplier" 
-          @export-to-excel="exportToExcel"
+          @change-showing="fillPageMultiplier"
         />
 
         <!-- actual table -->

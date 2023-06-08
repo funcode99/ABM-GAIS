@@ -4,12 +4,14 @@
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
 
+    import exportExcel from '@/utils/exportToExcel.js'
+    import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
+
     import Swal from "sweetalert2"
     import Api from '@/utils/Api'
 
     // import untuk user table
     import { ref, computed, onBeforeMount } from 'vue'
-    import { Workbook } from "exceljs"
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
 
@@ -230,58 +232,7 @@
 
     let deleteArray = ref([])
     const deleteCheckedArray = () => {
-
-      Swal.fire({
-        title:
-          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-        iconHtml: `<img src="${icondanger}" />`,
-        showCloseButton: true,
-        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-        showCancelButton: true,
-        buttonsStyling: false,
-        cancelButtonText: "Cancel",
-        customClass: {
-          cancelButton: "swal-cancel-button",
-          confirmButton: "swal-confirm-button",
-        },
-        reverseButtons: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes",
-      })
-        
-      .then((result) => {
-        if (result.isConfirmed) {
-
-        deleteArray.value.map((item) => {
-          Api.delete(`/sequence/delete_data/${item}`)
-        })
-          
-        Swal.fire({
-              title: "Successfully",
-              text: "Data has been deleted.",
-              icon: "success",
-              showCancelButton: false,
-              confirmButtonColor: "#015289",
-              showConfirmButton: false,
-              timer: 1500,
-        });
-
-        if (sortedData.value.length == 1) {
-          fetch()
-          } else {
-          fetch()
-        }
-
-        deleteArray.value = []
-
-        } else {
-          return
-        }
-
-      })
-
+      deleteCheckedArrayUtils(deleteArray, 'sequence', sortedData, fetch)
     }
 
     const filterTable = async (id) => {
@@ -298,37 +249,7 @@
     }
 
     const exportToExcel = () => {
-
-      const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet("Sequence Data")
-
-      // Menambahkan header kolom
-      tableHead.forEach((column, index) => {
-        worksheet.getCell(1, index + 1).value = column.title;
-      })
-
-      // Menambahkan data ke baris-baris selanjutnya
-      sortedData.value.forEach((data, rowIndex) => {
-        worksheet.getCell(rowIndex + 2, 1).value = data.no
-        worksheet.getCell(rowIndex + 2, 2).value = data.sequence_name
-        worksheet.getCell(rowIndex + 2, 3).value = data.prefix
-        worksheet.getCell(rowIndex + 2, 4).value = data.suffix
-        worksheet.getCell(rowIndex + 2, 5).value = data.sequence_size
-      })
-
-      // Menyimpan workbook menjadi file Excel
-      workbook.xlsx.writeBuffer().then((buffer) => {
-        const blob = new Blob([buffer], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "user_data.xlsx";
-        a.click();
-        URL.revokeObjectURL(url);
-      })
-
+      exportExcel('Sequence Data', tableHead, sortedData, 'no', 'sequence_name', 'prefix', 'suffix','sequence_size')
     }
   
 </script>
