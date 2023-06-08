@@ -199,11 +199,12 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.id_item.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.request_no.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    // console.log(item)
+    (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
+      (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.id_item.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.request_no.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
+      (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
