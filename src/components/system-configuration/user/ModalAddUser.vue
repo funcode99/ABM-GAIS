@@ -228,7 +228,6 @@
                   </select>
                 </div>
 
-                {{ idStatusMenu }}
                 <div class="mb-3 text-left">
                     <label for="status_menu">Status</label>
                     <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">

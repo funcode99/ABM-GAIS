@@ -51,13 +51,15 @@
   const columnClass = 'flex flex-col flex-1'
   const inputStylingClass ='py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
+  // initialization for fetched approver lines with default property & value
     if(props.formContent[4] == undefined) {
       console.log('array detail tidak ada')
     } 
     else {
       idMatrix.map((item, index) => {
+        item.isEdit = false
+        item.fromFetch = true
           if(index == idMatrix.length-1) {
-            // console.log('ini adalah index terakhir ' + index)
           }
           else {
             dropdownRemoveList.value.push(item.id_approval_auth)
@@ -67,133 +69,182 @@
     }
 
 
-  const fetchApproverAuthorities = async () => {
 
-    const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get('/approval/get_approval_type')
-      instanceArray = api.data.data 
-      addAuthoritiesData.value = instanceArray
-      authorities.value = addAuthoritiesData.value[0].level
-      levelValue.value = addAuthoritiesData.value[0].level
-  }
-
-  const saveField = () => {
-      formEditState.approval.matrixName = matrixName.value
-      formEditState.approval.companyId = company.value
-      formEditState.approval.menuId = menu.value
-      formEditState.approval.codeDocumentId = document.value
-      formEditState.approval.minCA = minCA.value
-      formEditState.approval.maxCA = maxCA.value
-      isVisible.value = false
-      emits('editApprover')
-  }
-
-  const saveApproverLines = async (data, idx, matrixId) => {
-
-    const token = JSON.parse(localStorage.getItem('token'))
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    const api = await Api.post('/approval/store_approval_detail', {
-      id_matrix: matrixId,
-      level: data[idx].level,
-      id_approval_auth: data[idx].id_approval_auth
-    })
-
-    data[idx].isPosted = undefined
-    console.log('approval telah ditambahkan!')
-    emits('fetchApproval')
-    const insertDefault = () => {
-      approverLines.value = props.formContent[4]
+    const saveField = () => {
+        formEditState.approval.matrixName = matrixName.value
+        formEditState.approval.companyId = company.value
+        formEditState.approval.menuId = menu.value
+        formEditState.approval.codeDocumentId = document.value
+        formEditState.approval.minCA = minCA.value
+        formEditState.approval.maxCA = maxCA.value
+        isVisible.value = false
+        emits('editApprover')
     }
-    setTimeout(insertDefault, 100)
 
-  }
+    const saveApproverLines = async (data, idx, matrixId) => {
 
-  const editApproverLines = async (data, idx, matrixId, id) => {
-    console.log('masuk ke edit approver lines')
-
-    const api = await Api.post(`/approval/update_data_approval_detail/${id}`, {
-      id_matrix: matrixId,
-      level: data[idx].level,
-      id_approval_auth: data[idx].id_approval_auth
-    })
-    console.log(api)
-    console.log('approval telah diubah!')
-    emits('fetchApproval')
-    const insertDefault = () => {
-      approverLines.value = props.formContent[4]
-    }
-    setTimeout(insertDefault, 100)
-  }
-
-  const addField = (fieldType, isi) => {
-
-          if(isi) {
-            dropdownRemoveList.value.push(isi)
-          }
-
-          fieldType.push({
-            id_approval_auth : authorities.value,
-            level: levelValue.value,
-            isPosted: false
-            // approverName : ''
-          })
-
-  }
-
-  const removeField = async (index, fieldType) => {
-
-    if(fieldType[index].id_detail) {
-      
-      console.log('masuk ke api')
-      
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.delete(`/approval/delete_data_approval_detail/${fieldType[index].id_detail}`)
+      const api = await Api.post('/approval/store_approval_detail', {
+        id_matrix: matrixId,
+        level: data[idx].level,
+        id_approval_auth: data[idx].id_approval_auth
+      })
 
-      console.log('approval berhasil dihapus')
+      data[idx].forAdd = undefined
+      console.log('approval telah ditambahkan!')
       emits('fetchApproval')
-      
+
+      const insertDefault = () => {
+        approverLines.value = props.formContent[4]
+
+        console.log(approverLines.value)
+
+        if(props.formContent[4] == undefined) {
+          console.log('array detail tidak ada')
+        } 
+        else {
+          approverLines.value.map((item, index) => {
+            item.isEdit = false
+            item.fromFetch = true
+              if(index == idMatrix.length-1) {
+              }
+              else {
+                dropdownRemoveList.value.push(item.id_approval_auth) 
+              }
+          })
+          // idMatrixActual.value = idMatrix[0].id_matrix
+        }
+
+      }
+      setTimeout(insertDefault, 100)
+
     }
 
-    console.log('setelah masuk ke api')
+    const editApproverLines = async (data, idx, matrixId, id) => {
+      console.log('masuk ke edit approver lines')
 
-    fieldType.splice(index, 1)
-    dropdownRemoveList.value.splice(index-1, 1)
-    dropdownRemoveList.value.splice(index+1, 1)
-  
-  }
+      const api = await Api.post(`/approval/update_data_approval_detail/${id}`, {
+        id_matrix: matrixId,
+        level: data[idx].level,
+        id_approval_auth: data[idx].id_approval_auth
+      })
+      console.log(api)
+      console.log('approval telah diubah!')
+      emits('fetchApproval')
+      console.log(approverLines.value)
+      const insertDefault = () => {
+        approverLines.value = props.formContent[4]
 
-  const fetchMenu = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
+        if(props.formContent[4] == undefined) {
+        console.log('array detail tidak ada')
+        } 
+        else {
+        approverLines.value.map((item, index) => {
+          item.isEdit = false
+          item.fromFetch = true
+            if(index == idMatrix.length-1) {
+              // console.log('ini adalah index terakhir ' + index)
+            }
+            else {
+              dropdownRemoveList.value.push(item.id_approval_auth) 
+            }
+        })
+        // idMatrixActual.value = idMatrix[0].id_matrix
+        }
+
+      }
+      setTimeout(insertDefault, 100)
+    }
+
+    const addField = (fieldType, isi) => {
+
+            if(isi) {
+              dropdownRemoveList.value.push(isi)
+            }
+
+            fieldType.push({
+              id_approval_auth : authorities.value,
+              level: levelValue.value,
+              forAdd: false
+              // approverName : ''
+            })
+
+    }
+
+    const removeField = async (index, fieldType) => {
+
+      if(fieldType[index].id_detail) {
+        
+        console.log('masuk ke api')
+        
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.delete(`/approval/delete_data_approval_detail/${fieldType[index].id_detail}`)
+
+        console.log('approval berhasil dihapus')
+        emits('fetchApproval')
+        
+      }
+
+      console.log('setelah masuk ke api')
+
+      fieldType.splice(index, 1)
+      dropdownRemoveList.value.splice(index-1, 1)
+      dropdownRemoveList.value.splice(index+1, 1)
+    
+    }
+
+
+
+
+
+
+    const fetchMenu = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/menu/get')      
+        instanceArray = api.data.data
+        addData.value = instanceArray
+    }
+
+    const fetchCompany = async () => {
+      const token = JSON.parse(localStorage.getItem("token"));
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const res = await Api.get("/company/get")
+      instanceArray = res.data.data
+      addCompanyData.value = instanceArray
+    }
+
+    const fetchDocument = async () => {
+      const token = JSON.parse(localStorage.getItem("token"));
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data
-      addData.value = instanceArray
-  }
+      const res = await Api.get("/request_trip/get_document_code")
+      instanceArray = res.data.data
+      addDocumentData.value = instanceArray
+    }
 
-  const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get")
-    instanceArray = res.data.data
-    addCompanyData.value = instanceArray
-  }
+    const fetchApproverAuthorities = async () => {
 
-  const fetchDocument = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    const res = await Api.get("/request_trip/get_document_code")
-    instanceArray = res.data.data
-    addDocumentData.value = instanceArray
-  }
+const token = JSON.parse(localStorage.getItem('token'))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get('/approval/get_approval_type')
+  instanceArray = api.data.data 
+  addAuthoritiesData.value = instanceArray
+  authorities.value = addAuthoritiesData.value[0].level
+  levelValue.value = addAuthoritiesData.value[0].level
+    }
 
-  onBeforeMount(() => {
-    fetchMenu()
-    fetchCompany()
-    fetchDocument()
-    fetchApproverAuthorities()
-  })
+
+
+
+
+    onBeforeMount(() => {
+      fetchMenu()
+      fetchCompany()
+      fetchDocument()
+      fetchApproverAuthorities()
+    })
 
 </script>
 
@@ -308,7 +359,9 @@
         <!-- approver lines area -->
         <div>
 
-         
+          <div class="w-10">
+           
+          </div>
 
           <h1 class="font-medium text-left">Approver Lines <span>*</span> </h1>
           <hr class="border border-black">
@@ -355,13 +408,17 @@
 
                   <td class="hidden" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
                   </td>
-    
-                  <!-- event listener gak ngaruh di option -->
+
+                  <!-- "input.isEdit === false ? true : approverLines.length-1 > index ? true : false" -->
+
                   <td>
-                    <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : input.isEdit === true ? true : false"  >
+                    <!--  -->
+                    <select v-model="input.id_approval_auth" :id="index" :disabled="input.isEdit == false ? true : false" >
+
                       <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
                           {{ data.auth_name }}
                       </option>
+
                     </select>
                   </td>
     
@@ -372,54 +429,48 @@
                   <td>
                     <input type="text" class="px-2" v-model="input.approverName" />
                   </td>
- 
-                  <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
-                  <!-- edit  -->
-                  <td v-if="input.isPosted === undefined && input.isEdit != false" class="flex flex-wrap gap-4 justify-center" >
-                
-                    <button type="button" @click="input.isEdit = false" :class="approverLines.length-1 > index ? 'hidden' : '' ">
+
+                  <td class="flex flex-wrap gap-4 justify-center" >
+
+                    <button v-if="input.fromFetch == true && input.isEdit == false" type="button" 
+                      :class="approverLines.length-1 > index ? 'hidden' : '' "
+                      @click="input.isEdit = true" 
+                    >
                       <img :src="editIcon" class="w-6 h-6" />
                     </button>
-                    <button type="button" @click="removeField(index, approverLines)" :class="approverLines.length-1 > index ? 'hidden' : '' " >
+                    
+                    <button v-if="input.fromFetch == true && input.isEdit == false" type="button" @click="removeField(index, approverLines)" :class="approverLines.length-1 > index ? 'hidden' : '' " >
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
-                  </td>
 
-                  <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
-                  <!-- add -->
-                  <td v-if="input.isPosted === false" class="flex flex-wrap gap-4 justify-center">
-               
-                    <button type="button" @click="input.isPosted = true">
+                    <h1 v-if="input.isEdit == true"> confirm for edit api</h1>
+                    <button v-if="input.isEdit == true" type="button" @click="editApproverLines(approverLines, index, idMatrixActual, input.id_detail) ">
+                      <img :src="checkIcon" class="w-5 h-5" />
+                    </button>
+
+                    <button v-if="input.isEdit == true" type="button" @click="input.isEdit = false">
+                      <img :src="closeIcon" class="w-5 h-5" />
+                    </button>
+
+                    <button v-if="input.forAdd == false" type="button" 
+                      @click="input.forAdd = true">
                       <img :src="editIcon" class="w-6 h-6" />
                     </button>
-                    <button type="button" @click="removeField(index, approverLines)">
+
+                    <button v-if="input.forAdd == false" type="button" @click="removeField(index, approverLines)">
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
-                  </td>
 
-                  <!-- berisi fungsi untuk mengganti -->
-                  <!-- fungsi edit -->
-                  <td v-if="input.isEdit === false" class="flex flex-wrap gap-4 justify-center">
-                 
-                    <button type="button" @click="editApproverLines(approverLines, index, idMatrixActual, input.id_detail) ">
+                    <h1 v-if="input.forAdd == true"> confirm for add api</h1>
+                    <button v-if="input.forAdd == true" type='button' @click="saveApproverLines(approverLines, index, idMatrixActual)">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
-                    <!-- removeField(index, approverLines) -->
-                    <button type="button" @click="input.isEdit = true">
-                      <img :src="closeIcon" class="w-5 h-5" />
-                    </button>
-                  </td>
 
-                  <!-- berisi fungsi untuk menambahkan -->
-                  <!-- fungsi add -->
-                  <td v-if="input.isPosted === true" class="flex flex-wrap gap-4 justify-center">
-                
-                    <button type='button' @click="saveApproverLines(approverLines, index, idMatrixActual)">
-                      <img :src="checkIcon" class="w-5 h-5" />
-                    </button>
-                    <button type='button' @click="removeField(index, approverLines)">
+                    <button v-if="input.forAdd == true" type='button' 
+                      @click="input.forAdd = false">
                       <img :src="closeIcon" class="w-5 h-5" />
                     </button>
+
                   </td>
   
                 </tr>
@@ -473,7 +524,7 @@ th span {
 
 :deep(.modal-vue3-content) {
   max-height: 550px !important;
-  width: 550px !important;
+  width: fit-content !important;
   max-width: 600px !important; 
 }
 
