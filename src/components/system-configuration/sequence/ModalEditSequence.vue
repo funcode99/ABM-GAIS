@@ -150,12 +150,12 @@
                   <!-- Nama -->
                   <div :class="columnClass">
                   
-                  <label
-                    class="block mb-2 font-JakartaSans font-medium text-sm">
-                      Nama<span class="text-red">*</span>
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm" for="sequence_name">
+                      Nama Sequence<span class="text-red">*</span>
                   </label>
 
                   <input
+                    id="sequence_name"
                     v-model="menuSequenceName"
                     type="text"
                     placeholder="Nama Sequence"
@@ -190,8 +190,9 @@
                         for="company"
                         class="block mb-2 font-JakartaSans font-medium text-sm"
                         id="company"
-                        >Menu<span class="text-red">*</span></label
                       >
+                        Menu<span class="text-red">*</span>
+                      </label>
                       <select v-model="menu" :class="inputStylingClass" required>
                         <option v-for="data in addMenuData" :key="data.id" :value="data.id">
                           {{ data.menu }}
@@ -260,11 +261,18 @@
                         Sequence Code<span class="text-red">*</span>
                     </label>
 
-                    <select for="sequence_code" v-model="menu" disabled>
+                    <!-- <select for="sequence_code" v-model="menu" disabled>
                       <option :class="inputStylingClass" v-for="data in addMenuData" :key="data.id" :value="data.id" required>
                         {{ data.code_sequence }}
                       </option>
-                    </select>
+                    </select> -->
+
+                    <input 
+                      type="text" 
+                      :class="[inputStylingClass, menu == data.id ? '' : 'hidden']" 
+                      v-for="data in addMenuData" :key="data.id" 
+                      :value="data.code_sequence" required disabled 
+                    />
 
                   </div>
 

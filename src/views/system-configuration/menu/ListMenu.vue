@@ -316,7 +316,7 @@
     const exportToExcel = () => {
 
       const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet("Brand Data")
+      const worksheet = workbook.addWorksheet("Menu Data")
 
       // Menambahkan header kolom
       tableHead.forEach((column, index) => {

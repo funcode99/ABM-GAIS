@@ -97,9 +97,6 @@ let addCompanyData = ref([]);
   const columnClass = 'flex flex-col flex-1'
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
-  // const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
-
-// const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
 </script>
 
 <template>
@@ -115,6 +112,7 @@ let addCompanyData = ref([]);
       <modalHeader @closeVisibility="isVisible = false" title="New Sequence" />
 
       <form class="modal-box-inner-inner" @submit.prevent="submitSequence">
+
         <div :class="rowClass">
           <!-- Company -->
           <div :class="columnClass">
@@ -163,10 +161,8 @@ let addCompanyData = ref([]);
           
           <!-- Nama -->
           <div :class="columnClass">
-            <label
-              for="sequence_name"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-            >
+
+            <label class="block mb-2 font-JakartaSans font-medium text-sm" for="sequence_name">
               Nama Sequence<span class="text-red">*</span>
             </label>
 
@@ -180,20 +176,20 @@ let addCompanyData = ref([]);
             />
           </div>
 
-          <!-- Next Value -->
-          <div :class="columnClass">
-                  <label for="next_value" class="block mb-2 font-JakartaSans font-medium text-sm">
-                      Next Value<span class="text-red">*</span>
-                  </label>
+                  <!-- Sequence Size -->
+                  <div :class="columnClass">
+                  <label
+                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Sequence Size<span class="text-red">*</span></label
+                  >
                   <input
-                    id="next_value"
-                    v-model="nextValue"
+                    v-model="sequenceSize"
                     type="text"
-                    placeholder="Next Value"
+                    placeholder="Sequence Size"
                     :class="inputStylingClass"
                     required
                   />
-          </div>
+                  </div>
 
         </div>
 
@@ -304,7 +300,7 @@ let addCompanyData = ref([]);
           <div :class="columnClass"></div>
         </div>
 
-        <modalFooter class="mt-6 pt-5 pb-8" @closeEdit="isVisible = false" />
+        <modalFooter class="pt-5 pb-8" @closeEdit="isVisible = false" />
 
         <div class="px-4 pb-4">
       <div class="flex flex-col gap-2">

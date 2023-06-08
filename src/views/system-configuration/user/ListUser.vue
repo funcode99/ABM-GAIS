@@ -159,6 +159,8 @@
 
     const callAddApi = async () => {
 
+        console.log(formState.user.idStatusMenu)
+
         const token = JSON.parse(localStorage.getItem('token'))
 
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -173,6 +175,7 @@
           id_company: formState.user.companyId,
           id_site: formState.user.siteId,
           name: formState.user.fullname,
+          is_active: formState.user.idStatusMenu
         })
         Swal.fire({
           position: "center",
@@ -203,6 +206,7 @@
           id_approval_auth: formEditState.user.approvalAuthId,
           id_company: formEditState.user.companyId,
           id_site: formEditState.user.siteId,
+          is_active: formEditState.user.idStatusMenu
         })
         Swal.fire({
           position: "center",
@@ -309,7 +313,7 @@
     const exportToExcel = () => {
 
       const workbook = new Workbook()
-      const worksheet = workbook.addWorksheet("Brand Data")
+      const worksheet = workbook.addWorksheet("User Data")
 
       // Menambahkan header kolom
       tableHead.forEach((column, index) => {
@@ -438,7 +442,8 @@
                           data.id_site, 
                           data.is_employee, 
                           data.name,
-                          data.id_employee
+                          data.id_employee,
+                          data.is_active
                           ]" />
                         <button @click="deleteData(data.id)">
                           <img :src="deleteicon" class="w-6 h-6" />

@@ -23,7 +23,8 @@ export const useFormEditStore = defineStore('add-form', {
                 roleId: 0,
                 approvalAuthId: 0,
                 companyId: 0,
-                siteId: 0
+                siteId: 0,
+                idStatusMenu: 0,
             },
             role: {
                 roleName: '',
