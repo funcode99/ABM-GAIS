@@ -515,6 +515,7 @@ const exportToExcel = () => {
                       index,
                     ]"
                   />
+                  {{ data?.detail }}
                   <button @click="deleteJobBand(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>
