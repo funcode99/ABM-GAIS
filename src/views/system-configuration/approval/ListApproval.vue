@@ -330,6 +330,11 @@
       })
 
     }
+
+    const fillPageMultiplier = (value) => {
+      pageMultiplier.value = value
+      onChangePage(1)
+    }
   
 </script>
 

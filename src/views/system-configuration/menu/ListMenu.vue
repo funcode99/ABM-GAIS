@@ -346,6 +346,11 @@
 
     }
 
+    const fillPageMultiplier = (value) => {
+      pageMultiplier.value = value
+      onChangePage(1)
+    }
+
 </script>
 
 <template>
@@ -361,9 +366,6 @@
 
       <tableContainer>
 
-        <!-- {{ deleteArray }} -->
-
-        <!-- cukup nama fungsi nya aja, argumen nya masuk automatis (gaperlu filteredItems()) -->
         <TableTopBar 
           title="Menu" 
           modalAddType="menu" 

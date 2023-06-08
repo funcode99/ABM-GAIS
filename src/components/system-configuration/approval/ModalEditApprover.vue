@@ -297,16 +297,21 @@ const token = JSON.parse(localStorage.getItem('token'))
           </div>
   
           <div class="mb-3 flex items-center text-left">
+
             <div class="flex flex-col w-full">
+
               <label for="document" class="block mb-2 font-JakartaSans font-medium text-sm">
                 Document<span class="text-red">*</span>
               </label>
+
               <select id="document" v-model="document" :class="inputStylingClass" required>
-                    <option v-for="data in addDocumentData" :key="data.id" :value="data.id">
-                      {{ data.document_name }}
-                    </option>
+                <option v-for="data in addDocumentData" :key="data.id" :value="data.id">
+                  {{ data.document_name }}
+                </option>
               </select>
+
             </div>
+            
           </div>
 
           <div :class="rowClass">
@@ -373,7 +378,7 @@ const token = JSON.parse(localStorage.getItem('token'))
             >
     
               <thead class="text-center font-Montserrat text-sm font-bold">
-                <tr class="">
+                <tr>
                   <th class="relative">
                     <span class="flex justify-center">Level</span>
                   </th>
@@ -409,21 +414,15 @@ const token = JSON.parse(localStorage.getItem('token'))
                   <td class="hidden" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
                   </td>
 
-                  <!-- "input.isEdit === false ? true : approverLines.length-1 > index ? true : false" -->
-
                   <td>
-                    <!--  -->
                     <select v-model="input.id_approval_auth" :id="index" :disabled="input.isEdit == false ? true : false" >
-
                       <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
                           {{ data.auth_name }}
                       </option>
-
                     </select>
                   </td>
     
                   <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
-    
                   </td>
     
                   <td>
@@ -443,7 +442,7 @@ const token = JSON.parse(localStorage.getItem('token'))
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
 
-                    <h1 v-if="input.isEdit == true"> confirm for edit api</h1>
+                    <!-- <h1 v-if="input.isEdit == true"> confirm for edit api</h1> -->
                     <button v-if="input.isEdit == true" type="button" @click="editApproverLines(approverLines, index, idMatrixActual, input.id_detail) ">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
@@ -461,7 +460,7 @@ const token = JSON.parse(localStorage.getItem('token'))
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
 
-                    <h1 v-if="input.forAdd == true"> confirm for add api</h1>
+                    <!-- <h1 v-if="input.forAdd == true"> confirm for add api</h1> -->
                     <button v-if="input.forAdd == true" type='button' @click="saveApproverLines(approverLines, index, idMatrixActual)">
                       <img :src="checkIcon" class="w-5 h-5" />
                     </button>
