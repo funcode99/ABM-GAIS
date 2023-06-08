@@ -37,6 +37,12 @@
   let addCompanyData = ref([])
   let addDocumentData = ref([])
   const emits = defineEmits(['changeMatrix', 'fetchApproval', 'editApprover'])
+
+  const formattedMinCA = parseFloat(minCA.value)
+  minCA.value = formattedMinCA.toLocaleString("id-ID")
+
+  const formattedMaxCA = parseFloat(maxCA.value)
+  maxCA.value = formattedMaxCA.toLocaleString("id-ID")
   
   let dropdownRemoveList = ref([])
   let authorities = ref('')
@@ -67,6 +73,8 @@
       })
       idMatrixActual.value = idMatrix[0].id_matrix
     }
+
+
 
 
 
@@ -246,6 +254,34 @@ const token = JSON.parse(localStorage.getItem('token'))
       fetchApproverAuthorities()
     })
 
+    const formatCurrency = (argument) => {
+        if(argument === 'a') {
+          
+          minCA.value = minCA.value.replace(/\D/g, "")
+
+          if (minCA.value === "" || minCA.value === "0") {
+          minCA.value = ""
+          } else {
+            const formattedMinCA = parseFloat(minCA.value.replace(/\./g, ""));
+            minCA.value = formattedMinCA.toLocaleString("id-ID");
+            }
+
+        }
+        if(argument === 'b') {
+          
+          maxCA.value = maxCA.value.replace(/\D/g, "")
+
+          if (maxCA.value === "" || maxCA.value === "0") {
+          maxCA.value = ""
+          } else {
+          const formattedMaxCA = parseFloat(maxCA.value.replace(/\./g, ""));
+          maxCA.value = formattedMaxCA.toLocaleString("id-ID");
+            }
+
+        }
+    }
+
+
 </script>
 
 <template>
@@ -321,10 +357,11 @@ const token = JSON.parse(localStorage.getItem('token'))
                       Minimum Amount (CA)
                 </label>
                 <input
-                      id="minCA"
-                      v-model="minCA"
-                      placeholder="Amount"
-                      :class="inputStylingClass"
+                  @input="formatCurrency('a')"
+                  id="minCA"
+                  v-model="minCA"
+                  placeholder="Amount"
+                  :class="inputStylingClass"
                 />
               </div>
 
@@ -333,10 +370,11 @@ const token = JSON.parse(localStorage.getItem('token'))
                       Maximum Amount (CA)
                 </label>
                 <input
-                      id="maxCA"
-                      v-model="maxCA"
-                      placeholder="Amount"
-                      :class="inputStylingClass"
+                  @input="formatCurrency('b')"
+                  id="maxCA"
+                  v-model="maxCA"
+                  placeholder="Amount"
+                  :class="inputStylingClass"
                 />
               </div>
 

@@ -4,7 +4,6 @@
  
   import { ref, onBeforeMount, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
-  import Swal from "sweetalert2"
   import Api from '@/utils/Api'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
@@ -115,16 +114,8 @@
           formState.approval.menuId = menu.value
           formState.approval.codeDocumentId = document.value
           formState.approval.arrayDetail = approverLines.value
-          formState.approval.minCA = minCA.value
-          formState.approval.maxCA = maxCA.value
-
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "Your work has been saved",
-            showConfirmButton: false,
-            timer: 1500,
-          })
+          formState.approval.minCA = minCA.value.replaceAll(".", "")
+          formState.approval.maxCA = maxCA.value.replaceAll(".", "")
 
           emits('addApprover')
 
@@ -145,6 +136,43 @@
       resetInput()
     }
   })
+
+  const formatCurrency = (argument) => {
+
+    if(argument === 'a') {
+      
+      minCA.value = minCA.value.replace(/\D/g, "")
+
+      if (minCA.value === "" || minCA.value === "0") {
+      minCA.value = ""
+      } else {
+        const formattedMinCA = parseFloat(minCA.value.replace(/\./g, ""));
+        minCA.value = formattedMinCA.toLocaleString("id-ID");
+        }
+
+    }
+
+    if(argument === 'b') {
+      
+      maxCA.value = maxCA.value.replace(/\D/g, "")
+
+      if (maxCA.value === "" || maxCA.value === "0") {
+      maxCA.value = ""
+      } else {
+      const formattedMaxCA = parseFloat(maxCA.value.replace(/\./g, ""));
+      maxCA.value = formattedMaxCA.toLocaleString("id-ID");
+        }
+
+    }
+
+
+
+
+
+
+
+
+  }
 
   const rowClass = 'flex justify-between items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'
@@ -218,9 +246,11 @@
               <div :class="rowClass">
                   <div :class="columnClass">
                     <label for="minCA">
-                      Minimum Amount (CA)
+                      Minimum Amount (CA) 
+                      <!-- {{ minCA }} -->
                     </label>
                     <input
+                      @input="formatCurrency('a')"
                       id="minCA"
                       v-model="minCA"
                       placeholder="Amount"
@@ -229,9 +259,11 @@
                   </div>
                   <div :class="columnClass">
                     <label for="maxCA">
-                      Maximum Amount (CA)
+                      Maximum Amount (CA) 
+                      <!-- {{ maxCA }}  -->
                     </label>
                     <input 
+                      @input="formatCurrency('b')"
                       id="maxCA"
                       v-model="maxCA"
                       placeholder="Amount"
