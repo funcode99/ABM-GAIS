@@ -13,15 +13,19 @@ import gearicon from "@/assets/system-configuration-not-selected.png";
 
 import ModalAdd from "@/components/facility-services/atk-supplies/management-item-atk/ModalAdd.vue";
 import ModalEdit from "@/components/facility-services/atk-supplies/management-item-atk/ModalEdit.vue";
+import Swal from "sweetalert2";
 
-import itemdata from "@/utils/Api/facility-service-system/management-item-atk/itemdata.js";
+// import itemdata from "@/utils/Api/facility-service-system/management-item-atk/itemdata.js";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed, onMounted } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
+import Api from "@/utils/Api";
 const sidebar = useSidebarStore();
 
 //for sort & search
+let selectedCompany = ref("Company");
+let selectedWarehouse = ref("Warehouse")
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
@@ -32,6 +36,10 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let Company = ref("");
+let Warehouse = ref("");
+let itemdata = ref("")
+let editData = ref("")
 
 //for paginations
 let showingValue = ref(1);
@@ -80,13 +88,12 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "ID Item", jsonData: "id_item" },
+  { Id: 2, title: "ID Item", jsonData: "code_item" },
   { Id: 3, title: "Item Name", jsonData: "item_name" },
-  { Id: 4, title: "Warehouse", jsonData: "warehouse" },
-  { Id: 5, title: "Stock Available", jsonData: "stock_available" },
-  { Id: 6, title: "Alert Quantity", jsonData: "alert_quantity" },
-  { Id: 7, title: "UOM", jsonData: "uom" },
+  { Id: 4, title: "Warehouse", jsonData: "warehouse_name" },
+  { Id: 5, title: "Stock Available", jsonData: "current_stock" },
+  { Id: 6, title: "Alert Quantity", jsonData: "alert_qty" },
+  { Id: 7, title: "UOM", jsonData: "uom_name" },
   { Id: 8, title: "Actions" },
 ];
 
@@ -100,14 +107,94 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = itemdata;
+const fetchGetCompanyID = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  // const id_company = JSON.parse(localStorage.getItem("id_company"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeWarehouseCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_company_id/${id_company}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchCondition = async () => {
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  const id_role = JSON.parse(localStorage.getItem("id_role"));
+  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+};
+const fetchData = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/management_atk/get");
+  // console.log(res.data.data)
+  itemdata.value = res.data.data.data;
+  instanceArray = itemdata.value;
+  // console.log(instanceArray)
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const editValue = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/management_atk/get/${id}`);
+  // console.log(res.data.data)
+  editData.value = res.data.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const deleteValue = async (id) => {
+  
+  Swal.fire({
+  title: "Warning !",
+  text: "Are you sure delete data ?",
+  icon: "warning",
+  buttons: true,
+  dangerMode: true,
+})
+.then((willDelete) => {
+  if (willDelete) {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    Api.delete(`/management_atk/delete_data/${id}`);
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Success Delete Data",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    fetchData()
+  } else {
+    Swal.fire({position: "center",
+      icon: "error",
+      title: "Failed Delete Data",
+      showConfirmButton: false,
+      timer: 1500,});
+  }
+})
+    
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchCondition()
+  fetchData()
 });
-
 //for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
@@ -197,26 +284,9 @@ const getSessionForSidebar = () => {
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
-                  Warehouse
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedTypeWarehouse"
-                >
-                  <option disabled selected>Warehouse</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.warehouse }}
-                  </option>
-                </select>
-              </div>
-
-              <div>
-                <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-                >
                   Company
                 </p>
-                <select
+                <!-- <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedTypeCompany"
                 >
@@ -224,7 +294,36 @@ const getSessionForSidebar = () => {
                   <option v-for="data in sortedData" :key="data.id">
                     {{ data.company }}
                   </option>
-                </select>
+                </select> -->
+                <select
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedCompany"
+                @change="changeWarehouseCompany(selectedCompany)"
+              >
+                <option disabled selected>Company</option>
+                <option v-for="(company,i) in Company" :key="i" :value="company.id">
+                  {{ company.company_name }}
+                </option>
+              </select>
+              </div>
+
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Warehouse
+                </p>
+                <select
+                  class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  required
+                  v-model="selectedWarehouse"
+                >
+                  <option disabled selected>Warehouse</option>
+                  <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
+                    {{ warehouse.warehouse_name }}
+                  </option>
+              </select>
               </div>
 
               <div class="flex flex-wrap gap-4 items-center pt-6">
@@ -335,7 +434,7 @@ const getSessionForSidebar = () => {
 
                 <tbody>
                   <tr
-                    class="font-JakartaSans font-normal text-sm"
+                    :class="data.current_stock <= data.alert_qty ? 'font-JakartaSans font-normal text-sm text-red' : 'font-JakartaSans font-normal text-sm'"
                     v-for="data in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
@@ -346,31 +445,41 @@ const getSessionForSidebar = () => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.no }}
+                      {{ data.code_item === null ? '-' : data.code_item }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.id_item }}
+                      {{ data.item_name === null ? '-' : data.item_name  }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.item_name }}
+                      {{ data.warehouse_name === null ? '-' : data.warehouse_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.warehouse }}
+                      {{ data.current_stock === null ? '-' :  data.current_stock}}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.stock_available }}
+                      {{ data.alert_qty === null ? '-' : data.alert_qty }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.alert_quantity }}
-                    </td>
-                    <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.uom }}
+                      {{ data.uom_name === null ? '-' : data.uom_name }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <ModalEdit
+                      <!-- <ModalEdit
+                        @
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                      />
-                      <button>
+                      /> -->
+                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar" :formContent="[
+                                  data.id, 
+                                  data.id_company, 
+                                  data.id_site, 
+                                  data.id_warehouse, 
+                                  data.id_uom, 
+                                  data.code_item, 
+                                  data.alert_qty,
+                                  data.item_name,
+                                  data.remarks,
+                                  data.id_brand
+                                ]" />
+                      <button @click="deleteValue(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
