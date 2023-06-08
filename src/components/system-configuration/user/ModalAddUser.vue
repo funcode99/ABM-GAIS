@@ -2,7 +2,6 @@
   import { ref, onBeforeMount, watch } from 'vue'
 
   import { Modal } from "usemodal-vue3"
-  import Swal from "sweetalert2"
   import Api from '@/utils/Api'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
@@ -22,15 +21,17 @@
   let password = ref('')
   let role = ref([])
   let selected = ref()
-  let company = ref()
+  // let company = ref()
   let location = ref()
   let isEmployee = ref(false)
+  let idStatusMenu = ref(0)
 
   let responseRoleArray = ref([])
-  let responseCompanyArray = ref([])
+  // let responseCompanyArray = ref([])
   let responseSiteArray = ref([])
   let responseEmployeeArray = ref([])
   let responseAuthoritiesArray = ref([])
+  let statusMenu = ref(null)
 
   const submitUser = () => {
 
@@ -43,8 +44,10 @@
     formState.user.password = password.value
     formState.user.roleId = role.value[0]
     formState.user.approvalAuthId = selected.value
-    formState.user.companyId = company.value
-    formState.user.siteId = location.value
+    // formState.user.companyId = company.value
+    formState.user.companyId = location.value[1]
+    formState.user.siteId = location.value[0]
+    formState.user.idStatusMenu = idStatusMenu.value
 
     emits('addUser')
 
@@ -57,12 +60,12 @@
     responseRoleArray.value = api.data.data
   }
 
-  const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem('token'))
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.get('/company/get')
-    responseCompanyArray.value = api.data.data
-  }
+  // const fetchCompany = async () => {
+  //   const token = JSON.parse(localStorage.getItem('token'))
+  //   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  //   const api = await Api.get('/company/get')
+  //   responseCompanyArray.value = api.data.data
+  // }
 
   const fetchSite = async () => {
     const token = JSON.parse(localStorage.getItem('token'))
@@ -85,12 +88,19 @@
     responseAuthoritiesArray.value = api.data.data
   }
 
+  const getMenuStatus = async () => {
+        const status = await Api.get('/menu/get_status/status')
+        let getStatus = status.data.data
+        statusMenu.value = getStatus
+  }
+
   onBeforeMount(() => {
     fetchRole()
-    fetchCompany()
+    // fetchCompany()
     fetchSite()
     fetchEmployee()
     fetchAuthorities()
+    getMenuStatus()
   })
 
   const resetInput = () => {
@@ -100,7 +110,7 @@
       password.value = ''
       role.value = []
       selected.value = null
-      company.value = null
+      // company.value = null
       location.value = null
   }
 
@@ -217,6 +227,16 @@
                     </option>
                   </select>
                 </div>
+
+                {{ idStatusMenu }}
+                <div class="mb-3 text-left">
+                    <label for="status_menu">Status</label>
+                    <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
+                        <option v-for="data in statusMenu" :key="data.id" :value="data.code">
+                          {{ data.status }}
+                        </option>
+                    </select>
+                </div>
     
                 <div v-if="role[1] == 'Driver' " class="mb-6 flex flex-col text-left justify-start">
                   <span
@@ -271,8 +291,8 @@
                   
                     <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
                     
-                    <select id="company" v-model="company" :class="inputStylingClass">
-                      <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" >
+                    <select id="company" v-model="location" :class="inputStylingClass">
+                      <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
                         {{ data.company_name }}
                       </option>
                     </select>
@@ -284,7 +304,7 @@
                     <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
                     
                     <select id="location" v-model="location" :class="inputStylingClass">
-                      <option v-for="data in responseSiteArray" :key="data.id" :value="data.id" >
+                      <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
                           {{ data.site_name }}
                       </option>
                     </select>

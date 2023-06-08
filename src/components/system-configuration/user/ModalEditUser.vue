@@ -13,6 +13,7 @@
     let isVisible = ref(false)
     let isAdding = ref(false)
     let modalPaddingHeight = '10vh'
+    let statusMenu = ref(null)
 
     const props = defineProps({
       formContent: Array
@@ -22,25 +23,28 @@
     let username = ref(props.formContent[0])
     let email = ref(props.formContent[1])
     let selected = ref(props.formContent[2])
-    let role = ref([props.formContent[3], null])
+    let role = ref(props.formContent[3])
     let company = ref(props.formContent[4])
     let location = ref(props.formContent[5])
     let isEmployee = ref(props.formContent[6] == 1 ? true : false)
     let fullname = ref(props.formContent[7])
     let usernameEmployee = ref(props.formContent[8])
+    let idStatusMenu = ref(props.formContent[9])
 
     const submitEdit = () => {
 
       formEditState.user.username = username.value
       formEditState.user.email = email.value
       formEditState.user.password = password.value
-      formEditState.user.roleId = role.value[0]
+      formEditState.user.roleId = role.value
       formEditState.user.approvalAuthId = selected.value
       formEditState.user.companyId = company.value
       formEditState.user.siteId = location.value
       formEditState.user.fullname = fullname.value
+      formEditState.user.idStatusMenu = idStatusMenu.value
 
       isVisible.value = false
+
     }
 
     const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
@@ -86,12 +90,19 @@
       responseAuthoritiesArray.value = api.data.data
     }
 
+    const getMenuStatus = async () => {
+        const status = await Api.get('/menu/get_status/status')
+        let getStatus = status.data.data
+        statusMenu.value = getStatus
+  }
+
     onBeforeMount(() => {
       fetchRole()
       fetchCompany()
       fetchSite()
       fetchAuthorities()
       fetchEmployee()
+      getMenuStatus()
     })
 
     const resetInput = () => {
@@ -99,7 +110,7 @@
       username.value = props.formContent[0]
       email.value = props.formContent[1]
       selected.value = props.formContent[2]
-      role.value = [props.formContent[3], null]
+      role.value = props.formContent[3]
       company.value = props.formContent[4]
       location.value = props.formContent[5]
       isEmployee.value = props.formContent[6] == 1 ? true : false 
@@ -113,6 +124,7 @@
         resetInput()
       }
     })
+
 
 </script>
 
@@ -132,6 +144,8 @@
         />
 
         <form class="pr-4 modal-box-inner-inner text-left" @submit.prevent="submitEdit">
+
+          <!-- {{ props.formContent[6] }} -->
   
           <div class="mb-6">
             <span>Employee?<span class="text-red-star">*</span></span>
@@ -218,11 +232,20 @@
             </label>
 
             <select id="user_role" :class="inputStylingClass" v-model="role" required>
-              <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]" :selected="data.id == role[0] ? true : false">
+              <option v-for="data in responseRoleArray" :key="data.id" :value="data.id" :selected="data.id == role[0] ? true : false">
                 {{ data.role_name }}
               </option>
             </select>
 
+          </div>
+
+          <div class="mb-6 flex flex-col text-left">
+            <label  class="block mb-2 font-JakartaSans font-medium text-sm" for="status_menu">Status <span class="text-red">*</span></label>
+            <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
+              <option v-for="data in statusMenu" :key="data.id" :value="data.code">
+                {{ data.status }}
+              </option>
+            </select>
           </div>
   
           <div v-if="role[1] == 'Driver' " class="mb-6 flex flex-col text-left justify-start">
@@ -248,7 +271,8 @@
               for="approval_authorities"
               class="block mb-2 font-JakartaSans font-medium text-sm text-left"
             >
-                Approval Authorities<span class="text-red">*</span>
+                Approval Authorities
+                
             </label>
   
             <!-- :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
