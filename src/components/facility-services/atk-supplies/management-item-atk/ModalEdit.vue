@@ -10,8 +10,10 @@ import Api from "@/utils/Api";
 import { useMenuAccessStore } from '@/stores/savemenuaccess'
 import { resetTracking } from "@vue/reactivity";
 
+import Swal from "sweetalert2";
 
-let selectedCompany = ref("Company");
+
+let selectedCompany = ref(props.formContent[1]);
 let selectedSite = ref("Site");
 let selectedWarehouse = ref("Warehouse")
 let selectedUOM = ref("UOM")
@@ -26,10 +28,17 @@ let alertQuantity = ref("")
 let Brand = ref("")
 let itemNames = ref("")
 let remark = ref("")
+let id = ref(props.formContent[0])
 const itemsTable = ref([])
 
 // const emits = defineEmits(["unlockScrollbar"]);
 const menuAccess = useMenuAccessStore()
+const props = defineProps({
+  roleId: Number,
+  roleAccess: Array,
+  formContent: Array,
+  unlockScrollbar: Boolean
+})
 const currentCompany = ref(props.formContent[1]);
 const currentSite = ref(props.formContent[2]);
 const currentWarehouse = ref(props.formContent[3]);
@@ -43,17 +52,11 @@ selectedCompany.value = currentCompany.value
 selectedSite.value = currentSite.value
 selectedWarehouse.value = currentWarehouse.value
 selectedUOM.value = currentUOM.value
+// console.log(selectedUOM.value)
 idItems.value = currentitemID.value
 alertQuantity.value = alertQTY.value
 itemNames.value = currentitemName.value
 remark.value = remarks.value
-Brand.value = currentBrand.value
-const props = defineProps({
-  roleId: Number,
-  roleAccess: Array,
-  formContent: Array
-})
-
 //for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -79,14 +82,21 @@ const fetchUOM = async () => {
   UOM.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-//for get site in select
-// const fetchGetSite = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/site/get_data");
-//   Site.value = res.data.data;
-//   // console.log("ini data parent" + JSON.stringify(res.data.data));
-// };
+const fetchSite = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchWH = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/warehouse");
+  Warehouse.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
 const changeCompany = async (id_company) => {
   fetchBrandCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
@@ -100,8 +110,9 @@ const fetchBrandCompany = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
-  // console.log(res)
+  // console.log(res.data)
   Brand.value = res.data.data;
+  selectedBrand.value = res.data.data[0].id
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
@@ -112,40 +123,46 @@ const changeSite = async (id_site) => {
   Warehouse.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+const save = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const payload = {
+    code_item : idItems.value,
+    item_name : itemNames.value,
+    id_brand : selectedBrand.value,
+    id_uom : selectedUOM.value,
+    alert_qty: alertQuantity.value,
+    id_company: selectedCompany.value,
+    id_site: selectedSite.value,
+    id_warehouse: selectedWarehouse.value,
+    remarks: remark.value
+  }
+  
+  
+  const res = await Api.post(`/management_atk/update_data/${id.value}`,payload);
+  Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  // lockScrollbar.value= false
+};
 //get kondisi local storage
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  fetchUOM()
+  fetchSite()
+  fetchWH()
+  fetchBrandCompany(selectedCompany.value)
   // const dataById = this.$emit('changeMenu')
   // console.log(currentbrandName)
   // console.log(ref(props.formConten0]))
 };
 
-const generateNumber = async () => {
-  idItems.value = Math.floor(100000000 + Math.random() * 900000000);
-};
-const addItem = async () => {
-
-  itemsTable.value.push({
-    company: selectedCompany.value,
-    site: selectedSite.value,
-    warehouse: selectedWarehouse.value,
-    uom: selectedUOM.value,
-    idItems: idItems.value,
-    alertQuanti : alertQuantity.value,
-    itemName: itemNames.value,
-    remarks:remark.value,
-    brand:selectedBrand.value
-  })
-  reset()
-  return itemsTable
-};
-const removeItems = async (id) => {
-
-itemsTable.value.splice(id,1)
-// return itemsTable
-}
 const reset = async () => {
   selectedCompany.value = ''
   selectedSite.value = ''
@@ -159,7 +176,6 @@ const reset = async () => {
 };
 onMounted(() => {
   fetchCondition()
-  fetchUOM()
 });
 
 
@@ -283,8 +299,8 @@ onMounted(() => {
           </div>
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="flex items-center border-b border-teal-500 py-2 mb-6 w-full">
-              <input class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" v-model="idItems" maxlength="9" type="number" placeholder="ID Item" aria-label="Full name">
-              <button class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded" type="button" @click="generateNumber">
+              <input class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" v-model="idItems" maxlength="9" type="number" placeholder="ID Item" aria-label="Full name" disabled="true">
+              <button class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded" type="button" @click="generateNumber" disabled="true">
                 <img :src="iconPlus" class="w-[10px] h-[10px]" />
               </button>
             </div>
@@ -362,6 +378,7 @@ onMounted(() => {
         <div class="flex justify-center gap-4 mr-6">
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            @click="save"
           >
             Save
           </button>
