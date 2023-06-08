@@ -24,8 +24,12 @@ let Site = ref("");
 let warehouseName = ref("");
 let warehouseIdCompany = ref("");
 let warehouseIdSite = ref();
-let selectedCompanyId = ref(props.formContent[1] || null);
-let selectedSiteId = ref(props.formContent[2] || null);
+let responseCompanyArray = ref([]);
+let responseSiteArray = ref([]);
+// let selectedCompanyId = ref(props.formContent[1] || null);
+// let selectedSiteId = ref(props.formContent[2] || null);
+let company = ref(props.formContent[1]);
+let location = ref([props.formContent[1], props.formContent[2]]);
 
 const props = defineProps({
   formContent: Array,
@@ -33,10 +37,10 @@ const props = defineProps({
 
 const currentwarehouseName = ref(props.formContent[0]);
 const originalwarehouseName = ref(props.formContent[0]);
-const currentwarehouseIdCompany = ref(props.formContent[1]);
-const originalwarehouseIdCompany = ref(props.formContent[1]);
-const currentwarehouseIdSite = ref(props.formContent[2]);
-const originalwarehouseIdSite = ref(props.formContent[2]);
+// const currentwarehouseIdCompany = ref(props.formContent[1]);
+// const originalwarehouseIdCompany = ref(props.formContent[1]);
+// const currentwarehouseIdSite = ref(props.formContent[2]);
+// const originalwarehouseIdSite = ref(props.formContent[2]);
 
 const submitEdit = () => {
   isAdding.value = true;
@@ -46,8 +50,8 @@ const submitEdit = () => {
   }
 
   formEditState.warehouse.warehouseName = currentwarehouseName.value;
-  formEditState.warehouse.warehouseIdCompany = selectedCompanyId.value;
-  formEditState.warehouse.warehouseIdSite = selectedSiteId.value;
+  formEditState.warehouse.warehouseIdCompany = location.value[1];
+  formEditState.warehouse.warehouseIdSite = location.value[0];
 
   isVisible.value = false;
   emits("changeWarehouse"); // Memanggil event 'changeWarehouse'
@@ -58,7 +62,7 @@ const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
-  Company.value = res.data.data;
+  responseCompanyArray.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -67,7 +71,7 @@ const fetchGetSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/site/get_data");
-  Site.value = res.data.data;
+  responseSiteArray.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -83,16 +87,17 @@ watch(isVisible, () => {
   if (isAdding.value == true) {
     isAdding.value = false;
   } else {
-    currentwarehouseName.value = props.formContent[0];
-    currentwarehouseIdCompany.value = props.formContent[1];
-    currentwarehouseIdSite.value = props.formContent[2];
+    // currentwarehouseName.value = props.formContent[0];
+    // currentwarehouseIdCompany.value = props.formContent[1];
+    // currentwarehouseIdSite.value = props.formContent[2];
+    resetForm();
   }
 });
 
 const resetForm = () => {
   currentwarehouseName.value = originalwarehouseName.value;
-  selectedCompanyId.value = originalwarehouseIdCompany.value;
-  selectedSiteId.value = originalwarehouseIdSite.value;
+  location.value = [props.formContent[1], props.formContent[2]];
+  // selectedSiteId.value = originalwarehouseIdSite.value;
 };
 </script>
 
@@ -104,10 +109,7 @@ const resetForm = () => {
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
       <modalHeader
-        @closeVisibility="
-          isVisible = false;
-          resetForm();
-        "
+        @closeVisibility="isVisible = false"
         title="Edit Warehouse"
       />
 
@@ -119,11 +121,16 @@ const resetForm = () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedCompanyId"
+            v-model="location"
           >
             <option disabled selected>Company</option>
-            <option v-for="company in Company" :value="company.id">
-              {{ company.company_name }}
+            <option
+              v-for="data in responseSiteArray"
+              :key="data.id"
+              :value="[data.id, data.id_company]"
+              :selected="data.id == company ? true : false"
+            >
+              {{ data.company_name }}
             </option>
           </select>
         </div>
@@ -135,11 +142,15 @@ const resetForm = () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedSiteId"
+            v-model="location"
           >
             <option disabled selected>Site</option>
-            <option v-for="site in Site" :value="site.id">
-              {{ site.site_name }}
+            <option
+              v-for="data in responseSiteArray"
+              :key="data.id"
+              :value="[data.id, data.id_company]"
+            >
+              {{ data.site_name }}
             </option>
           </select>
         </div>
@@ -156,13 +167,7 @@ const resetForm = () => {
           />
         </div>
 
-        <modalFooter
-          @closeEdit="
-            isVisible = false;
-            resetForm();
-          "
-          class="pb-2"
-        />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>
