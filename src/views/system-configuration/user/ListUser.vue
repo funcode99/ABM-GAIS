@@ -154,7 +154,7 @@
       if(formState.user.fullname === '') {
         formState.user.fullname = '-'
       }
-      setTimeout(callAddApi, 500);
+      setTimeout(callAddApi, 500)
     }
 
     const callAddApi = async () => {
@@ -188,11 +188,12 @@
     }
 
     const editExistingUser = async (data) => {
-      editDataUserId.value = data
+        editDataUserId.value = data
         setTimeout(callEditApi, 1000)
     }
 
     const callEditApi = async () => {
+        console.log(formEditState.user.fullname)
       const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.post(`/users/update_data/${editDataUserId.value}`, 
@@ -206,7 +207,8 @@
           id_approval_auth: formEditState.user.approvalAuthId,
           id_company: formEditState.user.companyId,
           id_site: formEditState.user.siteId,
-          is_active: formEditState.user.idStatusMenu
+          is_active: formEditState.user.idStatusMenu,
+         
         })
         Swal.fire({
           position: "center",

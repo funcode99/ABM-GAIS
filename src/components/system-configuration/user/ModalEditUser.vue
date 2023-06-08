@@ -14,6 +14,7 @@
     let isAdding = ref(false)
     let modalPaddingHeight = '10vh'
     let statusMenu = ref(null)
+    const emits = defineEmits('changeUser')
 
     const props = defineProps({
       formContent: Array
@@ -25,9 +26,9 @@
     let selected = ref(props.formContent[2])
     let role = ref(props.formContent[3])
     let company = ref(props.formContent[4])
-    let location = ref(props.formContent[5])
+    let location = ref([props.formContent[5], props.formContent[4]])
     let isEmployee = ref(props.formContent[6] == 1 ? true : false)
-    let fullname = ref(props.formContent[7])
+    let fullname = ref(props.formContent[0])
     let usernameEmployee = ref(props.formContent[8])
     let idStatusMenu = ref(props.formContent[9])
 
@@ -38,11 +39,11 @@
       formEditState.user.password = password.value
       formEditState.user.roleId = role.value
       formEditState.user.approvalAuthId = selected.value
-      formEditState.user.companyId = company.value
-      formEditState.user.siteId = location.value
+      formEditState.user.companyId = location.value[1]
+      formEditState.user.siteId = location.value[0]
       formEditState.user.fullname = fullname.value
       formEditState.user.idStatusMenu = idStatusMenu.value
-
+      emits('changeUser')
       isVisible.value = false
 
     }
@@ -112,9 +113,9 @@
       selected.value = props.formContent[2]
       role.value = props.formContent[3]
       company.value = props.formContent[4]
-      location.value = props.formContent[5]
+      location.value = [props.formContent[5], props.formContent[4]]
       isEmployee.value = props.formContent[6] == 1 ? true : false 
-      fullname.value = props.formContent[7]
+      fullname.value = props.formContent[0]
     }
 
     watch(isVisible, () => {
@@ -240,7 +241,9 @@
           </div>
 
           <div class="mb-6 flex flex-col text-left">
-            <label  class="block mb-2 font-JakartaSans font-medium text-sm" for="status_menu">Status <span class="text-red">*</span></label>
+            <label class="block mb-2 font-JakartaSans font-medium text-sm" for="status_menu">
+              Status <span class="text-red">*</span>
+            </label>
             <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
               <option v-for="data in statusMenu" :key="data.id" :value="data.code">
                 {{ data.status }}
@@ -285,38 +288,46 @@
           
                 :key="name.id"
                 >
-                <div class="flex items-center gap-2" 
-                  :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' )  ? 'hidden' : ''" >
-                      <input
-                      id="approval_authorities"
-                      type="checkbox" 
-                      :id="name.auth_name" 
-                      @click="selected = name.id" 
-                      :checked="selected === name.id" 
-                      />
-                      <label>{{ name.auth_name }}</label>
+                <!-- :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' )  ? 'hidden' : ''" -->
+                <div class="flex items-center gap-2">
+                  <input
+                    id="approval_authorities"
+                    type="checkbox" 
+                    :id="name.auth_name" 
+                    @click="selected = name.id" 
+                    :checked="selected === name.id" 
+                  />
+                  <label>{{ name.auth_name }}</label>
                   </div>
                 </div>
             </div>
             
           </div>
+
+          {{ location }}
+          <!-- {{ props.formContent[4] }} -->
+          <!-- {{ props.formContent[5] }} -->
   
           <div class="mb-6 flex flex-col gap-2">
               <label for="company" class="text-sm">Company <span class="text-red-star">*</span> </label>
-              <select id="company" v-model="company" :class="inputStylingClass">
-                <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" :selected="data.id == company ? true : false" >
+              <select id="company" v-model="location" :class="inputStylingClass">
+                <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" :selected="data.id == company ? true : false"
+                >
                   {{ data.company_name }}
                 </option>
               </select>
           </div>
   
           <div class="mb-6 flex flex-col gap-2">
-              <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
-              <select id="location" v-model="location" :class="inputStylingClass">
-                <option v-for="data in responseSiteArray" :key="data.id" :value="data.id" >
+
+            <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+              
+            <select id="location" v-model="location" :class="inputStylingClass">
+                <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
                     {{ data.site_name }}
                 </option>
-              </select>
+            </select>
+
           </div>
   
           <modalFooter
