@@ -83,8 +83,8 @@
         formEditState.approval.companyId = company.value
         formEditState.approval.menuId = menu.value
         formEditState.approval.codeDocumentId = document.value
-        formEditState.approval.minCA = minCA.value
-        formEditState.approval.maxCA = maxCA.value
+        formEditState.approval.minCA = minCA.value.replaceAll(".", "")
+        formEditState.approval.maxCA = maxCA.value.replaceAll(".", "")
         isVisible.value = false
         emits('editApprover')
     }
