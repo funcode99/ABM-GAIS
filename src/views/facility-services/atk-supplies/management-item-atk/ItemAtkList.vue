@@ -8,6 +8,8 @@ import icon_reset from "@/assets/icon_reset.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
 
@@ -59,7 +61,7 @@ const filterDataByType = () => {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
+      (item) => item.item_name === selectedType.value
     );
   }
 };
@@ -88,6 +90,7 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
+  { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "ID Item", jsonData: "code_item" },
   { Id: 3, title: "Item Name", jsonData: "item_name" },
   { Id: 4, title: "Warehouse", jsonData: "warehouse_name" },
@@ -158,35 +161,44 @@ const editValue = async (id) => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const deleteValue = async (id) => {
-  
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   Swal.fire({
-  title: "Warning !",
-  text: "Are you sure delete data ?",
-  icon: "warning",
-  buttons: true,
-  dangerMode: true,
-})
-.then((willDelete) => {
-  if (willDelete) {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    Api.delete(`/management_atk/delete_data/${id}`);
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Success Delete Data",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    fetchData()
-  } else {
-    Swal.fire({position: "center",
-      icon: "error",
-      title: "Failed Delete Data",
-      showConfirmButton: false,
-      timer: 1500,});
-  }
-})
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/management_atk/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: res.data.message,
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        fetchData()
+      });
+    } else {
+      return;
+    }
+  });
     
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
@@ -206,6 +218,18 @@ const filteredItems = (search) => {
       (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
       (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
+  });
+  sortedData.value = filteredR;
+  lengthCounter = sortedData.value.length;
+  onChangePage(1);
+};
+const selectAlert = (checked) => {
+  sortedData.value = instanceArray;
+  // console.log(instanceArray)
+  const filteredR = sortedData.value.filter((item) => {
+    if(item.current_stock <= item.alert_qty){
+      return((item.alert_qty))
+    }
   });
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
@@ -234,10 +258,10 @@ const getSessionForSidebar = () => {
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
         ]"
       >
-        <div class="bg-white rounded-t-xl custom-card">
+        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
-            <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
+            <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
               Management Item ATK
             </p>
 
@@ -378,10 +402,13 @@ const getSessionForSidebar = () => {
                 />
               </label>
             </div>
+            
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+
+          <div class="flex flex-wrap items-center justify-between mx-4 py-2">
+            <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
@@ -395,6 +422,15 @@ const getSessionForSidebar = () => {
             </select>
           </div>
 
+            <div class="flex justify-between gap-4 items-center">
+              <input
+                          type="checkbox"
+                          v-model="checkedAlert"
+                          @click="selectAlert(checkedAlert)"
+                        />
+                        Show Items that have been alert
+            </div>
+          </div>
           <!-- TABLE -->
           <div
             class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
@@ -436,7 +472,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     :class="data.current_stock <= data.alert_qty ? 'font-JakartaSans font-normal text-sm text-red' : 'font-JakartaSans font-normal text-sm'"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -444,6 +480,9 @@ const getSessionForSidebar = () => {
                   >
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
+                    </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ index + 1 }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.code_item === null ? '-' : data.code_item }}
