@@ -105,15 +105,16 @@ const generateNumber = async () => {
 const addItem = async () => {
 
   itemsTable.value.push({
-    company: selectedCompany.value,
-    site: selectedSite.value,
-    warehouse: selectedWarehouse.value,
-    uom: selectedUOM.value,
-    idItems: idItems.value,
-    alertQuanti : alertQuantity.value,
-    itemName: itemNames.value,
-    remarks:remark.value,
-    brand:selectedBrand.value
+    code_item: idItems.value,
+    item_name: itemNames.value,
+    id_brand:selectedBrand.value,
+    id_uom: selectedUOM.value,
+    alert_qty : alertQuantity.value,
+    id_company: selectedCompany.value,
+    id_site: selectedSite.value,
+    id_warehouse: selectedWarehouse.value,
+    current_stock: "",
+    remarks:remark.value
   })
   reset()
   return itemsTable
@@ -123,6 +124,21 @@ const removeItems = async (id) => {
 itemsTable.value.splice(id,1)
 // return itemsTable
 }
+const save = async () => {
+  const payload = {
+    array_multi:itemsTable.value,
+  }
+  const res = await Api.post('management_atk/store_multi/',payload);
+  Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    reset()
+    defineEmits(["unlockScrollbar"])
+};
 const reset = async () => {
   selectedCompany.value = ''
   selectedSite.value = ''
@@ -144,7 +160,7 @@ onMounted(() => {
   <label
     @click="this.$emit('unlockScrollbar')"
     for="my-modal-item-atk"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+    class="btn btn-success bg-green border-green hover:bg-none text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add Item</label
   >
 
@@ -157,17 +173,17 @@ onMounted(() => {
           for="my-modal-item-atk"
           class="cursor-pointer absolute right-3 top-3"
         >
-          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+          <img :src="iconClose" class="w-[24px] h-[24px] hover:scale-75" />
         </label>
-        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          Management Item
+        <p class="font-JakartaSans font-semibold text-white mx-4 py-2">
+          New Item
         </p>
       </nav>
 
       <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
         <img :src="icondanger" class="w-5 h-5" />
-        <p class="font-JakartaSans font-semibold text-lg">
-          Management Item Info
+        <p class="font-JakartaSans font-semibold">
+            Item Info
         </p>
       </div>
 
@@ -180,7 +196,7 @@ onMounted(() => {
                 >Company<span class="text-red">*</span></label
               >
               <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedCompany"
                 @change="changeCompany(selectedCompany)"
@@ -198,7 +214,7 @@ onMounted(() => {
                 >Site<span class="text-red">*</span></label
               >
               <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedSite"
                 @change="changeSite(selectedSite)"
@@ -228,7 +244,7 @@ onMounted(() => {
                 >Warehouse<span class="text-red">*</span></label
               >
               <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedWarehouse"
               >
@@ -245,7 +261,7 @@ onMounted(() => {
                 >UOM<span class="text-red">*</span></label
               >
               <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedUOM"
               >
@@ -257,29 +273,6 @@ onMounted(() => {
             </div>
           </div>
           <div class="flex justify-between px-6 items-center gap-2">
-            <div class="flex items-center border-b border-teal-500 py-2 mb-6 w-full">
-              <input class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" v-model="idItems" maxlength="9" type="number" placeholder="ID Item" aria-label="Full name">
-              <button class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded" type="button" @click="generateNumber">
-                <img :src="iconPlus" class="w-[10px] h-[10px]" />
-              </button>
-            </div>
-            <div class="mb-6 w-full">
-              <label
-                for="alert"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Alert Quantity<span class="text-red">*</span></label
-              >
-              <input
-                type="number"
-                v-model="alertQuantity"
-                class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Alert Quantity"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="item_name"
@@ -289,28 +282,29 @@ onMounted(() => {
               <input
                 type="text"
                 v-model="itemNames"
-                class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Item Name"
                 required
               />
             </div>
+
             <div class="mb-6 w-full">
               <label
-                for="id_item"
+                for="alert"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Remarks<span class="text-red">*</span></label
+                >Alert Quantity<span class="text-red">*</span></label
               >
-              <textarea
-                type="text"
-                v-model="remark"
-                class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Remarks"
+              <input
+                type="number"
+                v-model="alertQuantity"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Alert Quantity"
                 required
               />
             </div>
           </div>
 
-          <div class="flex justify-start px-6 items-center gap-2">
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="uom"
@@ -318,7 +312,7 @@ onMounted(() => {
                 >Brand<span class="text-red">*</span></label
               >
               <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedBrand"
               >
@@ -328,12 +322,41 @@ onMounted(() => {
                 </option>
               </select>
             </div>
+            <div class="mb-6 w-full">
+              <label
+                for="id_item"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Remarks<span class="text-red">*</span></label
+              >
+              <input
+                type="text"
+                v-model="remark"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Remarks"
+                required
+              />
+            </div>
+          </div>
+          <div class="flex justify-start px-6 items-center gap-2">
+            <label
+                for="warehouse"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >ID Items<span class="text-red">*</span></label
+              >
+          </div>
+          <div class="flex justify-start px-6 items-center gap-2">
+            <div class="flex items-center border-b border-teal-500 py-2 mb-6 w-full">
+              <input class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" v-model="idItems" maxlength="9" type="number" placeholder="ID Item" aria-label="Full name">
+              <button class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded" type="button" @click="generateNumber">
+                <img :src="iconPlus" class="w-[10px] h-[10px]" />
+              </button>
+            </div>
             <div class="mb-6 w-full"></div>
           </div>
 
           <div class="flex justify-center py-2">
             <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+              class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
               @click="addItem"
             >
               Add
@@ -346,42 +369,42 @@ onMounted(() => {
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   Warehouse
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   ID Item
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   Item Name
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   Brand
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   UOM
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   Alert Quantity
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   Remarks
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
                 >
                   Actions
                 </th>
@@ -389,12 +412,12 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]">{{ items.warehouse }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.idItems }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.itemName }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.brand }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.uom }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.alertQuanti }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_warehouse }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.code_item }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.item_name }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_brand }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_uom }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.alert_qty }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">
@@ -409,15 +432,16 @@ onMounted(() => {
         </div>
       </main>
 
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-center gap-4 mr-6">
+      <!-- <div class="sticky bottom-0 bg-white py-2"> -->
+        <div class="flex justify-center py-2">
           <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            @click="save"
           >
             Save
           </button>
         </div>
-      </div>
+      <!-- </div> -->
     </div>
   </div>
 </template>
