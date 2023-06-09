@@ -6,6 +6,7 @@
 
     import exportExcel from '@/utils/exportToExcel.js'
     import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
+    import selectAllCheckbox from '@/utils/selectAllCheckbox'
 
     // import untuk approval table
     import { ref, computed, onBeforeMount } from 'vue'
@@ -37,36 +38,20 @@
     let instanceArray = []
 
     let showingValue = ref(1)
-    let paginateIndex = ref(0);
-    let pageMultiplier = ref(10);
-    let pageMultiplierReactive = computed(() => pageMultiplier.value);
+    let paginateIndex = ref(0)
+    let pageMultiplier = ref(10)
+    let pageMultiplierReactive = computed(() => pageMultiplier.value)
+    let statusResponse = ref('')
+    let message = ref('')
 
     //for paginations
     const onChangePage = (pageOfItem) => {
-      paginateIndex.value = pageOfItem - 1;
-      showingValue.value = pageOfItem;
-    };
+      paginateIndex.value = pageOfItem - 1
+      showingValue.value = pageOfItem
+    }
 
     const selectAll = (checkValue) => { 
-      const checkLead = checkValue
-      if(checkLead == true) {
-        let check = document.getElementsByName('chk')
-        for(let i=0; i<check.length; i++) {  
-            if(check[i].type=='checkbox')  
-            check[i].checked=true;  
-        }
-        deleteArray.value = []
-        sortedData.value.map((item) => {
-          deleteArray.value.push(item.id)
-        })
-      } else {
-        let check = document.getElementsByName('chk')
-        for(let i=0; i<check.length; i++) {  
-            if(check[i].type=='checkbox')  
-            check[i].checked=false;  
-        }
-        deleteArray.value = []
-      }
+      selectAllCheckbox(checkValue, deleteArray, sortedData)
     }
 
     const tableHead = [
@@ -85,8 +70,7 @@
       }
     }
 
-    let statusResponse = ref('')
-    let message = ref('')
+
     const fetch = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -296,7 +280,9 @@
             <table v-if="sortedData.length > 0" class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
 
               <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                <tr class="">
+
+                <tr>
+
                   <th>
                     <div class="flex justify-center">
                       <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
@@ -319,6 +305,7 @@
                   </th>
 
                 </tr>
+
               </thead>
 
               <tbody>
@@ -503,9 +490,7 @@
           </div>
 
           <!-- PAGINATION -->
-          <div
-            class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
-          >
+          <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
               {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}

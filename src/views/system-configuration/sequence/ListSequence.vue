@@ -6,6 +6,7 @@
 
     import exportExcel from '@/utils/exportToExcel.js'
     import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
+    import selectAllCheckbox from '@/utils/selectAllCheckbox'
 
     import Swal from "sweetalert2"
     import Api from '@/utils/Api'
@@ -49,25 +50,7 @@
     }
 
     const selectAll = (checkValue) => { 
-      const checkLead = checkValue
-      if(checkLead == true) {
-        let check = document.getElementsByName('chk')
-        for(let i=0; i<check.length; i++) {  
-            if(check[i].type=='checkbox')  
-            check[i].checked=true;  
-        }
-        deleteArray.value = []
-        sortedData.value.map((item) => {
-          deleteArray.value.push(item.id)
-        })
-      } else {
-        let check = document.getElementsByName('chk')
-        for(let i=0; i<check.length; i++) {  
-            if(check[i].type=='checkbox')  
-            check[i].checked=false;  
-        }
-        deleteArray.value = []
-      }
+      selectAllCheckbox(checkValue, deleteArray, sortedData)
     }
 
     const tableHead = [
