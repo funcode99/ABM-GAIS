@@ -27,6 +27,8 @@
   let sequenceCode = ref('')
   const file = ref({})
   let menuData = ref([])
+    let companyData = ref(null)
+  let companyIdArray = ref(null)
 
   // buat ngisi dropdown status
   let statusMenu = ref(null)
@@ -66,11 +68,7 @@
 
   }
 
-  onBeforeMount(() => {
-    fetchCompany()
-    fetchMenuData()
-    getMenuStatus()
-  })
+
 
   const getMenuStatus = async () => {
         const status = await Api.get('/menu/get_status/status')
@@ -104,14 +102,16 @@
 
   })
 
-  let companyData = ref(null)
-  let companyIdArray = ref(null)
+
   const fetchCompany = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const res = await Api.get("/company/get");
-    companyData = res.data.data
-    companyData.map((item) => {
+    companyData.value = res.data.data
+    companyData.value.map((item) => {
+      console.log(item.value)
+      console.log(item.id)
+      console.log(item)
       item.value = item.id
     })
   }
@@ -129,6 +129,12 @@
       }
   }
 
+  onBeforeMount(() => {
+    fetchCompany()
+    fetchMenuData()
+    getMenuStatus()
+  })
+
 </script>
 
 <template>
@@ -140,6 +146,8 @@
         </button>
     
         <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+
+
 
             <main>
 
@@ -179,7 +187,7 @@
         
                   <div class="mb-3 text-left">
                       <label for="parent_menu">Parent Menu</label>
-                      <select id="parent_menu" :class="inputStylingClass" v-model="ParentId">
+                      <select id="parent_menu" :class="inputStylingClass" v-model="ParentId" required>
                           <option v-for="data in menuData" :key="data.id" :value="data.id">
                             {{ data.menu }}
                           </option>
@@ -188,17 +196,16 @@
         
                   <div class="mb-3 text-left">
                     <label for="status_menu">Status</label>
-                    <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
+                    <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu" required>
                         <option v-for="data in statusMenu" :key="data.id" :value="data.code">
                           {{ data.status }}
                         </option>
                     </select>
                   </div>
 
-                  <div class="my-3">
-
-                    <h1>Company</h1>
-                    <Multiselect
+                  <label for="company">Company</label>
+                  <Multiselect
+                      id="company"
                       v-model="companyIdArray"
                       mode="tags"
                       placeholder="Select companies"
@@ -207,9 +214,11 @@
                       :close-on-select="false"
                       :searchable="true"
                       :options="companyData"
+                      required
                       >
                       
                       <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                        
                         <div
                           class="multiselect-tag is-user"
                           :class="{
@@ -225,15 +234,16 @@
                             <span class="multiselect-tag-remove-icon"></span>
                           </span>
                         </div>
+
                       </template>
 
-                    </Multiselect>
-                  
-                  </div>
+                  </Multiselect>
+
+                  <div class="mb-3"></div>
         
                   <div class="mb-3 text-left">
                       <label for="sort">Sort</label>
-                      <select id="sort" :class="inputStylingClass" v-model="sort">
+                      <select id="sort" :class="inputStylingClass" v-model="sort" required>
                           <option>1</option>
                           <option>2</option>
                           <option>3</option>
@@ -283,6 +293,8 @@
               </form>
 
             </main>
+
+
 
         </Modal>
 
