@@ -30,21 +30,101 @@ let jobBandName = ref(props.formContent[0]);
 let hotelFare = ref(props.formContent[1]);
 let mealsRate = ref(props.formContent[2]);
 let selectedFlightClass = ref(props.formContent[4]);
+let idZona = props.formContent[5];
+let idZonaActual = ref(null);
 
 //for inner table
-let instanceArray = [];
-let idMatrixActual = ref(null);
-let currentAuthoritiesId = ref();
 let dropdownRemoveList = ref([]);
-let addZona = ref([]);
-let approverLines = ref(props.formContent[5] || []);
+let zonaCode = ref("");
+let jobBandCode = ref("");
+let tlkRate = ref("");
+let zonaTlkRateLines = ref(props.formContent[5] || []);
+let addZonaTlkRateData = ref([]);
+let currentAuthoritiesId = ref();
+let instanceArray = [];
+let addData = ref([]);
 
-const fetchZonaJobband = async () => {
+// initialization for fetched approver lines with default property & value
+if (props.formContent[5] == undefined) {
+  console.log("array detail tidak ada");
+} else {
+  idZona.map((item, index) => {
+    item.isEdit = false;
+    item.fromFetch = true;
+    if (index == idZona.length - 1) {
+    } else {
+      dropdownRemoveList.value.push(item.id_zona);
+    }
+  });
+  idZonaActual.value = idZona[0].id_zona;
+}
+
+const saveApproverLines = async (data, idx, zonaId) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona_job/get/");
-  instanceArray = res.data.data;
-  addZona.value = instanceArray;
+  const api = await Api.post("/zona_job/store", {
+    id_zona: zonaId,
+    id_job_band: parseInt(data[idx].id_job_band),
+    tlk_rate: parseInt(data[idx].tlkRate),
+  });
+
+  data[idx].forAdd = undefined;
+  console.log("zona tlk rate telah ditambahkan!");
+  emits("fetchJobband");
+
+  const insertDefault = () => {
+    zonaTlkRateLines.value = props.formContent[5];
+
+    console.log(zonaTlkRateLines.value);
+
+    if (props.formContent[5] == undefined) {
+      console.log("array detail tidak ada");
+    } else {
+      zonaTlkRateLines.value.map((item, index) => {
+        item.isEdit = false;
+        item.fromFetch = true;
+        if (index == idZona.length - 1) {
+        } else {
+          dropdownRemoveList.value.push(item.id_zona);
+        }
+      });
+      // idMatrixActual.value = idMatrix[0].id_matrix
+    }
+  };
+  setTimeout(insertDefault, 100);
+};
+
+const editApproverLines = async (data, idx, zonaId, id) => {
+  console.log("masuk ke edit approver lines");
+
+  const api = await Api.post(`/zona_job/update_data/${id}`, {
+    id_zona: zonaId,
+    id_job_band: parseInt(data[idx].id_job_band),
+    meals_rate: parseInt(data[idx].tlkRate),
+  });
+  console.log(api);
+  console.log("Zona TLK Rate telah diubah!");
+  emits("fetchJobband");
+  console.log(zonaTlkRateLines.value);
+  const insertDefault = () => {
+    zonaTlkRateLines.value = props.formContent[5];
+
+    if (props.formContent[5] == undefined) {
+      console.log("array detail tidak ada");
+    } else {
+      zonaTlkRateLines.value.map((item, index) => {
+        item.isEdit = false;
+        item.fromFetch = true;
+        if (index == idZona.length - 1) {
+          // console.log('ini adalah index terakhir ' + index)
+        } else {
+          dropdownRemoveList.value.push(item.id_zona);
+        }
+      });
+      // idMatrixActual.value = idMatrix[0].id_matrix
+    }
+  };
+  setTimeout(insertDefault, 100);
 };
 
 //untuk menambahkan field
@@ -54,9 +134,10 @@ const addField = (fieldType, isi) => {
   }
 
   fieldType.push({
-    id_zona: "",
-    tlk_rate: "",
-    isPosted: false,
+    id_zona: zonaCode.value,
+    id_job_band: jobBandCode.value,
+    tlk_rate: tlkRate.value,
+    forAdd: false,
   });
 };
 
@@ -71,10 +152,11 @@ const removeField = async (index, fieldType) => {
       `/zona_job/delete_data/${fieldType[index].id_detail}`
     );
 
-    console.log("approval berhasil dihapus");
-    emits("fetchApproval");
+    console.log("zona tlk rate berhasil dihapus");
+    emits("fetchJobband");
   }
 
+  console.log("setelah masuk ke api");
   fieldType.splice(index, 1);
   dropdownRemoveList.value.splice(index - 1, 1);
   dropdownRemoveList.value.splice(index + 1, 1);
@@ -117,6 +199,18 @@ const submitEdit = () => {
   isVisible.value = false;
   emits("changeJobband"); // Memanggil event 'changeJobband'
   console.log("Berhasil submit");
+};
+
+//for get jobband
+const fetchZonaJobband = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/zona_job/get/");
+  instanceArray = res.data.data;
+  addZonaTlkRateData.value = instanceArray;
+  zonaCode.value = addZonaTlkRateData.value[0].level;
+  tlkRate.value = addZonaTlkRateData.value[0].level;
+  jobBandCode.value = addZonaTlkRateData.value[0].level;
 };
 
 //for get company in select
@@ -366,26 +460,25 @@ const formatCurrency = () => {
             </thead>
 
             <tbody class="bg-[#F5F5F5]">
-              <!-- {{ addZona }} -->
+              <!-- {{ addZonaTlkRateData }} -->
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="(input, index) in approverLines"
+                v-for="(input, index) in zonaTlkRateLines"
                 :key="`${index}`"
               >
                 <td class="text-center justify-center">
                   <select
                     v-model="input.id_zona"
                     :id="index"
-                    :disabled="approverLines.length - 1 > index ? true : false"
+                    :disabled="
+                      addZonaTlkRateData.length - 1 > index ? true : false
+                    "
                     class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                   >
                     <option
-                      v-for="data in addZona"
+                      v-for="data in addZonaTlkRateData"
                       :key="data.id"
                       :value="data.id_zona"
-                      :hidden="
-                        dropdownRemoveList.includes(data.id) ? true : false
-                      "
                     >
                       {{ data.zona_name }}
                     </option>
@@ -406,61 +499,88 @@ const formatCurrency = () => {
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                     v-model="input.tlk_rate"
+                    :disabled="
+                      addZonaTlkRateData.length - 1 > index ? true : false
+                    "
                   />
                 </td>
 
-                <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
-                <td
-                  v-if="input.isPosted === undefined && input.isEdit != false"
-                  class="flex flex-wrap gap-4 justify-center"
-                >
-                  <button @click="input.isEdit = false">
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                  <button @click="removeField(index, approverLines)">
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td>
-
-                <!-- jika belum ada maka pasang ke isPosted untuk menambah value baru -->
-                <td
-                  v-if="input.isPosted === false"
-                  class="flex flex-wrap gap-4 justify-center"
-                >
-                  <button @click="input.isPosted = true">
-                    <img :src="editicon" class="w-6 h-6" />
-                  </button>
-                  <button @click="removeField(index, approverLines)">
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td>
-
-                <!-- berisi fungsi untuk mengganti -->
-                <td
-                  v-if="input.isEdit === false"
-                  class="flex flex-wrap gap-4 justify-center"
-                >
-                  <button @click="editApproverLines()">
-                    <img :src="checkIcon" class="w-5 h-5" />
-                  </button>
-                  <button @click="removeField(index, approverLines)">
-                    <img :src="closeIcon" class="w-5 h-5" />
-                  </button>
-                </td>
-
-                <!-- berisi fungsi untuk menambahkan -->
-                <td
-                  v-if="input.isPosted === true"
-                  class="flex flex-wrap gap-4 justify-center"
-                >
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <!-- jika sudah ada maka pasang ke isEdit untuk mengganti value -->
                   <button
+                    v-if="input.fromFetch == true && input.isEdit == false"
+                    type="button"
+                    :class="zonaTlkRateLines.length - 1 > index ? 'hidden' : ''"
+                    @click="input.isEdit = true"
+                  >
+                    <img :src="editicon" class="w-6 h-6" />
+                  </button>
+
+                  <button
+                    v-if="input.fromFetch == true && input.isEdit == false"
+                    type="button"
+                    @click="removeField(index, zonaTlkRateLines)"
+                    :class="zonaTlkRateLines.length - 1 > index ? 'hidden' : ''"
+                  >
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+
+                  <!-- <h1 v-if="input.isEdit == true"> confirm for edit api</h1> -->
+                  <button
+                    v-if="input.isEdit == true"
+                    type="button"
                     @click="
-                      saveApproverLines(approverLines, index, idMatrixActual)
+                      editApproverLines(
+                        zonaTlkRateLines,
+                        index,
+                        idZonaActual,
+                        input.id_detail
+                      )
                     "
                   >
                     <img :src="checkIcon" class="w-5 h-5" />
                   </button>
-                  <button @click="removeField(index, approverLines)">
+
+                  <button
+                    v-if="input.isEdit == true"
+                    type="button"
+                    @click="input.isEdit = false"
+                  >
+                    <img :src="closeIcon" class="w-5 h-5" />
+                  </button>
+
+                  <button
+                    v-if="input.forAdd == false"
+                    type="button"
+                    @click="input.forAdd = true"
+                  >
+                    <img :src="editicon" class="w-6 h-6" />
+                  </button>
+
+                  <button
+                    v-if="input.forAdd == false"
+                    type="button"
+                    @click="removeField(index, zonaTlkRateLines)"
+                  >
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+
+                  <!-- <h1 v-if="input.forAdd == true"> confirm for add api</h1> -->
+                  <button
+                    v-if="input.forAdd == true"
+                    type="button"
+                    @click="
+                      saveApproverLines(zonaTlkRateLines, index, idZonaActual)
+                    "
+                  >
+                    <img :src="checkIcon" class="w-5 h-5" />
+                  </button>
+
+                  <button
+                    v-if="input.forAdd == true"
+                    type="button"
+                    @click="input.forAdd = false"
+                  >
                     <img :src="closeIcon" class="w-5 h-5" />
                   </button>
                 </td>
@@ -474,7 +594,7 @@ const formatCurrency = () => {
                     class="cursor-pointer w-6 h-6"
                     :src="iconPlus"
                     alt=""
-                    @click="addField(approverLines, currentAuthoritiesId)"
+                    @click="addField(zonaTlkRateLines, currentAuthoritiesId)"
                   />
                 </td>
               </tr>
