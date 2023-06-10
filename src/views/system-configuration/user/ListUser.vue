@@ -13,9 +13,16 @@
     import exportExcel from '@/utils/exportToExcel.js'
     import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
     import selectAllCheckbox from '@/utils/selectAllCheckbox'
+
+    import fetchRoleUtils from '@/utils/Fetch/System-Configuration/fetchRole'
+    import fetchSiteUtils from '@/utils/Fetch/Reference/fetchSite'
+    import fetchEmployeeUtils from '@/utils/Fetch/Reference/fetchEmployee'
+
+    import fetchMenuStatusUtils from '@/utils/Fetch/System-Configuration/fetchMenuStatus'
+    import fetchApproverAuthoritiesUtils from '@/utils/Fetch/System-Configuration/fetchApproverAuthorities.js'
     
     // import untuk user table
-    import { ref, computed, onBeforeMount } from 'vue'
+    import { ref, computed, onBeforeMount, watch } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import Swal from "sweetalert2"
     import Api from '@/utils/Api'
@@ -25,10 +32,15 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+
+    import { useReferenceFetchResult } from '@/stores/fetch/reference'
+    import { useSysconfigFetchResult } from '@/stores/fetch/sysconfig'
     
     const sidebar = useSidebarStore()
     const formState = useFormAddStore()
     const formEditState = useFormEditStore()
+    const referenceFetch = useReferenceFetchResult()
+    const sysconfigFetch = useSysconfigFetchResult()
     
     let sortedData = ref([])
     let deleteArray = ref([])
@@ -221,9 +233,41 @@
       }
     }
 
+    let addRoleData = ref([])
+    let addSiteData = ref([])
+    let addEmployeeData = ref([])
+    let addMenuStatusData = ref([])
+    let addAuthoritiesData = ref([])
+
     onBeforeMount(() => {
       getSessionForSidebar()
+      fetchRoleUtils(instanceArray, addRoleData)
+      fetchSiteUtils(instanceArray, addSiteData)
+      fetchEmployeeUtils(instanceArray, addEmployeeData)
+
+      fetchMenuStatusUtils(instanceArray, addMenuStatusData)
+      fetchApproverAuthoritiesUtils(instanceArray, addAuthoritiesData)
       fetch()
+    })
+
+    watch(addRoleData, () => {
+      sysconfigFetch.fetchRoleResult = addRoleData.value
+    })
+
+    watch(addMenuStatusData, () => {
+      sysconfigFetch.fetchMenuStatusResult = addMenuStatusData.value 
+    })
+
+    watch(addAuthoritiesData, () => {
+      sysconfigFetch.fetchAuthoritiesResult = addAuthoritiesData.value 
+    })
+
+    watch(addSiteData, () => {
+      referenceFetch.fetchSiteResult = addSiteData.value
+    })
+
+    watch(addEmployeeData, () => {
+      referenceFetch.fetchEmployeeResult = addEmployeeData.value
     })
 
     const deleteCheckedArray = () => {
@@ -357,6 +401,7 @@
               <div v-else>
       
                 <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+                  
                   <thead class="text-center font-Montserrat text-sm font-bold h-10">
                       <tr class="">
                         <th>
@@ -379,6 +424,7 @@
                         </th>
                       </tr>
                   </thead>
+
                   <tbody class="animate-pulse">
                     <tr>
                       <td>
@@ -481,6 +527,7 @@
                       </td>
                     </tr>
                   </tbody>
+
                 </table>
 
               </div>
