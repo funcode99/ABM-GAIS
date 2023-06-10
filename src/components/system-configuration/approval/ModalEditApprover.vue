@@ -11,13 +11,17 @@
   import modalFooter from "@/components/modal/modalFooter.vue"
  
   // tiap kali scrollTop error pasti itu karena ref nya belum di import
-  import { ref, onBeforeMount } from 'vue'
+  import { ref, watch } from 'vue'
 
   import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
-
-  import Api from '@/utils/Api'
+  import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+  import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
+  import { useTravelManagementFetchResult } from "@/stores/fetch/travel-management"
 
   const formEditState = useFormEditStore()
+  const referenceFetch = useReferenceFetchResult()
+  const sysconfigFetch = useSysconfigFetchResult()
+  const tmsFetch = useTravelManagementFetchResult()
 
   const props = defineProps({
     formContent: Array
@@ -34,10 +38,15 @@
   let idMatrixActual = ref(null)
   let minCA = ref(props.formContent[6])
   let maxCA = ref(props.formContent[7])
+  const emits = defineEmits(['changeMatrix', 'fetchApproval', 'editApprover'])
+  
   let addCompanyData = ref([])
   let addDocumentData = ref([])
-  const emits = defineEmits(['changeMatrix', 'fetchApproval', 'editApprover'])
+  let addAuthoritiesData = ref([])
+  let addMenuData = ref([])
 
+  
+  
   const formattedMinCA = parseFloat(minCA.value)
   minCA.value = formattedMinCA.toLocaleString("id-ID")
 
@@ -47,11 +56,10 @@
   let dropdownRemoveList = ref([])
   let authorities = ref('')
   let approverLines = ref(props.formContent[4] || [])
-  let addAuthoritiesData = ref([])
+
   let levelValue = ref()
   let currentAuthoritiesId = ref()  
   let instanceArray = []
-  let addData = ref([])
 
   const rowClass = 'flex justify-between items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'
@@ -203,57 +211,6 @@
     
     }
 
-
-
-
-
-
-    const fetchMenu = async () => {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get('/menu/get')      
-        instanceArray = api.data.data
-        addData.value = instanceArray
-    }
-
-    const fetchCompany = async () => {
-      const token = JSON.parse(localStorage.getItem("token"));
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const res = await Api.get("/company/get")
-      instanceArray = res.data.data
-      addCompanyData.value = instanceArray
-    }
-
-    const fetchDocument = async () => {
-      const token = JSON.parse(localStorage.getItem("token"));
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const res = await Api.get("/request_trip/get_document_code")
-      instanceArray = res.data.data
-      addDocumentData.value = instanceArray
-    }
-
-    const fetchApproverAuthorities = async () => {
-
-const token = JSON.parse(localStorage.getItem('token'))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const api = await Api.get('/approval/get_approval_type')
-  instanceArray = api.data.data 
-  addAuthoritiesData.value = instanceArray
-  authorities.value = addAuthoritiesData.value[0].level
-  levelValue.value = addAuthoritiesData.value[0].level
-    }
-
-
-
-
-
-    onBeforeMount(() => {
-      fetchMenu()
-      fetchCompany()
-      fetchDocument()
-      fetchApproverAuthorities()
-    })
-
     const formatCurrency = (argument) => {
         if(argument === 'a') {
           
@@ -280,6 +237,13 @@ const token = JSON.parse(localStorage.getItem('token'))
 
         }
     }
+
+    watch(isVisible, () => {
+      addCompanyData.value = referenceFetch.fetchCompanyResult
+      addMenuData.value = sysconfigFetch.fetchMenuResult
+      addAuthoritiesData.value = sysconfigFetch.fetchApproverAuthoritiesResult
+      addDocumentData.value = tmsFetch.fetchDocumentCodeResult
+    })
 
 
 </script>
@@ -325,7 +289,7 @@ const token = JSON.parse(localStorage.getItem('token'))
                 Menu<span class="text-red">*</span>
               </label>
               <select id="menu" v-model="menu" :class="inputStylingClass">
-                <option v-for="data in addData" :key="data.id" :value="data.id">
+                <option v-for="data in addMenuData" :key="data.id" :value="data.id">
                   {{ data.menu }}
                 </option>
               </select>

@@ -1,9 +1,8 @@
 <script setup>
   // cuma gara2 lupa import ref sidebar gua error terus anjing
-  import { ref, onBeforeMount, watch } from 'vue'
+  import { ref, watch } from 'vue'
 
   import { Modal } from "usemodal-vue3"
-  import Api from '@/utils/Api'
 
   import Multiselect from '@vueform/multiselect'
 
@@ -11,7 +10,11 @@
   import modalFooter from "@/components/modal/modalFooter.vue"
 
   import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
+  import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+  import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
   let formState = useFormAddStore()
+  const referenceFetch = useReferenceFetchResult()
+  const sysconfigFetch = useSysconfigFetchResult()
 
   let isVisible = ref(false)
   let isAdding = ref(false)
@@ -26,11 +29,11 @@
   let sequence = ref(false)
   let sequenceCode = ref('')
   const file = ref({})
-  let menuData = ref([])
-    let companyData = ref(null)
   let companyIdArray = ref(null)
 
-  // buat ngisi dropdown status
+
+  let menuData = ref([])
+  let companyData = ref(null)
   let statusMenu = ref(null)
 
   const updatePhoto = (event) => {
@@ -68,16 +71,6 @@
 
   }
 
-
-
-  const getMenuStatus = async () => {
-        const status = await Api.get('/menu/get_status/status')
-        let getStatus = status.data.data
-        statusMenu.value = getStatus
-  }
-
-  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
-
   const resetInput = () => {
       menuName.value = ''
       url.value = ''
@@ -98,42 +91,13 @@
       resetInput()
     }
 
-    fetchMenuData()
+    companyData.value = referenceFetch.fetchCompanyResult
+    menuData.value = sysconfigFetch.fetchMenuResult
+    statusMenu.value = sysconfigFetch.fetchMenuStatusResult
 
   })
 
-
-  const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    companyData.value = res.data.data
-    companyData.value.map((item) => {
-      console.log(item.value)
-      console.log(item.id)
-      console.log(item)
-      item.value = item.id
-    })
-  }
-
-  const fetchMenuData = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const api = await Api.get('/menu/get/')
-        menuData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        // status.value = error.response.status
-        // message.value = error.response.data.message
-      }
-  }
-
-  onBeforeMount(() => {
-    fetchCompany()
-    fetchMenuData()
-    getMenuStatus()
-  })
+  const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -146,8 +110,6 @@
         </button>
     
         <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-
-
 
             <main>
 
@@ -293,8 +255,6 @@
               </form>
 
             </main>
-
-
 
         </Modal>
 

@@ -2,15 +2,20 @@
   import iconPlus from "@/assets/navbar/icon_plus.svg";
   import deleteicon from "@/assets/navbar/delete_icon.svg";
  
-  import { ref, onBeforeMount, watch } from 'vue'
+  import { ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
-  import Api from '@/utils/Api'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
   import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
+  import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+  import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
+  import { useTravelManagementFetchResult } from "@/stores/fetch/travel-management"
   const formState = useFormAddStore()
+  const referenceFetch = useReferenceFetchResult()
+  const sysconfigFetch = useSysconfigFetchResult()
+  const tmsFetch = useTravelManagementFetchResult()
 
   let authorities = ref('')
 
@@ -23,7 +28,6 @@
   const emits = defineEmits('addApprover')
 
   // for get Menu Dropdown
-  let instanceArray = []
   let addMenuData = ref([])
   let addCompanyData = ref([])
   let addDocumentData = ref([])
@@ -37,46 +41,6 @@
   let maxCA = ref(0)
 
   let dropdownRemoveList = ref([])
-
-  const fetchApproverAuthorities = async () => {
-    const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/approval/get_approval_type')
-      instanceArray = api.data.data 
-      addAuthoritiesData.value = instanceArray
-  }
-
-  const fetchMenu = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data
-      addMenuData.value = instanceArray
-      menu.value = addMenuData.value[0].id
-  }
-
-  const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    // console.log(res)
-    instanceArray = res.data.data;
-    // console.log(instanceArray)
-    addCompanyData.value = instanceArray;
-    // console.log(addCompanyData.value)
-    company.value = addCompanyData.value[0].id
-  }
-
-  const fetchDocument = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/request_trip/get_document_code");
-    instanceArray = res.data.data;
-    addDocumentData.value = instanceArray;
-    document.value = addDocumentData.value[0].id
-  }
-
-
 
   let currentAuthoritiesId = ref()
 
@@ -125,11 +89,18 @@
   }
 
   watch(isVisible, () => {
+
     if(isAdding.value == true) {
       isAdding.value = false
     } else {
       resetInput()
     }
+
+    addCompanyData.value = referenceFetch.fetchCompanyResult
+    addMenuData.value = sysconfigFetch.fetchMenuResult
+    addAuthoritiesData.value = sysconfigFetch.fetchApproverAuthoritiesResult
+    addDocumentData.value = tmsFetch.fetchDocumentCodeResult
+
   })
 
   const formatCurrency = (argument) => {
@@ -168,13 +139,6 @@
 
 
   }
-
-  onBeforeMount(() => {
-    fetchMenu()
-    fetchCompany()
-    fetchDocument()
-    fetchApproverAuthorities()
-  })
 
   const rowClass = 'flex justify-between items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'

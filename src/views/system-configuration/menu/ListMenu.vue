@@ -8,11 +8,15 @@
     import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
     import selectAllCheckbox from '@/utils/selectAllCheckbox'
 
+    import fetchMenuStatusUtils from '@/utils/Fetch/System-Configuration/fetchMenuStatus'
+    import fetchMenuUtils from '@/utils/Fetch/System-Configuration/fetchMenu.js'
+    import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany.js'
+
     import Swal from "sweetalert2"
     import Api from '@/utils/Api'
     
     // import untuk approval table
-    import { ref, onBeforeMount, computed } from 'vue'
+    import { ref, onBeforeMount, computed, watch } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import ModalEditMenu from '@/components/system-configuration/menu/ModalEditMenu.vue'
@@ -26,25 +30,33 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
+    import { useReferenceFetchResult } from '@/stores/fetch/reference'
+    import { useSysconfigFetchResult } from '@/stores/fetch/sysconfig'
+    
 
     let formState = useFormAddStore()
     let formEditState = useFormEditStore()
     const sidebar = useSidebarStore()
+    const referenceFetch = useReferenceFetchResult()
+    const sysconfigFetch = useSysconfigFetchResult()
 
+    let status = ref('')
+    let message = ref('')
     let instanceArray = []
     let sortedData = ref([])
     let deleteArray = ref([])
-    let menuData = ref([])
     let sortedbyASC = true
     let editDataId = ref(0)
-    let status = ref('')
-    let message = ref('')
 
     //for paginations
     let showingValue = ref(1);
     let pageMultiplier = ref(10);
     let pageMultiplierReactive = computed(() => pageMultiplier.value);
     let paginateIndex = ref(0);
+
+    let addMenuData = ref([])
+    let addCompanyData = ref([])
+    let addMenuStatusData = ref([])
 
     //for paginations
     const onChangePage = (pageOfItem) => {
@@ -198,26 +210,37 @@
       }
     }
 
-
-
-    const fetch = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const api = await Api.get('/menu/get/')
-        instanceArray = api.data.data
-        sortedData.value = instanceArray
-        // menuData.value = instanceArray
-      } catch (error) {
-        console.log(error)
-        // status.value = error.response.status
-        // message.value = error.response.data.message
-      }
-    }
+    // const fetch = async () => {
+    //   try {
+    //     const token = JSON.parse(localStorage.getItem('token'))
+    //     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    //     const api = await Api.get('/menu/get')
+    //     instanceArray = api.data.data
+    //     sortedData.value = instanceArray
+    //   } catch (error) {
+    //     console.log(error)
+    //     // status.value = error.response.status
+    //     // message.value = error.response.data.message
+    //   }
+    // }
 
     onBeforeMount(() => {
       getSessionForSidebar()
-      fetch()
+      fetchMenuStatusUtils(instanceArray, addMenuStatusData)
+      fetchMenuUtils(instanceArray, addMenuData, sortedData)
+      fetchCompanyUtils(instanceArray, addCompanyData)
+    })
+
+    watch(addCompanyData, () => {
+      referenceFetch.fetchCompanyResult = addCompanyData.value 
+    })
+
+    watch(addMenuData, () => {
+      sysconfigFetch.fetchMenuResult = addMenuData.value
+    })
+
+    watch(addMenuStatusData, () => {
+      sysconfigFetch.fetchMenuStatusResult = addMenuStatusData.value
     })
 
     const getSessionForSidebar = () => {

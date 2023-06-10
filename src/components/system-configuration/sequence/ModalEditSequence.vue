@@ -2,14 +2,16 @@
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
-  import { ref, onBeforeMount, watch } from 'vue'
+  import { ref, watch } from 'vue'
   import { Modal } from 'usemodal-vue3'
   import editIcon from "@/assets/navbar/edit_icon.svg"
 
-  import Api from '@/utils/Api'
-
   import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+  import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+  import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
   let formEditState = useFormEditStore()
+  const referenceFetch = useReferenceFetchResult()
+  const sysconfigFetch = useSysconfigFetchResult()
 
   const props = defineProps({
     formContent: Array
@@ -29,29 +31,8 @@
   let menu = ref(props.formContent[6])
   let company = ref(props.formContent[7])
 
-  let instanceArray = []
   let addMenuData = ref([])
   let addCompanyData = ref([])
-
-  const fetchMenu = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data
-      addMenuData.value = instanceArray
-  }
-
-  const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    addCompanyData.value = res.data.data;
-  }
-
-  onBeforeMount(() => {
-    fetchMenu()
-    fetchCompany()
-  })
 
   const submitEdit = () => {
 
@@ -81,11 +62,15 @@
   }
 
   watch(isVisible, () => {
+
     if (isEditing.value == true) {
     isEditing.value = false
   } else {
     resetInput()
   }
+
+    addCompanyData.value = referenceFetch.fetchCompanyResult
+    addMenuData.value = sysconfigFetch.fetchMenuResult
 
   })
 
@@ -260,12 +245,6 @@
                     <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm">
                         Sequence Code<span class="text-red">*</span>
                     </label>
-
-                    <!-- <select for="sequence_code" v-model="menu" disabled>
-                      <option :class="inputStylingClass" v-for="data in addMenuData" :key="data.id" :value="data.id" required>
-                        {{ data.code_sequence }}
-                      </option>
-                    </select> -->
 
                     <input 
                       type="text" 
