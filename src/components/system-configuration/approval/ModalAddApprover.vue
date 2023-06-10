@@ -76,12 +76,7 @@
     document.value = addDocumentData.value[0].id
   }
 
-  onBeforeMount(() => {
-    fetchMenu()
-    fetchCompany()
-    fetchDocument()
-    fetchApproverAuthorities()
-  })
+
 
   let currentAuthoritiesId = ref()
 
@@ -173,6 +168,13 @@
 
 
   }
+
+  onBeforeMount(() => {
+    fetchMenu()
+    fetchCompany()
+    fetchDocument()
+    fetchApproverAuthorities()
+  })
 
   const rowClass = 'flex justify-between items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'

@@ -185,7 +185,8 @@
               <input
                     id="icon"
                     :class="inputStylingClass"
-                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" required 
+                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
+                    required 
               />
               <h1 class="text-left">
                     Your current icon = {{ filename }}
@@ -194,7 +195,7 @@
       
             <div class="mb-3 text-left flex flex-col gap-1">
               <label for="parent_menu">Parent Menu</label>
-              <select id="parent_menu" :class="inputStylingClass" v-model="ParentId">
+              <select id="parent_menu" :class="inputStylingClass" v-model="ParentId" required>
                   <option v-for="data in menuData" :key="data.id" :value="data.id">
                     {{ data.menu }}
                   </option>
@@ -203,16 +204,15 @@
     
             <div class="mb-3 text-left flex flex-col gap-1">
               <label for="status_menu">Status</label>
-              <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
+              <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu" required>
                     <option v-for="data in statusMenu" :key="data.id" :value="data.code">
                       {{ data.status }}
                     </option>
               </select>
             </div>
     
-            <div class="my-3 text-left flex flex-col gap-1">
-              <h1>Company</h1>
-              <Multiselect
+            <label for="company">Company</label>
+            <Multiselect
                 v-model="companyIdArray"
                 mode="tags"
                 placeholder="Select companies"
@@ -221,6 +221,8 @@
                 :close-on-select="false"
                 :searchable="true"
                 :options="companyData"
+                id="company"
+                required
                 >
                 
                 <template v-slot:tag="{ option, handleTagRemove, disabled }">
@@ -241,12 +243,14 @@
                   </div>
                 </template>
   
-              </Multiselect>
-            </div>
+            </Multiselect>
+
+            <div class="mb-3 text-left flex flex-col gap-1"></div>
+
     
             <div class="mb-3 text-left flex flex-col gap-1">
               <label for="sort">Sort</label>
-              <select id="sort" :class="inputStylingClass" v-model="sort">
+              <select id="sort" :class="inputStylingClass" v-model="sort" required>
                       <option>1</option>
                       <option>2</option>
                       <option>3</option>
