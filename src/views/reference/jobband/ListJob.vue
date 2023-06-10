@@ -518,7 +518,7 @@ const exportToExcel = () => {
                       data.id_company,
                       data.id_flight_class,
                       data?.detail,
-                      index,
+                      data.id
                     ]"
                   />
                   <button @click="deleteJobBand(data.id)">

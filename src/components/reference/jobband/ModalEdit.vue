@@ -32,6 +32,7 @@ let mealsRate = ref(props.formContent[2]);
 let selectedFlightClass = ref(props.formContent[4]);
 let idZona = props.formContent[5];
 let idZonaActual = ref(null);
+let idJobBand = ref(props.formContent[6]);
 
 //for inner table
 let dropdownRemoveList = ref([]);
@@ -60,9 +61,11 @@ if (props.formContent[5] == undefined) {
 }
 
 const saveApproverLines = async (data, idx, zonaId) => {
+  console.log(data);
+  console.log(idx);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.post("/zona_job/store", {
+  const api = await Api.post("/zona_job/store/", {
     id_zona: zonaId,
     id_job_band: parseInt(data[idx].id_job_band),
     tlk_rate: parseInt(data[idx].tlkRate),
@@ -94,17 +97,20 @@ const saveApproverLines = async (data, idx, zonaId) => {
   setTimeout(insertDefault, 100);
 };
 
-const editApproverLines = async (data, idx, zonaId, id) => {
+const editApproverLines = async (data, idx, zonaId) => {
   console.log("masuk ke edit approver lines");
+  // console.log(data)
+  // console.log(idx)
+  console.log(data[idx].tlk_rate);
 
-  const api = await Api.post(`/zona_job/update_data/${id}`, {
+  const api = await Api.post(`/zona_job/update_data/${idJobBand.value}`, {
     id_zona: zonaId,
     id_job_band: parseInt(data[idx].id_job_band),
-    meals_rate: parseInt(data[idx].tlkRate),
+    tlk_rate: data[idx].tlk_rate,
   });
   console.log(api);
   console.log("Zona TLK Rate telah diubah!");
-  emits("fetchJobband");
+  // emits("fetchJobband");
   console.log(zonaTlkRateLines.value);
   const insertDefault = () => {
     zonaTlkRateLines.value = props.formContent[5];
@@ -143,17 +149,18 @@ const addField = (fieldType, isi) => {
 
 //untuk menghapus field
 const removeField = async (index, fieldType) => {
-  if (fieldType[index].id_detail) {
-    console.log("masuk ke api");
+  console.log(idJobBand.value);
+  if (idJobBand) {
+    console.log("masuk ke api delete");
 
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const api = await Api.delete(
-      `/zona_job/delete_data/${fieldType[index].id_detail}`
+      `/zona_job/delete_data/${idJobBand.value}`
     );
 
     console.log("zona tlk rate berhasil dihapus");
-    emits("fetchJobband");
+    // emits("fetchJobband");
   }
 
   console.log("setelah masuk ke api");
@@ -459,6 +466,8 @@ const formatCurrency = () => {
               </tr>
             </thead>
 
+        <!-- {{ zonaTlkRateLines }} -->
+
             <tbody class="bg-[#F5F5F5]">
               <!-- {{ addZonaTlkRateData }} -->
               <tr
@@ -471,7 +480,7 @@ const formatCurrency = () => {
                     v-model="input.id_zona"
                     :id="index"
                     :disabled="
-                      addZonaTlkRateData.length - 1 > index ? true : false
+                      addZonaTlkRateData.length - 1 > index && !input.isEdit
                     "
                     class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                   >
@@ -495,12 +504,13 @@ const formatCurrency = () => {
                 ></td>
 
                 <td class="text-center justify-center">
+                  <!-- {{  input.tlk_rate }} -->
                   <input
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                     v-model="input.tlk_rate"
                     :disabled="
-                      addZonaTlkRateData.length - 1 > index ? true : false
+                      addZonaTlkRateData.length - 1 > index && !input.isEdit
                     "
                   />
                 </td>
@@ -530,12 +540,7 @@ const formatCurrency = () => {
                     v-if="input.isEdit == true"
                     type="button"
                     @click="
-                      editApproverLines(
-                        zonaTlkRateLines,
-                        index,
-                        idZonaActual,
-                        input.id_detail
-                      )
+                      editApproverLines(zonaTlkRateLines, index, idZonaActual)
                     "
                   >
                     <img :src="checkIcon" class="w-5 h-5" />
