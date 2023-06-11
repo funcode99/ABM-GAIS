@@ -95,6 +95,10 @@
     menuData.value = sysconfigFetch.fetchMenuResult
     statusMenu.value = sysconfigFetch.fetchMenuStatusResult
 
+    companyData.value.map((item) => {
+      item.value = item.id
+    })
+
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
@@ -166,18 +170,19 @@
                   </div>
 
                   <label for="company">Company</label>
+
                   <Multiselect
-                      id="company"
-                      v-model="companyIdArray"
-                      mode="tags"
-                      placeholder="Select companies"
-                      track-by="company_name"
-                      label="company_name"
-                      :close-on-select="false"
-                      :searchable="true"
-                      :options="companyData"
-                      required
-                      >
+                    id="company"
+                    v-model="companyIdArray"
+                    mode="tags"
+                    placeholder="Select companies"
+                    track-by="company_name"
+                    label="company_name"
+                    :close-on-select="false"
+                    :searchable="true"
+                    :options="companyData"
+                    required
+                  >
                       
                       <template v-slot:tag="{ option, handleTagRemove, disabled }">
                         

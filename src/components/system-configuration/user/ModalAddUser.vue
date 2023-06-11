@@ -261,7 +261,7 @@
 
                     <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
                     
-                    <select id="location" v-model="location" :class="inputStylingClass">
+                    <select disabled id="location" v-model="location" :class="inputStylingClass">
                       <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
                           {{ data.site_name }}
                       </option>

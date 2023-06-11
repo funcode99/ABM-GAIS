@@ -60,9 +60,13 @@ const submitEdit = () => {
     formEditState.zona = {}; // Inisialisasi objek jika belum ada
   }
 
-  formEditState.zona.zonaIdCompany = companyIdArray.value;
-  formEditState.zona.zonaName = currentZonaName.value;
-  formEditState.zona.zonaIdCity = cityIdArray.value;
+  console.log(companyIdArray.value)
+  console.log(currentZonaName.value)
+  console.log(cityIdArray.value)
+
+  formEditState.zona.zonaIdCompany = companyIdArray.value
+  formEditState.zona.zonaName = currentZonaName.value
+  formEditState.zona.zonaIdCity = cityIdArray.value
 
   // console.log("nilai zona name" + JSON.stringify(currentZonaName));
 
