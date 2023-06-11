@@ -64,6 +64,7 @@ import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
 import StockInAtkList from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkList.vue"
 import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkView.vue"
+import StockInAtkID from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkId.vue"
 import ATKRequestList from '@/views/facility-services/atk-supplies/atk-request/ATK-Request.vue'
 import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/ATKRequestView.vue'
 import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
@@ -930,6 +931,23 @@ const router = createRouter({
       path: '/viewstockinatk',
       name: 'viewstock in atk',
       component: StockInAtkView,
+      meta: {
+        title: 'View Stock In ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/viewstockinatk/:id',
+      name: 'viewstock_in_atk',
+      component: StockInAtkID,
       meta: {
         title: 'View Stock In ATK'
       },
