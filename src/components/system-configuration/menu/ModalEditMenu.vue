@@ -101,6 +101,10 @@
     menuData.value = sysconfigFetch.fetchMenuResult
     statusMenu.value = sysconfigFetch.fetchMenuStatusResult
 
+    companyData.value.map((item) => {
+      item.value = item.id
+    })
+
     sequenceCode.value !== null ? sequence = true : sequence = false
   })
 
@@ -117,8 +121,6 @@
   
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
 
-      <!-- {{ companyIdObject }}
-      {{ companyIdObjectKeys }} -->
 
       <main>
 
@@ -187,7 +189,9 @@
             </div>
     
             <label for="company">Company</label>
+            
             <Multiselect
+                id="company"
                 v-model="companyIdArray"
                 mode="tags"
                 placeholder="Select companies"
@@ -196,7 +200,6 @@
                 :close-on-select="false"
                 :searchable="true"
                 :options="companyData"
-                id="company"
                 required
                 >
                 
