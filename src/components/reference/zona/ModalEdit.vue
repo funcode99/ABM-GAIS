@@ -21,9 +21,9 @@ let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
 let companyData = ref(null);
-let companyIdArray = ref([]);
+let companyIdArray = ref(null);
 let cityData = ref(null);
-let cityIdArray = ref([]);
+let cityIdArray = ref(null);
 
 let companyIdObject = ref(props.formContent[0]);
 let companyIdObjectKeys = ref(Object.values(companyIdObject.value));
@@ -33,21 +33,24 @@ let currentZonaName = ref(props.formContent[1]);
 let CityIdObject = ref(props.formContent[2]);
 let cityIdObjectKeys = ref(Object.values(CityIdObject.value));
 
-companyIdObjectKeys.value.map((item) => {
-  let number = Number(item);
-
-  if (Number.isInteger(number)) {
-    companyIdArray.value.push(item);
+companyIdObjectKeys.value.map((item, index) => {
+  if (item == "{") {
+    companyIdObjectKeys.value[index] = "[";
+  } else if (item == "}") {
+    companyIdObjectKeys.value[index] = "]";
   }
 });
 
-cityIdObjectKeys.value.map((item) => {
-  let number = Number(item);
-
-  if (Number.isInteger(number)) {
-    cityIdArray.value.push(item);
+cityIdObjectKeys.value.map((item, index) => {
+  if (item == "{") {
+    cityIdObjectKeys.value[index] = "[";
+  } else if (item == "}") {
+    cityIdObjectKeys.value[index] = "]";
   }
 });
+
+companyIdArray.value = JSON.parse(companyIdObjectKeys.value.join(""));
+cityIdArray.value = JSON.parse(cityIdObjectKeys.value.join(""));
 
 const props = defineProps({
   formContent: Array,
@@ -60,13 +63,13 @@ const submitEdit = () => {
     formEditState.zona = {}; // Inisialisasi objek jika belum ada
   }
 
-  console.log(companyIdArray.value)
-  console.log(currentZonaName.value)
-  console.log(cityIdArray.value)
+  console.log(companyIdArray.value);
+  console.log(currentZonaName.value);
+  console.log(cityIdArray.value);
 
-  formEditState.zona.zonaIdCompany = companyIdArray.value
-  formEditState.zona.zonaName = currentZonaName.value
-  formEditState.zona.zonaIdCity = cityIdArray.value
+  formEditState.zona.zonaIdCompany = companyIdArray.value;
+  formEditState.zona.zonaName = currentZonaName.value;
+  formEditState.zona.zonaIdCity = cityIdArray.value;
 
   // console.log("nilai zona name" + JSON.stringify(currentZonaName));
 
