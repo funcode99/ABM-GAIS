@@ -1,20 +1,22 @@
 <script setup>
-import { ref, onBeforeMount, watch } from "vue";
+import { ref, watch } from "vue"
 
-import { Modal } from "usemodal-vue3";
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import { Modal } from "usemodal-vue3"
 
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { useFormAddStore } from "@/stores/sysconfig/add-modal.js";
-let formState = useFormAddStore();
+import { useFormAddStore } from "@/stores/sysconfig/add-modal.js"
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
+let formState = useFormAddStore()
+const referenceFetch = useReferenceFetchResult()
+const sysconfigFetch = useSysconfigFetchResult()
 
-let isVisible = ref(false);
-let isAdding = ref(false);
-let modalPaddingHeight = "10vh";
-const emits = defineEmits("addSequence");
+let isVisible = ref(false)
+let isAdding = ref(false)
+let modalPaddingHeight = "10vh"
+const emits = defineEmits("addSequence")
 
   let menuSequenceName = ref('')
   let company = ref('')
@@ -25,30 +27,8 @@ const emits = defineEmits("addSequence");
   let recycleBy = ref('W')
   let suffix = ref('')
 
-let instanceArray = [];
-let addMenuData = ref([]);
-let addCompanyData = ref([]);
-
-  const fetchMenu = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/menu/get')      
-      instanceArray = api.data.data
-      addMenuData.value = instanceArray
-      // menu.value = addMenuData.value[0].id
-  }
-
-  const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    addCompanyData.value = res.data.data;
-  }
-
-  onBeforeMount(() => {
-    fetchMenu()
-    fetchCompany()
-  })
+  let addMenuData = ref([])
+  let addCompanyData = ref([])
 
   const submitSequence = () => {
 
@@ -61,15 +41,6 @@ let addCompanyData = ref([]);
     formState.sequence.prefix = prefix.value
     formState.sequence.suffix = suffix.value
     formState.sequence.menuId = menu.value
-
-    Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Your work has been saved",
-        showConfirmButton: false,
-        timer: 1500,
-    })
-
     emits('addSequence')
 
   }
@@ -91,6 +62,10 @@ let addCompanyData = ref([]);
     } else {
       resetInput()
     }
+
+    addCompanyData.value = referenceFetch.fetchCompanyResult
+    addMenuData.value = sysconfigFetch.fetchMenuResult
+    
   })
 
   const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
@@ -287,14 +262,23 @@ let addCompanyData = ref([]);
             >
               Sequence Code<span class="text-red">*</span>
             </label>
-            <input
+
+            <!-- <input
               id="sequence_code"
               v-model="sequenceCode"
               type="text"
               placeholder="Sequence Code"
               :class="inputStylingClass"
               required
+            /> -->
+
+            <input 
+              type="text" 
+              :class="[inputStylingClass, menu == data.id ? '' : 'hidden']" 
+              v-for="data in addMenuData" :key="data.id" 
+              :value="data.code_sequence" required disabled 
             />
+
           </div>
 
           <div :class="columnClass"></div>

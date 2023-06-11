@@ -8,9 +8,14 @@
     import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
     import selectAllCheckbox from '@/utils/selectAllCheckbox'
 
+    import fetchMenuUtils from '@/utils/Fetch/System-Configuration/fetchMenu.js'
+    import fetchApproverAuthoritiesUtils from '@/utils/Fetch/System-Configuration/fetchApproverAuthorities.js'
+    import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany.js'
+    import fetchDocumentCodeUtils from '@/utils/Fetch/Travel-Management/fetchDocumentCode.js'
+
     // import untuk approval table
-    import { ref, computed, onBeforeMount } from 'vue'
-    import arrowicon from "@/assets/navbar/icon_arrow.svg";
+    import { ref, computed, onBeforeMount, watch } from 'vue'
+    import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditApproval from '@/components/system-configuration/approval/ModalEditApprover.vue'
 
     import Swal from "sweetalert2"
@@ -18,17 +23,24 @@
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
-    import deleteicon from "@/assets/navbar/delete_icon.svg";
-    import icondanger from "@/assets/Danger.png";
-    import iconClose from "@/assets/navbar/icon_close.svg";
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import icondanger from "@/assets/Danger.png"
+    import iconClose from "@/assets/navbar/icon_close.svg"
 
     import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
+    
+    import { useReferenceFetchResult } from '@/stores/fetch/reference'
+    import { useSysconfigFetchResult } from '@/stores/fetch/sysconfig'
+    import { useTravelManagementFetchResult } from '@/stores/fetch/travel-management'
 
     const sidebar = useSidebarStore()
     const formEditState = useFormEditStore()
     const formState = useFormAddStore()
+    const referenceFetch = useReferenceFetchResult()
+    const sysconfigFetch = useSysconfigFetchResult()
+    const tmsFetch = useTravelManagementFetchResult()
 
     const editApprovalId = ref()
 
@@ -43,6 +55,11 @@
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let statusResponse = ref('')
     let message = ref('')
+
+    let addMenuData = ref([])
+    let addCompanyData = ref([])
+    let addDocumentData = ref([])
+    let addAuthoritiesData = ref([])
 
     //for paginations
     const onChangePage = (pageOfItem) => {
@@ -87,8 +104,29 @@
 
     onBeforeMount(() => {
       getSessionForSidebar()
+      fetchMenuUtils(instanceArray, addMenuData)
+      fetchCompanyUtils(instanceArray, addCompanyData)
+      fetchDocumentCodeUtils(instanceArray, addDocumentData)
+      fetchApproverAuthoritiesUtils(instanceArray, addAuthoritiesData)
       fetch()
     })
+
+    watch(addCompanyData, () => {
+      referenceFetch.fetchCompanyResult = addCompanyData.value 
+    })
+
+    watch(addMenuData, () => {
+      sysconfigFetch.fetchMenuResult = addMenuData.value
+    })
+
+    watch(addAuthoritiesData, () => {
+      sysconfigFetch.fetchApproverAuthoritiesResult = addAuthoritiesData.value
+    })
+
+    watch(addDocumentData, () => {
+      tmsFetch.fetchDocumentCodeResult = addDocumentData.value
+    })
+
 
     const filteredItems = (search) => {
         sortedData.value = instanceArray
@@ -220,13 +258,9 @@
     }
 
     const filterTable = async (id) => {
-      console.log(id)
-      console.log('masuk ke filter table')
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get(`/approval/get_approval?filterCompany=${id}`)
-        // console.log(api)
-        // console.log(api.status)
         statusResponse.value = api.status
         instanceArray = api.data.data
         sortedData.value = instanceArray

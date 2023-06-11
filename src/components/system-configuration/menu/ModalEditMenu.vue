@@ -4,20 +4,55 @@
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
-  import { ref, onBeforeMount, watch } from 'vue'
+  import { ref, watch } from 'vue'
   import { Modal } from 'usemodal-vue3'
-  import Api from '@/utils/Api'
   import Multiselect from '@vueform/multiselect'
 
   import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
-
+  import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+  import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
   let formState = useFormEditStore()
+  const referenceFetch = useReferenceFetchResult()
+  const sysconfigFetch = useSysconfigFetchResult()
+
+  let idStatusMenu = ref(props.formContent[6] == 'Active' ? 1 : 0)
 
   let statusMenu = ref(null)
-  let idStatusMenu = ref(props.formContent[6] == 'Active' ? 1 : 0)
   let menuData = ref(null)
+  let companyData = ref(null)
 
   const emits = defineEmits('changeMenu')
+
+  let isVisible = ref(false)
+  let modalPaddingHeight = '10vh'
+  const props = defineProps({
+    formContent: Array
+  })
+
+  const file = ref()
+  let menuName = ref(props.formContent[0])
+  let url = ref(props.formContent[1])
+  let sort = ref(props.formContent[2])
+  let filename = ref(props.formContent[3])
+  let sequence = ref(false)
+  let sequenceCode = ref(props.formContent[7])
+  let ParentId = ref(props.formContent[5])
+
+  sequenceCode.value !== null ? sequence = true : sequence = false
+
+  let companyIdObject = ref(props.formContent[4])
+  let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
+  let companyIdArray = ref(null)
+
+  companyIdObjectKeys.value.map((item, index) => {
+    if(item == '{') {
+      companyIdObjectKeys.value[index] = '['
+    } else if (item == '}') {
+      companyIdObjectKeys.value[index] = ']'
+    }
+  })
+
+  companyIdArray.value = JSON.parse(companyIdObjectKeys.value.join(''))
 
   const updatePhoto = (event) => {
     file.value = event.target.files[0]
@@ -25,6 +60,7 @@
   }
 
   const submitEdit = () => {
+
     try {     
         
         if(sequence) {
@@ -51,71 +87,6 @@
 
   }
 
-  onBeforeMount(() => {
-    getMenuStatus()
-    fetchCompany()
-  })
-
-  const getMenuStatus = async () => {
-      const status = await Api.get('/menu/get_status/status')
-      let getStatus = status.data.data
-      statusMenu.value = getStatus
-  }
-
-  let isVisible = ref(false)
-  let modalPaddingHeight = '10vh'
-
-  const props = defineProps({
-    formContent: Array
-  })
-
-  let menuName = ref(props.formContent[0])
-  let url = ref(props.formContent[1])
-  let sort = ref(props.formContent[2])
-  let filename = ref(props.formContent[3])
-  const file = ref()
-  let sequence = ref(false)
-  let sequenceCode = ref(props.formContent[7])
-  let ParentId = ref(props.formContent[5])
-
-  let companyIdObject = ref(props.formContent[4])
-  let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
-  let companyIdArray = ref(null)
-  let companyData = ref(null)
-
-  companyIdObjectKeys.value.map((item, index) => {
-    if(item == '{') {
-      companyIdObjectKeys.value[index] = '['
-    } else if (item == '}') {
-      companyIdObjectKeys.value[index] = ']'
-    }
-  })
-
-  companyIdArray.value = JSON.parse(companyIdObjectKeys.value.join(''))
-
-  const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    companyData = res.data.data
-    companyData.map((item) => {
-      item.value = item.id
-    })
-  }
-
-  const fetchMenuData = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const api = await Api.get('/menu/get/')
-        menuData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        // status.value = error.response.status
-        // message.value = error.response.data.message
-      }
-  }
-
   const resetInput = () => {
       menuName.value = props.formContent[0]
       url.value = props.formContent[1]
@@ -124,9 +95,13 @@
   }
 
   watch(isVisible, () => {
-    fetchCompany()
-    fetchMenuData()
     resetInput()
+
+    companyData.value = referenceFetch.fetchCompanyResult
+    menuData.value = sysconfigFetch.fetchMenuResult
+    statusMenu.value = sysconfigFetch.fetchMenuStatusResult
+
+    sequenceCode.value !== null ? sequence = true : sequence = false
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
@@ -274,7 +249,7 @@
               <h1>Use Sequence</h1>
             </div>
     
-            <div class="mb-3" v-if="sequence">
+            <div class="mb-3" v-if="sequenceCode">
               
               <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                     Sequence Code<span class="text-red-star">*</span>

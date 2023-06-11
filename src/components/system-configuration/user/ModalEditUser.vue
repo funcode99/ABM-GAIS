@@ -1,21 +1,22 @@
 <script setup>
-    import { ref, watch, onBeforeMount } from 'vue'
+    import { ref, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import editIcon from "@/assets/navbar/edit_icon.svg"
-    import Api from '@/utils/Api'
 
     import modalHeader from "@/components/modal/modalHeader.vue"
     import modalFooter from "@/components/modal/modalFooter.vue"
 
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+    import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+    import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
     let formEditState = useFormEditStore()
+    const referenceFetch = useReferenceFetchResult()
+    const sysconfigFetch = useSysconfigFetchResult()
 
     let isVisible = ref(false)
     let isAdding = ref(false)
     let modalPaddingHeight = '10vh'
-    let statusMenu = ref(null)
     const emits = defineEmits('changeUser')
-
     const props = defineProps({
       formContent: Array
     })
@@ -25,7 +26,6 @@
     let email = ref(props.formContent[1])
     let selected = ref(props.formContent[2])
     let role = ref(props.formContent[3])
-    let company = ref(props.formContent[4])
     let location = ref([props.formContent[5], props.formContent[4]])
     let isEmployee = ref(props.formContent[6] == 1 ? true : false)
     let fullname = ref(props.formContent[0])
@@ -51,60 +51,10 @@
     const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
     let responseRoleArray = ref([])
-    let responseCompanyArray = ref([])
     let responseSiteArray = ref([])
     let responseEmployeeArray = ref([])
     let responseAuthoritiesArray = ref([])
-
-    const fetchRole = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/role/get')
-      responseRoleArray.value = api.data.data
-    }
-
-    const fetchCompany = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/company/get')
-      responseCompanyArray.value = api.data.data
-    }
-
-    const fetchSite = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/site/get_data')
-      responseSiteArray.value = api.data.data
-    }
-
-    const fetchEmployee = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/employee/get_by_login')
-      responseEmployeeArray.value = api.data.data
-    }
-
-    const fetchAuthorities = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/approval/get_approval_type')
-      responseAuthoritiesArray.value = api.data.data
-    }
-
-    const getMenuStatus = async () => {
-        const status = await Api.get('/menu/get_status/status')
-        let getStatus = status.data.data
-        statusMenu.value = getStatus
-  }
-
-    onBeforeMount(() => {
-      fetchRole()
-      fetchCompany()
-      fetchSite()
-      fetchAuthorities()
-      fetchEmployee()
-      getMenuStatus()
-    })
+    let statusMenu = ref(null)
 
     const resetInput = () => {
       password.value = ''
@@ -112,20 +62,26 @@
       email.value = props.formContent[1]
       selected.value = props.formContent[2]
       role.value = props.formContent[3]
-      company.value = props.formContent[4]
       location.value = [props.formContent[5], props.formContent[4]]
       isEmployee.value = props.formContent[6] == 1 ? true : false 
       fullname.value = props.formContent[0]
     }
 
     watch(isVisible, () => {
+      
       if(isAdding.value == true) {
       isAdding.value = false
       } else {
         resetInput()
       }
-    })
 
+      responseRoleArray.value = sysconfigFetch.fetchRoleResult
+      responseAuthoritiesArray.value = sysconfigFetch.fetchApproverAuthoritiesResult
+      statusMenu.value = sysconfigFetch.fetchMenuStatusResult
+      responseSiteArray.value = referenceFetch.fetchSiteResult
+      responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
+
+    })
 
 </script>
 
@@ -303,31 +259,23 @@
             </div>
             
           </div>
-
-          {{ location }}
-          <!-- {{ props.formContent[4] }} -->
-          <!-- {{ props.formContent[5] }} -->
   
           <div class="mb-6 flex flex-col gap-2">
               <label for="company" class="text-sm">Company <span class="text-red-star">*</span> </label>
               <select id="company" v-model="location" :class="inputStylingClass">
-                <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" :selected="data.id == company ? true : false"
-                >
+                <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" :selected="data.id == props.formContent[4] ? true : false">
                   {{ data.company_name }}
                 </option>
               </select>
           </div>
   
           <div class="mb-6 flex flex-col gap-2">
-
             <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
-              
             <select id="location" v-model="location" :class="inputStylingClass">
                 <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
                     {{ data.site_name }}
                 </option>
             </select>
-
           </div>
   
           <modalFooter

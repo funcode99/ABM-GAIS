@@ -12,7 +12,7 @@
     import Api from '@/utils/Api'
 
     // import untuk user table
-    import { ref, computed, onBeforeMount } from 'vue'
+    import { ref, computed, onBeforeMount, watch } from 'vue'
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
     import ModalEditSequence from '@/components/system-configuration/sequence/ModalEditSequence.vue'
 
@@ -22,26 +22,37 @@
     import icondanger from "@/assets/Danger.png";
     import iconClose from "@/assets/navbar/icon_close.svg";
 
+    import fetchMenuUtils from '@/utils/Fetch/System-Configuration/fetchMenu.js'
+    import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany.js'
+
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
+    import { useReferenceFetchResult } from '@/stores/fetch/reference'
+    import { useSysconfigFetchResult } from '@/stores/fetch/sysconfig'
     const sidebar = useSidebarStore()
     let formState = useFormAddStore()
+    const referenceFetch = useReferenceFetchResult()
+    const sysconfigFetch = useSysconfigFetchResult()
     let formEditState = useFormEditStore()
+
 
     let editSequenceDataId = ref(0)
     
     const search = ref('')
+    let lengthCounter = 0
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
-    let lengthCounter = 0
+    let deleteArray = ref([])
+    let addCompanyData = ref([])
+    let addMenuData =  ref([])
 
     //for paginations
-    let showingValue = ref(1);
-    let pageMultiplier = ref(10);
-    let pageMultiplierReactive = computed(() => pageMultiplier.value);
-    let paginateIndex = ref(0);
+    let showingValue = ref(1)
+    let pageMultiplier = ref(10)
+    let pageMultiplierReactive = computed(() => pageMultiplier.value)
+    let paginateIndex = ref(0)
 
     //for paginations
     const onChangePage = (pageOfItem) => {
@@ -73,6 +84,8 @@
 
     onBeforeMount(() => {
       getSessionForSidebar()
+      fetchMenuUtils(instanceArray, addMenuData)
+      fetchCompanyUtils(instanceArray, addCompanyData)
       fetch()
     })
 
@@ -213,7 +226,7 @@
         fetch()
     }
 
-    let deleteArray = ref([])
+
     const deleteCheckedArray = () => {
       deleteCheckedArrayUtils(deleteArray, 'sequence', sortedData, fetch)
     }
@@ -234,6 +247,14 @@
     const exportToExcel = () => {
       exportExcel('Sequence Data', tableHead, sortedData, 'no', 'sequence_name', 'prefix', 'suffix','sequence_size')
     }
+
+    watch(addCompanyData, () => {
+      referenceFetch.fetchCompanyResult = addCompanyData.value 
+    })
+
+    watch(addMenuData, () => {
+      sysconfigFetch.fetchMenuResult = addMenuData.value
+    })
   
 </script>
 
