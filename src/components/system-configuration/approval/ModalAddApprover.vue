@@ -218,7 +218,6 @@
                   <div :class="columnClass">
                     <label for="minCA">
                       Minimum Amount (CA) 
-                      <!-- {{ minCA }} -->
                     </label>
                     <input
                       @input="formatCurrency('a')"
