@@ -38,7 +38,7 @@
   let sequenceCode = ref(props.formContent[7])
   let ParentId = ref(props.formContent[5])
 
-  sequenceCode.value !== null ? sequence = true : sequence = false
+
 
   let companyIdObject = ref(props.formContent[4])
   let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
@@ -71,7 +71,7 @@
 
         formState.menu.menuName = menuName.value
         formState.menu.sort = sort.value
-        formState.menu.sequence = sequence.value
+        formState.menu.sequence = sequenceCode.value
         formState.menu.url = url.value
         formState.menu.icon = file.value
         formState.menu.idStatusMenu = idStatusMenu.value
@@ -95,6 +95,7 @@
   }
 
   watch(isVisible, () => {
+
     resetInput()
 
     companyData.value = referenceFetch.fetchCompanyResult
@@ -105,11 +106,11 @@
       item.value = item.id
     })
 
-    sequenceCode.value !== null ? sequence = true : sequence = false
+    sequenceCode.value !== null ? sequence.value = true : ''
+
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
-
 </script>
 
 <!-- komponen ini mendapat warisan styling dari komponen parent nya (listMenu) -->
@@ -247,15 +248,15 @@
               </select>
             </div>
       
-            <div class="flex gap-2 mb-2">
+            <div class="flex gap-2 mb-2" >
               <input type="checkbox" v-model="sequence">
               <h1>Use Sequence</h1>
             </div>
     
-            <div class="mb-3" v-if="sequenceCode">
+            <div class="mb-3" v-if="sequence">
               
               <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                    Sequence Code<span class="text-red-star">*</span>
+                  Sequence Code<span class="text-red-star">*</span>
               </label>
     
               <input
@@ -269,6 +270,7 @@
               />
     
             </div>
+          
       
           </div>
   

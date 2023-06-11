@@ -416,7 +416,7 @@ const getSessionForSidebar = () => {
                       {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.item_count }}
+                      {{ data.qty }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.status }}

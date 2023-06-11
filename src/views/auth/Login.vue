@@ -29,11 +29,12 @@
         }
         )
         // tambah withCredentials malah error :(
-        // console.log(JSON.stringify(data.data.users.id_company))
+        // console.log(JSON.stringify(data.data.users.id_employee))
         //add local storage tomy
         localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
         localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
         localStorage.setItem('id_role', JSON.stringify(data.data.users.id_role))
+        localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
 
         // $cookies.set('token', data.data.data.access_token)
         // store.commit('isLoading', false);
