@@ -76,6 +76,8 @@
           formState.approval.minCA = minCA.value.replaceAll(".", "")
           formState.approval.maxCA = maxCA.value.replaceAll(".", "")
 
+          currentAuthoritiesId.value = null
+
           emits('addApprover')
 
   }
@@ -86,20 +88,23 @@
     menu.value = ''
     document.value = ''
     approverLines.value = []
+    dropdownRemoveList.value = []
+    minCA.value = 0
+    maxCA.value = 0
   }
 
   watch(isVisible, () => {
+
+    addCompanyData.value = referenceFetch.fetchCompanyResult
+    addMenuData.value = sysconfigFetch.fetchMenuResult
+    addAuthoritiesData.value = sysconfigFetch.fetchApproverAuthoritiesResult
+    addDocumentData.value = tmsFetch.fetchDocumentCodeResult
 
     if(isAdding.value == true) {
       isAdding.value = false
     } else {
       resetInput()
     }
-
-    addCompanyData.value = referenceFetch.fetchCompanyResult
-    addMenuData.value = sysconfigFetch.fetchMenuResult
-    addAuthoritiesData.value = sysconfigFetch.fetchApproverAuthoritiesResult
-    addDocumentData.value = tmsFetch.fetchDocumentCodeResult
 
   })
 
@@ -253,6 +258,7 @@
               </div>
 
               <!-- bagian bawah -->
+              <!-- {{ dropdownRemoveList }} -->
               <h1 class="font-medium">Approver Lines <span>*</span></h1>
               <hr class="border border-black">
       
@@ -287,8 +293,13 @@
                   </thead>
 
                   <!-- {{ approverLines }} -->
+
+             
         
                   <tbody class="bg-[#F5F5F5]">
+
+                    <!-- {{ sysconfigFetch.fetchApproverAuthoritiesResult }}
+                    {{ addMenuData }} -->
         
                     <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
                       
@@ -310,7 +321,7 @@
                           <option 
                             v-for="data in addAuthoritiesData" 
                             :key="data.id" 
-                            :value="data.id" 
+                            :value="data.id"
                             :hidden="dropdownRemoveList.includes(data.id) ? true : false"
                           >
                             {{ data.auth_name }}

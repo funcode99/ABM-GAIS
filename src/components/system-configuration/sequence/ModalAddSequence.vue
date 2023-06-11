@@ -262,14 +262,23 @@ const emits = defineEmits("addSequence")
             >
               Sequence Code<span class="text-red">*</span>
             </label>
-            <input
+
+            <!-- <input
               id="sequence_code"
               v-model="sequenceCode"
               type="text"
               placeholder="Sequence Code"
               :class="inputStylingClass"
               required
+            /> -->
+
+            <input 
+              type="text" 
+              :class="[inputStylingClass, menu == data.id ? '' : 'hidden']" 
+              v-for="data in addMenuData" :key="data.id" 
+              :value="data.code_sequence" required disabled 
             />
+
           </div>
 
           <div :class="columnClass"></div>

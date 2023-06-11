@@ -79,7 +79,6 @@
     responseSiteArray.value = referenceFetch.fetchSiteResult
     responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
 
-
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'

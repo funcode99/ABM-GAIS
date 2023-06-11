@@ -38,6 +38,8 @@
   let sequenceCode = ref(props.formContent[7])
   let ParentId = ref(props.formContent[5])
 
+  sequenceCode.value !== null ? sequence = true : sequence = false
+
   let companyIdObject = ref(props.formContent[4])
   let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
   let companyIdArray = ref(null)
@@ -98,6 +100,8 @@
     companyData.value = referenceFetch.fetchCompanyResult
     menuData.value = sysconfigFetch.fetchMenuResult
     statusMenu.value = sysconfigFetch.fetchMenuStatusResult
+
+    sequenceCode.value !== null ? sequence = true : sequence = false
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
@@ -245,7 +249,7 @@
               <h1>Use Sequence</h1>
             </div>
     
-            <div class="mb-3" v-if="sequence">
+            <div class="mb-3" v-if="sequenceCode">
               
               <label for="sequence_code" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                     Sequence Code<span class="text-red-star">*</span>
