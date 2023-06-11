@@ -8,6 +8,7 @@ import { ref, onMounted, watch } from "vue";
 import Api from "@/utils/Api";
 import { useMenuAccessStore } from '@/stores/savemenuaccess'
 import { resetTracking } from "@vue/reactivity";
+import Swal from "sweetalert2";
 
 
 let selectedCompany = ref("Company");

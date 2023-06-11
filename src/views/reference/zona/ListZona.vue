@@ -481,7 +481,7 @@ const exportToExcel = () => {
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
                     @change-zona="editZona(data.id)"
-                    :formContent="[data.id_company, data.zona, data.id_city]"
+                    :formContent="[data.comp_array, data.zona, data.city_array]"
                   />
                   <button @click="deleteZona(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
