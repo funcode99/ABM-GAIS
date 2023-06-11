@@ -3,6 +3,7 @@
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
+    import SkeletonLoadingTable from '@/components/layout/SkeletonLoadingTable.vue'
 
     import tableContainer from '@/components/table/tableContainer.vue'
 
@@ -403,7 +404,7 @@
                 <table class="table table-zebra table-compact border h-full w-full rounded-lg">
                   
                   <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                      <tr class="">
+                      <tr>
                         <th>
                           <div class="flex justify-center">
                             <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
@@ -425,108 +426,7 @@
                       </tr>
                   </thead>
 
-                  <tbody class="animate-pulse">
-                    <tr>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                      <td>
-                        <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                      </td>
-                    </tr>
-                  </tbody>
+                  <SkeletonLoadingTable :row="5" :column="6" />
 
                 </table>
 

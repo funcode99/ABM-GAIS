@@ -3,6 +3,7 @@
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
+    import SkeletonLoadingTable from '@/components/layout/SkeletonLoadingTable.vue'
 
     import exportExcel from '@/utils/exportToExcel.js'
     import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
@@ -274,6 +275,8 @@
       pageMultiplier.value = value
       onChangePage(1)
     }
+
+    const times = 5
   
 </script>
 
@@ -382,11 +385,13 @@
               
             </table>
 
+            <!--  -->
             <div v-else-if="sortedData.length == 0 && statusResponse == ''">
       
               <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                    <tr class="">
+                    <tr>
                       <th>
                         <div class="flex justify-center">
                           <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
@@ -400,95 +405,16 @@
                           </button>
                         </span>
                       </th>
+                      <th>
+                        <div class="flex justify-center">
+                            Actions                    
+                        </div>
+                      </th>
                     </tr>
                 </thead>
-                <tbody class="animate-pulse">
-                  <tr>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                    <td>
-                      <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-                    </td>
-                  </tr>
-                </tbody>
+                
+                <SkeletonLoadingTable :row="5" :column="5" />
+
               </table>
 
             </div>
@@ -496,7 +422,7 @@
             <div v-else-if="sortedData.length == 0 && statusResponse != ''">
               <table class="table table-zebra table-compact border h-full w-full rounded-lg">
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                    <tr class="">
+                    <tr>
                       <th>
                         <div class="flex justify-center">
                           <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
@@ -510,9 +436,13 @@
                           </button>
                         </span>
                       </th>
+                      <th>
+                        <div class="flex justify-center">
+                            Actions                    
+                        </div>
+                      </th>
                     </tr>
                 </thead>
-
               </table>
 
               <div class="text-center py-5">

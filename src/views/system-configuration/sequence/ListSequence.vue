@@ -3,6 +3,7 @@
     import Navbar from '@/components/layout/Navbar.vue'
     import TableTopBar from '@/components/layout/TableTopBar.vue'
     import Footer from '@/components/layout/Footer.vue'
+    import SkeletonLoadingTable from '@/components/layout/SkeletonLoadingTable.vue'
 
     import exportExcel from '@/utils/exportToExcel.js'
     import deleteCheckedArrayUtils from '@/utils/deleteCheckedArray'
@@ -374,144 +375,36 @@
 
               <div v-else>
       
-      <table class="table table-zebra table-compact border h-full w-full rounded-lg">
-        <thead class="text-center font-Montserrat text-sm font-bold h-10">
-            <tr class="">
-              <th>
-                <div class="flex justify-center">
-                  <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-                </div>
-              </th>    
-              <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-                <span class="flex justify-center items-center gap-1">
-                  {{ data.title }} 
-                  <button class="">
-                    <img :src="arrowicon" class="w-[9px] h-3" />
-                  </button>
-                </span>
-              </th>
-            </tr>
-        </thead>
-        <tbody class="animate-pulse">
-          <tr>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-            <td>
-              <div class="w-[80%] h-5 bg-slate-700 mx-auto"></div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                <table class="table table-zebra table-compact border h-full w-full rounded-lg">
 
-    </div>
+                  <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                      <tr>
+                        <th>
+                          <div class="flex justify-center">
+                            <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                          </div>
+                        </th>    
+                        <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                          <span class="flex justify-center items-center gap-1">
+                            {{ data.title }} 
+                            <button class="">
+                              <img :src="arrowicon" class="w-[9px] h-3" />
+                            </button>
+                          </span>
+                        </th>
+                        <th>
+                          <div class="flex justify-center">
+                            Actions
+                          </div>
+                        </th>
+                      </tr>
+                  </thead>
+
+                  <SkeletonLoadingTable :row="5" :column="7" />
+
+                </table>
+
+              </div>
 
             </div>
   
