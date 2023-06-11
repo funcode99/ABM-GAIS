@@ -7,15 +7,61 @@ import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 
-import { onBeforeMount } from "vue";
-
+import { onBeforeMount, ref } from "vue";
+import { useRouter } from 'vue-router'
 import { useSidebarStore } from "@/stores/sidebar.js";
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+
+
 const sidebar = useSidebarStore();
-
+const router = useRouter()
 let lengthCounter = 0;
+let stockName = ref("")
+let createdDate = ref("")
+let createdBy = ref("")
+let brandName = ref("");
+let Company = ref("");
+let Site = ref("");
+let Warehouse = ref("");
+let UOM = ref("")
+let UOMName = ref("")
+let idItems = ref("")
+let ItemsName = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let remark = ref("")
+let siteName = ref("")
+let status = ref("")
 
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/stock_in/get/${id}`);
+  console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    stockName.value = element.no_stock_in
+    createdDate.value = element.created_at
+    createdBy.value = element.employee_name
+    Warehouse.value = element.warehouse_name
+    itemNames.value = element.itemName
+    idItems.value = element.id_item
+    alertQuantity.value = element.qty
+    brandName.value = element.brand_name
+    UOMName.value = element.uom_name
+    remark.value = element.remarks
+    siteName.value = element.site_name
+    status.value = element.status
+  }
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 onBeforeMount(() => {
   getSessionForSidebar();
+  fetchDataById(router.currentRoute.value.params.id)
+  // console.log(router.currentRoute.value.params.id)
 });
 
 const getSessionForSidebar = () => {
@@ -45,29 +91,25 @@ const getSessionForSidebar = () => {
               class="flex items-center gap-2 py-4 mx-4"
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
-              <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
-                Stock In<span
-                  class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
-                >
-                  / IN 1232312
-                </span>
-              </h1>
+              <h3 class="text-blue font-semibold font-JakartaSans text-2xl">
+                Back
+              </h3>
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
-              <button
+              <!-- <button
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
               >
                 Draft
-              </button>
-              <button
+              </button> -->
+              <!-- <button
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Submit
-              </button>
+              </button> -->
             </div>
           </div>
 
-          <div class="flex justify-between ml-10">
+          <!-- <div class="flex justify-between ml-10">
             <div class="flex gap-2">
               <button
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
@@ -78,20 +120,26 @@ const getSessionForSidebar = () => {
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Submit
-              </button>
+              </button><br>
+            </div>
+          </div> -->
+
+          <div class="flex justify-between ml-10 mt-8">
+            <div class="flex gap-2">
+              <h1 class="font-JakartaSans font-medium text-lg">Document No : {{ stockName }}</h1>
             </div>
           </div>
-
           <!-- FORM READ ONLY-->
-          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-3 pt-7">
             <div class="flex flex-col gap-2">
+              
               <span class="font-JakartaSans font-medium text-sm"
                 >Created Date</span
               >
               <input
                 type="text"
                 disabled
-                value="23/2/2023"
+                v-model="createdDate"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -102,12 +150,37 @@ const getSessionForSidebar = () => {
               <input
                 type="text"
                 disabled
-                value="Jack H"
+                v-model="createdBy"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
           </div>
 
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
+            <div class="flex flex-col gap-2">
+              
+              <span class="font-JakartaSans font-medium text-sm"
+                >Site</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="siteName"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Status</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="status"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+          </div>
           <!-- TAB & TABLE-->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]">
             <div
@@ -126,11 +199,6 @@ const getSessionForSidebar = () => {
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Warehouse
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Date
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -160,26 +228,25 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Remarks
+                      Remark
                     </th>
-                    <th
+                    <!-- <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Action
-                    </th>
+                    </th> -->
                   </tr>
                 </thead>
                 <tbody class="font-JakartaSans font-normal text-xs">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]">
+                    <td class="border border-[#B9B9B9]">{{ Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">{{ idItems }}</td>
+                    <td class="border border-[#B9B9B9]">{{ itemNames }}</td>
+                    <td class="border border-[#B9B9B9]">{{ alertQuantity }}</td>
+                    <td class="border border-[#B9B9B9]">{{ brandName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ UOMName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ remark }}</td>
+                    <!-- <td class="border border-[#B9B9B9]">
                       <div class="flex justify-center items-center gap-2">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
@@ -188,7 +255,7 @@ const getSessionForSidebar = () => {
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
                       </div>
-                    </td>
+                    </td> -->
                   </tr>
                 </tbody>
               </table>
