@@ -4,6 +4,8 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -13,11 +15,12 @@ import gearicon from "@/assets/system-configuration-not-selected.png";
 
 import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue";
 
-import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
+// import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
-
+import Api from "@/utils/Api";
 import { useSidebarStore } from "@/stores/sidebar.js";
+import Swal from "sweetalert2";
 const sidebar = useSidebarStore();
 
 //for sort & search
@@ -26,6 +29,7 @@ const search = ref("");
 let sortedData = ref([]);
 const selectedType = ref("Company");
 const selectedTypeWarehouse = ref("Warehouse");
+let itemdata = ref("")
 
 let sortedbyASC = true;
 let instanceArray = [];
@@ -46,11 +50,11 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByType = () => {
-  if (selectedType.value === "") {
+  if (selectedTypeWarehouse.value === "") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
+      (item) => item.status === selectedTypeWarehouse.value
     );
   }
 };
@@ -58,7 +62,7 @@ const filterDataByType = () => {
 //for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
-  selectedType.value = "Type";
+  selectedTypeWarehouse.value = "Type";
 };
 
 //for check & uncheck all
@@ -79,12 +83,13 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Document No", jsonData: "document_no" },
-  { Id: 3, title: "Date", jsonData: "date" },
-  { Id: 4, title: "Warehouse", jsonData: "warehouse" },
+  { Id: 1, title: "No", jsonData: "id" },
+  { Id: 2, title: "Document No", jsonData: "no_stock_in" },
+  { Id: 3, title: "Date", jsonData: "updated_at" },
+  { Id: 4, title: "Created By", jsonData: "employee_name" },
   { Id: 5, title: "Item Count", jsonData: "item_count" },
-  { Id: 6, title: "Actions" },
+  { Id: 6, title: "Status", jsonData: "status" },
+  { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -97,23 +102,78 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = stockindata;
+const fetchData = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/stock_in/get");
+  // console.log(res.data.data)
+  itemdata.value = res.data.data.data;
+  instanceArray = itemdata.value;
+  // console.log(instanceArray)
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const deleteValue = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  Swal.fire({
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/stock_in/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: res.data.message,
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        fetchData()
+      });
+    } else {
+      return;
+    }
+  });
+    
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchData()
+  // console.log(stockindata)
+  // instanceArray = stockindata;
+  // sortedData.value = instanceArray;
+  // lengthCounter = sortedData.value.length;
 });
 
 //for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.document_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.warehouse.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.no_stock_in.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.document_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.warehouse.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.no_stock_in.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -195,15 +255,15 @@ const getSessionForSidebar = () => {
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
-                  Warehouse
+                  Status
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedTypeWarehouse"
                 >
-                  <option disabled selected>Warehouse</option>
+                  <option disabled selected>Status</option>
                   <option v-for="data in sortedData" :key="data.id">
-                    {{ data.warehouse }}
+                    {{ data.status }}
                   </option>
                 </select>
               </div>
@@ -334,37 +394,40 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.no }}
+                      {{ index + 1 }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.document_no }}
+                      {{ data.no_stock_in }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.date }}
+                      {{ data.updated_at }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.warehouse }}
+                      {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}
                     </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.status }}
+                    </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link to="/viewstockinatk">
+                      <router-link :to="`/viewstockinatk/${data.id}`">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
                       </router-link>
-                      <button>
+                      <button @click="deleteValue(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>

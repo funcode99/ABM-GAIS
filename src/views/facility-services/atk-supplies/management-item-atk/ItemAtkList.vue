@@ -9,6 +9,8 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import icondanger from "@/assets/Danger.png";
+import iconPlus from "@/assets/navbar/icon_plus.svg";
+import icondanger2 from "@/assets/icon-danger-circle.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
@@ -28,6 +30,20 @@ const sidebar = useSidebarStore();
 //for sort & search
 let selectedCompany = ref("Company");
 let selectedWarehouse = ref("Warehouse")
+let selectedSite = ref("Site");
+// let selectedWarehouse = ref("Warehouse")
+let selectedUOM = ref("UOM")
+let selectedBrand = ref("Brand")
+let brandName = ref("");
+// let Company = ref("");
+let Site = ref("");
+// let Warehouse = ref("");
+let UOM = ref("")
+let idItems = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let remark = ref("")
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
@@ -38,10 +54,13 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let lockScrollbarEdit = ref(false);
 let Company = ref("");
 let Warehouse = ref("");
 let itemdata = ref("")
 let editData = ref("")
+let idS = ref("")
+let checkedAlert = ref(false)
 
 //for paginations
 let showingValue = ref(1);
@@ -57,13 +76,34 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByType = () => {
-  if (selectedType.value === "") {
-    sortedData.value = instanceArray;
-  } else {
+  // console.log(selectedCompany.value)
+  if(selectedType.value != ''){
     sortedData.value = instanceArray.filter(
       (item) => item.item_name === selectedType.value
     );
   }
+  if(selectedCompany.value != ''){
+    sortedData.value = instanceArray.filter(
+      (item) => item.id_company === selectedCompany.value
+    );
+  }
+  if (selectedWarehouse.value != ''){
+    sortedData.value = instanceArray.filter(
+      (item) => item.id_warehouse === selectedWarehouse.value
+    );
+  }
+  // else{
+  //   sortedData.value = filteredR;
+  //   lengthCounter = sortedData.value.length;
+  //   onChangePage(1);
+  // }
+  // if (selectedType.value === "") {
+  //   sortedData.value = instanceArray;
+  // } else {
+  //   sortedData.value = instanceArray.filter(
+  //     (item) => item.item_name === selectedType.value
+  //   );
+  // }
 };
 
 //for filter & reset button
@@ -90,7 +130,7 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 1, title: "No", jsonData: "id" },
   { Id: 2, title: "ID Item", jsonData: "code_item" },
   { Id: 3, title: "Item Name", jsonData: "item_name" },
   { Id: 4, title: "Warehouse", jsonData: "warehouse_name" },
@@ -127,18 +167,66 @@ const fetchGetCompanyID = async (id_company) => {
   Company.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const changeWarehouseCompany = async (id_company) => {
+const fetchSite = async (id, id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id === element.id){
+      selectedSite.value = id
+    }
+  }
+};
+const fetchWarehouse = async (id, id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_company_id/${id_company}`);
-  // console.log(res)
   Warehouse.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id === element.id){
+      selectedWarehouse.value = id
+    }
+  }
+};
+const fetchBrand = async (id, id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  Brand.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id === element.id){
+      selectedBrand.value = id
+    }
+  }
+};
+const fetchBrandCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  Brand.value = res.data.data;
+};
+const fetchUOM = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/uom");
+  UOM.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id === element.id){
+      selectedUOM.value = id
+    }
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  // changeCompany()
 };
 const fetchData = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -152,13 +240,78 @@ const fetchData = async () => {
   lengthCounter = sortedData.value.length;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+const changeCompany = async (id_company) => {
+  fetchBrandCompany(id_company)
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  // console.log(res)
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeSite = async (id_site) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeWarehouseCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_company_id/${id_company}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
 const editValue = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get/${id}`);
   // console.log(res.data.data)
-  editData.value = res.data.data.data;
+  // editData.value = res.data.data.data;
+  idS.value = id
+  selectedCompany.value = res.data.data[0].id_company
+  selectedSite.value = fetchSite(res.data.data[0].id_site, res.data.data[0].id_company)
+  selectedWarehouse.value = fetchWarehouse(res.data.data[0].id_warehouse, res.data.data[0].id_company)
+  selectedUOM.value = fetchUOM(res.data.data[0].id_uom)
+  itemNames.value = res.data.data[0].item_name
+  alertQuantity.value = res.data.data[0].alert_qty
+  selectedBrand.value = fetchBrand(res.data.data[0].id_brand, res.data.data[0].id_company)
+  remark.value = res.data.data[0].remarks
+  idItems.value = res.data.data[0].code_item
+  lockScrollbarEdit.value = true
   // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const save = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const payload = {
+    code_item : idItems.value,
+    item_name : itemNames.value,
+    id_brand : selectedBrand.value,
+    id_uom : selectedUOM.value,
+    alert_qty: alertQuantity.value,
+    id_company: selectedCompany.value,
+    id_site: selectedSite.value,
+    id_warehouse: selectedWarehouse.value,
+    remarks: remark.value
+  }
+  
+  
+  const res = await Api.post(`/management_atk/update_data/${idS.value}`,payload);
+  Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    fetchData()
+    lockScrollbarEdit.value = false
+  // lockScrollbar.value= false
 };
 const deleteValue = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -225,15 +378,22 @@ const filteredItems = (search) => {
 };
 const selectAlert = (checked) => {
   sortedData.value = instanceArray;
-  // console.log(instanceArray)
-  const filteredR = sortedData.value.filter((item) => {
+  // console.log(checked)
+  if(checked === false){
+    const filteredR = sortedData.value.filter((item) => {
     if(item.current_stock <= item.alert_qty){
       return((item.alert_qty))
-    }
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
+      }
+    });
+    sortedData.value = filteredR;
+    lengthCounter = sortedData.value.length;
+    onChangePage(1);
+  }else{
+    sortedData.value = instanceArray;
+    lengthCounter = sortedData.value.length;
+    onChangePage(1);
+  }
+  
 };
 
 const getSessionForSidebar = () => {
@@ -455,7 +615,7 @@ const getSessionForSidebar = () => {
 
                     <th
                       v-for="data in tableHead"
-                      :key="data.Id"
+                      :key="data.id"
                       class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-sm"
                       @click="sortList(`${data.jsonData}`)"
                     >
@@ -476,7 +636,7 @@ const getSessionForSidebar = () => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
@@ -507,18 +667,214 @@ const getSessionForSidebar = () => {
                         @
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       /> -->
-                      <ModalEdit @unlock-scrollbar="lockScrollbar = !lockScrollbar" :formContent="[
-                                  data.id, 
-                                  data.id_company, 
-                                  data.id_site, 
-                                  data.id_warehouse, 
-                                  data.id_uom, 
-                                  data.code_item, 
-                                  data.alert_qty,
-                                  data.item_name,
-                                  data.remarks,
-                                  data.id_brand
-                                ]" />
+                      <label
+                      @click="editValue(data.id)"
+                      for="my-modal-item-edit-atk"
+                      class="cursor-pointer"
+                      ><img :src="editicon" class="w-6 h-6"
+                    /></label>
+
+                    <input type="checkbox" id="my-modal-item-edit-atk" class="modal-toggle" />
+                    <div v-if="lockScrollbarEdit" class="modal">
+                      <div class="modal-dialog bg-white w-3/5">
+                        <nav class="sticky top-0 z-50 bg-[#015289]">
+                          <label
+                            @click="lockScrollbar"
+                            for="my-modal-item-edit-atk"
+                            class="cursor-pointer absolute right-3 top-3"
+                          >
+                            <img :src="iconClose" class="w-[24px] h-[24px] hover:scale-75" />
+                          </label>
+                          <p class="font-JakartaSans font-semibold text-white mx-4 py-2 text-start">
+                            Edit Item
+                          </p>
+                        </nav>
+
+                        <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
+                          <img :src="icondanger2" class="w-5 h-5" />
+                          <p class="font-JakartaSans font-semibold">
+                            Item Info
+                          </p>
+                        </div>
+
+                        <main class="modal-box-inner-brand pb-14">
+                            <div class="flex justify-between px-6 items-center gap-2">
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="company"
+                                  class="block text-black text-left mb-2 font-JakartaSans font-medium text-sm"
+                                  >Company<span class="text-red">*</span></label
+                                >
+                                <select
+                                  class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black"
+                                  required
+                                  v-model="selectedCompany"
+                                  @change="changeCompany(selectedCompany)"
+                                >
+                                  <option disabled selected>Company</option>
+                                  <option v-for="(company,i) in Company" :key="i" :value="company.id">
+                                    {{ company.company_name }}
+                                  </option>
+                                </select>
+                              </div>
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="site"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >Site<span class="text-red">*</span></label
+                                >
+                                <select
+                                  class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black"
+                                  required
+                                  v-model="selectedSite"
+                                  @change="changeSite(selectedSite)"
+                                >
+                                  <option disabled selected>Site</option>
+                                  <option v-for="(site,i) in Site" :key="i" :value="site.id">
+                                    {{ site.site_name }}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="flex justify-between px-6 items-center gap-2">
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="detail"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >Details</label
+                                >
+                              <hr />
+                              </div>
+                            </div>
+                            <div class="flex justify-between px-6 items-center gap-2">
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="warehouse"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >Warehouse<span class="text-red">*</span></label
+                                >
+                                <select
+                                  class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                  required
+                                  v-model="selectedWarehouse"
+                                >
+                                  <option disabled selected>Warehouse</option>
+                                  <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
+                                    {{ warehouse.warehouse_name }}
+                                  </option>
+                                </select>
+                              </div>
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="uom"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >UOM<span class="text-red">*</span></label
+                                >
+                                <select
+                                  class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                  required
+                                  v-model="selectedUOM"
+                                >
+                                  <option disabled selected>UOM</option>
+                                  <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
+                                    {{ uom.uom_name }}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="flex justify-between px-6 items-center gap-2">
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="item_name"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >Item Name<span class="text-red">*</span></label
+                                >
+                                <input
+                                  type="text"
+                                  v-model="itemNames"
+                                  class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                  placeholder="Item Name"
+                                  required
+                                />
+                              </div>
+                              
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="alert"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >Alert Quantity<span class="text-red">*</span></label
+                                >
+                                <input
+                                  type="number"
+                                  v-model="alertQuantity"
+                                  class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                  placeholder="Alert Quantity"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div class="flex justify-between px-6 items-center gap-2">
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="uom"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >Brand<span class="text-red">*</span></label
+                                >
+                                <select
+                                  class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                  required
+                                  v-model="selectedBrand"
+                                >
+                                  <option disabled selected>Brand</option>
+                                  <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
+                                    {{ brand.brand_name }}
+                                  </option>
+                                </select>
+                              </div>
+                              <div class="mb-6 w-full">
+                                <label
+                                  for="id_item"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >Remarks<span class="text-red">*</span></label
+                                >
+                                <textarea
+                                  type="text"
+                                  v-model="remark"
+                                  class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                  placeholder="Remarks"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div class="flex justify-start px-6 items-center gap-2">
+                              <label
+                                  for="warehouse"
+                                  class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                  >ID Items<span class="text-red">*</span></label
+                                >
+                            </div>
+                            <div class="flex justify-start px-6 items-center gap-2">
+                              <div class="flex items-center border-b border-teal-500 py-2 mb-6 w-full">
+                                <input class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" v-model="idItems" maxlength="9" type="number" placeholder="ID Item" aria-label="Full name" disabled="true">
+                              </div>
+                              <div class="mb-6 w-full"></div>
+                            </div>
+
+                        </main>
+
+                        <div class="sticky bottom-0 bg-white py-2">
+                          <div class="flex justify-center gap-4 mr-6">
+                            <button
+                              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                              @click="save"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                       <button @click="deleteValue(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
