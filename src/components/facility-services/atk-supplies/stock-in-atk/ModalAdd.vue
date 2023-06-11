@@ -5,15 +5,19 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import { ref, onMounted, watch } from "vue";
 import Api from "@/utils/Api";
-
+import Swal from "sweetalert2";
+import { useRouter } from 'vue-router'
+const router = useRouter()
 let selectedCompany = ref("Company");
 let selectedSite = ref("Site");
 let selectedWarehouse = ref("Warehouse")
+let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
 let brandName = ref("");
 let Company = ref("");
 let Site = ref("");
+let Item = ref("")
 let Warehouse = ref("");
 let UOM = ref("")
 let idItems = ref("")
@@ -57,6 +61,7 @@ const fetchUOM = async () => {
 // };
 const changeCompany = async (id_company) => {
   fetchBrandCompany(id_company)
+  fetItems(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -70,6 +75,14 @@ const fetchBrandCompany = async (id_company) => {
   const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
   // console.log(res)
   Brand.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetItems = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/management_atk/get_by_company/${id_company}`);
+  // console.log(res)
+  Item.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
@@ -90,9 +103,16 @@ const fetchCondition = async () => {
 const addItem = async () => {
 
   itemsTable.value.push({
-    id_item : 1,
-    qty: alertQuantity.value,
-    remarks: remark.value
+    id_company: selectedCompany.value,
+    id_departement: '',
+    id_site: selectedSite.value,
+    id_warehouse: selectedWarehouse.value,
+    id_employee : selectedEmployee.value,
+    remarks:remark.value,
+    id_item: itemNames.value,
+    id_brand:selectedBrand.value,
+    id_uom: selectedUOM.value,
+    qty : alertQuantity.value,
   })
   reset()
   return itemsTable
@@ -104,11 +124,7 @@ itemsTable.value.splice(id,1)
 }
 const save = async () => {
   const payload = {
-    id_company: selectedCompany.value,
-    id_site: selectedSite.value,
-    id_warehouse: selectedWarehouse.value,
-    remarks:remark.value,
-    array_multi:itemsTable.value,
+    data:itemsTable.value
   }
   const res = await Api.post('stock_in/store',payload);
   Swal.fire({
@@ -119,7 +135,7 @@ const save = async () => {
       timer: 1500,
     });
     reset()
-    defineEmits(["unlockScrollbar"])
+    router.push({path: '/stockinatk'})
 };
 const reset = async () => {
   selectedCompany.value = ''
@@ -258,13 +274,23 @@ onMounted(() => {
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Item Name<span class="text-red">*</span></label
               >
-              <input
+              <!-- <input
                 type="text"
                 v-model="itemNames"
                 class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Item Name"
                 required
-              />
+              /> -->
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="itemNames"
+              >
+                <option disabled selected>Item</option>
+                <option v-for="(item,i) in Item" :key="i" :value="item.id">
+                 {{ item.code_item }} - {{ item.item_name }}
+                </option>
+              </select>
             </div>
 
             <div class="mb-6 w-full">
@@ -371,11 +397,11 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
+                <td class="border border-[#B9B9B9]">{{ items.id_warehouse }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_item }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
+                <td class="border border-[#B9B9B9]">{{ items.id_brand }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_uom }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">
