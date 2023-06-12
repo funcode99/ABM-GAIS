@@ -65,6 +65,7 @@ import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-
 import StockInAtkList from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkList.vue"
 import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkView.vue"
 import StockInAtkID from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkId.vue"
+import StockOpnameAtkID from "@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameAtkID.vue"
 import ATKRequestList from '@/views/facility-services/atk-supplies/atk-request/ATK-Request.vue'
 import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/ATKRequestView.vue'
 import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
@@ -962,6 +963,23 @@ const router = createRouter({
       }
     },
     {
+      path: '/stockOpname/:id',
+      name: 'stockOpname',
+      component: StockOpnameAtkID,
+      meta: {
+        title: 'View Stock Opname ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
       path: '/atk-request',
       name: 'ATK Request',
       component: ATKRequestList,
@@ -997,7 +1015,7 @@ const router = createRouter({
     },
     {
       path: '/stock-opname-atk',
-      name: 'Stock Opname ATK List',
+      name: 'stock-opname-atk',
       component: StockOpnameATKList,
       meta: {
         title: 'Stock Opname ATK List'
