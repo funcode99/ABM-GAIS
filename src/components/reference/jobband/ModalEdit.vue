@@ -1,6 +1,5 @@
 <script setup>
 import iconPlus from "@/assets/navbar/icon_plus.svg";
-import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import checkIcon from "@/assets/checkmark.png";
@@ -44,6 +43,8 @@ let addZonaTlkRateData = ref([]);
 let currentAuthoritiesId = ref();
 let instanceArray = [];
 let addData = ref([]);
+
+// let idTLK = ref(props.formContent[5].id_tlk)
 
 // initialization for fetched approver lines with default property & value
 if (props.formContent[5] == undefined) {
@@ -97,21 +98,20 @@ const saveApproverLines = async (data, idx, zonaId) => {
   setTimeout(insertDefault, 100);
 };
 
-const editApproverLines = async (data, idx, zonaId) => {
-  console.log("masuk ke edit approver lines");
-  // console.log(data)
-  // console.log(idx)
-  console.log(data[idx].tlk_rate);
+const editApproverLines = async (data, idx, zonaId, tlkId) => {
 
-  const api = await Api.post(`/zona_job/update_data/${idJobBand.value}`, {
+  console.log("masuk ke edit approver lines")
+
+  const api = await Api.post(`/zona_job/update_data/${tlkId}`, {
     id_zona: zonaId,
     id_job_band: parseInt(data[idx].id_job_band),
     tlk_rate: data[idx].tlk_rate,
   });
-  console.log(api);
-  console.log("Zona TLK Rate telah diubah!");
-  // emits("fetchJobband");
-  console.log(zonaTlkRateLines.value);
+  
+  console.log("Zona TLK Rate telah diubah!")
+
+  emits("fetchJobband")
+
   const insertDefault = () => {
     zonaTlkRateLines.value = props.formContent[5];
 
@@ -122,12 +122,10 @@ const editApproverLines = async (data, idx, zonaId) => {
         item.isEdit = false;
         item.fromFetch = true;
         if (index == idZona.length - 1) {
-          // console.log('ini adalah index terakhir ' + index)
         } else {
           dropdownRemoveList.value.push(item.id_zona);
         }
       });
-      // idMatrixActual.value = idMatrix[0].id_matrix
     }
   };
   setTimeout(insertDefault, 100);
@@ -343,8 +341,8 @@ const formatCurrency = () => {
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 w-full px-4 text-start">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Company<span class="text-red">*</span></label
-          >
+            >Company<span class="text-red">*</span>
+          </label>
           <div
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
           ></div>
@@ -540,7 +538,7 @@ const formatCurrency = () => {
                     v-if="input.isEdit == true"
                     type="button"
                     @click="
-                      editApproverLines(zonaTlkRateLines, index, idZonaActual)
+                      editApproverLines(zonaTlkRateLines, index, idZonaActual, input.id_tlk)
                     "
                   >
                     <img :src="checkIcon" class="w-5 h-5" />
