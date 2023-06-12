@@ -23,7 +23,7 @@
 
   let menuName = ref('')
   let url = ref('')
-  let idStatusMenu = ref(0)
+  let idStatusMenu = ref(1)
   let ParentId = ref(null)
   let sort = ref(1)
   let sequence = ref(false)
@@ -74,7 +74,7 @@
   const resetInput = () => {
       menuName.value = ''
       url.value = ''
-      idStatusMenu.value = 0
+      idStatusMenu.value = 1
       ParentId.value = null
       sort.value = 1
       sequence.value = false

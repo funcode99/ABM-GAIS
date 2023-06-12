@@ -48,6 +48,11 @@ export const useFormAddStore = defineStore('add-form', {
                 prefix: '',
                 suffix: '',
                 company: 0
+            },
+            menuAccess: {
+                roleId: '',
+                write: '',
+                read: ''
             }
         }
     }

@@ -275,6 +275,10 @@
       onChangePage(1)
     }
 
+    const fetchMenuStatusUtilsHelper = () => {
+      fetchMenuUtils(instanceArray, addMenuData, sortedData)
+    }
+
 </script>
 
 <template>
@@ -295,11 +299,11 @@
           modalAddType="menu" 
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()" 
-          @increase-menu="addNewMenu " 
+          @increase-menu="addNewMenu"
           @do-search="filteredItems"
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
-          @reset-table="fetch"
+          @reset-table="fetchMenuStatusUtilsHelper"
           @export-to-excel="exportToExcel"
         />
         
@@ -435,7 +439,36 @@
                   </div> 
 
                   <div v-else-if="sortedData.length == 0 && status == 200">
-                    Data tidak ditemukan
+
+                    <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+
+                      <thead class="text-center font-Montserrat text-sm font-bold h-10">
+
+<tr>
+  <th>
+    <div class="flex justify-center">
+      <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+    </div>
+  </th>
+  <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+    <span class="flex justify-center items-center gap-1">
+      {{ data.title }} 
+      <button class="">
+        <img :src="arrowicon" class="w-[9px] h-3" />
+      </button>
+    </span>
+  </th>
+  <th>
+    <div class="flex justify-center">
+      Actions
+    </div>
+  </th>
+</tr>
+
+                      </thead>
+
+                    </table>
+
                   </div>
     
             </div>

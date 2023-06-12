@@ -301,10 +301,10 @@
             <div class="flex flex-col w-full">
 
               <label for="document" class="block mb-2 font-JakartaSans font-medium text-sm">
-                Document<span class="text-red">*</span>
+                Document
               </label>
 
-              <select id="document" v-model="document" :class="inputStylingClass" required>
+              <select id="document" v-model="document" :class="inputStylingClass">
                 <option v-for="data in addDocumentData" :key="data.id" :value="data.id">
                   {{ data.document_name }}
                 </option>

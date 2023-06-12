@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 
-import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
+import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue"
 
 import dashboardIcon from "@/assets/dashboard-icon.png";
 import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png";

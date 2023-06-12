@@ -106,7 +106,7 @@
     }
 
     const editRole = async (data) => {
-        console.log('masuk ke edit role')
+        // console.log('masuk ke edit role')
         editRoleDataId.value = data
         setTimeout(callEditApi, 500)
     }
@@ -201,7 +201,6 @@
         sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
-
     const fetch = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -209,7 +208,7 @@
         const api = await Api.get('/role/get')
         instanceArray = api.data.data
         sortedData.value = instanceArray
-        // lengthCounter = sortedData.value.length
+        // console.log(api)
       } catch (error) {
         status.value = error.response.status
         message.value = error.response.data.message
@@ -217,14 +216,40 @@
 
     }
 
-    onBeforeMount(async () => {
+    onBeforeMount(() => {
       getSessionForSidebar()
-      fetch()
       fetchGetActive()
+      fetch()
     })
 
     const deleteCheckedArray = () => {
       deleteCheckedArrayUtils(deleteArray, 'role', sortedData, fetch)
+    }
+
+    const submitAccess = () => {
+      setTimeout(submitAccessMenu, 500)
+    }
+    
+    const submitAccessMenu = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.post(`/role/store_menu/${formState.menuAccess.roleId}`, {
+        id_role: formState.menuAccess.roleId,
+        write: formState.menuAccess.write,
+        read: formState.menuAccess.read
+      })
+
+      Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+      })
+
+      fetchGetActive()
+
     }
   
 </script>
@@ -306,7 +331,7 @@
                   </td>
                   <td class="flex flex-wrap gap-4 justify-center">
                     <!-- kalo tanpa value isi nya array kosong -->
-                    <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" />
+                    <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" @submit-menu-access="submitAccess" />
                     <ModalEditRole @change-role="editRole(data.id)" :formContent="[data.role_name, data.code_role]" />
                     <button @click="deleteData(data.id)">
                       <img :src="deleteicon" class="w-6 h-6" />

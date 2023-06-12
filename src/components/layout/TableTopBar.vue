@@ -17,8 +17,8 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 
 let search = ref("")
-let companyId = ref(null)
-let roleId = ref(null)
+let companyId = ref('company')
+let roleId = ref('role')
 let pageMultiplier = ref(10)
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 
@@ -56,6 +56,14 @@ onBeforeMount(() => {
   }
 
 })
+
+const emits = defineEmits(['resetTable'])
+
+const resetCompanyAndRole = () => {
+  companyId.value = 'company'
+  roleId.value = 'role'
+  emits('resetTable')
+}
 
 </script>
 
@@ -139,6 +147,9 @@ onBeforeMount(() => {
             v-model="companyId"
             class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
           >
+            <option hidden disabled value="company">
+              Company
+            </option>
             <option v-for="data in companyData" :value="data.id" :key="data.id">
               {{ data.company_name }}
             </option>
@@ -151,7 +162,7 @@ onBeforeMount(() => {
           :class="[$route.path == '/user' ? 'inline' : 'hidden']"
         >
           
-        <p class="capitalize font-Fira text-xs text-black font-medium">
+          <p class="capitalize font-Fira text-xs text-black font-medium">
             Role
           </p>
 
@@ -159,6 +170,9 @@ onBeforeMount(() => {
             v-model="roleId"
             class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:tline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
           >
+            <option hidden disabled value="role">
+              Role
+            </option>
             <option v-for="data in roleData" :value="data.id" :key="data.id">
               {{ data.role_name }}
             </option>
@@ -178,7 +192,7 @@ onBeforeMount(() => {
             Filter
           </button>
           <button
-            @click="$emit('resetTable')"
+            @click="resetCompanyAndRole"
             class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
           >
             <span>

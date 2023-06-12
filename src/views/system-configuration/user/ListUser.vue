@@ -276,6 +276,24 @@
     }
 
     const filterTable = async (id, roleId) => {
+
+      // console.log(id)
+      // console.log(roleId)
+
+      // console.log(typeof id)
+      // console.log(typeof roleId)
+
+      if(typeof id !== "number") {
+        id = 0
+      }
+
+      if(typeof roleId !== "number") {
+        roleId = 0
+      }
+
+      // console.log(id)
+      // console.log(roleId)
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)

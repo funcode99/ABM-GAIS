@@ -2,16 +2,18 @@
   import roleIcon from '@/assets/menu-access-role.png'
 
   import { useMenuAccessStore } from '@/stores/savemenuaccess'
+  import { useFormAddStore } from '@/stores/sysconfig/add-modal'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
-  import { ref, computed, watch } from 'vue'
+  import { ref, watch } from 'vue'
   import { Modal } from 'usemodal-vue3'
 
-  import Api from '@/utils/Api'
+  // import Api from '@/utils/Api'
 
   const menuAccess = useMenuAccessStore()
+  let formState = useFormAddStore()
 
   const props = defineProps({
     roleId: Number,
@@ -22,7 +24,7 @@
   let modalPaddingHeight = '10vh'
 
   let sortedData = ref([])
-  let sortedDataReactive = computed(() => sortedData.value)
+  const emits = defineEmits(['submitMenuAccess'])
 
 const menuHeadTable = [
   {Id: 1, title: 'Write'},
@@ -35,32 +37,45 @@ let readValue = ref(props.roleAccess[1] == undefined ? [] : props.roleAccess[1])
 let defaultValueWrite = ref('')
 let defaultValueRead = ref('')
 
-const submitAccess = async () => {
+const submitAccess = () => {
+ 
+    // defaultValueWrite.value = writeValue.value
+    // defaultValueRead.value = readValue.value
 
-    const token = JSON.parse(localStorage.getItem('token'))
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    const api = await Api.post(`/role/store_menu/${props.roleId}`, {
-      id_role: props.roleId,
-      write: writeValue.value,
-      read: readValue.value
-    })
+    // console.log(writeValue.value)
+    // console.log(readValue.value)
+
+    // const token = JSON.parse(localStorage.getItem('token'))
+    // Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    // const api = await Api.post(`/role/store_menu/${props.roleId}`, {
+    //   id_role: props.roleId,
+    //   write: writeValue.value,
+    //   read: readValue.value
+    // })
+
+    formState.menuAccess.roleId = props.roleId
+    formState.menuAccess.write = writeValue.value
+    formState.menuAccess.read = readValue.value
+
+    emits('submitMenuAccess')
 
     isVisible.value = false
-    defaultValueWrite.value = writeValue.value
-    defaultValueRead.value = readValue.value
+
 }
 
 watch(isVisible, () => {
-  
-  sortedData.value = menuAccess.fetchResult
+
+    sortedData.value = menuAccess.fetchResult
   
     if(isVisible.value == true) {
-      defaultValueWrite.value = writeValue.value
-      defaultValueRead.value = readValue.value
+      // defaultValueWrite.value = writeValue.value
+      // defaultValueRead.value = readValue.value
     } else if (isVisible.value == false) {
-      writeValue.value = defaultValueWrite.value
-      readValue.value = defaultValueRead.value
+      // writeValue.value = defaultValueWrite.value
+      // readValue.value = defaultValueRead.value
     }
+
+
 
 })
 
@@ -81,9 +96,9 @@ watch(isVisible, () => {
     
         <form class="modal-box-inner-inner" @submit.prevent="submitAccess">
 
-          <div class="mb-3 overflow-x-auto px-10">
+          <div class="mb-3 overflow-x-auto px-5">
       
-              <table class="table w-full">
+              <!-- <table class="table w-full">
                 
                 <thead>
                   <tr class="table-layout">
@@ -94,8 +109,8 @@ watch(isVisible, () => {
                   </tr>
                 </thead>
          
-                <tbody v-for="data in sortedDataReactive" :key="data.Id">
-                    
+                <tbody v-for="data in sortedData" :key="data.id">
+
                     <tr>
                       <th>
                         {{ data.menu }}
@@ -106,7 +121,7 @@ watch(isVisible, () => {
 
                     <tr v-for="inner in data.child">
                       
-                          <th>
+                          <th class="pl-7">
                             {{ inner.menu }}
                           </th>
                           
@@ -120,14 +135,105 @@ watch(isVisible, () => {
   
                     </tr>
 
+                    <tr v-for="inner in data.child">
+                      <tr v-for="innerinner in inner.grand_child">
+                        <th>
+                          {{ innerinner.menu }}
+                        </th>
+  
+                        <th class="text-center">
+                          <input type="checkbox" :value="innerinner.id" v-model="writeGrandChildrenValue">
+                        </th>
+  
+                        <th class="text-center">
+                          <input type="checkbox" :value="innerinner.id" v-model="readGrandChildrenValue">
+                        </th>
+                      </tr>
+                    </tr>
+
                 </tbody>
       
-              </table>
+              </table> -->
+
+              <!-- for header -->
+              <div class="flex gap-2 h-7">
+
+                <div class="pl-7 flex-1">
+
+                </div>
+
+                <div class="flex gap-2 basis-2/6 items-center font-black justify-center">
+                  <div>
+                    Write {{ writeValue }}
+                  </div>
+                  <div>
+                    Read {{ readValue }}
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- for body -->
+              <div>
+
+                <div v-for="data in sortedData" :key="data.id">
+
+                  <div>
+
+                    <!-- untuk parent -->
+                      <div class="h-8 items-center bg-slate-400 flex text-left font-black">
+                        <div class="basis-4/6 pl-1">{{ data.menu }}</div>
+                          <div class="basis-1/6"></div>
+                          <div class="basis-1/6"></div>
+                      </div>
+                
+                      <!-- untuk child & grand child -->
+                      <div class="flex flex-col" v-for="inner in data.child" :key="data.id">
+
+                        <!-- untuk child -->
+                        <div class="flex items-center text-left gap-2 h-7 bg-slate-300">
+
+                          <div class="pl-7 flex-1 font-black">
+                              {{ inner.menu }}
+                          </div>
+
+                          <div class="flex items-center gap-4 basis-2/6 justify-center">
+                            <input class="p-4" type="checkbox" :value="inner.id" v-model="writeValue">
+                            <input class="p-4" type="checkbox" :value="inner.id" v-model="readValue">
+                          </div>
+                            
+                        </div>
+
+                        <!-- untuk grand child -->
+                        <div class="flex items-center text-left gap-2 h-7 bg-slate-200" v-for="innerinner in inner.grand_child">
+                          <div class="pl-14 flex-1 font-black">
+                              {{ innerinner.menu }}
+                          </div>
+
+                          <div class="flex gap-4 basis-2/6 justify-center">
+                            <div class="">
+                                  <input type="checkbox" :value="innerinner.id" v-model="writeValue">
+                            </div>
+        
+                            <div class="">
+                                  <input type="checkbox" :value="innerinner.id" v-model="readValue">
+                            </div>
+                          </div>
+                            
+                        </div>
+                        
+                      </div>
+
+                  </div>
+
+                </div>
+
+              </div>
               
           </div>
           
           <modalFooter
-            class="mt-6 pt-5 z-50"
+            class="mt-6 pt-3 z-50"
             @closeEdit="isVisible = false"
           />
 
@@ -142,7 +248,6 @@ watch(isVisible, () => {
 .modal-box-inner-inner {
 
   max-height: 400px !important;
-  
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
@@ -153,6 +258,11 @@ watch(isVisible, () => {
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 
+}
+
+input[type="checkbox"] {
+  height: 18px;
+  width: 18px;
 }
 
 </style>
