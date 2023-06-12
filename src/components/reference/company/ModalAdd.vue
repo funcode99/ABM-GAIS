@@ -246,8 +246,8 @@ watch(isVisible, () => {
             v-model="selectedCodeErp"
           >
             <option disabled selected>ERP</option>
-            <option>SAP</option>
-            <option>RAMCO</option>
+            <option value="SAP">SAP</option>
+            <option value="RAMCO">RAMCO</option>
           </select>
         </div>
 

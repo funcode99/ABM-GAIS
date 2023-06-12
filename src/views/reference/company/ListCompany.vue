@@ -91,6 +91,7 @@ const callEditApi = async () => {
     logo: formEditState.company.companyLogo,
     code_erp: formEditState.company.companyCodeErp,
   });
+  // console.log(formEditState.company.companyCodeErp);
   Swal.fire({
     position: "center",
     icon: "success",
