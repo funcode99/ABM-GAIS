@@ -117,13 +117,9 @@ watch(isVisible, () => {
     <main>
       <modalHeader @closeVisibility="isVisible = false" title="New Hotel" />
 
-      <form
-        class="pt-4 modal-box-inner-hotel"
-        @submit.prevent="saveHotel"
-      >
+      <form class="pt-4 modal-box-inner-hotel" @submit.prevent="saveHotel">
         <div class="mb-6 px-4 w-full">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Hotel Code<span class="text-red">*</span></label
           >
           <input
@@ -136,8 +132,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 px-4 w-full">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Hotel Name<span class="text-red">*</span></label
           >
           <input
@@ -150,8 +145,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 px-4 w-full">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Address<span class="text-red">*</span></label
           >
           <input
@@ -165,8 +159,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Type<span class="text-red">*</span></label
           >
           <select
@@ -174,7 +167,7 @@ watch(isVisible, () => {
             required
             v-model="selectedType"
           >
-            <option disabled selected>Type</option>
+            <option value="" disabled selected hidden>Type</option>
             <option v-for="hotel in HotelType" :value="hotel.id">
               {{ hotel.type_accomodation }}
             </option>
@@ -182,8 +175,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >City<span class="text-red">*</span></label
           >
           <select
@@ -191,7 +183,7 @@ watch(isVisible, () => {
             required
             v-model="selectedCity"
           >
-            <option disabled selected>City</option>
+            <option value="" disabled selected hidden>City</option>
             <option v-for="hotel in City" :value="hotel.id">
               {{ hotel.city_name }}
             </option>
@@ -199,8 +191,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 px-4 w-full">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Email<span class="text-red">*</span></label
           >
           <input
@@ -213,8 +204,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 px-4 w-full">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Phone Number<span class="text-red">*</span></label
           >
           <input
@@ -227,8 +217,7 @@ watch(isVisible, () => {
         </div>
 
         <div class="mb-6 w-full px-4">
-          <label
-            class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Rating<span class="text-red">*</span></label
           >
           <select
@@ -237,11 +226,11 @@ watch(isVisible, () => {
             v-model="Rating"
           >
             <option disabled selected value="">Rating</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
 
