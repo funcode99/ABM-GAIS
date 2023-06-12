@@ -64,14 +64,18 @@ const saveApproverLines = async (data, idx, zonaId, tlkId) => {
   console.log("masuk ke add approver lines");
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  console.log(data[idx].id_zona);
+  console.log("ini zona id : ", zonaId);
+
   const api = await Api.post("/zona_job/store/", {
-    id_zona: zonaId,
-    id_job_band: parseInt(data[0].id_job_band),
+    id_zona: data[idx].id_zona,
+    id_job_band: idJobBand.value,
     tlk_rate: parseInt(data[idx].tlk_rate),
   });
 
   data[idx].forAdd = undefined;
   console.log("zona tlk rate telah ditambahkan!");
+
   emits("fetchJobband");
 
   const insertDefault = () => {
@@ -462,7 +466,9 @@ const formatCurrency = () => {
             <!-- {{ zonaTlkRateLines }} -->
 
             <tbody class="bg-[#F5F5F5]">
-              <!-- {{ addZonaTlkRateData }} -->
+              <!-- {{
+                addZonaTlkRateData
+              }} -->
               <tr
                 class="font-JakartaSans font-normal text-sm"
                 v-for="(input, index) in zonaTlkRateLines"
