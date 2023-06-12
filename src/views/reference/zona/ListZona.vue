@@ -88,7 +88,7 @@ const filterDataByCompany = () => {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.id_company === selectedCompany.value
+      (item) => item.id_company == selectedCompany.value
     );
   }
 };
