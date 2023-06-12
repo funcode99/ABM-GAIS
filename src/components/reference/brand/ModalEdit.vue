@@ -24,8 +24,15 @@ let Site = ref("");
 let brandName = ref("");
 let brandIdCompany = ref("");
 let brandIdSite = ref();
-let selectedCompanyId = ref(props.formContent[1] || null);
-let selectedSiteId = ref(props.formContent[2] || null);
+
+let responseCompanyArray = ref([]);
+let responseSiteArray = ref([]);
+
+// let selectedCompanyId = ref(props.formContent[1] || null);
+// let selectedSiteId = ref(props.formContent[2] || null);
+
+// let company = ref(props.formContent[1]);
+let location = ref([props.formContent[2], props.formContent[1]]);
 
 const props = defineProps({
   formContent: Array,
@@ -33,10 +40,10 @@ const props = defineProps({
 
 const currentbrandName = ref(props.formContent[0]);
 const originalbrandName = ref(props.formContent[0]);
-const currentbrandIdCompany = ref(props.formContent[1]);
-const originalbrandIdCompany = ref(props.formContent[1]);
-const currentbrandIdSite = ref(props.formContent[2]);
-const originalbrandIdSite = ref(props.formContent[2]);
+// const currentbrandIdCompany = ref(props.formContent[1]);
+// const originalbrandIdCompany = ref(props.formContent[1]);
+// const currentbrandIdSite = ref(props.formContent[2]);
+// const originalbrandIdSite = ref(props.formContent[2]);
 
 const submitEdit = () => {
   isAdding.value = true;
@@ -46,8 +53,8 @@ const submitEdit = () => {
   }
 
   formEditState.brand.brandName = currentbrandName.value;
-  formEditState.brand.brandIdCompany = selectedCompanyId.value;
-  formEditState.brand.brandIdSite = selectedSiteId.value;
+  formEditState.brand.brandIdCompany = location.value[1];
+  formEditState.brand.brandIdSite = location.value[0];
 
   isVisible.value = false;
   emits("changeBrand"); // Memanggil event 'changeBrand'
@@ -55,27 +62,20 @@ const submitEdit = () => {
 
 //for get company in select
 const fetchGetCompany = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    Company.value = res.data.data;
-  } catch (error) {
-    console.error("Error fetching companies:", error);
-  }
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  responseCompanyArray.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 //for get site in select
 const fetchGetSite = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/site/get_data");
-    Site.value = res.data.data;
-    // console.log(res.data.data);
-  } catch (error) {
-    console.error("Error fetching sites:", error);
-  }
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  responseSiteArray.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 onMounted(() => {
@@ -90,11 +90,15 @@ watch(isVisible, () => {
   if (isAdding.value == true) {
     isAdding.value = false;
   } else {
-    currentbrandName.value = props.formContent[0];
-    currentbrandIdCompany.value = props.formContent[1];
-    currentbrandIdSite.value = props.formContent[2];
+    resetForm();
   }
 });
+
+const resetForm = () => {
+  currentbrandName.value = originalbrandName.value;
+  location.value = [props.formContent[1], props.formContent[2]];
+  // selectedSiteId.value = originalwarehouseIdSite.value;
+};
 </script>
 
 <template>
@@ -114,15 +118,16 @@ watch(isVisible, () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedCompanyId"
+            v-model="location"
           >
             <option disabled selected>Company</option>
             <option
-              v-for="company in Company"
-              :value="company.id"
-              :key="company.id"
+              v-for="data in responseSiteArray"
+              :key="data.id"
+              :value="[data.id, data.id_company]"
+              :selected="data.id == props.formContent[1] ? true : false"
             >
-              {{ company.company_name }}
+              {{ data.company_name }}
             </option>
           </select>
         </div>
@@ -135,11 +140,16 @@ watch(isVisible, () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedSiteId"
+            v-model="location"
+            disabled
           >
             <option disabled selected>Site</option>
-            <option v-for="site in Site" :value="site.id" :key="site.id">
-              {{ site.site_name }}
+            <option
+              v-for="data in responseSiteArray"
+              :key="data.id"
+              :value="[data.id, data.id_company]"
+            >
+              {{ data.site_name }}
             </option>
           </select>
         </div>
