@@ -42,7 +42,6 @@ let zonaTlkRateLines = ref(props.formContent[5] || []);
 let addZonaTlkRateData = ref([]);
 let currentAuthoritiesId = ref();
 let instanceArray = [];
-let addData = ref([]);
 
 // let idTLK = ref(props.formContent[5].id_tlk)
 
