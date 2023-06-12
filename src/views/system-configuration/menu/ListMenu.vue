@@ -89,6 +89,7 @@
         
       .then((result) => {
         if (result.isConfirmed) {
+
           Api.delete(`/menu/delete_data/${event}`)
           .then((res) => {
 
@@ -103,16 +104,17 @@
             });
 
             if (sortedData.value.length == 1) {
-              // router.go()
-              fetch()
+              fetchMenuUtils(instanceArray, addMenuData, sortedData)
             } else {
-              fetch()
+              fetchMenuUtils(instanceArray, addMenuData, sortedData)
             }
 
           })
+
         } else {
           return
         }
+
       })
 
     }
@@ -147,7 +149,8 @@
           timer: 1500,
       })
 
-      fetch()
+
+      fetchMenuUtils(instanceArray, addMenuData, sortedData)
 
     }
 
@@ -183,7 +186,10 @@
           timer: 1500,
       })
 
-      fetch()        
+
+      fetchMenuUtils(instanceArray, addMenuData, sortedData)
+
+
       } catch (error) {
         console.log(error)
       }
