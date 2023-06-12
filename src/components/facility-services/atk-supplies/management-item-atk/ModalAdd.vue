@@ -17,6 +17,7 @@ let selectedWarehouse = ref("Warehouse")
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
 let brandName = ref("");
+let warehouseName = ref("");
 let Company = ref("");
 let Site = ref("");
 let Warehouse = ref("");
@@ -27,6 +28,9 @@ let Brand = ref("")
 let itemNames = ref("")
 let remark = ref("")
 const itemsTable = ref([])
+const itemsTable2 = ref([])
+let disableCompany = ref(false)
+let disableSite = ref(false)
 
 const emits = defineEmits(["unlockScrollbar"]);
 const menuAccess = useMenuAccessStore()
@@ -60,14 +64,6 @@ const fetchUOM = async () => {
   UOM.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-//for get site in select
-// const fetchGetSite = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/site/get_data");
-//   Site.value = res.data.data;
-//   // console.log("ini data parent" + JSON.stringify(res.data.data));
-// };
 const changeCompany = async (id_company) => {
   fetchBrandCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
@@ -91,6 +87,10 @@ const changeSite = async (id_site) => {
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
   // console.log(res)
   Warehouse.value = res.data.data;
+  // warehouseName.value = res.data.data.filter(
+  //     (item) => item.id_warehouse === selectedWarehouse.value
+  //   );
+  // console.log(warehouseName.value)
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 //get kondisi local storage
@@ -117,12 +117,18 @@ const addItem = async () => {
     current_stock: "",
     remarks:remark.value
   })
-  reset()
+  
+  resetButCompanyDisable()
   return itemsTable
 };
 const removeItems = async (id) => {
-
+// console.log(id)
 itemsTable.value.splice(id,1)
+if(id == 0){
+  disableSite.value = false
+  disableCompany.value = false
+  reset()
+}
 // return itemsTable
 }
 const save = async () => {
@@ -143,6 +149,17 @@ const save = async () => {
 const reset = async () => {
   selectedCompany.value = ''
   selectedSite.value = ''
+  selectedWarehouse.value = ''
+  selectedUOM.value = ''
+  idItems.value = ''
+  alertQuantity.value = ''
+  itemNames.value = ''
+  remark.value = ''
+  selectedBrand.value = ''
+};
+const resetButCompanyDisable = async () => {
+  disableSite.value = true
+  disableCompany.value = true
   selectedWarehouse.value = ''
   selectedUOM.value = ''
   idItems.value = ''
@@ -201,6 +218,7 @@ onMounted(() => {
                 required
                 v-model="selectedCompany"
                 @change="changeCompany(selectedCompany)"
+                :disabled="disableCompany"
               >
                 <option disabled selected>Company</option>
                 <option v-for="(company,i) in Company" :key="i" :value="company.id">
@@ -219,6 +237,7 @@ onMounted(() => {
                 required
                 v-model="selectedSite"
                 @change="changeSite(selectedSite)"
+                :disabled="disableSite"
               >
                 <option disabled selected>Site</option>
                 <option v-for="(site,i) in Site" :key="i" :value="site.id">
@@ -327,7 +346,7 @@ onMounted(() => {
               <label
                 for="id_item"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Remarks<span class="text-red">*</span></label
+                >Remarks</label
               >
               <input
                 type="text"

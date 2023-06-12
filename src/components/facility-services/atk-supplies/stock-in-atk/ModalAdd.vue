@@ -26,6 +26,8 @@ let Brand = ref("")
 let itemNames = ref("")
 let remark = ref("")
 const itemsTable = ref([])
+let disableCompany = ref(false)
+let disableSite = ref(false)
 const emits = defineEmits(["unlockScrollbar"]);
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -51,16 +53,9 @@ const fetchUOM = async () => {
   UOM.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-//for get site in select
-// const fetchGetSite = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/site/get_data");
-//   Site.value = res.data.data;
-//   // console.log("ini data parent" + JSON.stringify(res.data.data));
-// };
+
 const changeCompany = async (id_company) => {
-  fetchBrandCompany(id_company)
+  // changeUomBrand(id_company)
   fetItems(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -69,10 +64,10 @@ const changeCompany = async (id_company) => {
   Site.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetchBrandCompany = async (id_company) => {
+const fetchBrand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  const res = await Api.get('/brand/');
   // console.log(res)
   Brand.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -81,8 +76,23 @@ const fetItems = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get_by_company/${id_company}`);
-  // console.log(res)
+  // console.log(res.data.data)
   Item.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeUomBrand = async (id_item) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/management_atk/get_by_company/${selectedCompany.value}`);
+  // console.log(id_item)
+  // Warehouse.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id_item === element.id){
+      selectedBrand.value = element.id_brand
+      selectedUOM.value = element.id_uom
+    }
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
@@ -114,15 +124,33 @@ const addItem = async () => {
     id_uom: selectedUOM.value,
     qty : alertQuantity.value,
   })
-  reset()
+  resetButCompanyDisable()
   return itemsTable
+};
+const resetButCompanyDisable = async () => {
+  disableSite.value = true
+  disableCompany.value = true
+  selectedWarehouse.value = ''
+  selectedUOM.value = ''
+  idItems.value = ''
+  alertQuantity.value = ''
+  itemNames.value = ''
+  remark.value = ''
+  selectedBrand.value = ''
 };
 const removeItems = async (id) => {
 
 itemsTable.value.splice(id,1)
+if(id == 0){
+  disableSite.value = false
+  disableCompany.value = false
+  reset()
+}
 // return itemsTable
 }
 const save = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
     data:itemsTable.value
   }
@@ -150,6 +178,7 @@ const reset = async () => {
 onMounted(() => {
   fetchCondition()
   fetchUOM()
+  fetchBrand()
 });
 </script>
 
@@ -162,9 +191,9 @@ onMounted(() => {
   >
 
   <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
-  <div class="modal">
+  <div class="modal" >
     <div class="modal-dialog bg-white w-3/5">
-      <nav class="sticky top-0 z-50 bg-[#015289]">
+      <nav class="sticky top-0 z-50 bg-[#015289]" >
         <label
           @click="this.$emit('unlockScrollbar')"
           for="my-modal-stock-in"
@@ -195,6 +224,7 @@ onMounted(() => {
                 required
                 v-model="selectedCompany"
                 @change="changeCompany(selectedCompany)"
+                :disabled="disableCompany"
               >
                 <option disabled selected>Company</option>
                 <option v-for="(company,i) in Company" :key="i" :value="company.id">
@@ -213,6 +243,7 @@ onMounted(() => {
                 required
                 v-model="selectedSite"
                 @change="changeSite(selectedSite)"
+                :disabled="disableSite"
               >
                 <option disabled selected>Site</option>
                 <option v-for="(site,i) in Site" :key="i" :value="site.id">
@@ -251,25 +282,6 @@ onMounted(() => {
             </div>
             <div class="mb-6 w-full">
               <label
-                for="uom"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >UOM<span class="text-red">*</span></label
-              >
-              <select
-                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                required
-                v-model="selectedUOM"
-              >
-                <option disabled selected>UOM</option>
-                <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
-                  {{ uom.uom_name }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="flex justify-between px-6 items-center gap-2">
-            <div class="mb-6 w-full">
-              <label
                 for="item_name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Item Name<span class="text-red">*</span></label
@@ -285,10 +297,32 @@ onMounted(() => {
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="itemNames"
+                @change="changeUomBrand(itemNames)"
               >
                 <option disabled selected>Item</option>
                 <option v-for="(item,i) in Item" :key="i" :value="item.id">
                  {{ item.code_item }} - {{ item.item_name }}
+                </option>
+              </select>
+            </div>
+            
+          </div>
+          <div class="flex justify-between px-6 items-center gap-2">
+            <div class="mb-6 w-full">
+              <label
+                for="uom"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >UOM<span class="text-red">*</span></label
+              >
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedUOM"
+                disabled="true"
+              >
+                <option disabled selected>UOM</option>
+                <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
+                  {{ uom.uom_name }}
                 </option>
               </select>
             </div>
@@ -320,6 +354,7 @@ onMounted(() => {
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedBrand"
+                disabled="true"
               >
                 <option disabled selected>Brand</option>
                 <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
@@ -331,7 +366,7 @@ onMounted(() => {
               <label
                 for="id_item"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Remarks<span class="text-red">*</span></label
+                >Remarks</label
               >
               <input
                 type="text"
