@@ -98,11 +98,11 @@ const fetchSite = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/site/get_data");
   siteData = res.data.data;
-  console.log("ini data city" + JSON.stringify(res.data.data));
+  // console.log("ini data city" + JSON.stringify(res.data.data));
   siteData.map((item) => {
     item.value = item.id;
   });
-  console.log("Data company setelah perubahan:", siteData);
+  // console.log("Data company setelah perubahan:", siteData);
 };
 
 onMounted(() => {

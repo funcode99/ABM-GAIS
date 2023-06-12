@@ -33,7 +33,7 @@ let hotelRating = ref();
 
 let selectedHotelTypeId = ref(props.formContent[2] || null);
 let selectedCityId = ref(props.formContent[3] || null);
-let selectedRating = ref(props.formContent[6] || null);
+let selectedRating = ref(props.formContent[6]);
 
 const props = defineProps({
   formContent: Array,
@@ -69,7 +69,7 @@ const submitEdit = () => {
   formEditState.hotel.hotelIdCity = selectedCityId.value;
   formEditState.hotel.hotelEmail = currenthotelEmail.value;
   formEditState.hotel.hotelPhoneNumber = currenthotelPhoneNumber.value;
-  formEditState.hotel.hotelRating = currenthotelRating.value;
+  formEditState.hotel.hotelRating = selectedRating.value;
   formEditState.hotel.hotelCode = currenthotelCode.value;
 
   isVisible.value = false;
@@ -247,11 +247,11 @@ const resetForm = () => {
             v-model="selectedRating"
           >
             <option disabled selected>Rating</option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </div>
 

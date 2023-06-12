@@ -60,19 +60,22 @@ if (props.formContent[5] == undefined) {
   idZonaActual.value = idZona[0].id_zona;
 }
 
-const saveApproverLines = async (data, idx, zonaId) => {
-  console.log(data);
-  console.log(idx);
+const saveApproverLines = async (data, idx, zonaId, tlkId) => {
+  console.log("masuk ke add approver lines");
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  console.log(data[idx].id_zona);
+  console.log("ini zona id : ", zonaId);
+
   const api = await Api.post("/zona_job/store/", {
-    id_zona: zonaId,
-    id_job_band: parseInt(data[idx].id_job_band),
-    tlk_rate: parseInt(data[idx].tlkRate),
+    id_zona: data[idx].id_zona,
+    id_job_band: idJobBand.value,
+    tlk_rate: parseInt(data[idx].tlk_rate),
   });
 
   data[idx].forAdd = undefined;
   console.log("zona tlk rate telah ditambahkan!");
+
   emits("fetchJobband");
 
   const insertDefault = () => {
@@ -98,18 +101,17 @@ const saveApproverLines = async (data, idx, zonaId) => {
 };
 
 const editApproverLines = async (data, idx, zonaId, tlkId) => {
-
-  console.log("masuk ke edit approver lines")
+  console.log("masuk ke edit approver lines");
 
   const api = await Api.post(`/zona_job/update_data/${tlkId}`, {
     id_zona: zonaId,
     id_job_band: parseInt(data[idx].id_job_band),
     tlk_rate: data[idx].tlk_rate,
   });
-  
-  console.log("Zona TLK Rate telah diubah!")
 
-  emits("fetchJobband")
+  console.log("Zona TLK Rate telah diubah!");
+
+  emits("fetchJobband");
 
   const insertDefault = () => {
     zonaTlkRateLines.value = props.formContent[5];
@@ -145,19 +147,17 @@ const addField = (fieldType, isi) => {
 };
 
 //untuk menghapus field
-const removeField = async (index, fieldType) => {
-  console.log(idJobBand.value);
-  if (idJobBand) {
+const removeField = async (index, fieldType, tlkId) => {
+  console.log("ini tlk id" + tlkId);
+  if (tlkId) {
     console.log("masuk ke api delete");
 
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.delete(
-      `/zona_job/delete_data/${idJobBand.value}`
-    );
-
+    const api = await Api.delete(`/zona_job/delete_data/${tlkId}`);
+    console.log("ini api" + api);
     console.log("zona tlk rate berhasil dihapus");
-    // emits("fetchJobband");
+    emits("fetchJobband");
   }
 
   console.log("setelah masuk ke api");
@@ -209,7 +209,7 @@ const submitEdit = () => {
 const fetchZonaJobband = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona_job/get/");
+  const res = await Api.get("/zona/get/");
   instanceArray = res.data.data;
   addZonaTlkRateData.value = instanceArray;
   zonaCode.value = addZonaTlkRateData.value[0].level;
@@ -463,10 +463,12 @@ const formatCurrency = () => {
               </tr>
             </thead>
 
-        <!-- {{ zonaTlkRateLines }} -->
+            <!-- {{ zonaTlkRateLines }} -->
 
             <tbody class="bg-[#F5F5F5]">
-              <!-- {{ addZonaTlkRateData }} -->
+              <!-- {{
+                addZonaTlkRateData
+              }} -->
               <tr
                 class="font-JakartaSans font-normal text-sm"
                 v-for="(input, index) in zonaTlkRateLines"
@@ -476,17 +478,14 @@ const formatCurrency = () => {
                   <select
                     v-model="input.id_zona"
                     :id="index"
-                    :disabled="
-                      addZonaTlkRateData.length - 1 > index && !input.isEdit
-                    "
                     class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                   >
                     <option
                       v-for="data in addZonaTlkRateData"
                       :key="data.id"
-                      :value="data.id_zona"
+                      :value="data.id"
                     >
-                      {{ data.zona_name }}
+                      {{ data.zona }}
                     </option>
                   </select>
                 </td>
@@ -506,9 +505,6 @@ const formatCurrency = () => {
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                     v-model="input.tlk_rate"
-                    :disabled="
-                      addZonaTlkRateData.length - 1 > index && !input.isEdit
-                    "
                   />
                 </td>
 
@@ -526,7 +522,7 @@ const formatCurrency = () => {
                   <button
                     v-if="input.fromFetch == true && input.isEdit == false"
                     type="button"
-                    @click="removeField(index, zonaTlkRateLines)"
+                    @click="removeField(index, zonaTlkRateLines, input.id_tlk)"
                     :class="zonaTlkRateLines.length - 1 > index ? 'hidden' : ''"
                   >
                     <img :src="deleteicon" class="w-6 h-6" />
@@ -537,7 +533,12 @@ const formatCurrency = () => {
                     v-if="input.isEdit == true"
                     type="button"
                     @click="
-                      editApproverLines(zonaTlkRateLines, index, idZonaActual, input.id_tlk)
+                      editApproverLines(
+                        zonaTlkRateLines,
+                        index,
+                        idZonaActual,
+                        input.id_tlk
+                      )
                     "
                   >
                     <img :src="checkIcon" class="w-5 h-5" />
@@ -562,7 +563,7 @@ const formatCurrency = () => {
                   <button
                     v-if="input.forAdd == false"
                     type="button"
-                    @click="removeField(index, zonaTlkRateLines)"
+                    @click="removeField(index, zonaTlkRateLines, input.id_tlk)"
                   >
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>
@@ -572,7 +573,12 @@ const formatCurrency = () => {
                     v-if="input.forAdd == true"
                     type="button"
                     @click="
-                      saveApproverLines(zonaTlkRateLines, index, idZonaActual)
+                      saveApproverLines(
+                        zonaTlkRateLines,
+                        index,
+                        idZonaActual,
+                        input.id_tlk
+                      )
                     "
                   >
                     <img :src="checkIcon" class="w-5 h-5" />

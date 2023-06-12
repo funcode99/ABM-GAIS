@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
+// import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
 // import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
@@ -269,7 +269,7 @@ const fetchEmployee = async () => {
               Employee
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" />
+              <!-- <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >

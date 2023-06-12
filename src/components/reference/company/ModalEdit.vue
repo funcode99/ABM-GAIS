@@ -36,7 +36,7 @@ let iconfilename = ref(null);
 
 let selectedVendorId = ref(props.formContent[4] || null);
 let selectedImage = ref(props.formContent[5] || null);
-let selectedCodeErpId = ref(props.formContent[6] || null);
+let selectedCodeErpId = ref(props.formContent[6]);
 
 const file = ref({});
 
@@ -48,10 +48,10 @@ const currentcompanyName = ref(props.formContent[0]);
 const originalcompanyName = ref(props.formContent[0]);
 const currentcompanyCode = ref(props.formContent[1]);
 const originalcompanyCode = ref(props.formContent[1]);
-const currentcompanyGroup = ref(props.formContent[2]);
-const originalcompanyGroup = ref(props.formContent[2]);
-const currentcompanyShortName = ref(props.formContent[3]);
-const originalcompanyShortName = ref(props.formContent[3]);
+const currentcompanyShortName = ref(props.formContent[2]);
+const originalcompanyShortName = ref(props.formContent[2]);
+const currentcompanyGroup = ref(props.formContent[3]);
+const originalcompanyGroup = ref(props.formContent[3]);
 const currentcompanyIdVendor = ref(props.formContent[4]);
 const originalcompanyIdVendor = ref(props.formContent[4]);
 const currentcompanyLogo = ref(props.formContent[5]);
@@ -73,7 +73,7 @@ const submitEdit = () => {
 
   formEditState.company.companyIdVendor = selectedVendorId.value;
   formEditState.company.companyLogo = selectedImage.value;
-  formEditState.company.companyCodeErp = currentcompanyCodeErp.value;
+  formEditState.company.companyCodeErp = selectedCodeErpId.value;
 
   isVisible.value = false;
   emits("changeCompany"); // Memanggil event 'changeCompany'
@@ -109,8 +109,8 @@ watch(isVisible, () => {
   } else {
     currentcompanyName.value = props.formContent[0];
     currentcompanyCode.value = props.formContent[1];
-    currentcompanyGroup.value = props.formContent[2];
-    currentcompanyShortName.value = props.formContent[3];
+    currentcompanyShortName.value = props.formContent[2];
+    currentcompanyGroup.value = props.formContent[3];
     selectedVendorId.value = props.formContent[4];
     selectedImage.value = props.formContent[5];
     currentcompanyCodeErp.value = props.formContent[6];
@@ -145,48 +145,64 @@ const resetForm = () => {
 
       <form class="modal-box-inner-company" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="code"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyCode"
             type="text"
+            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="name"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >Name<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyName"
             type="text"
+            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="shortname"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >Short Name<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyShortName"
             type="text"
+            id="name"
             :class="inputStylingClass"
             required
           />
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="grupcompany"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >Group Company<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyGroup"
             type="text"
+            id="name"
             :class="inputStylingClass"
             required
           />
@@ -194,6 +210,7 @@ const resetForm = () => {
 
         <div class="mb-6 w-full px-4 text-start">
           <div
+            for="logo_company"
             class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
           >
             Logo Company
@@ -203,11 +220,12 @@ const resetForm = () => {
             <input
               type="file"
               name="logo"
+              id="logo_company"
               class="hidden border"
               accept="image/*"
               @change="onFileSelected"
             />
-            <label class="py-2">
+            <label class="py-2" for="logo_company">
               <div
                 v-if="iconfilename != null"
                 class="px-5 py-2 font-JakartaSans font-medium text-sm"
@@ -226,7 +244,9 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="vendor"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >Vendor Airlines<span class="text-red">*</span></label
           >
           <select
@@ -242,7 +262,9 @@ const resetForm = () => {
         </div>
 
         <div class="mb-6 px-4 w-full text-start">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+          <label
+            for="erp"
+            class="block mb-2 font-JakartaSans font-medium text-sm"
             >ERP<span class="text-red">*</span></label
           >
           <select
@@ -251,8 +273,8 @@ const resetForm = () => {
             v-model="selectedCodeErpId"
           >
             <option disabled selected>ERP</option>
-            <option>SAP</option>
-            <option>RAMCO</option>
+            <option value="SAP">SAP</option>
+            <option value="RAMCO">RAMCO</option>
           </select>
         </div>
 

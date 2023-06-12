@@ -62,6 +62,7 @@ const callEditApi = async () => {
     rating: formEditState.hotel.hotelRating,
     code_hotel: formEditState.hotel.hotelCode,
   });
+  // console.log(formEditState.hotel.hotelRating);
   Swal.fire({
     position: "center",
     icon: "success",

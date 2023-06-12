@@ -98,12 +98,15 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByCompany = () => {
+  // console.log("ini selected" + selectedCompany.value);
   if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
   } else {
+    // console.log(instanceArray);
     sortedData.value = instanceArray.filter(
-      (item) => item.id_company === selectedCompany.value
+      (item) => item.id_company == selectedCompany.value
     );
+    // console.log("ini sorted data" + JSON.stringify(sortedData));
   }
 };
 
@@ -518,7 +521,7 @@ const exportToExcel = () => {
                       data.id_company,
                       data.id_flight_class,
                       data?.detail,
-                      data.id
+                      data.id,
                     ]"
                   />
                   <button @click="deleteJobBand(data.id)">
