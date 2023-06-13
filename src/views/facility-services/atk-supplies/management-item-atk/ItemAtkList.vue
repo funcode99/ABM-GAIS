@@ -836,7 +836,7 @@ const getSessionForSidebar = () => {
                                 <label
                                   for="id_item"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                  >Remarks<span class="text-red">*</span></label
+                                  >Remarks</label
                                 >
                                 <textarea
                                   type="text"

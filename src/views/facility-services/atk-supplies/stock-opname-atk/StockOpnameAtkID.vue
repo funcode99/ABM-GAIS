@@ -62,7 +62,7 @@ const fetchDataById = async (id) => {
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.post(`/stock_in/approval_submit/${router.currentRoute.value.params.id}`);
+  const res = await Api.post(`/stock_opname/approval_submit/${router.currentRoute.value.params.id}`);
   Swal.fire({
       position: "center",
       icon: "success",

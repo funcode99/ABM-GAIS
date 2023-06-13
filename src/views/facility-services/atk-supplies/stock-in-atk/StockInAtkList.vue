@@ -21,6 +21,7 @@ import { ref, onBeforeMount, computed } from "vue";
 import Api from "@/utils/Api";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import Swal from "sweetalert2";
+import moment from 'moment';
 const sidebar = useSidebarStore();
 
 //for sort & search
@@ -184,6 +185,11 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+const format_date = (value) => {
+  if (value) {
+           return moment(String(value)).format('DD-MM-YYYY')
+          }
+};
 </script>
 
 <template>
@@ -206,7 +212,7 @@ const getSessionForSidebar = () => {
         <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
-            <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
+            <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
               Stock In ATK
             </p>
 
@@ -273,7 +279,7 @@ const getSessionForSidebar = () => {
                   <p
                     class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                   >
-                    Choose a Date
+                    Choose Date
                   </p>
 
                   <VueDatePicker
@@ -410,7 +416,7 @@ const getSessionForSidebar = () => {
                       {{ data.no_stock_in }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.updated_at }}
+                      {{ format_date(data.updated_at) }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.employee_name }}
@@ -423,9 +429,7 @@ const getSessionForSidebar = () => {
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link :to="`/viewstockinatk/${data.id}`">
-                        <button>
                           <img :src="editicon" class="w-6 h-6" />
-                        </button>
                       </router-link>
                       <button @click="deleteValue(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
