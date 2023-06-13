@@ -35,15 +35,16 @@ let itemNames = ref("")
 let remark = ref("")
 let siteName = ref("")
 let status = ref("")
+let statusValue = ref(false)
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/stock_in/get/${id}`);
+  const res = await Api.get(`/stock_opname/get/${id}`);
   console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    stockName.value = element.no_stock_in
+    stockName.value = element.no_stock_opname
     createdDate.value = format_date(element.created_at)
     createdBy.value = element.employee_name
     Warehouse.value = element.warehouse_name
@@ -55,6 +56,7 @@ const fetchDataById = async (id) => {
     remark.value = element.remarks
     siteName.value = element.site_name
     status.value = element.status
+    element.status == 'Submitted' ? !statusValue : statusValue
   }
   
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -62,7 +64,7 @@ const fetchDataById = async (id) => {
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.post(`/stock_opname/approval_submit/${router.currentRoute.value.params.id}`);
+  const res = await Api.post(`/stock_opname/submit/${router.currentRoute.value.params.id}`);
   Swal.fire({
       position: "center",
       icon: "success",
@@ -71,7 +73,7 @@ const submit = async () => {
       timer: 1500,
     });
     // reset()
-    router.push({path: '/stockinatk'})
+    router.push({path: '/stock-opname-atk'})
   // console.log(res.data.data)
   
   
@@ -111,7 +113,7 @@ const format_date = (value) => {
           <!-- HEADER -->
           <div class="flex justify-between">
             <router-link
-              to="/stockinatk"
+              to="/stock-opname-atk"
               class="flex items-center gap-2 py-4 mx-4"
             >
               <img :src="arrow" class="w-3 h-3" alt="" />

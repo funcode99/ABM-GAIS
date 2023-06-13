@@ -1,27 +1,191 @@
 <script setup>
-
-import { ref } from 'vue'
-
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icondanger from "@/assets/icon-danger-circle.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+import { ref, onMounted, watch } from "vue";
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+import { useRouter } from 'vue-router'
+const router = useRouter()
+let selectedCompany = ref("Company");
+let selectedSite = ref("Site");
+let selectedWarehouse = ref("Warehouse")
+let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
+let selectedUOM = ref("UOM")
+let selectedBrand = ref("Brand")
+let brandName = ref("");
+let Company = ref("");
+let Site = ref("");
+let Item = ref("")
+let Warehouse = ref("");
+let UOM = ref("")
+let idItems = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let remark = ref("")
+const itemsTable = ref([])
+let disableCompany = ref(false)
+let disableSite = ref(false)
+const emits = defineEmits(["unlockScrollbar"]);
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 
-const emits = defineEmits(["unlockScrollbar"])
+const fetchGetCompanyID = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  // const id_company = JSON.parse(localStorage.getItem("id_company"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 
-let companyModal = ref('')
-let dateModal = ref('')
-let siteModal = ref('')
+const fetchUOM = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/uom");
+  UOM.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 
-let warehouseModal = ref('')
-let quantityOpnameModal = ref('')
-let itemModal = ref('')
-let brandModal = ref('')
-let adjusmentTypeModal = ref('')
-let UOMModal = ref('')
-let quantityModal = ref('')
-let remarksModal = ref('')
+const changeCompany = async (id_company) => {
+  // changeUomBrand(id_company)
+  fetItems(id_company)
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  // console.log(res)
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchBrand = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get('/brand/');
+  // console.log(res)
+  Brand.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetItems = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/management_atk/get_by_company/${id_company}`);
+  // console.log(res.data.data)
+  Item.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeUomBrand = async (id_item) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/management_atk/get_by_company/${selectedCompany.value}`);
+  // console.log(id_item)
+  // Warehouse.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id_item === element.id){
+      selectedBrand.value = element.id_brand
+      selectedUOM.value = element.id_uom
+    }
+  }
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeSite = async (id_site) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+//get kondisi local storage
+const fetchCondition = async () => {
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  const id_role = JSON.parse(localStorage.getItem("id_role"));
+  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+};
 
+const addItem = async () => {
+
+  itemsTable.value.push({
+    id_company: selectedCompany.value,
+    // id_departement: '',
+    id_site: selectedSite.value,
+    id_warehouse: selectedWarehouse.value,
+    id_employee : selectedEmployee.value,
+    remarks:remark.value,
+    id_item: itemNames.value,
+    id_brand:selectedBrand.value,
+    id_uom: selectedUOM.value,
+    qty : alertQuantity.value,
+  })
+  resetButCompanyDisable()
+  return itemsTable
+};
+const resetButCompanyDisable = async () => {
+  disableSite.value = true
+  disableCompany.value = true
+  selectedWarehouse.value = ''
+  selectedUOM.value = ''
+  idItems.value = ''
+  alertQuantity.value = ''
+  itemNames.value = ''
+  remark.value = ''
+  selectedBrand.value = ''
+};
+const removeItems = async (id) => {
+
+itemsTable.value.splice(id,1)
+if(id == 0){
+  disableSite.value = false
+  disableCompany.value = false
+  reset()
+}
+// return itemsTable
+}
+const save = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const payload = {
+    id_company:selectedCompany.value,
+    id_departement : 1,
+    id_site:selectedSite.value,
+    id_warehouse : selectedWarehouse.value,
+    id_employee:selectedEmployee.value,
+    remarks:"",
+    array_detail:itemsTable.value
+  }
+  const res = await Api.post('request_atk/store',payload);
+  Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    reset()
+    router.push({path: '/stockinatk'})
+};
+const reset = async () => {
+  selectedCompany.value = ''
+  selectedSite.value = ''
+  selectedWarehouse.value = ''
+  selectedUOM.value = ''
+  alertQuantity.value = ''
+  itemNames.value = ''
+  remark.value = ''
+  selectedBrand.value = ''
+};
+onMounted(() => {
+  fetchCondition()
+  fetchUOM()
+  fetchBrand()
+});
 </script>
 
 <template>
@@ -29,13 +193,13 @@ let remarksModal = ref('')
     @click="this.$emit('unlockScrollbar')"
     for="my-modal-stock-in"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >Opname</label
+    >+ Add Item</label
   >
 
   <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
-  <div class="modal">
-    <div class="modal-box relative">
-      <nav class="sticky top-0 z-50 bg-[#015289]">
+  <div class="modal" >
+    <div class="modal-dialog bg-white w-3/5">
+      <nav class="sticky top-0 z-50 bg-[#015289]" >
         <label
           @click="this.$emit('unlockScrollbar')"
           for="my-modal-stock-in"
@@ -44,68 +208,66 @@ let remarksModal = ref('')
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          ATK Request
+          Atk Request
         </p>
       </nav>
 
       <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
         <img :src="icondanger" class="w-5 h-5" />
-        <p class="font-JakartaSans font-semibold text-lg">Request Stock Out Info</p>
+        <p class="font-JakartaSans font-semibold text-lg">Atk Request Info</p>
       </div>
 
-      <main class="modal-box-inner-brand pr-6 pb-14">
-        <div>
-          <div class="flex justify-between px-6 items-center gap-2">
+      <main class="modal-box-inner-brand pb-14">
+        <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Company<span class="text-red">*</span></label
               >
-              <input
-                v-modal="companyModal"
-                type="text"
-                name="company"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Company"
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
-              />
-            </div>
-            <div class="mb-6 w-full">
-              <label
-                for="Date"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Date<span class="text-red">*</span></label
+                v-model="selectedCompany"
+                @change="changeCompany(selectedCompany)"
+                :disabled="disableCompany"
               >
-              <input
-                v-model="dateModal"
-                type="text"
-                name="date"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Brand"
-                required
-              />
+                <option disabled selected>Company</option>
+                <option v-for="(company,i) in Company" :key="i" :value="company.id">
+                  {{ company.company_name }}
+                </option>
+              </select>
             </div>
-          </div>
-
-          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
                 for="site"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Site<span class="text-red">*</span></label
               >
-              <input
-                v-model="siteModal"
-                type="text"
-                name="site"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Site"
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
-              />
+                v-model="selectedSite"
+                @change="changeSite(selectedSite)"
+                :disabled="disableSite"
+              >
+                <option disabled selected>Site</option>
+                <option v-for="(site,i) in Site" :key="i" :value="site.id">
+                  {{ site.site_name }}
+                </option>
+              </select>
             </div>
           </div>
-
+          <div class="flex justify-between px-6 items-center gap-2">
+            <div class="mb-6 w-full">
+              <label
+                for="detail"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Details</label
+              >
+             <hr />
+            </div>
+          </div>
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
@@ -114,125 +276,108 @@ let remarksModal = ref('')
                 >Warehouse<span class="text-red">*</span></label
               >
               <select
-                v-model="warehouseModal"
-                class="bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
+                v-model="selectedWarehouse"
               >
-                <option disabled selected>Select Warehouse</option>
-                <option>Warehouse A</option>
-                <option>Warehouse B</option>
+                <option disabled selected>Warehouse</option>
+                <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
+                  {{ warehouse.warehouse_name }}
+                </option>
               </select>
             </div>
-
             <div class="mb-6 w-full">
               <label
-                for="uom"
+                for="item_name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Quantity Opname<span class="text-red">*</span></label
+                >Item Name<span class="text-red">*</span></label
               >
-              <input
-                v-model="quantityOpnameModal"
+              <!-- <input
                 type="text"
-                name="quantity opname"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Quantity Opname"
+                v-model="itemNames"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Item Name"
                 required
-              />
+              /> -->
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="itemNames"
+                @change="changeUomBrand(itemNames)"
+              >
+                <option disabled selected>Item</option>
+                <option v-for="(item,i) in Item" :key="i" :value="item.id">
+                 {{ item.code_item }} - {{ item.item_name }}
+                </option>
+              </select>
             </div>
+            
           </div>
-
           <div class="flex justify-between px-6 items-center gap-2">
-            <div class="mb-6 w-full">
-              <label
-                for="id_item"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Item<span class="text-red">*</span></label
-              >
-              <input
-                v-model="itemModal"
-                type="text"
-                name="item"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Item"
-                required
-              />
-            </div>
-            <div class="mb-6 w-full">
-              <label
-                for="uom"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Brand<span class="text-red">*</span></label
-              >
-              <input
-                v-model="brandModal"
-                type="text"
-                name="brand"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Brand"
-                required
-              />
-            </div>
-          </div>
-
-          <div class="flex justify-between px-6 items-center gap-2">
-            <div class="mb-6 w-full">
-              <label
-                for="adjusment_type"
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Adjusment Type<span class="text-red">*</span></label
-              >
-              <input
-                v-model="adjusmentTypeModal"
-                type="text"
-                name="adjusment type"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Adjusment Type"
-                required />
-            </div>
             <div class="mb-6 w-full">
               <label
                 for="uom"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >UOM<span class="text-red">*</span></label
               >
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedUOM"
+                disabled="true"
+              >
+                <option disabled selected>UOM</option>
+                <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
+                  {{ uom.uom_name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-6 w-full">
+              <label
+                for="alert"
+                class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Quantity<span class="text-red">*</span></label
+              >
               <input
-                v-model="UOMModal"
-                type="text"
-                name="UOM"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="UOM"
+                type="number"
+                v-model="alertQuantity"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Quantity"
                 required
               />
             </div>
           </div>
 
-          <div class="flex justify-between px-6 items-start gap-2">
+          <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
-                for="quantity"
+                for="uom"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Quantity<span class="text-red">*</span></label
+                >Brand<span class="text-red">*</span></label
               >
-              <input
-                v-model="quantityModal"
-                type="text"
-                name="Quantity"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Quantity"
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
-              />
+                v-model="selectedBrand"
+                disabled="true"
+              >
+                <option disabled selected>Brand</option>
+                <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
+                  {{ brand.brand_name }}
+                </option>
+              </select>
             </div>
             <div class="mb-6 w-full">
               <label
-                for="remarks"
+                for="id_item"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Remarks<span class="text-red">*</span></label
+                >Remarks</label
               >
-              <textarea
-                v-model="remarksModal"
+              <input
                 type="text"
-                name="Remarks"
-                class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                v-model="remark"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Remarks"
                 required
               />
@@ -240,34 +385,44 @@ let remarksModal = ref('')
           </div>
 
           <div class="flex justify-center py-2">
-            <button class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue">
+            <button
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+              @click="addItem"
+            >
               Add
             </button>
           </div>
 
-        </div>
-
         <!-- INNER TABLE -->
-        <div class="overflow-x-auto">
-          <table class="table table-compact w-full text-center">
+        <div class="inner-table px-6">
+          <table class="table table-compact w-full">
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
-                
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
-                  ID Item
+                  Warehouse
                 </th>
+                
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
                   Item Name
                 </th>
-
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
-                 Quantity
+                  Quantity
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Brand
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  UOM
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -282,17 +437,16 @@ let remarksModal = ref('')
               </tr>
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
-              <tr class="h-16">
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
-                <td class="border border-[#B9B9B9]"></td>
+              <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
+                <td class="border border-[#B9B9B9]">{{ items.id_warehouse }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_item }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_brand }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.id_uom }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">
-                    <button>
-                      <img :src="editicon" class="w-6 h-6" />
-                    </button>
-                    <button>
+                    <button @click="removeItems(i)">
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
                   </div>
@@ -301,13 +455,13 @@ let remarksModal = ref('')
             </tbody>
           </table>
         </div>
-
       </main>
 
       <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-center gap-4 mr-6">
+        <div class="flex justify-center gap-4">
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            @click="save"
           >
             Save
           </button>
@@ -326,7 +480,7 @@ let remarksModal = ref('')
 
 .modal-box-inner-brand {
   height: 450px;
-  --tw-scale-x: .9;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))

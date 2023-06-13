@@ -152,7 +152,11 @@ const save = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
-    data:itemsTable.value
+    id_company:selectedCompany.value,
+    id_site:selectedSite.value,
+    id_employee:selectedEmployee.value,
+    remarks:"",
+    array_detail:itemsTable.value
   }
   const res = await Api.post('stock_in/store',payload);
   Swal.fire({

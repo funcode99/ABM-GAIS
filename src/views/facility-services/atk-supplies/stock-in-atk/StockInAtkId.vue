@@ -35,6 +35,7 @@ let itemNames = ref("")
 let remark = ref("")
 let siteName = ref("")
 let status = ref("")
+let statusValue = ref(false)
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -55,6 +56,7 @@ const fetchDataById = async (id) => {
     remark.value = element.remarks
     siteName.value = element.site_name
     status.value = element.status
+    element.status == 'Submitted' ? !statusValue : statusValue
   }
   
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -62,7 +64,7 @@ const fetchDataById = async (id) => {
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.post(`/stock_in/approval_submit/${router.currentRoute.value.params.id}`);
+  const res = await Api.post(`/stock_in/submit/${router.currentRoute.value.params.id}`);
   Swal.fire({
       position: "center",
       icon: "success",
@@ -126,6 +128,7 @@ const format_date = (value) => {
                 Draft
               </button> -->
               <button
+                v-if="statusValue === true"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
               >
