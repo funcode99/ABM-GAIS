@@ -24,32 +24,32 @@
         {
             username: username.value,
             password: password.value
-        }
-        )
-        
+        })
+
         // tambah withCredentials malah error :(
         // console.log(JSON.stringify(data.data.users.id_employee))
         //add local storage tomy
-
-        
-        // console.log('mengganti menjadi backtick')
-        // console.log(deleteBacktick)
-
-        localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
-        localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
+ 
         localStorage.setItem('id_role', JSON.stringify(data.data.users.id_role))
+        localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
         localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
-
-        // console.log(typeof data.data.users.logo_path == 'string')
+        localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
 
         if(typeof data.data.users.logo_path == 'string') {
           let deleteBacktick = data.data.users.logo_path.replaceAll('"', '')
           localStorage.setItem('company_logo', deleteBacktick)
         }
+      
+
+        if(typeof data.data.users.name == 'string') {
+          let username = data.data.users.name.replaceAll('"', '')
+          localStorage.setItem('username', username)
+        }
 
 
         // $cookies.set('token', data.data.data.access_token)
-        // store.commit('isLoading', false);
+        // store.commit('isLoading', false)
+
         router.push('/user');
 
     } catch (error) {
