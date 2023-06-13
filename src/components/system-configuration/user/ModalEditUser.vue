@@ -226,34 +226,21 @@
   
           <div class="mb-6">
 
-            <label
-              for="approval_authorities"
-              class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-            >
+            <label class="block mb-2 font-JakartaSans font-medium text-sm text-left" for="approval_authorities">
                 Approval Authorities
-                
             </label>
-  
-            <!-- :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
-                :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''" -->
-            <!-- ambil value selected nya -->
 
             <div class="grid grid-cols-3">
-                <div 
-                v-for="name in responseAuthoritiesArray" 
-          
-                :key="name.id"
-                >
-                <!-- :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' )  ? 'hidden' : ''" -->
-                <div class="flex items-center gap-2">
-                  <input
-                    id="approval_authorities"
-                    type="checkbox" 
-                    :id="name.auth_name" 
-                    @click="selected = name.id" 
-                    :checked="selected === name.id" 
-                  />
-                  <label>{{ name.auth_name }}</label>
+                <div v-for="name in responseAuthoritiesArray" :key="name.id">
+                  <div class="flex items-center gap-2">
+                    <input
+                      id="approval_authorities"
+                      type="checkbox" 
+                      :id="name.auth_name" 
+                      @click="selected = name.id" 
+                      :checked="selected === name.id" 
+                    />
+                    <label>{{ name.auth_name }}</label>
                   </div>
                 </div>
             </div>
@@ -274,9 +261,9 @@
             <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
 
             <select disabled id="location" v-model="location" :class="inputStylingClass">
-                <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
-                     {{ data.site_name }}
-                </option>
+              <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
+                {{ data.site_name }}
+              </option>
             </select>
             
           </div>

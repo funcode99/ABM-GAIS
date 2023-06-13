@@ -26,7 +26,8 @@
   let password = ref('')
   let role = ref([])
   let selected = ref()
-  let location = ref([0, 0])
+  let company = ref()
+  let location = ref()  
   let isEmployee = ref(false)
   let idStatusMenu = ref(0)
 
@@ -83,14 +84,21 @@
 
   })
 
-  watch(location, (newValue, oldValue) => {
-      menuAccessStore.companyId = location.value
+  let isLoading = ref(false)
+
+  watch(company, () => {
+      isLoading.value = true
+      menuAccessStore.companyId = company.value
   })
 
   // tidak berubah karena tidak dibuka?
   watch(menuAccessStore, () => {
     console.log('terjadi perubahan')
     responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult
+  })
+
+  watch(responseSiteByCompanyIdArray, () => {
+    isLoading.value = false
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
@@ -232,28 +240,23 @@
                       class="block mb-2 font-JakartaSans font-medium text-sm text-left">
                       Approval Authorities
                   </label>
-    
-                    <!-- ambil value selected nya -->
-                    <!-- :class="(name.auth_name == 'PM' || name.auth_name == 'Treasury' || name.auth_name == 'Atasan Langsung' || name.auth_name == 'Accounting') && role[1] != 'Admin' ? 'hidden' : '' "
-                      :style="name.auth_name == 'GA' && role[1] != 'Super Admin' ? 'display:none' : ''" -->
 
                   <div class="grid grid-cols-3">
-                      <div 
-                        v-for="name in responseAuthoritiesArray" 
-                        :key="name.id"
-                      >
-                      <!-- :class="name.auth_name == 'HR' && ( role[1] == 'Admin' || role[1] == 'Super Admin' ) ? 'hidden' : '' " > -->
+
+                      <div v-for="name in responseAuthoritiesArray" :key="name.id">
+
                         <div class="flex items-center gap-2"> 
-                            <input 
-                            id="approval_authorities"
-                            type="checkbox" 
-                            :id="name.id" 
-                            @click="selected = name.id" 
-                            :checked="selected === name.id" 
+                            <input id="approval_authorities"
+                              type="checkbox" 
+                              :id="name.id" 
+                              @click="selected = name.id" 
+                              :checked="selected === name.id" 
                             />
                             <label>{{ name.auth_name }}</label>
                         </div>
+
                       </div>
+
                   </div>
     
                 </div>
@@ -261,7 +264,7 @@
                 <div class="mb-6 flex flex-col gap-2">
                   
                     <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
-                    <select @change="$emit('fetchSiteForCompany')" id="company" v-model="location" :class="inputStylingClass">
+                    <select @change="$emit('fetchSiteForCompany')" id="company" v-model="company" :class="inputStylingClass">
                       <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" >
                         {{ data.company_name }}
                       </option>
@@ -269,13 +272,27 @@
 
                 </div>
     
-                <div class="mb-6 flex flex-col gap-2">
+                <div v-if="!isLoading" class="mb-6 flex flex-col gap-2">
 
                     <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
                     
-                    <select id="location" v-model="location" :class="inputStylingClass">
+                    <select :disabled="isLoading" id="location" v-model="location" :class="inputStylingClass">
+                      
                       <option v-for="data in responseSiteByCompanyIdArray" :key="data.id" :value="data.id" >
                           {{ data.site_name }}
+                      </option>
+
+                    </select>
+
+                </div>
+
+                <div v-else>
+
+                  <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+                    
+                    <select :disabled="isLoading" id="location" :class="inputStylingClass">
+                      <option selected>
+                          Retrieving location data...
                       </option>
                     </select>
 
