@@ -8,6 +8,8 @@
   import { useSidebarStore } from "@/stores/sidebar.js"
   import { useRouter } from 'vue-router'
 
+  let companyLogo = localStorage.getItem('company_logo')
+
   import Api from '@/utils/Api'
 
   const router = useRouter()
@@ -26,6 +28,7 @@
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
     let api = await Api.post('/users/logout')
     localStorage.removeItem('token')
+    localStorage.removeItem('company_logo')
     router.push({path: '/'})
   }
 
@@ -53,7 +56,8 @@
       </div>
   
       <div class="hidden md:flex justify-center items-center">
-        <img :src="highlight" class="max-w-[120px] max-h-[79px]" />
+        <img :src=companyLogo class="max-w-[120px] max-h-[79px]" />
+        <!-- <img src="http://103.165.130.157:8086/storage/files/company/od2nBcLMjlMCQSbclgvcaZ76TVL502pYVADFR5gK.png" /> -->
       </div>
 
       <div class="md:hidden"></div>

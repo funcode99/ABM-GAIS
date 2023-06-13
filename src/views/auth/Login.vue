@@ -7,14 +7,12 @@
   import Footer from '@/components/layout/Footer.vue'
 
   import { ref } from 'vue'
-  import Api from '@/utils/Api';
-  import router from '@/router';
+  import Api from '@/utils/Api'
+  import router from '@/router'
 
   const username = ref('')
   const password = ref('')
   const isHide = ref(true)
-
-
 
   const submit = async () => {
       console.log('masuk ke submit')
@@ -31,10 +29,16 @@
         // tambah withCredentials malah error :(
         // console.log(JSON.stringify(data.data.users.id_employee))
         //add local storage tomy
+
+        let deleteBacktick = data.data.users.logo_path.replaceAll('"', '')
+        // console.log('mengganti menjadi backtick')
+        // console.log(deleteBacktick)
+
         localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
         localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
         localStorage.setItem('id_role', JSON.stringify(data.data.users.id_role))
         localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
+        localStorage.setItem('company_logo', deleteBacktick)
 
         // $cookies.set('token', data.data.data.access_token)
         // store.commit('isLoading', false);
@@ -123,7 +127,7 @@
                                     <h1>Remember me</h1>
                                   </div>
                                   <router-link to="/forgot">
-                                    <a class="underline cursor-pointer text-[#015289]">Forgot Password?</a>
+                                    <p class="underline cursor-pointer text-[#015289]">Forgot Password?</p>
                                   </router-link>
                           </div>
                           <!-- login button -->

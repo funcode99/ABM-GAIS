@@ -125,15 +125,15 @@ const router = createRouter({
       meta: {
         title: 'Forgot Password'
       },
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('token');
+      // beforeEnter: (to, from, next) => {
+      //   const token = localStorage.getItem('token');
 
-        if (token) {
-          return next()
-        }
+      //   if (token) {
+      //     return next()
+      //   }
 
-        return next('/')
-      }
+      //   return next('/')
+      // }
     },
     {
       path: '/profile',
