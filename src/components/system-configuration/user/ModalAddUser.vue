@@ -24,7 +24,7 @@
   let password = ref('')
   let role = ref([])
   let selected = ref()
-  let location = ref()
+  let location = ref([0, 0])
   let isEmployee = ref(false)
   let idStatusMenu = ref(0)
 
@@ -79,6 +79,10 @@
     responseSiteArray.value = referenceFetch.fetchSiteResult
     responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
 
+  })
+
+  watch(location, (newValue, oldValue) => {
+    
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'

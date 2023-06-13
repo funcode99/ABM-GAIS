@@ -241,7 +241,7 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get('/company/get_site/')
       } catch (error) {
-        
+        console.log(error)
       }
     }
 
@@ -271,7 +271,8 @@
     })
 
     watch(addAuthoritiesData, () => {
-      sysconfigFetch.fetchAuthoritiesResult = addAuthoritiesData.value 
+      console.log('data approver telah masuk')
+      sysconfigFetch.fetchApproverAuthoritiesResult = addAuthoritiesData.value 
     })
 
     watch(addCompanyData, () => {
@@ -288,12 +289,6 @@
 
     const filterTable = async (id, roleId) => {
 
-      // console.log(id)
-      // console.log(roleId)
-
-      // console.log(typeof id)
-      // console.log(typeof roleId)
-
       if(typeof id !== "number") {
         id = 0
       }
@@ -301,9 +296,6 @@
       if(typeof roleId !== "number") {
         roleId = 0
       }
-
-      // console.log(id)
-      // console.log(roleId)
 
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -333,8 +325,6 @@
 
       <tableContainer>
 
-           <!-- {{ deleteArray }} -->
-
         <TableTopBar 
           modalAddType="user"
           :title="'User'" 
@@ -346,6 +336,7 @@
           @filter-table="filterTable"
           @reset-table="fetch"
           @export-to-excel="exportToExcel"
+          @fetchSiteForCompany="fetchSiteByCompanyId"
         />
 
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
@@ -384,7 +375,7 @@
 
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                    <tr v-for="(data, index) in sortedData.slice(
+                    <tr v-for="data in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
