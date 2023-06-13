@@ -19,6 +19,7 @@
     // import fetchSiteUtils from '@/utils/Fetch/Reference/fetchSite'
     import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
     import fetchEmployeeUtils from '@/utils/Fetch/Reference/fetchEmployee'
+    import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
 
     import fetchMenuStatusUtils from '@/utils/Fetch/System-Configuration/fetchMenuStatus'
     import fetchApproverAuthoritiesUtils from '@/utils/Fetch/System-Configuration/fetchApproverAuthorities.js'
@@ -34,6 +35,7 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
+    import { useMenuAccessStore } from '@/stores/savemenuaccess'
 
     import { useReferenceFetchResult } from '@/stores/fetch/reference'
     import { useSysconfigFetchResult } from '@/stores/fetch/sysconfig'
@@ -43,6 +45,7 @@
     const formEditState = useFormEditStore()
     const referenceFetch = useReferenceFetchResult()
     const sysconfigFetch = useSysconfigFetchResult()
+    const menuAccessStore = useMenuAccessStore()
     
     let sortedData = ref([])
     let deleteArray = ref([])
@@ -228,28 +231,22 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get('/users')      
         instanceArray = api.data.data
-        console.log(instanceArray)
         sortedData.value = instanceArray
       } catch(error) {
         console.log(error)
       }
     }
 
-    const fetchSiteByCompanyId = async (companyId) => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get('/company/get_site/')
-      } catch (error) {
-        console.log(error)
-      }
-    }
+
 
     let addRoleData = ref([])
     let addCompanyData = ref([])
     let addEmployeeData = ref([])
     let addMenuStatusData = ref([])
     let addAuthoritiesData = ref([])
+    let addSiteByCompanyData = ref([])
+
+
 
     onBeforeMount(() => {
       getSessionForSidebar()
@@ -274,13 +271,26 @@
       console.log('data approver telah masuk')
       sysconfigFetch.fetchApproverAuthoritiesResult = addAuthoritiesData.value 
     })
-
+    
     watch(addCompanyData, () => {
-      referenceFetch.fetchSiteResult = addCompanyData.value
+      referenceFetch.fetchCompanyResult = addCompanyData.value
     })
 
     watch(addEmployeeData, () => {
       referenceFetch.fetchEmployeeResult = addEmployeeData.value
+    })
+
+    const fetchSiteByCompanyId = async () => {
+      setTimeout(runfetch, 500)
+    }
+
+    const runfetch = () => {
+      fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId)
+    }
+
+    watch(addSiteByCompanyData, () => {
+      menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
+      console.log(menuAccessStore.fetchSiteByCompanyResult)
     })
 
     const deleteCheckedArray = () => {

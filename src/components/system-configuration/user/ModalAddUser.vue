@@ -9,9 +9,11 @@
   import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
   import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
   import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
+  import { useMenuAccessStore } from '@/stores/savemenuaccess'
   let formState = useFormAddStore()
   const referenceFetch = useReferenceFetchResult()
   const sysconfigFetch = useSysconfigFetchResult()
+  const menuAccessStore = useMenuAccessStore()
 
   let isVisible = ref(false)
   let isAdding = ref(false)
@@ -29,9 +31,10 @@
   let idStatusMenu = ref(0)
 
   let responseRoleArray = ref([])
-  let responseSiteArray = ref([])
+  let responseCompanyArray = ref([])
   let responseEmployeeArray = ref([])
   let responseAuthoritiesArray = ref([])
+  let responseSiteByCompanyIdArray = ref([])
   let statusMenu = ref(null)
 
   const submitUser = () => {
@@ -45,7 +48,6 @@
     formState.user.password = password.value
     formState.user.roleId = role.value[0]
     formState.user.approvalAuthId = selected.value
-    // formState.user.companyId = company.value
     formState.user.companyId = location.value[1]
     formState.user.siteId = location.value[0]
     formState.user.idStatusMenu = idStatusMenu.value
@@ -61,7 +63,6 @@
       password.value = ''
       role.value = []
       selected.value = null
-      // company.value = null
       location.value = null
   }
 
@@ -76,13 +77,20 @@
     responseRoleArray.value = sysconfigFetch.fetchRoleResult
     responseAuthoritiesArray.value = sysconfigFetch.fetchApproverAuthoritiesResult
     statusMenu.value = sysconfigFetch.fetchMenuStatusResult
-    responseSiteArray.value = referenceFetch.fetchSiteResult
+
+    responseCompanyArray.value = referenceFetch.fetchCompanyResult
     responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
 
   })
 
   watch(location, (newValue, oldValue) => {
-    
+      menuAccessStore.companyId = location.value
+  })
+
+  // tidak berubah karena tidak dibuka?
+  watch(menuAccessStore, () => {
+    console.log('terjadi perubahan')
+    responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
@@ -254,7 +262,7 @@
                   
                     <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
                     <select @change="$emit('fetchSiteForCompany')" id="company" v-model="location" :class="inputStylingClass">
-                      <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
+                      <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" >
                         {{ data.company_name }}
                       </option>
                     </select>
@@ -265,8 +273,8 @@
 
                     <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
                     
-                    <select disabled id="location" v-model="location" :class="inputStylingClass">
-                      <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
+                    <select id="location" v-model="location" :class="inputStylingClass">
+                      <option v-for="data in responseSiteByCompanyIdArray" :key="data.id" :value="data.id" >
                           {{ data.site_name }}
                       </option>
                     </select>
