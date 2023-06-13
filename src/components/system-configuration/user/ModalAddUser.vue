@@ -249,7 +249,7 @@
                 <div class="mb-6 flex flex-col gap-2">
                   
                     <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
-                    <select id="company" v-model="location" :class="inputStylingClass">
+                    <select @change="$emit('fetchSiteForCompany')" id="company" v-model="location" :class="inputStylingClass">
                       <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
                         {{ data.company_name }}
                       </option>

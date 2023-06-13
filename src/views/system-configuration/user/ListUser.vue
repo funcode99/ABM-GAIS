@@ -16,7 +16,8 @@
     import selectAllCheckbox from '@/utils/selectAllCheckbox'
 
     import fetchRoleUtils from '@/utils/Fetch/System-Configuration/fetchRole'
-    import fetchSiteUtils from '@/utils/Fetch/Reference/fetchSite'
+    // import fetchSiteUtils from '@/utils/Fetch/Reference/fetchSite'
+    import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
     import fetchEmployeeUtils from '@/utils/Fetch/Reference/fetchEmployee'
 
     import fetchMenuStatusUtils from '@/utils/Fetch/System-Configuration/fetchMenuStatus'
@@ -224,7 +225,7 @@
     const fetch = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get('/users')      
         instanceArray = api.data.data
         console.log(instanceArray)
@@ -234,8 +235,18 @@
       }
     }
 
+    const fetchSiteByCompanyId = async (companyId) => {
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/company/get_site/')
+      } catch (error) {
+        
+      }
+    }
+
     let addRoleData = ref([])
-    let addSiteData = ref([])
+    let addCompanyData = ref([])
     let addEmployeeData = ref([])
     let addMenuStatusData = ref([])
     let addAuthoritiesData = ref([])
@@ -243,7 +254,7 @@
     onBeforeMount(() => {
       getSessionForSidebar()
       fetchRoleUtils(instanceArray, addRoleData)
-      fetchSiteUtils(instanceArray, addSiteData)
+      fetchCompanyUtils(instanceArray, addCompanyData)
       fetchEmployeeUtils(instanceArray, addEmployeeData)
 
       fetchMenuStatusUtils(instanceArray, addMenuStatusData)
@@ -263,8 +274,8 @@
       sysconfigFetch.fetchAuthoritiesResult = addAuthoritiesData.value 
     })
 
-    watch(addSiteData, () => {
-      referenceFetch.fetchSiteResult = addSiteData.value
+    watch(addCompanyData, () => {
+      referenceFetch.fetchSiteResult = addCompanyData.value
     })
 
     watch(addEmployeeData, () => {

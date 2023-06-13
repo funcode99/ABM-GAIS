@@ -26,11 +26,12 @@
             password: password.value
         }
         )
+        
         // tambah withCredentials malah error :(
         // console.log(JSON.stringify(data.data.users.id_employee))
         //add local storage tomy
 
-        let deleteBacktick = data.data.users.logo_path.replaceAll('"', '')
+        
         // console.log('mengganti menjadi backtick')
         // console.log(deleteBacktick)
 
@@ -38,7 +39,14 @@
         localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
         localStorage.setItem('id_role', JSON.stringify(data.data.users.id_role))
         localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
-        localStorage.setItem('company_logo', deleteBacktick)
+
+        // console.log(typeof data.data.users.logo_path == 'string')
+
+        if(typeof data.data.users.logo_path == 'string') {
+          let deleteBacktick = data.data.users.logo_path.replaceAll('"', '')
+          localStorage.setItem('company_logo', deleteBacktick)
+        }
+
 
         // $cookies.set('token', data.data.data.access_token)
         // store.commit('isLoading', false);

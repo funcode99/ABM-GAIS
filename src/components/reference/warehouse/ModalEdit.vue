@@ -99,6 +99,9 @@ const resetForm = () => {
   location.value = [props.formContent[1], props.formContent[2]];
   // selectedSiteId.value = originalwarehouseIdSite.value;
 };
+
+
+console.log(props.formContent)
 </script>
 
 <template>
@@ -128,9 +131,9 @@ const resetForm = () => {
               v-for="data in responseSiteArray"
               :key="data.id"
               :value="[data.id, data.id_company]"
-              :selected="data.id == company ? true : false"
-            >
-              {{ data.company_name }}
+              >
+              <!-- :selected="data.id == company ? true : false" -->
+              {{ data.company_name }} {{ data.id }} {{ company }} {{ data.id_company }}
             </option>
           </select>
         </div>
