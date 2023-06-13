@@ -153,7 +153,7 @@
         
                   <div class="mb-3 text-left">
                       <label for="parent_menu">Parent Menu</label>
-                      <select id="parent_menu" :class="inputStylingClass" v-model="ParentId" required>
+                      <select id="parent_menu" :class="inputStylingClass" v-model="ParentId">
                           <option v-for="data in menuData" :key="data.id" :value="data.id">
                             {{ data.menu }}
                           </option>

@@ -37,8 +37,8 @@
   let menu = ref('')
   let document = ref('')
   let company = ref('')
-  let minCA = ref(0)
-  let maxCA = ref(0)
+  let minCA = ref('0')
+  let maxCA = ref('0')
 
   let dropdownRemoveList = ref([])
 
@@ -68,13 +68,31 @@
 
           isVisible.value = false
 
+          // console.log('masuk ke save field')
+
+          // console.log(typeof minCA.value)
+          // console.log(typeof maxCA.value)
+
+          let minCAPost = minCA.value
+          let maxCAPost = maxCA.value
+
+          if(typeof minCA.value == 'number') {
+            // console.log('mengubah tipe data minCA')
+            minCAPost = minCA.value.toString()
+          }
+
+          if(typeof maxCA.value == 'number') {
+            // console.log('mengubah tipe data maxCA')
+            maxCAPost = maxCA.value.toString()
+          }
+
           formState.approval.matrixName = matrixName.value
           formState.approval.companyId = company.value
           formState.approval.menuId = menu.value
           formState.approval.codeDocumentId = document.value
           formState.approval.arrayDetail = approverLines.value
-          formState.approval.minCA = minCA.value.replaceAll(".", "")
-          formState.approval.maxCA = maxCA.value.replaceAll(".", "")
+          formState.approval.minCA = minCAPost.replaceAll(".", "")
+          formState.approval.maxCA = maxCAPost.replaceAll(".", "")
 
           currentAuthoritiesId.value = null
 

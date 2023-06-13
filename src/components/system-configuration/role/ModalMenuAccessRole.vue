@@ -164,10 +164,10 @@ watch(isVisible, () => {
 
                 <div class="flex gap-2 basis-2/6 items-center font-black justify-center">
                   <div>
-                    Write {{ writeValue }}
+                    Write
                   </div>
                   <div>
-                    Read {{ readValue }}
+                    Read
                   </div>
                 </div>
 

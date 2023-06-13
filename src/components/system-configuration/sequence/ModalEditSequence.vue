@@ -253,6 +253,11 @@
                       :value="data.code_sequence" required disabled 
                     />
 
+                    <!-- <input 
+                      type="text"
+                      :class="[inputStylingClass, menu == '' ? '' : 'hidden']" disabled 
+                    /> -->
+
                   </div>
 
                   <div :class="columnClass">

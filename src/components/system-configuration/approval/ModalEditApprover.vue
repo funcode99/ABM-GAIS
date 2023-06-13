@@ -83,18 +83,37 @@
     }
 
 
-
-
-
     const saveField = () => {
+
+          let minCAPost = minCA.value
+          let maxCAPost = maxCA.value
+
+          // console.log(typeof minCAPost)
+          // console.log(typeof maxCAPost)
+
+          // gak perlu diubah karena dari be dua2 nya sudah string tipe data nya
+
+          // if(typeof minCA.value == 'number') {
+          //   console.log('mengubah tipe data minCA')
+          //   minCAPost = minCA.value.toString()
+          // }
+
+          // if(typeof maxCA.value == 'number') {
+          //   console.log('mengubah tipe data maxCA')
+          //   maxCAPost = maxCA.value.toString()
+          // }
+
         formEditState.approval.matrixName = matrixName.value
         formEditState.approval.companyId = company.value
         formEditState.approval.menuId = menu.value
         formEditState.approval.codeDocumentId = document.value
-        formEditState.approval.minCA = minCA.value.replaceAll(".", "")
-        formEditState.approval.maxCA = maxCA.value.replaceAll(".", "")
+        formEditState.approval.minCA = minCAPost.replaceAll(".", "")
+        formEditState.approval.maxCA = maxCAPost.replaceAll(".", "")
+
         isVisible.value = false
+        
         emits('editApprover')
+
     }
 
     const saveApproverLines = async (data, idx, matrixId) => {
