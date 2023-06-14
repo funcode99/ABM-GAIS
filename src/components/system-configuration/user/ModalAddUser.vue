@@ -43,8 +43,14 @@
 
     isVisible.value = false
 
+    if(isEmployee.value) {
+      formState.user.username = username.value
+    } else {
+      // console.log('masuk ke non employee')
+      formState.user.username = usernameNonEmployee.value
+    }
+
     formState.user.fullname = fullname.value
-    formState.user.username = username.value
     formState.user.email = email.value
     formState.user.password = password.value
     formState.user.roleId = role.value[0]
