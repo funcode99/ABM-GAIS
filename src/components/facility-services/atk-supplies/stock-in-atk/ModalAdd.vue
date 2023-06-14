@@ -148,23 +148,7 @@ if(id == 0){
 }
 // return itemsTable
 }
-const save = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const payload = {
-    data:itemsTable.value
-  }
-  const res = await Api.post('stock_in/store',payload);
-  Swal.fire({
-      position: "center",
-      icon: "success",
-      title: res.data.message,
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    reset()
-    router.push({path: '/stockinatk'})
-};
+
 const reset = async () => {
   selectedCompany.value = ''
   selectedSite.value = ''

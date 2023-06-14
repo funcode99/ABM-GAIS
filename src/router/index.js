@@ -568,7 +568,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewcashadvancetravel',
+      path: '/viewcashadvancetravel/:id',
       name: 'view cash advance travel',
       component: TravelView,
       meta: {
@@ -602,7 +602,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewcashadvancenontravel',
+      path: '/viewcashadvancenontravel/:id',
       name: 'view cash advance non travel',
       component: NonTravelView,
       meta: {

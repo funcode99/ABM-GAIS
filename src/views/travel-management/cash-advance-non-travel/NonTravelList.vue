@@ -12,23 +12,52 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import datanontravel from "@/utils/Api/cash-advance-non-travel/datanontravel.js";
+import Api from "@/utils/Api";
+import moment from "moment";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed, onMounted, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
+const listStatus = [
+  { id: 2, title: "Draft" },
+  { id: 3, title: "Waiting Approval" },
+  { id: 4, title: "Revision" },
+  { id: 9, title: "Fully Rejected" },
+  { id: 10, title: "Completed" },
+];
 
-//for sort, search, & filter
-const date = ref();
+// format date & price
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+//for sort & search
 const search = ref("");
-const selectedType = ref("Status");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
-
-//for paginations & showing
+let sortedDataReactive = computed(() => sortedData.value);
+let sortAscending = true;
+const showFullText = ref({});
+let checkList = false;
+let statusForm = "create";
+let filter = reactive({
+  status: "",
+  date: "",
+  search: "",
+});
+//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
@@ -42,29 +71,37 @@ const onChangePage = (pageOfItem) => {
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
+  const check = document.getElementsByName("checks");
+  const btnDelete = document.getElementById("btnDelete");
+
+  if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type === "checkbox") {
+        check[i].checked = true;
+      }
     }
+    btnDelete.style.display = "block";
   } else {
-    let check = document.getElementsByName("checks");
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type === "checkbox") {
+        check[i].checked = false;
+      }
     }
+    btnDelete.style.display = "none";
   }
 };
 
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Event", jsonData: "event" },
-  { Id: 5, title: "Total", jsonData: "nominal" },
-  { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
+  { Id: 2, title: "Created Date", jsonData: "created_at" },
+  { Id: 3, title: "CA No", jsonData: "no_ca" },
+  { Id: 4, title: "Requestor", jsonData: "employee_name" },
+  { Id: 5, title: "Event Date", jsonData: "date" },
+  { Id: 6, title: "Event", jsonData: "event" },
+  { Id: 7, title: "Total", jsonData: "grand_total" },
+  { Id: 8, title: "Status", jsonData: "status" },
+  { Id: 9, title: "Actions" },
 ];
 
 //for sort
@@ -77,13 +114,6 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = datanontravel;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
 
 //for searching
 const filteredItems = (search) => {
@@ -101,9 +131,41 @@ const filteredItems = (search) => {
   onChangePage(1);
 };
 
+// get data
+const fetch = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("cash_advance/non_travel/");
+  instanceArray = api.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+const resetData = () => {
+  fetch();
+};
+
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+const filterDataByType = async () => {
+  let payload = {
+    search: filter.search,
+    status: filter.status,
+    start_date: filter.date ? filter.date[0] : "",
+    end_date: filter.date ? filter.date[1] : "",
+  };
+  const api = await Api.get("cash_advance/non_travel", { params: payload });
+  instanceArray = api.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetch();
+});
 </script>
 
 <template>
@@ -133,9 +195,7 @@ const getSessionForSidebar = () => {
               Cash Advance Non Travel
             </p>
             <div class="flex gap-4">
-              <ModalAddCaNonTravelVue
-                @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-              />
+              <ModalAddCaNonTravelVue />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -157,15 +217,18 @@ const getSessionForSidebar = () => {
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedType"
+                  v-model="filter.status"
                 >
                   <option disabled selected>status</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.status }}
+                  <option
+                    v-for="data in listStatus"
+                    :key="data.id"
+                    :value="data.id"
+                  >
+                    {{ data.title }}
                   </option>
                 </select>
               </div>
-
               <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
@@ -174,16 +237,18 @@ const getSessionForSidebar = () => {
                 </p>
 
                 <VueDatePicker
-                  v-model="date"
+                  v-model="filter.date"
                   range
                   :enable-time-picker="false"
                   class="my-date"
+                  format="yyyy-mm-dd"
                 />
               </div>
 
               <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  @click="filterDataByType"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -192,6 +257,7 @@ const getSessionForSidebar = () => {
                 </button>
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
                 >
                   <span>
                     <img :src="icon_reset" class="w-5 h-5" />
@@ -225,8 +291,8 @@ const getSessionForSidebar = () => {
                   placeholder="Search..."
                   type="text"
                   name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
+                  v-model="filter.search"
+                  @keyup="filterDataByType"
                 />
               </label>
             </div>
@@ -288,7 +354,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
@@ -297,14 +363,16 @@ const getSessionForSidebar = () => {
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.ca_no }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ format_date(data.created_at) }}</td>
+                    <td>{{ data.no_ca }}</td>
+                    <td>{{ data.employee_name }}</td>
+                    <td>{{ format_date(data.date) }}</td>
                     <td>{{ data.event }}</td>
-                    <td>{{ data.nominal }}</td>
+                    <td>{{ format_price(data.grand_total) }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewcashadvancenontravel">
+                      <router-link :to="`/viewcashadvancenontravel/${data.id}`">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
