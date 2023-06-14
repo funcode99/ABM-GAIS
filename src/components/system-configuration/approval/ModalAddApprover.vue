@@ -275,48 +275,42 @@
               </div>
 
               <!-- bagian bawah -->
-              <!-- {{ dropdownRemoveList }} -->
-              <h1 class="font-medium">Approver Lines <span>*</span></h1>
+
+              <h1 class="font-medium">Approver Lines <span class="text-red-star">*</span></h1>
               <hr class="border border-black">
       
               <!-- scroll nya di dalam kalau semua konten masuk di container ini -->
               <div class="overflow-x-auto block">
-                <table
-                  class="table table-zebra table-compact border w-full rounded-lg"
-                >
+
+                <table class="table table-zebra table-compact border w-full rounded-lg">
         
                   <thead class="text-center font-Montserrat text-sm font-bold">
                     <tr class="">
                       <th class="relative">
                         <span class="flex justify-center">Level</span>
                         <button class="absolute right-0 top-0 bottom-0">
-                          <img :src="arrowicon" class="w-[9px] h-3" />
+                          <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                         </button>
                       </th>
                       <th class="relative">
                         <span class="flex justify-center">Authorities</span>
                         <button class="absolute right-0 top-0 bottom-0">
-                          <img :src="arrowicon" class="w-[9px] h-3" />
+                          <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                         </button>
                       </th>
                       <th class="relative">
                         <span class="flex justify-center">Approver Name</span>
                         <button class="absolute right-1 top-0 bottom-0">
-                          <img :src="arrowicon" class="w-[9px] h-3" />
+                          <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                         </button>
                       </th>
-                      <th class="flex justify-center">Actions</th>
+                      <th class="flex justify-center">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
-
-                  <!-- {{ approverLines }} -->
-
-             
         
                   <tbody class="bg-[#F5F5F5]">
-
-                    <!-- {{ sysconfigFetch.fetchApproverAuthoritiesResult }}
-                    {{ addMenuData }} -->
         
                     <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
                       
@@ -330,7 +324,7 @@
                         {{ index + 1 }}
                       </td>
 
-                      <td class="hidden" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
+                      <td class="hidden h-full" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
                       </td>
         
                       <td>
@@ -346,7 +340,7 @@
                         </select>
                       </td>
 
-                      <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
+                      <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full">
     
                       </td>
         
@@ -355,10 +349,11 @@
                       </td>
         
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <button  @click="removeField(index, approverLines)">
+                        <button @click="removeField(index, approverLines)">
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
                       </td>
+
                     </tr>
         
                     <tr class='text-center'>
@@ -373,6 +368,7 @@
                   </tbody>
                   
                 </table>
+
               </div>
 
               <modalFooter

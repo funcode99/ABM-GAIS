@@ -85,23 +85,8 @@
 
     const saveField = () => {
 
-          let minCAPost = minCA.value
-          let maxCAPost = maxCA.value
-
-          // console.log(typeof minCAPost)
-          // console.log(typeof maxCAPost)
-
-          // gak perlu diubah karena dari be dua2 nya sudah string tipe data nya
-
-          // if(typeof minCA.value == 'number') {
-          //   console.log('mengubah tipe data minCA')
-          //   minCAPost = minCA.value.toString()
-          // }
-
-          // if(typeof maxCA.value == 'number') {
-          //   console.log('mengubah tipe data maxCA')
-          //   maxCAPost = maxCA.value.toString()
-          // }
+        let minCAPost = minCA.value
+        let maxCAPost = maxCA.value
 
         formEditState.approval.matrixName = matrixName.value
         formEditState.approval.companyId = company.value
@@ -148,7 +133,6 @@
                 dropdownRemoveList.value.push(item.id_approval_auth) 
               }
           })
-          // idMatrixActual.value = idMatrix[0].id_matrix
         }
 
       }
@@ -378,24 +362,16 @@
           
         </div>
 
-        <div class="w-full">
-          <!-- {{ approverLines }} -->
-        </div>
-
         <!-- approver lines area -->
         <div>
 
-          <div class="w-10">
-           
-          </div>
-
-          <h1 class="font-medium text-left">Approver Lines <span>*</span> </h1>
+          <h1 class="font-medium text-left">Approver Lines <span class="text-red-star">*</span> </h1>
           <hr class="border border-black">
   
-          <div class="overflow-x-hidden">
+          <div class="overflow-x-auto block">
+
             <table
-              class="table table-zebra table-compact border rounded-lg w-full"
-              :class="approverLines.length == 0 ? 'w-full' : ''"
+              class="table table-zebra table-compact border w-full rounded-lg"
             >
     
               <thead class="text-center font-Montserrat text-sm font-bold">
@@ -432,7 +408,7 @@
                     {{ index + 1 }}
                   </td>
 
-                  <td class="hidden" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
+                  <td class="hidden h-full" v-if="index+1 != 1 ? input.level = index+1 : input.level = 1">
                   </td>
 
                   <td>
@@ -443,14 +419,16 @@
                     </select>
                   </td>
     
-                  <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden">
+                  <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full">
                   </td>
     
                   <td>
-                    <input type="text" class="px-2" v-model="input.approverName" />
+                    <input type="text" class="px-2 border border-black" v-model="input.approverName" />
                   </td>
 
                   <td class="flex flex-wrap gap-4 justify-center" >
+
+                    <div class="h-6"></div>
 
                     <button v-if="input.fromFetch == true && input.isEdit == false" type="button" 
                       :class="approverLines.length-1 > index ? 'hidden' : '' "
@@ -507,6 +485,7 @@
               </tbody>
               
             </table>
+
           </div>
           
         </div>
