@@ -4,6 +4,8 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -11,20 +13,24 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
 
-import Api from "@/utils/Api"
-import ModalAddATKRequest from "@/components/facility-services/atk-supplies/atk-request/ModalAddRequest.vue";
+import ModalAdd from "@/components/facility-services/atk-supplies/atk-request/ModalAddRequest.vue";
+
+// import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
-
+import Api from "@/utils/Api";
 import { useSidebarStore } from "@/stores/sidebar.js";
+import Swal from "sweetalert2";
+import moment from 'moment';
 const sidebar = useSidebarStore();
-
 
 //for sort & search
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
 const selectedType = ref("Company");
+const selectedTypeWarehouse = ref("Warehouse");
+let itemdata = ref("")
 
 let sortedbyASC = true;
 let instanceArray = [];
@@ -45,11 +51,11 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByType = () => {
-  if (selectedType.value === "") {
+  if (selectedTypeWarehouse.value === "") {
     sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
+      (item) => item.status === selectedTypeWarehouse.value
     );
   }
 };
@@ -57,7 +63,7 @@ const filterDataByType = () => {
 //for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
-  selectedType.value = "Type";
+  selectedTypeWarehouse.value = "Type";
 };
 
 //for check & uncheck all
@@ -78,12 +84,13 @@ const selectAll = (checkValue) => {
 
 //for tablehead
 const tableHead = [
-  { Id: 1, title: "Created Date", jsonData: "no" },
-  { Id: 2, title: "Document No", jsonData: "document_no" },
-  { Id: 3, title: "Requestor", jsonData: "date" },
-  { Id: 4, title: "Item Count", jsonData: "warehouse" },
-  { Id: 5, title: "Status", jsonData: "item_count" },
-  { Id: 6, title: "Actions" },
+  { Id: 1, title: "No", jsonData: "id" },
+  { Id: 2, title: "Document No", jsonData: "no_atk_request" },
+  { Id: 3, title: "Date", jsonData: "updated_at" },
+  { Id: 4, title: "Created By", jsonData: "employee_name" },
+  { Id: 5, title: "Item Count", jsonData: "item_count" },
+  { Id: 6, title: "Status", jsonData: "status" },
+  { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -96,18 +103,78 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
-
-
+const fetchData = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/request_atk/get");
+  // console.log(res.data.data)
+  itemdata.value = res.data.data.data;
+  instanceArray = itemdata.value;
+  // console.log(instanceArray)
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const deleteValue = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  Swal.fire({
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/request_atk/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: res.data.message,
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        fetchData()
+      });
+    } else {
+      return;
+    }
+  });
+    
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchData()
+  // console.log(stockindata)
+  // instanceArray = stockindata;
+  // sortedData.value = instanceArray;
+  // lengthCounter = sortedData.value.length;
+});
 
 //for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.document_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.warehouse.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    (item.no_atk_request.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.document_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.warehouse.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.no_atk_request.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -118,30 +185,11 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
-
-const fetch = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get("/request_atk/get")
-  instanceArray = res.data.data.data
-  sortedData.value = instanceArray
-}
-
-onBeforeMount(() => {
-  getSessionForSidebar()
-  fetch()
-})
-
- const deleteData = (id) => {
-      Api.delete(`/request_atk/delete_data/${id}`)
-      fetch()
-      if (sortedData.value.length == 1) {
-        router.go()
-      } else {
-        fetch()
-      }
- }
-
+const format_date = (value) => {
+  if (value) {
+           return moment(String(value)).format('DD-MM-YYYY')
+          }
+};
 </script>
 
 <template>
@@ -151,8 +199,7 @@ onBeforeMount(() => {
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px] h-[100vh]">
-        
+    <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -163,10 +210,9 @@ onBeforeMount(() => {
         ]"
       >
         <div class="bg-white rounded-t-xl custom-card">
-
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
-            <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
+            <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
               ATK Request
             </p>
 
@@ -177,7 +223,7 @@ onBeforeMount(() => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAddATKRequest @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -193,26 +239,38 @@ onBeforeMount(() => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
+              
               <div>
-                <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
-                  Status
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Company
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedType"
                 >
-                    <option disabled selected>
-                        Status
-                    </option>
-                    <option>
-                        Booked
-                    </option>
-                    <option>
-                        Done
-                    </option>
-                    <option>
-                        Cancelled
-                    </option>
+                  <option disabled selected>Company</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.company }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Status
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedTypeWarehouse"
+                >
+                  <option disabled selected>Status</option>
+                  <option v-for="data in sortedData" :key="data.id">
+                    {{ data.status }}
+                  </option>
                 </select>
               </div>
 
@@ -221,7 +279,7 @@ onBeforeMount(() => {
                   <p
                     class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                   >
-                    Choose a Date
+                    Choose Date
                   </p>
 
                   <VueDatePicker
@@ -323,12 +381,6 @@ onBeforeMount(() => {
                       </div>
                     </th>
 
-                    <th>
-                      <div class="flex justify-center">
-                        No
-                      </div>
-                    </th>
-
                     <th
                       v-for="data in tableHead"
                       :key="data.Id"
@@ -361,28 +413,25 @@ onBeforeMount(() => {
                       {{ index + 1 }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.created_at.slice(0,10) }}
-                    </td>
-                    <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.no_atk_request }}
                     </td>
-                    <!-- gue anggap requestor nya adalah employee -->
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ format_date(data.updated_at) }}
+                    </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.warehouse_name }}
-                    </td>
-                    <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}
                     </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.status }}
+                    </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link to="/atk-request-view">
-                        <button>
+                      <router-link :to="`/atkRequest/${data.id}`">
                           <img :src="editicon" class="w-6 h-6" />
-                        </button>
                       </router-link>
-                      <button @click="deleteData(data.id)">
+                      <button @click="deleteValue(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
@@ -413,9 +462,7 @@ onBeforeMount(() => {
           </div>
         </div>
       </div>
-
       <Footer class="fixed bottom-0 left-0 right-0" />
-
     </div>
   </div>
 </template>

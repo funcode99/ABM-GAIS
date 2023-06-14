@@ -1,4 +1,5 @@
 <script setup>
+import iconUpload from "@/assets/icon_upload.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
@@ -17,9 +18,21 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
+// const selectedImage = ref(null);
+let selectedCompany = ref("Company");
+let selectedVendor = ref("Vendor");
+let selectedErpCode = ref("ERP");
+let companyName = ref("");
+let companyCode = ref("");
+let companyGroup = ref("");
+let companyShortName = ref("");
+let companyIdVendor = ref("");
+let companyLogo = ref("");
+let companyCodeErp = ref("");
+let parentCompany = ref("");
+let logoCompany = ref("");
 let vendorAirlines = ref("");
 let iconfilename = ref(null);
-let imageUrl = ref(null);
 
 let selectedVendorId = ref(props.formContent[4] || null);
 let selectedImage = ref(props.formContent[5] || null);
@@ -79,29 +92,12 @@ onMounted(() => {
   fetchVendors();
 });
 
-// for image logo
+//for image logo
 const onFileSelected = (event) => {
   const file = event.target.files[0];
-
-  if (file) {
-    selectedImage.value = file;
-    iconfilename.value = file.name;
-
-    // Create a FileReader instance
-    const reader = new FileReader();
-
-    // Define the callback function when FileReader has finished reading the file
-    reader.onload = () => {
-      imageUrl.value = reader.result;
-    };
-
-    // Read the selected file as a data URL
-    reader.readAsDataURL(file);
-  } else {
-    selectedImage.value = null;
-    iconfilename.value = null;
-    imageUrl.value = null;
-  }
+  selectedImage.value = file ? file : null;
+  iconfilename = file.name;
+  // console.log("selectedImage:", selectedImage.value);
 };
 
 const inputStylingClass =
@@ -127,7 +123,7 @@ const resetForm = () => {
   currentcompanyGroup.value = originalcompanyGroup.value;
   currentcompanyShortName.value = originalcompanyShortName.value;
   selectedVendorId.value = originalcompanyIdVendor.value;
-  imageUrl.value = originalcompanyLogo.value;
+  selectedImage.value = originalcompanyLogo.value;
   currentcompanyCodeErp.value = originalcompanyCodeErp.value;
 };
 </script>
@@ -148,53 +144,6 @@ const resetForm = () => {
       />
 
       <form class="modal-box-inner-company" @submit.prevent="submitEdit">
-        <div class="flex justify-center items-center">
-          <div class="avatar">
-            <div
-              class="flex justify-center items-center w-[100px] h-[100px] rounded-full bg-[#D9D9D9]"
-            >
-              <div class="flex justify-center items-center">
-                <label
-                  for="file-input"
-                  class="cursor-pointer flex items-center justify-center"
-                >
-                  <div
-                    class="w-[100px] h-[100px] rounded-full bg-[#D9D9D9] flex items-center justify-center"
-                  >
-                    <div class="flex relative">
-                      <img
-                        v-if="!imageUrl"
-                        :src="selectedImage"
-                        class="w-[100px] h-[100px] object-cover object-center"
-                      />
-                      <img
-                        v-else
-                        :src="imageUrl"
-                        class="w-[100px] h-[100px] object-cover object-center"
-                      />
-                    </div>
-                  </div>
-                </label>
-
-                <input
-                  type="file"
-                  id="file-input"
-                  class="hidden"
-                  required
-                  accept="image/*"
-                  @change="onFileSelected"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p
-          class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4 mb-6"
-        >
-          Logo
-        </p>
-
         <div class="mb-6 text-start px-4 w-full">
           <label
             for="code"
@@ -257,6 +206,41 @@ const resetForm = () => {
             :class="inputStylingClass"
             required
           />
+        </div>
+
+        <div class="mb-6 w-full px-4 text-start">
+          <div
+            for="logo_company"
+            class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
+          >
+            Logo Company
+            <span class="text-red">*</span>
+          </div>
+          <div class="relative border border-slate-300 rounded-lg py-2">
+            <input
+              type="file"
+              name="logo"
+              id="logo_company"
+              class="hidden border"
+              accept="image/*"
+              @change="onFileSelected"
+            />
+            <label class="py-2" for="logo_company">
+              <div
+                v-if="iconfilename != null"
+                class="px-5 py-2 font-JakartaSans font-medium text-sm"
+              >
+                {{ iconfilename }}
+              </div>
+              <div v-else class="px-5 font-JakartaSans font-medium text-sm">
+                {{ selectedImage || "Logo Company" }}
+              </div>
+              <img
+                :src="iconUpload"
+                class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              />
+            </label>
+          </div>
         </div>
 
         <div class="mb-6 text-start px-4 w-full">

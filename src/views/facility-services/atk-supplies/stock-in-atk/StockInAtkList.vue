@@ -422,7 +422,7 @@ const format_date = (value) => {
                       {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.qty }}
+                      {{ data.item_count }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.status }}

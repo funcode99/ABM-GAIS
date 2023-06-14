@@ -136,6 +136,7 @@
         id_status_menu: formState.menu.idStatusMenu,
         use_sequence: formState.menu.sequence,
         code_sequence: formState.menu.sequenceCode,
+        description: 'kosong',
         url: formState.menu.url,
         icon: formState.menu.icon,
         id_company: formState.menu.companyId
@@ -175,12 +176,12 @@
 
       const api = await Api.post(`/menu/update_data/${editDataId.value}`, {
         menu: formEditState.menu.menuName,
+        description: 'kosong',
         url: formEditState.menu.url,
         icon: formEditState.menu.icon,
         sort: formEditState.menu.sort,
-        parent_id: formEditState.menu.parentId,
+        parent_id: null,
         use_sequence: formEditState.menu.sequence,
-        code_sequence: formEditState.menu.sequenceCode,
         id_status_menu: formEditState.menu.idStatusMenu,
         id_company: formEditState.menu.companyId
       })

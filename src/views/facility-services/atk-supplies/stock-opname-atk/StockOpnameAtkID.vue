@@ -35,26 +35,52 @@ let itemNames = ref("")
 let remark = ref("")
 let siteName = ref("")
 let status = ref("")
+let statusValue = ref(false)
+let QuantityAdjusment = ref("")
+let adjusmentType = ref("")
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/stock_in/get/${id}`);
+  const res = await Api.get(`/stock_opname/get/${id}`);
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    stockName.value = element.no_stock_opname
+    createdDate.value = format_date(element.created_at)
+    createdBy.value = element.employee_name
+    // Warehouse.value = element.warehouse_name
+    // itemNames.value = element.itemName
+    // idItems.value = element.id_item
+    // alertQuantity.value = element.qty
+    // brandName.value = element.brand_name
+    // UOMName.value = element.uom_name
+    // remark.value = element.remarks
+    siteName.value = element.site_name
+    status.value = element.status
+    // element.status == 'Submitted' ? !statusValue : statusValue
+  }
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchDetailById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/stock_opname/get_by_stock_opname_id/${id}`);
   console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    stockName.value = element.no_stock_in
-    createdDate.value = format_date(element.created_at)
-    createdBy.value = element.employee_name
     Warehouse.value = element.warehouse_name
-    itemNames.value = element.itemName
-    idItems.value = element.id_item
-    alertQuantity.value = element.qty
+    itemNames.value = element.item_name
+    idItems.value = element.code_item
+    alertQuantity.value = element.qty_before
     brandName.value = element.brand_name
     UOMName.value = element.uom_name
     remark.value = element.remarks
-    siteName.value = element.site_name
-    status.value = element.status
+    QuantityAdjusment.value = element.qty_adjustment
+    adjusmentType.value = element.adjustment_type
+    // siteName.value = element.site_name
+    // element.status == 'Submitted' ? !statusValue : statusValue
   }
   
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -62,7 +88,7 @@ const fetchDataById = async (id) => {
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.post(`/stock_opname/approval_submit/${router.currentRoute.value.params.id}`);
+  const res = await Api.post(`/stock_opname/submit/${router.currentRoute.value.params.id}`);
   Swal.fire({
       position: "center",
       icon: "success",
@@ -71,7 +97,7 @@ const submit = async () => {
       timer: 1500,
     });
     // reset()
-    router.push({path: '/stockinatk'})
+    router.push({path: '/stock-opname-atk'})
   // console.log(res.data.data)
   
   
@@ -80,6 +106,7 @@ const submit = async () => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(router.currentRoute.value.params.id)
+  fetchDetailById(router.currentRoute.value.params.id)
   // console.log(router.currentRoute.value.params.id)
 });
 
@@ -111,7 +138,7 @@ const format_date = (value) => {
           <!-- HEADER -->
           <div class="flex justify-between">
             <router-link
-              to="/stockinatk"
+              to="/stock-opname-atk"
               class="flex items-center gap-2 py-4 mx-4"
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
@@ -243,6 +270,16 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
+                      Quantity Adjusment
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Adjusment Type
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Brand
                     </th>
                     <th
@@ -268,6 +305,8 @@ const format_date = (value) => {
                     <td class="border border-[#B9B9B9]">{{ idItems }}</td>
                     <td class="border border-[#B9B9B9]">{{ itemNames }}</td>
                     <td class="border border-[#B9B9B9]">{{ alertQuantity }}</td>
+                    <td class="border border-[#B9B9B9]">{{ QuantityAdjusment }}</td>
+                    <td class="border border-[#B9B9B9]">{{ adjusmentType }}</td>
                     <td class="border border-[#B9B9B9]">{{ brandName }}</td>
                     <td class="border border-[#B9B9B9]">{{ UOMName }}</td>
                     <td class="border border-[#B9B9B9]">{{ remark }}</td>

@@ -462,11 +462,10 @@ const exportToExcel = () => {
                       data.short_name,
                       data.group_company,
                       data.id_vendor,
-                      data.logo_path,
+                      data.logo,
                       data.code_erp,
                     ]"
                   />
-
                   <ModalEdit
                     @change-company="editCompany(data.id)"
                     :formContent="[
@@ -475,7 +474,7 @@ const exportToExcel = () => {
                       data.short_name,
                       data.group_company,
                       data.id_vendor,
-                      data.logo_path,
+                      data.logo,
                       data.code_erp,
                     ]"
                   />
