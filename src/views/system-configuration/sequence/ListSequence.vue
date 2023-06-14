@@ -39,9 +39,12 @@
 
 
     let editSequenceDataId = ref(0)
+
+    // for catch status & message response from server when status is not 2xx
+    let responseStatus = ref('')
+    let responseMessage = ref('')
     
     const search = ref('')
-    let lengthCounter = 0
     let sortedData = ref([])
     let sortedbyASC = true
     let instanceArray = []
@@ -96,7 +99,6 @@
           return item.sequence_name.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.prefix.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.suffix.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.sequence_size.toString().indexOf(search.toLowerCase()) > -1
       })
       sortedData.value = filteredR
-      lengthCounter = sortedData.value.length
       onChangePage(1)
     }
 
@@ -110,13 +112,17 @@
     }
 
     const fetch = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      // Set authorization for api
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/sequence')      
-      instanceArray = api.data.data
-      sortedData.value = instanceArray
-      lengthCounter = sortedData.value.length
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/sequence')      
+        instanceArray = api.data.data
+        sortedData.value = instanceArray
+        responseStatus.value = api.status
+      } catch (error) {
+        responseStatus.value = error.response.status
+        responseMessage.value = error.response.data.message
+      }
     }
 
     const deleteData = async (event) => {
@@ -227,7 +233,6 @@
         fetch()
     }
 
-
     const deleteCheckedArray = () => {
       deleteCheckedArrayUtils(deleteArray, 'sequence', sortedData, fetch)
     }
@@ -327,30 +332,35 @@
   
                 <tbody>
   
-                  <!-- sortir nya harus sama dengan key yang di data dummy -->
-  
-                    <tr v-for="(data, index) in sortedData.slice(
+                    <tr v-for="data in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
-                      <td>
+
+                      <td style="width: 5%;">
                         <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                       </td>
-                      <td>
+
+                      <td style="width: 5%;">
                         {{ data.no }}
                       </td>
-                      <td>
+
+                      <td style="width: 25%;">
                         {{ data.sequence_name }}
                       </td>
-                      <td>
+
+                      <td style="width: 20%;">
                         {{ data.prefix }}
                       </td>
-                      <td>
+
+                      <td style="width: 25%;">
                         {{ data.suffix }}
                       </td>
-                      <td>
+
+                      <td style="width: 10%;">
                         {{ data.sequence_size }}
                       </td>
+
                       <td class="flex flex-wrap gap-4 justify-center">
                         <ModalEditSequence @change-sequence="editExistingSequence(data.id)" :formContent="[
                           data.sequence_name, 
@@ -367,15 +377,14 @@
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
                       </td>
+
                     </tr>
   
                 </tbody>
                 
               </table>
-
-              <div v-else>
       
-                <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+              <table v-else-if="sortedData.length == 0 && responseStatus == ''" class="table table-zebra table-compact border h-full w-full rounded-lg">
 
                   <thead class="text-center font-Montserrat text-sm font-bold h-10">
                       <tr>
@@ -400,11 +409,45 @@
                       </tr>
                   </thead>
 
-                  <SkeletonLoadingTable :row="5" :column="7" />
+                  <SkeletonLoadingTable :column="7" :row="5" />
 
-                </table>
+              </table>
 
-              </div>
+              <table v-else-if="(sortedData.length == 0 && responseStatus == 200) || (sortedData.length == 0 && responseStatus == 404)" class="table table-zebra table-compact border h-full w-full rounded-lg">
+                
+                <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                    <tr>
+                      <th>
+                        <div class="flex justify-center">
+                          <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                        </div>
+                      </th>    
+                      <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                        <span class="flex justify-center items-center gap-1">
+                          {{ data.title }} 
+                          <button class="">
+                            <img :src="arrowicon" class="w-[9px] h-3" />
+                          </button>
+                        </span>
+                      </th>
+                      <th>
+                        <div class="text-center">
+                          Actions
+                        </div>
+                      </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="7"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >Tidak ada data</td>
+                  </tr>
+                </tbody>
+
+              </table>
 
             </div>
   

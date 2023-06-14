@@ -59,6 +59,10 @@
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let paginateIndex = ref(0)
 
+    // for catch status & message response from server when status is not 2xx
+    let responseStatus = ref('')
+    let responseMessage = ref('')
+
     const tableHead = [
       {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Username', jsonData: 'username'},
@@ -229,11 +233,13 @@
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get('/users')      
+        const api = await Api.get('/users') 
         instanceArray = api.data.data
         sortedData.value = instanceArray
+        responseStatus.value = api.status
       } catch(error) {
-        console.log(error)
+        responseStatus.value = error.response.status
+        responseMessage.value = error.response.data.message
       }
     }
 
@@ -245,8 +251,6 @@
     let addMenuStatusData = ref([])
     let addAuthoritiesData = ref([])
     let addSiteByCompanyData = ref([])
-
-
 
     onBeforeMount(() => {
       getSessionForSidebar()
@@ -290,7 +294,6 @@
 
     watch(addSiteByCompanyData, () => {
       menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
-      console.log(menuAccessStore.fetchSiteByCompanyResult)
     })
 
     const deleteCheckedArray = () => {
@@ -356,7 +359,7 @@
               <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
 
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
-                  <tr class="">
+                  <tr>
                     
                     <th>
                       <div class="flex justify-center">
@@ -390,23 +393,29 @@
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
-                      <td>
+
+                      <td style="width: 5%;">
                         <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                       </td>
-                      <td>
+
+                      <td style="width: 5%;">
                           {{ data.no }}
                       </td>
-                      <td>
+
+                      <td style="width: 25%;">
                         {{ data.username }}
                       </td>
-                      <td>
+
+                      <td style="width: 25%;">
                         <!-- {{ data.id_role }} -->
                         {{ data.role_name }}
                       </td>
-                      <td>
+
+                      <td style="width: 25%;">
                         <!-- {{ data.id_approval_auth }} -->
                         {{ data.auth_name }}
                       </td>
+
                       <td class="flex flex-wrap gap-4 justify-center">
                         <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[
                           data.username, 
@@ -424,15 +433,14 @@
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
                       </td>
+
                     </tr>
 
                 </tbody>
                 
               </table>
 
-              <div v-else>
-      
-                <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+              <table v-else-if="sortedData.length == 0 && responseStatus == ''" class="table table-zebra table-compact border h-full w-full rounded-lg">
                   
                   <thead class="text-center font-Montserrat text-sm font-bold h-10">
                       <tr>
@@ -457,11 +465,45 @@
                       </tr>
                   </thead>
 
-                  <SkeletonLoadingTable :row="5" :column="6" />
+                  <SkeletonLoadingTable :column="6" :row="5" />
 
-                </table>
+              </table>
 
-              </div>
+              <table v-else-if="(sortedData.length == 0 && responseStatus == 200) || (sortedData.length == 0 && responseStatus == 404)" class="table table-zebra table-compact border h-full w-full rounded-lg">
+                  
+                  <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                      <tr>
+                        <th>
+                          <div class="flex justify-center">
+                            <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                          </div>
+                        </th>    
+                        <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
+                          <span class="flex justify-center items-center gap-1">
+                            {{ data.title }} 
+                            <button class="">
+                              <img :src="arrowicon" class="w-[9px] h-3" />
+                            </button>
+                          </span>
+                        </th>
+                        <th>
+                          <div class="text-center">
+                            Actions
+                          </div>
+                        </th>
+                      </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td
+                        colspan="6"
+                        class="text-center font-JakartaSans text-base font-medium"
+                      >Tidak ada data</td>
+                    </tr>
+                  </tbody>
+
+              </table>
 
             </div>
 

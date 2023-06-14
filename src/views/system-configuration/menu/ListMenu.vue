@@ -41,8 +41,8 @@
     const referenceFetch = useReferenceFetchResult()
     const sysconfigFetch = useSysconfigFetchResult()
 
-    let status = ref('')
-    let message = ref('')
+    let responseStatus = ref('')
+    let responseMessage = ref('')
     let instanceArray = []
     let sortedData = ref([])
     let deleteArray = ref([])
@@ -127,6 +127,7 @@
 
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
       const api = await Api.post('/menu/store', 
       {
         menu: formState.menu.menuName,
@@ -148,7 +149,6 @@
           timer: 1500,
       })
 
-
       fetchMenuUtils(instanceArray, addMenuData, sortedData)
 
     }
@@ -163,7 +163,15 @@
       
       try {
         const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      // isi nya undefined
+      // console.log(formEditState.menu.icon)
+
+      console.log(formEditState.menu.sequence)
+      console.log(formEditState.menu.sequenceCode)
+      console.log(editDataId.value)
+      console.log(formEditState.menu.companyId)
 
       const api = await Api.post(`/menu/update_data/${editDataId.value}`, {
         menu: formEditState.menu.menuName,
@@ -185,9 +193,7 @@
           timer: 1500,
       })
 
-
       fetchMenuUtils(instanceArray, addMenuData, sortedData)
-
 
       } catch (error) {
         console.log(error)
@@ -219,7 +225,7 @@
     onBeforeMount(() => {
       getSessionForSidebar()
       fetchMenuStatusUtils(instanceArray, addMenuStatusData)
-      fetchMenuUtils(instanceArray, addMenuData, sortedData)
+      fetchMenuUtils(instanceArray, responseStatus, responseMessage, addMenuData, sortedData)
       fetchCompanyUtils(instanceArray, addCompanyData)
     })
 
@@ -311,7 +317,7 @@
             
             <div class="block overflow-x-auto overflow-y-hidden">
 
-                  <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
+              <table v-if="sortedData.length > 0" class="table table-zebra table-compact border w-full sm:w-full h-full rounded-lg">
 
                     <thead class="text-center font-Montserrat text-sm font-bold h-10">
                       
@@ -350,26 +356,29 @@
                             paginateIndex * pageMultiplierReactive,
                             (paginateIndex + 1) * pageMultiplierReactive
                           )" :key="data.id">
-                            <td>
+
+                            <td style="width: 5%;">
                               <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                             </td>
-                            <td>
+
+                            <td style="width: 5%;">
                               {{ data.no }} 
                             </td>
-                            <td>
+
+                            <td style="width: 30%;">
                               {{ data.menu }}
                             </td>
       
-                            <td class="">
+                            <td style="width: 30%;">
                               <!-- <img class="w-16 h-16" :src="data.icon_path" /> -->
                               {{ data.parent }}
                             </td>
       
-                            <td v-if="data.status_name == 'Active'">
+                            <td style="width: 15%;" v-if="data.status_name == 'Active'">
                               Active
                             </td>
       
-                            <td v-else>
+                            <td style="width: 15%;" v-else>
                               Disabled
                             </td>
       
@@ -383,7 +392,8 @@
                                   data.parent_id, 
                                   data.status_name,
                                   data.code_sequence,
-                                  data.icon_path
+                                  data.icon_path,
+                                  data.use_sequence
                                 ]" />
                                 <button @click="deleteData(data.id)">
                                   <img :src="deleteicon" class="w-6 h-6" />
@@ -396,11 +406,9 @@
                           
                     </tbody>
                         
-                  </table>
+              </table>
                   
-                  <div v-else-if="sortedData.length == 0 && status == ''">
-      
-                    <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+              <table v-else-if="sortedData.length == 0 && responseStatus == ''" class="table table-zebra table-compact border h-full w-full rounded-lg">
 
                       <thead class="text-center font-Montserrat text-sm font-bold h-10">
 
@@ -427,49 +435,45 @@
                           
                       </thead>
 
-                      <SkeletonLoadingTable :row="5" :column="6" />
+                      <SkeletonLoadingTable :column="6" :row="5" />
 
-                    </table>
-                    
-                    <!-- <div class="text-center py-5">
-                      <h1>{{ status }}</h1>
-                      <h1>{{ message }}</h1>
-                    </div> -->
-      
-                  </div> 
+              </table>
 
-                  <div v-else-if="sortedData.length == 0 && status == 200">
+              <table v-else-if="(sortedData.length == 0 && responseStatus == 200) || (sortedData.length == 0 && responseStatus == 404)" class="table table-zebra table-compact border h-full w-full rounded-lg">
 
-                    <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+                  <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                        <tr>
+                          <th>
+                            <div class="flex justify-center">
+                              <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
+                            </div>
+                          </th>
+                          <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer">
+                            <span class="flex justify-center items-center gap-1">
+                              {{ data.title }} 
+                              <button class="">
+                                <img :src="arrowicon" class="w-[9px] h-3" />
+                              </button>
+                            </span>
+                          </th>
+                          <th>
+                            <div class="flex justify-center">
+                              Actions
+                            </div>
+                          </th>
+                        </tr>
+                  </thead>
 
-                      <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                  <tbody>
+                    <tr>
+                      <td
+                        colspan="6"
+                        class="text-center font-JakartaSans text-base font-medium"
+                      >Tidak ada data</td>
+                    </tr>
+                  </tbody>
 
-<tr>
-  <th>
-    <div class="flex justify-center">
-      <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">
-    </div>
-  </th>
-  <th v-for="data in tableHead" :key="data.Id" class="overflow-x-hidden cursor-pointer" @click="sortList(`${data.jsonData}`)">
-    <span class="flex justify-center items-center gap-1">
-      {{ data.title }} 
-      <button class="">
-        <img :src="arrowicon" class="w-[9px] h-3" />
-      </button>
-    </span>
-  </th>
-  <th>
-    <div class="flex justify-center">
-      Actions
-    </div>
-  </th>
-</tr>
-
-                      </thead>
-
-                    </table>
-
-                  </div>
+              </table>
     
             </div>
   

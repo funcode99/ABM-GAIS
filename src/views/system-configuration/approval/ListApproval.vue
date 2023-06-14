@@ -54,8 +54,10 @@
     let paginateIndex = ref(0)
     let pageMultiplier = ref(10)
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
-    let statusResponse = ref('')
-    let message = ref('')
+
+
+    let responseStatus = ref('')
+    let responseMessage = ref('')
 
     let addMenuData = ref([])
     let addCompanyData = ref([])
@@ -90,15 +92,17 @@
 
 
     const fetch = async () => {
+
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get('/approval/get_approval')
         instanceArray = api.data.data
         sortedData.value = instanceArray
+        responseStatus.value = api.status
       } catch (error) {
-        statusResponse.value = error.response.status
-        message.value = error.response.data.message
+        responseStatus.value = error.response.status
+        responseMessage.value = error.response.data.message
       }
 
     }
@@ -262,7 +266,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get(`/approval/get_approval?filterCompany=${id}`)
-        statusResponse.value = api.status
+        responseStatus.value = api.status
         instanceArray = api.data.data
         sortedData.value = instanceArray
     }
@@ -275,8 +279,6 @@
       pageMultiplier.value = value
       onChangePage(1)
     }
-
-    const times = 5
   
 </script>
 
@@ -312,7 +314,7 @@
           
           <div class="relative w-full">
 
-            <!-- kalo berhasil fetch statusResponse nya '' -->
+            <!-- kalo berhasil fetch responseStatus nya '' -->
 
             <table v-if="sortedData.length > 0" class="table table-zebra table-compact overflow-x-hidden border w-full sm:w-full h-full rounded-lg">
 
@@ -350,18 +352,23 @@
                 <!-- sortir nya harus sama dengan key yang di data dummy -->
 
                   <tr v-for="(data, index) in sortedData" :key="data.id">
-                    <td>
+
+                    <td style="width: 5%;">
                       <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                     </td>
-                    <td>
+
+                    <td style="width: 5%;">
                       {{ data.no }} 
                     </td>
-                    <td>
+
+                    <td style="width: 40%;">
                       {{ data.approval_name }}
                     </td>
-                    <td>
+
+                    <td style="width: 40%;">
                       {{ data.menu }}
                     </td>
+
                     <td class="flex flex-wrap gap-4 justify-center">
                       <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" 
                       :formContent="[
@@ -384,11 +391,8 @@
               </tbody>
               
             </table>
-
-            <!--  -->
-            <div v-else-if="sortedData.length == 0 && statusResponse == ''">
       
-              <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+            <table v-else-if="sortedData.length == 0 && responseStatus == ''" class="table table-zebra table-compact border h-full w-full rounded-lg">
 
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
                     <tr>
@@ -413,14 +417,12 @@
                     </tr>
                 </thead>
                 
-                <SkeletonLoadingTable :row="5" :column="5" />
+                <SkeletonLoadingTable :column="5" :row="5" />
 
-              </table>
+            </table>
 
-            </div>
-
-            <div v-else-if="sortedData.length == 0 && statusResponse != ''">
-              <table class="table table-zebra table-compact border h-full w-full rounded-lg">
+            <table v-else-if="(sortedData.length == 0 && responseStatus == 200) || (sortedData.length == 0 && responseStatus == 404)" class="table table-zebra table-compact border h-full w-full rounded-lg">
+                
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
                     <tr>
                       <th>
@@ -437,19 +439,23 @@
                         </span>
                       </th>
                       <th>
-                        <div class="flex justify-center">
-                            Actions                    
+                        <div class="text-center">
+                          Actions
                         </div>
                       </th>
                     </tr>
                 </thead>
-              </table>
 
-              <div class="text-center py-5">
-                <h1>{{ statusResponse }}</h1>
-                <h1>{{ message }}</h1>
-              </div>
-            </div>
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="5"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >Tidak ada data</td>
+                  </tr>
+                </tbody>
+
+            </table>
 
           </div>
 

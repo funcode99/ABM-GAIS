@@ -34,11 +34,15 @@
   let url = ref(props.formContent[1])
   let sort = ref(props.formContent[2])
   let filename = ref(props.formContent[3])
-  let sequence = ref(false)
+  let sequence = ref(props.formContent[9])
   let sequenceCode = ref(props.formContent[7])
   let ParentId = ref(props.formContent[5])
 
-
+  if(sequence.value == 0) {
+    sequence.value = false
+  } else {
+    sequence.value = true
+  }
 
   let companyIdObject = ref(props.formContent[4])
   let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
@@ -61,18 +65,17 @@
 
   const submitEdit = () => {
 
-        // console.log(sequence.value)
-
     try {     
         
-        if(sequence) {
+        if(sequence.value) {
           sequence.value = 1
         } else {
           sequence.value = 0
-          sequenceCode.value = ''
+          sequenceCode.value = null
         }
 
         // console.log(sequence.value)
+        // console.log(sequenceCode.value)
         // console.log(file.value)
 
         formState.menu.menuName = menuName.value
@@ -103,6 +106,8 @@
 
   watch(isVisible, () => {
 
+    // sequenceCode.value !== null ? sequence.value = true : ''
+
     resetInput()
 
     companyData.value = referenceFetch.fetchCompanyResult
@@ -112,8 +117,6 @@
     companyData.value.map((item) => {
       item.value = item.id
     })
-
-    sequenceCode.value !== null ? sequence.value = true : ''
 
   })
 

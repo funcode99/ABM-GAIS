@@ -371,7 +371,9 @@ const fetchEmployee = async () => {
           <!-- TABLE -->
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+
               <tr>
+
                 <!-- <th>
                   <div class="flex justify-center">
                     <input
@@ -397,7 +399,9 @@ const fetchEmployee = async () => {
                     </button>
                   </span>
                 </th>
+
               </tr>
+
             </thead>
 
             <tbody>
@@ -445,6 +449,7 @@ const fetchEmployee = async () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
+                  
                   <th>
                     <div class="flex justify-center">
                       <!-- <input
@@ -470,6 +475,7 @@ const fetchEmployee = async () => {
                       </button>
                     </div>
                   </th>
+
                 </tr>
               </thead>
 
