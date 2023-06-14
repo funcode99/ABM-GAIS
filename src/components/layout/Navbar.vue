@@ -9,6 +9,7 @@
   import { useRouter } from 'vue-router'
 
   let companyLogo = localStorage.getItem('company_logo')
+  let userName = localStorage.getItem('username')
 
   import Api from '@/utils/Api'
 
@@ -29,6 +30,7 @@
     let api = await Api.post('/users/logout')
     localStorage.removeItem('token')
     localStorage.removeItem('company_logo')
+    localStorage.removeItem('username')
     router.push({path: '/'})
   }
 
@@ -119,7 +121,7 @@
                 <div class="cursor-pointer w-full" v-click-outside="changeViewStatus">
                   <div class="min-h-max py-3 flex items-center justify-evenly w-full">
                     <p class="font-JakartaSans font-medium text-base justify-center items-center">
-                      Halo, User
+                      Halo, {{ userName }}
                     </p>
                     <img class="w-[18px] h-[18px]" :src="arrow" alt="">
                   </div>

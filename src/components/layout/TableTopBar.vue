@@ -99,9 +99,11 @@ const resetCompanyAndRole = () => {
         />
 
         <ModalAddUser
+          @fetchSiteForCompany="$emit('fetchSiteForCompany')"
           @add-user="$emit('increaseUser')"
           v-if="props.modalAddType === 'user'"
         />
+        
         <ModalAddApproval
           @add-approver="$emit('increaseApprover')"
           v-if="props.modalAddType === 'approval'"

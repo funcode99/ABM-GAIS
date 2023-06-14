@@ -6,7 +6,7 @@ const fetchCompany = async (instanceArray, addCompanyData) => {
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const res = await Api.get("/company/get")
         instanceArray = res.data.data
-        addCompanyData.value = instanceArray
+        addCompanyData.value = res.data.data
     } catch (error) {
         console.log(error)
     }
