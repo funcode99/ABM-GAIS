@@ -85,7 +85,7 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "id" },
-  { Id: 2, title: "Document No", jsonData: "no_stock_in" },
+  { Id: 2, title: "Document No", jsonData: "no_stock_opname" },
   { Id: 3, title: "Date", jsonData: "updated_at" },
   { Id: 4, title: "Created By", jsonData: "employee_name" },
   { Id: 5, title: "Item Count", jsonData: "item_count" },
@@ -170,10 +170,10 @@ onBeforeMount(() => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.no_stock_in.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+    (item.no_stock_opname.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.no_stock_in.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.no_stock_opname.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
@@ -413,7 +413,7 @@ const format_date = (value) => {
                       {{ index + 1 }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.no_stock_in }}
+                      {{ data.no_stock_opname }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ format_date(data.updated_at) }}
@@ -422,7 +422,7 @@ const format_date = (value) => {
                       {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.qty }}
+                      {{ data.item_count }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.status }}

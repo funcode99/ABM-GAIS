@@ -9,6 +9,8 @@ import Api from "@/utils/Api";
 import { useMenuAccessStore } from '@/stores/savemenuaccess'
 import { resetTracking } from "@vue/reactivity";
 import Swal from "sweetalert2";
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
 
 let selectedCompany = ref("Company");
@@ -104,7 +106,7 @@ const generateNumber = async () => {
   idItems.value = Math.floor(100000000 + Math.random() * 900000000);
 };
 const addItem = async () => {
-
+  
   itemsTable.value.push({
     code_item: idItems.value,
     item_name: itemNames.value,
@@ -132,6 +134,7 @@ if(id == 0){
 // return itemsTable
 }
 const save = async () => {
+  
   const payload = {
     array_multi:itemsTable.value,
   }
@@ -144,9 +147,13 @@ const save = async () => {
       timer: 1500,
     });
     reset()
-    defineEmits(["unlockScrollbar"])
+    // console.log(router.go({path : '/managementitem'}))
+    router.go({path : '/managementitem'})
+    // defineEmits(["unlockScrollbar"])
 };
 const reset = async () => {
+  disableSite.value = false
+  disableCompany.value = false
   selectedCompany.value = ''
   selectedSite.value = ''
   selectedWarehouse.value = ''

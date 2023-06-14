@@ -35,26 +35,41 @@ let itemNames = ref("")
 let remark = ref("")
 let siteName = ref("")
 let status = ref("")
+let statusValue = ref(false)
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/stock_in/get/${id}`);
-  console.log(res.data.data)
+  // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
     stockName.value = element.no_stock_in
     createdDate.value = format_date(element.created_at)
     createdBy.value = element.employee_name
+    siteName.value = element.site_name
+    status.value = element.status
+    // element.status == 'Submitted' ? !statusValue : statusValue
+  }
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchDetailById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/stock_in/get_by_stock_in_id/${id}`);
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
     Warehouse.value = element.warehouse_name
-    itemNames.value = element.itemName
-    idItems.value = element.id_item
+    itemNames.value = element.item_name
+    idItems.value = element.code_item
     alertQuantity.value = element.qty
     brandName.value = element.brand_name
     UOMName.value = element.uom_name
     remark.value = element.remarks
-    siteName.value = element.site_name
-    status.value = element.status
+    // siteName.value = element.site_name
+    // element.status == 'Submitted' ? !statusValue : statusValue
   }
   
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -62,7 +77,7 @@ const fetchDataById = async (id) => {
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.post(`/stock_in/approval_submit/${router.currentRoute.value.params.id}`);
+  const res = await Api.post(`/stock_in/submit/${router.currentRoute.value.params.id}`);
   Swal.fire({
       position: "center",
       icon: "success",
@@ -80,6 +95,7 @@ const submit = async () => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(router.currentRoute.value.params.id)
+  fetchDetailById(router.currentRoute.value.params.id)
   // console.log(router.currentRoute.value.params.id)
 });
 

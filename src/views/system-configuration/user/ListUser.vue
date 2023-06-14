@@ -357,7 +357,6 @@
 
                 <thead class="text-center font-Montserrat text-sm font-bold h-10">
                   <tr class="">
-                    
                     <th>
                       <div class="flex justify-center">
                         <input type="checkbox" name="chklead" @click="selectAll(checkLead = !checkLead)">

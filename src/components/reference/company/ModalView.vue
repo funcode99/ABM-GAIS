@@ -1,34 +1,87 @@
 <script setup>
+import iconUpload from "@/assets/icon_upload.svg";
 import iconview from "@/assets/view_icon.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 
 import Api from "@/utils/Api";
 
-// import Multiselect from "@vueform/multiselect";
+import Multiselect from "@vueform/multiselect";
 
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { Modal } from "usemodal-vue3";
+import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
 
+const emits = defineEmits(["unlockScrollbar", "changeCompany", "viewCompany"]);
+
+let formEditState = useFormEditStore();
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
 
+// const selectedImage = ref(null);
+let selectedCompany = ref("Company");
+let selectedVendor = ref("Vendor");
+let selectedErpCode = ref("ERP");
+let companyName = ref("");
+let companyCode = ref("");
+let companyGroup = ref("");
+let companyShortName = ref("");
+let companyIdVendor = ref("");
+let companyLogo = ref("");
+let companyCodeErp = ref("");
+let parentCompany = ref("");
+let logoCompany = ref("");
 let vendorAirlines = ref("");
+let iconfilename = ref(null);
+
 let selectedVendorId = ref(props.formContent[4] || null);
 let selectedImage = ref(props.formContent[5] || null);
 let selectedCodeErpId = ref(props.formContent[6] || null);
 
-// let siteData = ref(null);
-// let siteIdArray = ref(null);
+let siteData = ref(null);
+let siteIdArray = ref(null);
+
+const file = ref({});
 
 const props = defineProps({
   formContent: Array,
 });
 
 const currentcompanyName = ref(props.formContent[0]);
+const originalcompanyName = ref(props.formContent[0]);
 const currentcompanyCode = ref(props.formContent[1]);
-const currentcompanyShortName = ref(props.formContent[2]);
-const currentcompanyGroup = ref(props.formContent[3]);
+const originalcompanyCode = ref(props.formContent[1]);
+const currentcompanyGroup = ref(props.formContent[2]);
+const originalcompanyGroup = ref(props.formContent[2]);
+const currentcompanyShortName = ref(props.formContent[3]);
+const originalcompanyShortName = ref(props.formContent[3]);
+const currentcompanyIdVendor = ref(props.formContent[4]);
+const originalcompanyIdVendor = ref(props.formContent[4]);
+const currentcompanyLogo = ref(props.formContent[5]);
+const originalcompanyLogo = ref(props.formContent[5]);
+const currentcompanyCodeErp = ref(props.formContent[6]);
+const originalcompanyCodeErp = ref(props.formContent[6]);
+
+const submitEdit = () => {
+  isAdding.value = true;
+
+  if (!formEditState.company) {
+    formEditState.company = {}; // Inisialisasi objek jika belum ada
+  }
+
+  formEditState.company.companyName = currentcompanyName.value;
+  formEditState.company.companyCode = currentcompanyCode.value;
+  formEditState.company.companyGroup = currentcompanyGroup.value;
+  formEditState.company.companyShortName = currentcompanyShortName.value;
+
+  formEditState.company.companyIdVendor = selectedVendorId.value;
+  formEditState.company.companyLogo = selectedImage.value;
+  formEditState.company.companyCodeErp = currentcompanyCodeErp.value;
+
+  isVisible.value = false;
+  emits("changeCompany"); // Memanggil event 'changeCompany'
+};
 
 //for get vendor in select
 const fetchVendors = async () => {
@@ -40,25 +93,57 @@ const fetchVendors = async () => {
 };
 
 //for get site in multiselect
-// const fetchSite = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/site/get_data");
-//   siteData = res.data.data;
-//   // console.log("ini data city" + JSON.stringify(res.data.data));
-//   siteData.map((item) => {
-//     item.value = item.id;
-//   });
-//   // console.log("Data company setelah perubahan:", siteData);
-// };
+const fetchSite = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  siteData = res.data.data;
+  // console.log("ini data city" + JSON.stringify(res.data.data));
+  siteData.map((item) => {
+    item.value = item.id;
+  });
+  // console.log("Data company setelah perubahan:", siteData);
+};
 
 onMounted(() => {
   fetchVendors();
-  // fetchSite();
+  fetchSite();
 });
+
+//for image logo
+const onFileSelected = (event) => {
+  const file = event.target.files[0];
+  selectedImage.value = file ? file : null;
+  iconfilename = file.name;
+  // console.log("selectedImage:", selectedImage.value);
+};
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+
+watch(isVisible, () => {
+  if (isAdding.value == true) {
+    isAdding.value = false;
+  } else {
+    currentcompanyName.value = props.formContent[0];
+    currentcompanyCode.value = props.formContent[1];
+    currentcompanyGroup.value = props.formContent[2];
+    currentcompanyShortName.value = props.formContent[3];
+    selectedVendorId.value = props.formContent[4];
+    selectedImage.value = props.formContent[5];
+    currentcompanyCodeErp.value = props.formContent[6];
+  }
+});
+
+const resetForm = () => {
+  currentcompanyName.value = originalcompanyName.value;
+  currentcompanyCode.value = originalcompanyCode.value;
+  currentcompanyGroup.value = originalcompanyGroup.value;
+  currentcompanyShortName.value = originalcompanyShortName.value;
+  selectedVendorId.value = originalcompanyIdVendor.value;
+  selectedImage.value = originalcompanyLogo.value;
+  currentcompanyCodeErp.value = originalcompanyCodeErp.value;
+};
 </script>
 
 <template>
@@ -68,55 +153,21 @@ const inputStylingClass =
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader @closeVisibility="isVisible = false" title="View Company" />
+      <modalHeader
+        @closeVisibility="
+          isVisible = false;
+          resetForm();
+        "
+        title="View Company"
+      />
 
-      <form class="modal-box-inner-company">
-        <div class="flex justify-center items-center">
-          <div class="avatar">
-            <div
-              class="flex justify-center items-center w-[100px] h-[100px] rounded-full bg-[#D9D9D9]"
-            >
-              <div class="flex justify-center items-center">
-                <label
-                  for="file-input"
-                  class="cursor-not-allowed flex items-center justify-center"
-                >
-                  <div
-                    class="w-[100px] h-[100px] rounded-full bg-[#D9D9D9] flex items-center justify-center"
-                  >
-                    <div class="flex relative">
-                      <img
-                        :src="selectedImage"
-                        class="w-[100px] h-[100px] object-cover object-center"
-                      />
-                    </div>
-                  </div>
-                </label>
-
-                <input
-                  disabled
-                  type="file"
-                  id="file-input"
-                  class="hidden cursor-not-allowed"
-                  required
-                  accept="image/*"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p
-          class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4 mb-6"
-        >
-          Logo
-        </p>
-
+      <form class="modal-box-inner-company" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyCode"
             type="text"
             :class="inputStylingClass"
@@ -131,6 +182,7 @@ const inputStylingClass =
             >Name<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyName"
             type="text"
             :class="inputStylingClass"
@@ -145,6 +197,7 @@ const inputStylingClass =
             >Short Name<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyShortName"
             type="text"
             :class="inputStylingClass"
@@ -159,6 +212,7 @@ const inputStylingClass =
             >Group Company<span class="text-red">*</span></label
           >
           <input
+            @keydown.enter="submitEdit"
             v-model="currentcompanyGroup"
             type="text"
             :class="inputStylingClass"
@@ -166,6 +220,39 @@ const inputStylingClass =
             disabled
             class="cursor-not-allowed"
           />
+        </div>
+
+        <div class="mb-6 w-full px-4 text-start">
+          <div
+            class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
+          >
+            Logo Company
+            <span class="text-red">*</span>
+          </div>
+          <div class="relative border border-slate-300 rounded-lg py-2">
+            <input
+              type="file"
+              class="hidden disabled"
+              accept="image/*"
+              @change="onFileSelected"
+              disabled
+            />
+            <label class="py-2">
+              <div v-if="iconfilename != null" class="pl-2">
+                {{ iconfilename }}
+              </div>
+              <div
+                v-else
+                class="pl-2 font-JakartaSans font-medium text-sm cursor-not-allowed"
+              >
+                {{ selectedImage || "Logo Company" }}
+              </div>
+              <img
+                :src="iconUpload"
+                class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-not-allowed"
+              />
+            </label>
+          </div>
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
@@ -201,7 +288,7 @@ const inputStylingClass =
           </select>
         </div>
 
-        <!-- <div class="mb-6 w-full px-4 text-start">
+        <div class="mb-6 w-full px-4 text-start">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Site<span class="text-red">*</span></label
           >
@@ -237,7 +324,7 @@ const inputStylingClass =
               </div>
             </template>
           </Multiselect>
-        </div> -->
+        </div>
       </form>
     </main>
   </Modal>

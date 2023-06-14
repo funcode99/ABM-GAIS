@@ -19,7 +19,6 @@ let formEditState = useFormEditStore();
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
-let Zona = ref("");
 
 let companyData = ref(null);
 let companyIdArray = ref(null);
@@ -29,7 +28,7 @@ let cityIdArray = ref(null);
 let companyIdObject = ref(props.formContent[0]);
 let companyIdObjectKeys = ref(Object.values(companyIdObject.value));
 
-let selectedZonaId = ref(props.formContent[1] || null);
+let currentZonaName = ref(props.formContent[1]);
 
 let CityIdObject = ref(props.formContent[2]);
 let cityIdObjectKeys = ref(Object.values(CityIdObject.value));
@@ -61,15 +60,21 @@ const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.zona) {
-    formEditState.zona = {};
+    formEditState.zona = {}; // Inisialisasi objek jika belum ada
   }
 
+  console.log(companyIdArray.value);
+  console.log(currentZonaName.value);
+  console.log(cityIdArray.value);
+
   formEditState.zona.zonaIdCompany = companyIdArray.value;
-  formEditState.zona.zonaName = selectedZonaId.value;
+  formEditState.zona.zonaName = currentZonaName.value;
   formEditState.zona.zonaIdCity = cityIdArray.value;
 
+  // console.log("nilai zona name" + JSON.stringify(currentZonaName));
+
   isVisible.value = false;
-  emits("changeZona");
+  emits("changeZona"); // Memanggil event 'changeZona'
 };
 
 //for get city in input
@@ -98,26 +103,16 @@ const fetchGetCompany = async () => {
   // console.log("Data company setelah perubahan:", companyData);
 };
 
-//for get zona in select
-const fetchGetZona = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona/get_id/");
-  Zona.value = res.data.data;
-  // console.log("ini data zona" + JSON.stringify(res.data.data));
-};
-
 onMounted(() => {
   fetchCity();
   fetchGetCompany();
-  fetchGetZona();
 });
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
 const resetInput = () => {
-  selectedZonaId.value = props.formContent[1];
+  currentZonaName.value = props.formContent[1];
   companyIdArray.value = [...props.formContent[0]];
   cityIdArray.value = [...props.formContent[2]];
 };
@@ -181,17 +176,13 @@ watch(isVisible, (newValue) => {
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Zona<span class="text-red">*</span></label
           >
-          <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+          <input
+            type="text"
+            placeholder="Zona"
             required
-            v-model="selectedZonaId"
-            disabled
-          >
-            <option disabled selected>Zona</option>
-            <option v-for="zona in Zona" :value="zona.id_zona">
-              {{ zona.zona_name }}
-            </option>
-          </select>
+            v-model="currentZonaName"
+            :class="inputStylingClass"
+          />
         </div>
 
         <div class="mb-6 w-full px-4 text-start">

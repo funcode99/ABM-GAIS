@@ -1,5 +1,5 @@
 <script setup>
-import iconplus from "@/assets/navbar/icon_plus.svg";
+import iconUpload from "@/assets/icon_upload.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
@@ -13,20 +13,34 @@ import { ref, onMounted, watch } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "company-saved"]);
 
+let sortedData = ref([]);
 const selectedImage = ref(null);
+let selectedCompany = ref("Company");
 let selectedVendor = ref("Vendor");
 let selectedCodeErp = ref("ERP");
 let companyCode = ref("");
 let companyName = ref("");
+let parentCompany = ref("");
 let grupCompany = ref("");
+let logoCompany = ref("");
 let vendorAirlines = ref("");
 let shortName = ref("");
+let codeErp = ref("");
+let isOpenModal = ref(false);
 const file = ref({});
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 let iconfilename = ref(null);
-let imageUrl = ref(null);
+
+//for get parent company in select
+const fetchParentCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get_parent");
+  parentCompany.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 
 //for get vendor in select
 const fetchVendors = async () => {
@@ -39,6 +53,7 @@ const fetchVendors = async () => {
 
 // onMounted(fetch);
 onMounted(() => {
+  fetchParentCompany();
   fetchVendors();
 });
 
@@ -47,21 +62,7 @@ const onFileSelected = (event) => {
   const file = event.target.files[0];
   selectedImage.value = file ? file : null;
   iconfilename = file.name;
-
-  // Create a FileReader instance
-  const reader = new FileReader();
-
-  // Define the callback function when FileReader has finished reading the file
-  reader.onload = () => {
-    imageUrl.value = reader.result;
-  };
-
-  // Read the selected file as a data URL
-  if (file) {
-    reader.readAsDataURL(file);
-  } else {
-    imageUrl.value = null;
-  }
+  // console.log(selectedImage)
 };
 
 const saveCompany = async () => {
@@ -104,9 +105,10 @@ const resetInput = () => {
   companyName.value = "";
   shortName.value = "";
   grupCompany.value = "";
+  selectedImage.value = "Logo";
   selectedVendor.value = "Vendor";
   selectedCodeErp.value = "ERP";
-  imageUrl.value = null;
+  iconfilename = "Logo";
 };
 
 watch(isVisible, () => {
@@ -131,53 +133,6 @@ watch(isVisible, () => {
       <modalHeader @closeVisibility="isVisible = false" title="New Company" />
 
       <form class="pt-4 modal-box-inner-company" @submit.prevent="saveCompany">
-        <div class="flex justify-center items-center">
-          <div class="avatar">
-            <div
-              class="flex justify-center items-center w-[100px] h-[100px] rounded-full bg-[#D9D9D9]"
-            >
-              <div class="flex justify-center items-center">
-                <label
-                  for="file-input"
-                  class="cursor-pointer flex items-center justify-center"
-                >
-                  <div
-                    class="w-[100px] h-[100px] rounded-full bg-[#D9D9D9] flex items-center justify-center"
-                  >
-                    <div class="flex relative">
-                      <img
-                        v-if="!imageUrl"
-                        :src="iconplus"
-                        class="w-[37px] h-[37px]"
-                      />
-                      <img
-                        v-else
-                        :src="imageUrl"
-                        class="w-[100px] h-[100px] object-cover object-center"
-                      />
-                    </div>
-                  </div>
-                </label>
-
-                <input
-                  type="file"
-                  id="file-input"
-                  class="hidden"
-                  required
-                  accept="image/*"
-                  @change="onFileSelected"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p
-          class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4 mb-6"
-        >
-          Logo
-        </p>
-
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Code<span class="text-red">*</span></label
@@ -226,6 +181,43 @@ watch(isVisible, () => {
             required
             v-model="grupCompany"
           />
+        </div>
+
+        <div class="mb-6 w-full px-4">
+          <div
+            class="block mb-2 font-JakartaSans font-medium text-sm cursor-default"
+          >
+            Logo Company
+            <span class="text-red">*</span>
+          </div>
+          <div class="relative border border-slate-300 rounded-lg">
+            <input
+              type="file"
+              id="logo_company"
+              class="hidden border"
+              accept="image/*"
+              @change="onFileSelected"
+            />
+            <label class="py-2" for="logo_company">
+              <span
+                class="font-JakartaSans hidden font-medium text-sm cursor-pointer"
+                >{{ selectedImage || "Logo Company" }}</span
+              >
+              <img
+                :src="iconUpload"
+                class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+              />
+            </label>
+            <div
+              v-if="iconfilename != null"
+              class="px-5 py-2 font-JakartaSans font-medium text-sm"
+            >
+              {{ iconfilename }}
+            </div>
+            <div v-else class="px-4 py-2 font-JakartaSans font-medium text-sm">
+              Logo
+            </div>
+          </div>
         </div>
 
         <div class="mb-6 w-full px-4">

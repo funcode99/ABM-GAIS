@@ -17,6 +17,7 @@ let selectedBrand = ref("Brand")
 let selectedAdjusment = ref("Adjusment Type")
 let quantityOpname = ref("")
 let brandName = ref("");
+let Adjusment = ref([])
 let Company = ref("");
 let Site = ref("");
 let Item = ref("")
@@ -111,6 +112,7 @@ const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  Adjusment.value.push({name:'addition'},{ name:'substraction'})
 };
 
 const addItem = async () => {
@@ -175,16 +177,17 @@ const save = async () => {
     remarks : remark.value,
     array_detail:itemsTable2.value
   }
-  const res = await Api.post('/stock_opname/store',payload);
+  await Api.post('/stock_opname/store',payload).then((res) => {
   Swal.fire({
       position: "center",
-      icon: "error",
-      title: 'Failed',
+      icon: "success",
+      title: res.data.message,
       showConfirmButton: false,
       timer: 1500,
     });
     reset()
     router.push({path: '/stock-opname-atk'})
+  });
 };
 const reset = async () => {
   selectedCompany.value = ''
@@ -395,11 +398,10 @@ onMounted(() => {
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedAdjusment"
-                disabled="true"
               >
                 <option disabled selected>Adjusment Type</option>
-                <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
-                  {{ brand.brand_name }}
+                <option v-for="(adjust,i) in Adjusment" :key="i" :value="adjust.name">
+                  {{ adjust.name }}
                 </option>
               </select>
             </div>

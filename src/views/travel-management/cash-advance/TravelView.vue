@@ -2,55 +2,17 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
-
-import Api from "@/utils/Api";
-import moment from "moment";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
+import { onBeforeMount } from "vue";
 
-import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
-import { useRoute } from "vue-router";
-
 const sidebar = useSidebarStore();
-const route = useRoute();
-let dataArr = ref([]);
-let dataItem = ref([]);
 
 let lengthCounter = 0;
-let id = route.params.id;
-
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
-
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
-const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/cash_advance/travel/${id}`);
-  dataArr.value = res.data.data[0];
-  fetchDataItem(id);
-};
-
-const fetchDataItem = async (id) => {
-  const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
-  dataItem.value = res.data.data;
-};
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchDataById(id);
 });
 
 const getSessionForSidebar = () => {
@@ -85,25 +47,17 @@ const getSessionForSidebar = () => {
                 Cash Advance Travel<span
                   class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
                 >
-                  / {{ dataArr.no_ca }}
+                  / TCA-ABM/1309/12.05
                 </span>
               </h1>
             </router-link>
             <div class="py-4">
               <button
-                type="button"
-                :class="
-                  dataArr.status == 'Revision' || dataArr.status == 'Rejected'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize status-default'
-                "
+                class="btn btn-sm bg-[#2970FF] border-none mx-4 capitalize hover:bg-[#004EEB]"
               >
-                {{ dataArr.status }}
+                Status
               </button>
             </div>
-          </div>
-          <div class="float-right">
-            <ModalJurnal @change-flight="editFlight(id)" />
           </div>
 
           <!-- FORM READ ONLY-->
@@ -115,7 +69,7 @@ const getSessionForSidebar = () => {
               <input
                 type="text"
                 disabled
-                :value="format_date(dataArr.created_at)"
+                value="23/2/2023"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -126,7 +80,7 @@ const getSessionForSidebar = () => {
               <input
                 type="text"
                 disabled
-                :value="dataArr.no_request_trip"
+                value="TRV-ABM/1232/23.04"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -137,25 +91,7 @@ const getSessionForSidebar = () => {
               <input
                 type="text"
                 disabled
-                :value="dataArr.employee_name"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm">Currency</span>
-              <input
-                type="text"
-                disabled
-                :value="dataArr.currency_name"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm">Notes</span>
-              <input
-                type="text"
-                disabled
-                :value="dataArr.remarks"
+                value="Jack H"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -164,7 +100,7 @@ const getSessionForSidebar = () => {
               <input
                 type="text"
                 disabled
-                :value="format_price(dataArr.grand_total)"
+                value="540.000"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -188,7 +124,7 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Item
+                      Item Type
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -217,25 +153,22 @@ const getSessionForSidebar = () => {
                     </th>
                   </tr>
                 </thead>
-
                 <tbody class="font-JakartaSans font-normal text-xs">
-                  <tr class="h-16" v-for="data in dataItem" :key="data.id">
-                    <td class="border border-[#B9B9B9]">
-                      {{ data.item_name }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">
-                      {{ data.frequency }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">
-                      {{ data.currency_name }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">
-                      {{ format_price(data.nominal) }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">
-                      {{ format_price(data.total) }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">{{ data.remarks }}</td>
+                  <tr class="h-16">
+                    <td class="border border-[#B9B9B9]">Meal</td>
+                    <td class="border border-[#B9B9B9]">2</td>
+                    <td class="border border-[#B9B9B9]">Rupiah</td>
+                    <td class="border border-[#B9B9B9]">120.000</td>
+                    <td class="border border-[#B9B9B9]">240.000</td>
+                    <td class="border border-[#B9B9B9]">-</td>
+                  </tr>
+                  <tr class="h-16">
+                    <td class="border border-[#B9B9B9]">Transport</td>
+                    <td class="border border-[#B9B9B9]">2</td>
+                    <td class="border border-[#B9B9B9]">Rupiah</td>
+                    <td class="border border-[#B9B9B9]">150.000</td>
+                    <td class="border border-[#B9B9B9]">300.000</td>
+                    <td class="border border-[#B9B9B9]">-</td>
                   </tr>
                 </tbody>
               </table>
@@ -252,13 +185,5 @@ const getSessionForSidebar = () => {
 .custom-card {
   box-shadow: 0px -4px #015289;
   border-radius: 4px;
-}
-
-.status-revision {
-  background: #ef3022;
-}
-
-.status-default {
-  background: #2970ff;
 }
 </style>

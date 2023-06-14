@@ -568,7 +568,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewcashadvancetravel/:id',
+      path: '/viewcashadvancetravel',
       name: 'view cash advance travel',
       component: TravelView,
       meta: {
@@ -602,7 +602,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewcashadvancenontravel/:id',
+      path: '/viewcashadvancenontravel',
       name: 'view cash advance non travel',
       component: NonTravelView,
       meta: {
@@ -980,6 +980,23 @@ const router = createRouter({
       }
     },
     {
+      path: '/atkRequest/:id',
+      name: 'atk-request',
+      component: ATKRequestView,
+      meta: {
+        title: 'ATK Request'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
       path: '/atk-request',
       name: 'ATK Request',
       component: ATKRequestList,
@@ -996,23 +1013,23 @@ const router = createRouter({
         return next('/')
       }
     },
-    {
-      path: '/atk-request-view',
-      name: 'ATK Request View',
-      component: ATKRequestView,
-      meta: {
-        title: 'Request ATK View'
-      },
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('token');
+    // {
+    //   path: '/atk-request-view',
+    //   name: 'ATK Request View',
+    //   component: ATKRequestView,
+    //   meta: {
+    //     title: 'Request ATK View'
+    //   },
+    //   beforeEnter: (to, from, next) => {
+    //     const token = localStorage.getItem('token');
 
-        if (token) {
-          return next()
-        }
+    //     if (token) {
+    //       return next()
+    //     }
 
-        return next('/')
-      }
-    },
+    //     return next('/')
+    //   }
+    // },
     {
       path: '/stock-opname-atk',
       name: 'stock-opname-atk',

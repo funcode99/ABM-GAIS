@@ -61,24 +61,17 @@
 
   const submitEdit = () => {
 
-        // console.log(sequence.value)
-
     try {     
         
         if(sequence) {
           sequence.value = 1
         } else {
           sequence.value = 0
-          sequenceCode.value = ''
         }
-
-        // console.log(sequence.value)
-        // console.log(file.value)
 
         formState.menu.menuName = menuName.value
         formState.menu.sort = sort.value
-        formState.menu.sequence = sequence.value
-        formState.menu.sequenceCode = sequenceCode.value
+        formState.menu.sequence = sequenceCode.value
         formState.menu.url = url.value
         formState.menu.icon = file.value
         formState.menu.idStatusMenu = idStatusMenu.value
@@ -165,13 +158,13 @@
     
             <div class="mb-3 flex flex-col">
               <label for="icon" class="block mb-2 font-JakartaSans font-medium text-sm text-left">
-                  Icon
-                  <!-- <span class="text-red-star">*</span> -->
+                  Icon<span class="text-red-star">*</span>
               </label>
               <input
                     id="icon"
                     :class="inputStylingClass"
-                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
+                    required 
               />
               <h1 class="text-left">
                     Your current icon = {{ filename }}
@@ -313,5 +306,3 @@
 }
 
 </style>
-
-<style src="@vueform/multiselect/themes/default.css"></style>

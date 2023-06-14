@@ -7,23 +7,92 @@ import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 
-import { onBeforeMount } from "vue";
-
+import { onBeforeMount, ref } from "vue";
+import { useRouter } from 'vue-router'
 import { useSidebarStore } from "@/stores/sidebar.js";
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+import moment from 'moment';
+
+
 const sidebar = useSidebarStore();
-
+const router = useRouter()
 let lengthCounter = 0;
+let stockName = ref("")
+let createdDate = ref("")
+let createdBy = ref("")
+let brandName = ref("");
+let Company = ref("");
+let Site = ref("");
+let Warehouse = ref("");
+let UOM = ref("")
+let UOMName = ref("")
+let idItems = ref("")
+let ItemsName = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let remark = ref("")
+let siteName = ref("")
+let status = ref("")
+let statusValue = ref(false)
 
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get/${id}`);
+  console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    stockName.value = element.no_atk_request
+    createdDate.value = format_date(element.created_at)
+    createdBy.value = element.employee_name
+    Warehouse.value = element.warehouse_name
+    itemNames.value = element.itemName
+    idItems.value = element.id_item
+    alertQuantity.value = element.qty
+    brandName.value = element.brand_name
+    UOMName.value = element.uom_name
+    remark.value = element.remarks
+    siteName.value = element.site_name
+    status.value = element.status
+    element.status == 'Submitted' ? !statusValue : statusValue
+  }
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const submit = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.post(`/request_atk/submit/${router.currentRoute.value.params.id}`);
+  Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // reset()
+    router.push({path: '/atk-request'})
+  // console.log(res.data.data)
+  
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 onBeforeMount(() => {
   getSessionForSidebar();
+  fetchDataById(router.currentRoute.value.params.id)
+  // console.log(router.currentRoute.value.params.id)
 });
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
-
-const buttonStyling = 'p-4 border border-[#8c8c8c] rounded-lg rounded-bl-3xl w-[114px] h-[42px] flex items-center justify-center text-sm'
-
+const format_date = (value) => {
+  if (value) {
+           return moment(String(value)).format('DD-MM-YYYY')
+          }
+};
 </script>
 
 <template>
@@ -44,46 +113,33 @@ const buttonStyling = 'p-4 border border-[#8c8c8c] rounded-lg rounded-bl-3xl w-[
           <!-- HEADER -->
           <div class="flex justify-between">
             <router-link
-              to="/stockinatk"
+              to="/atk-request"
               class="flex items-center gap-2 py-4 mx-4"
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
-              <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
-                ATK Request<span
-                  class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
-                >
-                  / Request No. 1232312
-                </span>
-              </h1>
+              <h3 class="text-blue font-semibold font-JakartaSans text-2xl">
+                Back
+              </h3>
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
-              <button
-                :class="buttonStyling"
+              <!-- <button
+                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
               >
                 Draft
-              </button>
+              </button> -->
               <button
-              :class="buttonStyling"
+                class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                @click="submit"
               >
-                Booked
-              </button>
-              <button
-                :class="buttonStyling"
-              >
-                Done
-              </button>
-              <button
-              :class="buttonStyling"
-              >
-                Cancelled
+                Submit
               </button>
             </div>
           </div>
 
-          <div class="flex justify-between ml-10">
+          <!-- <div class="flex justify-between ml-10">
             <div class="flex gap-2">
               <button
-                class="btn btn-sm text-black text-base font-JakartaSans font-bold capitalize w-[100px] border-black bg-[#fdfdfd] hover:bg-blue hover:text-white hover:border-blue"
+                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
               >
                 Edit
               </button>
@@ -91,71 +147,86 @@ const buttonStyling = 'p-4 border border-[#8c8c8c] rounded-lg rounded-bl-3xl w-[
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Submit
-              </button>
+              </button><br>
+            </div>
+          </div> -->
+
+          <div class="flex justify-between ml-10 mt-8">
+            <div class="flex gap-2">
+              <h1 class="font-JakartaSans font-medium text-lg">Document No : {{ stockName }}</h1>
             </div>
           </div>
-
           <!-- FORM READ ONLY-->
-          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-3 pt-7">
             <div class="flex flex-col gap-2">
+              
               <span class="font-JakartaSans font-medium text-sm"
                 >Created Date</span
               >
               <input
                 type="text"
                 disabled
-                value=""
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Site</span
-              >
-              <input
-                type="text"
-                disabled
-                value=""
+                v-model="createdDate"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created By</span
-              > 
-              <input
-                type="text"
-                disabled
-                value=""
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Warehouse</span
               >
               <input
                 type="text"
                 disabled
-                value=""
+                v-model="createdBy"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
           </div>
 
-          <!-- TAB & TABLE-->
-          <div class="pt-2 mx-[70px]">
-
-            <div
-              class="bg-[#8b8b8b] py-3 px-4 rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
-            >
-              <p class="font-JakartaSans font-normal text-sm mx-8 text-white">Details</p>
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
+            <div class="flex flex-col gap-2">
+              
+              <span class="font-JakartaSans font-medium text-sm"
+                >Site</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="siteName"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
             </div>
-
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Status</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="status"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+          </div>
+          <!-- TAB & TABLE-->
+          <div class="bg-blue rounded-lg pt-2 mx-[70px]">
+            <div
+              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+            >
+              <div
+                class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
+              ></div>
+              <p class="font-JakartaSans font-normal text-sm mx-8">Details</p>
+            </div>
             <div class="overflow-x-auto">
-              <table class="table table-compact w-full text-center">
+              <table class="table table-compact w-full">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Warehouse
+                    </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
@@ -164,17 +235,17 @@ const buttonStyling = 'p-4 border border-[#8c8c8c] rounded-lg rounded-bl-3xl w-[
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Nama Item
+                      Item Name
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                     Brand
+                      Quantity
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                    Quantity
+                      Brand
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -184,24 +255,25 @@ const buttonStyling = 'p-4 border border-[#8c8c8c] rounded-lg rounded-bl-3xl w-[
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Remarks
+                      Remark
                     </th>
-                    <th
+                    <!-- <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Action
-                    </th>
+                    </th> -->
                   </tr>
                 </thead>
                 <tbody class="font-JakartaSans font-normal text-xs">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]"></td>
-                    <td class="border border-[#B9B9B9]">
+                    <td class="border border-[#B9B9B9]">{{ Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">{{ idItems }}</td>
+                    <td class="border border-[#B9B9B9]">{{ itemNames }}</td>
+                    <td class="border border-[#B9B9B9]">{{ alertQuantity }}</td>
+                    <td class="border border-[#B9B9B9]">{{ brandName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ UOMName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ remark }}</td>
+                    <!-- <td class="border border-[#B9B9B9]">
                       <div class="flex justify-center items-center gap-2">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
@@ -210,14 +282,12 @@ const buttonStyling = 'p-4 border border-[#8c8c8c] rounded-lg rounded-bl-3xl w-[
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
                       </div>
-                    </td>
+                    </td> -->
                   </tr>
                 </tbody>
               </table>
             </div>
-
           </div>
-          
         </div>
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />
