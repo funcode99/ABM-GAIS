@@ -284,7 +284,7 @@
   overflow-y: auto !important;
 }
 
-.multiselect-tag.is-user {
+/* .multiselect-tag.is-user {
   padding: 5px 8px;
   border-radius: 22px;
   background: #35495e;
@@ -308,7 +308,7 @@
   margin: 0 6px 0 0;
   border-radius: 50%;
   height: 22px;
-}
+} */
 
 </style>
 

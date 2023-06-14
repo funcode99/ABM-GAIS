@@ -50,7 +50,7 @@
         // $cookies.set('token', data.data.data.access_token)
         // store.commit('isLoading', false)
 
-        router.push('/user');
+        router.push('/user')
 
     } catch (error) {
         console.log(error)
