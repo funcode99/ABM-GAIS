@@ -18,10 +18,11 @@
   let isVisible = ref(false)
   let isAdding = ref(false)
   let modalPaddingHeight = "10vh"
-  const emits = defineEmits('addUser')
+  const emits = defineEmits(['addUser', 'fetchSiteForCompany'])
 
   let fullname = ref('')
-  let username = ref('')
+  let username = ref(['', 0])
+  let usernameNonEmployee = ref('')
   let email = ref('')
   let password = ref('')
   let role = ref([])
@@ -86,14 +87,18 @@
 
   let isLoading = ref(false)
 
+  watch(username, () => {
+      company.value = username.value[1]
+  })
+
   watch(company, () => {
       isLoading.value = true
       menuAccessStore.companyId = company.value
+      emits('fetchSiteForCompany')
   })
 
   // tidak berubah karena tidak dibuka?
   watch(menuAccessStore, () => {
-    console.log('terjadi perubahan')
     responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult
   })
 
@@ -148,7 +153,7 @@
                     <input
                         id="username"
                         v-if="!isEmployee"
-                        v-model="username"
+                        v-model="usernameNonEmployee"
                         type="text"
                         placeholder="Username"
                         :class="inputStylingClass"
@@ -156,7 +161,7 @@
                     />
     
                     <select id="username" v-if="isEmployee" v-model="username" :class="inputStylingClass">
-                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="data.employee_name">
+                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company]">
                         {{ data.employee_name }}
                       </option>
                     </select>
@@ -264,7 +269,7 @@
                 <div class="mb-6 flex flex-col gap-2">
                   
                     <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
-                    <select @change="$emit('fetchSiteForCompany')" id="company" v-model="company" :class="inputStylingClass">
+                    <select id="company" v-model="company" :class="inputStylingClass">
                       <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" >
                         {{ data.company_name }}
                       </option>

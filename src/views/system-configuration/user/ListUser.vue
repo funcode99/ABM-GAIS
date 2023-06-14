@@ -272,7 +272,6 @@
     })
 
     watch(addAuthoritiesData, () => {
-      console.log('data approver telah masuk')
       sysconfigFetch.fetchApproverAuthoritiesResult = addAuthoritiesData.value 
     })
     

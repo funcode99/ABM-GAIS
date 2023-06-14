@@ -174,24 +174,26 @@ watch(isVisible, () => {
               </div>
 
               <!-- for body -->
-              <div>
+              <div class="rounded-lg">
 
                 <div v-for="data in sortedData" :key="data.id">
 
                   <div>
 
                     <!-- untuk parent -->
-                      <div class="h-8 items-center bg-slate-400 flex text-left font-black">
-                        <div class="basis-4/6 pl-1">{{ data.menu }}</div>
+                      <div class="h-8 items-center bg-blue text-white border-b border-white flex text-left font-black">
+
+                          <div class="basis-4/6 pl-1">{{ data.menu }}</div>
                           <div class="basis-1/6"></div>
                           <div class="basis-1/6"></div>
+                          
                       </div>
                 
                       <!-- untuk child & grand child -->
                       <div class="flex flex-col" v-for="inner in data.child" :key="data.id">
 
                         <!-- untuk child -->
-                        <div class="flex items-center text-left gap-2 h-7 bg-slate-300">
+                        <div class="flex items-center text-left gap-2 h-7 bg-[#c1c0c0] border-b border-white">
 
                           <div class="pl-7 flex-1 font-black">
                               {{ inner.menu }}
@@ -205,7 +207,7 @@ watch(isVisible, () => {
                         </div>
 
                         <!-- untuk grand child -->
-                        <div class="flex items-center text-left gap-2 h-7 bg-slate-200" v-for="innerinner in inner.grand_child">
+                        <div class="flex items-center text-left gap-2 h-7 bg-slate-100" v-for="innerinner in inner.grand_child">
                           <div class="pl-14 flex-1 font-black">
                               {{ innerinner.menu }}
                           </div>
