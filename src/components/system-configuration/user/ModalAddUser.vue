@@ -21,7 +21,7 @@
   const emits = defineEmits(['addUser', 'fetchSiteForCompany'])
 
   let fullname = ref('')
-  let username = ref(['', 0])
+  let username = ref(['', 0, 0])
   let usernameNonEmployee = ref('')
   let email = ref('')
   let password = ref('')
@@ -43,15 +43,14 @@
 
     isVisible.value = false
 
-    // di ujung ada koma ternyata gak ngaruh
     formState.user.fullname = fullname.value
     formState.user.username = username.value
     formState.user.email = email.value
     formState.user.password = password.value
     formState.user.roleId = role.value[0]
     formState.user.approvalAuthId = selected.value
-    formState.user.companyId = location.value[1]
-    formState.user.siteId = location.value[0]
+    formState.user.companyId = company.value
+    formState.user.siteId = location.value
     formState.user.idStatusMenu = idStatusMenu.value
 
     emits('addUser')
@@ -87,8 +86,12 @@
 
   let isLoading = ref(false)
 
+  watch(isEmployee, () => {
+    company.value = username.value[1]    
+  })
+
   watch(username, () => {
-      company.value = username.value[1]
+    company.value = username.value[1]
   })
 
   watch(company, () => {
@@ -103,6 +106,7 @@
   })
 
   watch(responseSiteByCompanyIdArray, () => {
+    location.value = username.value[2]
     isLoading.value = false
   })
 
@@ -161,7 +165,7 @@
                     />
     
                     <select id="username" v-if="isEmployee" v-model="username" :class="inputStylingClass">
-                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company]">
+                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company, data.id_site]">
                         {{ data.employee_name }}
                       </option>
                     </select>
@@ -269,7 +273,7 @@
                 <div class="mb-6 flex flex-col gap-2">
                   
                     <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
-                    <select id="company" v-model="company" :class="inputStylingClass">
+                    <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
                       <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" >
                         {{ data.company_name }}
                       </option>
@@ -281,7 +285,7 @@
 
                     <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
                     
-                    <select :disabled="isLoading" id="location" v-model="location" :class="inputStylingClass">
+                    <select :disabled="isLoading || isEmployee" id="location" v-model="location" :class="inputStylingClass">
                       
                       <option v-for="data in responseSiteByCompanyIdArray" :key="data.id" :value="data.id" >
                           {{ data.site_name }}
