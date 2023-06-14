@@ -167,7 +167,8 @@ const save = async () => {
       timer: 1500,
     });
     reset()
-    router.push({path: '/stockinatk'})
+    router.go({path : '/stockinatk'})
+    // router.push({path: '/stockinatk'})
 };
 const reset = async () => {
   selectedCompany.value = ''

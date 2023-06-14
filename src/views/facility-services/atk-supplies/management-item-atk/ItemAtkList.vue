@@ -28,8 +28,8 @@ import Api from "@/utils/Api";
 const sidebar = useSidebarStore();
 
 //for sort & search
-let selectedCompany = ref("Company");
-let selectedWarehouse = ref("Warehouse")
+let selectedCompany = ref("");
+let selectedWarehouse = ref("")
 let selectedSite = ref("Site");
 // let selectedWarehouse = ref("Warehouse")
 let selectedUOM = ref("UOM")
@@ -47,7 +47,7 @@ let remark = ref("")
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
-const selectedType = ref("Item");
+const selectedType = ref("");
 const selectedTypeWarehouse = ref("Warehouse");
 const selectedTypeCompany = ref("Company");
 let sortedbyASC = true;
@@ -67,31 +67,33 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let lenghtPagination = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1
-  showingValue.value = pageOfItem
+  fetchData(pageOfItem,selectedType.value,selectedCompany.value,selectedWarehouse.value)
+  // console.log(paginateIndex.value)
 };
 
 //for filter & reset button
 const filterDataByType = () => {
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
   // console.log(selectedCompany.value)
-  if(selectedType.value != ''){
-    sortedData.value = instanceArray.filter(
-      (item) => item.item_name === selectedType.value
-    );
-  }
-  if(selectedCompany.value != ''){
-    sortedData.value = instanceArray.filter(
-      (item) => item.id_company === selectedCompany.value
-    );
-  }
-  if (selectedWarehouse.value != ''){
-    sortedData.value = instanceArray.filter(
-      (item) => item.id_warehouse === selectedWarehouse.value
-    );
-  }
+  // if(selectedType.value != ''){
+  //   sortedData.value = instanceArray.filter(
+  //     (item) => item.item_name === selectedType.value
+  //   );
+  // }
+  // if(selectedCompany.value != ''){
+  //   sortedData.value = instanceArray.filter(
+  //     (item) => item.id_company === selectedCompany.value
+  //   );
+  // }
+  // if (selectedWarehouse.value != ''){
+  //   sortedData.value = instanceArray.filter(
+  //     (item) => item.id_warehouse === selectedWarehouse.value
+  //   );
+  // }
   // else{
   //   sortedData.value = filteredR;
   //   lengthCounter = sortedData.value.length;
@@ -108,8 +110,10 @@ const filterDataByType = () => {
 
 //for filter & reset button
 const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedType.value = "Type";
+  selectedType.value = ''
+  selectedCompany.value = ''
+  selectedWarehouse.value = ''
+  fetchData(showingValue.value,"","","")
 };
 
 //for check & uncheck all
@@ -228,18 +232,21 @@ const fetchCondition = async () => {
   id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
   // changeCompany()
 };
-const fetchData = async () => {
+const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/management_atk/get");
-  // console.log(res.data.data)
+  const res = await Api.get(`/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}`);
   itemdata.value = res.data.data.data;
   instanceArray = itemdata.value;
   // console.log(instanceArray)
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  lenghtPagination = res.data.data.total
+  paginateIndex.value = res.data.data.current_page - 1
+  showingValue.value = res.data.data.current_page
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+
 const changeCompany = async (id_company) => {
   fetchBrandCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
@@ -309,7 +316,7 @@ const save = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchData()
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
     lockScrollbarEdit.value = false
   // lockScrollbar.value= false
 };
@@ -346,7 +353,7 @@ const deleteValue = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchData()
+        fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
       });
     } else {
       return;
@@ -358,7 +365,7 @@ const deleteValue = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchCondition()
-  fetchData()
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
 });
 //for searching
 const filteredItems = (search) => {
@@ -632,10 +639,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     :class="data.current_stock <= data.alert_qty ? 'font-JakartaSans font-normal text-sm text-red' : 'font-JakartaSans font-normal text-sm'"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="(data, index) in sortedData"
                     :key="data.id"
                   >
                     <td class="p-0">
@@ -891,11 +895,11 @@ const getSessionForSidebar = () => {
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              {{ Math.min(showingValue * pageMultiplier, lenghtPagination) }}
+              of {{ lenghtPagination }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="lenghtPagination"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
