@@ -66,14 +66,18 @@ const submitEdit = () => {
   formEditState.jobBand.jobBandHotelFare = hotelFare.value;
   formEditState.jobBand.jobBandMealrate = mealsRate.value;
   formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
-  arrayDetail.value = inputValues.value.map((item, index) => {
+
+  const length = addZona.length;
+  tlkRatevalue.value = tlkRatevalue.value.slice(0, length);
+
+  const arrayDetail = addZona.map((item, index) => {
     return {
       id_zona: item.id_zona,
-      tlk_rate: tlkRatevalue.value[index],
+      tlk_rate: tlkRatevalue.value[index] || "",
     };
   });
 
-  formEditState.jobBand.arrayDetail = arrayDetail.value;
+  formEditState.jobBand.arrayDetail = arrayDetail;
 
   isVisible.value = false;
   emits("changeJobband");
@@ -156,15 +160,19 @@ const formattedMealsRate = computed({
 });
 
 const formattedGrossHari = computed(() => {
-  return tlkRatevalue.value.map((value) => {
-    if (value === "" || value === "0") {
-      return "";
-    } else {
-      return parseFloat(value).toLocaleString("id-ID", {
-        minimumFractionDigits: 0,
-      });
-    }
-  });
+  if (tlkRatevalue.value && tlkRatevalue.value.length > 0) {
+    return tlkRatevalue.value.map((value) => {
+      if (value === undefined || value === null || value === "") {
+        return "";
+      } else {
+        return parseFloat(value).toLocaleString("id-ID", {
+          minimumFractionDigits: 0,
+        });
+      }
+    });
+  } else {
+    return [];
+  }
 });
 
 const updateGrossHari = (event, index) => {
@@ -172,7 +180,11 @@ const updateGrossHari = (event, index) => {
     .replace(/[^\d.]/g, "")
     .replaceAll(".", "");
 
-  tlkRatevalue.value[index] = formattedValue || "";
+  if (formattedValue === "") {
+    tlkRatevalue.value[index] = "";
+  } else {
+    tlkRatevalue.value[index] = formattedValue;
+  }
 };
 
 const updateHotelFare = (event) => {
