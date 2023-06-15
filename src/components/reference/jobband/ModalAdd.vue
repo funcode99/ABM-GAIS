@@ -319,9 +319,6 @@ function formatCurrency() {
                 </td>
               </tr>
             </tbody>
-            {{
-              arrayDetail
-            }}
           </table>
         </div>
 

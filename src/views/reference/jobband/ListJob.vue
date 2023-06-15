@@ -37,7 +37,7 @@ let editJobBandDataid = ref();
 const editJobBand = async (data) => {
   editJobBandDataid.value = data;
   setTimeout(callEditApi, 500);
-  console.log(data);
+  // console.log(data);
 };
 
 const callEditApi = async () => {
@@ -49,14 +49,13 @@ const callEditApi = async () => {
       `/job_band/update_data/${editJobBandDataid.value}`,
       {
         band_job_name: formEditState.jobBand.jobBandName,
-        hotel_fare: parseInt(formEditState.jobBand.jobBandHotelFare),
-        meals_rate: parseInt(formEditState.jobBand.jobBandMealrate),
+        hotel_fare: formEditState.jobBand.jobBandHotelFare,
+        meals_rate: formEditState.jobBand.jobBandMealrate,
         id_company: formEditState.jobBand.jobBandIdCompany,
-        id_flight_class: parseInt(formEditState.jobBand.jobBandIdFlight),
+        id_flight_class: formEditState.jobBand.jobBandIdFlight,
+        array_detail: formEditState.jobBand.arrayDetail,
       }
     );
-
-    // console.log("Response:", response.data);
 
     Swal.fire({
       position: "center",
@@ -520,10 +519,10 @@ const exportToExcel = () => {
                       data.meals_rate,
                       data.id_company,
                       data.id_flight_class,
-                      data?.detail,
-                      data.id,
+                      data.detail,
                     ]"
                   />
+                  <!-- {{ data.detail }} -->
                   <button @click="deleteJobBand(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>

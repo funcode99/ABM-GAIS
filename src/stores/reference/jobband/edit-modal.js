@@ -9,7 +9,7 @@ export const useFormEditStore = defineStore('add-form', {
                 jobBandHotelFare: '',
                 jobBandMealrate: '',
                 jobBandIdFlight: '',
-                arrayDetail: null,
+                arrayDetail: [],
             },
         }
     }
