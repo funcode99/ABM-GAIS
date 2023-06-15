@@ -2,6 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -132,7 +133,10 @@ const filterDataByType = async () => {
 };
 
 const resetData = () => {
-    fetch()
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
+  fetch();
 };
 
 //for searching
@@ -336,7 +340,7 @@ const getSessionForSidebar = () => {
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
                     v-for="(data, index) in sortedData.slice(
@@ -363,6 +367,11 @@ const getSessionForSidebar = () => {
                         </button>
                       </router-link>
                     </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="10"/>
                   </tr>
                 </tbody>
               </table>
