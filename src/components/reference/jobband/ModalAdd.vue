@@ -1,7 +1,4 @@
 <script setup>
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
@@ -11,7 +8,7 @@ import Multiselect from "@vueform/multiselect";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, onBeforeMount } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "jobband-saved"]);
 
@@ -25,6 +22,10 @@ let FlightClass = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
+let tlkRate = ref(null);
+let id_zona = ref("");
+const inputValues = ref([]);
+const inputZonaValues = ref([]);
 
 let companyData = ref(null);
 let companyIdArray = ref(null);
@@ -37,24 +38,7 @@ let authorities = ref("");
 let currentAuthoritiesId = ref();
 let dropdownRemoveList = ref([]);
 let addZona = ref([]);
-
-const addField = (fieldType, isi) => {
-  if (isi) {
-    dropdownRemoveList.value.push(isi);
-  }
-
-  fieldType.push({
-    id_zona: authorities.value,
-    tlk_rate: "",
-    tlk_rate_api: "",
-  });
-};
-
-const removeField = (index, fieldType) => {
-  fieldType.splice(index, 1);
-  dropdownRemoveList.value.splice(index - 1, 1);
-  dropdownRemoveList.value.splice(index + 1, 1);
-};
+const arrayDetail = ref([]);
 
 //for get company in input
 const fetchGetCompany = async () => {
@@ -82,16 +66,24 @@ const fetchGetFlightClass = async () => {
 const fetchGetZona = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona/get/");
-  instanceArray = res.data.data;
-  addZona.value = instanceArray;
+  const res = await Api.get("/zona/get_id/");
+  addZona = res.data.data;
   // console.log("ini data zona" + JSON.stringify(res.data.data));
-  // console.log("ini instance array" +JSON.stringify(instanceArray));
+  // console.log("ini instance array" + JSON.stringify(instanceArray));
+  inputZonaValues.value = res.data.data;
+  // console.log(inputZonaValues.value);
+  inputZonaValues.value = inputZonaValues.value.map((item) => {
+    arrayDetail.value.push({ id_zona: item.id_zona, tlk_rate: "" });
+  });
 };
 
 onMounted(() => {
   fetchGetCompany();
   fetchGetFlightClass();
+  inputValues.value = addZona.value.map(() => "");
+});
+
+onBeforeMount(() => {
   fetchGetZona();
 });
 
@@ -106,15 +98,19 @@ const callAddApi = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
+    inputValues.value.map((item, index) => {
+      arrayDetail.value[index].tlk_rate = item;
+      console.log(item);
+    });
+
     await Api.post(`/job_band/store`, {
       band_job_name: jobBandName.value,
       hotel_fare: hotelFare.value.replace(/\./g, ""),
       meals_rate: mealsRate.value.replace(/\./g, ""),
       id_company: companyIdArray.value,
       id_flight_class: selectedFlightClass.value,
-      array_detail: approverLines.value,
+      array_detail: arrayDetail.value,
     });
-
     Swal.fire({
       position: "center",
       icon: "success",
@@ -149,6 +145,7 @@ watch(isVisible, () => {
 function formatCurrency() {
   hotelFare.value = hotelFare.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
   mealsRate.value = mealsRate.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
+  // tlkRate.value = tlkRate.value.replace(/\D/g, "");
 
   if (hotelFare.value === "" || hotelFare.value === "0") {
     hotelFare.value = "";
@@ -165,20 +162,6 @@ function formatCurrency() {
     mealsRate.value = formattedMealsRate.toLocaleString("id-ID");
     // Kirim formattedMealsRate ke API sebagai meals rate
   }
-
-  approverLines.value.forEach((input) => {
-    if (input.tlk_rate_api) {
-      input.tlk_rate_api = input.tlk_rate_api.replace(/\D/g, ""); // Menghapus semua karakter non-digit
-      if (input.tlk_rate_api === "" || input.tlk_rate_api === "0") {
-        input.tlk_rate_api = "";
-      } else {
-        const numericValue = parseInt(input.tlk_rate_api);
-        // console.log(numericValue);
-        input.tlk_rate_api = numericValue.toLocaleString("id-ID");
-        input.tlk_rate = numericValue;
-      }
-    }
-  });
 }
 </script>
 
@@ -308,78 +291,37 @@ function formatCurrency() {
                     >Gross/Hari</span
                   >
                 </th>
-                <th class="relative bg-blue">
-                  <span class="text-center items-center text-white capitalize"
-                    >Action</span
-                  >
-                </th>
               </tr>
             </thead>
 
             <tbody class="bg-[#F5F5F5]">
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="(input, index) in approverLines"
-                :key="`phoneInput-${index}`"
+                v-for="(data, index) in addZona"
+                :key="data.id_zona"
               >
                 <td class="text-center justify-center">
                   <select
-                    v-model="input.id_zona"
-                    :id="index"
-                    :disabled="approverLines.length - 1 > index ? true : false"
                     class="w-full border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+                    disabled
                   >
-                    <option
-                      v-for="data in addZona"
-                      :key="data.id"
-                      :value="data.id"
-                      :hidden="
-                        dropdownRemoveList.includes(data.id) ? true : false
-                      "
-                    >
-                      {{ data.zona }}
+                    <option :value="data.id_zona" selected>
+                      {{ data.zona_name }}
                     </option>
                   </select>
                 </td>
-
-                <td
-                  v-if="
-                    input.level != 'R'
-                      ? (currentAuthoritiesId = input.id_zona)
-                      : ''
-                  "
-                  class="hidden"
-                ></td>
-
                 <td class="text-center justify-center">
                   <input
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                    v-model="input.tlk_rate_api"
-                    @input="formatCurrency"
-                  />
-                </td>
-
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <button @click="removeField(index, approverLines)">
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td>
-              </tr>
-
-              <tr>
-                <td></td>
-                <td></td>
-                <td class="flex justify-center">
-                  <img
-                    class="cursor-pointer w-6 h-6"
-                    :src="iconPlus"
-                    alt=""
-                    @click="addField(approverLines, currentAuthoritiesId)"
+                    v-model="inputValues[index]"
                   />
                 </td>
               </tr>
             </tbody>
+            {{
+              arrayDetail
+            }}
           </table>
         </div>
 
