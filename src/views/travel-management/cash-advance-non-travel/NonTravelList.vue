@@ -2,6 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
 import deleteCheckedArrayUtils from "@/utils/deleteCheckedArray";
@@ -131,6 +132,9 @@ const fetch = async () => {
 };
 
 const resetData = () => {
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
   fetch();
 };
 
@@ -444,7 +448,7 @@ onBeforeMount(() => {
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
                     v-for="(data, index) in sortedData.slice(
@@ -479,6 +483,11 @@ onBeforeMount(() => {
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="10"/>
                   </tr>
                 </tbody>
               </table>

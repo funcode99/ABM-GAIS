@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -218,7 +219,7 @@ const getSessionForSidebar = () => {
                   </tr>
                 </thead>
 
-                <tbody class="font-JakartaSans font-normal text-xs">
+                <tbody class="font-JakartaSans font-normal text-xs" v-if="dataItem.length > 0">
                   <tr class="h-16" v-for="data in dataItem" :key="data.id">
                     <td class="border border-[#B9B9B9]">
                       {{ data.item_name }}
@@ -236,6 +237,11 @@ const getSessionForSidebar = () => {
                       {{ format_price(data.total) }}
                     </td>
                     <td class="border border-[#B9B9B9]">{{ data.remarks }}</td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="6"/>
                   </tr>
                 </tbody>
               </table>

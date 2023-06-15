@@ -37,7 +37,6 @@ const emits = defineEmits(["unlockScrollbar"]);
         >
           <div class="mb-6">
             <label
-              for="event"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Doc Number</label
             >
@@ -51,7 +50,6 @@ const emits = defineEmits(["unlockScrollbar"]);
           </div>
           <div class="mb-6">
             <label
-              for="event"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Doc Currency</label
             >
@@ -69,7 +67,6 @@ const emits = defineEmits(["unlockScrollbar"]);
         >
           <div class="mb-6">
             <label
-              for="date"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Doc Date</label
             >
@@ -82,7 +79,6 @@ const emits = defineEmits(["unlockScrollbar"]);
           </div>
           <div class="mb-6">
             <label
-              for="event"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Company Code</label
             >
@@ -100,7 +96,6 @@ const emits = defineEmits(["unlockScrollbar"]);
         >
           <div class="mb-6">
             <label
-              for="date"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Ref Doc</label
             >
@@ -114,7 +109,6 @@ const emits = defineEmits(["unlockScrollbar"]);
           </div>
           <div class="mb-6">
             <label
-              for="event"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Posting Date</label
             >
