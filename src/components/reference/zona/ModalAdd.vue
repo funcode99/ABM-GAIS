@@ -17,6 +17,8 @@ let zonaName = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
+let selectedZona = ref("Zona");
+let Zona = ref("");
 
 let companyData = ref(null);
 let companyIdArray = ref(null);
@@ -49,9 +51,19 @@ const fetchGetCompany = async () => {
   // console.log("Data company setelah perubahan:", companyData);
 };
 
+//for get zona in select
+const fetchGetZona = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/zona/get_id/");
+  Zona.value = res.data.data;
+  // console.log("ini data zona" + JSON.stringify(res.data.data));
+};
+
 onMounted(() => {
   fetchCity();
   fetchGetCompany();
+  fetchGetZona();
 });
 
 const saveZona = async () => {
@@ -65,7 +77,7 @@ const callAddApi = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     await Api.post(`/zona/store`, {
-      zona_name: zonaName.value,
+      id_zona: selectedZona.value,
       id_city: cityIdArray.value,
       id_company: companyIdArray.value,
     });
@@ -85,7 +97,7 @@ const callAddApi = async () => {
 };
 
 const resetInput = () => {
-  zonaName.value = "";
+  selectedZona.value = "Zona";
   cityIdArray.value = [];
   companyIdArray.value = [];
 };
@@ -154,13 +166,16 @@ watch(isVisible, () => {
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Zona<span class="text-red">*</span></label
           >
-          <input
-            type="text"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Zona"
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="zonaName"
-          />
+            v-model="selectedZona"
+          >
+            <option disabled selected>Zona</option>
+            <option v-for="zona in Zona" :value="zona.id_zona">
+              {{ zona.zona_name }}
+            </option>
+          </select>
         </div>
 
         <div class="mb-6 w-full px-4">
