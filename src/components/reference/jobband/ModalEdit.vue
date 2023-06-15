@@ -24,7 +24,6 @@ let hotelFare = ref(props.formContent[1]);
 let mealsRate = ref(props.formContent[2]);
 let selectedFlightClass = ref(props.formContent[4]);
 
-//for inner table
 let addZona = ref([]);
 let tlkRatevalue = ref([]);
 let idZonaValue = ref();
@@ -36,7 +35,6 @@ inputValues.value.forEach((item, index) => {
   idZonaValue.value = item.id_zona;
 });
 
-//for form
 const formEditState = useFormEditStore();
 
 let companyData = ref(null);
@@ -79,10 +77,8 @@ const submitEdit = () => {
 
   isVisible.value = false;
   emits("changeJobband");
-  console.log("Berhasil submit");
 };
 
-//for get jobband
 const fetchGetZona = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -90,7 +86,6 @@ const fetchGetZona = async () => {
   addZona = res.data.data;
 };
 
-//for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -101,7 +96,6 @@ const fetchGetCompany = async () => {
   });
 };
 
-//for get site in select
 const fetchGetFlightClass = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -135,7 +129,6 @@ watch(isVisible, (newValue) => {
   }
 });
 
-// Buat computed property formattedHotelFare
 const formattedHotelFare = computed({
   get() {
     return hotelFare.value
@@ -149,7 +142,6 @@ const formattedHotelFare = computed({
   },
 });
 
-// Buat computed property formattedMealsRate
 const formattedMealsRate = computed({
   get() {
     return mealsRate.value
@@ -163,7 +155,26 @@ const formattedMealsRate = computed({
   },
 });
 
-// Fungsi untuk meng-update nilai hotel fare
+const formattedGrossHari = computed(() => {
+  return tlkRatevalue.value.map((value) => {
+    if (value === "" || value === "0") {
+      return "";
+    } else {
+      return parseFloat(value).toLocaleString("id-ID", {
+        minimumFractionDigits: 0,
+      });
+    }
+  });
+});
+
+const updateGrossHari = (event, index) => {
+  const formattedValue = event.target.value
+    .replace(/[^\d.]/g, "")
+    .replaceAll(".", "");
+
+  tlkRatevalue.value[index] = formattedValue || "";
+};
+
 const updateHotelFare = (event) => {
   const formattedValue = event.target.value
     .replace(/[^\d.]/g, "")
@@ -172,7 +183,6 @@ const updateHotelFare = (event) => {
   hotelFare.value = formattedValue;
 };
 
-// Fungsi untuk meng-update nilai meals rate
 const updateMealsRate = (event) => {
   const formattedValue = event.target.value
     .replace(/[^\d.]/g, "")
@@ -181,7 +191,6 @@ const updateMealsRate = (event) => {
   mealsRate.value = formattedValue;
 };
 
-// Fungsi untuk memformat currency pada blur event
 const formatCurrency = () => {
   hotelFare.value = hotelFare.value.replace(/\D/g, "");
   mealsRate.value = mealsRate.value.replace(/\D/g, "");
@@ -356,7 +365,8 @@ const formatCurrency = () => {
                   <input
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                    v-model="tlkRatevalue[index]"
+                    v-model="formattedGrossHari[index]"
+                    @input="updateGrossHari($event, index)"
                   />
                 </td>
               </tr>

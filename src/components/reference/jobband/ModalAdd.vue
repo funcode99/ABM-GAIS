@@ -48,7 +48,6 @@ const fetchGetFlightClass = async () => {
   FlightClass.value = res.data.data;
 };
 
-//for get zona
 const fetchGetZona = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;

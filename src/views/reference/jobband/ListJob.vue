@@ -33,11 +33,9 @@ const formEditState = useFormEditStore();
 
 let editJobBandDataid = ref();
 
-//for edit
 const editJobBand = async (data) => {
   editJobBandDataid.value = data;
   setTimeout(callEditApi, 500);
-  // console.log(data);
 };
 
 const callEditApi = async () => {
@@ -56,7 +54,6 @@ const callEditApi = async () => {
         array_detail: formEditState.jobBand.arrayDetail,
       }
     );
-    console.log(formEditState.jobBand.arrayDetail);
     Swal.fire({
       position: "center",
       icon: "success",
@@ -70,7 +67,6 @@ const callEditApi = async () => {
   }
 };
 
-//for sort & search
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
@@ -83,39 +79,31 @@ let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
 let checkList = false;
 
-//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
-//for filter & reset button
 const filterDataByCompany = () => {
-  // console.log("ini selected" + selectedCompany.value);
   if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
   } else {
-    // console.log(instanceArray);
     sortedData.value = instanceArray.filter(
       (item) => item.id_company == selectedCompany.value
     );
-    // console.log("ini sorted data" + JSON.stringify(sortedData));
   }
 };
 
-//for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
   selectedCompany.value = "Company";
 };
 
-//for check & uncheck all
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
   const btnDelete = document.getElementById("btnDelete");
@@ -141,13 +129,11 @@ const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
-      // Lakukan tindakan penghapusan data yang sesuai di sini
       const row = check[i].parentNode.parentNode;
       row.parentNode.removeChild(row);
     }
   }
 
-  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
   const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
@@ -157,7 +143,6 @@ const deleteDataInCeklis = () => {
   }
 };
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Job Band", jsonData: "band_job_name" },
@@ -166,7 +151,6 @@ const tableHead = [
   { Id: 5, title: "Actions" },
 ];
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -184,7 +168,6 @@ onBeforeMount(() => {
   lengthCounter = sortedData.value.length;
 });
 
-//for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
@@ -206,36 +189,26 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-//for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 onMounted(() => {
   fetchGetCompany();
 });
 
-const getData = () => {
-  console.log("mengambil kembali data");
-  fetchJobBand();
-};
-
-//get all job band
 const fetchJobBand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/job_band/");
-  // console.log(res.data.data);
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 };
 
-//delete job band
 const deleteJobBand = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -278,7 +251,6 @@ const deleteJobBand = async (id) => {
   });
 };
 
-//for export
 const exportToExcel = () => {
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet("Job Band Data");
@@ -291,12 +263,10 @@ const exportToExcel = () => {
     { title: "Meals Rate" },
   ];
 
-  // Menambahkan header kolom
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  // Menambahkan data ke baris-baris selanjutnya
   sortedDataReactive.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
@@ -305,7 +275,6 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 5).value = data.meals_rate;
   });
 
-  // Menyimpan workbook menjadi file Excel
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -511,7 +480,6 @@ const exportToExcel = () => {
                 </td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
-                    @fetchJobband="getData"
                     @change-jobband="editJobBand(data.id)"
                     :formContent="[
                       data.band_job_name,
@@ -522,7 +490,6 @@ const exportToExcel = () => {
                       data.detail,
                     ]"
                   />
-                  <!-- {{ data.detail }} -->
                   <button @click="deleteJobBand(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>
@@ -634,7 +601,7 @@ tr th {
 
 .readmore-text {
   display: inline-block;
-  max-width: 200px; /* Atur sesuai kebutuhan */
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
