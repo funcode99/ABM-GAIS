@@ -12,54 +12,40 @@ import { ref, onMounted, watch, onBeforeMount } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "jobband-saved"]);
 
-let selectedCompany = ref("Company");
 let selectedFlightClass = ref("Flight Class");
 let jobBandName = ref("");
 let hotelFare = ref("");
 let mealsRate = ref("");
-let Company = ref("");
 let FlightClass = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
-let tlkRate = ref(null);
-let id_zona = ref("");
+
 const inputValues = ref([]);
 const inputZonaValues = ref([]);
+const initialInputValues = ref([]);
 
 let companyData = ref(null);
 let companyIdArray = ref(null);
 
-//for inner table
-let instanceArray = [];
-let approverLines = ref([]);
-let approverLinesSaved = ref([]);
-let authorities = ref("");
-let currentAuthoritiesId = ref();
-let dropdownRemoveList = ref([]);
 let addZona = ref([]);
 const arrayDetail = ref([]);
 
-//for get company in input
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   companyData = res.data.data;
-  // console.log("ini data company" + JSON.stringify(res.data.data));
   companyData.map((item) => {
     item.value = item.id;
   });
-  // console.log("Data company setelah perubahan:", companyData);
 };
 
-//for get site in select
 const fetchGetFlightClass = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/flight_class/");
   FlightClass.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 //for get zona
@@ -68,12 +54,12 @@ const fetchGetZona = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/zona/get_id/");
   addZona = res.data.data;
-  // console.log("ini data zona" + JSON.stringify(res.data.data));
-  // console.log("ini instance array" + JSON.stringify(instanceArray));
   inputZonaValues.value = res.data.data;
-  // console.log(inputZonaValues.value);
   inputZonaValues.value = inputZonaValues.value.map((item) => {
-    arrayDetail.value.push({ id_zona: item.id_zona, tlk_rate: "" });
+    arrayDetail.value.push({
+      id_zona: item.id_zona,
+      tlk_rate: "",
+    });
   });
 };
 
@@ -81,6 +67,7 @@ onMounted(() => {
   fetchGetCompany();
   fetchGetFlightClass();
   inputValues.value = addZona.value.map(() => "");
+  initialInputValues.value = [...inputValues.value];
 });
 
 onBeforeMount(() => {
@@ -99,8 +86,7 @@ const callAddApi = async () => {
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
     inputValues.value.map((item, index) => {
-      arrayDetail.value[index].tlk_rate = item;
-      console.log(item);
+      arrayDetail.value[index].tlk_rate = item.replace(/\./g, "");
     });
 
     await Api.post(`/job_band/store`, {
@@ -125,13 +111,16 @@ const callAddApi = async () => {
   }
 };
 
+const resetInputValues = () => {
+  inputValues.value = [...initialInputValues.value];
+};
+
 const resetInput = () => {
   jobBandName.value = "";
   hotelFare.value = "";
   mealsRate.value = "";
   companyIdArray.value = [];
   selectedFlightClass.value = "Flight";
-  approverLines.value = [];
 };
 
 watch(isVisible, () => {
@@ -139,20 +128,19 @@ watch(isVisible, () => {
     isAdding.value = false;
   } else {
     resetInput();
+    resetInputValues();
   }
 });
 
 function formatCurrency() {
-  hotelFare.value = hotelFare.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
-  mealsRate.value = mealsRate.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
-  // tlkRate.value = tlkRate.value.replace(/\D/g, "");
+  hotelFare.value = hotelFare.value.replace(/\D/g, "");
+  mealsRate.value = mealsRate.value.replace(/\D/g, "");
 
   if (hotelFare.value === "" || hotelFare.value === "0") {
     hotelFare.value = "";
   } else {
     const formattedHotelFare = parseFloat(hotelFare.value.replace(/\./g, ""));
     hotelFare.value = formattedHotelFare.toLocaleString("id-ID");
-    // Kirim formattedHotelFare ke API sebagai hotel fare
   }
 
   if (mealsRate.value === "" || mealsRate.value === "0") {
@@ -160,8 +148,16 @@ function formatCurrency() {
   } else {
     const formattedMealsRate = parseFloat(mealsRate.value.replace(/\./g, ""));
     mealsRate.value = formattedMealsRate.toLocaleString("id-ID");
-    // Kirim formattedMealsRate ke API sebagai meals rate
   }
+
+  inputValues.value = inputValues.value.map((value) => {
+    if (value === "" || value === "0") {
+      return "";
+    } else {
+      const formattedValue = parseFloat(value.replace(/\./g, ""));
+      return formattedValue.toLocaleString("id-ID");
+    }
+  });
 }
 </script>
 
@@ -315,6 +311,7 @@ function formatCurrency() {
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
                     v-model="inputValues[index]"
+                    @input="formatCurrency"
                   />
                 </td>
               </tr>
