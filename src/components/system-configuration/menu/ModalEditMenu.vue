@@ -172,8 +172,7 @@
               <input
                     id="icon"
                     :class="inputStylingClass"
-                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base" 
-                    required 
+                    @change="updatePhoto" type="file" accept="image/*" class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
               />
               <h1 class="text-left">
                     Your current icon = {{ filename }}
