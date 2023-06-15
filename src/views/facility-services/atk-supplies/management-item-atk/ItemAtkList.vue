@@ -61,51 +61,23 @@ let itemdata = ref("")
 let editData = ref("")
 let idS = ref("")
 let checkedAlert = ref(false)
-
+let valueChecked = ref(1)
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 let lenghtPagination = ref(0)
-
+const searchFilter = ref("");
 //for paginations
 const onChangePage = (pageOfItem) => {
-  fetchData(pageOfItem,selectedType.value,selectedCompany.value,selectedWarehouse.value)
+  fetchData(pageOfItem,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
   // console.log(paginateIndex.value)
 };
 
 //for filter & reset button
 const filterDataByType = () => {
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
-  // console.log(selectedCompany.value)
-  // if(selectedType.value != ''){
-  //   sortedData.value = instanceArray.filter(
-  //     (item) => item.item_name === selectedType.value
-  //   );
-  // }
-  // if(selectedCompany.value != ''){
-  //   sortedData.value = instanceArray.filter(
-  //     (item) => item.id_company === selectedCompany.value
-  //   );
-  // }
-  // if (selectedWarehouse.value != ''){
-  //   sortedData.value = instanceArray.filter(
-  //     (item) => item.id_warehouse === selectedWarehouse.value
-  //   );
-  // }
-  // else{
-  //   sortedData.value = filteredR;
-  //   lengthCounter = sortedData.value.length;
-  //   onChangePage(1);
-  // }
-  // if (selectedType.value === "") {
-  //   sortedData.value = instanceArray;
-  // } else {
-  //   sortedData.value = instanceArray.filter(
-  //     (item) => item.item_name === selectedType.value
-  //   );
-  // }
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
 };
 
 //for filter & reset button
@@ -113,7 +85,7 @@ const resetData = () => {
   selectedType.value = ''
   selectedCompany.value = ''
   selectedWarehouse.value = ''
-  fetchData(showingValue.value,"","","")
+  fetchData(showingValue.value,"","","",1,searchFilter.value,pageMultiplier.value)
 };
 
 //for check & uncheck all
@@ -232,10 +204,10 @@ const fetchCondition = async () => {
   id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
   // changeCompany()
 };
-const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse) => {
+const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse,alert_qty,searchFilter,pageMultiplier) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}`);
+  const res = await Api.get(`/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}&alert_qty=${alert_qty}&search=${searchFilter}&perPage=${pageMultiplier}`);
   itemdata.value = res.data.data.data;
   instanceArray = itemdata.value;
   // console.log(instanceArray)
@@ -316,7 +288,7 @@ const save = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
     lockScrollbarEdit.value = false
   // lockScrollbar.value= false
 };
@@ -353,7 +325,7 @@ const deleteValue = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
+        fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
       });
     } else {
       return;
@@ -365,40 +337,50 @@ const deleteValue = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchCondition()
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value)
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
 });
 //for searching
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    // console.log(item)
-    (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
-      (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
-      (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,search,pageMultiplier.value)
+  // sortedData.value = instanceArray;
+  // const filteredR = sortedData.value.filter((item) => {
+  //   // console.log(item)
+  //   (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
+  //     (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+  //   return (
+  //     (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
+  //     (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+  //   );
+  // });
+  // sortedData.value = filteredR;
+  // lengthCounter = sortedData.value.length;
+  // onChangePage(1);
 };
+const perPage = async () => {
+    // console.log(pageMultiplier.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+    // console.log("ini data parent" + JSON.stringify(res.data.data));
+  };
 const selectAlert = (checked) => {
-  sortedData.value = instanceArray;
+  // sortedData.value = instanceArray;
   // console.log(checked)
   if(checked === false){
-    const filteredR = sortedData.value.filter((item) => {
-    if(item.current_stock <= item.alert_qty){
-      return((item.alert_qty))
-      }
-    });
-    sortedData.value = filteredR;
-    lengthCounter = sortedData.value.length;
-    onChangePage(1);
+    valueChecked.value = 0
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value)
+    // const filteredR = sortedData.value.filter((item) => {
+    // if(item.current_stock <= item.alert_qty){
+    //   return((item.alert_qty))
+    //   }
+    // });
+    // sortedData.value = filteredR;
+    // lengthCounter = sortedData.value.length;
+    // onChangePage(1);
   }else{
-    sortedData.value = instanceArray;
-    lengthCounter = sortedData.value.length;
-    onChangePage(1);
+    valueChecked.value = 1
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value)
+    // sortedData.value = instanceArray;
+    // lengthCounter = sortedData.value.length;
+    // onChangePage(1);
   }
   
 };
@@ -580,6 +562,7 @@ const getSessionForSidebar = () => {
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
+              @change="perPage"
             >
               <option>10</option>
               <option>25</option>

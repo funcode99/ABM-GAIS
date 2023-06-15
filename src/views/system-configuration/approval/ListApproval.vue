@@ -107,9 +107,12 @@
 
     }
 
+   let responseStatusMenu = ref('')
+   let responseMessageMenu = ref('')
+
     onBeforeMount(() => {
       getSessionForSidebar()
-      fetchMenuUtils(instanceArray, addMenuData)
+      fetchMenuUtils(instanceArray, responseStatusMenu, responseMessageMenu, addMenuData)
       fetchCompanyUtils(instanceArray, addCompanyData)
       fetchDocumentCodeUtils(instanceArray, addDocumentData)
       fetchApproverAuthoritiesUtils(instanceArray, addAuthoritiesData)

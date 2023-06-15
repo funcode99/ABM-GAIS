@@ -2,27 +2,55 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
+import showicon from "@/assets/eye.png";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import moment from "moment";
 
-import datatravel from "@/utils/Api/travel-cash-advance/datatravel.js";
+import Api from "@/utils/Api";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
+const listStatus = [
+  { id: 0, title: "Draft" },
+  { id: 1, title: "Waiting Approval" },
+  { id: 2, title: "Revision" },
+  { id: 3, title: "Cancelled" },
+  { id: 9, title: "Rejected" },
+  { id: 10, title: "Completed" },
+];
+
+// format date & price
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
 
 //for sort, search, & filter
 const date = ref();
-const search = ref("");
 const selectedType = ref("Status");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
+let filter = reactive({
+  status: "",
+  date: "",
+  search: "",
+});
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -56,11 +84,13 @@ const selectAll = (checkValue) => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Requestor", jsonData: "name" },
-  { Id: 5, title: "Total", jsonData: "total" },
-  { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
+  { Id: 3, title: "CA No", jsonData: "no_ca" },
+  { Id: 4, title: "Requestor", jsonData: "employee_name" },
+  { Id: 5, title: "Item", jsonData: "item_count" },
+  { Id: 6, title: "Currency", jsonData: "currency_name" },
+  { Id: 7, title: "Total", jsonData: "grand_total" },
+  { Id: 8, title: "Status", jsonData: "status" },
+  { Id: 9, title: "Actions" },
 ];
 
 //for sort
@@ -74,12 +104,40 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = datatravel;
+const fetch = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("cash_advance/travel/");
+  instanceArray = api.data.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+};
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetch();
 });
+
+//for filter & reset button
+const filterDataByType = async () => {
+  let payload = {
+    search: filter.search,
+    status: filter.status,
+    start_date: filter.date ? filter.date[0] : "",
+    end_date: filter.date ? filter.date[1] : "",
+  };
+  const api = await Api.get("cash_advance/travel", { params: payload });
+  instanceArray = api.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+const resetData = () => {
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
+  fetch();
+};
 
 //for searching
 const filteredItems = (search) => {
@@ -147,11 +205,15 @@ const getSessionForSidebar = () => {
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedType"
+                  v-model="filter.status"
                 >
                   <option disabled selected>status</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.status }}
+                  <option
+                    v-for="data in listStatus"
+                    :key="data.id"
+                    :value="data.id"
+                  >
+                    {{ data.title }}
                   </option>
                 </select>
               </div>
@@ -164,16 +226,18 @@ const getSessionForSidebar = () => {
                 </p>
 
                 <VueDatePicker
-                  v-model="date"
+                  v-model="filter.date"
                   range
                   :enable-time-picker="false"
                   class="my-date"
+                  format="yyyy-mm-dd"
                 />
               </div>
 
               <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  @click="filterDataByType"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -182,6 +246,7 @@ const getSessionForSidebar = () => {
                 </button>
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
                 >
                   <span>
                     <img :src="icon_reset" class="w-5 h-5" />
@@ -215,8 +280,8 @@ const getSessionForSidebar = () => {
                   placeholder="Search..."
                   type="text"
                   name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
+                  v-model="filter.search"
+                  @keyup="filterDataByType"
                 />
               </label>
             </div>
@@ -275,31 +340,38 @@ const getSessionForSidebar = () => {
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                    v-for="(data, index) in sortedData.slice(
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.ca_no }}</td>
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.total }}</td>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ format_date(data.created_at) }}</td>
+                    <td>{{ data.no_ca }}</td>
+                    <td>{{ data.employee_name }}</td>
+                    <td>{{ data.item_count }}</td>
+                    <td>{{ data.currency_name }}</td>
+                    <td>{{ format_price(data.grand_total) }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewcashadvancetravel">
+                      <router-link :to="`/viewcashadvancetravel/${data.id}`">
                         <button>
-                          <img :src="editicon" class="w-6 h-6" />
+                          <img :src="showicon" class="w-6 h-6" />
                         </button>
                       </router-link>
                     </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="10"/>
                   </tr>
                 </tbody>
               </table>
