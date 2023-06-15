@@ -190,7 +190,9 @@
             </div>
     
             <div class="mb-3 text-left flex flex-col gap-1">
-              <label for="status_menu">Status</label>
+              <label for="status_menu">
+                Status <span class="text-red-star">*</span>
+              </label>
               <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu" required>
                     <option v-for="data in statusMenu" :key="data.id" :value="data.code">
                       {{ data.status }}
@@ -198,7 +200,9 @@
               </select>
             </div>
     
-            <label for="company">Company</label>
+            <label for="company">
+              Company<span class="text-red-star">*</span>
+            </label>
             
             <Multiselect
                 id="company"
@@ -237,7 +241,9 @@
 
     
             <div class="mb-3 text-left flex flex-col gap-1">
-              <label for="sort">Sort</label>
+              <label for="sort">
+                Sort <span class="text-red-star">*</span>
+              </label>
               <select id="sort" :class="inputStylingClass" v-model="sort" required>
                       <option>1</option>
                       <option>2</option>
