@@ -56,7 +56,7 @@ const callEditApi = async () => {
         array_detail: formEditState.jobBand.arrayDetail,
       }
     );
-
+    console.log(formEditState.jobBand.arrayDetail);
     Swal.fire({
       position: "center",
       icon: "success",

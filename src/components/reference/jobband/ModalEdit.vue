@@ -1,9 +1,5 @@
 <script setup>
-import iconPlus from "@/assets/navbar/icon_plus.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import checkIcon from "@/assets/checkmark.png";
-import closeIcon from "@/assets/close-window.png";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
@@ -22,31 +18,23 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-//for form
-let Company = ref("");
 let FlightClass = ref();
 let jobBandName = ref(props.formContent[0]);
 let hotelFare = ref(props.formContent[1]);
 let mealsRate = ref(props.formContent[2]);
 let selectedFlightClass = ref(props.formContent[4]);
-let idZona = props.formContent[5];
-let idZonaActual = ref(null);
-let idJobBand = ref(props.formContent[6]);
 
 //for inner table
-let dropdownRemoveList = ref([]);
-let zonaCode = ref("");
-let jobBandCode = ref("");
-let tlkRate = ref("");
-// let zonaTlkRateLines = ref(props.formContent[5] || []);
-let addZonaTlkRateData = ref([]);
-let currentAuthoritiesId = ref();
-let instanceArray = [];
 let addZona = ref([]);
-const arrayDetail = ref([]);
-const inputValues = ref([]);
-const inputZonaValues = ref([]);
-let CurrentInputValues = ref(props.formContent[5] || []);
+let tlkRatevalue = ref([]);
+let idZonaValue = ref();
+let arrayDetail = ref([]);
+let inputValues = ref(props.formContent[5]);
+
+inputValues.value.forEach((item, index) => {
+  tlkRatevalue.value[index] = item.tlk_rate;
+  idZonaValue.value = item.id_zona;
+});
 
 //for form
 const formEditState = useFormEditStore();
@@ -72,7 +60,7 @@ const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.jobBand) {
-    formEditState.jobBand = {}; // Inisialisasi objek jika belum ada
+    formEditState.jobBand = {};
   }
 
   formEditState.jobBand.jobBandIdCompany = companyIdArray.value;
@@ -80,11 +68,17 @@ const submitEdit = () => {
   formEditState.jobBand.jobBandHotelFare = hotelFare.value;
   formEditState.jobBand.jobBandMealrate = mealsRate.value;
   formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
-  formEditState.jobBand.arrayDetail = CurrentInputValues.value;
+  arrayDetail.value = inputValues.value.map((item, index) => {
+    return {
+      id_zona: item.id_zona,
+      tlk_rate: tlkRatevalue.value[index],
+    };
+  });
 
-  console.log(CurrentInputValues.value);
+  formEditState.jobBand.arrayDetail = arrayDetail.value;
+
   isVisible.value = false;
-  emits("changeJobband"); // Memanggil event 'changeJobband'
+  emits("changeJobband");
   console.log("Berhasil submit");
 };
 
@@ -94,13 +88,6 @@ const fetchGetZona = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/zona/get_id/");
   addZona = res.data.data;
-  // console.log("ini data zona" + JSON.stringify(res.data.data));
-  // console.log("ini instance array" + JSON.stringify(instanceArray));
-  inputZonaValues.value = res.data.data;
-  // console.log(inputZonaValues.value);
-  inputZonaValues.value = inputZonaValues.value.map((item) => {
-    arrayDetail.value.push({ id_zona: item.id_zona, tlk_rate: "" });
-  });
 };
 
 //for get company in select
@@ -179,51 +166,43 @@ const formattedMealsRate = computed({
 // Fungsi untuk meng-update nilai hotel fare
 const updateHotelFare = (event) => {
   const formattedValue = event.target.value
-    .replace(/[^\d.]/g, "") // Menghapus semua karakter non-digit dan non-titik
-    .replaceAll(".", ""); // Menghapus semua titik agar dapat di-parse sebagai angka
+    .replace(/[^\d.]/g, "")
+    .replaceAll(".", "");
 
   hotelFare.value = formattedValue;
-};
-
-const updateTlkRate = (event, index) => {
-  console.log(CurrentInputValues.value[index]);
-  if (CurrentInputValues.value[index]) {
-    CurrentInputValues.value[index] = {
-      ...CurrentInputValues.value[index],
-      tlk_rate: event.target.value,
-    };
-  }
 };
 
 // Fungsi untuk meng-update nilai meals rate
 const updateMealsRate = (event) => {
   const formattedValue = event.target.value
-    .replace(/[^\d.]/g, "") // Menghapus semua karakter non-digit dan non-titik
-    .replaceAll(".", ""); // Menghapus semua titik agar dapat di-parse sebagai angka
+    .replace(/[^\d.]/g, "")
+    .replaceAll(".", "");
 
   mealsRate.value = formattedValue;
 };
 
 // Fungsi untuk memformat currency pada blur event
 const formatCurrency = () => {
-  hotelFare.value = hotelFare.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
-  mealsRate.value = mealsRate.value.replace(/\D/g, ""); // Menghapus semua karakter non-digit
+  hotelFare.value = hotelFare.value.replace(/\D/g, "");
+  mealsRate.value = mealsRate.value.replace(/\D/g, "");
 
   if (hotelFare.value === "" || hotelFare.value === "0") {
     hotelFare.value = "";
   } else {
     const formattedHotelFare = parseFloat(hotelFare.value.replace(/\./g, ""));
-    hotelFare.value = formattedHotelFare.toString(); // Mengubah nilai menjadi string tanpa desimal
-    // Kirim formattedHotelFare ke API sebagai hotel fare
+    hotelFare.value = formattedHotelFare.toString();
   }
 
   if (mealsRate.value === "" || mealsRate.value === "0") {
     mealsRate.value = "";
   } else {
     const formattedMealsRate = parseFloat(mealsRate.value.replace(/\./g, ""));
-    mealsRate.value = formattedMealsRate.toString(); // Mengubah nilai menjadi string tanpa desimal
-    // Kirim formattedMealsRate ke API sebagai meals rate
+    mealsRate.value = formattedMealsRate.toString();
   }
+
+  inputValues.value.forEach((item, index) => {
+    tlkRatevalue.value[index] = item.tlk_rate;
+  });
 };
 </script>
 
@@ -360,7 +339,7 @@ const formatCurrency = () => {
             <tbody class="bg-[#F5F5F5]">
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="(data, index) in CurrentInputValues"
+                v-for="(data, index) in addZona"
                 :key="data.id_zona"
               >
                 <td class="text-center justify-center">
@@ -377,8 +356,7 @@ const formatCurrency = () => {
                   <input
                     type="text"
                     class="px-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
-                    @input="updateTlkRate($event, index)"
-                    :value="data.tlk_rate"
+                    v-model="tlkRatevalue[index]"
                   />
                 </td>
               </tr>
