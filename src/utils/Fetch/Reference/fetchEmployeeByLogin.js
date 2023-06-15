@@ -1,6 +1,6 @@
 import Api from '@/utils/Api'
 
-const fetchEmployee = async (instanceArray, addEmployeeData) => {
+const fetchEmployeeByLogin = async (instanceArray, addEmployeeData) => {
     try {
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -12,4 +12,4 @@ const fetchEmployee = async (instanceArray, addEmployeeData) => {
     }
 }
 
-export default fetchEmployee
+export default fetchEmployeeByLogin
