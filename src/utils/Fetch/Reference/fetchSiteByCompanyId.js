@@ -7,7 +7,6 @@ const fetchSiteByCompanyId = async (siteResult, companyId) => {
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/company/get_site/${companyId}`)
       siteResult.value = api.data.data
-      console.log('selesai mengambil data site')
     } catch (error) {
       console.log(error)
     }

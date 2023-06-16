@@ -39,10 +39,11 @@
     let usernameEmployee = ref(props.formContent[8])
     let idStatusMenu = ref(props.formContent[9])
 
-    let responseRoleArray = ref([])
     let responseCompanyArray = ref([])
-    let responseSiteByCompanyIdArray = ref([])
     let responseEmployeeArray = ref([])
+
+    let responseRoleArray = ref([])
+    let responseSiteByCompanyIdArray = ref([])
     let responseAuthoritiesArray = ref([])
     let statusMenu = ref(null)
 
@@ -65,22 +66,27 @@
     const resetInput = () => {
 
       password.value = ''
-      // usernameEmployee.value = props.formContent[8]
+      usernameEmployee.value = props.formContent[8]
       username.value = props.formContent[0]
       email.value = props.formContent[1]
       selected.value = props.formContent[2]
       role.value = props.formContent[3]
-      company.value = props.formContent[4]
-      location.value = props.formContent[5]
       isEmployee.value = props.formContent[6] == 1 ? true : false 
       fullname.value = props.formContent[0]
-
     }
 
     watch(isVisible, () => {
+
+      if(isVisible.value === true) {
+        company.value = props.formContent[4]
+        location.value = props.formContent[5]
+      } else {
+        company.value = 0
+        location.value = 0
+      }
       
       if(isAdding.value == true) {
-      isAdding.value = false
+        isAdding.value = false
       } else {
         resetInput()
       }
@@ -94,8 +100,9 @@
 
     })
 
-    // watch(isEmployee, () => {
-    // })
+    watch(isEmployee, () => {
+
+    })
 
     watch(usernameEmployee, () => {
       emits('fetchEmployeeIndividualInfo', usernameEmployee.value)
@@ -108,25 +115,22 @@
     watch(company, () => {
       isLoading.value = true
       menuAccessStore.companyId = company.value
-      emits('fetchSiteForCompany')
+      if(company.value !== 0) {
+        emits('fetchSiteForCompany')
+      }
     })
 
     watch(menuAccessStore, () => {
       responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult
     })
 
-
-
     watch(responseSiteByCompanyIdArray, () => {
-
       if(fromSelect.value === false) {
           location.value = props.formContent[5]
       } else {
           location.value = referenceFetch.fetchIndividualEmployeeResult.id_site
       }
-
       isLoading.value = false
-
     })
 
     const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
@@ -168,7 +172,8 @@
           <div class="mb-6">
 
               <label for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
-                  Username<span class="text-red">*</span> {{ usernameEmployee }}
+                  Username<span class="text-red">*</span> 
+                  <!-- {{ usernameEmployee }} -->
               </label>
 
               <input
@@ -302,7 +307,8 @@
           <div class="mb-6 flex flex-col gap-2">
               
             <label for="company" class="text-sm">
-              Company<span class="text-red-star">*</span>
+              Company<span class="text-red-star">*</span> 
+              <!-- {{ company }} -->
             </label>
               
               <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
@@ -315,7 +321,10 @@
 
             <div v-if="!isLoading" class="mb-6 flex flex-col gap-2">
 
-              <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+              <label for="location" class="text-sm">
+                Location <span class="text-red-star">*</span> 
+                <!-- {{ location }} -->
+              </label>
 
               <select :disabled="isLoading || isEmployee" id="location" v-model="location" :class="inputStylingClass">
                 
@@ -329,7 +338,9 @@
 
             <div v-else class="flex flex-col gap-2">
 
-              <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+              <label for="location" class="text-sm">
+                Location <span class="text-red-star">*</span> 
+              </label>
 
               <select :disabled="isLoading" id="location" :class="inputStylingClass">
                 <option selected>
