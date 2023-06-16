@@ -16,10 +16,9 @@
     import selectAllCheckbox from '@/utils/selectAllCheckbox'
 
     import fetchRoleUtils from '@/utils/Fetch/System-Configuration/fetchRole'
-    // import fetchSiteUtils from '@/utils/Fetch/Reference/fetchSite'
     import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
-    import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
+    import fetchAllEmployeeUtils from '@/utils/Fetch/Reference/fetchAllEmployee'
 
     import fetchMenuStatusUtils from '@/utils/Fetch/System-Configuration/fetchMenuStatus'
     import fetchApproverAuthoritiesUtils from '@/utils/Fetch/System-Configuration/fetchApproverAuthorities.js'
@@ -256,7 +255,7 @@
       getSessionForSidebar()
       fetchRoleUtils(instanceArray, addRoleData)
       fetchCompanyUtils(instanceArray, addCompanyData)
-      fetchEmployeeByLoginUtils(instanceArray, addEmployeeData)
+      fetchAllEmployeeUtils(instanceArray, addEmployeeData)
 
       fetchMenuStatusUtils(instanceArray, addMenuStatusData)
       fetchApproverAuthoritiesUtils(instanceArray, addAuthoritiesData)
@@ -318,6 +317,20 @@
 
     const exportToExcel = () => {
       exportExcel('User Data', tableHead, sortedData, 'no', 'username', 'role_name', 'auth_name')
+    }
+
+    let employeeDataIndexNumber = ref()
+    let employeeData = ref()
+
+    const fetchEmployeeInfo = (employeeId) => {
+      
+      employeeDataIndexNumber.value = addEmployeeData.value.findIndex((item) => {
+        return item.id == employeeId
+      })
+
+      employeeData.value = addEmployeeData.value[employeeDataIndexNumber.value]
+      referenceFetch.fetchIndividualEmployeeResult = employeeData.value
+
     }
 
 </script>
@@ -416,7 +429,11 @@
                       </td>
 
                       <td class="flex flex-wrap gap-4 justify-center">
-                        <ModalEditUser @change-user="editExistingUser(data.id)" :formContent="[
+                        <ModalEditUser 
+                        @fetchSiteForCompany="fetchSiteByCompanyId"
+                        @fetchEmployeeIndividualInfo="fetchEmployeeInfo"
+                        @change-user="editExistingUser(data.id)" 
+                        :formContent="[
                           data.username, 
                           data.email, 
                           data.id_approval_auth, 

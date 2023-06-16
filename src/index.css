@@ -217,3 +217,18 @@ input[type=radio]:checked {
 .this {
   overflow-x: hidden;
 }
+
+.readmore-text {
+  display: inline-block;
+  max-width: 200px; /* Atur sesuai kebutuhan */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 100%;
+  white-space: nowrap;
+  word-break: break-word;
+}

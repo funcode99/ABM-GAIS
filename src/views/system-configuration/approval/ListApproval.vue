@@ -365,11 +365,15 @@
                     </td>
 
                     <td style="width: 40%;">
-                      {{ data.approval_name }}
+                      <span>
+                        {{ data.approval_name }}
+                      </span>
                     </td>
 
                     <td style="width: 40%;">
-                      {{ data.menu }}
+                      <span>
+                        {{ data.menu }}
+                      </span>
                     </td>
 
                     <td class="flex flex-wrap gap-4 justify-center">

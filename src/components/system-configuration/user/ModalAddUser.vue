@@ -1,6 +1,5 @@
 <script setup>
   import { ref, watch } from 'vue'
-
   import { Modal } from "usemodal-vue3"
 
   import modalHeader from "@/components/modal/modalHeader.vue"
@@ -19,6 +18,8 @@
   let isAdding = ref(false)
   let modalPaddingHeight = "10vh"
   const emits = defineEmits(['addUser', 'fetchSiteForCompany'])
+  let isLoading = ref(false)
+  let isEmployee = ref(false)
 
   let fullname = ref('')
   let username = ref(['', 0, 0])
@@ -29,7 +30,6 @@
   let selected = ref()
   let company = ref()
   let location = ref()  
-  let isEmployee = ref(false)
   let idStatusMenu = ref(0)
 
   let responseRoleArray = ref([])
@@ -81,16 +81,14 @@
       resetInput()
     }
 
+    statusMenu.value = sysconfigFetch.fetchMenuStatusResult
     responseRoleArray.value = sysconfigFetch.fetchRoleResult
     responseAuthoritiesArray.value = sysconfigFetch.fetchApproverAuthoritiesResult
-    statusMenu.value = sysconfigFetch.fetchMenuStatusResult
 
     responseCompanyArray.value = referenceFetch.fetchCompanyResult
     responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
 
   })
-
-  let isLoading = ref(false)
 
   watch(isEmployee, () => {
     company.value = username.value[1]    
@@ -279,10 +277,13 @@
                 <div class="mb-6 flex flex-col gap-2">
                   
                     <label for="company" class="text-sm">Company <span class="text-red-star">*</span></label>
+
                     <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
+                      
                       <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" >
                         {{ data.company_name }}
                       </option>
+
                     </select>
 
                 </div>

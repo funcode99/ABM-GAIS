@@ -346,15 +346,21 @@
                       </td>
 
                       <td style="width: 25%;">
-                        {{ data.sequence_name }}
+                        <span class="readmore-text">
+                          {{ data.sequence_name }}
+                        </span>
                       </td>
 
                       <td style="width: 20%;">
-                        {{ data.prefix }}
+                        <span class="readmore-text">
+                          {{ data.prefix }}
+                        </span>
                       </td>
 
                       <td style="width: 25%;">
-                        {{ data.suffix }}
+                        <span class="readmore-text">
+                          {{ data.suffix }}
+                        </span>
                       </td>
 
                       <td style="width: 10%;">

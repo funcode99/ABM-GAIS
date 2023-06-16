@@ -1,6 +1,7 @@
 <script setup>
     import { ref, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
+
     import editIcon from "@/assets/navbar/edit_icon.svg"
 
     import modalHeader from "@/components/modal/modalHeader.vue"
@@ -9,28 +10,41 @@
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
     import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
+    import { useMenuAccessStore } from '@/stores/savemenuaccess'
     let formEditState = useFormEditStore()
     const referenceFetch = useReferenceFetchResult()
     const sysconfigFetch = useSysconfigFetchResult()
+    const menuAccessStore = useMenuAccessStore()
 
     let isVisible = ref(false)
     let isAdding = ref(false)
     let modalPaddingHeight = '10vh'
-    const emits = defineEmits('changeUser')
+    const emits = defineEmits(['changeUser', 'fetchSiteForCompany', 'fetchEmployeeIndividualInfo'])
     const props = defineProps({
       formContent: Array
     })
+
+    let isLoading = ref(false)
+    let fromSelect = ref(false)
     
     let password = ref('')
     let username = ref(props.formContent[0])
     let email = ref(props.formContent[1])
     let selected = ref(props.formContent[2])
     let role = ref(props.formContent[3])
-    let location = ref([props.formContent[5], props.formContent[4]])
+    let company = ref()
+    let location = ref()
     let isEmployee = ref(props.formContent[6] == 1 ? true : false)
     let fullname = ref(props.formContent[0])
     let usernameEmployee = ref(props.formContent[8])
     let idStatusMenu = ref(props.formContent[9])
+
+    let responseRoleArray = ref([])
+    let responseCompanyArray = ref([])
+    let responseSiteByCompanyIdArray = ref([])
+    let responseEmployeeArray = ref([])
+    let responseAuthoritiesArray = ref([])
+    let statusMenu = ref(null)
 
     const submitEdit = () => {
 
@@ -39,8 +53,8 @@
       formEditState.user.password = password.value
       formEditState.user.roleId = role.value
       formEditState.user.approvalAuthId = selected.value
-      formEditState.user.companyId = location.value[1]
-      formEditState.user.siteId = location.value[0]
+      formEditState.user.companyId = company.value
+      formEditState.user.siteId = location.value
       formEditState.user.fullname = fullname.value
       formEditState.user.idStatusMenu = idStatusMenu.value
       emits('changeUser')
@@ -48,23 +62,19 @@
 
     }
 
-    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
-
-    let responseRoleArray = ref([])
-    let responseSiteArray = ref([])
-    let responseEmployeeArray = ref([])
-    let responseAuthoritiesArray = ref([])
-    let statusMenu = ref(null)
-
     const resetInput = () => {
+
       password.value = ''
+      // usernameEmployee.value = props.formContent[8]
       username.value = props.formContent[0]
       email.value = props.formContent[1]
       selected.value = props.formContent[2]
       role.value = props.formContent[3]
-      location.value = [props.formContent[5], props.formContent[4]]
+      company.value = props.formContent[4]
+      location.value = props.formContent[5]
       isEmployee.value = props.formContent[6] == 1 ? true : false 
       fullname.value = props.formContent[0]
+
     }
 
     watch(isVisible, () => {
@@ -75,13 +85,51 @@
         resetInput()
       }
 
+      statusMenu.value = sysconfigFetch.fetchMenuStatusResult
       responseRoleArray.value = sysconfigFetch.fetchRoleResult
       responseAuthoritiesArray.value = sysconfigFetch.fetchApproverAuthoritiesResult
-      statusMenu.value = sysconfigFetch.fetchMenuStatusResult
-      responseSiteArray.value = referenceFetch.fetchSiteResult
+
+      responseCompanyArray.value = referenceFetch.fetchCompanyResult
       responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
 
     })
+
+    // watch(isEmployee, () => {
+    // })
+
+    watch(usernameEmployee, () => {
+      emits('fetchEmployeeIndividualInfo', usernameEmployee.value)
+    })
+
+    watch(referenceFetch, () => {
+      company.value = referenceFetch.fetchIndividualEmployeeResult.id_company
+    })
+
+    watch(company, () => {
+      isLoading.value = true
+      menuAccessStore.companyId = company.value
+      emits('fetchSiteForCompany')
+    })
+
+    watch(menuAccessStore, () => {
+      responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult
+    })
+
+
+
+    watch(responseSiteByCompanyIdArray, () => {
+
+      if(fromSelect.value === false) {
+          location.value = props.formContent[5]
+      } else {
+          location.value = referenceFetch.fetchIndividualEmployeeResult.id_site
+      }
+
+      isLoading.value = false
+
+    })
+
+    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -101,8 +149,6 @@
         />
 
         <form class="pr-4 modal-box-inner-inner text-left" @submit.prevent="submitEdit">
-
-          <!-- {{ props.formContent[6] }} -->
   
           <div class="mb-6">
             <span>Employee?<span class="text-red-star">*</span></span>
@@ -122,7 +168,7 @@
           <div class="mb-6">
 
               <label for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
-                  Username<span class="text-red">*</span>
+                  Username<span class="text-red">*</span> {{ usernameEmployee }}
               </label>
 
               <input
@@ -135,10 +181,16 @@
                   required
               />
   
-              <select v-if="isEmployee" v-model="usernameEmployee" :class="inputStylingClass">
-                <option v-for="data in responseEmployeeArray" :key="data.id" :value="data.id">
+              <select @change="fromSelect = true" v-if="isEmployee" v-model="usernameEmployee" :class="inputStylingClass">
+
+                <option
+                  v-for="data in responseEmployeeArray"
+                  :key="data.id"
+                  :value="data.id" 
+                >
                   {{ data.employee_name }}
                 </option>
+
               </select>
 
           </div>
@@ -248,27 +300,47 @@
           </div>
   
           <div class="mb-6 flex flex-col gap-2">
-              <label for="company" class="text-sm">Company <span class="text-red-star">*</span> </label>
-              <select id="company" v-model="location" :class="inputStylingClass">
-                <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" :selected="data.id == props.formContent[4] ? true : false">
+              
+            <label for="company" class="text-sm">
+              Company<span class="text-red-star">*</span>
+            </label>
+              
+              <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
+                <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" :selected="data.id == props.formContent[4] ? true : false">
                   {{ data.company_name }}
                 </option>
               </select>
-          </div>
-  
-          <div class="mb-6 flex flex-col gap-2">
 
-            <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
-
-            <select disabled id="location" v-model="location" :class="inputStylingClass">
-              <option v-for="data in responseSiteArray" :key="data.id" :value="[data.id, data.id_company]" >
-                {{ data.site_name }}
-              </option>
-            </select>
-            
           </div>
+
+            <div v-if="!isLoading" class="mb-6 flex flex-col gap-2">
+
+              <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+
+              <select :disabled="isLoading || isEmployee" id="location" v-model="location" :class="inputStylingClass">
+                
+                <option v-for="data in responseSiteByCompanyIdArray" :key="data.id" :value="data.id" >
+                    {{ data.site_name }}
+                </option>
+
+              </select>
+
+            </div>
+
+            <div v-else class="flex flex-col gap-2">
+
+              <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+
+              <select :disabled="isLoading" id="location" :class="inputStylingClass">
+                <option selected>
+                    Retrieving location data...
+                </option>
+              </select>
+
+            </div>
   
           <modalFooter
+            class="mt-6 pt-5"
             @closeEdit="isVisible = false"
           />
   

@@ -5,7 +5,8 @@ export const useReferenceFetchResult = defineStore('reference', {
             return {
                 fetchCompanyResult: [],
                 fetchSiteResult: [],
-                fetchEmployeeResult: []
+                fetchEmployeeResult: [],
+                fetchIndividualEmployeeResult: []
             }
     }
 })
