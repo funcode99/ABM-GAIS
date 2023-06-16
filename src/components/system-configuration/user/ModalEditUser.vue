@@ -18,14 +18,13 @@
 
     let isVisible = ref(false)
     let isAdding = ref(false)
+    let isLoading = ref(false)
+    let fromSelect = ref(false)
     let modalPaddingHeight = '10vh'
     const emits = defineEmits(['changeUser', 'fetchSiteForCompany', 'fetchEmployeeIndividualInfo'])
     const props = defineProps({
       formContent: Array
     })
-
-    let isLoading = ref(false)
-    let fromSelect = ref(false)
     
     let password = ref('')
     let username = ref(props.formContent[0])
@@ -64,7 +63,6 @@
     }
 
     const resetInput = () => {
-
       password.value = ''
       usernameEmployee.value = props.formContent[8]
       username.value = props.formContent[0]
@@ -290,8 +288,8 @@
             <div class="grid grid-cols-3">
                 <div v-for="name in responseAuthoritiesArray" :key="name.id">
                   <div class="flex items-center gap-2">
+                    <!-- id="approval_authorities" -->
                     <input
-                      id="approval_authorities"
                       type="checkbox" 
                       :id="name.auth_name" 
                       @click="selected = name.id" 
@@ -381,4 +379,5 @@
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
+
 </style>

@@ -30,7 +30,7 @@
   let selected = ref()
   let company = ref()
   let location = ref()  
-  let idStatusMenu = ref(0)
+  let idStatusMenu = ref(1)
 
   let responseRoleArray = ref([])
   let responseCompanyArray = ref([])
@@ -231,14 +231,15 @@
                 </div>
     
                 <div v-if="role[1] == 'Driver' " class="mb-6 flex flex-col text-left justify-start">
-                  <span
-                    for="company"
+                  <label
+                    for="full_name"
                     class="block mb-2 font-JakartaSans font-medium text-sm"
-                    id="company">
+                   >
                     Full Name<span class="text-red">*</span>
-                  </span>
+                  </label>
                   <input
                         v-model="fullname"
+                        id="full_name"
                         type="text"
                         placeholder="Full Name"
                         :class="inputStylingClass"
@@ -259,7 +260,8 @@
                       <div v-for="name in responseAuthoritiesArray" :key="name.id">
 
                         <div class="flex items-center gap-2"> 
-                            <input id="approval_authorities"
+                          <!-- id="approval_authorities" -->
+                            <input 
                               type="checkbox" 
                               :id="name.id" 
                               @click="selected = name.id" 
