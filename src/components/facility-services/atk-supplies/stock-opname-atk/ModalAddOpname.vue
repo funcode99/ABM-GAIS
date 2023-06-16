@@ -32,7 +32,9 @@ const itemsTable = ref([])
 const itemsTable2 = ref([])
 let disableCompany = ref(false)
 let disableSite = ref(false)
-const emits = defineEmits(["unlockScrollbar"]);
+let addModal = ref(false)
+
+const emits = defineEmits(["unlockScrollbar", "close"]);
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -177,7 +179,7 @@ const save = async () => {
     remarks : remark.value,
     array_detail:itemsTable2.value
   }
-  await Api.post('/stock_opname/store',payload).then((res) => {
+  Api.post('stock_opname/store/',payload).then((res) => {
   Swal.fire({
       position: "center",
       icon: "success",
@@ -186,9 +188,26 @@ const save = async () => {
       timer: 1500,
     });
     reset()
-    router.push({path: '/stock-opname-atk'})
-  });
+    addModal.value = false
+    emits("close");
+  }).catch((error) =>{
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: error.response.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // console.log(error.response.data.message)
+  })
+  // router.push({path: '/stock-opname-atk'})
 };
+const coba = async () => {
+  addModal.value = true
+}
+const coba2 = async () => {
+  addModal.value = false
+}
 const reset = async () => {
   selectedCompany.value = ''
   selectedSite.value = ''
@@ -200,6 +219,7 @@ const reset = async () => {
   selectedBrand.value = ''
   quantityOpname.value = ''
   selectedAdjusment.value= ''
+  itemsTable.value = []
 };
 onMounted(() => {
   fetchCondition()
@@ -210,18 +230,18 @@ onMounted(() => {
 
 <template>
   <label
-    @click="this.$emit('unlockScrollbar')"
+    @click="coba"
     for="my-modal-stock-in"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Opname</label
   >
 
-  <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
-  <div class="modal" >
+  <input type="checkbox" v-if="addModal == true" id="my-modal-stock-in" class="modal-toggle" />
+  <div class="modal" v-if="addModal == true">
     <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]" >
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="coba2"
           for="my-modal-stock-in"
           class="cursor-pointer absolute right-3 top-3"
         >

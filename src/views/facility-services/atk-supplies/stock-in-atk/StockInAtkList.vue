@@ -296,7 +296,7 @@
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAdd @unlock-scrollbar="lockScrollbar = !lockScrollbar" />
+              <ModalAdd @close="fetchData(showingValue, selectedType, status, start_date, end_date,searchFilter,pageMultiplier)" />
 
               <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
                 <img :src="icon_receive" class="w-6 h-6" />
