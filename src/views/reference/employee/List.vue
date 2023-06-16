@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 
 // import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
 // import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
+import ModalView from "@/components/reference/employee/ModalView.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
@@ -95,7 +96,7 @@ const tableHead = [
   { Id: 4, title: "Gender", jsonData: "jenkel" },
   { Id: 5, title: "Email", jsonData: "email" },
   { Id: 6, title: "Phone Number", jsonData: "phone_number" },
-  // { Id: 7, title: "Actions" },
+  { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -371,9 +372,7 @@ const fetchEmployee = async () => {
           <!-- TABLE -->
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-
               <tr>
-
                 <!-- <th>
                   <div class="flex justify-center">
                     <input
@@ -399,9 +398,7 @@ const fetchEmployee = async () => {
                     </button>
                   </span>
                 </th>
-
               </tr>
-
             </thead>
 
             <tbody>
@@ -431,14 +428,32 @@ const fetchEmployee = async () => {
                 <td style="width: 5%">{{ data.jenkel }}</td>
                 <td style="width: 10%">{{ data.email }}</td>
                 <td style="width: 10%">{{ data.phone_number }}</td>
-                <!-- <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <ModalView
+                    :formContent="[
+                      data.foto_path,
+                      data.employee_name,
+                      data.email,
+                      data.sn_employee,
+                      data.start_date,
+                      data.nik,
+                      data.end_date,
+                      data.dob,
+                      data.company_name,
+                      data.jenkel,
+                      data.site_name,
+                      data.departement_name,
+                      data.band_job_name,
+                      data.phone_number,
+                    ]"
+                  />
+                  <!-- <ModalEdit
                     @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                   />
                   <button>
                     <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td> -->
+                  </button> -->
+                </td>
               </tr>
             </tbody>
           </tableData>
@@ -449,7 +464,6 @@ const fetchEmployee = async () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
-                  
                   <th>
                     <div class="flex justify-center">
                       <!-- <input
@@ -475,7 +489,6 @@ const fetchEmployee = async () => {
                       </button>
                     </div>
                   </th>
-
                 </tr>
               </thead>
 
@@ -485,7 +498,7 @@ const fetchEmployee = async () => {
                     colspan="8"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
-                    Tidak Ada Data
+                    Data not Found
                   </td>
                 </tr>
               </tbody>
