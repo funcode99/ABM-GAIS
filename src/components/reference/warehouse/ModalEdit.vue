@@ -66,7 +66,7 @@ const changeCompany = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
-  console.log(res);
+  // console.log(res);
   Site.value = res.data.data;
   // console.log("ini data site" + JSON.stringify(res.data.data));
   selectedSite.value = originalcurrentSite.value;
@@ -118,7 +118,20 @@ watch(isVisible, () => {
 const resetForm = () => {
   currentwarehouseName.value = originalwarehouseName.value;
   selectedCompany.value = originalcurrentCompany.value;
-  selectedSite.value = originalcurrentSite.value;
+  selectedSite.value = fetchGetSiteId(originalcurrentSite.value);
+};
+
+const fetchGetSiteId = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if (id == element.id) {
+      selectedSite.value = element.id;
+    }
+  }
 };
 </script>
 
