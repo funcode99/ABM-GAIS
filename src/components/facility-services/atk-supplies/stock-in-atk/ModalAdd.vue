@@ -15,6 +15,8 @@ let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
 let brandName = ref("");
+let warehouseName = ref("");
+let uomName = ref("")
 let Company = ref("");
 let Site = ref("");
 let Item = ref("")
@@ -28,7 +30,9 @@ let remark = ref("")
 const itemsTable = ref([])
 let disableCompany = ref(false)
 let disableSite = ref(false)
-const emits = defineEmits(["unlockScrollbar"]);
+let addModal = ref(false)
+
+const emits = defineEmits(["unlockScrollbar", "close"]);
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -111,7 +115,27 @@ const fetchCondition = async () => {
 };
 
 const addItem = async () => {
-
+  const wh = Warehouse.value
+  for (let index = 0; index < wh.length; index++) {
+    const element = wh[index];
+    if(element.id == selectedWarehouse.value){
+      warehouseName.value = element.warehouse_name
+    }
+  }
+  const br = Brand.value
+  for (let index = 0; index < br.length; index++) {
+    const element = br[index];
+    if(element.id == selectedBrand.value){
+      brandName.value = element.brand_name
+    }
+  }
+  const uom = UOM.value
+  for (let index = 0; index < uom.length; index++) {
+    const element = uom[index];
+    if(element.id == selectedUOM.value){
+      uomName.value = element.uom_name
+    }
+  }
   itemsTable.value.push({
     id_company: selectedCompany.value,
     id_departement: '',
@@ -123,6 +147,9 @@ const addItem = async () => {
     id_brand:selectedBrand.value,
     id_uom: selectedUOM.value,
     qty : alertQuantity.value,
+    nameWarehouse : warehouseName.value,
+    namaBrand : brandName.value,
+    namaUOM : uomName.value
   })
   resetButCompanyDisable()
   return itemsTable
@@ -158,7 +185,7 @@ const save = async () => {
     remarks:"",
     array_detail:itemsTable.value
   }
-  const res = await Api.post('stock_in/store',payload);
+  Api.post('stock_in/store/',payload).then((res) => {
   Swal.fire({
       position: "center",
       icon: "success",
@@ -167,9 +194,27 @@ const save = async () => {
       timer: 1500,
     });
     reset()
-    router.go({path : '/stockinatk'})
+    addModal.value = false
+    emits("close");
+  }).catch((error) =>{
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: error.response.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // console.log(error.response.data.message)
+  })
+    // router.go({path : '/stockinatk'})
     // router.push({path: '/stockinatk'})
 };
+const coba = async () => {
+  addModal.value = true
+}
+const coba2 = async () => {
+  addModal.value = false
+}
 const reset = async () => {
   selectedCompany.value = ''
   selectedSite.value = ''
@@ -179,6 +224,7 @@ const reset = async () => {
   itemNames.value = ''
   remark.value = ''
   selectedBrand.value = ''
+  itemsTable.value = []
 };
 onMounted(() => {
   fetchCondition()
@@ -189,18 +235,18 @@ onMounted(() => {
 
 <template>
   <label
-    @click="this.$emit('unlockScrollbar')"
+    @click="coba"
     for="my-modal-stock-in"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add Item</label
+    >+ Add Stock</label
   >
 
-  <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
-  <div class="modal" >
+  <input type="checkbox" v-if="addModal == true" id="my-modal-stock-in" class="modal-toggle" />
+  <div class="modal" v-if="addModal == true">
     <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]" >
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="coba2"
           for="my-modal-stock-in"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -437,11 +483,11 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]">{{ items.id_warehouse }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.nameWarehouse }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.id_item }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_brand }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_uom }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.namaBrand }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.namaUOM }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">

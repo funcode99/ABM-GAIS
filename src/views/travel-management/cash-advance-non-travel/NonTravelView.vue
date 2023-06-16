@@ -2,7 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 import Swal from "sweetalert2";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
@@ -96,7 +96,7 @@ const saveFormHeader = async () => {
 
 const cancelHeader = () => {
   visibleHeader.value = false;
-  editItem.value = false
+  editItem.value = false;
 };
 
 const removeItems = async (id) => {
@@ -171,14 +171,32 @@ const fetchCostCentre = async () => {
 };
 
 const submit = async () => {
-  const api = await Api.delete(`cash_advance/submit/${idCaNon}`);
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  });
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  Api.post(`cash_advance/submit/${idCaNon}`)
+    .then((res) => {
+      let status = res.data.success == true ? "success" : "error";
+      Swal.fire({
+        position: "center",
+        icon: status,
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      route.push({ path: "/cashadvancenontravel" });
+    })
+    .catch((e) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: e.response.data.error,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: "#EA5455",
+        color: "#ffffff",
+      });
+    });
 };
 
 onBeforeMount(() => {
@@ -250,7 +268,6 @@ const inputClass =
                 !visibleHeader
               "
               @click="edit()"
-              for="my-modal-3"
               class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
             >
               Edit
@@ -338,8 +355,7 @@ const inputClass =
               >
               <select
                 v-model="dataArr.id_currency"
-                id="currency"
-                class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                class="bg-white max-w-[80%] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 :disabled="!visibleHeader"
               >
                 <option disabled selected>Currency</option>
@@ -370,7 +386,8 @@ const inputClass =
               v-if="
                 (dataArr.status == 'Draft' || dataArr.status == 'Revision') &&
                 !addItem &&
-                !editItem
+                !editItem &&
+                visibleHeader
               "
               @click="addItems"
             >
@@ -388,9 +405,7 @@ const inputClass =
             <div :class="rowClass">
               <div :class="colClass">
                 <input type="hidden" name="idItem" v-model="itemsId" />
-                <label
-                  for="item"
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Item<span class="text-red">*</span></label
                 >
                 <input
@@ -403,9 +418,7 @@ const inputClass =
                 />
               </div>
               <div :class="colClass">
-                <label
-                  for="nominal"
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Nominal<span class="text-red">*</span></label
                 >
                 <input
@@ -421,9 +434,7 @@ const inputClass =
 
             <div :class="rowClass">
               <div :class="colClass">
-                <label
-                  for="cost_center"
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Cost Center<span class="text-red">*</span></label
                 >
                 <select v-model="itemsCostCentre" :class="inputClass" required>
@@ -438,9 +449,7 @@ const inputClass =
                 </select>
               </div>
               <div :class="colClass">
-                <label
-                  for="remarks"
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Remarks<span class="text-red">*</span></label
                 >
                 <input
@@ -458,7 +467,6 @@ const inputClass =
               <div class="flex justify-center gap-4 mr-6">
                 <label
                   @click="cancelItems"
-                  for="my-modal-3"
                   class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
                   >Cancel</label
                 >
@@ -512,11 +520,15 @@ const inputClass =
                     </th>
                   </tr>
                 </thead>
-                <tbody class="font-JakartaSans font-normal text-xs">
+                <tbody
+                  class="font-JakartaSans font-normal text-xs"
+                  v-if="dataItem.length > 0"
+                >
                   <tr class="h-16" v-for="item in dataItem" :key="item.id">
                     <td class="border border-[#B9B9B9]">
                       <input
                         v-model="item.item_name"
+                        :class="inputClass"
                         type="text"
                         name="item"
                         placeholder="Item"
@@ -531,7 +543,6 @@ const inputClass =
                       <select
                         v-else
                         v-model="item.id_cost_center"
-                        id="id_cost_center"
                         required
                         :disabled="item.id == idEdit ? false : true"
                       >
@@ -602,6 +613,11 @@ const inputClass =
                     </td>
                   </tr>
                 </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="4" />
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>
@@ -623,5 +639,10 @@ const inputClass =
 
 .status-default {
   background: #2970ff;
+}
+
+:disabled {
+  background: #EEEEEE;
+  border-color: #EEEEEE;
 }
 </style>

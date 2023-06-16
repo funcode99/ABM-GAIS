@@ -63,7 +63,7 @@ const callEditApi = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   await Api.post(`/zona/update_data/${editZonaDataid.value}`, {
     id_company: formEditState.zona.zonaIdCompany,
-    zona_name: formEditState.zona.zonaName,
+    id_zona: formEditState.zona.zonaName,
     id_city: formEditState.zona.zonaIdCity,
   });
   Swal.fire({
@@ -467,7 +467,7 @@ const exportToExcel = () => {
                   <input type="checkbox" name="checks" />
                 </td>
                 <td style="width: 5%">{{ data.no }}</td>
-                <td style="width: 20%">{{ data.zona }}</td>
+                <td style="width: 20%">{{ data.zona_name }}</td>
                 <td style="width: 50%">
                   <span
                     :class="[
@@ -478,10 +478,15 @@ const exportToExcel = () => {
                     {{ data.city_name }}
                   </span>
                 </td>
+
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
                     @change-zona="editZona(data.id)"
-                    :formContent="[data.comp_array, data.zona, data.city_array]"
+                    :formContent="[
+                      data.comp_array,
+                      data.id_zona,
+                      data.city_array,
+                    ]"
                   />
                   <button @click="deleteZona(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
@@ -531,7 +536,7 @@ const exportToExcel = () => {
                     colspan="5"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
-                    Tidak Ada Data
+                    Data not Found
                   </td>
                 </tr>
               </tbody>

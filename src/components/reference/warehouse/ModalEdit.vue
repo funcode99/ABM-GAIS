@@ -18,18 +18,14 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-let selectedCompany = ref("Company");
 let Company = ref("");
 let Site = ref("");
-let warehouseName = ref("");
-let warehouseIdCompany = ref("");
-let warehouseIdSite = ref();
-let responseCompanyArray = ref([]);
-let responseSiteArray = ref([]);
-// let selectedCompanyId = ref(props.formContent[1] || null);
-// let selectedSiteId = ref(props.formContent[2] || null);
-let company = ref(props.formContent[1]);
-let location = ref([props.formContent[1], props.formContent[2]]);
+let Warehouse = ref("");
+let Brand = ref("");
+
+let selectedCompany = ref(props.formContent[1]);
+let selectedSite = ref("Site");
+let selectedBrand = ref("Brand");
 
 const props = defineProps({
   formContent: Array,
@@ -37,24 +33,24 @@ const props = defineProps({
 
 const currentwarehouseName = ref(props.formContent[0]);
 const originalwarehouseName = ref(props.formContent[0]);
-// const currentwarehouseIdCompany = ref(props.formContent[1]);
-// const originalwarehouseIdCompany = ref(props.formContent[1]);
-// const currentwarehouseIdSite = ref(props.formContent[2]);
-// const originalwarehouseIdSite = ref(props.formContent[2]);
+const currentCompany = ref(props.formContent[1]);
+const originalcurrentCompany = ref(props.formContent[1]);
+const currentSite = ref(props.formContent[2]);
+const originalcurrentSite = ref(props.formContent[2]);
 
 const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.warehouse) {
-    formEditState.warehouse = {}; // Inisialisasi objek jika belum ada
+    formEditState.warehouse = {};
   }
 
   formEditState.warehouse.warehouseName = currentwarehouseName.value;
-  formEditState.warehouse.warehouseIdCompany = location.value[1];
-  formEditState.warehouse.warehouseIdSite = location.value[0];
+  formEditState.warehouse.warehouseIdCompany = selectedCompany.value;
+  formEditState.warehouse.warehouseIdSite = selectedSite.value;
 
   isVisible.value = false;
-  emits("changeWarehouse"); // Memanggil event 'changeWarehouse'
+  emits("changeWarehouse");
 };
 
 //for get company in select
@@ -62,7 +58,35 @@ const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
-  responseCompanyArray.value = res.data.data;
+  Company.value = res.data.data;
+};
+
+const changeCompany = async (id_company) => {
+  fetchBrandCompany(id_company);
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  // console.log(res)
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  selectedSite.value = originalcurrentSite.value;
+};
+const fetchBrandCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  // console.log(res.data)
+  Brand.value = res.data.data;
+  // selectedBrand.value = res.data.data[0].id;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const changeSite = async (id_site) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -71,8 +95,7 @@ const fetchGetSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/site/get_data");
-  responseSiteArray.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  Site.value = res.data.data;
 };
 
 onMounted(() => {
@@ -87,21 +110,29 @@ watch(isVisible, () => {
   if (isAdding.value == true) {
     isAdding.value = false;
   } else {
-    // currentwarehouseName.value = props.formContent[0];
-    // currentwarehouseIdCompany.value = props.formContent[1];
-    // currentwarehouseIdSite.value = props.formContent[2];
     resetForm();
   }
 });
 
 const resetForm = () => {
   currentwarehouseName.value = originalwarehouseName.value;
-  location.value = [props.formContent[1], props.formContent[2]];
-  // selectedSiteId.value = originalwarehouseIdSite.value;
+  selectedCompany.value = originalcurrentCompany.value;
+  selectedSite.value = originalcurrentSite.value;
+  selectedSite.value = fetchGetSiteId(originalcurrentSite.value);
 };
 
-
-console.log(props.formContent)
+const fetchGetSiteId = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if (id == element.id) {
+      selectedSite.value = element.id;
+    }
+  }
+};
 </script>
 
 <template>
@@ -124,16 +155,16 @@ console.log(props.formContent)
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="location"
+            v-model="selectedCompany"
+            @change="changeCompany(selectedCompany)"
           >
             <option disabled selected>Company</option>
             <option
-              v-for="data in responseSiteArray"
-              :key="data.id"
-              :value="[data.id, data.id_company]"
-              >
-              <!-- :selected="data.id == company ? true : false" -->
-              {{ data.company_name }} {{ data.id }} {{ company }} {{ data.id_company }}
+              v-for="(company, i) in Company"
+              :key="i"
+              :value="company.id"
+            >
+              {{ company.company_name }}
             </option>
           </select>
         </div>
@@ -145,16 +176,12 @@ console.log(props.formContent)
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="location"
-            disabled
+            v-model="selectedSite"
+            @change="changeSite(selectedSite)"
           >
             <option disabled selected>Site</option>
-            <option
-              v-for="data in responseSiteArray"
-              :key="data.id"
-              :value="[data.id, data.id_company]"
-            >
-              {{ data.site_name }}
+            <option v-for="(site, i) in Site" :key="i" :value="site.id">
+              {{ site.site_name }}
             </option>
           </select>
         </div>

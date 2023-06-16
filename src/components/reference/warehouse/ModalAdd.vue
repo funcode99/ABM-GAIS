@@ -16,28 +16,62 @@ let selectedSite = ref("Site");
 let warehouseName = ref("");
 let Company = ref("");
 let Site = ref("");
+let Warehouse = ref("");
+let Brand = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 let location = ref();
-let responseSiteArray = ref([]);
-let responseEmployeeArray = ref([]);
+// let responseSiteArray = ref([]);
+// let responseEmployeeArray = ref([]);
 
-//for get company in select
+// //for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
-  responseEmployeeArray.value = res.data.data;
+  Company.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
-//for get site in select
+// //for get site in select
 const fetchGetSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/site/get_data");
-  responseSiteArray.value = res.data.data;
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const changeCompany = async (id_company) => {
+  fetchBrandCompany(id_company);
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  // console.log(res)
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const fetchBrandCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  // console.log(res)
+  Brand.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const changeSite = async (id_site) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
+  // warehouseName.value = res.data.data.filter(
+  //     (item) => item.id_warehouse === selectedWarehouse.value
+  //   );
+  // console.log(warehouseName.value)
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -59,8 +93,8 @@ const callAddApi = async () => {
 
     await Api.post(`/warehouse/store`, {
       warehouse_name: warehouseName.value,
-      id_company: location.value[1],
-      id_site: location.value[0],
+      id_company: selectedCompany.value,
+      id_site: selectedSite.value,
     });
 
     Swal.fire({
@@ -112,16 +146,16 @@ watch(isVisible, () => {
           >
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            required
-            v-model="location"
+            v-model="selectedCompany"
+            @change="changeCompany(selectedCompany)"
           >
             <option disabled selected>Company</option>
             <option
-              v-for="data in responseSiteArray"
-              :key="data.id"
-              :value="[data.id, data.id_company]"
+              v-for="(company, i) in Company"
+              :key="i"
+              :value="company.id"
             >
-              {{ data.company_name }}
+              {{ company.company_name }}
             </option>
           </select>
         </div>
@@ -133,16 +167,12 @@ watch(isVisible, () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="location"
-            disabled
+            v-model="selectedSite"
+            @change="changeSite(selectedSite)"
           >
             <option disabled selected>Site</option>
-            <option
-              v-for="data in responseSiteArray"
-              :key="data.id"
-              :value="[data.id, data.id_company]"
-            >
-              {{ data.site_name }}
+            <option v-for="(site, i) in Site" :key="i" :value="site.id">
+              {{ site.site_name }}
             </option>
           </select>
         </div>

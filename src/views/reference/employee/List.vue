@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 
 // import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
 // import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
+import ModalView from "@/components/reference/employee/ModalView.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
@@ -95,7 +96,7 @@ const tableHead = [
   { Id: 4, title: "Gender", jsonData: "jenkel" },
   { Id: 5, title: "Email", jsonData: "email" },
   { Id: 6, title: "Phone Number", jsonData: "phone_number" },
-  // { Id: 7, title: "Actions" },
+  { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -205,49 +206,49 @@ const fetchEmployee = async () => {
 // };
 
 //for export
-// const exportToExcel = () => {
-//   const workbook = new Workbook();
-//   const worksheet = workbook.addWorksheet("Employee Data");
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Employee Data");
 
-//   const tableHead = [
-//     { title: "Nomor" },
-//     { title: "ID" },
-//     { title: "SN" },
-//     { title: "Name" },
-//     { title: "Gender" },
-//     { title: "Email" },
-//     { title: "Phone" },
-//   ];
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "SN" },
+    { title: "Name" },
+    { title: "Gender" },
+    { title: "Email" },
+    { title: "Phone" },
+  ];
 
-//   // Menambahkan header kolom
-//   tableHead.forEach((column, index) => {
-//     worksheet.getCell(1, index + 1).value = column.title;
-//   });
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
 
-//   // Menambahkan data ke baris-baris selanjutnya
-//   sortedDataReactive.value.forEach((data, rowIndex) => {
-//     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-//     worksheet.getCell(rowIndex + 2, 2).value = data.id;
-//     worksheet.getCell(rowIndex + 2, 3).value = data.sn_employee;
-//     worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
-//     worksheet.getCell(rowIndex + 2, 5).value = data.jenkel;
-//     worksheet.getCell(rowIndex + 2, 6).value = data.email;
-//     worksheet.getCell(rowIndex + 2, 7).value = data.phone_number;
-//   });
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.sn_employee;
+    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.jenkel;
+    worksheet.getCell(rowIndex + 2, 6).value = data.email;
+    worksheet.getCell(rowIndex + 2, 7).value = data.phone_number;
+  });
 
-//   // Menyimpan workbook menjadi file Excel
-//   workbook.xlsx.writeBuffer().then((buffer) => {
-//     const blob = new Blob([buffer], {
-//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-//     });
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = "employee_data.xlsx";
-//     a.click();
-//     URL.revokeObjectURL(url);
-//   });
-// };
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "employee_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 </script>
 
 <template>
@@ -272,6 +273,7 @@ const fetchEmployee = async () => {
               <!-- <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
@@ -371,9 +373,7 @@ const fetchEmployee = async () => {
           <!-- TABLE -->
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-
               <tr>
-
                 <!-- <th>
                   <div class="flex justify-center">
                     <input
@@ -399,9 +399,7 @@ const fetchEmployee = async () => {
                     </button>
                   </span>
                 </th>
-
               </tr>
-
             </thead>
 
             <tbody>
@@ -431,14 +429,33 @@ const fetchEmployee = async () => {
                 <td style="width: 5%">{{ data.jenkel }}</td>
                 <td style="width: 10%">{{ data.email }}</td>
                 <td style="width: 10%">{{ data.phone_number }}</td>
-                <!-- <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <ModalView
+                    :formContent="[
+                      data.foto_path,
+                      data.employee_name,
+                      data.email,
+                      data.sn_employee,
+                      data.start_date,
+                      data.nik,
+                      data.end_date,
+                      data.dob,
+                      data.company_name,
+                      data.jenkel,
+                      data.site_name,
+                      data.departement_name,
+                      data.band_job_name,
+                      data.phone_number,
+                      data.cost_center_name,
+                    ]"
+                  />
+                  <!-- <ModalEdit
                     @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                   />
                   <button>
                     <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td> -->
+                  </button> -->
+                </td>
               </tr>
             </tbody>
           </tableData>
@@ -449,7 +466,6 @@ const fetchEmployee = async () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
-                  
                   <th>
                     <div class="flex justify-center">
                       <!-- <input
@@ -475,7 +491,6 @@ const fetchEmployee = async () => {
                       </button>
                     </div>
                   </th>
-
                 </tr>
               </thead>
 
@@ -485,7 +500,7 @@ const fetchEmployee = async () => {
                     colspan="8"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
-                    Tidak Ada Data
+                    Data not Found
                   </td>
                 </tr>
               </tbody>

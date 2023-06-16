@@ -2,9 +2,9 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
-import deleteCheckedArrayUtils from "@/utils/deleteCheckedArray";
 import selectAllCheckbox from "@/utils/selectAllCheckbox";
 
 import icon_receive from "@/assets/icon-receive.svg";
@@ -51,6 +51,7 @@ let sortedData = ref([]);
 let deleteArray = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let paginationArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
 let sortedDataReactive = computed(() => sortedData.value);
@@ -65,14 +66,19 @@ let filter = reactive({
 });
 //for paginations
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+  fetch(pageOfItem);
 };
 
 //for check & uncheck all
@@ -90,7 +96,6 @@ const tableHead = [
   { Id: 6, title: "Event", jsonData: "event" },
   { Id: 7, title: "Total", jsonData: "grand_total" },
   { Id: 8, title: "Status", jsonData: "status" },
-  { Id: 9, title: "Actions" },
 ];
 
 //for sort
@@ -121,16 +126,28 @@ const filteredItems = (search) => {
 };
 
 // get data
-const fetch = async () => {
+const fetch = async (id) => {
+  let payload = {
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("cash_advance/non_travel/");
-  instanceArray = api.data.data;
+  const api = await Api.get("cash_advance/non_travel/", { params: payload });
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from;
+  showingValueTo.value = paginationArray.to;
 };
 
 const resetData = () => {
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
   fetch();
 };
 
@@ -138,17 +155,27 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const filterDataByType = async () => {
+const filterDataByType = async (id) => {
   let payload = {
     search: filter.search,
     status: filter.status,
     start_date: filter.date ? filter.date[0] : "",
     end_date: filter.date ? filter.date[1] : "",
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
   };
   const api = await Api.get("cash_advance/non_travel", { params: payload });
-  instanceArray = api.data.data;
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from;
+  showingValueTo.value = paginationArray.to;
+  showingValue.value = paginationArray.current_page;
 };
 
 // delete data
@@ -251,11 +278,11 @@ onBeforeMount(() => {
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -441,16 +468,16 @@ onBeforeMount(() => {
                         </button>
                       </span>
                     </th>
+                    <th>
+                      <div class="text-center">Actions</div>
+                    </th>
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="(data, index) in sortedData"
                     :key="data.no"
                   >
                     <td>
@@ -461,7 +488,7 @@ onBeforeMount(() => {
                         v-model="deleteArray"
                       />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
                     <td>{{ format_date(data.created_at) }}</td>
                     <td>{{ data.no_ca }}</td>
                     <td>{{ data.employee_name }}</td>
@@ -469,16 +496,25 @@ onBeforeMount(() => {
                     <td>{{ data.event }}</td>
                     <td>{{ format_price(data.grand_total) }}</td>
                     <td>{{ data.status }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link :to="`/viewcashadvancenontravel/${data.id}`">
-                        <button>
-                          <img :src="editicon" class="w-6 h-6" />
+                    <td>
+                      <div class="flex justify-center items-center gap-2">
+                        <router-link
+                          :to="`/viewcashadvancenontravel/${data.id}`"
+                        >
+                          <button>
+                            <img :src="editicon" class="w-6 h-6" />
+                          </button>
+                        </router-link>
+                        <button @click="deleteData(data.id)">
+                          <img :src="deleteicon" class="w-6 h-6" />
                         </button>
-                      </router-link>
-                      <button @click="deleteData(data.id)">
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
+                      </div>
                     </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="10" />
                   </tr>
                 </tbody>
               </table>
@@ -490,12 +526,12 @@ onBeforeMount(() => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
