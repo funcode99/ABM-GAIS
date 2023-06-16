@@ -25,13 +25,17 @@ import moment from 'moment';
 const sidebar = useSidebarStore();
 
 //for sort & search
-const date = ref();
+const start_date = ref("");
+const end_date = ref("");
 const search = ref("");
+const searchFilter = ref("");
 let sortedData = ref([]);
-const selectedType = ref("Company");
-const selectedTypeWarehouse = ref("Warehouse");
+const selectedType = ref("");
+const selectedTypeWarehouse = ref("");
+const status = ref("");
+let StatusItems = ref([])
 let itemdata = ref("")
-
+let Company = ref("");
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
@@ -42,28 +46,36 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let lenghtPagination = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
+  fetchData(pageOfItem, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
 };
 
 //for filter & reset button
 const filterDataByType = () => {
-  if (selectedTypeWarehouse.value === "") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.status === selectedTypeWarehouse.value
-    );
-  }
+  const start = moment(String(start_date.value)).format('YYYY-MM-DD')
+    const end = moment(String(end_date.value)).format('YYYY-MM-DD')
+    // console.log(test)
+    if (start_date.value == "" && end_date.value == "") {
+      fetchData(showingValue.value, selectedType.value, status, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+    } else if (start_date.value != "" && end_date.value == "") {
+      fetchData(showingValue.value, selectedType.value, status.value, start, end_date.value,searchFilter.value,pageMultiplier.value)
+    } else if (start_date.value == "" && end_date.value != "") {
+      fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end,searchFilter.value,pageMultiplier.value)
+    } else {
+      fetchData(showingValue.value, selectedType.value, status.value, start, end,searchFilter.value,pageMultiplier.value)
+    }
 };
 
 //for filter & reset button
 const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedTypeWarehouse.value = "Type";
+  selectedType.value = ''
+    status.value = ''
+    start_date.value = ''
+    end_date.value = ''
+    fetchData(showingValue.value, "", "", "", "",searchFilter.value,pageMultiplier.value)
 };
 
 //for check & uncheck all
@@ -103,18 +115,33 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
-const fetchData = async () => {
+const fetchData = async (page, selectedType, status, start_date, end_date,search,perpage) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/request_atk/get");
+  const res = await Api.get(`/request_atk/get?page=${page}&id_company=${selectedType}&code_status_doc=${status}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`);
   // console.log(res.data.data)
   itemdata.value = res.data.data.data;
   instanceArray = itemdata.value;
   // console.log(instanceArray)
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  lenghtPagination = res.data.data.total
+    paginateIndex.value = res.data.data.current_page - 1
+    showingValue.value = res.data.data.current_page
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+const perPage = async () => {
+    // console.log(pageMultiplier.value)
+    fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+    // console.log("ini data parent" + JSON.stringify(res.data.data));
+  };
+  const fetchGetCompany = async () => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.get("/company/get");
+    Company.value = res.data.data;
+    // console.log("ini data parent" + JSON.stringify(res.data.data));
+  };
 const deleteValue = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -148,7 +175,7 @@ const deleteValue = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchData()
+        fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
       });
     } else {
       return;
@@ -159,7 +186,15 @@ const deleteValue = async (id) => {
 };
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchData()
+  fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+    fetchGetCompany()
+    StatusItems.value.push({
+      id: 0,
+      name: 'Draft'
+    }, {
+      id: 1,
+      name: 'Submitted'
+    })
   // console.log(stockindata)
   // instanceArray = stockindata;
   // sortedData.value = instanceArray;
@@ -168,18 +203,7 @@ onBeforeMount(() => {
 
 //for searching
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.no_atk_request.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.no_atk_request.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
+  fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,search,pageMultiplier.value)
 };
 
 const getSessionForSidebar = () => {
@@ -248,11 +272,10 @@ const format_date = (value) => {
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedType"
-                >
+                  v-model="selectedType">
                   <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.company }}
+                  <option v-for="(company,i) in Company" :key="i" :value="company.id">
+                    {{ company.company_name }}
                   </option>
                 </select>
               </div>
@@ -265,29 +288,31 @@ const format_date = (value) => {
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedTypeWarehouse"
-                >
+                  v-model="status">
                   <option disabled selected>Status</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.status }}
+                  <option v-for="data in StatusItems" :key="data.id" :value="data.id">
+                    {{ data.name }}
                   </option>
                 </select>
               </div>
 
-              <div class="flex flex-wrap gap-4 items-center">
+              <div>
                 <div>
-                  <p
-                    class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-                  >
-                    Choose Date
+                  <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
+                    Start Date
                   </p>
 
-                  <VueDatePicker
-                    v-model="date"
-                    range
-                    :enable-time-picker="false"
-                    class="my-date lg:w-10"
-                  />
+                  <VueDatePicker v-model="start_date" :enable-time-picker="false" class="my-date lg:w-10" />
+                </div>
+              </div>
+
+              <div>
+                <div>
+                  <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
+                    End Date
+                  </p>
+
+                  <VueDatePicker v-model="end_date" :enable-time-picker="false" class="my-date lg:w-10" />
                 </div>
               </div>
 
@@ -313,7 +338,7 @@ const format_date = (value) => {
               </div>
             </div>
 
-            <div class="pt-6 w-full ml-2">
+            <!-- <div class="pt-6 w-full ml-2">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -341,23 +366,40 @@ const format_date = (value) => {
                   @keyup="filteredItems(search)"
                 />
               </label>
-            </div>
+            </div> -->
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
-            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
-            <select
-              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              v-model="pageMultiplier"
-            >
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>75</option>
-              <option>100</option>
-            </select>
+          <div class="flex flex-wrap items-center justify-between mx-4 py-2">
+            <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+              <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="pageMultiplier"
+                @change="perPage">
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>75</option>
+                <option>100</option>
+              </select>
+            </div>
+            <div class="flex justify-between gap-4 items-center">
+              <label class="relative block">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                  <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  </svg>
+                </span>
+                <input
+                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  placeholder="Search..." type="text" name="search" v-model="search" @keyup="filteredItems(search)" />
+              </label>
+            </div>
           </div>
+
 
           <!-- TABLE -->
           <div
@@ -400,10 +442,7 @@ const format_date = (value) => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="(data, index) in sortedData"
                     :key="data.id"
                   >
                     <td class="p-0">
@@ -447,11 +486,11 @@ const format_date = (value) => {
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              {{ Math.min(showingValue * pageMultiplier, lenghtPagination) }}
+              of {{ lenghtPagination }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="lenghtPagination"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
