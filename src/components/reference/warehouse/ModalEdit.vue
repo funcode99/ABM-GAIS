@@ -18,9 +18,6 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-// let responseCompanyArray = ref([]);
-// let responseSiteArray = ref([]);
-
 let Company = ref("");
 let Site = ref("");
 let Warehouse = ref("");
@@ -29,8 +26,6 @@ let Brand = ref("");
 let selectedCompany = ref(props.formContent[1]);
 let selectedSite = ref("Site");
 let selectedBrand = ref("Brand");
-
-// let location = ref([props.formContent[1], props.formContent[2]]);
 
 const props = defineProps({
   formContent: Array,
@@ -43,9 +38,6 @@ const originalcurrentCompany = ref(props.formContent[1]);
 const currentSite = ref(props.formContent[2]);
 const originalcurrentSite = ref(props.formContent[2]);
 
-// selectedCompany.value = currentCompany.value;
-// selectedSite.value = currentSite.value;
-
 const submitEdit = () => {
   isAdding.value = true;
 
@@ -54,13 +46,8 @@ const submitEdit = () => {
   }
 
   formEditState.warehouse.warehouseName = currentwarehouseName.value;
-  formEditState.warehouse.warehouseIdCompany = currentCompany.value;
-  formEditState.warehouse.warehouseIdSite = currentSite.value;
-
-  console.log(
-    (formEditState.warehouse.warehouseIdCompany = currentCompany.value)
-  );
-  console.log((formEditState.warehouse.warehouseIdSite = currentSite.value));
+  formEditState.warehouse.warehouseIdCompany = selectedCompany.value;
+  formEditState.warehouse.warehouseIdSite = selectedSite.value;
 
   isVisible.value = false;
   emits("changeWarehouse");
@@ -82,6 +69,7 @@ const changeCompany = async (id_company) => {
   console.log(res);
   Site.value = res.data.data;
   // console.log("ini data site" + JSON.stringify(res.data.data));
+  selectedSite.value = originalcurrentSite.value;
 };
 
 const changeSite = async (id_site) => {
@@ -107,7 +95,7 @@ const fetchBrandCompany = async (id_company) => {
   const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
   // console.log(res.data)
   Brand.value = res.data.data;
-  selectedBrand.value = res.data.data[0].id;
+  // selectedBrand.value = res.data.data[0].id;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -129,9 +117,8 @@ watch(isVisible, () => {
 
 const resetForm = () => {
   currentwarehouseName.value = originalwarehouseName.value;
-  currentCompany.value = originalcurrentCompany.value;
-  currentSite.value = originalcurrentSite.value;
-  // location.value = [props.formContent[1], props.formContent[2]];
+  selectedCompany.value = originalcurrentCompany.value;
+  selectedSite.value = originalcurrentSite.value;
 };
 </script>
 
