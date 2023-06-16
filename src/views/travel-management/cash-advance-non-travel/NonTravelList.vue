@@ -5,7 +5,6 @@ import Footer from "@/components/layout/Footer.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
-import deleteCheckedArrayUtils from "@/utils/deleteCheckedArray";
 import selectAllCheckbox from "@/utils/selectAllCheckbox";
 
 import icon_receive from "@/assets/icon-receive.svg";
@@ -91,7 +90,6 @@ const tableHead = [
   { Id: 6, title: "Event", jsonData: "event" },
   { Id: 7, title: "Total", jsonData: "grand_total" },
   { Id: 8, title: "Status", jsonData: "status" },
-  { Id: 9, title: "Actions" },
 ];
 
 //for sort
@@ -445,6 +443,9 @@ onBeforeMount(() => {
                         </button>
                       </span>
                     </th>
+                    <th>
+                      <div class="text-center">Actions</div>
+                    </th>
                   </tr>
                 </thead>
 
@@ -473,21 +474,25 @@ onBeforeMount(() => {
                     <td>{{ data.event }}</td>
                     <td>{{ format_price(data.grand_total) }}</td>
                     <td>{{ data.status }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link :to="`/viewcashadvancenontravel/${data.id}`">
-                        <button>
-                          <img :src="editicon" class="w-6 h-6" />
+                    <td>
+                      <div class="flex justify-center items-center gap-2">
+                        <router-link
+                          :to="`/viewcashadvancenontravel/${data.id}`"
+                        >
+                          <button>
+                            <img :src="editicon" class="w-6 h-6" />
+                          </button>
+                        </router-link>
+                        <button @click="deleteData(data.id)">
+                          <img :src="deleteicon" class="w-6 h-6" />
                         </button>
-                      </router-link>
-                      <button @click="deleteData(data.id)">
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <DataNotFound :cnt-col="10"/>
+                    <DataNotFound :cnt-col="10" />
                   </tr>
                 </tbody>
               </table>

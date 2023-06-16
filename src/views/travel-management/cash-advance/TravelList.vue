@@ -90,7 +90,6 @@ const tableHead = [
   { Id: 6, title: "Currency", jsonData: "currency_name" },
   { Id: 7, title: "Total", jsonData: "grand_total" },
   { Id: 8, title: "Status", jsonData: "status" },
-  { Id: 9, title: "Actions" },
 ];
 
 //for sort
@@ -337,6 +336,9 @@ const getSessionForSidebar = () => {
                         </button>
                       </span>
                     </th>
+                    <th>
+                      <div class="text-center">Actions</div>
+                    </th>
                   </tr>
                 </thead>
 
@@ -371,7 +373,7 @@ const getSessionForSidebar = () => {
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <DataNotFound :cnt-col="10"/>
+                    <DataNotFound :cnt-col="10" />
                   </tr>
                 </tbody>
               </table>
