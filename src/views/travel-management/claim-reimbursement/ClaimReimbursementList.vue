@@ -2,6 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import ModalAdd from "@/components/tms-claim-reimbursement/ModalAdd.vue";
 
@@ -12,22 +13,57 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import claimdata from "@/utils/Api/tms-claim-reimbursement/claimdata.js";
+import Api from "@/utils/Api";
+import moment from "moment";
+import Swal from "sweetalert2";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
+const listStatus = [
+  { id: 0, title: "Draft" },
+  { id: 1, title: "Waiting Approval" },
+  { id: 2, title: "Revision" },
+  { id: 9, title: "Rejected" },
+  { id: 10, title: "Completed" },
+];
 
+// format date & price
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
 //for sort, search, & filter
 const selectedStatus = ref("Status");
 const selectedCatype = ref("Type");
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
+let listReimbursementType = ref([]);
+let listType = ref([]);
+
+let deleteArray = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
+let visibleModal = ref(false);
+let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
+
+let filter = reactive({
+  status: "",
+  date: "",
+  search: "",
+  type: "",
+});
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -81,9 +117,9 @@ const sortList = (sortBy) => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  instanceArray = claimdata;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
+  fetch();
+  fetchTypeReimbursement();
+  fetchType();
 });
 
 //for searching
@@ -101,6 +137,152 @@ const filteredItems = (search) => {
   lengthCounter = sortedData.value.length;
   onChangePage(1);
 };
+
+// get data
+const fetch = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("claim_reimbursement/get_data");
+  instanceArray = api.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+const fetchTypeReimbursement = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("reimbursement");
+  instanceArray = api.data.data.data;
+  listReimbursementType.value = instanceArray;
+};
+
+const fetchType = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  let payload = {
+    id_employee: selectedEmployee,
+  };
+  const api = await Api.get("claim_reimbursement/get_travel", {
+    params: payload,
+  });
+  instanceArray = api.data.data;
+  listType.value = instanceArray;
+};
+
+const resetData = () => {
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
+  filter.type = "";
+  fetch();
+  fetchTypeReimbursement();
+  fetchType();
+};
+
+const filterDataByType = async () => {
+  let payload = {
+    search: filter.search,
+    status: filter.status,
+    start_date: filter.date ? filter.date[0] : "",
+    end_date: filter.date ? filter.date[1] : "",
+  };
+  const api = await Api.get("cash_advance/non_travel", { params: payload });
+  instanceArray = api.data.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+};
+
+// delete data
+const deleteData = async (event) => {
+  Swal.fire({
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`claim_reimbursement/delete_data/${event}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Data has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        if (sortedData.value.length == 1) {
+          router.go();
+        } else {
+          fetch();
+        }
+      });
+    } else {
+      return;
+    }
+  });
+};
+const deleteCheckedArray = () => {
+  Swal.fire({
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      let payload = {
+        id: deleteArray.value,
+      };
+      Api.delete(`claim_reimbursement/delete_data/`, { params: payload }).then(
+        (res) => {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: res.data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
+          if (sortedData.value.length == 1) {
+            router.go();
+          } else {
+            fetch();
+          }
+        }
+      );
+    } else {
+      return;
+    }
+  });
+};
+// end
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
@@ -134,7 +316,18 @@ const getSessionForSidebar = () => {
               Claim Reimbursement
             </p>
             <div class="flex gap-4">
-              <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar"/>
+              <label
+                @click="visibleModal = true"
+                for="my-modal-claim"
+                class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+                >+ Add New</label
+              >
+              
+              <ModalAdd
+                v-if="visibleModal"
+                :list-reimbursement-type="listReimbursementType"
+                :list-type="listType"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
               >
@@ -155,12 +348,16 @@ const getSessionForSidebar = () => {
                   Status
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedStatus"
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="filter.status"
                 >
-                  <option disabled selected>Status</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.type_status }}
+                  <option disabled selected>status</option>
+                  <option
+                    v-for="data in listStatus"
+                    :key="data.id"
+                    :value="data.id"
+                  >
+                    {{ data.title }}
                   </option>
                 </select>
               </div>
@@ -169,15 +366,15 @@ const getSessionForSidebar = () => {
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
-                  Item Type
+                  Type
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCatype"
+                  v-model="filter.type"
                 >
                   <option disabled selected>Type</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.type }}
+                  <option v-for="data in listReimbursementType" :key="data.id">
+                    {{ data.reimbursement_type }}
                   </option>
                 </select>
               </div>
@@ -190,16 +387,18 @@ const getSessionForSidebar = () => {
                 </p>
 
                 <VueDatePicker
-                  v-model="date"
+                  v-model="filter.date"
                   range
                   :enable-time-picker="false"
                   class="my-date"
+                  format="yyyy-mm-dd"
                 />
               </div>
 
               <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                  @click="filterDataByType"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -208,6 +407,7 @@ const getSessionForSidebar = () => {
                 </button>
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
                 >
                   <span>
                     <img :src="icon_reset" class="w-5 h-5" />
@@ -241,8 +441,8 @@ const getSessionForSidebar = () => {
                   placeholder="Search..."
                   type="text"
                   name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
+                  v-model="filter.search"
+                  @keyup="filterDataByType"
                 />
               </label>
             </div>
@@ -301,7 +501,7 @@ const getSessionForSidebar = () => {
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
                     v-for="data in sortedData.slice(
@@ -325,10 +525,15 @@ const getSessionForSidebar = () => {
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
                       </router-link>
-                      <button>
+                      <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="8" />
                   </tr>
                 </tbody>
               </table>
