@@ -252,7 +252,7 @@ const inputStylingClass =
         <div class="flex justify-between px-4 items-center text-start">
           <div class="mb-6 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Departemen<span class="text-red">*</span></label
+              >Departement<span class="text-red">*</span></label
             >
             <input
               v-model="employeeDepartementName"

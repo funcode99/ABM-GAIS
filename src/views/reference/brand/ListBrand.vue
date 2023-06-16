@@ -551,7 +551,7 @@ const exportToExcel = () => {
                     colspan="5"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
-                    Tidak Ada Data
+                  Data not Found
                   </td>
                 </tr>
               </tbody>

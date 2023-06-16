@@ -206,49 +206,49 @@ const fetchEmployee = async () => {
 // };
 
 //for export
-// const exportToExcel = () => {
-//   const workbook = new Workbook();
-//   const worksheet = workbook.addWorksheet("Employee Data");
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Employee Data");
 
-//   const tableHead = [
-//     { title: "Nomor" },
-//     { title: "ID" },
-//     { title: "SN" },
-//     { title: "Name" },
-//     { title: "Gender" },
-//     { title: "Email" },
-//     { title: "Phone" },
-//   ];
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "SN" },
+    { title: "Name" },
+    { title: "Gender" },
+    { title: "Email" },
+    { title: "Phone" },
+  ];
 
-//   // Menambahkan header kolom
-//   tableHead.forEach((column, index) => {
-//     worksheet.getCell(1, index + 1).value = column.title;
-//   });
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
 
-//   // Menambahkan data ke baris-baris selanjutnya
-//   sortedDataReactive.value.forEach((data, rowIndex) => {
-//     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-//     worksheet.getCell(rowIndex + 2, 2).value = data.id;
-//     worksheet.getCell(rowIndex + 2, 3).value = data.sn_employee;
-//     worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
-//     worksheet.getCell(rowIndex + 2, 5).value = data.jenkel;
-//     worksheet.getCell(rowIndex + 2, 6).value = data.email;
-//     worksheet.getCell(rowIndex + 2, 7).value = data.phone_number;
-//   });
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.sn_employee;
+    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.jenkel;
+    worksheet.getCell(rowIndex + 2, 6).value = data.email;
+    worksheet.getCell(rowIndex + 2, 7).value = data.phone_number;
+  });
 
-//   // Menyimpan workbook menjadi file Excel
-//   workbook.xlsx.writeBuffer().then((buffer) => {
-//     const blob = new Blob([buffer], {
-//       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-//     });
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = "employee_data.xlsx";
-//     a.click();
-//     URL.revokeObjectURL(url);
-//   });
-// };
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "employee_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 </script>
 
 <template>
@@ -273,6 +273,7 @@ const fetchEmployee = async () => {
               <!-- <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
