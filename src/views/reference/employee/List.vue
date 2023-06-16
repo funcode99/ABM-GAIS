@@ -446,6 +446,7 @@ const exportToExcel = () => {
                       data.departement_name,
                       data.band_job_name,
                       data.phone_number,
+                      data.cost_center_name,
                     ]"
                   />
                   <!-- <ModalEdit

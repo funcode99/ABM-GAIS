@@ -27,6 +27,7 @@ let employeeSiteName = ref(props.formContent[10]);
 let employeeDepartementName = ref(props.formContent[11]);
 let employeeJobbandName = ref(props.formContent[12]);
 let employeePhoneNumber = ref(props.formContent[13]);
+let employeeCostCenter = ref(props.formContent[14]);
 
 const formattedStartDate = computed(() => {
   if (employeeStartDate.value) {
@@ -39,6 +40,13 @@ const formattedStartDate = computed(() => {
 const formattedEndDate = computed(() => {
   if (employeeEndDate.value) {
     const date = new Date(employeeEndDate.value);
+    return date.toISOString().split("T")[0];
+  }
+  return "";
+});
+const formattedBOD = computed(() => {
+  if (employeeDob.value) {
+    const date = new Date(employeeDob.value);
     return date.toISOString().split("T")[0];
   }
   return "";
@@ -195,7 +203,7 @@ const inputStylingClass =
               >DOB<span class="text-red">*</span></label
             >
             <input
-              v-model="employeeDob"
+              v-model="formattedBOD"
               type="text"
               :class="inputStylingClass"
               required
@@ -279,13 +287,27 @@ const inputStylingClass =
           </div>
         </div>
 
-        <div class="flex justify-start px-4 items-center">
-          <div class="mb-6 w-56 text-start">
+        <div class="flex justify-between px-4 items-center text-start">
+          <div class="mb-6 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Phone Number<span class="text-red">*</span></label
             >
             <input
               v-model="employeePhoneNumber"
+              type="text"
+              :class="inputStylingClass"
+              required
+              disabled
+              class="cursor-not-allowed"
+            />
+          </div>
+
+          <div class="mb-6 w-full ml-2 overflow-x-hidden">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Cost Center<span class="text-red">*</span></label
+            >
+            <input
+              v-model="employeeCostCenter"
               type="text"
               :class="inputStylingClass"
               required
