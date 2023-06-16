@@ -66,29 +66,11 @@ const changeCompany = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
-  // console.log(res);
+  // console.log(res)
   Site.value = res.data.data;
-  // console.log("ini data site" + JSON.stringify(res.data.data));
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
   selectedSite.value = originalcurrentSite.value;
 };
-
-const changeSite = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  // console.log(res)
-  Warehouse.value = res.data.data;
-  // console.log("ini data warehouse" + JSON.stringify(res.data.data));
-};
-
-//for get site in select
-const fetchGetSite = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/get_data");
-  Site.value = res.data.data;
-};
-
 const fetchBrandCompany = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -97,6 +79,23 @@ const fetchBrandCompany = async (id_company) => {
   Brand.value = res.data.data;
   // selectedBrand.value = res.data.data[0].id;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const changeSite = async (id_site) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
+  // console.log(res)
+  Warehouse.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+//for get site in select
+const fetchGetSite = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  Site.value = res.data.data;
 };
 
 onMounted(() => {
@@ -118,6 +117,7 @@ watch(isVisible, () => {
 const resetForm = () => {
   currentwarehouseName.value = originalwarehouseName.value;
   selectedCompany.value = originalcurrentCompany.value;
+  selectedSite.value = originalcurrentSite.value;
   selectedSite.value = fetchGetSiteId(originalcurrentSite.value);
 };
 
