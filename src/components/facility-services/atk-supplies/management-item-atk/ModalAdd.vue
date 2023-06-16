@@ -34,14 +34,17 @@ const itemsTable = ref([])
 const itemsTable2 = ref([])
 let disableCompany = ref(false)
 let disableSite = ref(false)
+let addModal = ref(false)
 
-const emits = defineEmits(["unlockScrollbar"]);
+const emits = defineEmits(["unlockScrollbar", "close"]);
 const menuAccess = useMenuAccessStore()
 
-const props = defineProps({
-  roleId: Number,
-  roleAccess: Array
-})
+// const props = defineProps({
+//   roleId: Number,
+//   roleAccess: Array,
+//   unlockScrollbar:Boolean
+// })
+// console.log(props.unlockScrollbar)
 //for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -158,12 +161,13 @@ if(id == 0){
 }
 // return itemsTable
 }
+// console.log(emits('close'))
 const save = async () => {
   
   const payload = {
     array_multi:itemsTable.value,
   }
-  const res = await Api.post('management_atk/store_multi/',payload);
+  Api.post('management_atk/store_multi/',payload).then((res) => {
   Swal.fire({
       position: "center",
       icon: "success",
@@ -172,10 +176,29 @@ const save = async () => {
       timer: 1500,
     });
     reset()
+    addModal.value = false
+    emits("close");
+  }).catch((error) =>{
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: error.response.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // console.log(error.response.data.message)
+  })
+    
     // console.log(router.go({path : '/managementitem'}))
-    router.go({path : '/managementitem'})
+    // router.go({path : '/managementitem'})
     // defineEmits(["unlockScrollbar"])
 };
+const coba = async () => {
+  addModal.value = true
+}
+const coba2 = async () => {
+  addModal.value = false
+}
 const reset = async () => {
   disableSite.value = false
   disableCompany.value = false
@@ -188,6 +211,7 @@ const reset = async () => {
   itemNames.value = ''
   remark.value = ''
   selectedBrand.value = ''
+  itemsTable.value= []
 };
 const resetButCompanyDisable = async () => {
   disableSite.value = true
@@ -208,24 +232,24 @@ onMounted(() => {
 
 <template>
   <label
-    @click="this.$emit('unlockScrollbar')"
+    @click="coba"
     for="my-modal-item-atk"
     class="btn btn-success bg-green border-green hover:bg-none text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >+ Add Item</label
   >
 
-  <input type="checkbox" id="my-modal-item-atk" class="modal-toggle" />
-  <div class="modal">
+  <input type="checkbox" v-if="addModal == true" id="my-modal-item-atk" class="modal-toggle" />
+  <div class="modal" v-if="addModal == true">
     <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
+          @click="coba2"
           for="my-modal-item-atk"
           class="cursor-pointer absolute right-3 top-3"
         >
-          <img :src="iconClose" class="w-[24px] h-[24px] hover:scale-75" />
+          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
-        <p class="font-JakartaSans font-semibold text-white mx-4 py-2">
+        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
           New Item
         </p>
       </nav>
