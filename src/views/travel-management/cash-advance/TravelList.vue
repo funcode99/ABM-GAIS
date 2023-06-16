@@ -45,6 +45,7 @@ const selectedType = ref("Status");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let paginationArray = [];
 let lengthCounter = 0;
 let filter = reactive({
   status: "",
@@ -54,14 +55,18 @@ let filter = reactive({
 
 //for paginations & showing
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
-
+let totalPage = ref(0);
+let totalData = ref(0);
 //for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+  fetch(pageOfItem);
 };
 
 //for check & uncheck all
@@ -103,13 +108,23 @@ const sortList = (sortBy) => {
   }
 };
 
-const fetch = async () => {
+const fetch = async (id) => {
+  let payload = {
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
+
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("cash_advance/travel/");
-  instanceArray = api.data.data;
+  const api = await Api.get("cash_advance/travel/", { params: payload });
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from;
+  showingValueTo.value = paginationArray.to;
 };
 
 onBeforeMount(() => {
@@ -118,17 +133,28 @@ onBeforeMount(() => {
 });
 
 //for filter & reset button
-const filterDataByType = async () => {
+const filterDataByType = async (id) => {
   let payload = {
     search: filter.search,
     status: filter.status,
     start_date: filter.date ? filter.date[0] : "",
     end_date: filter.date ? filter.date[1] : "",
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
   };
+
   const api = await Api.get("cash_advance/travel", { params: payload });
-  instanceArray = api.data.data;
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from;
+  showingValueTo.value = paginationArray.to;
+  showingValue.value = paginationArray.current_page;
 };
 
 const resetData = () => {
@@ -160,13 +186,13 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen clean-margin ease-in-out duration-500"
         :class="[
           lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
@@ -175,7 +201,7 @@ const getSessionForSidebar = () => {
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
-            class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
+            class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
           >
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
@@ -236,7 +262,7 @@ const getSessionForSidebar = () => {
               <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByType"
+                  @click="filterDataByType()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -280,7 +306,7 @@ const getSessionForSidebar = () => {
                   type="text"
                   name="search"
                   v-model="filter.search"
-                  @keyup="filterDataByType"
+                  @keyup="filterDataByType()"
                 />
               </label>
             </div>
@@ -307,7 +333,7 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                :class="sortedData.length > 0 ? 'table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg' : 'table table-zebra table-compact border h-full w-full rounded-lg'"
               >
                 <thead
                   class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -345,16 +371,13 @@ const getSessionForSidebar = () => {
                 <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="(data, index) in sortedData"
                     :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
                     <td>{{ format_date(data.created_at) }}</td>
                     <td>{{ data.no_ca }}</td>
                     <td>{{ data.employee_name }}</td>
@@ -385,12 +408,12 @@ const getSessionForSidebar = () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
