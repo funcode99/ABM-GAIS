@@ -209,12 +209,12 @@
     
                 <div class="mb-6 flex flex-col text-left justify-start">
                   <label
-                    for="company"
+                    for="role"
                     class="block mb-2 font-JakartaSans font-medium text-sm"
                   >
                     User Role<span class="text-red">*</span>
                   </label>
-                  <select id="company" :class="inputStylingClass" v-model="role" required>
+                  <select id="role" :class="inputStylingClass" v-model="role" required>
                     <option v-for="data in responseRoleArray" :key="data.id" :value="[data.id, data.role_name]">
                       {{ data.role_name }}
                     </option>
