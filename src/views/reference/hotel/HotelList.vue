@@ -315,6 +315,10 @@ watch(HotelType, () => {
   referenceFetch.fetchTypeOfHotelResult = HotelType.value
 })
 
+const fetchHotel = () => {
+  fetchHotelUtils(instanceArray, sortedData)
+}
+
 </script>
 
 <template>
