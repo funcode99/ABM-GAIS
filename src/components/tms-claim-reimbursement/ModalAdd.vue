@@ -12,6 +12,7 @@ import { ref } from "vue";
 const props = defineProps({
   listType: Array,
   listReimbursementType: Array,
+  visible: Boolean,
 });
 
 const format_price = (value) => {
@@ -24,6 +25,7 @@ const format_price = (value) => {
 
 let listReimbursement = ref(props.listReimbursementType);
 let listTravel = ref(props.listType);
+let visibleModal = ref(props.visible);
 
 let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
 let username = localStorage.getItem("username");
@@ -32,6 +34,7 @@ let reimburse_type = ref("");
 let nominal = ref("");
 let travel_type = ref("");
 let remarks = ref("");
+const tempItem = ref([]);
 
 const selectedImage = ref(null);
 let filename = ref(null);
@@ -43,8 +46,6 @@ const onFileSelected = (event) => {
 };
 
 // Table
-const tempItem = ref([]);
-
 const addItem = async () => {
   let spl_reimburse = reimburse_type.value.split("+");
 
@@ -53,12 +54,13 @@ const addItem = async () => {
       nominal: nominal.value,
       remarks: remarks.value,
       reimburse_type_name: spl_reimburse[1],
+      id_reimbursement_type: spl_reimburse[0],
     };
 
     tempItem.value.push(data);
-    reimburse_type = "";
-    nominal = "";
-    remarks = "";
+    reimburse_type.value = "";
+    nominal.value = "";
+    remarks.value = "";
   } else {
     Swal.fire({
       html: "<b>Please fill in the form!</b>",
@@ -84,28 +86,52 @@ const removeItems = async (id) => {
 const saveForm = async () => {
   const payload = {
     id_employee: selectedEmployee,
-    id_reimbursement_type: reimburse_type,
-    attachment: selectedImage,
-    id_currency: currency.value,
-    grand_total: total,
+    id_request_trip: travel_type.value,
+    attachment: selectedImage.value,
     array_detail: tempItem.value,
   };
-//   const api = await Api.post("cash_advance/store", payload);
-//   Swal.fire({
-//     position: "center",
-//     icon: "success",
-//     title: api.data.message,
-//     showConfirmButton: false,
-//     timer: 1500,
-//   });
-  router.push({ path: "/cashadvancenontravel" });
-  visible.value = false;
+  if (selectedImage.value) {
+    Api.post("claim_reimbursement/store", payload).then((res) => {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      router.push({ path: "/claimreimbursement" });
+      visibleModal.value = false;
+    });
+  } else {
+    Swal.fire({
+      html: "<b>Please fill in the form!</b>",
+      timer: 2000,
+      timerProgressBar: true,
+      position: "top-end",
+      background: "#EA5455",
+      color: "#ffffff",
+      showCancelButton: false,
+      showConfirmButton: false,
+      width: "300px",
+    });
+  }
+};
+
+const close = () => {
+  reimburse_type.value = "";
+  nominal.value = "";
+  remarks.value = "";
+  travel_type.value = "";
+  filename.value = "";
+  selectedImage.value = "";
+  tempItem.value = [];
+  visibleModal.value = false;
 };
 </script>
 
 <template>
   <input type="checkbox" id="my-modal-claim" class="modal-toggle" />
-  <div class="modal">
+  <div class="modal" v-if="visibleModal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
@@ -154,7 +180,7 @@ const saveForm = async () => {
                 accept="application/pdf"
                 @change="onFileSelected"
               />
-              <label class="py-2" for="logo_company">
+              <label class="py-2">
                 <span
                   class="font-JakartaSans hidden font-medium text-sm cursor-pointer"
                   >{{ selectedImage || "Attachment" }}</span
@@ -217,7 +243,7 @@ const saveForm = async () => {
               <option
                 v-for="data in listReimbursement"
                 :key="data.id"
-                :value="data.id"
+                :value="data.id + '+' + data.reimbursement_type"
               >
                 {{ data.reimbursement_type }}
               </option>
@@ -318,16 +344,17 @@ const saveForm = async () => {
 
       <div class="sticky bottom-0 bg-white py-2">
         <div class="flex justify-end gap-4 mr-6">
-          <button
-            class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+          <label
+            @click="close"
+            for="my-modal-3"
+            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+            >Cancel</label
           >
-            Draft
-          </button>
           <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
             @click="saveForm"
           >
-            Submit
+            Save
           </button>
         </div>
       </div>
