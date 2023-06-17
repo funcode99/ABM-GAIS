@@ -670,7 +670,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewclaimreimbursement',
+      path: '/viewclaimreimbursement/:id',
       name: 'View Claim Reimbursement',
       component: ClaimReimbursementView,
       meta: {
