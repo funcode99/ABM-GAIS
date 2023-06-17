@@ -1,59 +1,38 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { Modal } from "usemodal-vue3";
+import { Modal } from "usemodal-vue3"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue"
 
-const emits = defineEmits(["unlockScrollbar", "hotel-saved"]);
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+const referenceFetch = useReferenceFetchResult()
 
-let selectedType = ref("Type");
-let selectedCity = ref("City");
-let selectedRating = ref("Rating");
-let HotelCode = ref("");
-let HotelName = ref("");
-let Address = ref("");
-let Email = ref("");
-let phoneNumber = ref("");
-let Rating = ref("");
-let HotelType = ref("");
-let City = ref("");
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
+const emits = defineEmits(["unlockScrollbar", "hotel-saved"])
 
-//for get hotel type in select
-const fetchGetHotelType = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/hotel/get_by_type");
-  HotelType.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-//for get city in select
-const fetchGetCity = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/city/");
-  City.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetHotelType();
-  fetchGetCity();
-});
+let selectedType = ref("Type")
+let selectedCity = ref("City")
+let HotelCode = ref("")
+let HotelName = ref("")
+let Address = ref("")
+let Email = ref("")
+let phoneNumber = ref("")
+let Rating = ref("")
+let HotelType = ref("")
+let City = ref("")
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
 
 const saveHotel = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
-};
+}
 
 const callAddApi = async () => {
   try {
@@ -83,26 +62,32 @@ const callAddApi = async () => {
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 const resetInput = () => {
-  HotelCode.value = "";
-  HotelName.value = "";
-  Address.value = "";
-  selectedType.value = "Type";
-  selectedCity.value = "City";
-  Email.value = "";
-  phoneNumber.value = "";
-  Rating.value = "";
-};
+  HotelCode.value = ""
+  HotelName.value = ""
+  Address.value = ""
+  selectedType.value = "Type"
+  selectedCity.value = "City"
+  Email.value = ""
+  phoneNumber.value = ""
+  Rating.value = ""
+}
 
 watch(isVisible, () => {
+  
   if (isAdding.value == true) {
-    isAdding.value = false;
+    isAdding.value = false
   } else {
-    resetInput();
+    resetInput()
   }
-});
+
+  City.value = referenceFetch.fetchCityResult
+  HotelType.value = referenceFetch.fetchTypeOfHotelResult
+
+})
+
 </script>
 
 <template>

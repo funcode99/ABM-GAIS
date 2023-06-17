@@ -1,35 +1,41 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/brand/ModalAdd.vue";
-import ModalEdit from "@/components/reference/brand/ModalEdit.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import ModalAdd from "@/components/reference/brand/ModalAdd.vue"
+import ModalEdit from "@/components/reference/brand/ModalEdit.vue"
 
-import tableContainer from "@/components/table/tableContainer.vue";
-import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
+import tableTop from "@/components/table/tableTop.vue"
+import tableData from "@/components/table/tableData.vue"
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import icon_receive from "@/assets/icon-receive.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
 
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"
 
-import Api from "@/utils/Api";
+import Api from "@/utils/Api"
 
-import { Workbook } from "exceljs";
+import { Workbook } from "exceljs"
 
-import { ref, onBeforeMount, onMounted, computed } from "vue";
+import { ref, onBeforeMount, computed, watch } from "vue"
 
-import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
-import { useSidebarStore } from "@/stores/sidebar.js";
+import fetchBrandUtils from '@/utils/Fetch/Reference/fetchBrand'
+import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
+import fetchSiteUtils from '@/utils/Fetch/Reference/fetchSite'
 
-const sidebar = useSidebarStore();
-const formEditState = useFormEditStore();
+import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js"
+import { useSidebarStore } from "@/stores/sidebar.js"
+import { useReferenceFetchResult } from '@/stores/fetch/reference'
+
+const sidebar = useSidebarStore()
+const formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
 
 let brandName = ref("");
 let brandIdCompany = ref("");
@@ -61,20 +67,18 @@ const callEditApi = async () => {
     timer: 1500,
   });
   fetchBrand();
-};
+}
 
 //for sort, search, & filter
-const search = ref("");
-let sortedData = ref([]);
-const selectedCompany = ref("Company");
-let sortedbyASC = true;
-let instanceArray = [];
-let Company = ref("");
-let lengthCounter = 0;
-let sortAscending = true;
-let sortedDataReactive = computed(() => sortedData.value);
-const showFullText = ref({});
-let checkList = false;
+const search = ref("")
+let sortedData = ref([])
+const selectedCompany = ref("Company")
+let sortedbyASC = true
+let instanceArray = []
+let Company = ref("")
+const showFullText = ref({})
+let checkList = false
+let addSiteData = ref([])
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -84,36 +88,36 @@ let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
-};
+  paginateIndex.value = pageOfItem - 1
+  showingValue.value = pageOfItem
+}
 
 //for filter & reset button
 const filterDataByCompany = () => {
   if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
+    sortedData.value = instanceArray
   } else {
     sortedData.value = instanceArray.filter(
       (item) => item.id_company === selectedCompany.value
-    );
+    )
   }
-};
+}
 
 //for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
   selectedCompany.value = "Company";
-};
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const check = document.getElementsByName("checks");
-  const btnDelete = document.getElementById("btnDelete");
+  const check = document.getElementsByName("checks")
+  const btnDelete = document.getElementById("btnDelete")
 
   if (checkValue === true) {
     for (let i = 0; i < check.length; i++) {
       if (check[i].type === "checkbox") {
-        check[i].checked = true;
+        check[i].checked = true
       }
     }
     btnDelete.style.display = "block";
@@ -125,7 +129,7 @@ const selectAll = (checkValue) => {
     }
     btnDelete.style.display = "none";
   }
-};
+}
 
 const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
@@ -145,7 +149,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-};
+}
 
 //for tablehead
 const tableHead = [
@@ -153,25 +157,18 @@ const tableHead = [
   { Id: 2, title: "Brand Name", jsonData: "brand_name" },
   { Id: 3, title: "Company", jsonData: "company_name" },
   { Id: 4, title: "Actions" },
-];
+]
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
   }
-};
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchBrand();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+}
 
 //for searching
 const filteredItems = (search) => {
@@ -185,37 +182,12 @@ const filteredItems = (search) => {
     );
   });
   sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
   onChangePage(1);
-};
+}
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
-
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetCompany();
-});
-
-//get all brand
-const fetchBrand = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/brand/");
-  // console.log(res.data.data);
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
+}
 
 //delete brand
 const deleteBrand = async (id) => {
@@ -258,7 +230,7 @@ const deleteBrand = async (id) => {
       return;
     }
   });
-};
+}
 
 //for export
 const exportToExcel = () => {
@@ -278,7 +250,7 @@ const exportToExcel = () => {
   })
 
   // Menambahkan data ke baris-baris selanjutnya
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.brand_name;
@@ -298,6 +270,21 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 }
+
+onBeforeMount(() => {
+  getSessionForSidebar()
+  fetchBrandUtils(instanceArray, sortedData)
+  fetchCompanyUtils(instanceArray, Company)
+  fetchSiteUtils(instanceArray, addSiteData)
+})
+
+watch(Company, () => {
+  referenceFetch.fetchCompanyResult = Company.value
+})
+
+watch(addSiteData, () => {
+  referenceFetch.fetchSiteResult = addSiteData.value
+})
 
 </script>
 

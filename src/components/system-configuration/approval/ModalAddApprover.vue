@@ -68,21 +68,14 @@
 
           isVisible.value = false
 
-          // console.log('masuk ke save field')
-
-          // console.log(typeof minCA.value)
-          // console.log(typeof maxCA.value)
-
           let minCAPost = minCA.value
           let maxCAPost = maxCA.value
 
           if(typeof minCA.value == 'number') {
-            // console.log('mengubah tipe data minCA')
             minCAPost = minCA.value.toString()
           }
 
           if(typeof maxCA.value == 'number') {
-            // console.log('mengubah tipe data maxCA')
             maxCAPost = maxCA.value.toString()
           }
 

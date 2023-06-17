@@ -1,56 +1,35 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { Modal } from "usemodal-vue3";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import { useReferenceFetchResult } from '@/stores/fetch/reference'
+const referenceFetch = useReferenceFetchResult()
 
-import { ref, onMounted, watch } from "vue";
+const emits = defineEmits(["unlockScrollbar", "brand-saved"])
 
-const emits = defineEmits(["unlockScrollbar", "brand-saved"]);
+let selectedCompany = ref("Company")
+let selectedSite = ref("Site")
+let brandName = ref("")
+let Company = ref("")
+let Site = ref("")
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
+let location = ref()
+let responseCompanyArray = ref([])
+let responseSiteArray = ref([])
 
-let selectedCompany = ref("Company");
-let selectedSite = ref("Site");
-let brandName = ref("");
-let Company = ref("");
-let Site = ref("");
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
-let location = ref();
-let responseEmployeeArray = ref([]);
-let responseSiteArray = ref([]);
-
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  responseEmployeeArray.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-//for get site in select
-const fetchGetSite = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/get_data");
-  responseSiteArray.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetCompany();
-  fetchGetSite();
-});
 
 const saveBrand = async () => {
-  isAdding.value = true;
-  isVisible.value = !isVisible.value;
-  setTimeout(callAddApi, 500);
-};
+  isAdding.value = true
+  isVisible.value = !isVisible.value
+  setTimeout(callAddApi, 500)
+}
 
 const callAddApi = async () => {
   try {
@@ -71,37 +50,46 @@ const callAddApi = async () => {
       timer: 1500,
     });
 
-    emits("brand-saved");
+    emits("brand-saved")
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-};
+}
 
 const resetInput = () => {
-  brandName.value = "";
-  selectedCompany.value = "Company";
-  selectedSite.value = "Site";
-};
+  brandName.value = ""
+  selectedCompany.value = "Company"
+  selectedSite.value = "Site"
+}
 
 watch(isVisible, () => {
+
   if (isAdding.value == true) {
-    isAdding.value = false;
+    isAdding.value = false
   } else {
-    resetInput();
+    resetInput()
   }
-});
+
+  responseCompanyArray.value = referenceFetch.fetchEmployeeResult
+  responseSiteArray.value = referenceFetch.fetchSiteResult
+
+})
+
+
 </script>
 
 <template>
+
   <button
     @click="isVisible = true"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-  >
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
     + Add New
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+
     <main>
+      
       <modalHeader @closeVisibility="isVisible = false" title="New Brand" />
 
       <form class="pt-4" @submit.prevent="saveBrand">
@@ -160,7 +148,9 @@ watch(isVisible, () => {
 
         <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
+
     </main>
+
   </Modal>
 </template>
 

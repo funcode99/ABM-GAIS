@@ -1,76 +1,38 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { Modal } from "usemodal-vue3";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import Multiselect from "@vueform/multiselect";
+import Multiselect from "@vueform/multiselect"
 
-import { ref, onMounted, watch } from "vue";
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+const referenceFetch = useReferenceFetchResult()
 
-const emits = defineEmits(["unlockScrollbar", "zona-saved"]);
+const emits = defineEmits(["unlockScrollbar", "zona-saved"])
 
-let zonaName = ref("");
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
-let selectedZona = ref("Zona");
-let Zona = ref("");
+let zonaName = ref("")
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
+let selectedZona = ref("Zona")
+let Zona = ref("")
 
-let companyData = ref(null);
-let companyIdArray = ref(null);
-let cityData = ref(null);
-let cityIdArray = ref(null);
-
-//for get city in input
-const fetchCity = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/city/");
-  cityData = res.data.data;
-  // console.log("ini data city" + JSON.stringify(res.data.data));
-  cityData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data company setelah perubahan:", cityData);
-};
-
-//for get company in input
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  companyData = res.data.data;
-  // console.log("ini data company" + JSON.stringify(res.data.data));
-  companyData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data company setelah perubahan:", companyData);
-};
-
-//for get zona in select
-const fetchGetZona = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona/get_id/");
-  Zona.value = res.data.data;
-  // console.log("ini data zona" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchCity();
-  fetchGetCompany();
-  fetchGetZona();
-});
+let companyData = ref(null)
+let companyIdArray = ref(null)
+let cityData = ref(null)
+let cityIdArray = ref(null)
+let addZonaId = ref([])
 
 const saveZona = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
-};
+}
 
 const callAddApi = async () => {
   try {
@@ -94,7 +56,7 @@ const callAddApi = async () => {
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 const resetInput = () => {
   selectedZona.value = "Zona";
@@ -104,11 +66,25 @@ const resetInput = () => {
 
 watch(isVisible, () => {
   if (isAdding.value == true) {
-    isAdding.value = false;
+    isAdding.value = false
   } else {
-    resetInput();
+    resetInput()
   }
-});
+
+  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value.map((item) => {
+    item.value = item.id
+  })
+
+  cityData.value = referenceFetch.fetchCityResult
+  cityData.value.map((item) => {
+    item.value = item.id
+  })
+
+  Zona.value = referenceFetch.fetchZonaIdResult
+
+})
+
 </script>
 
 <template>

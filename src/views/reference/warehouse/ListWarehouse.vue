@@ -1,67 +1,69 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/warehouse/ModalAdd.vue";
-import ModalEdit from "@/components/reference/warehouse/ModalEdit.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import ModalAdd from "@/components/reference/warehouse/ModalAdd.vue"
+import ModalEdit from "@/components/reference/warehouse/ModalEdit.vue"
 
-import tableContainer from "@/components/table/tableContainer.vue";
-import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
+import tableTop from "@/components/table/tableTop.vue"
+import tableData from "@/components/table/tableData.vue"
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import icon_receive from "@/assets/icon-receive.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
 
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"
 
-import Api from "@/utils/Api";
+import Api from "@/utils/Api"
 
-import { Workbook } from "exceljs";
+import { Workbook } from "exceljs"
 
-import { ref, onBeforeMount, onMounted, computed } from "vue";
+import { ref, onBeforeMount, onMounted, computed } from "vue"
 
-import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
-import { useSidebarStore } from "@/stores/sidebar.js";
+import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js"
+import { useSidebarStore } from "@/stores/sidebar.js"
 
-const sidebar = useSidebarStore();
-const formEditState = useFormEditStore();
+const sidebar = useSidebarStore()
+const formEditState = useFormEditStore()
 
-let warehouseName = ref("");
-let warehouseIdCompany = ref("");
-let warehouseIdSite = ref();
+let warehouseName = ref("")
+let warehouseIdCompany = ref("")
+let warehouseIdSite = ref()
 
-let editWarehouseDataId = ref();
+let editWarehouseDataId = ref()
 
 //for edit
 const editWarehouse = async (data) => {
-  editWarehouseDataId.value = data;
-  setTimeout(callEditApi, 500);
-  // console.log("ini data id:" + data);
-};
+  editWarehouseDataId.value = data
+  setTimeout(callEditApi, 500)
+}
 
 //for edit
 const callEditApi = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   await Api.post(`/warehouse/update_data/${editWarehouseDataId.value}`, {
     warehouse_name: formEditState.warehouse.warehouseName,
     id_company: formEditState.warehouse.warehouseIdCompany,
     id_site: formEditState.warehouse.warehouseIdSite,
-  });
+  })
+
   Swal.fire({
     position: "center",
     icon: "success",
     title: "Your work has been saved",
     showConfirmButton: false,
     timer: 1500,
-  });
-  fetchWarehouse();
-};
+  })
+
+  fetchWarehouse()
+
+}
 
 //for sort & search
 const search = ref("");
@@ -84,20 +86,20 @@ let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
-};
+  paginateIndex.value = pageOfItem - 1
+  showingValue.value = pageOfItem
+}
 
 //for filter & reset button
 const filterDataByCompany = () => {
   if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
+    sortedData.value = instanceArray
   } else {
     sortedData.value = instanceArray.filter(
       (item) => item.id_company === selectedCompany.value
-    );
+    )
   }
-};
+}
 
 //for filter & reset button
 const resetData = () => {

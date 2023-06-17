@@ -1,104 +1,89 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg";
+import editicon from "@/assets/navbar/edit_icon.svg"
 
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import Api from "@/utils/Api";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import { ref, onMounted, watch } from "vue";
-import { Modal } from "usemodal-vue3";
+import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js"
+import { useReferenceFetchResult } from '@/stores/fetch/reference'
+let formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
 
-import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
+const emits = defineEmits(["unlockScrollbar", "changeBrand"])
 
-const emits = defineEmits(["unlockScrollbar", "changeBrand"]);
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
 
-let formEditState = useFormEditStore();
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
+let selectedCompany = ref("Company")
+let Company = ref("")
+let Site = ref("")
+let brandName = ref("")
+let brandIdCompany = ref("")
+let brandIdSite = ref()
 
-let selectedCompany = ref("Company");
-let Company = ref("");
-let Site = ref("");
-let brandName = ref("");
-let brandIdCompany = ref("");
-let brandIdSite = ref();
-
-let responseCompanyArray = ref([]);
-let responseSiteArray = ref([]);
+let responseCompanyArray = ref([])
+let responseSiteArray = ref([])
 
 // let selectedCompanyId = ref(props.formContent[1] || null);
 // let selectedSiteId = ref(props.formContent[2] || null);
 
 // let company = ref(props.formContent[1]);
-let location = ref([props.formContent[2], props.formContent[1]]);
+let location = ref([props.formContent[2], props.formContent[1]])
 
 const props = defineProps({
   formContent: Array,
 });
 
-const currentbrandName = ref(props.formContent[0]);
-const originalbrandName = ref(props.formContent[0]);
+const currentbrandName = ref(props.formContent[0])
+const originalbrandName = ref(props.formContent[0])
 // const currentbrandIdCompany = ref(props.formContent[1]);
 // const originalbrandIdCompany = ref(props.formContent[1]);
 // const currentbrandIdSite = ref(props.formContent[2]);
 // const originalbrandIdSite = ref(props.formContent[2]);
 
 const submitEdit = () => {
-  isAdding.value = true;
+  isAdding.value = true
 
   if (!formEditState.brand) {
-    formEditState.brand = {}; // Inisialisasi objek jika belum ada
+    formEditState.brand = {} // Inisialisasi objek jika belum ada
   }
 
-  formEditState.brand.brandName = currentbrandName.value;
-  formEditState.brand.brandIdCompany = location.value[1];
-  formEditState.brand.brandIdSite = location.value[0];
+  formEditState.brand.brandName = currentbrandName.value
+  formEditState.brand.brandIdCompany = location.value[1]
+  formEditState.brand.brandIdSite = location.value[0]
 
-  isVisible.value = false;
-  emits("changeBrand"); // Memanggil event 'changeBrand'
-};
+  isVisible.value = false
+  emits("changeBrand") // Memanggil event 'changeBrand'
 
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  responseCompanyArray.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-//for get site in select
-const fetchGetSite = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/get_data");
-  responseSiteArray.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetCompany();
-  fetchGetSite();
-});
+}
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 watch(isVisible, () => {
+
   if (isAdding.value == true) {
-    isAdding.value = false;
+    isAdding.value = false
   } else {
-    resetForm();
+    resetForm()
   }
-});
+
+  responseCompanyArray.value = referenceFetch.fetchEmployeeResult
+  responseSiteArray.value = referenceFetch.fetchSiteResult
+
+})
 
 const resetForm = () => {
-  currentbrandName.value = originalbrandName.value;
-  location.value = [props.formContent[1], props.formContent[2]];
-  // selectedSiteId.value = originalwarehouseIdSite.value;
-};
+  currentbrandName.value = originalbrandName.value
+  location.value = [props.formContent[1], props.formContent[2]]
+  // selectedSiteId.value = originalwarehouseIdSite.value
+}
+
+
 </script>
 
 <template>

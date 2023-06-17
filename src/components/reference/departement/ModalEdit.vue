@@ -1,98 +1,61 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg";
+import editicon from "@/assets/navbar/edit_icon.svg"
 
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import Api from "@/utils/Api";
+import Multiselect from "@vueform/multiselect"
 
-import Multiselect from "@vueform/multiselect";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import { ref, onMounted, watch } from "vue";
-import { Modal } from "usemodal-vue3";
+import { useFormEditStore } from "@/stores/reference/departement/edit-modal.js"
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+let formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
 
-import { useFormEditStore } from "@/stores/reference/departement/edit-modal.js";
+const emits = defineEmits(["unlockScrollbar", "changeDepartement"])
 
-const emits = defineEmits(["unlockScrollbar", "changeDepartement"]);
+let selectedGlAccount = ref("Account")
+let GlAccount = ref("")
+let status = ref("Status")
+let Division = ref([])
+let divisionArray = ref(null)
+let departementHead = ref("Name")
+let Employee = ref("")
 
-let selectedGlAccount = ref("Account");
-let GlAccount = ref("");
-let status = ref("Status");
-let Division = ref([]);
-let divisionArray = ref(null);
-let departementHead = ref("Name");
-let Employee = ref("");
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
 
-let formEditState = useFormEditStore();
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
+let companyData = ref(null)
+let companyIdArray = ref([])
 
-let companyData = ref(null);
-let companyIdArray = ref([]);
+let divisionData = ref(null)
 
-let divisionData = ref(null);
-let divisionIdArray = ref([]);
 
-let companyIdObject = ref(props.formContent[0]);
-let companyIdObjectKeys = ref(Object.values(companyIdObject.value));
+let companyIdObject = ref(props.formContent[0])
+let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
 
 companyIdObjectKeys.value.map((item) => {
-  let number = Number(item);
+  let number = Number(item)
 
   if (Number.isInteger(number)) {
-    companyIdArray.value.push(item);
+    companyIdArray.value.push(item)
   }
-});
+})
 
-let currentDepartementCode = ref(props.formContent[1]);
-let currentDepartementName = ref(props.formContent[2]);
-// let currentDepartementCostCenter = ref(props.formContent[3]);
-let currentDepartementProfitCenter = ref(props.formContent[3]);
-let selectedDepartementGlAccount = ref(props.formContent[4]);
-let selectedStatusTypeId = ref(props.formContent[5]);
-let selectedDepartementHead = ref(props.formContent[6]);
-
-//for get company in input
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  companyData = res.data.data;
-  // console.log("ini data company" + JSON.stringify(res.data.data));
-  companyData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data company setelah perubahan:", companyData);
-};
-
-//for get gl account in select
-const fetchGlAccount = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/gl_account/");
-  GlAccount.value = res.data.data;
-  // console.log("ini data gl account" + JSON.stringify(res.data.data));
-};
-
-//for get employee in select
-const fetchEmployee = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/employee/get/");
-  Employee.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data.data));
-};
-
-onMounted(() => {
-  fetchGetCompany();
-  fetchGlAccount();
-  fetchEmployee();
-});
+let currentDepartementCode = ref(props.formContent[1])
+let currentDepartementName = ref(props.formContent[2])
+let currentDepartementProfitCenter = ref(props.formContent[3])
+let selectedDepartementGlAccount = ref(props.formContent[4])
+let selectedStatusTypeId = ref(props.formContent[5])
+let divisionIdArray = ref([props.formContent[6]])
+let selectedDepartementHead = ref(props.formContent[7])
 
 const props = defineProps({
   formContent: Array,
-});
+})
 
 const submitEdit = () => {
   isAdding.value = true;
@@ -112,35 +75,43 @@ const submitEdit = () => {
   formEditState.departement.departementDivision = divisionIdArray.value;
   formEditState.departement.departementHead = selectedDepartementHead.value;
 
-  console.log(
-    "nilai gl account" + JSON.stringify(selectedDepartementGlAccount)
-  );
+  isVisible.value = false
 
-  isVisible.value = false;
-  emits("changeDepartement"); // Memanggil event 'changeZona'
+  emits("changeDepartement") // Memanggil event 'changeZona'
 };
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 const resetInput = () => {
-  const originalFormContent = props.formContent;
+  const originalFormContent = props.formContent
 
-  companyIdArray.value = [...originalFormContent[0]];
-  currentDepartementCode.value = originalFormContent[1];
-  currentDepartementName.value = originalFormContent[2];
-  currentDepartementProfitCenter.value = originalFormContent[3];
-  selectedDepartementGlAccount.value = originalFormContent[4];
-  selectedStatusTypeId.value = originalFormContent[5];
-  // divisionIdArray.value = [...originalFormContent[7]];
-  selectedDepartementHead.value = originalFormContent[6];
+  companyIdArray.value = [...originalFormContent[0]]
+  currentDepartementCode.value = originalFormContent[1]
+  currentDepartementName.value = originalFormContent[2]
+  currentDepartementProfitCenter.value = originalFormContent[3]
+  selectedDepartementGlAccount.value = originalFormContent[4]
+  selectedStatusTypeId.value = originalFormContent[5]
+  divisionIdArray.value = [props.formContent[6]]
+  selectedDepartementHead.value = originalFormContent[7]
 };
 
 watch(isVisible, (newValue) => {
+
   if (newValue) {
-    resetInput();
+    resetInput()
   }
-});
+
+  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value.map((item) => {
+    item.value = item.id
+  })
+
+  Employee.value = referenceFetch.fetchEmployeeResult
+  GlAccount.value = referenceFetch.fetchGLAccountResult
+
+})
+
 </script>
 
 <template>
@@ -300,7 +271,7 @@ watch(isVisible, (newValue) => {
               v-model="selectedDepartementHead"
             >
               <option disabled selected>Name</option>
-              <option v-for="name in Employee" :value="name.id">
+              <option v-for="name in Employee" :key="name.id" :value="name.id">
                 {{ name.employee_name }}
               </option>
             </select>

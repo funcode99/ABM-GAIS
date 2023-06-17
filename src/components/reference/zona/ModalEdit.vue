@@ -4,22 +4,21 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-import Api from "@/utils/Api";
-
 import Multiselect from "@vueform/multiselect";
 
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
-import { useFormEditStore } from "@/stores/reference/zona/edit-modal.js";
+import { useFormEditStore } from "@/stores/reference/zona/edit-modal.js"
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+let formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
 
-const emits = defineEmits(["unlockScrollbar", "changeZona"]);
-
-let formEditState = useFormEditStore();
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
-let Zona = ref("");
+const emits = defineEmits(["unlockScrollbar", "changeZona"])
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
+let Zona = ref("")
 
 let companyData = ref(null);
 let companyIdArray = ref(null);
@@ -34,99 +33,76 @@ let selectedZonaId = ref(props.formContent[1] || null);
 let CityIdObject = ref(props.formContent[2]);
 let cityIdObjectKeys = ref(Object.values(CityIdObject.value));
 
-companyIdObjectKeys.value.map((item, index) => {
+
+  companyIdObjectKeys.value.map((item, index) => {
+  
   if (item == "{") {
-    companyIdObjectKeys.value[index] = "[";
+    companyIdObjectKeys.value[index] = "["
   } else if (item == "}") {
-    companyIdObjectKeys.value[index] = "]";
-  }
-});
-
-cityIdObjectKeys.value.map((item, index) => {
-  if (item == "{") {
-    cityIdObjectKeys.value[index] = "[";
-  } else if (item == "}") {
-    cityIdObjectKeys.value[index] = "]";
-  }
-});
-
-companyIdArray.value = JSON.parse(companyIdObjectKeys.value.join(""));
-cityIdArray.value = JSON.parse(cityIdObjectKeys.value.join(""));
-
-const props = defineProps({
-  formContent: Array,
-});
-
-const submitEdit = () => {
-  isAdding.value = true;
-
-  if (!formEditState.zona) {
-    formEditState.zona = {};
+    companyIdObjectKeys.value[index] = "]"
   }
 
-  formEditState.zona.zonaIdCompany = companyIdArray.value;
-  formEditState.zona.zonaName = selectedZonaId.value;
-  formEditState.zona.zonaIdCity = cityIdArray.value;
+  })
 
-  isVisible.value = false;
-  emits("changeZona");
-};
+  cityIdObjectKeys.value.map((item, index) => {
+    if (item == "{") {
+      cityIdObjectKeys.value[index] = "["
+    } else if (item == "}") {
+      cityIdObjectKeys.value[index] = "]"
+    }
+  })
 
-//for get city in input
-const fetchCity = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/city/");
-  cityData = res.data.data;
-  // console.log("ini data city" + JSON.stringify(res.data.data));
-  cityData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data company setelah perubahan:", cityData);
-};
+  companyIdArray.value = JSON.parse(companyIdObjectKeys.value.join(""))
+  cityIdArray.value = JSON.parse(cityIdObjectKeys.value.join(""))
 
-//for get company in input
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  companyData = res.data.data;
-  // console.log("ini data company" + JSON.stringify(res.data.data));
-  companyData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data company setelah perubahan:", companyData);
-};
+  const props = defineProps({
+    formContent: Array,
+  })
 
-//for get zona in select
-const fetchGetZona = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona/get_id/");
-  Zona.value = res.data.data;
-  // console.log("ini data zona" + JSON.stringify(res.data.data));
-};
+  const submitEdit = () => {
+    isAdding.value = true;
 
-onMounted(() => {
-  fetchCity();
-  fetchGetCompany();
-  fetchGetZona();
-});
+    if (!formEditState.zona) {
+      formEditState.zona = {};
+    }
 
-const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+    formEditState.zona.zonaIdCompany = companyIdArray.value;
+    formEditState.zona.zonaName = selectedZonaId.value;
+    formEditState.zona.zonaIdCity = cityIdArray.value;
 
-const resetInput = () => {
-  selectedZonaId.value = props.formContent[1];
-  companyIdArray.value = [...props.formContent[0]];
-  cityIdArray.value = [...props.formContent[2]];
-};
-
-watch(isVisible, (newValue) => {
-  if (newValue) {
-    resetInput();
+    isVisible.value = false;
+    emits("changeZona");
   }
-});
+
+  const resetInput = () => {
+    selectedZonaId.value = props.formContent[1]
+    companyIdArray.value = [...props.formContent[0]]
+    cityIdArray.value = [...props.formContent[2]]
+  }
+
+  watch(isVisible, (newValue) => {
+    if (newValue) {
+      resetInput();
+    }
+
+    companyData.value = referenceFetch.fetchCompanyResult
+    companyData.value.map((item) => {
+      item.value = item.id
+    })
+
+    cityData.value = referenceFetch.fetchCityResult
+    cityData.value.map((item) => {
+      item.value = item.id
+    })
+
+    Zona.value = referenceFetch.fetchZonaIdResult
+
+
+  })
+
+  const inputStylingClass =
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+
 </script>
 
 <template>

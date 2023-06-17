@@ -1,108 +1,89 @@
 <script setup>
-import editicon from "@/assets/navbar/edit_icon.svg";
+import editicon from "@/assets/navbar/edit_icon.svg"
 
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import Api from "@/utils/Api";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import { ref, onMounted, watch } from "vue";
-import { Modal } from "usemodal-vue3";
+import { useFormEditStore } from "@/stores/reference/hotel/edit-modal.js"
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
 
-import { useFormEditStore } from "@/stores/reference/hotel/edit-modal.js";
+let formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
 
-const emits = defineEmits(["unlockScrollbar", "changeHotel"]);
+const emits = defineEmits(["unlockScrollbar", "changeHotel"])
 
-let formEditState = useFormEditStore();
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
 
-let selectedType = ref("Type");
-let selectedCity = ref("City");
-let HotelType = ref("");
-let City = ref("");
-let HotelCode = ref("");
-let hotelName = ref("");
-let hotelAddress = ref("");
-let hotelIdTypeHotel = ref("");
-let hotelIdCity = ref();
-let hotelEmail = ref();
-let hotelPhoneNumber = ref();
-let hotelRating = ref();
+let selectedType = ref("Type")
+let selectedCity = ref("City")
+let HotelType = ref("")
+let City = ref("")
+let HotelCode = ref("")
+let hotelName = ref("")
+let hotelAddress = ref("")
+let hotelIdTypeHotel = ref("")
+let hotelIdCity = ref()
+let hotelEmail = ref()
+let hotelPhoneNumber = ref()
+let hotelRating = ref()
 
-let selectedHotelTypeId = ref(props.formContent[2] || null);
-let selectedCityId = ref(props.formContent[3] || null);
-let selectedRating = ref(props.formContent[6]);
+let selectedHotelTypeId = ref(props.formContent[2] || null)
+let selectedCityId = ref(props.formContent[3] || null)
+let selectedRating = ref(props.formContent[6])
 
 const props = defineProps({
   formContent: Array,
-});
+})
 
-const currenthotelName = ref(props.formContent[0]);
-const originalhotelName = ref(props.formContent[0]);
-const currenthotelAddress = ref(props.formContent[1]);
-const originalhotelAddress = ref(props.formContent[1]);
-const currenthotelIdTypeHotel = ref(props.formContent[2]);
-const originalhotelIdTypeHotel = ref(props.formContent[2]);
-const currenthotelIdCity = ref(props.formContent[3]);
-const originalhotelIdCity = ref(props.formContent[3]);
-const currenthotelEmail = ref(props.formContent[4]);
-const originalhotelEmail = ref(props.formContent[4]);
-const currenthotelPhoneNumber = ref(props.formContent[5]);
-const originalhotelPhoneNumber = ref(props.formContent[5]);
-const currenthotelRating = ref(props.formContent[6]);
-const originalhotelRating = ref(props.formContent[6]);
-const currenthotelCode = ref(props.formContent[7]);
-const originalhotelCode = ref(props.formContent[7]);
+const currenthotelName = ref(props.formContent[0])
+const originalhotelName = ref(props.formContent[0])
+const currenthotelAddress = ref(props.formContent[1])
+const originalhotelAddress = ref(props.formContent[1])
+const currenthotelIdTypeHotel = ref(props.formContent[2])
+const originalhotelIdTypeHotel = ref(props.formContent[2])
+const currenthotelIdCity = ref(props.formContent[3])
+const originalhotelIdCity = ref(props.formContent[3])
+const currenthotelEmail = ref(props.formContent[4])
+const originalhotelEmail = ref(props.formContent[4])
+const currenthotelPhoneNumber = ref(props.formContent[5])
+const originalhotelPhoneNumber = ref(props.formContent[5])
+const currenthotelRating = ref(props.formContent[6])
+const originalhotelRating = ref(props.formContent[6])
+const currenthotelCode = ref(props.formContent[7])
+const originalhotelCode = ref(props.formContent[7])
 
 const submitEdit = () => {
-  isAdding.value = true;
+
+  isAdding.value = true
 
   if (!formEditState.hotel) {
-    formEditState.hotel = {}; // Inisialisasi objek jika belum ada
+    formEditState.hotel = {} // Inisialisasi objek jika belum ada
   }
 
-  formEditState.hotel.hotelName = currenthotelName.value;
-  formEditState.hotel.hotelAddress = currenthotelAddress.value;
-  formEditState.hotel.hotelIdTypeHotel = selectedHotelTypeId.value;
-  formEditState.hotel.hotelIdCity = selectedCityId.value;
-  formEditState.hotel.hotelEmail = currenthotelEmail.value;
-  formEditState.hotel.hotelPhoneNumber = currenthotelPhoneNumber.value;
-  formEditState.hotel.hotelRating = selectedRating.value;
-  formEditState.hotel.hotelCode = currenthotelCode.value;
+  formEditState.hotel.hotelName = currenthotelName.value
+  formEditState.hotel.hotelAddress = currenthotelAddress.value
+  formEditState.hotel.hotelIdTypeHotel = selectedHotelTypeId.value
+  formEditState.hotel.hotelIdCity = selectedCityId.value
+  formEditState.hotel.hotelEmail = currenthotelEmail.value
+  formEditState.hotel.hotelPhoneNumber = currenthotelPhoneNumber.value
+  formEditState.hotel.hotelRating = selectedRating.value
+  formEditState.hotel.hotelCode = currenthotelCode.value
 
-  isVisible.value = false;
-  emits("changeHotel"); // Memanggil event 'changeBrand'
-};
+  isVisible.value = false
+  emits("changeHotel") // Memanggil event 'changeBrand'
 
-//for get hotel type in select
-const fetchGetHotelType = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/hotel/get_by_type");
-  HotelType.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-//for get city in select
-const fetchGetCity = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/city/");
-  City.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetHotelType();
-  fetchGetCity();
-});
+}
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 watch(isVisible, () => {
+  
   if (isAdding.value == true) {
     isAdding.value = false;
   } else {
@@ -115,7 +96,11 @@ watch(isVisible, () => {
     currenthotelRating.value = props.formContent[6];
     currenthotelCode.value = props.formContent[7];
   }
-});
+
+  City.value = referenceFetch.fetchCityResult
+  HotelType.value = referenceFetch.fetchTypeOfHotelResult
+
+})
 
 const resetForm = () => {
   currenthotelName.value = originalhotelName.value;
@@ -126,7 +111,8 @@ const resetForm = () => {
   currenthotelPhoneNumber.value = originalhotelPhoneNumber.value;
   currenthotelRating.value = originalhotelRating.value;
   currenthotelCode.value = originalhotelCode.value;
-};
+}
+
 </script>
 
 <template>

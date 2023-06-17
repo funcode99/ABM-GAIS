@@ -1,12 +1,18 @@
 import { defineStore } from 'pinia'
 
 export const useReferenceFetchResult = defineStore('reference', {
-    state:() => {
-            return {
+    state: () => {
+          return {
+                fetchBrandResult: [],
+                fetchCityResult: [],
                 fetchCompanyResult: [],
-                fetchSiteResult: [],
                 fetchEmployeeResult: [],
-                fetchIndividualEmployeeResult: []
+                fetchIndividualEmployeeResult: [],
+                fetchGLAccountResult: [],
+                fetchHotelResult: [],
+                fetchTypeOfHotelResult: [],
+                fetchSiteResult: [],
+                fetchZonaIdResult: [],
             }
     }
 })

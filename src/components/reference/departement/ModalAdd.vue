@@ -1,84 +1,51 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { Modal } from "usemodal-vue3";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import Multiselect from "@vueform/multiselect";
+import Multiselect from "@vueform/multiselect"
 
-import { ref, onMounted, watch } from "vue";
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+const referenceFetch = useReferenceFetchResult()
 
-const emits = defineEmits(["unlockScrollbar", "departementSaved"]);
+const emits = defineEmits(["unlockScrollbar", "departementSaved"])
 
-let departemenCode = ref("");
-let departementName = ref("");
-let costCenter = ref("");
-let profitCenter = ref("");
-let selectedGlAccount = ref("Account");
-let GlAccount = ref("");
-let status = ref("Status");
-let Division = ref([]);
-let divisionArray = ref(null);
-let selectedDepartementHead = ref("Name");
-let Employee = ref("");
+let departemenCode = ref("")
+let departementName = ref("")
+let costCenter = ref("")
+let profitCenter = ref("")
+let selectedGlAccount = ref("Account")
+let GlAccount = ref("")
+let status = ref("Status")
+let Division = ref([])
+let divisionArray = ref(null)
+let selectedDepartementHead = ref("Name")
+let Employee = ref("")
 
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
 
-let companyData = ref(null);
-let companyIdArray = ref([]);
-
-//for get company in input
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  companyData = res.data.data;
-  // console.log("ini data company" + JSON.stringify(res.data.data));
-  companyData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data company setelah perubahan:", companyData);
-};
-
-//for get gl account in select
-const fetchGlAccount = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/gl_account/");
-  GlAccount.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-//for get employee in select
-const fetchEmployee = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/employee/get/");
-  Employee.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetCompany();
-  fetchGlAccount();
-  fetchEmployee();
-});
+let companyData = ref(null)
+let companyIdArray = ref([])
 
 const saveDepartement = async () => {
-  isAdding.value = true;
-  isVisible.value = !isVisible.value;
-  setTimeout(callAddApi, 500);
-};
+  isAdding.value = true
+  isVisible.value = !isVisible.value
+  setTimeout(callAddApi, 500)
+}
 
 const callAddApi = async () => {
   try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    
     await Api.post(`/department/store`, {
       id_company: companyIdArray.value,
       departement_code: departemenCode.value,
@@ -88,7 +55,7 @@ const callAddApi = async () => {
       is_active: status.value,
       id_division: Division.value.join(","),
       departement_head: selectedDepartementHead.value,
-    });
+    })
 
     Swal.fire({
       position: "center",
@@ -98,28 +65,39 @@ const callAddApi = async () => {
       timer: 1500,
     });
 
-    emits("departementSaved");
+    emits("departementSaved")
+
   } catch (error) {
     console.log(error);
   }
 };
 
 const resetInput = () => {
-  companyIdArray.value = [];
-  departemenCode.value = "";
-  departementName.value = "";
-  profitCenter.value = "";
-  selectedGlAccount.value = "Account";
-  status.value = "Status";
-  Division.value = [];
-  selectedDepartementHead.value = "Name";
-};
+  companyIdArray.value = []
+  departemenCode.value = ""
+  departementName.value = ""
+  profitCenter.value = ""
+  selectedGlAccount.value = "Account"
+  status.value = "Status"
+  Division.value = []
+  selectedDepartementHead.value = "Name"
+}
 
 watch(isVisible, (newValue) => {
+  
   if (newValue) {
-    resetInput();
+    resetInput()
   }
-});
+
+  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value.map((item) => {
+    item.value = item.id
+  })
+
+  Employee.value = referenceFetch.fetchEmployeeResult
+  GlAccount.value = referenceFetch.fetchGLAccountResult
+
+})
 </script>
 
 <template>
