@@ -1,312 +1,321 @@
 <script setup>
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import ModalAdd from "@/components/reference/departement/ModalAdd.vue";
+import ModalEdit from "@/components/reference/departement/ModalEdit.vue";
 
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import ModalAdd from "@/components/reference/departement/ModalAdd.vue"
-import ModalEdit from "@/components/reference/departement/ModalEdit.vue"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import tableData from "@/components/table/tableData.vue"
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import icon_receive from "@/assets/icon-receive.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
-import icondanger from "@/assets/Danger.png"
-import iconClose from "@/assets/navbar/icon_close.svg"
+import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany.js";
+// import fetchDepartmentUtils from "@/utils/Fetch/Reference/fetchDepartment.js";
+import fetchAllEmployeeUtils from "@/utils/Fetch/Reference/fetchAllEmployee.js";
+import fetchGLAccountUtils from "@/utils/Fetch/Reference/fetchGLAccount";
 
-import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany.js'
-import fetchDepartmentUtils from '@/utils/Fetch/Reference/fetchDepartment.js'
-import fetchAllEmployeeUtils from '@/utils/Fetch/Reference/fetchAllEmployee.js'
-import fetchGLAccountUtils from "@/utils/Fetch/Reference/fetchGLAccount"
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
+import { Workbook } from "exceljs";
+import { ref, onBeforeMount, computed, watch } from "vue";
 
-import { Workbook } from "exceljs"
-import { ref, onBeforeMount, computed, watch } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js";
+import { useFormEditStore } from "@/stores/reference/departement/edit-modal.js";
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 
-import { useSidebarStore } from "@/stores/sidebar.js"
-import { useFormEditStore } from "@/stores/reference/departement/edit-modal.js"
-import { useReferenceFetchResult } from '@/stores/fetch/reference'
+const sidebar = useSidebarStore();
+let formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult();
 
-const sidebar = useSidebarStore()
-let formEditState = useFormEditStore()
-const referenceFetch = useReferenceFetchResult()
-
-let Company = ref("")
-let sortedData = ref([])
-let addEmployeeData = ref([])
-let addGLAccountData = ref([])
+let Company = ref("");
+let sortedData = ref([]);
+let addEmployeeData = ref([]);
+let addGLAccountData = ref([]);
 
 //for sort & search
-const search = ref("")
-const selectedCompany = ref("Company")
-let sortedbyASC = true
-let instanceArray = []
-const showFullText = ref({})
-let checkList = false
+const search = ref("");
+const selectedCompany = ref("Company");
+let sortedbyASC = true;
+let instanceArray = [];
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
-let showingValue = ref(1)
-let pageMultiplier = ref(10)
-let pageMultiplierReactive = computed(() => pageMultiplier.value)
-let paginateIndex = ref(0)
+let showingValue = ref(1);
+let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let paginateIndex = ref(0);
 
-let editDepartementDataid = ref()
+let editDepartementDataid = ref();
 
-  //for tablehead
-  const tableHead = [
-    { Id: 1, title: "No", jsonData: "no" },
-    { Id: 2, title: "Name", jsonData: "departement_name" },
-    // { Id: 3, title: "Cost Center", jsonData: "cost_center" },
-    { Id: 3, title: "Status", jsonData: "status_name" },
-    { Id: 4, title: "Departement Head", jsonData: "departement_head" },
-    { Id: 5, title: "Actions" },
-  ]
+//for tablehead
+const tableHead = [
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Name", jsonData: "departement_name" },
+  // { Id: 3, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 3, title: "Status", jsonData: "status_name" },
+  { Id: 4, title: "Departement Head", jsonData: "departement_head" },
+  { Id: 5, title: "Actions" },
+];
 
-  //for edit
-  const editDepartement = async (data) => {
-    editDepartementDataid.value = data
-    setTimeout(callEditApi, 500)
-  }
+//for edit
+const editDepartement = async (data) => {
+  editDepartementDataid.value = data;
+  setTimeout(callEditApi, 500);
+};
 
-  //for edit
-  const callEditApi = async () => {
+//for edit
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
 
-    const token = JSON.parse(localStorage.getItem("token"))
-    
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    
-    await Api.post(`department/update_data/${editDepartementDataid.value}`, {
-      id_company: formEditState.departement.departementIdCompany,
-      departement_code: formEditState.departement.departementCode,
-      departement_name: formEditState.departement.departementName,
-      profit_center: formEditState.departement.departementProfitCenter,
-      id_gl_account: formEditState.departement.departementGlAccount,
-      is_active: formEditState.departement.departementStatus,
-      id_division: formEditState.departement.departementDivision,
-      departement_head: formEditState.departement.departementHead,
-    })
-    
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    })
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-    fetchDepartement()
+  await Api.post(`department/update_data/${editDepartementDataid.value}`, {
+    id_company: formEditState.departement.departementIdCompany,
+    departement_code: formEditState.departement.departementCode,
+    departement_name: formEditState.departement.departementName,
+    profit_center: formEditState.departement.departementProfitCenter,
+    id_gl_account: formEditState.departement.departementGlAccount,
+    is_active: formEditState.departement.departementStatus,
+    id_division: formEditState.departement.departementDivision,
+    departement_head: formEditState.departement.departementHead,
+  });
 
-  }
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
 
-  //for paginations
-  const onChangePage = (pageOfItem) => {
-    paginateIndex.value = pageOfItem - 1;
-    showingValue.value = pageOfItem;
-  };
+  fetchDepartement();
+};
 
-  //for filter & reset button
-  const filterDataByCompany = () => {
-    if (selectedCompany.value === "Company") {
-      sortedData.value = instanceArray;
-    } else {
-      sortedData.value = instanceArray.filter(
-        (item) => item.id_company == selectedCompany.value
-      );
-    }
-  };
+//for paginations
+const onChangePage = (pageOfItem) => {
+  paginateIndex.value = pageOfItem - 1;
+  showingValue.value = pageOfItem;
+};
 
-  //for filter & reset button
-  const resetData = () => {
-    sortedData.value = instanceArray
-    selectedCompany.value = "Company"
-  };
-
-  //for check & uncheck all
-  const selectAll = (checkValue) => {
-    const check = document.getElementsByName("checks");
-    const btnDelete = document.getElementById("btnDelete");
-
-    if (checkValue === true) {
-      for (let i = 0; i < check.length; i++) {
-        if (check[i].type === "checkbox") {
-          check[i].checked = true;
-        }
-      }
-      btnDelete.style.display = "block";
-    } else {
-      for (let i = 0; i < check.length; i++) {
-        if (check[i].type === "checkbox") {
-          check[i].checked = false;
-        }
-      }
-      btnDelete.style.display = "none";
-    }
-  }
-
-  const deleteDataInCeklis = () => {
-    const check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type === "checkbox" && check[i].checked) {
-        // Lakukan tindakan penghapusan data yang sesuai di sini
-        const row = check[i].parentNode.parentNode;
-        row.parentNode.removeChild(row);
-      }
-    }
-
-    // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
-    const btnDelete = document.getElementById("btnDelete");
-    const checkedCheckboxes = document.querySelectorAll(
-      'input[name="checks"]:checked'
-    );
-    if (checkedCheckboxes.length === 0) {
-      btnDelete.style.display = "none";
-    }
-  }
-
-  //for sort
-  const sortList = (sortBy) => {
-    if (sortedbyASC) {
-      sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-      sortedbyASC = false;
-    } else {
-      sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-      sortedbyASC = true;
-    }
-  }
-
-  //for searching
-  const filteredItems = (search) => {
+//for filter & reset button
+const filterDataByCompany = () => {
+  if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
-    const filteredR = sortedData.value.filter((item) => {
-      const departementName = item.departement_name.toLowerCase();
-      const departementHead =
-        typeof item.departement_head === "string"
-          ? item.departement_head.toLowerCase()
-          : "";
-      return (
-        departementName.indexOf(search.toLowerCase()) > -1 ||
-        departementHead.indexOf(search.toLowerCase()) > -1
-      );
+  } else {
+    sortedData.value = instanceArray.filter(
+      (item) => item.id_company == selectedCompany.value
+    );
+  }
+};
+
+//for filter & reset button
+const resetData = () => {
+  sortedData.value = instanceArray;
+  selectedCompany.value = "Company";
+};
+
+//for check & uncheck all
+const selectAll = (checkValue) => {
+  const check = document.getElementsByName("checks");
+  const btnDelete = document.getElementById("btnDelete");
+
+  if (checkValue === true) {
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type === "checkbox") {
+        check[i].checked = true;
+      }
+    }
+    btnDelete.style.display = "block";
+  } else {
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type === "checkbox") {
+        check[i].checked = false;
+      }
+    }
+    btnDelete.style.display = "none";
+  }
+};
+
+const deleteDataInCeklis = () => {
+  const check = document.getElementsByName("checks");
+  for (let i = 0; i < check.length; i++) {
+    if (check[i].type === "checkbox" && check[i].checked) {
+      // Lakukan tindakan penghapusan data yang sesuai di sini
+      const row = check[i].parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  }
+
+  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
+  const btnDelete = document.getElementById("btnDelete");
+  const checkedCheckboxes = document.querySelectorAll(
+    'input[name="checks"]:checked'
+  );
+  if (checkedCheckboxes.length === 0) {
+    btnDelete.style.display = "none";
+  }
+};
+
+//for sort
+const sortList = (sortBy) => {
+  if (sortedbyASC) {
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedbyASC = false;
+  } else {
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedbyASC = true;
+  }
+};
+
+//for searching
+const filteredItems = (search) => {
+  sortedData.value = instanceArray;
+  const filteredR = sortedData.value.filter((item) => {
+    const departementName = item.departement_name.toLowerCase();
+    const departementHead =
+      typeof item.departement_head === "string"
+        ? item.departement_head.toLowerCase()
+        : "";
+    return (
+      departementName.indexOf(search.toLowerCase()) > -1 ||
+      departementHead.indexOf(search.toLowerCase()) > -1
+    );
+  });
+  sortedData.value = filteredR;
+  onChangePage(1);
+};
+
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+//delete departement
+const deleteDepartement = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  Swal.fire({
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/department/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Departement has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        fetchDepartement();
+      });
+    } else {
+      return;
+    }
+  });
+};
+
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Departement Data");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "Name" },
+    // { title: "Cost Center" },
+    { title: "Status" },
+    { title: "Departement Head" },
+  ];
+
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedData.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.departement_name;
+    // worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
+    worksheet.getCell(rowIndex + 2, 4).value = data.departement_head_name;
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-    sortedData.value = filteredR;
-    onChangePage(1);
-  }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "departememt_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 
-  const getSessionForSidebar = () => {
-    sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-  }
-
-  //delete departement
-  const deleteDepartement = async (id) => {
+const fetchDepartement = async () => {
+  try {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-    Swal.fire({
-      title:
-        "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-      html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-      iconHtml: `<img src="${icondanger}" />`,
-      showCloseButton: true,
-      closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-      showCancelButton: true,
-      buttonsStyling: false,
-      cancelButtonText: "Cancel",
-      customClass: {
-        cancelButton: "swal-cancel-button",
-        confirmButton: "swal-confirm-button",
-      },
-      reverseButtons: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Api.delete(`/department/delete_data/${id}`).then((res) => {
-          Swal.fire({
-            title: "Successfully",
-            text: "Departement has been deleted.",
-            icon: "success",
-            showCancelButton: false,
-            confirmButtonColor: "#015289",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-          fetchDepartement();
-        });
-      } else {
-        return;
-      }
-    });
+    const api = await Api.get("/department/");
+    instanceArray = api.data.data;
+    sortedData.value = instanceArray;
+  } catch (error) {
+    console.log(error);
   }
+};
 
-  //for export
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Departement Data");
+onBeforeMount(() => {
+  getSessionForSidebar();
+  // fetchDepartmentUtils(instanceArray, sortedData)
+  fetchCompanyUtils(instanceArray, Company);
+  fetchAllEmployeeUtils(instanceArray, addEmployeeData);
+  fetchGLAccountUtils(addGLAccountData);
+  fetchDepartement();
+});
 
-    const tableHead = [
-      { title: "Nomor" },
-      { title: "ID" },
-      { title: "Name" },
-      // { title: "Cost Center" },
-      { title: "Status" },
-      { title: "Departement Head" },
-    ];
+watch(Company, () => {
+  referenceFetch.fetchCompanyResult = Company.value;
+});
 
-    // Menambahkan header kolom
-    tableHead.forEach((column, index) => {
-      worksheet.getCell(1, index + 1).value = column.title;
-    });
+watch(addEmployeeData, () => {
+  referenceFetch.fetchEmployeeResult = addEmployeeData.value;
+});
 
-    // Menambahkan data ke baris-baris selanjutnya
-    sortedData.value.forEach((data, rowIndex) => {
-      worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-      worksheet.getCell(rowIndex + 2, 2).value = data.id;
-      worksheet.getCell(rowIndex + 2, 3).value = data.departement_name;
-      // worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
-      worksheet.getCell(rowIndex + 2, 4).value = data.departement_head_name;
-    });
-
-    // Menyimpan workbook menjadi file Excel
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "departememt_data.xlsx";
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-  }
-
-  onBeforeMount(() => {
-    getSessionForSidebar()
-    fetchDepartmentUtils(instanceArray, sortedData)
-    fetchCompanyUtils(instanceArray, Company)
-    fetchAllEmployeeUtils(instanceArray, addEmployeeData)
-    fetchGLAccountUtils(addGLAccountData)
-  })
-
-  watch(Company, () => {
-    referenceFetch.fetchCompanyResult = Company.value
-  })
-
-  watch(addEmployeeData, () => {
-    referenceFetch.fetchEmployeeResult = addEmployeeData.value
-  })
-
-  watch(addGLAccountData, () => {
-    referenceFetch.fetchGLAccountResult = addGLAccountData.value
-  })
-
+watch(addGLAccountData, () => {
+  referenceFetch.fetchGLAccountResult = addGLAccountData.value;
+});
 </script>
 
 <template>
