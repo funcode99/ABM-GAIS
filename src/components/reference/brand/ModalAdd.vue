@@ -70,7 +70,7 @@ watch(isVisible, () => {
     resetInput()
   }
 
-  responseCompanyArray.value = referenceFetch.fetchEmployeeResult
+  responseCompanyArray.value = referenceFetch.fetchCompanyResult
   responseSiteArray.value = referenceFetch.fetchSiteResult
 
 })

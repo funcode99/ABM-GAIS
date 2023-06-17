@@ -72,7 +72,7 @@ watch(isVisible, () => {
     resetForm()
   }
 
-  responseCompanyArray.value = referenceFetch.fetchEmployeeResult
+  responseCompanyArray.value = referenceFetch.fetchCompanyResult
   responseSiteArray.value = referenceFetch.fetchSiteResult
 
 })
