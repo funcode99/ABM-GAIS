@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
 
 import ModalAdd from "@/components/tms-claim-reimbursement/ModalAdd.vue";
+import selectAllCheckbox from "@/utils/selectAllCheckbox";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -12,6 +13,8 @@ import icon_reset from "@/assets/icon_reset.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -42,10 +45,6 @@ const format_price = (value) => {
   return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 //for sort, search, & filter
-const selectedStatus = ref("Status");
-const selectedCatype = ref("Type");
-const date = ref();
-const search = ref("");
 let sortedData = ref([]);
 let listReimbursementType = ref([]);
 let listType = ref([]);
@@ -53,8 +52,8 @@ let listType = ref([]);
 let deleteArray = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let paginationArray = [];
 let lengthCounter = 0;
-let lockScrollbar = ref(false);
 let visibleModal = ref(false);
 let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
 
@@ -65,43 +64,36 @@ let filter = reactive({
   type: "",
 });
 
-//for paginations & showing
+//for paginations
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+  fetch(pageOfItem);
 };
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
-    }
-  } else {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
-    }
-  }
+    selectAllCheckbox(checkValue, deleteArray, sortedData);
 };
 
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "Claim No", jsonData: "claim_no" },
-  { Id: 4, title: "Requestor", jsonData: "requestor" },
-  { Id: 5, title: "Type", jsonData: "type" },
+  { Id: 2, title: "Created Date", jsonData: "created_at" },
+  { Id: 3, title: "Claim No", jsonData: "no_claim" },
+  { Id: 4, title: "Requestor", jsonData: "employee_name" },
+  { Id: 5, title: "Type", jsonData: "no_request_trip" },
   { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -139,13 +131,24 @@ const filteredItems = (search) => {
 };
 
 // get data
-const fetch = async () => {
+const fetch = async (id) => {
+  let payload = {
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("claim_reimbursement/get_data");
-  instanceArray = api.data.data;
+  const api = await Api.get("claim_reimbursement/get_data", {
+    params: payload,
+  });
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from;
+  showingValueTo.value = paginationArray.to;
 };
 
 const fetchTypeReimbursement = async () => {
@@ -179,17 +182,29 @@ const resetData = () => {
   fetchType();
 };
 
-const filterDataByType = async () => {
+const filterDataByType = async (id) => {
   let payload = {
     search: filter.search,
     status: filter.status,
     start_date: filter.date ? filter.date[0] : "",
     end_date: filter.date ? filter.date[1] : "",
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
   };
-  const api = await Api.get("cash_advance/non_travel", { params: payload });
-  instanceArray = api.data.data;
+  const api = await Api.get("claim_reimbursement/get_data", {
+    params: payload,
+  });
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from;
+  showingValueTo.value = paginationArray.to;
+  showingValue.value = paginationArray.current_page;
 };
 
 // delete data
@@ -225,11 +240,7 @@ const deleteData = async (event) => {
           timer: 1500,
         });
 
-        if (sortedData.value.length == 1) {
-          router.go();
-        } else {
-          fetch();
-        }
+        fetch();
       });
     } else {
       return;
@@ -290,12 +301,9 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full this"
-    :class="lockScrollbar === true ? 'fixed' : ''"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen h-full mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -316,17 +324,30 @@ const getSessionForSidebar = () => {
               Claim Reimbursement
             </p>
             <div class="flex gap-4">
+              <div
+                v-if="deleteArray.length > 0"
+                class="flex gap-2 items-center"
+              >
+                <h1 class="font-semibold">{{ deleteArray.length }} Selected</h1>
+                <button
+                  @click="deleteCheckedArray"
+                  class="bg-[#f4446c] py-3 px-4 text-xs rounded-lg text-white"
+                >
+                  Delete Selected
+                </button>
+              </div>
               <label
                 @click="visibleModal = true"
                 for="my-modal-claim"
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
                 >+ Add New</label
               >
-              
+
               <ModalAdd
                 v-if="visibleModal"
                 :list-reimbursement-type="listReimbursementType"
                 :list-type="listType"
+                :visible="visibleModal"
               />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -498,29 +519,34 @@ const getSessionForSidebar = () => {
                         </button>
                       </span>
                     </th>
+                    <th>
+                      <div class="text-center">Actions</div>
+                    </th>
                   </tr>
                 </thead>
 
                 <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="(data, index) in sortedData"
                     :key="data.no"
                   >
                     <td>
-                      <input type="checkbox" name="checks" />
+                      <input
+                        type="checkbox"
+                        name="checks"
+                        :value="data.id"
+                        v-model="deleteArray"
+                      />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.claim_no }}</td>
-                    <td>{{ data.requestor }}</td>
-                    <td>{{ data.type }}</td>
+                    <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
+                    <td>{{ format_date(data.created_at) }}</td>
+                    <td>{{ data.no_claim }}</td>
+                    <td>{{ data.employee_name }}</td>
+                    <td>{{ data.no_request_trip }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewclaimreimbursement">
+                      <router-link :to="`/viewclaimreimbursement/${data.id}`">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
@@ -545,9 +571,9 @@ const getSessionForSidebar = () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
               :total-items="sortedData.length"
