@@ -300,10 +300,12 @@ const exportToExcel = () => {
   });
 }
 
+let baitArray = ref([])
+
 onBeforeMount(() => {
   getSessionForSidebar()
   fetchCityUtils(addCityData)
-  fetchHotelUtils(instanceArray, sortedData)
+  fetchHotelUtils(baitArray, sortedData)
   fetchTypeOfHotelUtils(HotelType)
 })
 
@@ -318,6 +320,10 @@ watch(HotelType, () => {
 const fetchHotel = () => {
   fetchHotelUtils(instanceArray, sortedData)
 }
+
+watch(baitArray, () => {
+  instanceArray = baitArray.value
+})
 
 </script>
 

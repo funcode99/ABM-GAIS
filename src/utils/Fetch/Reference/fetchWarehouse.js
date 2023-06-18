@@ -5,7 +5,7 @@ const fetchWarehouse = async (instanceArray, addWarehouseData) => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get('/warehouse')
-        instanceArray = api.data.data
+        instanceArray.value = api.data.data
         addWarehouseData.value = api.data.data
     } catch (error) {
         console.log(error)

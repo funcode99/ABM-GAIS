@@ -60,6 +60,7 @@ const tableHead = [
 
 //for edit
 const callEditApi = async () => {
+  
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   await Api.post(`/warehouse/update_data/${editWarehouseDataId.value}`, {
@@ -192,10 +193,12 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
 }
 
+let baitArray = ref([])
+
 onBeforeMount(() => {
   getSessionForSidebar()
-  fetchCompanyUtils(instanceArray, Company)
-  fetchWarehouseUtils(instanceArray, sortedData)
+  fetchCompanyUtils([], Company)
+  fetchWarehouseUtils(baitArray, sortedData)
 })
 
   const fetchWarehouse = () => {
@@ -302,6 +305,10 @@ const deleteWarehouse = async (id) => {
 
   watch(addSiteByCompanyData, () => {
     menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
+  })
+
+  watch(baitArray, () => {
+    instanceArray = baitArray.value
   })
 
 </script>

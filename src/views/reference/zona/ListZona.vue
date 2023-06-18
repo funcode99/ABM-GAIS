@@ -282,10 +282,12 @@ const exportToExcel = () => {
   });
 }
 
+let baitArray = ref([])
+
 onBeforeMount(() => {
   getSessionForSidebar()
-  fetchZonaUtils(instanceArray, sortedData)
-  fetchCompanyUtils(instanceArray, Company)
+  fetchZonaUtils(baitArray, sortedData)
+  fetchCompanyUtils([], Company)
   fetchCityUtils(addCityData)
   fetchZonaIdUtils(addZonaIdData)
 })
@@ -301,6 +303,11 @@ watch(addCityData, () => {
 watch(addZonaIdData, () => {
   referenceFetch.fetchZonaIdResult = addZonaIdData.value
 })
+
+watch(baitArray, () => {
+  instanceArray = baitArray.value
+})
+
 
 </script>
 
