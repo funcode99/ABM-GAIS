@@ -495,9 +495,9 @@ watch(addZonaIdData, () => {
                   <ModalEdit
                     @change-zona="editZona(data.id)"
                     :formContent="[
-                      data.comp_array,
+                      data.id_company,
                       data.id_zona,
-                      data.city_array,
+                      data.id_city,
                     ]"
                   />
                   <button @click="deleteZona(data.id)">

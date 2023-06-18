@@ -21,39 +21,16 @@ let isAdding = ref(false)
 let Zona = ref("")
 
 let companyData = ref(null);
-let companyIdArray = ref(null);
 let cityData = ref(null);
+let companyIdArray = ref(null);
 let cityIdArray = ref(null);
 
-let companyIdObject = ref(props.formContent[0]);
-let companyIdObjectKeys = ref(Object.values(companyIdObject.value));
+let companyIdObject = ref(`[${props.formContent[0]}]`)
+let selectedZonaId = ref(props.formContent[1] || null)
+let cityIdObject = ref(`[${props.formContent[2]}]`)
 
-let selectedZonaId = ref(props.formContent[1] || null);
-
-let CityIdObject = ref(props.formContent[2]);
-let cityIdObjectKeys = ref(Object.values(CityIdObject.value));
-
-
-  companyIdObjectKeys.value.map((item, index) => {
-  
-  if (item == "{") {
-    companyIdObjectKeys.value[index] = "["
-  } else if (item == "}") {
-    companyIdObjectKeys.value[index] = "]"
-  }
-
-  })
-
-  cityIdObjectKeys.value.map((item, index) => {
-    if (item == "{") {
-      cityIdObjectKeys.value[index] = "["
-    } else if (item == "}") {
-      cityIdObjectKeys.value[index] = "]"
-    }
-  })
-
-  companyIdArray.value = JSON.parse(companyIdObjectKeys.value.join(""))
-  cityIdArray.value = JSON.parse(cityIdObjectKeys.value.join(""))
+companyIdArray.value = JSON.parse(companyIdObject.value)
+cityIdArray.value = JSON.parse(cityIdObject.value)
 
   const props = defineProps({
     formContent: Array,
@@ -76,8 +53,8 @@ let cityIdObjectKeys = ref(Object.values(CityIdObject.value));
 
   const resetInput = () => {
     selectedZonaId.value = props.formContent[1]
-    companyIdArray.value = [...props.formContent[0]]
-    cityIdArray.value = [...props.formContent[2]]
+    companyIdArray.value = JSON.parse(companyIdObject.value)
+    cityIdArray.value = JSON.parse(cityIdObject.value)
   }
 
   watch(isVisible, (newValue) => {
@@ -96,7 +73,6 @@ let cityIdObjectKeys = ref(Object.values(CityIdObject.value));
     })
 
     Zona.value = referenceFetch.fetchZonaIdResult
-
 
   })
 

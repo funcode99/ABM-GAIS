@@ -39,16 +39,8 @@ const formEditState = useFormEditStore();
 
 let companyData = ref(null);
 let companyIdArray = ref([]);
-let companyIdObject = ref(props.formContent[3]);
-let companyIdObjectKeys = ref(Object.values(companyIdObject.value));
-
-companyIdObjectKeys.value.map((item) => {
-  let number = Number(item);
-
-  if (Number.isInteger(number)) {
-    companyIdArray.value.push(item);
-  }
-});
+let companyIdObject = ref(`[${props.formContent[3]}]`)
+companyIdArray.value = JSON.parse(companyIdObject.value)
 
 const props = defineProps({
   formContent: Array,
@@ -123,7 +115,8 @@ const resetInput = () => {
   jobBandName.value = props.formContent[0];
   hotelFare.value = props.formContent[1];
   mealsRate.value = props.formContent[2];
-  companyIdArray.value = [...props.formContent[3]];
+  let companyIdObject = ref(`[${props.formContent[3]}]`)
+  companyIdArray.value = JSON.parse(companyIdObject.value)
   selectedFlightClass.value = props.formContent[4];
 };
 
@@ -238,9 +231,11 @@ const formatCurrency = () => {
 
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 w-full px-4 text-start">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Company<span class="text-red">*</span>
+
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Company<span class="text-red">*</span> 
           </label>
+
           <div
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
           ></div>
