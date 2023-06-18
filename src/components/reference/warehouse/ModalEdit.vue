@@ -21,11 +21,9 @@ let isAdding = ref(false);
 let Company = ref("");
 let Site = ref("");
 let Warehouse = ref("");
-let Brand = ref("");
 
 let selectedCompany = ref(props.formContent[1])
-let selectedSite = ref("Site")
-let selectedBrand = ref("Brand")
+let selectedSite = ref(props.formContent[2])
 
 const props = defineProps({
   formContent: Array,
@@ -64,7 +62,6 @@ const fetchGetCompany = async () => {
 }
 
 const changeCompany = async (id_company) => {
-  fetchBrandCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const res = await Api.get(`/site/get_by_company/${id_company}`)
@@ -72,19 +69,6 @@ const changeCompany = async (id_company) => {
   selectedSite.value = originalcurrentSite.value
 }
 
-const fetchBrandCompany = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get(`/brand/get_by_company_id/${id_company}`)
-  Brand.value = res.data.data
-}
-
-const changeSite = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`)
-  Warehouse.value = res.data.data
-}
 
 //for get site in select
 const fetchGetSite = async () => {
@@ -176,8 +160,7 @@ watch(isVisible, () => {
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
             v-model="selectedSite"
-            @change="changeSite(selectedSite)"
-          >
+            >
             <option disabled selected>Site</option>
             <option v-for="(site, i) in Site" :key="i" :value="site.id">
               {{ site.site_name }}

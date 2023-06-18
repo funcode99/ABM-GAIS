@@ -29,21 +29,10 @@ let modalPaddingHeight = "25vh"
 let isAdding = ref(false)
 
 let companyData = ref(null)
-let companyIdArray = ref([])
+let companyIdArray = ref(`[${props.formContent[0]}]`)
+companyIdArray.value = JSON.parse(companyIdArray.value)
 
 let divisionData = ref(null)
-
-
-let companyIdObject = ref(props.formContent[0])
-let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
-
-companyIdObjectKeys.value.map((item) => {
-  let number = Number(item)
-
-  if (Number.isInteger(number)) {
-    companyIdArray.value.push(item)
-  }
-})
 
 let currentDepartementCode = ref(props.formContent[1])
 let currentDepartementName = ref(props.formContent[2])
@@ -86,7 +75,9 @@ const inputStylingClass =
 const resetInput = () => {
   const originalFormContent = props.formContent
 
-  companyIdArray.value = [...originalFormContent[0]]
+  companyIdArray.value = `[${originalFormContent[0]}]`
+  companyIdArray.value = JSON.parse(companyIdArray.value)
+  
   currentDepartementCode.value = originalFormContent[1]
   currentDepartementName.value = originalFormContent[2]
   currentDepartementProfitCenter.value = originalFormContent[3]
@@ -128,9 +119,9 @@ watch(isVisible, (newValue) => {
 
       <form class="pt-4 modal-box-inner-zona" @submit.prevent="submitEdit">
         <div class="mb-6 w-full px-4 text-start">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Company<span class="text-red">*</span></label
-          >
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Company<span class="text-red">*</span> {{ companyIdArray }}
+          </label>
           <div
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
           ></div>
