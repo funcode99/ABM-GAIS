@@ -108,6 +108,7 @@ const removeItems = async (id) => {
     showConfirmButton: false,
     timer: 1500,
   });
+  fetchDataById(idCaNon);
 };
 
 const editItems = (id) => {
