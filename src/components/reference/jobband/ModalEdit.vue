@@ -299,9 +299,9 @@ const formatCurrency = () => {
         </div>
 
         <div class="mb-6 w-full px-4 text-start">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Meals Rate<span class="text-red">*</span></label
-          >
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Meals Rate<span class="text-red">*</span>
+          </label>
           <input
             type="text"
             placeholder="Meal Rate"

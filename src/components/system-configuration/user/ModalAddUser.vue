@@ -104,7 +104,6 @@
       emits('fetchSiteForCompany')
   })
 
-  // tidak berubah karena tidak dibuka?
   watch(menuAccessStore, () => {
     responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult
   })

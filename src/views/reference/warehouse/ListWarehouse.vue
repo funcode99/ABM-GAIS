@@ -9,6 +9,10 @@ import tableContainer from "@/components/table/tableContainer.vue"
 import tableTop from "@/components/table/tableTop.vue"
 import tableData from "@/components/table/tableData.vue"
 
+import fetchWarehouseUtils from "@/utils/Fetch/Reference/fetchWarehouse"
+import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
+import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
+
 import icon_filter from "@/assets/icon_filter.svg"
 import icon_reset from "@/assets/icon_reset.svg"
 import icon_receive from "@/assets/icon-receive.svg"
@@ -18,22 +22,24 @@ import icondanger from "@/assets/Danger.png"
 import iconClose from "@/assets/navbar/icon_close.svg"
 
 import Swal from "sweetalert2"
-
 import Api from "@/utils/Api"
-
 import { Workbook } from "exceljs"
+import { ref, onBeforeMount, computed, watch } from "vue"
 
-import { ref, onBeforeMount, onMounted, computed } from "vue"
 
 import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js"
 import { useSidebarStore } from "@/stores/sidebar.js"
-
-const sidebar = useSidebarStore()
-const formEditState = useFormEditStore()
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+import { useMenuAccessStore } from '@/stores/savemenuaccess'
 
 let warehouseName = ref("")
 let warehouseIdCompany = ref("")
 let warehouseIdSite = ref()
+
+const sidebar = useSidebarStore()
+const formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
+const menuAccessStore = useMenuAccessStore()
 
 let editWarehouseDataId = ref()
 
@@ -42,6 +48,15 @@ const editWarehouse = async (data) => {
   editWarehouseDataId.value = data
   setTimeout(callEditApi, 500)
 }
+
+//for tablehead
+const tableHead = [
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Warehouse Name", jsonData: "warehouse_name" },
+  { Id: 3, title: "Company", jsonData: "company_name" },
+  { Id: 4, title: "Site", jsonData: "site_name" },
+  { Id: 4, title: "Actions" },
+]
 
 //for edit
 const callEditApi = async () => {
@@ -66,23 +81,21 @@ const callEditApi = async () => {
 }
 
 //for sort & search
-const search = ref("");
-let sortedData = ref([]);
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
-let selectedCompany = ref("Company");
-let Company = ref("");
-let sortAscending = true;
-let sortedDataReactive = computed(() => sortedData.value);
-const showFullText = ref({});
-let checkList = false;
+const search = ref("")
+let sortedData = ref([])
+let sortedbyASC = true
+let instanceArray = []
+let selectedCompany = ref("Company")
+let Company = ref("")
+let sortedDataReactive = computed(() => sortedData.value)
+const showFullText = ref({})
+let checkList = false
 
 //for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
+let showingValue = ref(1)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -105,7 +118,7 @@ const filterDataByCompany = () => {
 const resetData = () => {
   sortedData.value = instanceArray;
   selectedCompany.value = "Company";
-};
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -127,7 +140,7 @@ const selectAll = (checkValue) => {
     }
     btnDelete.style.display = "none";
   }
-};
+}
 
 const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
@@ -147,16 +160,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-};
-
-//for tablehead
-const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Warehouse Name", jsonData: "warehouse_name" },
-  { Id: 3, title: "Company", jsonData: "company_name" },
-  { Id: 4, title: "Site", jsonData: "site_name" },
-  { Id: 4, title: "Actions" },
-];
+}
 
 //for sort
 const sortList = (sortBy) => {
@@ -167,14 +171,7 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-};
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchWarehouse();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+}
 
 //for searching
 const filteredItems = (search) => {
@@ -187,38 +184,23 @@ const filteredItems = (search) => {
       (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
+  sortedData.value = filteredR
   onChangePage(1);
-};
+}
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+onBeforeMount(() => {
+  getSessionForSidebar()
+  fetchCompanyUtils(instanceArray, Company)
+  fetchWarehouseUtils(instanceArray, sortedData)
+})
 
-onMounted(() => {
-  fetchGetCompany();
-});
-
-//get all warehouse
-const fetchWarehouse = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/warehouse/");
-  // console.log(res.data.data);
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
+  const fetchWarehouse = () => {
+    fetchWarehouseUtils(instanceArray, sortedData)
+  }
 
 //delete brand
 const deleteWarehouse = async (id) => {
@@ -261,48 +243,67 @@ const deleteWarehouse = async (id) => {
       return;
     }
   });
-};
+}
 
-//for export
-const exportToExcel = () => {
-  const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("Warehouse Data");
+  //for export
+  const exportToExcel = () => {
+    const workbook = new Workbook();
+    const worksheet = workbook.addWorksheet("Warehouse Data");
 
-  const tableHead = [
-    { title: "Nomor" },
-    { title: "ID" },
-    { title: "Warehouse Name" },
-    { title: "Company" },
-    { title: "Site" },
-  ];
+    const tableHead = [
+      { title: "Nomor" },
+      { title: "ID" },
+      { title: "Warehouse Name" },
+      { title: "Company" },
+      { title: "Site" },
+    ];
 
-  // Menambahkan header kolom
-  tableHead.forEach((column, index) => {
-    worksheet.getCell(1, index + 1).value = column.title;
-  });
-
-  // Menambahkan data ke baris-baris selanjutnya
-  sortedDataReactive.value.forEach((data, rowIndex) => {
-    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-    worksheet.getCell(rowIndex + 2, 2).value = data.id;
-    worksheet.getCell(rowIndex + 2, 3).value = data.warehouse_name;
-    worksheet.getCell(rowIndex + 2, 4).value = data.company_name;
-    worksheet.getCell(rowIndex + 2, 5).value = data.site_name;
-  });
-
-  // Menyimpan workbook menjadi file Excel
-  workbook.xlsx.writeBuffer().then((buffer) => {
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    // Menambahkan header kolom
+    tableHead.forEach((column, index) => {
+      worksheet.getCell(1, index + 1).value = column.title;
     });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "warehouse_data.xlsx";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-};
+
+    // Menambahkan data ke baris-baris selanjutnya
+    sortedDataReactive.value.forEach((data, rowIndex) => {
+      worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+      worksheet.getCell(rowIndex + 2, 2).value = data.id;
+      worksheet.getCell(rowIndex + 2, 3).value = data.warehouse_name;
+      worksheet.getCell(rowIndex + 2, 4).value = data.company_name;
+      worksheet.getCell(rowIndex + 2, 5).value = data.site_name;
+    });
+
+    // Menyimpan workbook menjadi file Excel
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "warehouse_data.xlsx";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  const fetchSiteByCompanyId = async () => {
+    setTimeout(runfetch, 500)
+  }
+
+  let addSiteByCompanyData = ref([])
+
+  const runfetch = () => {
+    fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId)
+  }
+
+  watch(Company, () => {
+    referenceFetch.fetchCompanyResult = Company.value
+  })
+
+  watch(addSiteByCompanyData, () => {
+    menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
+  })
+
 </script>
 
 <template>
@@ -333,7 +334,7 @@ const exportToExcel = () => {
               >
                 Delete
               </button>
-              <ModalAdd @warehouse-saved="fetchWarehouse" />
+              <ModalAdd @warehouse-saved="fetchWarehouse" @fetchSiteByCompanyId="fetchSiteByCompanyId" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"

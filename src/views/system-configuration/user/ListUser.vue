@@ -46,6 +46,8 @@
     const sysconfigFetch = useSysconfigFetchResult()
     const menuAccessStore = useMenuAccessStore()
     
+    let employeeDataIndexNumber = ref()
+    let employeeData = ref()
     let sortedData = ref([])
     let deleteArray = ref([])
     let sortedbyASC = true
@@ -242,8 +244,6 @@
       }
     }
 
-
-
     let addRoleData = ref([])
     let addCompanyData = ref([])
     let addEmployeeData = ref([])
@@ -318,9 +318,6 @@
     const exportToExcel = () => {
       exportExcel('User Data', tableHead, sortedData, 'no', 'username', 'role_name', 'auth_name')
     }
-
-    let employeeDataIndexNumber = ref()
-    let employeeData = ref()
 
     const fetchEmployeeInfo = (employeeId) => {
       
