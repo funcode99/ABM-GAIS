@@ -223,11 +223,17 @@
       }
     }
 
+    let baitArray = ref([])
+
     onBeforeMount(() => {
       getSessionForSidebar()
       fetchMenuStatusUtils(instanceArray, addMenuStatusData)
-      fetchMenuUtils(instanceArray, responseStatus, responseMessage, addMenuData, sortedData)
+      fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
       fetchCompanyUtils(instanceArray, addCompanyData)
+    })
+
+    watch(baitArray, () => {
+      instanceArray = baitArray.value
     })
 
     watch(addCompanyData, () => {
@@ -256,9 +262,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.get(`/menu/get?filter=${id}`)
-        // console.log(api)
-        // console.log(api.status)
-        status.value = api.status
+        responseStatus.value = api.status
         instanceArray = api.data.data
         sortedData.value = instanceArray
     }
@@ -282,7 +286,7 @@
     }
 
     const fetchMenuStatusUtilsHelper = () => {
-      fetchMenuUtils(instanceArray, addMenuData, sortedData)
+      fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
     }
 
 </script>
