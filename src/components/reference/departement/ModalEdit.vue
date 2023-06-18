@@ -120,7 +120,7 @@ watch(isVisible, (newValue) => {
       <form class="pt-4 modal-box-inner-zona" @submit.prevent="submitEdit">
         <div class="mb-6 w-full px-4 text-start">
           <label class="block mb-2 font-JakartaSans font-medium text-sm">
-            Company<span class="text-red">*</span> {{ companyIdArray }}
+            Company<span class="text-red">*</span>
           </label>
           <div
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
