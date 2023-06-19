@@ -37,7 +37,6 @@ let editFlightDataId = ref();
 const editFlight = async (data) => {
   editFlightDataId.value = data;
   setTimeout(callEditApi, 500);
-  // console.log("ini data:" + data);
 };
 
 //for edit
@@ -62,9 +61,6 @@ const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
-let lengthCounter = 0;
-let sortedDataReactive = computed(() => sortedData.value);
-let sortAscending = true;
 const showFullText = ref({});
 let checkList = false;
 
@@ -143,8 +139,6 @@ const sortList = (sortBy) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchFlight();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
 });
 
 //for searching
@@ -159,7 +153,6 @@ const filteredItems = (search) => {
     );
   });
   sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
   onChangePage(1);
 };
 
@@ -174,8 +167,7 @@ const fetchFlight = async () => {
   const res = await Api.get("/flight_class/");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
+}
 
 //delete flight
 const deleteFlight = async (id) => {
@@ -218,7 +210,7 @@ const deleteFlight = async (id) => {
       return;
     }
   });
-};
+}
 
 //for export
 const exportToExcel = () => {
@@ -237,7 +229,7 @@ const exportToExcel = () => {
   });
 
   // Menambahkan data ke baris-baris selanjutnya
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.flight_class;
@@ -255,7 +247,9 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-};
+}
+
+
 </script>
 
 <template>

@@ -7,7 +7,10 @@ import { Modal } from "usemodal-vue3";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
+
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
+const referenceFetch = useReferenceFetchResult()
 
 const emits = defineEmits(["unlockScrollbar", "site-saved"]);
 
@@ -19,24 +22,11 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetCompany();
-});
-
 const saveSite = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
-};
+}
 
 const callAddApi = async () => {
   try {
@@ -61,13 +51,13 @@ const callAddApi = async () => {
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 const resetInput = () => {
   selectedCompany.value = "Company";
   siteCode.value = "";
   siteName.value = "";
-};
+}
 
 watch(isVisible, () => {
   if (isAdding.value == true) {
@@ -75,7 +65,12 @@ watch(isVisible, () => {
   } else {
     resetInput();
   }
-});
+})
+
+watch(referenceFetch, () => {
+  Company.value = referenceFetch.fetchCompanyResult
+})
+
 </script>
 
 <template>

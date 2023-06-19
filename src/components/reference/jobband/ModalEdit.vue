@@ -7,12 +7,15 @@ import modalFooter from "@/components/modal/modalFooter.vue";
 import { Modal } from "usemodal-vue3";
 
 import Multiselect from "@vueform/multiselect";
-import Api from "@/utils/Api";
 
-import { ref, onMounted, onBeforeMount, watch, computed } from "vue";
+import { ref, watch, computed } from "vue";
 import { useFormEditStore } from "@/stores/reference/jobband/edit-modal.js";
+import { useReferenceFetchResult } from '@/stores/fetch/reference'
 
 const emits = defineEmits(["unlockScrollbar", "changeJobband", "fetchJobband"]);
+
+const formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
 
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
@@ -27,15 +30,12 @@ let selectedFlightClass = ref(props.formContent[4]);
 let addZona = ref([]);
 let tlkRatevalue = ref([]);
 let idZonaValue = ref();
-let arrayDetail = ref([]);
 let inputValues = ref(props.formContent[5]);
 
 inputValues.value.forEach((item, index) => {
   tlkRatevalue.value[index] = item.tlk_rate;
   idZonaValue.value = item.id_zona;
 });
-
-const formEditState = useFormEditStore();
 
 let companyData = ref(null);
 let companyIdArray = ref([]);
@@ -44,7 +44,7 @@ companyIdArray.value = JSON.parse(companyIdObject.value)
 
 const props = defineProps({
   formContent: Array,
-});
+})
 
 const submitEdit = () => {
   isAdding.value = true;
@@ -69,47 +69,24 @@ const submitEdit = () => {
     };
   });
 
-  formEditState.jobBand.arrayDetail = arrayDetail;
+  formEditState.jobBand.arrayDetail = arrayDetail
 
-  isVisible.value = false;
-  emits("changeJobband");
-};
+  isVisible.value = false
+  emits("changeJobband")
 
-const fetchGetZona = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona/get_id/");
-  addZona = res.data.data;
-};
+}
 
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  companyData = res.data.data;
-  companyData.map((item) => {
-    item.value = item.id;
-  });
-};
-
-const fetchGetFlightClass = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/flight_class/");
-  FlightClass.value = res.data.data;
-};
-
-onMounted(() => {
-  fetchGetCompany();
-  fetchGetFlightClass();
-});
-
-onBeforeMount(() => {
-  fetchGetZona();
-});
+watch(referenceFetch, () => {
+  addZona.value = referenceFetch.fetchZonaIdResult
+  FlightClass.value = referenceFetch.fetchFlightClassResult
+  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value.map((item) => {
+    item.value = item.id
+  })
+})
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 const resetInput = () => {
   jobBandName.value = props.formContent[0];
@@ -118,13 +95,13 @@ const resetInput = () => {
   let companyIdObject = ref(`[${props.formContent[3]}]`)
   companyIdArray.value = JSON.parse(companyIdObject.value)
   selectedFlightClass.value = props.formContent[4];
-};
+}
 
 watch(isVisible, (newValue) => {
   if (newValue) {
     resetInput();
   }
-});
+})
 
 const formattedHotelFare = computed({
   get() {
@@ -137,7 +114,7 @@ const formattedHotelFare = computed({
   set(value) {
     hotelFare.value = value;
   },
-});
+})
 
 const formattedMealsRate = computed({
   get() {
@@ -150,7 +127,7 @@ const formattedMealsRate = computed({
   set(value) {
     mealsRate.value = value;
   },
-});
+})
 
 const formattedGrossHari = computed(() => {
   if (tlkRatevalue.value && tlkRatevalue.value.length > 0) {
@@ -166,7 +143,7 @@ const formattedGrossHari = computed(() => {
   } else {
     return [];
   }
-});
+})
 
 const updateGrossHari = (event, index) => {
   const formattedValue = event.target.value
@@ -178,7 +155,7 @@ const updateGrossHari = (event, index) => {
   } else {
     tlkRatevalue.value[index] = formattedValue;
   }
-};
+}
 
 const updateHotelFare = (event) => {
   const formattedValue = event.target.value
@@ -186,7 +163,7 @@ const updateHotelFare = (event) => {
     .replaceAll(".", "");
 
   hotelFare.value = formattedValue;
-};
+}
 
 const updateMealsRate = (event) => {
   const formattedValue = event.target.value
@@ -194,7 +171,7 @@ const updateMealsRate = (event) => {
     .replaceAll(".", "");
 
   mealsRate.value = formattedValue;
-};
+}
 
 const formatCurrency = () => {
   hotelFare.value = hotelFare.value.replace(/\D/g, "");
@@ -217,7 +194,8 @@ const formatCurrency = () => {
   inputValues.value.forEach((item, index) => {
     tlkRatevalue.value[index] = item.tlk_rate;
   });
-};
+}
+
 </script>
 
 <template>

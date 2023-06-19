@@ -3,18 +3,18 @@ import iconview from "@/assets/view_icon.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 
-import Api from "@/utils/Api";
-
 import Multiselect from "@vueform/multiselect";
 
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
+let formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult()
 
 const emits = defineEmits(["unlockScrollbar", "viewSite"]);
 
-let formEditState = useFormEditStore();
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
@@ -40,7 +40,6 @@ if (warehouseDataArray.value && Array.isArray(warehouseDataArray.value)) {
       readonly: true,
     };
   });
-  // console.log(warehouseData.value);
 }
 
 const props = defineProps({
@@ -54,18 +53,9 @@ const originalsiteIdCompany = ref(props.formContent[1]);
 const currentsiteCode = ref(props.formContent[2]);
 const originalsiteCode = ref(props.formContent[2]);
 
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-
-onMounted(() => {
-  fetchGetCompany();
-});
+watch(referenceFetch, () => {
+  Company.value = referenceFetch.fetchCompanyResult
+})
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";

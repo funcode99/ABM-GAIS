@@ -1,14 +1,16 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/sites/ModalAdd.vue";
-import ModalEdit from "@/components/reference/sites/ModalEdit.vue";
-import ModalView from "@/components/reference/sites/ModalView.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import ModalAdd from "@/components/reference/sites/ModalAdd.vue"
+import ModalEdit from "@/components/reference/sites/ModalEdit.vue"
+import ModalView from "@/components/reference/sites/ModalView.vue"
 
-import tableContainer from "@/components/table/tableContainer.vue";
-import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
+import tableTop from "@/components/table/tableTop.vue"
+import tableData from "@/components/table/tableData.vue"
+
+import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
@@ -24,11 +26,13 @@ import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
 
-import { ref, onBeforeMount, onMounted, computed } from "vue";
+import { ref, onBeforeMount, computed, watch } from "vue";
 
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
+const referenceFetch = useReferenceFetchResult()
 const sidebar = useSidebarStore();
 const formEditState = useFormEditStore();
 
@@ -59,10 +63,9 @@ const callViewApi = async () => {
 
 //for edit
 const editSite = async (data) => {
-  editSiteDataId.value = data;
-  setTimeout(callEditApi, 500);
-  // console.log("ini data id:" + data);
-};
+  editSiteDataId.value = data
+  setTimeout(callEditApi, 500)
+}
 
 //for edit
 const callEditApi = async () => {
@@ -88,10 +91,8 @@ const search = ref("");
 let sortedData = ref([]);
 const selectedCompany = ref("Company");
 let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
+let instanceArray = []
 let Company = ref("");
-let sortAscending = true;
 let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
 let checkList = false;
@@ -185,14 +186,7 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-};
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchSite();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+}
 
 //for searching
 const filteredItems = (search) => {
@@ -206,7 +200,6 @@ const filteredItems = (search) => {
     );
   });
   sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
   onChangePage(1);
 };
 
@@ -223,20 +216,16 @@ const fetchGetCompany = async () => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
-onMounted(() => {
-  fetchGetCompany();
-});
+
 
 //get call site
 const fetchSite = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/site/get_data");
-  // console.log(res.data.data);
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
+}
 
 //delete site
 const deleteSite = async (id) => {
@@ -279,7 +268,7 @@ const deleteSite = async (id) => {
       return;
     }
   });
-};
+}
 
 //for export
 const exportToExcel = () => {
@@ -320,7 +309,20 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-};
+}
+
+const addCompanyData = ref([])
+
+onBeforeMount(() => {
+  getSessionForSidebar()
+  fetchSite()
+  fetchCompanyUtils([], addCompanyData)
+})
+
+watch(addCompanyData, () => {
+  referenceFetch.fetchCompanyResult = addCompanyData.value
+})
+
 </script>
 
 <template>

@@ -1,58 +1,59 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/reimbursement/ModalAdd.vue";
-import ModalEdit from "@/components/reference/reimbursement/ModalEdit.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import ModalAdd from "@/components/reference/reimbursement/ModalAdd.vue"
+import ModalEdit from "@/components/reference/reimbursement/ModalEdit.vue"
 
-import tableContainer from "@/components/table/tableContainer.vue";
-import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
+import tableTop from "@/components/table/tableTop.vue"
+import tableData from "@/components/table/tableData.vue"
 
-import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
+import fetchJobBandUtils from "@/utils/Fetch/Reference/fetchJobBand"
 
-import Swal from "sweetalert2";
+import icon_receive from "@/assets/icon-receive.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
 
-import Api from "@/utils/Api";
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import { Workbook } from "exceljs";
+import { Workbook } from "exceljs"
+import { ref, onBeforeMount, computed, watch } from "vue"
 
-import { ref, onBeforeMount, computed } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js"
+import { useReferenceFetchResult } from "@/stores/fetch/reference"
+import { useFormEditStore } from "@/stores/reference/reimbursement/edit-modal.js"
 
-import { useSidebarStore } from "@/stores/sidebar.js";
-import { useFormEditStore } from "@/stores/reference/reimbursement/edit-modal.js";
+const sidebar = useSidebarStore()
+const formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
 
-const sidebar = useSidebarStore();
-let formEditState = useFormEditStore();
+let sortedData = ref([])
+const addJobBandData = ref([])
 
 //for sort & search
-const search = ref("");
-let sortedData = ref([]);
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
-let sortedDataReactive = computed(() => sortedData.value);
-let sortAscending = true;
-const showFullText = ref({});
-let checkList = false;
+const search = ref("")
+let sortedbyASC = true
+let instanceArray = []
+const showFullText = ref({})
+let checkList = false
 
 //for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
+let showingValue = ref(1)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
 
-let editReimbursementDataid = ref();
+let editReimbursementDataid = ref()
 
 //for edit
 const editReimbursement = async (data) => {
   editReimbursementDataid.value = data;
   setTimeout(callEditApi, 500);
-};
+}
 
 //for edit
 const callEditApi = async () => {
@@ -74,13 +75,13 @@ const callEditApi = async () => {
     timer: 1500,
   });
   fetchReimbursement();
-};
+}
 
 //for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -102,7 +103,7 @@ const selectAll = (checkValue) => {
     }
     btnDelete.style.display = "none";
   }
-};
+}
 
 const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
@@ -122,7 +123,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-};
+}
 
 //for tablehead
 const tableHead = [
@@ -130,7 +131,7 @@ const tableHead = [
   { Id: 2, title: "Reimbursement Type", jsonData: "reimbursement_type" },
   { Id: 3, title: "Parent Type", jsonData: "reimbursement_parent" },
   { Id: 4, title: "Actions" },
-];
+]
 
 //for sort
 const sortList = (sortBy) => {
@@ -141,14 +142,7 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-};
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchReimbursement();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+}
 
 //for searching
 const filteredItems = (search) => {
@@ -164,14 +158,13 @@ const filteredItems = (search) => {
         -1)
     );
   });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
+  sortedData.value = filteredR
   onChangePage(1);
-};
+}
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+}
 
 //get all reimbursement
 const fetchReimbursement = async () => {
@@ -179,9 +172,8 @@ const fetchReimbursement = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/reimbursement/");
   instanceArray = res.data.data.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
+  sortedData.value = instanceArray
+}
 
 //delete reimbursement
 const deleteReimbursement = async (id) => {
@@ -224,7 +216,7 @@ const deleteReimbursement = async (id) => {
       return;
     }
   });
-};
+}
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -243,7 +235,7 @@ const exportToExcel = () => {
   });
 
   // Menambahkan data ke baris-baris selanjutnya
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.reimbursement_type;
@@ -262,7 +254,18 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-};
+}
+
+onBeforeMount(() => {
+  getSessionForSidebar()
+  fetchReimbursement()
+  fetchJobBandUtils(addJobBandData)
+})
+
+watch(addJobBandData, () => {
+  referenceFetch.fetchJobBandResult = addJobBandData.value
+})
+
 </script>
 
 <template>

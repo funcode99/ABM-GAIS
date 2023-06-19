@@ -2,6 +2,7 @@
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
+import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
 import Swal from "sweetalert2";
@@ -9,35 +10,19 @@ import Api from "@/utils/Api";
 
 import Multiselect from "@vueform/multiselect";
 
-import { ref, onMounted, watch } from "vue";
+import { useReferenceFetchResult } from "@/stores/fetch/reference"
+const referenceFetch = useReferenceFetchResult()
 
-const emits = defineEmits(["unlockScrollbar", "reimbursementSaved"]);
+const emits = defineEmits(["unlockScrollbar", "reimbursementSaved"])
 
-let reimbursementType = ref("");
-let parentType = ref("");
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
+let reimbursementType = ref("")
+let parentType = ref("")
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
 
-let jobBandData = ref(null);
-let jobBandIdArray = ref(null);
-
-//for get city in input
-const fetchJobBand = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/job_band/");
-  jobBandData = res.data.data;
-  // console.log("ini data jobBandData" + JSON.stringify(res.data.data));
-  jobBandData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data jobBandData setelah perubahan:", jobBandData);
-};
-
-onMounted(() => {
-  fetchJobBand();
-});
+let jobBandData = ref(null)
+let jobBandIdArray = ref(null)
 
 const saveReimbursement = async () => {
   isAdding.value = true;
@@ -72,8 +57,7 @@ const callAddApi = async () => {
 const resetInput = () => {
   reimbursementType.value = "";
   parentType.value = "";
-  jobBandIdArray.value = [];
-  // selectedJobBand.value = "Job Band";
+  jobBandIdArray.value = []
 };
 
 watch(isVisible, () => {
@@ -82,10 +66,16 @@ watch(isVisible, () => {
   } else {
     resetInput();
   }
-});
+})
+
+watch(referenceFetch, () => {
+  jobBandData.value = referenceFetch.fetchJobBandResult
+})
+
 </script>
 
 <template>
+
   <button
     @click="isVisible = true"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
@@ -129,13 +119,18 @@ watch(isVisible, () => {
             v-model="parentType"
           />
         </div>
+
         <div class="mb-6 w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Job Band<span class="text-red">*</span></label
-          >
-          <div
-            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
-          ></div>
+        
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Job Band<span class="text-red">*</span>
+          </label>
+
+        
+          <div class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm">
+          </div>
+
+        
           <Multiselect
             v-model="jobBandIdArray"
             mode="tags"
@@ -165,13 +160,16 @@ watch(isVisible, () => {
             </template>
           </Multiselect>
         </div>
+
         <modalFooter @closeEdit="isVisible = false" />
       </form>
     </main>
   </Modal>
+
 </template>
 
 <style scoped>
+
 :deep(.modal-vue3-content) {
   max-height: 700px !important;
   max-width: 510px !important;
@@ -186,4 +184,5 @@ watch(isVisible, () => {
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
+
 </style>

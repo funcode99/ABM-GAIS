@@ -55,9 +55,10 @@
     let pageMultiplier = ref(10)
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
 
-
     let responseStatus = ref('')
     let responseMessage = ref('')
+    let responseStatusMenu = ref('')
+    let responseMessageMenu = ref('')
 
     let addMenuData = ref([])
     let addCompanyData = ref([])
@@ -90,7 +91,6 @@
       }
     }
 
-
     const fetch = async () => {
 
       try {
@@ -106,9 +106,6 @@
       }
 
     }
-
-   let responseStatusMenu = ref('')
-   let responseMessageMenu = ref('')
 
     onBeforeMount(() => {
       getSessionForSidebar()
@@ -134,7 +131,6 @@
     watch(addDocumentData, () => {
       tmsFetch.fetchDocumentCodeResult = addDocumentData.value
     })
-
 
     const filteredItems = (search) => {
         sortedData.value = instanceArray
@@ -256,11 +252,6 @@
 
     }
 
-    const getData = () => {
-      console.log('mengambil kembali data')
-      fetch()
-    }
-
     const deleteCheckedArray = () => {
       deleteCheckedArrayUtils(deleteArray, 'approval', sortedData, fetch, 'approval')
     }
@@ -297,8 +288,6 @@
       <Sidebar class="flex-none" />
 
       <tableContainer>
-
-        <!-- {{ deleteArray }} -->
         
         <TableTopBar 
           modalAddType="approval"
@@ -377,7 +366,7 @@
                     </td>
 
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <ModalEditApproval @fetchApproval="getData" @edit-approver="editExistingApprover(data.id)" 
+                      <ModalEditApproval @fetchApproval="fetch" @edit-approver="editExistingApprover(data.id)" 
                       :formContent="[
                         data.approval_name, 
                         data.id_company, 

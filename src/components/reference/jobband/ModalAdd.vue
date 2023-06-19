@@ -1,14 +1,16 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { Modal } from "usemodal-vue3";
+import { ref, onMounted, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import Multiselect from "@vueform/multiselect";
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import Multiselect from "@vueform/multiselect"
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import { ref, onMounted, watch, onBeforeMount } from "vue";
+import { useReferenceFetchResult } from '@/stores/fetch/reference'
+const referenceFetch = useReferenceFetchResult()
 
 const emits = defineEmits(["unlockScrollbar", "jobband-saved"]);
 
@@ -31,53 +33,11 @@ let companyIdArray = ref(null);
 let addZona = ref([]);
 const arrayDetail = ref([]);
 
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  companyData = res.data.data;
-  companyData.map((item) => {
-    item.value = item.id;
-  });
-};
-
-const fetchGetFlightClass = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/flight_class/");
-  FlightClass.value = res.data.data;
-};
-
-const fetchGetZona = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/zona/get_id/");
-  addZona = res.data.data;
-  inputZonaValues.value = res.data.data;
-  inputZonaValues.value = inputZonaValues.value.map((item) => {
-    arrayDetail.value.push({
-      id_zona: item.id_zona,
-      tlk_rate: "",
-    });
-  });
-};
-
-onMounted(() => {
-  fetchGetCompany();
-  fetchGetFlightClass();
-  inputValues.value = addZona.value.map(() => "");
-  initialInputValues.value = [...inputValues.value];
-});
-
-onBeforeMount(() => {
-  fetchGetZona();
-});
-
 const saveJobBand = async () => {
-  isAdding.value = true;
-  isVisible.value = !isVisible.value;
-  setTimeout(callAddApi, 500);
-};
+  isAdding.value = true
+  isVisible.value = !isVisible.value
+  setTimeout(callAddApi, 500)
+}
 
 const callAddApi = async () => {
   try {
@@ -108,11 +68,11 @@ const callAddApi = async () => {
   } catch (error) {
     console.log(error);
   }
-};
+}
 
 const resetInputValues = () => {
   inputValues.value = [...initialInputValues.value];
-};
+}
 
 const resetInput = () => {
   jobBandName.value = "";
@@ -120,7 +80,7 @@ const resetInput = () => {
   mealsRate.value = "";
   companyIdArray.value = [];
   selectedFlightClass.value = "Flight";
-};
+}
 
 watch(isVisible, () => {
   if (isAdding.value == true) {
@@ -129,7 +89,7 @@ watch(isVisible, () => {
     resetInput();
     resetInputValues();
   }
-});
+})
 
 function formatCurrency() {
   hotelFare.value = hotelFare.value.replace(/\D/g, "");
@@ -158,13 +118,38 @@ function formatCurrency() {
     }
   });
 }
+
+onMounted(() => {
+    inputValues.value = addZona.value.map(() => "")
+  initialInputValues.value = [...inputValues.value]
+})
+
+watch(referenceFetch, () => {
+
+  FlightClass.value = referenceFetch.fetchFlightClassResult
+  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value.map((item) => {
+    item.value = item.id
+  })
+
+  addZona.value = referenceFetch.fetchZonaIdResult
+  inputZonaValues.value = referenceFetch.fetchZonaIdResult
+  inputZonaValues.value = inputZonaValues.value.map((item) => {
+    arrayDetail.value.push({
+      id_zona: item.id_zona,
+      tlk_rate: "",
+    })
+  })
+
+})
+
 </script>
 
 <template>
+
   <button
     @click="isVisible = true"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-  >
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
     + Add New
   </button>
 

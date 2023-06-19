@@ -9,6 +9,10 @@ import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
 
+import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
+import fetchFlightClassUtils from '@/utils/Fetch/Reference/fetchFlightClass'
+import fetchZonaIdUtils from '@/utils/Fetch/Reference/fetchZonaId'
+
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -17,21 +21,26 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 
-import Swal from "sweetalert2";
-
-import Api from "@/utils/Api";
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
 import { Workbook } from "exceljs";
+import { ref, onBeforeMount, computed, watch } from "vue";
 
-import { ref, onBeforeMount, onMounted, computed } from "vue";
+import { useReferenceFetchResult } from "@/stores/fetch/reference"
+import { useFormEditStore } from "@/stores/reference/jobband/edit-modal.js"
+import { useSidebarStore } from "@/stores/sidebar.js"
 
-import { useFormEditStore } from "@/stores/reference/jobband/edit-modal.js";
-import { useSidebarStore } from "@/stores/sidebar.js";
 
-const sidebar = useSidebarStore();
-const formEditState = useFormEditStore();
+let Company = ref("")
+const addZonaIdData = ref([])
+const addFlightClassData = ref([])
 
-let editJobBandDataid = ref();
+const sidebar = useSidebarStore()
+const formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
+
+const editJobBandDataid = ref();
 
 const editJobBand = async (data) => {
   editJobBandDataid.value = data;
@@ -67,17 +76,14 @@ const callEditApi = async () => {
   }
 };
 
-const search = ref("");
-let sortedData = ref([]);
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
-let selectedCompany = ref("Company");
-let Company = ref("");
-let sortAscending = true;
-let sortedDataReactive = computed(() => sortedData.value);
-const showFullText = ref({});
-let checkList = false;
+const search = ref("")
+let sortedData = ref([])
+let sortedbyASC = true
+let instanceArray = []
+let selectedCompany = ref("Company")
+
+const showFullText = ref({})
+let checkList = false
 
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
@@ -87,7 +93,7 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
+}
 
 const filterDataByCompany = () => {
   if (selectedCompany.value === "Company") {
@@ -97,12 +103,12 @@ const filterDataByCompany = () => {
       (item) => item.id_company == selectedCompany.value
     );
   }
-};
+}
 
 const resetData = () => {
   sortedData.value = instanceArray;
   selectedCompany.value = "Company";
-};
+}
 
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
@@ -123,7 +129,7 @@ const selectAll = (checkValue) => {
     }
     btnDelete.style.display = "none";
   }
-};
+}
 
 const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
@@ -141,7 +147,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-};
+}
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
@@ -149,7 +155,7 @@ const tableHead = [
   { Id: 3, title: "Hotel fare", jsonData: "hotel_fare" },
   { Id: 4, title: "Meals Rate", jsonData: "meals_rate" },
   { Id: 5, title: "Actions" },
-];
+]
 
 const sortList = (sortBy) => {
   if (sortedbyASC) {
@@ -159,14 +165,7 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-};
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchJobBand();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+}
 
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
@@ -180,25 +179,13 @@ const filteredItems = (search) => {
         -1)
     );
   });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
+  sortedData.value = filteredR
   onChangePage(1);
-};
+}
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
-
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-};
-
-onMounted(() => {
-  fetchGetCompany();
-});
+}
 
 const fetchJobBand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -206,8 +193,7 @@ const fetchJobBand = async () => {
   const res = await Api.get("/job_band/");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
+}
 
 const deleteJobBand = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -249,7 +235,7 @@ const deleteJobBand = async (id) => {
       return;
     }
   });
-};
+}
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -267,7 +253,7 @@ const exportToExcel = () => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.band_job_name;
@@ -286,7 +272,31 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-};
+}
+
+onBeforeMount(() => {
+
+  getSessionForSidebar()
+  fetchJobBand()
+  
+  fetchCompanyUtils([], Company)
+  fetchFlightClassUtils(addFlightClassData)
+  fetchZonaIdUtils(addZonaIdData)
+
+})
+
+watch(addZonaIdData, () => {
+  referenceFetch.fetchZonaIdResult = addZonaIdData.value
+})
+
+watch(Company, () => {
+  referenceFetch.fetchCompanyResult = Company.value
+})
+
+watch(addFlightClassData, () => {
+  referenceFetch.fetchFlightClassResult = addFlightClassData.value
+})
+
 </script>
 
 <template>
@@ -327,26 +337,23 @@ const exportToExcel = () => {
           </div>
 
           <!-- SORT & SEARCH -->
-          <div
-            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4"
-          >
+          <div class="grid grid-flow-col auto-cols-max justify-between items-center mx-4">
+
             <div class="flex flex-wrap items-center gap-4">
+
               <div>
-                <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-                >
+
+                <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
                   Company
                 </p>
 
-                <select
-                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCompany"
-                >
+                <select class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer" v-model="selectedCompany">
                   <option disabled selected>Company</option>
                   <option v-for="company in Company" :value="company.id">
                     {{ company.company_name }}
                   </option>
                 </select>
+
               </div>
 
               <div class="flex flex-wrap gap-4 items-center pt-6">
@@ -369,6 +376,7 @@ const exportToExcel = () => {
                   Reset
                 </button>
               </div>
+
             </div>
 
             <div class="pt-6 flex md:mx-0">

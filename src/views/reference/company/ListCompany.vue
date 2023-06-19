@@ -1,35 +1,35 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/company/ModalAdd.vue";
-import ModalEdit from "@/components/reference/company/ModalEdit.vue";
-import ModalView from "@/components/reference/company/ModalView.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import ModalAdd from "@/components/reference/company/ModalAdd.vue"
+import ModalEdit from "@/components/reference/company/ModalEdit.vue"
+import ModalView from "@/components/reference/company/ModalView.vue"
 
 import fetchVendorUtils from "@/utils/Fetch/Reference/fetchVendorFlightTrip"
 
-import tableContainer from "@/components/table/tableContainer.vue";
-import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
+import tableTop from "@/components/table/tableTop.vue"
+import tableData from "@/components/table/tableData.vue"
 
-import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
+import icon_receive from "@/assets/icon-receive.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
 
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import { Workbook } from "exceljs";
-import { ref, onBeforeMount, computed, watch } from "vue";
+import { Workbook } from "exceljs"
+import { ref, onBeforeMount, computed, watch } from "vue"
 
-import { useReferenceFetchResult } from "@/stores/fetch/reference";
-import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
-import { useSidebarStore } from "@/stores/sidebar.js";
+import { useReferenceFetchResult } from "@/stores/fetch/reference"
+import { useFormEditStore } from "@/stores/reference/company/edit-modal.js"
+import { useSidebarStore } from "@/stores/sidebar.js"
 
-const sidebar = useSidebarStore();
-const formEditState = useFormEditStore();
+const sidebar = useSidebarStore()
+const formEditState = useFormEditStore()
 const referenceFetch = useReferenceFetchResult()
 
 let companyCode = ref();
@@ -77,12 +77,11 @@ let sortedData = ref([])
 let addVendorData = ref([])
 
 //for sort & search
-const search = ref("");
-let sortedbyASC = true;
-let instanceArray = [];
-let sortAscending = true;
-const showFullText = ref({});
-let checkList = false;
+const search = ref("")
+let sortedbyASC = true
+let instanceArray = []
+const showFullText = ref({})
+let checkList = false
 
 //for paginations
 let showingValue = ref(1);
@@ -150,10 +149,10 @@ const sortList = (sortBy) => {
 };
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetch();
+  getSessionForSidebar()
+  fetch()
   fetchVendorUtils(addVendorData)
-});
+})
 
 watch(addVendorData, () => {
   referenceFetch.fetchVendorAirlinesResult = addVendorData.value
@@ -286,9 +285,11 @@ const tableHead = [
     <Navbar />
 
     <div class="flex w-screen content mt-[115px]">
+      
       <Sidebar class="flex-none" />
 
       <tableContainer>
+
         <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -527,6 +528,7 @@ const tableHead = [
             />
           </div>
         </tableTop>
+
       </tableContainer>
 
       <Footer />

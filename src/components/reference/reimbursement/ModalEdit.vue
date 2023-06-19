@@ -4,18 +4,20 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-import Api from "@/utils/Api";
 
 import Multiselect from "@vueform/multiselect";
 
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
 import { useFormEditStore } from "@/stores/reference/reimbursement/edit-modal.js";
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 
 const emits = defineEmits(["unlockScrollbar", "changeReimbursement"]);
 
-let formEditState = useFormEditStore();
+const formEditState = useFormEditStore()
+const referenceFetch = useReferenceFetchResult()
+
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
@@ -54,28 +56,9 @@ const submitEdit = () => {
     currentReimbursementParentType.value;
   formEditState.reimbursement.reimbursementIdJobBand = jobBandIdArray.value;
 
-  // console.log("nilai zona name" + JSON.stringify(currentZonaName));
-
   isVisible.value = false;
   emits("changeReimbursement"); // Memanggil event 'changeZona'
-};
-
-//for get city in input
-const fetchJobBand = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/job_band/");
-  jobBandData = res.data.data;
-  // console.log("ini data jobBandData" + JSON.stringify(res.data.data));
-  jobBandData.map((item) => {
-    item.value = item.id;
-  });
-  // console.log("Data jobBandData setelah perubahan:", jobBandData);
-};
-
-onMounted(() => {
-  fetchJobBand();
-});
+}
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
@@ -90,7 +73,15 @@ watch(isVisible, (newValue) => {
   if (newValue) {
     resetInput();
   }
-});
+})
+
+watch(referenceFetch, () => {
+  jobBandData.value = referenceFetch.fetchJobBandResult
+    jobBandData.map((item) => {
+    item.value = item.id;
+  })
+})
+
 </script>
 
 <template>
