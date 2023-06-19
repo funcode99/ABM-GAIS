@@ -1,53 +1,52 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import ModalAdd from "@/components/reference/warehouse/ModalAdd.vue"
-import ModalEdit from "@/components/reference/warehouse/ModalEdit.vue"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import ModalAdd from "@/components/reference/warehouse/ModalAdd.vue";
+import ModalEdit from "@/components/reference/warehouse/ModalEdit.vue";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import tableData from "@/components/table/tableData.vue"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
-import fetchWarehouseUtils from "@/utils/Fetch/Reference/fetchWarehouse"
-import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
-import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
+import fetchWarehouseUtils from "@/utils/Fetch/Reference/fetchWarehouse";
+import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
+import fetchSiteByCompanyIdUtils from "@/utils/Fetch/Reference/fetchSiteByCompanyId";
 
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import icon_receive from "@/assets/icon-receive.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
-import icondanger from "@/assets/Danger.png"
-import iconClose from "@/assets/navbar/icon_close.svg"
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
-import { Workbook } from "exceljs"
-import { ref, onBeforeMount, computed, watch } from "vue"
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
+import { Workbook } from "exceljs";
+import { ref, onBeforeMount, computed, watch } from "vue";
 
+import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
+import { useSidebarStore } from "@/stores/sidebar.js";
+import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
+import { useMenuAccessStore } from "@/stores/savemenuaccess";
 
-import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js"
-import { useSidebarStore } from "@/stores/sidebar.js"
-import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
-import { useMenuAccessStore } from '@/stores/savemenuaccess'
+let warehouseName = ref("");
+let warehouseIdCompany = ref("");
+let warehouseIdSite = ref();
 
-let warehouseName = ref("")
-let warehouseIdCompany = ref("")
-let warehouseIdSite = ref()
+const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult();
+const menuAccessStore = useMenuAccessStore();
 
-const sidebar = useSidebarStore()
-const formEditState = useFormEditStore()
-const referenceFetch = useReferenceFetchResult()
-const menuAccessStore = useMenuAccessStore()
-
-let editWarehouseDataId = ref()
+let editWarehouseDataId = ref();
 
 //for edit
 const editWarehouse = async (data) => {
-  editWarehouseDataId.value = data
-  setTimeout(callEditApi, 500)
-}
+  editWarehouseDataId.value = data;
+  setTimeout(callEditApi, 500);
+};
 
 //for tablehead
 const tableHead = [
@@ -56,18 +55,17 @@ const tableHead = [
   { Id: 3, title: "Company", jsonData: "company_name" },
   { Id: 4, title: "Site", jsonData: "site_name" },
   { Id: 4, title: "Actions" },
-]
+];
 
 //for edit
 const callEditApi = async () => {
-  
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   await Api.post(`/warehouse/update_data/${editWarehouseDataId.value}`, {
     warehouse_name: formEditState.warehouse.warehouseName,
     id_company: formEditState.warehouse.warehouseIdCompany,
     id_site: formEditState.warehouse.warehouseIdSite,
-  })
+  });
 
   Swal.fire({
     position: "center",
@@ -75,51 +73,50 @@ const callEditApi = async () => {
     title: "Your work has been saved",
     showConfirmButton: false,
     timer: 1500,
-  })
+  });
 
-  fetchWarehouse()
-
-}
+  fetchWarehouse();
+};
 
 //for sort & search
-const search = ref("")
-let sortedData = ref([])
-let sortedbyASC = true
-let instanceArray = []
-let selectedCompany = ref("Company")
-let Company = ref("")
-let sortedDataReactive = computed(() => sortedData.value)
-const showFullText = ref({})
-let checkList = false
+const search = ref("");
+let sortedData = ref([]);
+let sortedbyASC = true;
+let instanceArray = [];
+let selectedCompany = ref("Company");
+let Company = ref("");
+let sortedDataReactive = computed(() => sortedData.value);
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
-let showingValue = ref(1)
-let pageMultiplier = ref(10)
-let pageMultiplierReactive = computed(() => pageMultiplier.value)
-let paginateIndex = ref(0)
+let showingValue = ref(1);
+let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let paginateIndex = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1
-  showingValue.value = pageOfItem
-}
+  paginateIndex.value = pageOfItem - 1;
+  showingValue.value = pageOfItem;
+};
 
 //for filter & reset button
 const filterDataByCompany = () => {
   if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray
+    sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
       (item) => item.id_company === selectedCompany.value
-    )
+    );
   }
-}
+};
 
 //for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
   selectedCompany.value = "Company";
-}
+};
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -141,7 +138,7 @@ const selectAll = (checkValue) => {
     }
     btnDelete.style.display = "none";
   }
-}
+};
 
 const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
@@ -161,7 +158,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-}
+};
 
 //for sort
 const sortList = (sortBy) => {
@@ -172,7 +169,7 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-}
+};
 
 //for searching
 const filteredItems = (search) => {
@@ -185,25 +182,25 @@ const filteredItems = (search) => {
       (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
-  sortedData.value = filteredR
+  sortedData.value = filteredR;
   onChangePage(1);
-}
+};
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
-}
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
 
-let baitArray = ref([])
+let baitArray = ref([]);
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchCompanyUtils([], Company)
-  fetchWarehouseUtils(baitArray, sortedData)
-})
+  getSessionForSidebar();
+  fetchCompanyUtils([], Company);
+  fetchWarehouseUtils(baitArray, sortedData);
+});
 
-  const fetchWarehouse = () => {
-    fetchWarehouseUtils(instanceArray, sortedData)
-  }
+const fetchWarehouse = () => {
+  fetchWarehouseUtils(instanceArray, sortedData);
+};
 
 //delete brand
 const deleteWarehouse = async (id) => {
@@ -246,71 +243,70 @@ const deleteWarehouse = async (id) => {
       return;
     }
   });
-}
+};
 
-  //for export
-  const exportToExcel = () => {
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet("Warehouse Data");
+//for export
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Warehouse Data");
 
-    const tableHead = [
-      { title: "Nomor" },
-      { title: "ID" },
-      { title: "Warehouse Name" },
-      { title: "Company" },
-      { title: "Site" },
-    ];
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "ID" },
+    { title: "Warehouse Name" },
+    { title: "Company" },
+    { title: "Site" },
+  ];
 
-    // Menambahkan header kolom
-    tableHead.forEach((column, index) => {
-      worksheet.getCell(1, index + 1).value = column.title;
+  // Menambahkan header kolom
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  // Menambahkan data ke baris-baris selanjutnya
+  sortedDataReactive.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.id;
+    worksheet.getCell(rowIndex + 2, 3).value = data.warehouse_name;
+    worksheet.getCell(rowIndex + 2, 4).value = data.company_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.site_name;
+  });
+
+  // Menyimpan workbook menjadi file Excel
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "warehouse_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 
-    // Menambahkan data ke baris-baris selanjutnya
-    sortedDataReactive.value.forEach((data, rowIndex) => {
-      worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-      worksheet.getCell(rowIndex + 2, 2).value = data.id;
-      worksheet.getCell(rowIndex + 2, 3).value = data.warehouse_name;
-      worksheet.getCell(rowIndex + 2, 4).value = data.company_name;
-      worksheet.getCell(rowIndex + 2, 5).value = data.site_name;
-    });
+const fetchSiteByCompanyId = async () => {
+  setTimeout(runfetch, 500);
+};
 
-    // Menyimpan workbook menjadi file Excel
-    workbook.xlsx.writeBuffer().then((buffer) => {
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "warehouse_data.xlsx";
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-  }
+let addSiteByCompanyData = ref([]);
 
-  const fetchSiteByCompanyId = async () => {
-    setTimeout(runfetch, 500)
-  }
+const runfetch = () => {
+  fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId);
+};
 
-  let addSiteByCompanyData = ref([])
+watch(Company, () => {
+  referenceFetch.fetchCompanyResult = Company.value;
+});
 
-  const runfetch = () => {
-    fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId)
-  }
+watch(addSiteByCompanyData, () => {
+  menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value;
+});
 
-  watch(Company, () => {
-    referenceFetch.fetchCompanyResult = Company.value
-  })
-
-  watch(addSiteByCompanyData, () => {
-    menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
-  })
-
-  watch(baitArray, () => {
-    instanceArray = baitArray.value
-  })
-
+watch(baitArray, () => {
+  instanceArray = baitArray.value;
+});
 </script>
 
 <template>
@@ -341,7 +337,10 @@ const deleteWarehouse = async (id) => {
               >
                 Delete
               </button>
-              <ModalAdd @warehouse-saved="fetchWarehouse" @fetchSiteByCompanyId="fetchSiteByCompanyId" />
+              <ModalAdd
+                @warehouse-saved="fetchWarehouse"
+                @fetchSiteByCompanyId="fetchSiteByCompanyId"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
@@ -511,6 +510,7 @@ const deleteWarehouse = async (id) => {
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
                     @change-warehouse="editWarehouse(data.id)"
+                    @fetchSiteByCompanyId="fetchSiteByCompanyId"
                     :formContent="[
                       data.warehouse_name,
                       data.id_company,

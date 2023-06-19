@@ -4,120 +4,98 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-import Api from "@/utils/Api"
-
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
 import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
-
-const emits = defineEmits(["unlockScrollbar", "changeWarehouse"]);
+import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
+import { useMenuAccessStore } from "@/stores/savemenuaccess";
 
 let formEditState = useFormEditStore();
-let isVisible = ref(false);
+const referenceFetch = useReferenceFetchResult();
+const menuAccessStore = useMenuAccessStore();
+
+const emits = defineEmits([
+  "unlockScrollbar",
+  "changeWarehouse",
+  "fetchSiteByCompanyId",
+]);
+
 let modalPaddingHeight = "25vh";
+let isVisible = ref(false);
 let isAdding = ref(false);
+let isLoading = ref(false);
 
-let Company = ref("");
-let Site = ref("");
-let Warehouse = ref("");
-
-let selectedCompany = ref(props.formContent[1])
-let selectedSite = ref(props.formContent[2])
+let company = ref();
+let location = ref();
+let responseCompanyArray = ref([]);
+let responseSiteByCompanyIdArray = ref([]);
 
 const props = defineProps({
   formContent: Array,
-})
+});
 
-const currentwarehouseName = ref(props.formContent[0])
-const originalwarehouseName = ref(props.formContent[0])
-const currentCompany = ref(props.formContent[1])
-const originalcurrentCompany = ref(props.formContent[1])
-const currentSite = ref(props.formContent[2])
-const originalcurrentSite = ref(props.formContent[2])
+const currentwarehouseName = ref(props.formContent[0]);
+const originalwarehouseName = ref(props.formContent[0]);
 
 const submitEdit = () => {
-
-  isAdding.value = true
-
   if (!formEditState.warehouse) {
-    formEditState.warehouse = {}
+    formEditState.warehouse = {};
   }
 
-  formEditState.warehouse.warehouseName = currentwarehouseName.value
-  formEditState.warehouse.warehouseIdCompany = selectedCompany.value
-  formEditState.warehouse.warehouseIdSite = selectedSite.value
+  formEditState.warehouse.warehouseName = currentwarehouseName.value;
+  formEditState.warehouse.warehouseIdCompany = company.value;
+  formEditState.warehouse.warehouseIdSite = location.value;
 
-  isVisible.value = false
-  emits("changeWarehouse")
-  
-}
-
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get("/company/get")
-  Company.value = res.data.data
-}
-
-const changeCompany = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get(`/site/get_by_company/${id_company}`)
-  Site.value = res.data.data
-  selectedSite.value = originalcurrentSite.value
-}
-
-
-//for get site in select
-const fetchGetSite = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/get_data");
-  Site.value = res.data.data;
-}
-
-onMounted(() => {
-  fetchGetCompany()
-  fetchGetSite()
-})
-
-const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+  isVisible.value = false;
+  emits("changeWarehouse");
+};
 
 const resetForm = () => {
-  currentwarehouseName.value = originalwarehouseName.value
-  selectedCompany.value = originalcurrentCompany.value
-  selectedSite.value = originalcurrentSite.value
-  // selectedSite.value = fetchGetSiteId(originalcurrentSite.value)
-}
-
-const fetchGetSiteId = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/get_data");
-  Site.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id == element.id) {
-      selectedSite.value = element.id;
-    }
-  }
-}
+  currentwarehouseName.value = originalwarehouseName.value;
+};
 
 watch(isVisible, () => {
-  
-  if (isAdding.value == true) {
-    isAdding.value = false
+  if (isVisible.value === true) {
+    company.value = props.formContent[1];
+    location.value = props.formContent[2];
   } else {
-    resetForm()
+    company.value = 0;
+    location.value = 0;
   }
 
-  // selectedSite.value = originalcurrentSite.value
+  if (isAdding.value == true) {
+    isAdding.value = false;
+  } else {
+    resetForm();
+  }
 
-})
+  responseCompanyArray.value = referenceFetch.fetchCompanyResult;
+});
 
+watch(referenceFetch, () => {
+  company.value = referenceFetch.fetchSiteResult.id_company;
+});
+
+watch(company, () => {
+  isLoading.value = true;
+  menuAccessStore.companyId = company.value;
+  if (company.value !== 0) {
+    emits("fetchSiteByCompanyId");
+  }
+});
+
+watch(menuAccessStore, () => {
+  responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult;
+});
+
+watch(responseSiteByCompanyIdArray, () => {
+  location.value = referenceFetch.fetchSiteResult.id_site;
+  isLoading.value = false;
+});
+
+const inputStylingClass =
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
@@ -140,34 +118,49 @@ watch(isVisible, () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedCompany"
-            @change="changeCompany(selectedCompany)"
+            v-model="company"
           >
             <option disabled selected>Company</option>
             <option
-              v-for="(company, i) in Company"
-              :key="i"
-              :value="company.id"
+              v-for="data in responseCompanyArray"
+              :key="data.id"
+              :value="data.id"
+              :selected="data.id == props.formContent[1] ? true : false"
             >
-              {{ company.company_name }}
+              {{ data.company_name }}
             </option>
           </select>
         </div>
 
-        <div class="mb-6 text-start w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >
+        <div v-if="!isLoading" class="mb-6 text-start w-full px-4">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
             Site<span class="text-red">*</span>
           </label>
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="selectedSite"
-            >
+            v-model="location"
+          >
             <option disabled selected>Site</option>
-            <option v-for="(site, i) in Site" :key="i" :value="site.id">
-              {{ site.site_name }}
+            <option
+              v-for="data in responseSiteByCompanyIdArray"
+              :key="data.id"
+              :value="data.id"
+            >
+              {{ data.site_name }}
             </option>
+          </select>
+        </div>
+
+        <div v-else class="mb-6 w-full px-4 text-start">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Site<span class="text-red">*</span>
+          </label>
+
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+          >
+            <option>Retrieving site data...</option>
           </select>
         </div>
 
