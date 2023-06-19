@@ -68,6 +68,19 @@ const submitEdit = () => {
   emits("changeCompany"); // Memanggil event 'changeCompany'
 };
 
+//for get vendor in select
+// const fetchVendors = async () => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const res = await Api.get("/flight_trip/get_vendor");
+//   vendorAirlines.value = res.data.data
+// }
+
+// onMounted(() => {
+//   fetchVendors();
+// });
+
+// for image logo
 const onFileSelected = (event) => {
   const file = event.target.files[0];
 
