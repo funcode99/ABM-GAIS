@@ -4,8 +4,6 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-// import Api from "@/utils/Api"
-
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
@@ -69,18 +67,6 @@ const submitEdit = () => {
   isVisible.value = false;
   emits("changeCompany"); // Memanggil event 'changeCompany'
 };
-
-//for get vendor in select
-// const fetchVendors = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/flight_trip/get_vendor");
-//   vendorAirlines.value = res.data.data
-// }
-
-// onMounted(() => {
-//   fetchVendors();
-// });
 
 // for image logo
 const onFileSelected = (event) => {
