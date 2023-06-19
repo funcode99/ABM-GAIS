@@ -11,6 +11,7 @@ import tableData from "@/components/table/tableData.vue"
 
 import fetchWarehouseUtils from "@/utils/Fetch/Reference/fetchWarehouse"
 import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
+import fetchSiteUtils from '@/utils/Fetch/Reference/fetchSite'
 import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
 
 import icon_filter from "@/assets/icon_filter.svg"
@@ -42,6 +43,11 @@ const referenceFetch = useReferenceFetchResult()
 const menuAccessStore = useMenuAccessStore()
 
 let editWarehouseDataId = ref()
+
+const addSiteByCompanyData = ref([])
+const addSiteData = ref([])
+const baitArray = ref([])
+let Company = ref("")
 
 //for edit
 const editWarehouse = async (data) => {
@@ -87,7 +93,7 @@ let sortedData = ref([])
 let sortedbyASC = true
 let instanceArray = []
 let selectedCompany = ref("Company")
-let Company = ref("")
+
 let sortedDataReactive = computed(() => sortedData.value)
 const showFullText = ref({})
 let checkList = false
@@ -193,60 +199,52 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
 }
 
-let baitArray = ref([])
-
-onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchCompanyUtils([], Company)
-  fetchWarehouseUtils(baitArray, sortedData)
-})
-
   const fetchWarehouse = () => {
     fetchWarehouseUtils(instanceArray, sortedData)
   }
 
-//delete brand
-const deleteWarehouse = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  //delete brand
+  const deleteWarehouse = async (id) => {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Api.delete(`/warehouse/delete_data/${id}`).then((res) => {
-        Swal.fire({
-          title: "Successfully",
-          text: "Warehouse has been deleted.",
-          icon: "success",
-          showCancelButton: false,
-          confirmButtonColor: "#015289",
-          showConfirmButton: false,
-          timer: 1500,
+    Swal.fire({
+      title:
+        "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+      html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+      iconHtml: `<img src="${icondanger}" />`,
+      showCloseButton: true,
+      closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+      showCancelButton: true,
+      buttonsStyling: false,
+      cancelButtonText: "Cancel",
+      customClass: {
+        cancelButton: "swal-cancel-button",
+        confirmButton: "swal-confirm-button",
+      },
+      reverseButtons: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Api.delete(`/warehouse/delete_data/${id}`).then((res) => {
+          Swal.fire({
+            title: "Successfully",
+            text: "Warehouse has been deleted.",
+            icon: "success",
+            showCancelButton: false,
+            confirmButtonColor: "#015289",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          fetchWarehouse();
         });
-        fetchWarehouse();
-      });
-    } else {
-      return;
-    }
-  });
-}
+      } else {
+        return;
+      }
+    });
+  }
 
   //for export
   const exportToExcel = () => {
@@ -293,14 +291,29 @@ const deleteWarehouse = async (id) => {
     setTimeout(runfetch, 500)
   }
 
-  let addSiteByCompanyData = ref([])
-
   const runfetch = () => {
     fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId)
   }
 
+
+
+  onBeforeMount(() => {
+    getSessionForSidebar()
+    fetchCompanyUtils([], Company)
+    fetchSiteUtils([], addSiteData)
+    fetchWarehouseUtils(baitArray, sortedData)
+  })
+
   watch(Company, () => {
+    // console.log('perubahan di company')
+    console.log(referenceFetch.fetchCompanyResult)
     referenceFetch.fetchCompanyResult = Company.value
+    console.log(referenceFetch.fetchCompanyResult)
+  })
+
+  watch(addSiteData, () => {
+    // console.log('perubahan di site')
+    referenceFetch.fetchSiteResult = addSiteData.value
   })
 
   watch(addSiteByCompanyData, () => {

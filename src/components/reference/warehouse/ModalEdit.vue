@@ -6,14 +6,17 @@ import modalFooter from "@/components/modal/modalFooter.vue";
 
 import Api from "@/utils/Api"
 
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
-import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js"
+
+const referenceFetch = useReferenceFetchResult()
+let formEditState = useFormEditStore();
 
 const emits = defineEmits(["unlockScrollbar", "changeWarehouse"]);
 
-let formEditState = useFormEditStore();
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
@@ -53,14 +56,6 @@ const submitEdit = () => {
   
 }
 
-//for get company in select
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get("/company/get")
-  Company.value = res.data.data
-}
-
 const changeCompany = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -68,20 +63,6 @@ const changeCompany = async (id_company) => {
   Site.value = res.data.data
   selectedSite.value = originalcurrentSite.value
 }
-
-
-//for get site in select
-const fetchGetSite = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/get_data");
-  Site.value = res.data.data;
-}
-
-onMounted(() => {
-  fetchGetCompany()
-  fetchGetSite()
-})
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -115,8 +96,12 @@ watch(isVisible, () => {
   }
 
   // selectedSite.value = originalcurrentSite.value
+  Company.value = referenceFetch.fetchCompanyResult
+  Site.value = referenceFetch.fetchSiteResult
 
 })
+
+
 
 </script>
 
