@@ -1,9 +1,7 @@
 <script setup>
   // cuma gara2 lupa import ref sidebar gua error terus anjing
   import { ref, watch } from 'vue'
-
   import { Modal } from "usemodal-vue3"
-
   import Multiselect from '@vueform/multiselect'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
@@ -288,32 +286,6 @@
 :deep(.modal-vue3-content) {
   max-height: 550px !important;
   overflow-y: auto !important;
-}
-
-.multiselect-tag.is-user {
-  padding: 5px 8px;
-  border-radius: 22px;
-  background: #35495e;
-  margin: 3px 3px 8px;
-}
-
-.multiselect-tag.is-user img {
-  width: 18px;
-  border-radius: 50%;
-  height: 18px;
-  margin-right: 8px;
-  border: 2px solid #ffffffbf;
-}
-
-.multiselect-tag.is-user i:before {
-  color: #ffffff;
-  border-radius: 50%;;
-}
-
-.user-image {
-  margin: 0 6px 0 0;
-  border-radius: 50%;
-  height: 22px;
 }
 
 </style>

@@ -337,33 +337,33 @@
                         (paginateIndex + 1) * pageMultiplierReactive
                       )" :key="data.id">
 
-                      <td style="width: 5%;">
+                      <td class="w-[5%]">
                         <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
                       </td>
 
-                      <td style="width: 5%;">
+                      <td class="w-[5%]">
                         {{ data.no }}
                       </td>
 
-                      <td style="width: 25%;">
+                      <td class="w[-25%] hover:w-[initial]">
                         <span class="readmore-text">
                           {{ data.sequence_name }}
                         </span>
                       </td>
 
-                      <td style="width: 20%;">
+                      <td class="w-[20%] hover:w-[initial]">
                         <span class="readmore-text">
                           {{ data.prefix }}
                         </span>
                       </td>
 
-                      <td style="width: 25%;">
+                      <td class="w-[25%] hover:w-[initial]">
                         <span class="readmore-text">
                           {{ data.suffix }}
                         </span>
                       </td>
 
-                      <td style="width: 10%;">
+                      <td class="w-[10%]">
                         {{ data.sequence_size }}
                       </td>
 
