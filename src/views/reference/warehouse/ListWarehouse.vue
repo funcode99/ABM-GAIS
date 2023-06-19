@@ -9,9 +9,9 @@ import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
 
-import fetchWarehouseUtils from "@/utils/Fetch/Reference/fetchWarehouse"
-import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
-import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
+import fetchWarehouseUtils from "@/utils/Fetch/Reference/fetchWarehouse";
+import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
+import fetchSiteByCompanyIdUtils from "@/utils/Fetch/Reference/fetchSiteByCompanyId";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
@@ -41,9 +41,6 @@ const referenceFetch = useReferenceFetchResult();
 const menuAccessStore = useMenuAccessStore();
 
 let editWarehouseDataId = ref();
-
-const addSiteData = ref([])
-let Company = ref("")
 
 //for edit
 const editWarehouse = async (data) => {
@@ -82,14 +79,15 @@ const callEditApi = async () => {
 };
 
 //for sort & search
-const search = ref("")
-let sortedData = ref([])
-let sortedbyASC = true
-let instanceArray = []
-let selectedCompany = ref("Company")
-let sortedDataReactive = computed(() => sortedData.value)
-const showFullText = ref({})
-let checkList = false
+const search = ref("");
+let sortedData = ref([]);
+let sortedbyASC = true;
+let instanceArray = [];
+let selectedCompany = ref("Company");
+let Company = ref("");
+let sortedDataReactive = computed(() => sortedData.value);
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
 let showingValue = ref(1);
@@ -192,22 +190,22 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-let baitArray = ref([])
+let baitArray = ref([]);
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchCompanyUtils([], Company)
-  fetchWarehouseUtils(baitArray, sortedData)
-})
+  getSessionForSidebar();
+  fetchCompanyUtils([], Company);
+  fetchWarehouseUtils(baitArray, sortedData);
+});
 
-  const fetchWarehouse = () => {
-    fetchWarehouseUtils(instanceArray, sortedData)
-  }
+const fetchWarehouse = () => {
+  fetchWarehouseUtils(instanceArray, sortedData);
+};
 
-  //delete brand
-  const deleteWarehouse = async (id) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//delete brand
+const deleteWarehouse = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
     title:
@@ -245,7 +243,7 @@ onBeforeMount(() => {
       return;
     }
   });
-}
+};
 
 //for export
 const exportToExcel = () => {
@@ -292,19 +290,19 @@ const fetchSiteByCompanyId = async () => {
   setTimeout(runfetch, 500);
 };
 
-  let addSiteByCompanyData = ref([])
+let addSiteByCompanyData = ref([]);
 
-  const runfetch = () => {
-    fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId)
-  }
+const runfetch = () => {
+  fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId);
+};
 
-  watch(Company, () => {
-    referenceFetch.fetchCompanyResult = Company.value
-  })
+watch(Company, () => {
+  referenceFetch.fetchCompanyResult = Company.value;
+});
 
-  watch(addSiteByCompanyData, () => {
-    menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
-  })
+watch(addSiteByCompanyData, () => {
+  menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value;
+});
 
 watch(baitArray, () => {
   instanceArray = baitArray.value;
