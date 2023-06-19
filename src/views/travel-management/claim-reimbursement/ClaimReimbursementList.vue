@@ -177,6 +177,7 @@ const resetData = () => {
   filter.status = "";
   filter.date = "";
   filter.type = "";
+  deleteArray.value = []
   fetch();
   fetchTypeReimbursement();
   fetchType();
@@ -295,6 +296,10 @@ const deleteCheckedArray = () => {
 };
 // end
 
+const closeModal = () => {
+    visibleModal.value = false
+}
+
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
@@ -345,6 +350,7 @@ const getSessionForSidebar = () => {
 
               <ModalAdd
                 v-if="visibleModal"
+                @close="closeModal"
                 :list-reimbursement-type="listReimbursementType"
                 :list-type="listType"
                 :visible="visibleModal"
