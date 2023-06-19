@@ -226,7 +226,7 @@ const inputStylingClass =
             disabled
             class="cursor-not-allowed"
           >
-            <template v-slot:tag="{ option, handleTagRemove }">
+            <template v-slot:tag="{ option }">
               <div
                 class="multiselect-tag is-user cursor-not-allowed"
                 :class="{
@@ -237,7 +237,6 @@ const inputStylingClass =
                 <span
                   v-if="!option.readonly"
                   class="multiselect-tag-remove cursor-not-allowed"
-                  @click="handleTagRemove(option, $event)"
                 >
                   <span class="multiselect-tag-remove-icon"></span>
                 </span>

@@ -5,6 +5,8 @@ import modalHeader from "@/components/modal/modalHeader.vue";
 
 import Api from "@/utils/Api";
 
+import Multiselect from "@vueform/multiselect";
+
 import { ref, onMounted, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
@@ -26,6 +28,21 @@ let selectedCompanyId = ref(props.formContent[1] || null);
 let Warehouse = ref("");
 let selectedWarehouse = ref("Warehouse");
 
+let warehouseDataArray = ref(props.formContent[3]);
+let warehouseData = ref([]);
+
+if (warehouseDataArray.value && Array.isArray(warehouseDataArray.value)) {
+  warehouseData.value = warehouseDataArray.value.map((item) => {
+    return {
+      id_warehouse: item.id_warehouse,
+      id_site: item.id_site,
+      warehouse_name: item.warehouse_name,
+      readonly: true,
+    };
+  });
+  // console.log(warehouseData.value);
+}
+
 const props = defineProps({
   formContent: Array,
 });
@@ -36,21 +53,6 @@ const currentsiteIdCompany = ref(props.formContent[1]);
 const originalsiteIdCompany = ref(props.formContent[1]);
 const currentsiteCode = ref(props.formContent[2]);
 const originalsiteCode = ref(props.formContent[2]);
-
-const submitEdit = () => {
-  isAdding.value = true;
-
-  if (!formEditState.brand) {
-    formEditState.brand = {}; // Inisialisasi objek jika belum ada
-  }
-
-  formEditState.site.siteName = currentsiteName.value;
-  formEditState.site.siteIdCompany = selectedCompanyId.value;
-  formEditState.site.siteCode = currentsiteCode.value;
-
-  isVisible.value = false;
-  emits("viewSite"); // Memanggil event 'changeSite'
-};
 
 //for get company in select
 const fetchGetCompany = async () => {
@@ -67,22 +69,6 @@ onMounted(() => {
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
-
-watch(isVisible, () => {
-  if (isAdding.value == true) {
-    isAdding.value = false;
-  } else {
-    currentsiteName.value = props.formContent[0];
-    currentsiteIdCompany.value = props.formContent[1];
-    currentsiteCode.value = props.formContent[2];
-  }
-});
-
-const resetForm = () => {
-  currentsiteName.value = originalsiteName.value;
-  selectedCompanyId.value = originalsiteIdCompany.value;
-  currentsiteCode.value = originalsiteCode.value;
-};
 </script>
 
 <template>
@@ -92,15 +78,9 @@ const resetForm = () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader
-        @closeVisibility="
-          isVisible = false;
-          resetForm();
-        "
-        title="View Site"
-      />
+      <modalHeader @closeVisibility="isVisible = false" title="View Site" />
 
-      <form class="modal-box-inner-site" @submit.prevent="submitEdit">
+      <form class="modal-box-inner-site">
         <div class="mb-6 text-start w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
@@ -123,7 +103,6 @@ const resetForm = () => {
             >Site Code<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentsiteCode"
             type="text"
             :class="inputStylingClass"
@@ -138,7 +117,6 @@ const resetForm = () => {
             >Site Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentsiteName"
             type="text"
             :class="inputStylingClass"
@@ -147,6 +125,51 @@ const resetForm = () => {
             class="cursor-not-allowed"
           />
         </div>
+
+        <div class="mb-6 w-full px-4 text-start">
+          <label class="block mb-2 font-JakartaSans font-medium text-sm"
+            >Warehouse<span class="text-red">*</span></label
+          >
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            v-model="warehouseDataArray"
+            mode="tags"
+            placeholder="No Data"
+            :close-on-select="false"
+            :searchable="false"
+            :object="true"
+            :resolve-on-load="false"
+            :delay="0"
+            :min-chars="1"
+            :options="
+              async (query) => {
+                return await warehouseData(query);
+              }
+            "
+            disabled
+            class="cursor-not-allowed"
+          >
+            <template v-slot:tag="{ option }">
+              <div
+                class="multiselect-tag is-user cursor-not-allowed"
+                :class="{
+                  'is-disabled': option.readonly,
+                }"
+              >
+                {{ option.warehouse_name }}
+                <span
+                  v-if="!option.readonly"
+                  class="multiselect-tag-remove cursor-not-allowed"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
+        </div>
       </form>
     </main>
   </Modal>
@@ -154,7 +177,7 @@ const resetForm = () => {
 
 <style scoped>
 :deep(.modal-vue3-content) {
-  max-height: 300px !important;
+  max-height: 400px !important;
   max-width: 510px !important;
 }
 
