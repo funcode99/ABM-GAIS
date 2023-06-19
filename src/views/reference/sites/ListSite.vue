@@ -516,6 +516,7 @@ const exportToExcel = () => {
                       data.site_name,
                       data.id_company,
                       data.site_code,
+                      data.detail,
                     ]"
                   />
                   <ModalEdit
