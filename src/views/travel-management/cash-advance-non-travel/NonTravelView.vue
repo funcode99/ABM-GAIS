@@ -91,7 +91,7 @@ const saveFormHeader = async () => {
     timer: 1500,
   });
   visibleHeader.value = false;
-  fetchDataById(idCaNon);
+  route.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
 };
 
 const cancelHeader = () => {
@@ -127,7 +127,7 @@ const saveItems = async (type, id = null, item = null) => {
       timer: 1500,
     });
   } else if (type == "create") {
-    let payload = {
+    const payload = {
       id_ca: idCaNon,
       item_name: itemsItem.value,
       nominal: itemsNominal.value,
@@ -184,7 +184,6 @@ const submit = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      route.push({ path: "/cashadvancenontravel" });
     })
     .catch((e) => {
       Swal.fire({
@@ -198,6 +197,7 @@ const submit = async () => {
         color: "#ffffff",
       });
     });
+  fetchDataById(idCaNon);
 };
 
 onBeforeMount(() => {
@@ -643,7 +643,7 @@ const inputClass =
 }
 
 :disabled {
-  background: #EEEEEE;
-  border-color: #EEEEEE;
+  background: #eeeeee;
+  border-color: #eeeeee;
 }
 </style>

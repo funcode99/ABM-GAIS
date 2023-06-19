@@ -41,6 +41,7 @@ import TravelView from '@/views/travel-management/cash-advance/TravelView.vue'
 import NonTravelList from '@/views/travel-management/cash-advance-non-travel/NonTravelList.vue'
 import NonTravelView from '@/views/travel-management/cash-advance-non-travel/NonTravelView.vue'
 import SettlementList from "@/views/travel-management/settlement/SettlementList.vue"
+import SettlementView from "@/views/travel-management/settlement/SettlementView.vue"
 import SettlementReport from '@/views/travel-management/settlement/SettlementReport.vue'
 
 import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
@@ -635,6 +636,23 @@ const router = createRouter({
         return next('/')
       }
     },
+    {
+        path: '/settlement/:id',
+        name: 'View Settlement',
+        component: SettlementView,
+        meta: {
+          title: 'View Settlement'
+        },
+        beforeEnter: (to, from, next) => {
+          const token = localStorage.getItem('token');
+  
+          if (token) {
+            return next()
+          }
+  
+          return next('/')
+        }
+      },
     {
       path: '/settlement-report',
       name: 'Settlement Reports',

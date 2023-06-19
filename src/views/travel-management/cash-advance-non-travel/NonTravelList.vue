@@ -148,6 +148,7 @@ const resetData = () => {
   filter.search = "";
   filter.status = "";
   filter.date = "";
+  deleteArray.value = []
   fetch();
 };
 

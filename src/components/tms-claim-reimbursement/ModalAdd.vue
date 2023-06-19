@@ -8,12 +8,16 @@ import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+
+const route = useRouter();
 
 const props = defineProps({
   listType: Array,
   listReimbursementType: Array,
   visible: Boolean,
 });
+const emits = defineEmits(["close"]);
 
 const format_price = (value) => {
   if (!value) {
@@ -99,8 +103,11 @@ const saveForm = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      router.push({ path: "/claimreimbursement" });
-      visibleModal.value = false;
+      if (res.data.success) {
+        route.push({ path: `/viewclaimreimbursement/${res.data.data.id}` });
+
+        visibleModal.value = false;
+      }
     });
   } else {
     Swal.fire({
@@ -125,7 +132,7 @@ const close = () => {
   filename.value = "";
   selectedImage.value = "";
   tempItem.value = [];
-  visibleModal.value = false;
+  emits("close");
 };
 </script>
 
@@ -135,8 +142,7 @@ const close = () => {
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
-          @click="this.$emit('unlockScrollbar')"
-          for="my-modal-claim"
+          @click="close"
           class="cursor-pointer absolute right-3 top-0 lg:top-3"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
@@ -159,7 +165,7 @@ const close = () => {
               v-model="username"
               type="text"
               name="name"
-              class="font-JakartaSans capitalize block bg-white w-full lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="font-JakartaSans capitalize block bg-white max-w[55%] lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Requestor"
               required
               disabled
@@ -172,37 +178,13 @@ const close = () => {
               Attachment
               <span class="text-red">*</span>
             </div>
-            <div class="relative border border-slate-300 rounded-lg py-[6px]">
-              <input
-                type="file"
-                id="logo_company"
-                class="hidden border"
-                accept="application/pdf"
-                @change="onFileSelected"
-              />
-              <label class="py-2">
-                <span
-                  class="font-JakartaSans hidden font-medium text-sm cursor-pointer"
-                  >{{ selectedImage || "Attachment" }}</span
-                >
-                <img
-                  :src="iconUpload"
-                  class="h-6 w-6 absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                />
-              </label>
-              <div
-                v-if="filename != null"
-                class="px-5 py-2 font-JakartaSans font-medium text-sm"
-              >
-                {{ filename }}
-              </div>
-              <div
-                v-else
-                class="px-4 py-2 font-JakartaSans font-medium text-sm"
-              >
-                Attachment
-              </div>
-            </div>
+            <input
+              type="file"
+              class="px-4 py-1 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              accept="application/pdf"
+              @change="onFileSelected"
+              v-value="selectedImage"
+            />
           </div>
         </div>
         <div class="flex justify-between px-6 items-center gap-2">
@@ -346,7 +328,6 @@ const close = () => {
         <div class="flex justify-end gap-4 mr-6">
           <label
             @click="close"
-            for="my-modal-3"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
             >Cancel</label
           >
