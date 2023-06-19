@@ -39,37 +39,6 @@ let companyLogo = ref();
 let companyCodeErp = ref();
 
 let editCompanyDataId = ref();
-let viewCompanyDataId = ref();
-
-//for view
-// const viewCompany = async (data) => {
-//   viewCompanyDataId.value = data;
-//   setTimeout(callViewApi, 500);
-//   // console.log("ini data id:" + data);
-// };
-
-//for edit
-// const callViewApi = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   await Api.post(`/company/update_data/${viewCompanyDataId.value}`, {
-//     company_name: formEditState.company.companyName,
-//     company_code: formEditState.company.companyCode,
-//     group_company: formEditState.company.companyGroup,
-//     short_name: formEditState.company.companyShortName,
-//     id_vendor: formEditState.company.companyIdVendor,
-//     logo: formEditState.company.companyLogo,
-//     code_erp: formEditState.company.companyCodeErp,
-//   });
-//   Swal.fire({
-//     position: "center",
-//     icon: "success",
-//     title: "Your work has been saved",
-//     showConfirmButton: false,
-//     timer: 1500,
-//   });
-//   fetch();
-// };
 
 //for edit
 const editCompany = async (data) => {
@@ -464,6 +433,7 @@ const exportToExcel = () => {
                       data.id_vendor,
                       data.logo_path,
                       data.code_erp,
+                      data.detail,
                     ]"
                   />
 

@@ -5,9 +5,9 @@ import modalHeader from "@/components/modal/modalHeader.vue";
 
 import Api from "@/utils/Api";
 
-// import Multiselect from "@vueform/multiselect";
+import Multiselect from "@vueform/multiselect";
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { Modal } from "usemodal-vue3";
 
 let isVisible = ref(false);
@@ -18,8 +18,21 @@ let selectedVendorId = ref(props.formContent[4] || null);
 let selectedImage = ref(props.formContent[5] || null);
 let selectedCodeErpId = ref(props.formContent[6] || null);
 
-// let siteData = ref(null);
-// let siteIdArray = ref(null);
+let siteDataArray = ref(props.formContent[7]);
+let siteData = ref([]);
+
+if (siteDataArray.value && Array.isArray(siteDataArray.value)) {
+  siteData.value = siteDataArray.value.map((item) => {
+    return {
+      id_site: item.id_site,
+      id_company: item.id_company,
+      site_name: item.site_name,
+      site_code: item.site_code,
+      readonly: true,
+    };
+  });
+  // console.log(siteData.value);
+}
 
 const props = defineProps({
   formContent: Array,
@@ -39,22 +52,8 @@ const fetchVendors = async () => {
   // console.log("ini data vendor" + JSON.stringify(res.data.data));
 };
 
-//for get site in multiselect
-// const fetchSite = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/site/get_data");
-//   siteData = res.data.data;
-//   // console.log("ini data city" + JSON.stringify(res.data.data));
-//   siteData.map((item) => {
-//     item.value = item.id;
-//   });
-//   // console.log("Data company setelah perubahan:", siteData);
-// };
-
 onMounted(() => {
   fetchVendors();
-  // fetchSite();
 });
 
 const inputStylingClass =
@@ -201,7 +200,7 @@ const inputStylingClass =
           </select>
         </div>
 
-        <!-- <div class="mb-6 w-full px-4 text-start">
+        <div class="mb-6 w-full px-4 text-start">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Site<span class="text-red">*</span></label
           >
@@ -210,26 +209,34 @@ const inputStylingClass =
           ></div>
 
           <Multiselect
-            v-model="siteIdArray"
+            v-model="siteDataArray"
             mode="tags"
-            placeholder="Select Site"
-            track-by="site_name"
-            label="site_name"
+            placeholder="Select options"
             :close-on-select="false"
-            :searchable="true"
-            :options="siteData"
+            :searchable="false"
+            :object="true"
+            :resolve-on-load="false"
+            :delay="0"
+            :min-chars="1"
+            :options="
+              async (query) => {
+                return await siteData(query);
+              }
+            "
+            disabled
+            class="cursor-not-allowed"
           >
-            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+            <template v-slot:tag="{ option, handleTagRemove }">
               <div
-                class="multiselect-tag is-user"
+                class="multiselect-tag is-user cursor-not-allowed"
                 :class="{
-                  'is-disabled': disabled,
+                  'is-disabled': option.readonly,
                 }"
               >
                 {{ option.site_name }}
                 <span
-                  v-if="!disabled"
-                  class="multiselect-tag-remove"
+                  v-if="!option.readonly"
+                  class="multiselect-tag-remove cursor-not-allowed"
                   @click="handleTagRemove(option, $event)"
                 >
                   <span class="multiselect-tag-remove-icon"></span>
@@ -237,7 +244,7 @@ const inputStylingClass =
               </div>
             </template>
           </Multiselect>
-        </div> -->
+        </div>
       </form>
     </main>
   </Modal>
