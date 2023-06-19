@@ -8,9 +8,9 @@ import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import { useRouter } from 'vue-router'
 const router = useRouter()
-let selectedCompany = ref("Company");
-let selectedSite = ref("Site");
-let selectedWarehouse = ref("Warehouse")
+let selectedCompany = ref("");
+let selectedSite = ref("");
+let selectedWarehouse = ref("")
 let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
@@ -90,13 +90,14 @@ const changeUomBrand = async (id_item) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get_by_company/${selectedCompany.value}`);
-  // console.log(id_item)
+  // console.log(res.data.data)
   // Warehouse.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
     if(id_item === element.id){
       selectedBrand.value = element.id_brand
       selectedUOM.value = element.id_uom
+      alertQuantity.value = element.current_stock
     }
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -113,12 +114,21 @@ const changeSite = async (id_site) => {
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
   Adjusment.value.push({name:'addition'},{ name:'substraction'})
 };
 
 const addItem = async () => {
-
+  if(selectedCompany.value == '' || selectedSite.value == '' || selectedWarehouse.value == '' || selectedUOM.value == '' || itemNames.value == ''  || selectedBrand.value == ''){
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data required Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else {
   itemsTable.value.push({
     id_company: selectedCompany.value,
     id_departement: '',
@@ -142,6 +152,7 @@ const addItem = async () => {
   })
   resetButCompanyDisable()
   return itemsTable
+}
   // return itemsTable2
 };
 const resetButCompanyDisable = async () => {
@@ -168,6 +179,16 @@ if(id == 0){
 // return itemsTable
 }
 const save = async () => {
+  if (selectedCompany.value == '') {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data Di Table Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else{
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
@@ -200,6 +221,7 @@ const save = async () => {
     });
     // console.log(error.response.data.message)
   })
+}
   // router.push({path: '/stock-opname-atk'})
 };
 const coba = async () => {
@@ -439,7 +461,7 @@ onMounted(() => {
                 v-model="alertQuantity"
                 class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Quantity"
-                required
+                disabled="true"
               />
             </div>
             <div class="mb-6 w-full">

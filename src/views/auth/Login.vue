@@ -27,11 +27,12 @@
         })
 
         // tambah withCredentials malah error :(
-        // console.log(JSON.stringify(data.data.users.id_employee))
-        //add local storage tomy
+        // console.log(JSON.stringify(data))
+        //add local storage tomy 
  
-        localStorage.setItem('id_role', JSON.stringify(data.data.users.id_role))
+        localStorage.setItem('id_role', JSON.stringify(data.data.users.code_role))
         localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
+        localStorage.setItem('id_site', JSON.stringify(data.data.users.id_site))
         localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
         localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
 

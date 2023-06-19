@@ -58,16 +58,13 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByType = () => {
-  const start = moment(String(start_date.value)).format('YYYY-MM-DD')
-    const end = moment(String(end_date.value)).format('YYYY-MM-DD')
+  // console.log(start_date.value[1])
+    const start = moment(String(start_date.value[0])).format('YYYY-MM-DD')
+    const end = moment(String(start_date.value[1])).format('YYYY-MM-DD')
     // console.log(test)
-    if (start_date.value == "" && end_date.value == "") {
-      fetchData(showingValue.value, selectedType.value, status, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
-    } else if (start_date.value != "" && end_date.value == "") {
-      fetchData(showingValue.value, selectedType.value, status.value, start, end_date.value,searchFilter.value,pageMultiplier.value)
-    } else if (start_date.value == "" && end_date.value != "") {
-      fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end,searchFilter.value,pageMultiplier.value)
-    } else {
+    if (start_date.value[0] == undefined) {
+      fetchData(showingValue.value, selectedType.value, status.value, "", "",searchFilter.value,pageMultiplier.value)
+    }  else {
       fetchData(showingValue.value, selectedType.value, status.value, start, end,searchFilter.value,pageMultiplier.value)
     }
 };
@@ -305,11 +302,11 @@ const format_date = (value) => {
                     Start Date
                   </p>
 
-                  <VueDatePicker v-model="start_date" :enable-time-picker="false" class="my-date lg:w-10" />
+                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" />
                 </div>
               </div>
 
-              <div>
+              <!-- <div>
                 <div>
                   <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
                     End Date
@@ -317,7 +314,7 @@ const format_date = (value) => {
 
                   <VueDatePicker v-model="end_date" :enable-time-picker="false" class="my-date lg:w-10" />
                 </div>
-              </div>
+              </div> -->
 
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
@@ -452,7 +449,7 @@ const format_date = (value) => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ index + 1 }}
+                      {{ (showingValue - 1) * pageMultiplier + 1 + index }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.no_stock_opname }}

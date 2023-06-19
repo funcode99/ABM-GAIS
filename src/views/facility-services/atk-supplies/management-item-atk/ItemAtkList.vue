@@ -201,7 +201,7 @@ const fetchUOM = async (id) => {
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
   // changeCompany()
 };
 const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse,alert_qty,searchFilter,pageMultiplier) => {
@@ -237,6 +237,7 @@ const changeSite = async (id_site) => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeWarehouseCompany = async (id_company) => {
+  // changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_company_id/${id_company}`);
@@ -456,7 +457,7 @@ const getSessionForSidebar = () => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-              <div>
+              <!-- <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
@@ -471,7 +472,7 @@ const getSessionForSidebar = () => {
                     {{ data.item_name }}
                   </option>
                 </select>
-              </div>
+              </div> -->
 
               <div>
                 <p
@@ -479,24 +480,34 @@ const getSessionForSidebar = () => {
                 >
                   Company
                 </p>
-                <!-- <select
-                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedTypeCompany"
-                >
-                  <option disabled selected>Company</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.company }}
-                  </option>
-                </select> -->
                 <select
                 class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedCompany"
-                @change="changeWarehouseCompany(selectedCompany)"
+                @change="changeCompany(selectedCompany)"
               >
                 <option disabled selected>Company</option>
                 <option v-for="(company,i) in Company" :key="i" :value="company.id">
                   {{ company.company_name }}
+                </option>
+              </select>
+              </div>
+
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
+                  Site
+                </p>
+                <select
+                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedSite"
+                @change="changeSite(selectedSite)"
+              >
+                <option disabled selected>Site</option>
+                <option v-for="(site,i) in Site" :key="i" :value="site.id">
+                  {{ site.site_name }}
                 </option>
               </select>
               </div>
@@ -648,7 +659,7 @@ const getSessionForSidebar = () => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ index + 1 }}
+                      {{ (showingValue - 1) * pageMultiplier + 1 + index }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.code_item === null ? '-' : data.code_item }}
