@@ -295,8 +295,6 @@ const getSessionForSidebar = () => {
     fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId)
   }
 
-
-
   onBeforeMount(() => {
     getSessionForSidebar()
     fetchCompanyUtils([], Company)
@@ -305,10 +303,7 @@ const getSessionForSidebar = () => {
   })
 
   watch(Company, () => {
-    // console.log('perubahan di company')
-    console.log(referenceFetch.fetchCompanyResult)
     referenceFetch.fetchCompanyResult = Company.value
-    console.log(referenceFetch.fetchCompanyResult)
   })
 
   watch(addSiteData, () => {
