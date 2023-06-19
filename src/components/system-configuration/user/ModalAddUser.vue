@@ -1,6 +1,7 @@
 <script setup>
   import { ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
+  import Multiselect from '@vueform/multiselect'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
@@ -67,9 +68,11 @@
       email.value = ''
       fullname.value = ''
       username.value = ''
+      usernameNonEmployee.value = ''
       password.value = ''
       role.value = []
       selected.value = null
+      company.value = null
       location.value = null
   }
 
@@ -87,6 +90,10 @@
 
     responseCompanyArray.value = referenceFetch.fetchCompanyResult
     responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
+
+    responseEmployeeArray.value.map((item) => {
+      item.value = item.id
+    })
 
   })
 
@@ -174,6 +181,26 @@
                     </select>
     
                 </div>
+
+                <!-- <Multiselect
+                      v-model="username"
+                      track-by="employee_name"
+                      label="employee_name"
+                      placeholder="Choose a programming language"
+                      :filter-results="true"
+                      :min-chars="1"
+                      :searchable="true"
+                      :options="responseEmployeeArray"
+                    >
+                    <template class="overflow-y-scroll" v-slot:tag="{ option, handleTagRemove, disabled }">
+                      <div class="multiselect-multiple-label">
+                        {{ option.employee_name }}
+                      </div>
+                    </template>  
+                </Multiselect> -->
+
+
+                <div class="mb-6"></div>
     
                 <div class="mb-6">
                   <label

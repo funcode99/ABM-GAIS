@@ -7,6 +7,8 @@
   import checkIcon from '@/assets/checkmark.png'
   import closeIcon from '@/assets/close-window.png'
 
+  import Api from '@/utils/Api'
+
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
  

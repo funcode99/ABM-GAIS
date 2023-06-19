@@ -172,6 +172,7 @@
 
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.post('/users/store', 
+        
         {
           username: formState.user.username,
           email: formState.user.email,
@@ -184,6 +185,7 @@
           name: formState.user.fullname,
           is_active: formState.user.idStatusMenu
         })
+
         Swal.fire({
           position: "center",
           icon: "success",
@@ -191,6 +193,7 @@
           showConfirmButton: false,
           timer: 1500,
         })
+
         fetch()
     }
 
