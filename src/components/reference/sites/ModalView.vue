@@ -62,7 +62,10 @@ const inputStylingClass =
 </script>
 
 <template>
-  <button @click="isVisible = !isVisible">
+  <button
+    @click="isVisible = !isVisible"
+    :style="[isVisible ? 'margin-right:8px;' : '']"
+  >
     <img :src="iconview" alt="view icon" />
   </button>
 

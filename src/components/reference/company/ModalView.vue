@@ -2,13 +2,14 @@
 import iconview from "@/assets/view_icon.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
+
 import Multiselect from "@vueform/multiselect";
+
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
+const referenceFetch = useReferenceFetchResult();
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
-
-import { useReferenceFetchResult } from "@/stores/fetch/reference"
-const referenceFetch = useReferenceFetchResult()
 
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
@@ -31,6 +32,7 @@ if (siteDataArray.value && Array.isArray(siteDataArray.value)) {
       readonly: true,
     };
   });
+  // console.log(siteData.value);
 }
 
 const props = defineProps({
@@ -43,16 +45,18 @@ const currentcompanyShortName = ref(props.formContent[2]);
 const currentcompanyGroup = ref(props.formContent[3]);
 
 watch(referenceFetch, () => {
-  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult
-})
+  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
+});
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
-
-  <button @click="isVisible = !isVisible">
+  <button
+    @click="isVisible = !isVisible"
+    :style="[isVisible ? 'margin-right:8px;' : '']"
+  >
     <img :src="iconview" alt="view icon" />
   </button>
 
@@ -238,11 +242,9 @@ const inputStylingClass =
       </form>
     </main>
   </Modal>
-
 </template>
 
 <style scoped>
-
 :deep(.modal-vue3-content) {
   max-height: 400px !important;
   max-width: 510px !important;
@@ -259,5 +261,4 @@ const inputStylingClass =
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
-
 </style>
