@@ -503,6 +503,7 @@ watch(baitArray, () => {
                 </td>
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
+                    @fetchSiteByCompanyId="fetchSiteByCompanyId"
                     @change-brand="editBrand(data.id)"
                     :formContent="[
                       data.brand_name,
