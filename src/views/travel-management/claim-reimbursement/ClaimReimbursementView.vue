@@ -98,8 +98,8 @@ const saveFormHeader = async () => {
     attachment: selectedImage.value,
   };
 
-  Api.post(`claim_reimbursement/update_data/${idClaim}`, payload).then(
-    (res) => {
+  Api.post(`claim_reimbursement/update_data/${idClaim}`, payload)
+    .then((res) => {
       if (res.data.success) {
         Swal.fire({
           position: "center",
@@ -123,8 +123,8 @@ const saveFormHeader = async () => {
           width: "300px",
         });
       }
-    }
-  ).catch((e) => {
+    })
+    .catch((e) => {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -259,7 +259,7 @@ const submit = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      route.push({ path: "/claimreimbursement" });
+      route.push({ path: `/viewclaimreimbursement/${idClaim}` });
     })
     .catch((e) => {
       Swal.fire({

@@ -9,6 +9,8 @@ import { Modal } from "usemodal-vue3";
 import moment from "moment";
 import { useRouter } from "vue-router";
 
+const route = useRouter();
+
 const format_date = (value) => {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY");
@@ -122,7 +124,10 @@ const saveForm = async () => {
     showConfirmButton: false,
     timer: 1500,
   });
-  router.push({ path: "/cashadvancenontravel" });
+  if (api.data.success) {
+      router.push({ path: `/viewcashadvancenontravel/${api.data.data.id}` });
+  }
+
   visible.value = false;
 };
 

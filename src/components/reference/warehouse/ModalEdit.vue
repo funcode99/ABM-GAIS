@@ -4,25 +4,18 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-import { ref, watch } from "vue";
+import Api from "@/utils/Api"
+
+import { ref, onMounted, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
 import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
-import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
-import { useMenuAccessStore } from "@/stores/savemenuaccess";
+
+const emits = defineEmits(["unlockScrollbar", "changeWarehouse"]);
 
 let formEditState = useFormEditStore();
-const referenceFetch = useReferenceFetchResult();
-const menuAccessStore = useMenuAccessStore();
-
-const emits = defineEmits([
-  "unlockScrollbar",
-  "changeWarehouse",
-  "fetchSiteByCompanyId",
-]);
-
-let modalPaddingHeight = "25vh";
 let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 let isLoading = ref(false);
 
@@ -43,13 +36,47 @@ const submitEdit = () => {
     formEditState.warehouse = {};
   }
 
-  formEditState.warehouse.warehouseName = currentwarehouseName.value;
-  formEditState.warehouse.warehouseIdCompany = company.value;
-  formEditState.warehouse.warehouseIdSite = location.value;
+  formEditState.warehouse.warehouseName = currentwarehouseName.value
+  formEditState.warehouse.warehouseIdCompany = selectedCompany.value
+  formEditState.warehouse.warehouseIdSite = selectedSite.value
 
-  isVisible.value = false;
-  emits("changeWarehouse");
-};
+  isVisible.value = false
+  emits("changeWarehouse")
+  
+}
+
+//for get company in select
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/company/get")
+  Company.value = res.data.data
+}
+
+const changeCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/site/get_by_company/${id_company}`)
+  Site.value = res.data.data
+  selectedSite.value = originalcurrentSite.value
+}
+
+
+//for get site in select
+const fetchGetSite = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/site/get_data");
+  Site.value = res.data.data;
+}
+
+onMounted(() => {
+  fetchGetCompany()
+  fetchGetSite()
+})
+
+const inputStylingClass =
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 const resetForm = () => {
   currentwarehouseName.value = originalwarehouseName.value;
@@ -70,32 +97,13 @@ watch(isVisible, () => {
     resetForm();
   }
 
-  responseCompanyArray.value = referenceFetch.fetchCompanyResult;
-});
-
-watch(referenceFetch, () => {
-  company.value = referenceFetch.fetchSiteResult.id_company;
-});
-
-watch(company, () => {
-  isLoading.value = true;
-  menuAccessStore.companyId = company.value;
-  if (company.value !== 0) {
-    emits("fetchSiteByCompanyId");
-  }
-});
-
-watch(menuAccessStore, () => {
-  responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult;
-});
+  // selectedSite.value = originalcurrentSite.value
 
 watch(responseSiteByCompanyIdArray, () => {
   location.value = referenceFetch.fetchSiteResult.id_site;
   isLoading.value = false;
 });
 
-const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
