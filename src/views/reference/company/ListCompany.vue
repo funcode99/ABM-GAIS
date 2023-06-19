@@ -6,6 +6,8 @@ import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import ModalView from "@/components/reference/company/ModalView.vue";
 
+import fetchVendorUtils from "@/utils/Fetch/Reference/fetchVendorFlightTrip"
+
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
@@ -17,18 +19,18 @@ import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
-
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
+import { ref, onBeforeMount, computed, watch } from "vue";
 
-import { ref, onBeforeMount, computed } from "vue";
-
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 const formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult()
 
 let companyCode = ref();
 let companyName = ref();
@@ -71,14 +73,14 @@ const callEditApi = async () => {
   fetch();
 };
 
+let sortedData = ref([])
+let addVendorData = ref([])
+
 //for sort & search
 const search = ref("");
-let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
-let lengthCounter = 0;
 let sortAscending = true;
-let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
 let checkList = false;
 
@@ -134,16 +136,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-};
-
-//for tablehead
-const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Code", jsonData: "company_code" },
-  { Id: 3, title: "Name", jsonData: "company_name" },
-  { Id: 4, title: "Parent Company", jsonData: "group_company" },
-  { Id: 5, title: "Actions" },
-];
+}
 
 //for sort
 const sortList = (sortBy) => {
@@ -159,9 +152,12 @@ const sortList = (sortBy) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
+  fetchVendorUtils(addVendorData)
 });
+
+watch(addVendorData, () => {
+  referenceFetch.fetchVendorAirlinesResult = addVendorData.value
+})
 
 //for searching
 const filteredItems = (search) => {
@@ -175,7 +171,6 @@ const filteredItems = (search) => {
     );
   });
   sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
   onChangePage(1);
 };
 
@@ -187,12 +182,10 @@ const getSessionForSidebar = () => {
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  // console.log(res.data.data);
+  const res = await Api.get("/company/get")
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
+}
 
 const deleteCompany = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -234,7 +227,7 @@ const deleteCompany = async (id) => {
       return;
     }
   });
-};
+}
 
 //for export
 const exportToExcel = () => {
@@ -255,7 +248,7 @@ const exportToExcel = () => {
   });
 
   // Menambahkan data ke baris-baris selanjutnya
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.company_code;
@@ -275,7 +268,17 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-};
+}
+
+//for tablehead
+const tableHead = [
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Code", jsonData: "company_code" },
+  { Id: 3, title: "Name", jsonData: "company_name" },
+  { Id: 4, title: "Parent Company", jsonData: "group_company" },
+  { Id: 5, title: "Actions" },
+]
+
 </script>
 
 <template>

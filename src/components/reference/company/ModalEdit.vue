@@ -4,15 +4,19 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-import Api from "@/utils/Api";
+// import Api from "@/utils/Api"
 
-import { ref, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
+
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
+
+const formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult()
 
 const emits = defineEmits(["unlockScrollbar", "changeCompany"]);
 
-let formEditState = useFormEditStore();
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
@@ -67,17 +71,16 @@ const submitEdit = () => {
 };
 
 //for get vendor in select
-const fetchVendors = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/flight_trip/get_vendor");
-  vendorAirlines.value = res.data.data;
-  // console.log("ini data vendor" + JSON.stringify(res.data.data));
-};
+// const fetchVendors = async () => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const res = await Api.get("/flight_trip/get_vendor");
+//   vendorAirlines.value = res.data.data
+// }
 
-onMounted(() => {
-  fetchVendors();
-});
+// onMounted(() => {
+//   fetchVendors();
+// });
 
 // for image logo
 const onFileSelected = (event) => {
@@ -129,7 +132,12 @@ const resetForm = () => {
   selectedVendorId.value = originalcompanyIdVendor.value;
   imageUrl.value = originalcompanyLogo.value;
   currentcompanyCodeErp.value = originalcompanyCodeErp.value;
-};
+}
+
+watch(referenceFetch, () => {
+  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult
+})
+
 </script>
 
 <template>
@@ -247,8 +255,9 @@ const resetForm = () => {
           <label
             for="grupcompany"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Group Company<span class="text-red">*</span></label
-          >
+            >
+            Group Company<span class="text-red">*</span>
+          </label>
           <input
             @keydown.enter="submitEdit"
             v-model="currentcompanyGroup"
