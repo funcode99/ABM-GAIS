@@ -1,35 +1,41 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
-import { ref, watch } from "vue"
-import { Modal } from "usemodal-vue3"
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
+import { Modal } from "usemodal-vue3";
 
-import { useReferenceFetchResult } from '@/stores/fetch/reference'
-const referenceFetch = useReferenceFetchResult()
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-const emits = defineEmits(["unlockScrollbar", "brand-saved"])
+import { ref, watch } from "vue";
 
-let selectedCompany = ref("Company")
-let selectedSite = ref("Site")
-let brandName = ref("")
-let Company = ref("")
-let Site = ref("")
-let isVisible = ref(false)
-let modalPaddingHeight = "25vh"
-let isAdding = ref(false)
-let location = ref()
-let responseCompanyArray = ref([])
-let responseSiteArray = ref([])
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
+import { useMenuAccessStore } from "@/stores/savemenuaccess";
 
+const referenceFetch = useReferenceFetchResult();
+const menuAccessStore = useMenuAccessStore();
+
+const emits = defineEmits([
+  "unlockScrollbar",
+  "brand-saved",
+  "fetchSiteByCompanyId",
+]);
+
+let selected = ref([0, 0]);
+let brandName = ref("");
+let Company = ref("");
+let Site = ref("");
+let isLoading = ref(false);
+let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
+let location = ref();
 
 const saveBrand = async () => {
-  isAdding.value = true
-  isVisible.value = !isVisible.value
-  setTimeout(callAddApi, 500)
-}
+  isAdding.value = true;
+  isVisible.value = !isVisible.value;
+  setTimeout(callAddApi, 500);
+};
 
 const callAddApi = async () => {
   try {
@@ -38,8 +44,8 @@ const callAddApi = async () => {
 
     await Api.post(`/brand/store`, {
       brand_name: brandName.value,
-      id_company: location.value[1],
-      id_site: location.value[0],
+      id_company: selected.value[0],
+      id_site: selected.value[1],
     });
 
     Swal.fire({
@@ -50,46 +56,53 @@ const callAddApi = async () => {
       timer: 1500,
     });
 
-    emits("brand-saved")
+    emits("brand-saved");
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
-}
+};
 
 const resetInput = () => {
-  brandName.value = ""
-  selectedCompany.value = "Company"
-  selectedSite.value = "Site"
-}
+  brandName.value = "";
+  location.value = "";
+};
 
 watch(isVisible, () => {
-
   if (isAdding.value == true) {
-    isAdding.value = false
+    isAdding.value = false;
   } else {
-    resetInput()
+    resetInput();
   }
 
-  responseCompanyArray.value = referenceFetch.fetchCompanyResult
-  responseSiteArray.value = referenceFetch.fetchSiteResult
+  Company.value = referenceFetch.fetchCompanyResult;
+  Site.value = menuAccessStore.fetchSiteByCompanyResult;
+});
 
-})
+watch(selected.value, () => {
+  isLoading.value = true;
+  menuAccessStore.companyId = selected.value[0];
+  emits("fetchSiteByCompanyId");
+});
 
+watch(menuAccessStore, () => {
+  Site.value = menuAccessStore.fetchSiteByCompanyResult;
+});
 
+watch(Site, () => {
+  isLoading.value = false;
+});
 </script>
 
 <template>
-
   <button
     @click="isVisible = true"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+  >
     + Add New
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-
     <main>
-      
       <modalHeader @closeVisibility="isVisible = false" title="New Brand" />
 
       <form class="pt-4" @submit.prevent="saveBrand">
@@ -100,36 +113,44 @@ watch(isVisible, () => {
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="location"
+            v-model="selected[0]"
           >
             <option disabled selected>Company</option>
             <option
-              v-for="data in responseSiteArray"
-              :key="data.id"
-              :value="[data.id, data.id_company]"
+              v-for="(company, i) in Company"
+              :key="i"
+              :value="company.id"
             >
-              {{ data.company_name }}
+              {{ company.company_name }}
             </option>
           </select>
         </div>
 
-        <div class="mb-6 w-full px-4">
+        <div class="mb-6 w-full px-4" v-if="!isLoading">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Site<span class="text-red">*</span></label
           >
           <select
             class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="location"
+            v-model="selected[1]"
           >
             <option disabled selected>Site</option>
-            <option
-              v-for="data in responseSiteArray"
-              :key="data.id"
-              :value="[data.id, data.id_company]"
-            >
-              {{ data.site_name }}
+            <option v-for="(site, i) in Site" :key="i" :value="site.id">
+              {{ site.site_name }}
             </option>
+          </select>
+        </div>
+
+        <div class="mb-6 w-full px-4" v-else>
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Site<span class="text-red">*</span>
+          </label>
+
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+          >
+            <option>Retrieving site data...</option>
           </select>
         </div>
 
@@ -148,9 +169,7 @@ watch(isVisible, () => {
 
         <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
-
     </main>
-
   </Modal>
 </template>
 

@@ -9,6 +9,10 @@ import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
 
+import fetchBrandUtils from "@/utils/Fetch/Reference/fetchBrand";
+import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
+import fetchSiteByCompanyIdUtils from "@/utils/Fetch/Reference/fetchSiteByCompanyId";
+
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
@@ -18,28 +22,23 @@ import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
-
 import Api from "@/utils/Api";
-
 import { Workbook } from "exceljs";
-
 import { ref, onBeforeMount, computed, watch } from "vue";
 
-// import fetchBrandUtils from "@/utils/Fetch/Reference/fetchBrand";
-import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
-import fetchSiteUtils from "@/utils/Fetch/Reference/fetchSite";
-
-import { useFormEditStore } from "@/stores/reference/brand/edit-modal.js";
+import { useFormEditStore } from "@/stores/reference/warehouse/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
-import { useReferenceFetchResult } from "@/stores/fetch/reference";
-
-const sidebar = useSidebarStore();
-const formEditState = useFormEditStore();
-const referenceFetch = useReferenceFetchResult();
+import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
+import { useMenuAccessStore } from "@/stores/savemenuaccess";
 
 let brandName = ref("");
 let brandIdCompany = ref("");
 let brandIdSite = ref();
+
+const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult();
+const menuAccessStore = useMenuAccessStore();
 
 let editBrandDataId = ref();
 
@@ -49,6 +48,14 @@ const editBrand = async (data) => {
   setTimeout(callEditApi, 500);
   // console.log("ini data id:" + data);
 };
+
+//for tablehead
+const tableHead = [
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Brand Name", jsonData: "brand_name" },
+  { Id: 3, title: "Company", jsonData: "company_name" },
+  { Id: 4, title: "Actions" },
+];
 
 //for edit
 const callEditApi = async () => {
@@ -72,13 +79,13 @@ const callEditApi = async () => {
 //for sort, search, & filter
 const search = ref("");
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
+let selectedCompany = ref("Company");
 let Company = ref("");
+let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
 let checkList = false;
-let addSiteData = ref([]);
 
 //for paginations & showing
 let showingValue = ref(1);
@@ -151,14 +158,6 @@ const deleteDataInCeklis = () => {
   }
 };
 
-//for tablehead
-const tableHead = [
-  { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Brand Name", jsonData: "brand_name" },
-  { Id: 3, title: "Company", jsonData: "company_name" },
-  { Id: 4, title: "Actions" },
-];
-
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
@@ -187,6 +186,18 @@ const filteredItems = (search) => {
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+let baitArray = ref([]);
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchCompanyUtils([], Company);
+  fetchBrandUtils(baitArray, sortedData);
+});
+
+const fetchBrand = () => {
+  fetchBrandUtils(instanceArray, sortedData);
 };
 
 //delete brand
@@ -250,7 +261,7 @@ const exportToExcel = () => {
   });
 
   // Menambahkan data ke baris-baris selanjutnya
-  sortedData.value.forEach((data, rowIndex) => {
+  sortedDataReactive.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.brand_name;
@@ -271,32 +282,26 @@ const exportToExcel = () => {
   });
 };
 
-const fetchBrand = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.get("/brand");
-    instanceArray = api.data.data;
-    sortedData.value = instanceArray;
-  } catch (error) {
-    console.log(error);
-  }
+const fetchSiteByCompanyId = async () => {
+  setTimeout(runfetch, 500);
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  // fetchBrandUtils(instanceArray, sortedData);
-  fetchCompanyUtils(instanceArray, Company);
-  fetchSiteUtils(instanceArray, addSiteData);
-  fetchBrand();
-});
+let addSiteByCompanyData = ref([]);
+
+const runfetch = () => {
+  fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId);
+};
 
 watch(Company, () => {
   referenceFetch.fetchCompanyResult = Company.value;
 });
 
-watch(addSiteData, () => {
-  referenceFetch.fetchSiteResult = addSiteData.value;
+watch(addSiteByCompanyData, () => {
+  menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value;
+});
+
+watch(baitArray, () => {
+  instanceArray = baitArray.value;
 });
 </script>
 
@@ -327,7 +332,10 @@ watch(addSiteData, () => {
               >
                 Delete
               </button>
-              <ModalAdd @brand-saved="fetchBrand" />
+              <ModalAdd
+                @brand-saved="fetchBrand"
+                @fetchSiteByCompanyId="fetchSiteByCompanyId"
+              />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
