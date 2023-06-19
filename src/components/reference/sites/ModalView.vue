@@ -54,7 +54,6 @@ const originalsiteIdCompany = ref(props.formContent[1]);
 const currentsiteCode = ref(props.formContent[2]);
 const originalsiteCode = ref(props.formContent[2]);
 
-//for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -72,7 +71,10 @@ const inputStylingClass =
 </script>
 
 <template>
-  <button @click="isVisible = !isVisible">
+  <button
+    @click="isVisible = !isVisible"
+    :style="[isVisible ? 'margin-right:8px;' : '']"
+  >
     <img :src="iconview" alt="view icon" />
   </button>
 

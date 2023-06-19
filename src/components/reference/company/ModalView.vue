@@ -3,12 +3,10 @@ import iconview from "@/assets/view_icon.svg";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 
-// import Api from "@/utils/Api";
-
 import Multiselect from "@vueform/multiselect";
 
-import { useReferenceFetchResult } from "@/stores/fetch/reference"
-const referenceFetch = useReferenceFetchResult()
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
+const referenceFetch = useReferenceFetchResult();
 
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
@@ -46,28 +44,19 @@ const currentcompanyCode = ref(props.formContent[1]);
 const currentcompanyShortName = ref(props.formContent[2]);
 const currentcompanyGroup = ref(props.formContent[3]);
 
-//for get vendor in select
-// const fetchVendors = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/flight_trip/get_vendor");
-//   vendorAirlines.value = res.data.data;
-// };
-
-// onMounted(() => {
-//   fetchVendors();
-// });
-
 watch(referenceFetch, () => {
-  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult
-})
+  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
+});
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
-  <button @click="isVisible = !isVisible">
+  <button
+    @click="isVisible = !isVisible"
+    :style="[isVisible ? 'margin-right:8px;' : '']"
+  >
     <img :src="iconview" alt="view icon" />
   </button>
 

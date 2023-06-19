@@ -4,8 +4,6 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-// import Api from "@/utils/Api"
-
 import { ref, watch } from "vue";
 import { Modal } from "usemodal-vue3";
 
@@ -13,7 +11,7 @@ import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
 
 const formEditState = useFormEditStore();
-const referenceFetch = useReferenceFetchResult()
+const referenceFetch = useReferenceFetchResult();
 
 const emits = defineEmits(["unlockScrollbar", "changeCompany"]);
 
@@ -54,7 +52,7 @@ const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.company) {
-    formEditState.company = {}; // Inisialisasi objek jika belum ada
+    formEditState.company = {};
   }
 
   formEditState.company.companyName = currentcompanyName.value;
@@ -70,19 +68,6 @@ const submitEdit = () => {
   emits("changeCompany"); // Memanggil event 'changeCompany'
 };
 
-//for get vendor in select
-// const fetchVendors = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/flight_trip/get_vendor");
-//   vendorAirlines.value = res.data.data
-// }
-
-// onMounted(() => {
-//   fetchVendors();
-// });
-
-// for image logo
 const onFileSelected = (event) => {
   const file = event.target.files[0];
 
@@ -90,15 +75,12 @@ const onFileSelected = (event) => {
     selectedImage.value = file;
     iconfilename.value = file.name;
 
-    // Create a FileReader instance
     const reader = new FileReader();
 
-    // Define the callback function when FileReader has finished reading the file
     reader.onload = () => {
       imageUrl.value = reader.result;
     };
 
-    // Read the selected file as a data URL
     reader.readAsDataURL(file);
   } else {
     selectedImage.value = null;
@@ -132,16 +114,18 @@ const resetForm = () => {
   selectedVendorId.value = originalcompanyIdVendor.value;
   imageUrl.value = originalcompanyLogo.value;
   currentcompanyCodeErp.value = originalcompanyCodeErp.value;
-}
+};
 
 watch(referenceFetch, () => {
-  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult
-})
-
+  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
+});
 </script>
 
 <template>
-  <button @click="isVisible = !isVisible">
+  <button
+    @click="isVisible = !isVisible"
+    :style="[isVisible ? 'margin-right:8px;' : '']"
+  >
     <img :src="editicon" alt="edit icon" />
   </button>
 
@@ -255,7 +239,7 @@ watch(referenceFetch, () => {
           <label
             for="grupcompany"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >
+          >
             Group Company<span class="text-red">*</span>
           </label>
           <input

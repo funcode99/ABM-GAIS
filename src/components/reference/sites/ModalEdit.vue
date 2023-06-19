@@ -40,7 +40,7 @@ const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.site) {
-    formEditState.site = {}; // Inisialisasi objek jika belum ada
+    formEditState.site = {};
   }
 
   formEditState.site.siteName = currentsiteName.value;
@@ -48,7 +48,7 @@ const submitEdit = () => {
   formEditState.site.siteCode = currentsiteCode.value;
 
   isVisible.value = false;
-  emits("changeSite"); // Memanggil event 'changeSite'
+  emits("changeSite");
 };
 
 //for get company in select
@@ -85,7 +85,10 @@ const resetForm = () => {
 </script>
 
 <template>
-  <button @click="isVisible = !isVisible">
+  <button
+    @click="isVisible = !isVisible"
+    :style="[isVisible ? 'margin-right:8px;' : '']"
+  >
     <img :src="editicon" alt="edit icon" />
   </button>
 
