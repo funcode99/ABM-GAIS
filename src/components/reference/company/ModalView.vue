@@ -211,7 +211,7 @@ const inputStylingClass =
           <Multiselect
             v-model="siteDataArray"
             mode="tags"
-            placeholder="Select options"
+            placeholder="No Data"
             :close-on-select="false"
             :searchable="false"
             :object="true"
