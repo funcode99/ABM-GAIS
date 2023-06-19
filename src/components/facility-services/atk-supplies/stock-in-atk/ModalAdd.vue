@@ -8,9 +8,9 @@ import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import { useRouter } from 'vue-router'
 const router = useRouter()
-let selectedCompany = ref("Company");
-let selectedSite = ref("Site");
-let selectedWarehouse = ref("Warehouse")
+let selectedCompany = ref("");
+let selectedSite = ref("");
+let selectedWarehouse = ref("")
 let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
@@ -111,10 +111,20 @@ const changeSite = async (id_site) => {
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
 };
 
 const addItem = async () => {
+  if(selectedCompany.value == '' || selectedSite.value == '' || selectedWarehouse.value == '' || selectedUOM.value == '' || itemNames.value == '' || alertQuantity.value == '' || selectedBrand.value == ''){
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data required Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else {
   const wh = Warehouse.value
   for (let index = 0; index < wh.length; index++) {
     const element = wh[index];
@@ -153,6 +163,7 @@ const addItem = async () => {
   })
   resetButCompanyDisable()
   return itemsTable
+  }
 };
 const resetButCompanyDisable = async () => {
   disableSite.value = true
@@ -176,6 +187,16 @@ if(id == 0){
 // return itemsTable
 }
 const save = async () => {
+  if (selectedCompany.value == '') {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data Di Table Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else{
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
@@ -206,6 +227,7 @@ const save = async () => {
     });
     // console.log(error.response.data.message)
   })
+  }
     // router.go({path : '/stockinatk'})
     // router.push({path: '/stockinatk'})
 };

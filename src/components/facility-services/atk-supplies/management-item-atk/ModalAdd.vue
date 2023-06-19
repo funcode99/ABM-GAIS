@@ -55,11 +55,13 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
+  changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
+  selectedCompany.value = id_company
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -77,6 +79,12 @@ const changeCompany = async (id_company) => {
   const res = await Api.get(`/site/get_by_company/${id_company}`);
   // console.log(res)
   Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(JSON.parse(localStorage.getItem("id_site")) === element.id){
+      selectedSite.value = element.id
+    }
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchBrandCompany = async (id_company) => {
@@ -103,13 +111,23 @@ const changeSite = async (id_site) => {
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
 };
 
 const generateNumber = async () => {
   idItems.value = Math.floor(100000000 + Math.random() * 900000000);
 };
 const addItem = async () => {
+  if(selectedCompany.value == '' || selectedSite.value == '' || selectedWarehouse.value == '' || selectedUOM.value == '' || itemNames.value == '' || alertQuantity.value == '' || selectedBrand.value == '' || idItems.value == ''){
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data required Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else {
   const wh = Warehouse.value
   for (let index = 0; index < wh.length; index++) {
     const element = wh[index];
@@ -150,6 +168,7 @@ const addItem = async () => {
   
   resetButCompanyDisable()
   return itemsTable
+  }
 };
 const removeItems = async (id) => {
 // console.log(id)
@@ -163,6 +182,16 @@ if(id == 0){
 }
 // console.log(emits('close'))
 const save = async () => {
+  if (selectedCompany.value == '') {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data Di Table Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else{
   
   const payload = {
     array_multi:itemsTable.value,
@@ -188,7 +217,7 @@ const save = async () => {
     });
     // console.log(error.response.data.message)
   })
-    
+} 
     // console.log(router.go({path : '/managementitem'}))
     // router.go({path : '/managementitem'})
     // defineEmits(["unlockScrollbar"])

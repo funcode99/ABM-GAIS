@@ -107,7 +107,7 @@ const changeSite = async (id_site) => {
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === 4 ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
 };
 
 const addItem = async () => {

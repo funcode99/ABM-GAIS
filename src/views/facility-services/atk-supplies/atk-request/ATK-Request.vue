@@ -449,7 +449,7 @@ const format_date = (value) => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ index + 1 }}
+                      {{ (showingValue - 1) * pageMultiplier + 1 + index }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.no_atk_request }}
