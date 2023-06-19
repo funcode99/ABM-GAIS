@@ -36,6 +36,7 @@ let remark = ref("")
 let siteName = ref("")
 let status = ref("")
 let statusValue = ref(false)
+let ItemTable = ref([])
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -61,13 +62,22 @@ const fetchDetailById = async (id) => {
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    Warehouse.value = element.warehouse_name
-    itemNames.value = element.item_name
-    idItems.value = element.code_item
-    alertQuantity.value = element.qty
-    brandName.value = element.brand_name
-    UOMName.value = element.uom_name
-    remark.value = element.remarks
+    ItemTable.value.push({
+      Warehouse : element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+    })
+    // Warehouse.value = element.warehouse_name
+    // itemNames.value = element.item_name
+    // idItems.value = element.code_item
+    // alertQuantity.value = element.qty
+    // brandName.value = element.brand_name
+    // UOMName.value = element.uom_name
+    // remark.value = element.remarks
     // siteName.value = element.site_name
     // element.status == 'Submitted' ? !statusValue : statusValue
   }
@@ -132,7 +142,7 @@ const format_date = (value) => {
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
               <h3 class="text-blue font-semibold font-JakartaSans text-2xl">
-                Back
+                {{ stockName }}
               </h3>
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
@@ -142,34 +152,41 @@ const format_date = (value) => {
                 Draft
               </button> -->
               <button
+                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+              >
+                {{status}}
+              </button>
+              <!-- <button
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
               >
                 Submit
-              </button>
+              </button> -->
             </div>
           </div>
 
-          <!-- <div class="flex justify-between ml-10">
+          <div class="flex justify-between ml-10">
             <div class="flex gap-2">
-              <button
+              <!-- <button
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
               >
                 Edit
-              </button>
+              </button> -->
               <button
+                v-if="status == 'Draft'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                @click="submit"
               >
                 Submit
               </button><br>
             </div>
-          </div> -->
+          </div>
 
-          <div class="flex justify-between ml-10 mt-8">
+          <!-- <div class="flex justify-between ml-10 mt-8">
             <div class="flex gap-2">
               <h1 class="font-JakartaSans font-medium text-lg">Document No : {{ stockName }}</h1>
             </div>
-          </div>
+          </div> -->
           <!-- FORM READ ONLY-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-3 pt-7">
             <div class="flex flex-col gap-2">
@@ -278,15 +295,15 @@ const format_date = (value) => {
                     </th> -->
                   </tr>
                 </thead>
-                <tbody class="font-JakartaSans font-normal text-xs">
+                <tbody class="font-JakartaSans font-normal text-xs" v-for="(value, ind) in ItemTable" :key="ind">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">{{ Warehouse }}</td>
-                    <td class="border border-[#B9B9B9]">{{ idItems }}</td>
-                    <td class="border border-[#B9B9B9]">{{ itemNames }}</td>
-                    <td class="border border-[#B9B9B9]">{{ alertQuantity }}</td>
-                    <td class="border border-[#B9B9B9]">{{ brandName }}</td>
-                    <td class="border border-[#B9B9B9]">{{ UOMName }}</td>
-                    <td class="border border-[#B9B9B9]">{{ remark }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.itemNames }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.alertQuantity }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.brandName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                     <!-- <td class="border border-[#B9B9B9]">
                       <div class="flex justify-center items-center gap-2">
                         <button>
