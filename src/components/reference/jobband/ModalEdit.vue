@@ -10,12 +10,12 @@ import Multiselect from "@vueform/multiselect";
 
 import { ref, watch, computed } from "vue";
 import { useFormEditStore } from "@/stores/reference/jobband/edit-modal.js";
-import { useReferenceFetchResult } from '@/stores/fetch/reference'
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 
 const emits = defineEmits(["unlockScrollbar", "changeJobband", "fetchJobband"]);
 
-const formEditState = useFormEditStore()
-const referenceFetch = useReferenceFetchResult()
+const formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult();
 
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
@@ -32,19 +32,26 @@ let tlkRatevalue = ref([]);
 let idZonaValue = ref();
 let inputValues = ref(props.formContent[5]);
 
-inputValues.value.forEach((item, index) => {
-  tlkRatevalue.value[index] = item.tlk_rate;
-  idZonaValue.value = item.id_zona;
-});
+// inputValues.value.forEach((item, index) => {
+//   tlkRatevalue.value[index] = item.tlk_rate;
+//   idZonaValue.value = item.id_zona;
+// });
+
+if (inputValues.value && Array.isArray(inputValues.value)) {
+  inputValues.value.forEach((item, index) => {
+    tlkRatevalue.value[index] = item.tlk_rate;
+    idZonaValue.value = item.id_zona;
+  });
+}
 
 let companyData = ref(null);
 let companyIdArray = ref([]);
-let companyIdObject = ref(`[${props.formContent[3]}]`)
-companyIdArray.value = JSON.parse(companyIdObject.value)
+let companyIdObject = ref(`[${props.formContent[3]}]`);
+companyIdArray.value = JSON.parse(companyIdObject.value);
 
 const props = defineProps({
   formContent: Array,
-})
+});
 
 const submitEdit = () => {
   isAdding.value = true;
@@ -62,46 +69,54 @@ const submitEdit = () => {
   const length = addZona.length;
   tlkRatevalue.value = tlkRatevalue.value.slice(0, length);
 
-  const arrayDetail = addZona.map((item, index) => {
-    return {
-      id_zona: item.id_zona,
-      tlk_rate: tlkRatevalue.value[index] || "",
-    };
-  });
+  // const arrayDetail = addZona.map((item, index) => {
+  //   return {
+  //     id_zona: item.id_zona,
+  //     tlk_rate: tlkRatevalue.value[index] || "",
+  //   };
+  // });
 
-  formEditState.jobBand.arrayDetail = arrayDetail
+  let arrayDetail;
 
-  isVisible.value = false
-  emits("changeJobband")
+  if (Array.isArray(addZona)) {
+    arrayDetail = addZona.map((item, index) => {
+      return {
+        id_zona: item.id_zona,
+        tlk_rate: tlkRatevalue.value[index] || "",
+      };
+    });
+  }
 
-}
+  formEditState.jobBand.arrayDetail = arrayDetail;
+
+  isVisible.value = false;
+  emits("changeJobband");
+};
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
 const resetInput = () => {
   jobBandName.value = props.formContent[0];
   hotelFare.value = props.formContent[1];
   mealsRate.value = props.formContent[2];
-  let companyIdObject = ref(`[${props.formContent[3]}]`)
-  companyIdArray.value = JSON.parse(companyIdObject.value)
+  let companyIdObject = ref(`[${props.formContent[3]}]`);
+  companyIdArray.value = JSON.parse(companyIdObject.value);
   selectedFlightClass.value = props.formContent[4];
-}
+};
 
 watch(isVisible, (newValue) => {
-
   if (newValue) {
     resetInput();
   }
 
-  addZona.value = referenceFetch.fetchZonaIdResult
-  FlightClass.value = referenceFetch.fetchFlightClassResult
-  companyData.value = referenceFetch.fetchCompanyResult
+  addZona.value = referenceFetch.fetchZonaIdResult;
+  FlightClass.value = referenceFetch.fetchFlightClassResult;
+  companyData.value = referenceFetch.fetchCompanyResult;
   companyData.value.map((item) => {
-    item.value = item.id
-  })
-
-})
+    item.value = item.id;
+  });
+});
 
 const formattedHotelFare = computed({
   get() {
@@ -114,7 +129,7 @@ const formattedHotelFare = computed({
   set(value) {
     hotelFare.value = value;
   },
-})
+});
 
 const formattedMealsRate = computed({
   get() {
@@ -127,7 +142,7 @@ const formattedMealsRate = computed({
   set(value) {
     mealsRate.value = value;
   },
-})
+});
 
 const formattedGrossHari = computed(() => {
   if (tlkRatevalue.value && tlkRatevalue.value.length > 0) {
@@ -143,7 +158,7 @@ const formattedGrossHari = computed(() => {
   } else {
     return [];
   }
-})
+});
 
 const updateGrossHari = (event, index) => {
   const formattedValue = event.target.value
@@ -155,7 +170,7 @@ const updateGrossHari = (event, index) => {
   } else {
     tlkRatevalue.value[index] = formattedValue;
   }
-}
+};
 
 const updateHotelFare = (event) => {
   const formattedValue = event.target.value
@@ -163,7 +178,7 @@ const updateHotelFare = (event) => {
     .replaceAll(".", "");
 
   hotelFare.value = formattedValue;
-}
+};
 
 const updateMealsRate = (event) => {
   const formattedValue = event.target.value
@@ -171,7 +186,7 @@ const updateMealsRate = (event) => {
     .replaceAll(".", "");
 
   mealsRate.value = formattedValue;
-}
+};
 
 const formatCurrency = () => {
   hotelFare.value = hotelFare.value.replace(/\D/g, "");
@@ -194,8 +209,7 @@ const formatCurrency = () => {
   inputValues.value.forEach((item, index) => {
     tlkRatevalue.value[index] = item.tlk_rate;
   });
-}
-
+};
 </script>
 
 <template>
@@ -209,9 +223,8 @@ const formatCurrency = () => {
 
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 w-full px-4 text-start">
-
           <label class="block mb-2 font-JakartaSans font-medium text-sm">
-            Company<span class="text-red">*</span> 
+            Company<span class="text-red">*</span>
           </label>
 
           <div
