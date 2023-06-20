@@ -73,11 +73,8 @@ watch(isVisible, (newValue) => {
   if (newValue) {
     resetInput();
   }
-})
-
-watch(referenceFetch, () => {
   jobBandData.value = referenceFetch.fetchJobBandResult
-    jobBandData.map((item) => {
+    jobBandData.value.map((item) => {
     item.value = item.id;
   })
 })
