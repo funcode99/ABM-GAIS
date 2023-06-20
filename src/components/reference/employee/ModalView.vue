@@ -28,6 +28,8 @@ let employeeDepartementName = ref(props.formContent[11]);
 let employeeJobbandName = ref(props.formContent[12]);
 let employeePhoneNumber = ref(props.formContent[13]);
 let employeeCostCenter = ref(props.formContent[14]);
+let employeeDirectSupervisor = ref(props.formContent[15]);
+let employeeIndirectSupervisor = ref(props.formContent[16]);
 
 const formattedStartDate = computed(() => {
   if (employeeStartDate.value) {
@@ -308,6 +310,36 @@ const inputStylingClass =
             >
             <input
               v-model="employeeCostCenter"
+              type="text"
+              :class="inputStylingClass"
+              required
+              disabled
+              class="cursor-not-allowed"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-between px-4 items-center text-start">
+          <div class="mb-6 w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Direct Supervisor<span class="text-red">*</span></label
+            >
+            <input
+              v-model="employeeDirectSupervisor"
+              type="text"
+              :class="inputStylingClass"
+              required
+              disabled
+              class="cursor-not-allowed"
+            />
+          </div>
+
+          <div class="mb-6 w-full ml-2 overflow-x-hidden">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Indirect Supervisor<span class="text-red">*</span></label
+            >
+            <input
+              v-model="employeeIndirectSupervisor"
               type="text"
               :class="inputStylingClass"
               required
