@@ -76,15 +76,6 @@ const submitEdit = () => {
 
 }
 
-watch(referenceFetch, () => {
-  addZona.value = referenceFetch.fetchZonaIdResult
-  FlightClass.value = referenceFetch.fetchFlightClassResult
-  companyData.value = referenceFetch.fetchCompanyResult
-  companyData.value.map((item) => {
-    item.value = item.id
-  })
-})
-
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
@@ -98,9 +89,18 @@ const resetInput = () => {
 }
 
 watch(isVisible, (newValue) => {
+
   if (newValue) {
     resetInput();
   }
+
+  addZona.value = referenceFetch.fetchZonaIdResult
+  FlightClass.value = referenceFetch.fetchFlightClassResult
+  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value.map((item) => {
+    item.value = item.id
+  })
+
 })
 
 const formattedHotelFare = computed({

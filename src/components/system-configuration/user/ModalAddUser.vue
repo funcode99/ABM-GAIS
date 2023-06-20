@@ -42,12 +42,14 @@
 
   const submitUser = () => {
 
+    console.log(isEmployee.value)
+    console.log(username.value)
+
     isVisible.value = false
 
-    if(isEmployee.value) {
-      formState.user.username = username.value
+    if(isEmployee.value == true) {
+      formState.user.username = username.value[0]
     } else {
-      // console.log('masuk ke non employee')
       formState.user.username = usernameNonEmployee.value
     }
 
@@ -145,6 +147,8 @@
 
                 <div class="mb-6">
                   <span>Employee?<span class="text-red-star">*</span></span>
+                  <!-- {{ username }}
+                  {{ location }} -->
                   <div class="flex gap-2 pt-2">
                     <div class="flex gap-1">
                       <!-- fill the same name attribute for individual select -->
@@ -322,7 +326,7 @@
                     
                     <select :disabled="isLoading || isEmployee" id="location" v-model="location" :class="inputStylingClass">
                       
-                      <option v-for="data in responseSiteByCompanyIdArray" :key="data.id" :value="data.id" >
+                      <option :selected="data.id == location" v-for="data in responseSiteByCompanyIdArray" :key="data.id" :value="data.id" >
                           {{ data.site_name }}
                       </option>
 
