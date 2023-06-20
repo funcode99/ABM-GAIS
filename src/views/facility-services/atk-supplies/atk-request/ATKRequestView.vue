@@ -47,16 +47,28 @@ const fetchDataById = async (id) => {
     stockName.value = element.no_atk_request
     createdDate.value = format_date(element.created_at)
     createdBy.value = element.employee_name
-    Warehouse.value = element.warehouse_name
-    itemNames.value = element.itemName
-    idItems.value = element.id_item
-    alertQuantity.value = element.qty
-    brandName.value = element.brand_name
-    UOMName.value = element.uom_name
-    remark.value = element.remarks
     siteName.value = element.site_name
     status.value = element.status
-    element.status == 'Submitted' ? !statusValue : statusValue
+  }
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchDetailById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get_data_detail/${id}`);
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    ItemTable.value.push({
+      Warehouse : element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+    })
   }
   
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -82,6 +94,7 @@ const submit = async () => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(router.currentRoute.value.params.id)
+  fetchDetailById(router.currentRoute.value.params.id)
   // console.log(router.currentRoute.value.params.id)
 });
 
@@ -118,7 +131,7 @@ const format_date = (value) => {
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
               <h3 class="text-blue font-semibold font-JakartaSans text-2xl">
-                Back
+                {{ stockName }}
               </h3>
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
@@ -128,34 +141,35 @@ const format_date = (value) => {
                 Draft
               </button> -->
               <button
+                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+              >
+                {{status}}
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-between ml-10">
+            <div class="flex gap-2">
+              <!-- <button
+                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+              >
+                Edit
+              </button> -->
+              <button
+                v-if="status == 'Draft'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
               >
                 Submit
-              </button>
+              </button><br>
             </div>
           </div>
 
-          <!-- <div class="flex justify-between ml-10">
-            <div class="flex gap-2">
-              <button
-                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
-              >
-                Edit
-              </button>
-              <button
-                class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Submit
-              </button><br>
-            </div>
-          </div> -->
-
-          <div class="flex justify-between ml-10 mt-8">
+          <!-- <div class="flex justify-between ml-10 mt-8">
             <div class="flex gap-2">
               <h1 class="font-JakartaSans font-medium text-lg">Document No : {{ stockName }}</h1>
             </div>
-          </div>
+          </div> -->
           <!-- FORM READ ONLY-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-3 pt-7">
             <div class="flex flex-col gap-2">

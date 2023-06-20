@@ -143,7 +143,7 @@ const format_date = (value) => {
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
               <h3 class="text-blue font-semibold font-JakartaSans text-2xl">
-                Back
+                {{ stockName }}
               </h3>
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
@@ -153,34 +153,35 @@ const format_date = (value) => {
                 Draft
               </button> -->
               <button
+                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+              >
+                {{status}}
+              </button>
+            </div>
+          </div>
+
+          <div class="flex justify-between ml-10">
+            <div class="flex gap-2">
+              <!-- <button
+                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+              >
+                Edit
+              </button> -->
+              <button
+                v-if="status == 'Draft'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
               >
                 Submit
-              </button>
+              </button><br>
             </div>
           </div>
 
-          <!-- <div class="flex justify-between ml-10">
-            <div class="flex gap-2">
-              <button
-                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
-              >
-                Edit
-              </button>
-              <button
-                class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Submit
-              </button><br>
-            </div>
-          </div> -->
-
-          <div class="flex justify-between ml-10 mt-8">
+          <!-- <div class="flex justify-between ml-10 mt-8">
             <div class="flex gap-2">
               <h1 class="font-JakartaSans font-medium text-lg">Document No : {{ stockName }}</h1>
             </div>
-          </div>
+          </div> -->
           <!-- FORM READ ONLY-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-3 pt-7">
             <div class="flex flex-col gap-2">

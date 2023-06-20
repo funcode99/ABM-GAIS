@@ -60,7 +60,7 @@ const fetchUOM = async () => {
 
 const changeCompany = async (id_company) => {
   // changeUomBrand(id_company)
-  fetItems(id_company)
+  // fetItems(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -76,10 +76,10 @@ const fetchBrand = async () => {
   Brand.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetItems = async (id_company) => {
+const fetItems = async (id_warehouse) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get_by_company/${id_company}`);
+  const res = await Api.get(`/management_atk/get_by_warehouse_id/${id_warehouse}`);
   // console.log(res.data.data)
   Item.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -346,6 +346,7 @@ onMounted(() => {
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedWarehouse"
+                @change="fetItems(selectedWarehouse)"
               >
                 <option disabled selected>Warehouse</option>
                 <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">

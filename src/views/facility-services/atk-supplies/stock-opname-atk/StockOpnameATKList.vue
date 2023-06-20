@@ -299,7 +299,7 @@ const format_date = (value) => {
               <div>
                 <div>
                   <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
-                    Start Date
+                    Date
                   </p>
 
                   <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" />
