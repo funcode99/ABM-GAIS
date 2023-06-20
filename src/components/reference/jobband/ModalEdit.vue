@@ -32,11 +32,6 @@ let tlkRatevalue = ref([]);
 let idZonaValue = ref();
 let inputValues = ref(props.formContent[5]);
 
-inputValues.value.forEach((item, index) => {
-  tlkRatevalue.value[index] = item.tlk_rate;
-  idZonaValue.value = item.id_zona;
-});
-
 let companyData = ref(null);
 let companyIdArray = ref([]);
 let companyIdObject = ref(`[${props.formContent[3]}]`)
@@ -100,6 +95,13 @@ watch(isVisible, (newValue) => {
   companyData.value.map((item) => {
     item.value = item.id
   })
+
+  // console.log(inputValues)
+
+  // inputValues.value.forEach((item, index) => {
+  // tlkRatevalue.value[index] = item.tlk_rate;
+  // idZonaValue.value = item.id_zona;
+  // });
 
 })
 

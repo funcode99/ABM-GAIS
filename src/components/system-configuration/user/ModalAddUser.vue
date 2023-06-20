@@ -48,7 +48,7 @@
     isVisible.value = false
 
     if(isEmployee.value == true) {
-      formState.user.username = username.value[0]
+      formState.user.username = username.value[4]
     } else {
       formState.user.username = usernameNonEmployee.value
     }
@@ -64,6 +64,10 @@
 
     emits('addUser')
 
+  }
+
+  const changeUsernameEmail = () => {
+    email.value = username.value[3]
   }
 
   const resetInput = () => {
@@ -178,8 +182,8 @@
                         required
                     />
     
-                    <select id="username" v-if="isEmployee" v-model="username" :class="inputStylingClass">
-                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company, data.id_site]">
+                    <select id="username" v-if="isEmployee" @change="changeUsernameEmail" v-model="username" :class="inputStylingClass">
+                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company, data.id_site, data.email, data.sn_employee]">
                         {{ data.employee_name }}
                       </option>
                     </select>
