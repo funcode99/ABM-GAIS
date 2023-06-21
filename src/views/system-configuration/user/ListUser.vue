@@ -318,6 +318,7 @@
         const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)
         instanceArray = api.data.data
         sortedData.value = instanceArray
+        onChangePage(1)
     }
 
     const exportToExcel = () => {
