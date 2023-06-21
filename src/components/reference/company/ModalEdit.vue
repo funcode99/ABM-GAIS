@@ -117,6 +117,7 @@ watch(isVisible, () => {
     selectedImage.value = props.formContent[5];
     currentcompanyCodeErp.value = props.formContent[6];
   }
+  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
 });
 
 const resetForm = () => {
@@ -129,9 +130,6 @@ const resetForm = () => {
   currentcompanyCodeErp.value = originalcompanyCodeErp.value;
 };
 
-watch(referenceFetch, () => {
-  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
-});
 </script>
 
 <template>

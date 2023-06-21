@@ -1,7 +1,7 @@
 <script setup>
   import { ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
-  import Multiselect from '@vueform/multiselect'
+  // import Multiselect from '@vueform/multiselect'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
@@ -206,6 +206,14 @@
                       </div>
                     </template>  
                 </Multiselect> -->
+
+                <Select2
+                  v-model="username"
+                  :options="responseEmployeeArray"
+
+                >
+                  
+                </Select2>
 
 
                 <div class="mb-6"></div>

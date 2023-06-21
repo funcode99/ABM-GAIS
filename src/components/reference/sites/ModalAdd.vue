@@ -65,9 +65,7 @@ watch(isVisible, () => {
   } else {
     resetInput();
   }
-})
 
-watch(referenceFetch, () => {
   Company.value = referenceFetch.fetchCompanyResult
 })
 

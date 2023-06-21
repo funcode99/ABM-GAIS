@@ -71,10 +71,8 @@ watch(isVisible, () => {
   }
 
   responseCompanyArray.value = referenceFetch.fetchCompanyResult;
-});
-
-watch(referenceFetch, () => {
   company.value = referenceFetch.fetchSiteResult.id_company;
+
 });
 
 watch(company, () => {
