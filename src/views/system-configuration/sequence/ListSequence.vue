@@ -345,19 +345,19 @@
                         {{ data.no }}
                       </td>
 
-                      <td class="w[-25%] hover:w-[initial]">
-                        <span class="readmore-text">
+                      <td class="w-[25%]">
+                        <span class="readmore-text" @mouseover="changeTableWidth">
                           {{ data.sequence_name }}
                         </span>
                       </td>
 
-                      <td class="w-[20%] hover:w-[initial]">
+                      <td class="w-[20%]">
                         <span class="readmore-text">
                           {{ data.prefix }}
                         </span>
                       </td>
 
-                      <td class="w-[25%] hover:w-[initial]">
+                      <td class="w-[25%]">
                         <span class="readmore-text">
                           {{ data.suffix }}
                         </span>

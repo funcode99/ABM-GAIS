@@ -1,7 +1,15 @@
 <script setup>
-  import { ref, watch } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
-  // import Multiselect from '@vueform/multiselect'
+
+  import {
+  Combobox,
+  ComboboxInput,
+  ComboboxButton,
+  ComboboxOption,
+  ComboboxOptions,
+  TransitionRoot,
+} from '@headlessui/vue'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
@@ -66,10 +74,6 @@
 
   }
 
-  const changeUsernameEmail = () => {
-    email.value = username.value[3]
-  }
-
   const resetInput = () => {
       email.value = ''
       fullname.value = ''
@@ -109,6 +113,7 @@
 
   watch(username, () => {
     company.value = username.value[1]
+    email.value = username.value[3]
   })
 
   watch(company, () => {
@@ -127,6 +132,19 @@
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
+
+  let query = ref('')
+
+  let filteredPeople = computed(() =>
+  query.value === ''
+    ? responseEmployeeArray.value
+    : responseEmployeeArray.value.filter((person) =>
+        person.employee_name
+          .toLowerCase()
+          .replace(/\s+/g, '')
+          .includes(query.value.toLowerCase().replace(/\s+/g, ''))
+      )
+  )
 
 </script>
 
@@ -151,8 +169,6 @@
 
                 <div class="mb-6">
                   <span>Employee?<span class="text-red-star">*</span></span>
-                  <!-- {{ username }}
-                  {{ location }} -->
                   <div class="flex gap-2 pt-2">
                     <div class="flex gap-1">
                       <!-- fill the same name attribute for individual select -->
@@ -166,10 +182,10 @@
                   </div>
                 </div>
     
-                <div class="mb-6">
+                <div v-if="!isEmployee" class="mb-6">
 
-                    <label for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
-                        Username<span class="text-red">*</span>
+                    <label v-if="!isEmployee" for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
+                        Username<span class="text-red">*</span> 
                     </label>
     
                     <input
@@ -182,38 +198,83 @@
                         required
                     />
     
-                    <select id="username" v-if="isEmployee" @change="changeUsernameEmail" v-model="username" :class="inputStylingClass">
-                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company, data.id_site, data.email, data.sn_employee]">
-                        {{ data.employee_name }}
-                      </option>
-                    </select>
-    
                 </div>
 
-                <!-- <Multiselect
-                      v-model="username"
-                      track-by="employee_name"
-                      label="employee_name"
-                      placeholder="Choose a programming language"
-                      :filter-results="true"
-                      :min-chars="1"
-                      :searchable="true"
-                      :options="responseEmployeeArray"
+                <label v-if="isEmployee" for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
+                  Username<span class="text-red">*</span>
+                </label>
+
+                <Combobox v-if="isEmployee" v-model="username">
+
+                  <div>
+                    
+                    <div>
+
+                      <ComboboxInput
+                        :class="inputStylingClass"
+                        :value="username[0]"
+                        placeholder="Username"
+                      />
+                      
+                      <ComboboxButton class="absolute inset-y-0 right-0 flex items-center pr-2">
+                      </ComboboxButton>
+
+                    </div>
+
+                    <TransitionRoot
+                      leave="transition ease-in duration-100"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                      @after-leave="query = ''"
                     >
-                    <template class="overflow-y-scroll" v-slot:tag="{ option, handleTagRemove, disabled }">
-                      <div class="multiselect-multiple-label">
-                        {{ option.employee_name }}
-                      </div>
-                    </template>  
-                </Multiselect> -->
 
-                <Select2
-                  v-model="username"
-                  :options="responseEmployeeArray"
+                      <ComboboxOptions class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                        
+                        <div
+                          v-if="filteredPeople.length === 0 && query !== ''"
+                          class="relative cursor-default select-none py-2 px-4 text-gray-700"
+                        >
+                          Nothing found.
+                        </div>
 
-                >
-                  
-                </Select2>
+                        <ComboboxOption
+                          v-for="data in filteredPeople"
+                          as="template"
+                          :key="data.id"
+                          :value="[data.employee_name, data.id_company, data.id_site, data.email, data.sn_employee]"
+                          v-slot="{ username, active }"
+                        >
+
+                          <li
+                            class="relative cursor-default select-none py-2 pl-10 pr-4"
+                            :class="{
+                              'bg-teal-600 text-white': active,
+                              'text-gray-900': !active,
+                            }"
+                          >
+                            
+                            <span class="block truncate" :class="{ 'font-medium': username, 'font-normal': !username }">
+                              {{ data.employee_name }}
+                            </span>
+
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3"
+                              v-if="username"
+                              :class="{ 'text-white': active, 'text-teal-600': !active }"
+                            >
+
+                            </span>
+
+                          </li>
+
+                        </ComboboxOption>
+
+                      </ComboboxOptions>
+
+                    </TransitionRoot>
+
+                  </div>
+
+                </Combobox>
 
 
                 <div class="mb-6"></div>
