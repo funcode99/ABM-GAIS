@@ -1,19 +1,18 @@
 <script setup>
-import iconview from "@/assets/view_icon.svg";
 
-import modalHeader from "@/components/modal/modalHeader.vue";
+import iconview from "@/assets/view_icon.svg"
+import modalHeader from "@/components/modal/modalHeader.vue"
+import Multiselect from "@vueform/multiselect"
 
-import Multiselect from "@vueform/multiselect";
+import { ref, watch } from "vue"
+import { Modal } from "usemodal-vue3"
 
-import { ref, watch } from "vue";
-import { Modal } from "usemodal-vue3";
-
-import { useReferenceFetchResult } from "@/stores/fetch/reference";
-import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
-let formEditState = useFormEditStore();
+import { useReferenceFetchResult } from "@/stores/fetch/reference"
+import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js"
+const formEditState = useFormEditStore()
 const referenceFetch = useReferenceFetchResult()
 
-const emits = defineEmits(["unlockScrollbar", "viewSite"]);
+const emits = defineEmits(["unlockScrollbar", "viewSite"])
 
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
@@ -44,7 +43,7 @@ if (warehouseDataArray.value && Array.isArray(warehouseDataArray.value)) {
 
 const props = defineProps({
   formContent: Array,
-});
+})
 
 const currentsiteName = ref(props.formContent[0]);
 const originalsiteName = ref(props.formContent[0]);
@@ -58,7 +57,9 @@ watch(referenceFetch, () => {
 })
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+
+
 </script>
 
 <template>
@@ -70,6 +71,7 @@ const inputStylingClass =
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+    
     <main>
       <modalHeader @closeVisibility="isVisible = false" title="View Site" />
 
@@ -110,7 +112,7 @@ const inputStylingClass =
             disabled
             class="cursor-not-allowed"
           />
-          
+
         </div>
 
         <div class="mb-6 text-start w-full px-4">
@@ -131,11 +133,12 @@ const inputStylingClass =
         </div>
 
         <div class="mb-6 w-full px-4 text-start">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Warehouse<span class="text-red">*</span></label
-          >
-          <div
-            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Warehouse<span class="text-red">*</span>
+          </label>
+
+          <div class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
           ></div>
 
           <Multiselect
@@ -175,7 +178,9 @@ const inputStylingClass =
           </Multiselect>
         </div>
       </form>
+
     </main>
+    
   </Modal>
 </template>
 
