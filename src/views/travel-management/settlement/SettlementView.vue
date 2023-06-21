@@ -32,11 +32,7 @@ let idEdit = ref("");
 let visibleHeader = ref(false);
 let editItem = ref(false);
 let addItem = ref(false);
-let itemsItem = ref("");
-let itemsNominal = ref("");
-let itemsCostCentre = ref("");
-let itemsRemarks = ref("");
-let type = ref("")
+let type = ref("");
 
 const tableHeadDetailsItem = [
   { id: 1, title: "Item" },
@@ -75,7 +71,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/settlement/get_data/${id}`);
   dataArr.value = res.data.data[0];
-  generateType(dataArr.total_real, dataArr.total_no)
+  generateType(dataArr.total_real, dataArr.total_no);
   fetchDataItem(id);
 };
 
@@ -119,21 +115,13 @@ const saveItems = async (type, id = null, item = null) => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchDataById(idSettlement)
+    fetchDataById(idSettlement);
     router.push({ path: `/settlement/${idSettlement}` });
   }
   editItem.value = false;
   addItem.value = false;
-  idEdit.value = ''
+  idEdit.value = "";
   fetchDataItem(idSettlement);
-};
-
-const addItems = () => {
-  addItem.value = true;
-};
-
-const cancelItems = () => {
-  addItem.value = false;
 };
 
 const submit = async () => {
@@ -167,14 +155,14 @@ const submit = async () => {
 };
 
 const generateType = (after, before) => {
-    if (after > before) {
-        type.value = 'Over'
-    } else if (after < before) {
-        type.value = 'Less'
-    } else {
-        type.value = 'Equal'
-    }
-}
+  if (after > before) {
+    type.value = "Over";
+  } else if (after < before) {
+    type.value = "Less";
+  } else {
+    type.value = "Equal";
+  }
+};
 
 // image
 const selectedImage = ref(null);
@@ -196,8 +184,6 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const rowClass = "flex justify-between px-6 items-center gap-2";
-const colClass = "mb-6 w-full";
 const inputClass =
   "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
@@ -355,9 +341,7 @@ const inputClass =
               />
             </div>
             <div class="flex flex-col gap-2" v-else>
-              <span class="font-JakartaSans font-medium text-sm"
-                >Event</span
-              >
+              <span class="font-JakartaSans font-medium text-sm">Event</span>
               <input
                 type="text"
                 disabled
@@ -366,9 +350,7 @@ const inputClass =
               />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Type</span
-              >
+              <span class="font-JakartaSans font-medium text-sm">Type</span>
               <input
                 type="text"
                 disabled
@@ -393,7 +375,9 @@ const inputClass =
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
                     <th
-                      v-for="data in (dataArr.id_ca_type == '1' ? tableHeadDetailsItem : tableHeadDetailsItemNon)"
+                      v-for="data in dataArr.id_ca_type == '1'
+                        ? tableHeadDetailsItem
+                        : tableHeadDetailsItemNon"
                       :key="data.id"
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
@@ -436,7 +420,11 @@ const inputClass =
                       {{ format_price(data.nominal_ca * data.frequency) }}
                     </td>
                     <td>
+                      <div v-if="data.id != idEdit">
+                        {{ format_price(data.nominal_real) }}
+                      </div>
                       <input
+                        v-else
                         type="number"
                         :class="inputClass"
                         required
