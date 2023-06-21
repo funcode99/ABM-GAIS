@@ -154,12 +154,11 @@
             <span>Employee?<span class="text-red-star">*</span></span>
             <div class="flex gap-2 pt-2">
               <div class="flex gap-1">
-                <!-- fill the same name attribute for individual select -->
-                <input type="radio" name="employee" v-model="isEmployee" :value="true" class="border border-black w-[26px] h-[26px]" required>
+                <input type="radio" name="employee" v-model="isEmployee" :value="true" class="border border-black w-[26px] h-[26px]" disabled>
                 <label for="">Yes</label>
               </div>
               <div class="flex gap-1">
-                <input type="radio" name="employee" v-model="isEmployee" :value="false" class="border border-black w-[26px] h-[26px]">
+                <input type="radio" name="employee" v-model="isEmployee" :value="false" class="border border-black w-[26px] h-[26px]" disabled>
                 <label for="">No</label>
               </div>
             </div>
@@ -172,27 +171,16 @@
                   <!-- {{ usernameEmployee }} -->
               </label>
 
+              <!-- v-if="!isEmployee" -->
               <input
                   id="username"
-                  v-if="!isEmployee"
                   v-model="username"
                   type="text"
                   placeholder="Username"
                   :class="inputStylingClass"
                   required
+                  disabled
               />
-  
-              <select @change="fromSelect = true" v-if="isEmployee" v-model="usernameEmployee" :class="inputStylingClass">
-
-                <option
-                  v-for="data in responseEmployeeArray"
-                  :key="data.id"
-                  :value="data.id" 
-                >
-                  {{ data.employee_name }}
-                </option>
-
-              </select>
 
           </div>
   
@@ -211,6 +199,7 @@
               placeholder="Email"
               :class=inputStylingClass
               required
+              disabled
             />
 
           </div>
