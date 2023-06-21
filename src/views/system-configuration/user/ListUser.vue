@@ -19,6 +19,7 @@
     import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
     import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
     import fetchAllEmployeeUtils from '@/utils/Fetch/Reference/fetchAllEmployee'
+    import fetchUnregisteredEmployee from '@/utils/Fetch/Reference/fetchUnregisteredEmployee'
 
     import fetchMenuStatusUtils from '@/utils/Fetch/System-Configuration/fetchMenuStatus'
     import fetchApproverAuthoritiesUtils from '@/utils/Fetch/System-Configuration/fetchApproverAuthorities.js'
@@ -258,7 +259,8 @@
       getSessionForSidebar()
       fetchRoleUtils(instanceArray, addRoleData)
       fetchCompanyUtils(instanceArray, addCompanyData)
-      fetchAllEmployeeUtils(instanceArray, addEmployeeData)
+      // fetchAllEmployeeUtils(instanceArray, addEmployeeData)
+      fetchUnregisteredEmployee(addEmployeeData)
 
       fetchMenuStatusUtils(instanceArray, addMenuStatusData)
       fetchApproverAuthoritiesUtils(instanceArray, addAuthoritiesData)

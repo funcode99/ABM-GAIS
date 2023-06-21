@@ -89,6 +89,21 @@ watch(isVisible, () => {
     resetInput();
     resetInputValues();
   }
+
+  FlightClass.value = referenceFetch.fetchFlightClassResult
+  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value.map((item) => {
+    item.value = item.id
+  })
+
+  addZona.value = referenceFetch.fetchZonaIdResult
+  inputZonaValues.value = referenceFetch.fetchZonaIdResult
+  inputZonaValues.value = inputZonaValues.value.map((item) => {
+    arrayDetail.value.push({
+      id_zona: item.id_zona,
+      tlk_rate: "",
+    })
+  })
 })
 
 function formatCurrency() {
@@ -122,25 +137,6 @@ function formatCurrency() {
 onMounted(() => {
     inputValues.value = addZona.value.map(() => "")
   initialInputValues.value = [...inputValues.value]
-})
-
-watch(referenceFetch, () => {
-
-  FlightClass.value = referenceFetch.fetchFlightClassResult
-  companyData.value = referenceFetch.fetchCompanyResult
-  companyData.value.map((item) => {
-    item.value = item.id
-  })
-
-  addZona.value = referenceFetch.fetchZonaIdResult
-  inputZonaValues.value = referenceFetch.fetchZonaIdResult
-  inputZonaValues.value = inputZonaValues.value.map((item) => {
-    arrayDetail.value.push({
-      id_zona: item.id_zona,
-      tlk_rate: "",
-    })
-  })
-
 })
 
 </script>

@@ -1,7 +1,7 @@
 <script setup>
   import { ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
-  import Multiselect from '@vueform/multiselect'
+  // import Multiselect from '@vueform/multiselect'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
@@ -48,7 +48,7 @@
     isVisible.value = false
 
     if(isEmployee.value == true) {
-      formState.user.username = username.value[0]
+      formState.user.username = username.value[4]
     } else {
       formState.user.username = usernameNonEmployee.value
     }
@@ -64,6 +64,10 @@
 
     emits('addUser')
 
+  }
+
+  const changeUsernameEmail = () => {
+    email.value = username.value[3]
   }
 
   const resetInput = () => {
@@ -178,8 +182,8 @@
                         required
                     />
     
-                    <select id="username" v-if="isEmployee" v-model="username" :class="inputStylingClass">
-                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company, data.id_site]">
+                    <select id="username" v-if="isEmployee" @change="changeUsernameEmail" v-model="username" :class="inputStylingClass">
+                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company, data.id_site, data.email, data.sn_employee]">
                         {{ data.employee_name }}
                       </option>
                     </select>
@@ -202,6 +206,14 @@
                       </div>
                     </template>  
                 </Multiselect> -->
+
+                <Select2
+                  v-model="username"
+                  :options="responseEmployeeArray"
+
+                >
+                  
+                </Select2>
 
 
                 <div class="mb-6"></div>

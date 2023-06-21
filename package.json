@@ -28,6 +28,7 @@
     "pinia-plugin-persistedstate": "^3.1.0",
     "sweetalert2": "^11.7.5",
     "usemodal-vue3": "^0.3.7",
+    "v-select2-component": "^0.4.7",
     "vue": "^3.2.47",
     "vue-awesome-paginate": "^1.1.46",
     "vue-chartjs": "^5.2.0",

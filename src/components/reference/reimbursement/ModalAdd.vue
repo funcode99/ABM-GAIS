@@ -66,9 +66,6 @@ watch(isVisible, () => {
   } else {
     resetInput();
   }
-})
-
-watch(referenceFetch, () => {
   jobBandData.value = referenceFetch.fetchJobBandResult
 })
 

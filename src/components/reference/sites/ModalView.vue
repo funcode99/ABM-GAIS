@@ -79,22 +79,29 @@ const inputStylingClass =
             >Company<span class="text-red">*</span></label
           >
           <select
+
             class="cursor-not-allowed font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
             v-model="selectedCompanyId"
             disabled
+
           >
+
             <option disabled selected>Company</option>
+
             <option v-for="company in Company" :value="company.id">
               {{ company.company_name }}
             </option>
+
           </select>
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Site Code<span class="text-red">*</span></label
-          >
+          
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Site Code<span class="text-red">*</span>
+          </label>
+
           <input
             v-model="currentsiteCode"
             type="text"
@@ -103,12 +110,15 @@ const inputStylingClass =
             disabled
             class="cursor-not-allowed"
           />
+          
         </div>
 
         <div class="mb-6 text-start w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Site Name<span class="text-red">*</span></label
-          >
+
+          <label class="block mb-2 font-JakartaSans font-medium text-sm">
+            Site Name<span class="text-red">*</span>
+          </label>
+
           <input
             v-model="currentsiteName"
             type="text"
@@ -117,6 +127,7 @@ const inputStylingClass =
             disabled
             class="cursor-not-allowed"
           />
+
         </div>
 
         <div class="mb-6 w-full px-4 text-start">

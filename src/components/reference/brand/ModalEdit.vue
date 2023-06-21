@@ -69,11 +69,7 @@ watch(isVisible, () => {
   } else {
     resetForm();
   }
-
   responseCompanyArray.value = referenceFetch.fetchCompanyResult;
-});
-
-watch(referenceFetch, () => {
   company.value = referenceFetch.fetchSiteResult.id_company;
 });
 

@@ -96,6 +96,8 @@
       responseCompanyArray.value = referenceFetch.fetchCompanyResult
       responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
 
+      company.value = referenceFetch.fetchIndividualEmployeeResult.id_company
+
     })
 
     watch(isEmployee, () => {
@@ -104,10 +106,6 @@
 
     watch(usernameEmployee, () => {
       emits('fetchEmployeeIndividualInfo', usernameEmployee.value)
-    })
-
-    watch(referenceFetch, () => {
-      company.value = referenceFetch.fetchIndividualEmployeeResult.id_company
     })
 
     watch(company, () => {

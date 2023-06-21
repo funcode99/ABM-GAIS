@@ -28,7 +28,8 @@ let remark = ref("")
 const itemsTable = ref([])
 let disableCompany = ref(false)
 let disableSite = ref(false)
-const emits = defineEmits(["unlockScrollbar"]);
+let addModal = ref(false)
+const emits = defineEmits(["unlockScrollbar", "close"]);
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -56,7 +57,7 @@ const fetchUOM = async () => {
 
 const changeCompany = async (id_company) => {
   // changeUomBrand(id_company)
-  fetItems(id_company)
+  // fetItems(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -72,10 +73,10 @@ const fetchBrand = async () => {
   Brand.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetItems = async (id_company) => {
+const fetItems = async (id_warehouse) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get_by_company/${id_company}`);
+  const res = await Api.get(`/management_atk/get_by_warehouse_id/${id_warehouse}`);
   // console.log(res.data.data)
   Item.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -111,7 +112,16 @@ const fetchCondition = async () => {
 };
 
 const addItem = async () => {
-
+  if(selectedCompany.value == '' || selectedSite.value == '' || selectedWarehouse.value == '' || selectedUOM.value == '' || itemNames.value == '' || alertQuantity.value == '' || selectedBrand.value == ''){
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data required Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else {
   itemsTable.value.push({
     id_company: selectedCompany.value,
     // id_departement: '',
@@ -126,6 +136,7 @@ const addItem = async () => {
   })
   resetButCompanyDisable()
   return itemsTable
+}
 };
 const resetButCompanyDisable = async () => {
   disableSite.value = true
@@ -149,6 +160,16 @@ if(id == 0){
 // return itemsTable
 }
 const save = async () => {
+  if (selectedCompany.value == '') {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Data Di Table Tidak Boleh Kosong',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else{
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
@@ -160,7 +181,7 @@ const save = async () => {
     remarks:"",
     array_detail:itemsTable.value
   }
-  const res = await Api.post('request_atk/store',payload);
+  Api.post('request_atk/store',payload).then((res) => {
   Swal.fire({
       position: "center",
       icon: "success",
@@ -169,8 +190,25 @@ const save = async () => {
       timer: 1500,
     });
     reset()
-    router.push({path: '/stockinatk'})
+    addModal.value = false
+    emits("close");
+  }).catch((error) =>{
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: error.response.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  })
+  }
 };
+const coba = async () => {
+  addModal.value = true
+}
+const coba2 = async () => {
+  addModal.value = false
+}
 const reset = async () => {
   selectedCompany.value = ''
   selectedSite.value = ''
@@ -190,10 +228,10 @@ onMounted(() => {
 
 <template>
   <label
-    @click="this.$emit('unlockScrollbar')"
+  @click="coba"
     for="my-modal-stock-in"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add Item</label
+    >+ Add Request</label
   >
 
   <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
@@ -201,7 +239,7 @@ onMounted(() => {
     <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]" >
         <label
-          @click="this.$emit('unlockScrollbar')"
+        @click="coba2"
           for="my-modal-stock-in"
           class="cursor-pointer absolute right-3 top-3"
         >
@@ -279,6 +317,7 @@ onMounted(() => {
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedWarehouse"
+                @change="fetItems(selectedWarehouse)"
               >
                 <option disabled selected>Warehouse</option>
                 <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">

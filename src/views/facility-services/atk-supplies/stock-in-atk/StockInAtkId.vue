@@ -173,7 +173,7 @@ const format_date = (value) => {
                 Edit
               </button> -->
               <button
-                v-if="status == 'Draft'"
+                v-if="status != 'Completed'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
               >
