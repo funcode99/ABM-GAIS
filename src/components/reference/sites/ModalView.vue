@@ -52,7 +52,7 @@ const originalsiteIdCompany = ref(props.formContent[1]);
 const currentsiteCode = ref(props.formContent[2]);
 const originalsiteCode = ref(props.formContent[2]);
 
-watch(referenceFetch, () => {
+watch(isVisible, () => {
   Company.value = referenceFetch.fetchCompanyResult
 })
 

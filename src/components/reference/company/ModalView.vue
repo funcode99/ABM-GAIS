@@ -44,7 +44,7 @@ const currentcompanyCode = ref(props.formContent[1]);
 const currentcompanyShortName = ref(props.formContent[2]);
 const currentcompanyGroup = ref(props.formContent[3]);
 
-watch(referenceFetch, () => {
+watch(isVisible, () => {
   vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
 });
 
