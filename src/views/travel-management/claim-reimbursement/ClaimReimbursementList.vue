@@ -83,7 +83,7 @@ const onChangePage = (pageOfItem) => {
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-    selectAllCheckbox(checkValue, deleteArray, sortedData);
+  selectAllCheckbox(checkValue, deleteArray, sortedData);
 };
 
 //for tablehead
@@ -92,7 +92,7 @@ const tableHead = [
   { Id: 2, title: "Created Date", jsonData: "created_at" },
   { Id: 3, title: "Claim No", jsonData: "no_claim" },
   { Id: 4, title: "Requestor", jsonData: "employee_name" },
-  { Id: 5, title: "Type", jsonData: "no_request_trip" },
+  { Id: 5, title: "Total", jsonData: "total_tlk" },
   { Id: 6, title: "Status", jsonData: "status" },
 ];
 
@@ -177,7 +177,7 @@ const resetData = () => {
   filter.status = "";
   filter.date = "";
   filter.type = "";
-  deleteArray.value = []
+  deleteArray.value = [];
   fetch();
   fetchTypeReimbursement();
   fetchType();
@@ -297,8 +297,8 @@ const deleteCheckedArray = () => {
 // end
 
 const closeModal = () => {
-    visibleModal.value = false
-}
+  visibleModal.value = false;
+};
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
@@ -389,7 +389,7 @@ const getSessionForSidebar = () => {
                 </select>
               </div>
 
-              <div>
+              <!-- <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
@@ -404,7 +404,7 @@ const getSessionForSidebar = () => {
                     {{ data.reimbursement_type }}
                   </option>
                 </select>
-              </div>
+              </div> -->
 
               <div>
                 <p
@@ -549,14 +549,12 @@ const getSessionForSidebar = () => {
                     <td>{{ format_date(data.created_at) }}</td>
                     <td>{{ data.no_claim }}</td>
                     <td>{{ data.employee_name }}</td>
-                    <td>{{ data.no_request_trip }}</td>
+                    <td>{{ format_price(data.grand_total) }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link :to="`/viewclaimreimbursement/${data.id}`">
-                        <button>
-                          <img :src="editicon" class="w-6 h-6" />
-                        </button>
-                      </router-link>
+                      <button @click="$router.push(`/viewclaimreimbursement/${data.id}`)">
+                        <img :src="editicon" class="w-6 h-6" />
+                      </button>
                       <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>

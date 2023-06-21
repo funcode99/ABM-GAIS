@@ -1,29 +1,40 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
-import icon_done from "@/assets/icon_done.svg";
+import { ref } from "vue";
+
+const props = defineProps({
+  roleCode: String,
+  listEmployee: Array,
+});
+
+let dataEmployee = ref(props.listEmployee);
+let code_role = ref(props.roleCode);
+let notes = ref(null)
+let id_employee = ref(null)
+
+const emits = defineEmits(["close", "approve"]);
+
+const approve = () => {
+    let data = {
+        id_employee: id_employee.value,
+        notes: notes.value
+    }
+    emits('approve', data)
+}
 </script>
 
 <template>
-  <label
-    for="my-modal-approve"
-    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-  >
-    <span>
-      <img :src="icon_done" class="w-5 h-5" />
-    </span>
-    Approve
-  </label>
-
   <input type="checkbox" id="my-modal-approve" class="modal-toggle" />
   <div class="modal">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
-        <label
+        <button
           for="my-modal-approve"
           class="cursor-pointer absolute right-3 top-3"
+          @click="emits('close')"
         >
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-        </label>
+        </button>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
           Approval Confirmation
         </p>
@@ -34,7 +45,10 @@ import icon_done from "@/assets/icon_done.svg";
           Are you sure want to approve this document?
         </p>
         <form class="pt-4">
-          <div class="flex flex-wrap justify-start gap-2">
+          <div
+            v-if="code_role == 'SUPADM'"
+            class="flex flex-wrap justify-start gap-2"
+          >
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
@@ -50,11 +64,11 @@ import icon_done from "@/assets/icon_done.svg";
             </div>
             <select
               class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+              v-model="id_employee"
               required
             >
-              <option disabled selected>Name</option>
-              <option>Name A</option>
-              <option>Name B</option>
+              <option class="readonly" value="">Select</option>
+              <option v-for="data in dataEmployee" :key="data.id">data.name</option>
             </select>
           </div>
 
@@ -81,19 +95,23 @@ import icon_done from "@/assets/icon_done.svg";
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Notes"
             required
+            v-model="notes"
           />
         </form>
       </main>
 
       <div class="sticky bottom-0 bg-white py-2">
         <div class="flex justify-end gap-4 mr-6">
-          <label
+          <button
             for="my-modal-approve"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
+            @click="emits('close')"
           >
+            Cancel
+          </button>
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            @click="approve"
           >
             Approve
           </button>

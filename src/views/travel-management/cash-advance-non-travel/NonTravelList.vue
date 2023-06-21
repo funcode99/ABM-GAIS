@@ -140,7 +140,7 @@ const fetch = async (id) => {
   lengthCounter = sortedData.value.length;
   totalPage.value = paginationArray.last_page;
   totalData.value = paginationArray.total;
-  showingValueFrom.value = paginationArray.from;
+  showingValueFrom.value = paginationArray.from ? paginationArray.from : 0;
   showingValueTo.value = paginationArray.to;
 };
 

@@ -13,10 +13,12 @@ import moment from "moment";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const sidebar = useSidebarStore();
 const route = useRoute();
+const router = useRouter();
+
 let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
 
 let lockScrollbar = ref(false);
@@ -91,7 +93,7 @@ const saveFormHeader = async () => {
     timer: 1500,
   });
   visibleHeader.value = false;
-  route.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
+  router.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
 };
 
 const cancelHeader = () => {
@@ -184,6 +186,7 @@ const submit = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
+      router.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
     })
     .catch((e) => {
       Swal.fire({
@@ -197,7 +200,6 @@ const submit = async () => {
         color: "#ffffff",
       });
     });
-  fetchDataById(idCaNon);
 };
 
 onBeforeMount(() => {
@@ -423,7 +425,7 @@ const inputClass =
                   >Nominal<span class="text-red">*</span></label
                 >
                 <input
-                  v-model="itemsNominal"
+                  :value="format_price(itemsNominal)"
                   type="number"
                   name="nominal"
                   :class="inputClass"
@@ -557,7 +559,11 @@ const inputClass =
                       </select>
                     </td>
                     <td class="border border-[#B9B9B9]">
+                      <div v-if="item.id != idEdit">
+                        {{ format_price(item.nominal) }}
+                      </div>
                       <input
+                        v-else
                         v-model="item.nominal"
                         type="number"
                         name="nominal"
