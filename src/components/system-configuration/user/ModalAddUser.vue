@@ -198,12 +198,6 @@
                         required
                     />
     
-                    <!-- <select id="username" v-if="isEmployee" @change="changeUsernameEmail" v-model="username" :class="inputStylingClass">
-                      <option v-for="data in responseEmployeeArray" :key="data.id" :value="[data.employee_name, data.id_company, data.id_site, data.email, data.sn_employee]">
-                        {{ data.employee_name }}
-                      </option>
-                    </select> -->
-    
                 </div>
 
                 <label v-if="isEmployee" for="username" class="block mb-2 font-JakartaSans font-medium text-sm">
