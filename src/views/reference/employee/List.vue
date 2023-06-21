@@ -14,12 +14,12 @@ import tableData from "@/components/table/tableData.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+// import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
+// import icondanger from "@/assets/Danger.png";
+// import iconClose from "@/assets/navbar/icon_close.svg";
 
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
@@ -113,6 +113,7 @@ const sortList = (sortBy) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchEmployee();
+  fetchGetCompany();
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 });
@@ -145,10 +146,6 @@ const fetchGetCompany = async () => {
   Company.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-
-onMounted(() => {
-  fetchGetCompany();
-});
 
 // get all employee
 const fetchEmployee = async () => {
@@ -296,7 +293,7 @@ const exportToExcel = () => {
                   v-model="selectedCompany"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="company in Company" :key="company.id">
+                  <option v-for="company in Company" :value="company.id">
                     {{ company.company_name }}
                   </option>
                 </select>
@@ -565,7 +562,7 @@ tr th {
 
 .readmore-text {
   display: inline-block;
-  max-width: 200px; /* Atur sesuai kebutuhan */
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
