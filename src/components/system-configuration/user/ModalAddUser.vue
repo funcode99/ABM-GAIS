@@ -139,15 +139,11 @@
   query.value === ''
     ? responseEmployeeArray.value
     : responseEmployeeArray.value.filter(
-    (person) => {
-      console.log('filter employee')  
-      return person.employee_name
+    (person) => person.employee_name
           .toLowerCase()
           .replace(/\s+/g, '')
           .includes(query.value.toLowerCase().replace(/\s+/g, ''))
-    }
-
-      )
+    )
   )
 
 </script>
@@ -226,12 +222,10 @@
 
                     </div>
 
-                    <!-- @after-leave="query = ''" -->
                     <TransitionRoot
                       leave="transition ease-in duration-100"
                       leaveFrom="opacity-100"
                       leaveTo="opacity-0"
-                 
                     >
 
                       <ComboboxOptions class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
