@@ -37,7 +37,7 @@ const formattedStartDate = computed(() => {
     return date.toISOString().split("T")[0];
   }
   return "";
-})
+});
 
 const formattedEndDate = computed(() => {
   if (employeeEndDate.value) {
@@ -45,7 +45,7 @@ const formattedEndDate = computed(() => {
     return date.toISOString().split("T")[0];
   }
   return "";
-})
+});
 
 const formattedBOD = computed(() => {
   if (employeeDob.value) {
@@ -53,15 +53,13 @@ const formattedBOD = computed(() => {
     return date.toISOString().split("T")[0];
   }
   return "";
-})
+});
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
-
   <button @click="isVisible = !isVisible">
     <img :src="iconview" alt="view icon" />
   </button>
@@ -373,6 +371,4 @@ const inputStylingClass =
   overflow-x: hidden;
   overscroll-behavior-y: contain;
 }
-
-
 </style>
