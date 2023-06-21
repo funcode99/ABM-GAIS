@@ -32,12 +32,7 @@ let tlkRatevalue = ref([]);
 let idZonaValue = ref();
 let inputValues = ref(props.formContent[5]);
 
-// inputValues.value.forEach((item, index) => {
-//   tlkRatevalue.value[index] = item.tlk_rate;
-//   idZonaValue.value = item.id_zona;
-// });
-
-if (inputValues.value && Array.isArray(inputValues.value)) {
+if (inputValues.value) {
   inputValues.value.forEach((item, index) => {
     tlkRatevalue.value[index] = item.tlk_rate;
     idZonaValue.value = item.id_zona;
@@ -69,23 +64,14 @@ const submitEdit = () => {
   const length = addZona.length;
   tlkRatevalue.value = tlkRatevalue.value.slice(0, length);
 
-  // const arrayDetail = addZona.map((item, index) => {
-  //   return {
-  //     id_zona: item.id_zona,
-  //     tlk_rate: tlkRatevalue.value[index] || "",
-  //   };
-  // });
-
-  let arrayDetail;
-
-  if (Array.isArray(addZona)) {
-    arrayDetail = addZona.map((item, index) => {
-      return {
-        id_zona: item.id_zona,
-        tlk_rate: tlkRatevalue.value[index] || "",
-      };
-    });
-  }
+  const arrayDetail = Array.isArray(addZona.value)
+    ? addZona.value.map((item, index) => {
+        return {
+          id_zona: item.id_zona,
+          tlk_rate: tlkRatevalue.value[index] || "",
+        };
+      })
+    : [];
 
   formEditState.jobBand.arrayDetail = arrayDetail;
 
