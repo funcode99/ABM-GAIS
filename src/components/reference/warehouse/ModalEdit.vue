@@ -56,6 +56,7 @@ const resetForm = () => {
 };
 
 watch(isVisible, () => {
+  
   if (isVisible.value === true) {
     company.value = props.formContent[1];
     location.value = props.formContent[2];
@@ -71,7 +72,6 @@ watch(isVisible, () => {
   }
 
   responseCompanyArray.value = referenceFetch.fetchCompanyResult;
-  company.value = referenceFetch.fetchSiteResult.id_company;
 
 });
 
@@ -88,12 +88,12 @@ watch(menuAccessStore, () => {
 });
 
 watch(responseSiteByCompanyIdArray, () => {
-  location.value = referenceFetch.fetchSiteResult.id_site;
   isLoading.value = false;
 });
 
 const inputStylingClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+
 </script>
 
 <template>

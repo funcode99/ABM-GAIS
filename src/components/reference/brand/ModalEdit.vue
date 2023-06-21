@@ -39,6 +39,7 @@ const currentbrandName = ref(props.formContent[0]);
 const originalbrandName = ref(props.formContent[0]);
 
 const submitEdit = () => {
+
   if (!formEditState.brand) {
     formEditState.brand = {};
   }
@@ -49,6 +50,7 @@ const submitEdit = () => {
 
   isVisible.value = false;
   emits("changeBrand");
+
 };
 
 const resetForm = () => {
@@ -56,6 +58,7 @@ const resetForm = () => {
 };
 
 watch(isVisible, () => {
+
   if (isVisible.value === true) {
     company.value = props.formContent[1];
     location.value = props.formContent[2];
@@ -69,26 +72,26 @@ watch(isVisible, () => {
   } else {
     resetForm();
   }
+
   responseCompanyArray.value = referenceFetch.fetchCompanyResult;
-  company.value = referenceFetch.fetchSiteResult.id_company;
+
 });
 
 watch(company, () => {
-  isLoading.value = true;
-  menuAccessStore.companyId = company.value;
+  isLoading.value = true
+  menuAccessStore.companyId = company.value
   if (company.value !== 0) {
-    emits("fetchSiteByCompanyId");
+    emits("fetchSiteByCompanyId")
   }
-});
+})
 
 watch(menuAccessStore, () => {
-  responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult;
-});
+  responseSiteByCompanyIdArray.value = menuAccessStore.fetchSiteByCompanyResult
+})
 
 watch(responseSiteByCompanyIdArray, () => {
-  location.value = referenceFetch.fetchSiteResult.id_site;
-  isLoading.value = false;
-});
+  isLoading.value = false
+})
 
 const inputStylingClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
@@ -118,9 +121,8 @@ const inputStylingClass =
               v-for="data in responseCompanyArray"
               :key="data.id"
               :value="data.id"
-              :selected="data.id == props.formContent[1] ? true : false"
             >
-              {{ data.company_name }}
+              {{ data.company_name }} {{ data.id }}
             </option>
           </select>
         </div>
@@ -140,7 +142,7 @@ const inputStylingClass =
               :key="data.id"
               :value="data.id"
             >
-              {{ data.site_name }}
+              {{ data.site_name }} {{ data.id }}
             </option>
           </select>
         </div>
