@@ -19,10 +19,12 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
+let grupCompany = ref("");
 let vendorAirlines = ref("");
 let iconfilename = ref(null);
 let imageUrl = ref(null);
 
+let selectedGrupCompanyId = ref(props.formContent[3] || null);
 let selectedVendorId = ref(props.formContent[4] || null);
 let selectedImage = ref(props.formContent[5] || null);
 let selectedCodeErpId = ref(props.formContent[6]);
@@ -39,8 +41,8 @@ const currentcompanyCode = ref(props.formContent[1]);
 const originalcompanyCode = ref(props.formContent[1]);
 const currentcompanyShortName = ref(props.formContent[2]);
 const originalcompanyShortName = ref(props.formContent[2]);
-const currentcompanyGroup = ref(props.formContent[3]);
-const originalcompanyGroup = ref(props.formContent[3]);
+const currentCompanyGrupCompanyId = ref(props.formContent[3]);
+const originalCompanyGrupCompanyId = ref(props.formContent[3]);
 const currentcompanyIdVendor = ref(props.formContent[4]);
 const originalcompanyIdVendor = ref(props.formContent[4]);
 const currentcompanyLogo = ref(props.formContent[5]);
@@ -57,7 +59,7 @@ const submitEdit = () => {
 
   formEditState.company.companyName = currentcompanyName.value;
   formEditState.company.companyCode = currentcompanyCode.value;
-  formEditState.company.companyGroup = currentcompanyGroup.value;
+  formEditState.company.companyGroup = selectedGrupCompanyId.value;
   formEditState.company.companyShortName = currentcompanyShortName.value;
 
   formEditState.company.companyIdVendor = selectedVendorId.value;
@@ -65,20 +67,8 @@ const submitEdit = () => {
   formEditState.company.companyCodeErp = selectedCodeErpId.value;
 
   isVisible.value = false;
-  emits("changeCompany"); // Memanggil event 'changeCompany'
+  emits("changeCompany");
 };
-
-//for get vendor in select
-// const fetchVendors = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/flight_trip/get_vendor");
-//   vendorAirlines.value = res.data.data
-// }
-
-// onMounted(() => {
-//   fetchVendors();
-// });
 
 // for image logo
 const onFileSelected = (event) => {
@@ -112,24 +102,24 @@ watch(isVisible, () => {
     currentcompanyName.value = props.formContent[0];
     currentcompanyCode.value = props.formContent[1];
     currentcompanyShortName.value = props.formContent[2];
-    currentcompanyGroup.value = props.formContent[3];
+    selectedGrupCompanyId.value = props.formContent[3];
     selectedVendorId.value = props.formContent[4];
     selectedImage.value = props.formContent[5];
     currentcompanyCodeErp.value = props.formContent[6];
   }
   vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
+  grupCompany.value = referenceFetch.fetchGrupCompanyResult;
 });
 
 const resetForm = () => {
   currentcompanyName.value = originalcompanyName.value;
   currentcompanyCode.value = originalcompanyCode.value;
-  currentcompanyGroup.value = originalcompanyGroup.value;
+  selectedGrupCompanyId.value = originalCompanyGrupCompanyId.value;
   currentcompanyShortName.value = originalcompanyShortName.value;
   selectedVendorId.value = originalcompanyIdVendor.value;
   imageUrl.value = originalcompanyLogo.value;
   currentcompanyCodeErp.value = originalcompanyCodeErp.value;
 };
-
 </script>
 
 <template>
@@ -183,7 +173,6 @@ const resetForm = () => {
                   type="file"
                   id="file-input"
                   class="hidden"
-                  required
                   accept="image/*"
                   @change="onFileSelected"
                 />
@@ -205,7 +194,6 @@ const resetForm = () => {
             >Code<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentcompanyCode"
             type="text"
             id="name"
@@ -221,7 +209,6 @@ const resetForm = () => {
             >Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentcompanyName"
             type="text"
             id="name"
@@ -237,7 +224,6 @@ const resetForm = () => {
             >Short Name<span class="text-red">*</span></label
           >
           <input
-            @keydown.enter="submitEdit"
             v-model="currentcompanyShortName"
             type="text"
             id="name"
@@ -253,14 +239,16 @@ const resetForm = () => {
           >
             Group Company<span class="text-red">*</span>
           </label>
-          <input
-            @keydown.enter="submitEdit"
-            v-model="currentcompanyGroup"
-            type="text"
-            id="name"
-            :class="inputStylingClass"
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-          />
+            v-model="selectedGrupCompanyId"
+          >
+            <option disabled selected>Grup Company</option>
+            <option v-for="data in grupCompany" :value="data.id">
+              {{ data.group_company_name }}
+            </option>
+          </select>
         </div>
 
         <div class="mb-6 text-start px-4 w-full">
