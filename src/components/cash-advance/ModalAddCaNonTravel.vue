@@ -102,8 +102,9 @@ const resetItems = async () => {
   itemsRemarks.value = "";
 };
 
-const removeItems = async (id) => {
+const removeItems = async (id, nominal) => {
   tempItem.value.splice(id, 1);
+  total -= Number(nominal);
 };
 // END ITEMS
 const saveForm = async () => {
@@ -222,7 +223,7 @@ onMounted(() => {
             >Total</label
           >
           <input
-            v-model="total"
+            :value="format_price(total)"
             type="text"
             name="event"
             :class="inputClass"
@@ -337,7 +338,7 @@ onMounted(() => {
                   <img
                     :src="deleteicon"
                     class="w-6 h-6"
-                    @click="removeItems(i)"
+                    @click="removeItems(i, items.nominal)"
                   />
                 </button>
               </div>

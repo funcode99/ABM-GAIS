@@ -2,58 +2,70 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-
-import ModalRejectShortcutnonTravel from "@/components/approval/cash-advance-non-travel/ModalRejectShortcutnonTravel.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
+import ModalRejectShortcut from "@/components/approval/cash-advance-travel/ModalRejectShortcut.vue";
+import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_ceklis from "@/assets/icon_ceklis.svg";
+import iconClose from "@/assets/navbar/icon_close.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import iconView from "@/assets/view-details.png";
 
-import canontraveldata from "@/utils/Api/approval/cash-advance-nontravel/canontraveldata.js";
+import moment from "moment";
 
-import { ref, onBeforeMount, computed } from "vue";
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+import { useRouter } from "vue-router";
 
+import { ref, onBeforeMount, computed, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
+let visibleModalReject = ref(false);
+const router = useRouter();
 
-//for sort & search
-const date = ref();
-const search = ref("");
+// format date & price
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+//for sort, search, & filter
 let sortedData = ref([]);
-// const selectedType = ref("Type");
 let sortedbyASC = true;
 let instanceArray = [];
+let paginationArray = [];
 let lengthCounter = 0;
+let filter = reactive({
+  status: "",
+  date: "",
+  search: "",
+});
 
-//for paginations
+//for paginations & showing
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
-
+let totalPage = ref(0);
+let totalData = ref(0);
 //for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+  fetch(pageOfItem);
 };
-
-//for filter & reset button
-// const filterDataByType = () => {
-//   if (selectedType.value === "") {
-//     sortedData.value = instanceArray;
-//   } else {
-//     sortedData.value = instanceArray.filter(
-//       (item) => item.type === selectedType.value
-//     );
-//   }
-// };
-
-//for filter & reset button
-// const resetData = () => {
-//   sortedData.value = instanceArray;
-//   selectedType.value = "Type";
-// };
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -75,12 +87,12 @@ const selectAll = (checkValue) => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "CA No", jsonData: "ca_no" },
-  { Id: 4, title: "Requestor", jsonData: "name" },
-  { Id: 5, title: "Event", jsonData: "event" },
-  { Id: 6, title: "Total", jsonData: "nominal" },
-  { Id: 7, title: "Status", jsonData: "status" },
-  { Id: 8, title: "Actions" },
+  { Id: 3, title: "CA No", jsonData: "no_ca" },
+  { Id: 4, title: "Requestor", jsonData: "employee_name" },
+  { Id: 5, title: "Item", jsonData: "item_count" },
+  { Id: 6, title: "Currency", jsonData: "currency_name" },
+  { Id: 7, title: "Total", jsonData: "grand_total" },
+  { Id: 8, title: "Status", jsonData: "status" },
 ];
 
 //for sort
@@ -94,22 +106,75 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = canontraveldata;
+const fetch = async (id) => {
+  let payload = {
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
+
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("approval_non_travel/get_data", {
+    params: payload,
+  });
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from ? paginationArray.from : 0;
+  showingValueTo.value = paginationArray.to;
+};
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetch();
 });
+
+//for filter & reset button
+const filterDataByType = async (id) => {
+  let payload = {
+    search: filter.search,
+    status: filter.status,
+    start_date: filter.date ? filter.date[0] : "",
+    end_date: filter.date ? filter.date[1] : "",
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
+
+  const api = await Api.get("approval_non_travel/get_data", {
+    params: payload,
+  });
+  paginationArray = api.data.data;
+  instanceArray = paginationArray.data;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+  sortedData.value = instanceArray;
+  lengthCounter = sortedData.value.length;
+  totalPage.value = paginationArray.last_page;
+  totalData.value = paginationArray.total;
+  showingValueFrom.value = paginationArray.from ? paginationArray.from : 0;
+  showingValueTo.value = paginationArray.to;
+  showingValue.value = paginationArray.current_page;
+};
+
+const resetData = () => {
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
+  fetch();
+};
 
 //for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
     (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1);
+      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
       (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
     );
   });
   sortedData.value = filteredR;
@@ -120,37 +185,86 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+const closeModalReject = () => {
+  visibleModalReject.value = false;
+};
+
+const rejectData = async (payload, id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  if (payload.is_revision == true && !payload.notes) {
+    Swal.fire({
+      html: "<b>Please fill notes!</b>",
+      timer: 2000,
+      timerProgressBar: true,
+      position: "top-end",
+      background: "#EA5455",
+      color: "#ffffff",
+      showCancelButton: false,
+      showConfirmButton: false,
+      width: "300px",
+    });
+  } else {
+    const res = await Api.post(`/approval_non_travel/reject/${id}`, payload);
+    if (res.data.success) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      closeModalReject();
+      router.push({ path: `/approvalcatravel` });
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: res.response.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
+};
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen clean-margin ease-in-out duration-500"
         :class="[
           lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
         ]"
       >
-        <div class="bg-white rounded-t-xl custom-card">
+        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
-            class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
+            class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-3"
           >
             <p
-              class="font-JakartaSans text-2xl capitalize text-[#0A0A0A] font-semibold"
+              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
               Cash Advance Non Travel
             </p>
+            <!-- <div class="flex gap-4">
+              <button
+                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+              >
+                <img :src="icon_receive" class="w-6 h-6" />
+              </button>
+            </div> -->
           </div>
 
-          <!-- SORT & SEARCH -->
+          <!-- SORT, DATE & SEARCH -->
           <div
-            class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
+            class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
             <div class="flex flex-wrap items-center gap-4">
               <div>
@@ -161,17 +275,18 @@ const getSessionForSidebar = () => {
                 </p>
 
                 <VueDatePicker
-                  v-model="date"
+                  v-model="filter.date"
                   range
                   :enable-time-picker="false"
                   class="my-date"
+                  format="yyyy-mm-dd"
                 />
               </div>
 
-              <div class="flex flex-wrap gap-4 items-center pt-6">
+              <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByType"
+                  @click="filterDataByType()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -190,7 +305,7 @@ const getSessionForSidebar = () => {
               </div>
             </div>
 
-            <div class="pt-6 w-full">
+            <div class="pt-6 flex md:mx-0">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
                   <svg
@@ -214,8 +329,8 @@ const getSessionForSidebar = () => {
                   placeholder="Search..."
                   type="text"
                   name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
+                  v-model="filter.search"
+                  @keyup="filterDataByType()"
                 />
               </label>
             </div>
@@ -242,7 +357,11 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                :class="
+                  sortedData.length > 0
+                    ? 'table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg'
+                    : 'table table-zebra table-compact border h-full w-full rounded-lg'
+                "
               >
                 <thead
                   class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -271,36 +390,56 @@ const getSessionForSidebar = () => {
                         </button>
                       </span>
                     </th>
+                    <th>
+                      <div class="text-center">Actions</div>
+                    </th>
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
-                    :key="data.no"
+                    v-for="(data, index) in sortedData"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.ca_no }}</td>
-                    <td>{{ data.name }}</td>
-                    <td>{{ data.event }}</td>
-                    <td>{{ data.nominal }}</td>
+                    <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
+                    <td>{{ format_date(data.created_at) }}</td>
+                    <td>{{ data.no_ca }}</td>
+                    <td>{{ data.employee_name }}</td>
+                    <td>{{ data.item_count }}</td>
+                    <td>{{ data.currency_name }}</td>
+                    <td>{{ format_price(data.grand_total) }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewapprovalcanontravel">
-                        <button>
-                          <img :src="icon_ceklis" class="w-6 h-6" />
-                        </button>
-                      </router-link>
-                      <ModalRejectShortcutnonTravel />
+                      <button
+                        @click="
+                          $router.push(`/viewapprovalcanontravel/${data.id}`)
+                        "
+                      >
+                        <img :src="iconView" class="w-6 h-6" />
+                      </button>
+                      <!-- <label
+                        for="my-modal-reject"
+                        class="cursor-pointer"
+                        @click="visibleModalReject = true"
+                      >
+                        <img :src="iconClose" class="w-5 h-5 mt-[2px]" />
+                      </label>
+                      <ModalReject
+                        v-if="visibleModalReject"
+                        :id="data.id"
+                        @close="closeModalReject"
+                        @reject="(data, id) => rejectData(data, id)"
+                      /> -->
                     </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <DataNotFound :cnt-col="10" />
                   </tr>
                 </tbody>
               </table>
@@ -312,12 +451,12 @@ const getSessionForSidebar = () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
