@@ -152,11 +152,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <label
+  <button
     @click="visible = true"
     for="my-modal-3"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add New</label
+    >+ Add New</button
   >
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <Modal v-model:visible="visible">

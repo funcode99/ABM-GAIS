@@ -17,6 +17,9 @@ let selectedBrand = ref("Brand")
 let selectedAdjusment = ref("Adjusment Type")
 let quantityOpname = ref("")
 let brandName = ref("");
+let warehouseName = ref("");
+let namaItem = ref("")
+let uomName = ref("")
 let Adjusment = ref([])
 let Company = ref("");
 let Site = ref("");
@@ -44,11 +47,13 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
+  changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
+  selectedCompany.value = id_company
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -61,6 +66,7 @@ const fetchUOM = async () => {
 };
 
 const changeCompany = async (id_company) => {
+  //  fetchBrandCompany(id_company)
   // changeUomBrand(id_company)
   // fetItems(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
@@ -68,6 +74,13 @@ const changeCompany = async (id_company) => {
   const res = await Api.get(`/site/get_by_company/${id_company}`);
   // console.log(res)
   Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(JSON.parse(localStorage.getItem("id_site")) === element.id){
+      selectedSite.value = element.id
+      changeSite(element.id)
+    }
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchBrand = async () => {
@@ -129,6 +142,34 @@ const addItem = async () => {
     });
     return false
   }else {
+    const wh = Warehouse.value
+  for (let index = 0; index < wh.length; index++) {
+    const element = wh[index];
+    if(element.id == selectedWarehouse.value){
+      warehouseName.value = element.warehouse_name
+    }
+  }
+  const br = Brand.value
+  for (let index = 0; index < br.length; index++) {
+    const element = br[index];
+    if(element.id == selectedBrand.value){
+      brandName.value = element.brand_name
+    }
+  }
+  const uom = UOM.value
+  for (let index = 0; index < uom.length; index++) {
+    const element = uom[index];
+    if(element.id == selectedUOM.value){
+      uomName.value = element.uom_name
+    }
+  }
+  const it = Item.value
+  for (let index = 0; index < it.length; index++) {
+    const element = it[index];
+    if(element.id == itemNames.value){
+      namaItem.value = element.item_name
+    }
+  }
   itemsTable.value.push({
     id_company: selectedCompany.value,
     id_departement: '',
@@ -142,6 +183,10 @@ const addItem = async () => {
     qty : alertQuantity.value,
     qtyOpname : quantityOpname.value,
     adjusment: selectedAdjusment.value,
+    nameWarehouse : warehouseName.value,
+    namaBrand : brandName.value,
+    namaUOM : uomName.value,
+    namItem : namaItem.value
   })
 
   itemsTable2.value.push({
@@ -402,6 +447,7 @@ onMounted(() => {
                 required
                 v-model="selectedUOM"
                 disabled="true"
+                style="background-color: 	#D3D3D3;"
               >
                 <option disabled selected>UOM</option>
                 <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
@@ -424,6 +470,7 @@ onMounted(() => {
                 required
                 v-model="selectedBrand"
                 disabled="true"
+                style="background-color: 	#D3D3D3;"
               >
                 <option disabled selected>Brand</option>
                 <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
@@ -463,6 +510,7 @@ onMounted(() => {
                 class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 placeholder="Quantity"
                 disabled="true"
+                style="background-color: 	#D3D3D3;"
               />
             </div>
             <div class="mb-6 w-full">
@@ -545,13 +593,13 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]">{{ items.id_warehouse }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_item }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.nameWarehouse }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.namItem }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.adjusment }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.qtyOpname }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_brand }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_uom }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.namaBrand }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.namaUOM }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">

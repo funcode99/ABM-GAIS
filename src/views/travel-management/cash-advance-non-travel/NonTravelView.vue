@@ -13,10 +13,12 @@ import moment from "moment";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const sidebar = useSidebarStore();
 const route = useRoute();
+const router = useRouter();
+
 let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
 
 let lockScrollbar = ref(false);
@@ -66,10 +68,6 @@ const fetchDataItem = async (id) => {
 const edit = () => {
   visibleHeader.value = true;
   statusForm = "edit-header";
-  dataItem.value.forEach((dt) => {
-    tempTotal += Number(dt.nominal);
-  });
-  dataArr.value.grand_total = tempTotal;
 };
 
 const saveFormHeader = async () => {
@@ -91,7 +89,7 @@ const saveFormHeader = async () => {
     timer: 1500,
   });
   visibleHeader.value = false;
-  route.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
+  router.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
 };
 
 const cancelHeader = () => {
@@ -101,14 +99,39 @@ const cancelHeader = () => {
 
 const removeItems = async (id) => {
   const api = await Api.delete(`cash_advance/delete_data_detail/${id}`);
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  fetchDataById(idCaNon);
+  if (api.data.success == true) {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: api.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    update_nominal();
+  }
+};
+
+const update_nominal = async () => {
+  const res = await Api.get(`/cash_advance/get_by_cash_id/${idCaNon}`);
+  dataItem.value = res.data.data;
+
+  if (res.data.success == true) {
+    tempTotal = 0;
+    dataItem.value.forEach((dt) => {
+      tempTotal += Number(dt.nominal);
+    });
+    const payload = {
+      id_employee: selectedEmployee,
+      id_request_trip: 2,
+      event: dataArr.value.event,
+      date: dataArr.value.date,
+      id_currency: dataArr.value.id_currency,
+      grand_total: tempTotal,
+    };
+
+    await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
+    dataArr.value.grand_total = tempTotal;
+  }
 };
 
 const editItems = (id) => {
@@ -119,13 +142,17 @@ const editItems = (id) => {
 const saveItems = async (type, id = null, item = null) => {
   if (type == "edit") {
     const api = await Api.post(`cash_advance/update_data_detail/${id}`, item);
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: api.data.message,
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    if (api.data.success == true) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: api.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      update_nominal();
+      idEdit.value = "";
+    }
   } else if (type == "create") {
     const payload = {
       id_ca: idCaNon,
@@ -135,18 +162,20 @@ const saveItems = async (type, id = null, item = null) => {
       remarks: itemsRemarks.value,
     };
     const api = await Api.post(`cash_advance/store_detail`, payload);
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: api.data.message,
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    if (api.data.success == true) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: api.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      update_nominal();
+      resetItems();
+    }
   }
-
   editItem.value = false;
   addItem.value = false;
-  fetchDataItem(idCaNon);
 };
 
 const addItems = () => {
@@ -184,6 +213,7 @@ const submit = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
+      router.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
     })
     .catch((e) => {
       Swal.fire({
@@ -197,7 +227,13 @@ const submit = async () => {
         color: "#ffffff",
       });
     });
-  fetchDataById(idCaNon);
+};
+
+const resetItems = async () => {
+  itemsItem.value = "";
+  itemsNominal.value = "";
+  itemsCostCentre.value = "";
+  itemsRemarks.value = "";
 };
 
 onBeforeMount(() => {
@@ -218,10 +254,7 @@ const inputClass =
 </script>
 
 <template>
-  <div
-    :class="lockScrollbar === true ? 'fixed' : ''"
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
@@ -381,7 +414,9 @@ const inputClass =
           </div>
 
           <!-- TAB & TABLE-->
-          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
+          <div
+            class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7 overflow-x-hidden"
+          >
             <button
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
               v-if="
@@ -405,7 +440,6 @@ const inputClass =
 
             <div :class="rowClass">
               <div :class="colClass">
-                <input type="hidden" name="idItem" v-model="itemsId" />
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Item<span class="text-red">*</span></label
                 >
@@ -557,7 +591,11 @@ const inputClass =
                       </select>
                     </td>
                     <td class="border border-[#B9B9B9]">
+                      <div v-if="item.id != idEdit">
+                        {{ format_price(item.nominal) }}
+                      </div>
                       <input
+                        v-else
                         v-model="item.nominal"
                         type="number"
                         name="nominal"
@@ -645,5 +683,8 @@ const inputClass =
 :disabled {
   background: #eeeeee;
   border-color: #eeeeee;
+}
+.this {
+  overflow-x: hidden;
 }
 </style>

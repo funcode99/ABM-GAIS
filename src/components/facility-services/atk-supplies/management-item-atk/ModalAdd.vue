@@ -83,6 +83,7 @@ const changeCompany = async (id_company) => {
     const element = res.data.data[index];
     if(JSON.parse(localStorage.getItem("id_site")) === element.id){
       selectedSite.value = element.id
+      changeSite(element.id)
     }
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -294,7 +295,6 @@ onMounted(() => {
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
-                for="company"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Company<span class="text-red">*</span></label
               >
@@ -313,7 +313,6 @@ onMounted(() => {
             </div>
             <div class="mb-6 w-full">
               <label
-                for="site"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Site<span class="text-red">*</span></label
               >
@@ -334,7 +333,6 @@ onMounted(() => {
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
-                for="detail"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Details</label
               >
@@ -344,7 +342,6 @@ onMounted(() => {
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
-                for="warehouse"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Warehouse<span class="text-red">*</span></label
               >
@@ -361,7 +358,6 @@ onMounted(() => {
             </div>
             <div class="mb-6 w-full">
               <label
-                for="uom"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >UOM<span class="text-red">*</span></label
               >
@@ -380,7 +376,6 @@ onMounted(() => {
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
-                for="item_name"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Item Name<span class="text-red">*</span></label
               >
@@ -395,7 +390,6 @@ onMounted(() => {
 
             <div class="mb-6 w-full">
               <label
-                for="alert"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Alert Quantity<span class="text-red">*</span></label
               >
@@ -412,7 +406,6 @@ onMounted(() => {
           <div class="flex justify-between px-6 items-center gap-2">
             <div class="mb-6 w-full">
               <label
-                for="uom"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Brand<span class="text-red">*</span></label
               >
@@ -429,7 +422,6 @@ onMounted(() => {
             </div>
             <div class="mb-6 w-full">
               <label
-                for="id_item"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Remarks</label
               >
@@ -444,7 +436,6 @@ onMounted(() => {
           </div>
           <div class="flex justify-start px-6 items-center gap-2">
             <label
-                for="warehouse"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >ID Items<span class="text-red">*</span></label
               >
