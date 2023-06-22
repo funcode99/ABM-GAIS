@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import './index.css'
+import 'vue-search-select/dist/VueSearchSelect.css'
 
 import Vue3TagsInput from 'vue3-tags-input';
 import vClickOutside from "click-outside-vue3"

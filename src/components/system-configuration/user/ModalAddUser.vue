@@ -1,15 +1,7 @@
 <script setup>
   import { computed, ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
-
-  import {
-  Combobox,
-  ComboboxInput,
-  ComboboxButton,
-  ComboboxOption,
-  ComboboxOptions,
-  TransitionRoot,
-} from '@headlessui/vue'
+  import { ModelSelect } from 'vue-search-select'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
@@ -23,6 +15,8 @@
   const sysconfigFetch = useSysconfigFetchResult()
   const menuAccessStore = useMenuAccessStore()
 
+  let result = ref([])
+
   let isVisible = ref(false)
   let isAdding = ref(false)
   let modalPaddingHeight = "10vh"
@@ -31,7 +25,7 @@
   let isEmployee = ref(false)
 
   let fullname = ref('')
-  let username = ref(['', 0, 0])
+  let employeeId = ref()
   let usernameNonEmployee = ref('')
   let email = ref('')
   let password = ref('')
@@ -50,13 +44,10 @@
 
   const submitUser = () => {
 
-    console.log(isEmployee.value)
-    console.log(username.value)
-
     isVisible.value = false
 
     if(isEmployee.value == true) {
-      formState.user.username = username.value[4]
+      formState.user.username = result.value[0].employee_name
     } else {
       formState.user.username = usernameNonEmployee.value
     }
@@ -77,7 +68,7 @@
   const resetInput = () => {
       email.value = ''
       fullname.value = ''
-      username.value = ''
+      employeeId.value = ''
       usernameNonEmployee.value = ''
       password.value = ''
       role.value = []
@@ -103,17 +94,26 @@
 
     responseEmployeeArray.value.map((item) => {
       item.value = item.id
+      item.text = item.employee_name
     })
 
   })
 
   watch(isEmployee, () => {
-    company.value = username.value[1]    
+    // company.value = 0
   })
 
-  watch(username, () => {
-    company.value = username.value[1]
-    email.value = username.value[3]
+  watch(employeeId, () => {
+    
+    result.value = responseEmployeeArray.value.filter((item) => {
+      return item.id == employeeId.value
+    })
+
+    if(result.value.length > 0) {
+      company.value = result.value[0].id_company
+      email.value = result.value[0].email
+    }
+
   })
 
   watch(company, () => {
@@ -127,24 +127,13 @@
   })
 
   watch(responseSiteByCompanyIdArray, () => {
-    location.value = username.value[2]
+    if(result.value.length > 0) {
+      location.value = result.value[0].id_site
+    }
     isLoading.value = false
   })
 
   const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
-
-  let query = ref('')
-
-  let filteredPeople = computed(() =>
-  query.value === ''
-    ? responseEmployeeArray.value
-    : responseEmployeeArray.value.filter((person) =>
-        person.employee_name
-          .toLowerCase()
-          .replace(/\s+/g, '')
-          .includes(query.value.toLowerCase().replace(/\s+/g, ''))
-      )
-  )
 
 </script>
 
@@ -204,78 +193,11 @@
                   Username<span class="text-red">*</span>
                 </label>
 
-                <Combobox v-if="isEmployee" v-model="username">
-
-                  <div>
-                    
-                    <div>
-
-                      <ComboboxInput
-                        :class="inputStylingClass"
-                        :value="username[0]"
-                        placeholder="Username"
-                      />
-                      
-                      <ComboboxButton class="absolute inset-y-0 right-0 flex items-center pr-2">
-                      </ComboboxButton>
-
-                    </div>
-
-                    <TransitionRoot
-                      leave="transition ease-in duration-100"
-                      leaveFrom="opacity-100"
-                      leaveTo="opacity-0"
-                      @after-leave="query = ''"
-                    >
-
-                      <ComboboxOptions class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                        
-                        <div
-                          v-if="filteredPeople.length === 0 && query !== ''"
-                          class="relative cursor-default select-none py-2 px-4 text-gray-700"
-                        >
-                          Nothing found.
-                        </div>
-
-                        <ComboboxOption
-                          v-for="data in filteredPeople"
-                          as="template"
-                          :key="data.id"
-                          :value="[data.employee_name, data.id_company, data.id_site, data.email, data.sn_employee]"
-                          v-slot="{ username, active }"
-                        >
-
-                          <li
-                            class="relative cursor-default select-none py-2 pl-10 pr-4"
-                            :class="{
-                              'bg-teal-600 text-white': active,
-                              'text-gray-900': !active,
-                            }"
-                          >
-                            
-                            <span class="block truncate" :class="{ 'font-medium': username, 'font-normal': !username }">
-                              {{ data.employee_name }}
-                            </span>
-
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3"
-                              v-if="username"
-                              :class="{ 'text-white': active, 'text-teal-600': !active }"
-                            >
-
-                            </span>
-
-                          </li>
-
-                        </ComboboxOption>
-
-                      </ComboboxOptions>
-
-                    </TransitionRoot>
-
-                  </div>
-
-                </Combobox>
-
+                <model-select v-if="isEmployee" 
+                  v-model="employeeId"
+                  :options="responseEmployeeArray" 
+                  placeholder="Select Employee">
+                </model-select>
 
                 <div class="mb-6"></div>
     

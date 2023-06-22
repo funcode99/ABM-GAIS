@@ -203,6 +203,18 @@ const nextStep = async (step) => {
         timer: 1500,
       });
       router.push({ path: `/settlement/${api.data.data.id}` });
+    } else {
+      Swal.fire({
+        html: "<b>Please fill in the form!</b>",
+        timer: 2000,
+        timerProgressBar: true,
+        position: "top-end",
+        background: "#EA5455",
+        color: "#ffffff",
+        showCancelButton: false,
+        showConfirmButton: false,
+        width: "300px",
+      });
     }
   }
 };
@@ -478,8 +490,8 @@ const nextStep = async (step) => {
     backdrop-filter;
   transition-duration: 200ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  width: 91.666667%;
-  max-width: 50rem /* 512px */;
+  /* width: 91.666667%; */
+  max-width: 70rem;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

@@ -65,6 +65,7 @@ const fetchDataById = async (id) => {
   const res = await Api.get(`/claim_reimbursement/get_data/${id}`);
   dataArr.value = res.data.data[0];
   filename.value = dataArr.value.attachment;
+  selectedImage.value = dataArr.value.attachment_path;
   fetchDataItem(id);
 };
 
@@ -141,6 +142,7 @@ const saveFormHeader = async () => {
 const cancelHeader = () => {
   visibleHeader.value = false;
   editItem.value = false;
+  idEdit.value = ''
 };
 // END
 
@@ -392,7 +394,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2" v-if="dataArr.status == 'Completed'">
               <span class="font-JakartaSans font-medium text-sm"
                 >Transfered Date</span
               >
@@ -424,7 +426,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
                 accept="application/pdf"
                 @change="onFileSelected"
-                v-value="selectedImage"
+                :v-model="selectedImage"
                 :disabled="!visibleHeader"
               />
               <div
@@ -611,7 +613,11 @@ const inputClass =
                       </select>
                     </td>
                     <td class="border border-[#B9B9B9]">
+                      <span v-if="!editItem">
+                        {{ format_price(item.nominal) }}
+                      </span>
                       <input
+                        v-else
                         v-model="item.nominal"
                         type="number"
                         name="nominal"
