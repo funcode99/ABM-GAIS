@@ -16,6 +16,7 @@ let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
 let brandName = ref("");
 let warehouseName = ref("");
+let namaItem = ref("")
 let uomName = ref("")
 let Company = ref("");
 let Site = ref("");
@@ -146,6 +147,13 @@ const addItem = async () => {
       uomName.value = element.uom_name
     }
   }
+  const it = Item.value
+  for (let index = 0; index < it.length; index++) {
+    const element = it[index];
+    if(element.id == itemNames.value){
+      namaItem.value = element.item_name
+    }
+  }
   itemsTable.value.push({
     id_company: selectedCompany.value,
     id_departement: '',
@@ -159,7 +167,8 @@ const addItem = async () => {
     qty : alertQuantity.value,
     nameWarehouse : warehouseName.value,
     namaBrand : brandName.value,
-    namaUOM : uomName.value
+    namaUOM : uomName.value,
+    namItem : namaItem.value
   })
   resetButCompanyDisable()
   return itemsTable
@@ -393,6 +402,7 @@ onMounted(() => {
                 required
                 v-model="selectedUOM"
                 disabled="true"
+                style="background-color: 	#D3D3D3;"
               >
                 <option disabled selected>UOM</option>
                 <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
@@ -429,6 +439,7 @@ onMounted(() => {
                 required
                 v-model="selectedBrand"
                 disabled="true"
+                style="background-color: 	#D3D3D3;"
               >
                 <option disabled selected>Brand</option>
                 <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
@@ -507,7 +518,7 @@ onMounted(() => {
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
                 <td class="border border-[#B9B9B9]">{{ items.nameWarehouse }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_item }}</td>
+                <td class="border border-[#B9B9B9]">{{ items.namItem }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.namaBrand }}</td>
                 <td class="border border-[#B9B9B9]">{{ items.namaUOM }}</td>

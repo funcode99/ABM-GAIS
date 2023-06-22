@@ -151,11 +151,11 @@ const format_date = (value) => {
               >
                 Draft
               </button> -->
-              <button
-                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+              <span
+                class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[100px] h-[30px] border-blue bg-white"
               >
                 {{status}}
-              </button>
+              </span>
               <!-- <button
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
@@ -167,11 +167,11 @@ const format_date = (value) => {
 
           <div class="flex justify-between ml-10">
             <div class="flex gap-2">
-              <!-- <button
+              <button
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
               >
                 Edit
-              </button> -->
+              </button>
               <button
                 v-if="status != 'Completed'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
