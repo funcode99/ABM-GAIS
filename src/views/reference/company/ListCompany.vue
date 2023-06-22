@@ -5,7 +5,8 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/reference/company/ModalAdd.vue";
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import ModalView from "@/components/reference/company/ModalView.vue";
-import ModalAddgrupCompany from "@/components/reference/company/GroupCompany/ModalAddgrupCompany.vue";
+import ModalAddGrupCompany from "@/components/reference/company/GroupCompany/ModalAddGrupCompany.vue";
+import ModalEditGrupCompany from "@/components/reference/company/GroupCompany/ModalEditGrupCompany.vue";
 
 import fetchVendorUtils from "@/utils/Fetch/Reference/fetchVendorFlightTrip";
 import fetchGrupCompanyUtils from "@/utils/Fetch/Reference/fetchGrupCompany";
@@ -28,10 +29,12 @@ import { ref, onBeforeMount, computed, watch } from "vue";
 
 import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
+import { useFormEditStoreGroupCompany } from "@/stores/reference/company/edit-modal-grupCompany.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 const formEditState = useFormEditStore();
+const formEditStateGroupCompany = useFormEditStoreGroupCompany();
 const referenceFetch = useReferenceFetchResult();
 
 let companyCode = ref();
@@ -323,7 +326,7 @@ const fetchGroupCompany = async () => {
   const res = await Api.get("/group_company/get");
   instanceArrayGroupCompany = res.data.data;
   sortedDataGroupCompany.value = instanceArrayGroupCompany;
-  console.log(instanceArrayGroupCompany);
+  // console.log(instanceArrayGroupCompany);
 };
 
 const deleteDataInCeklisGroupCompany = () => {
@@ -438,6 +441,36 @@ const deleteGroupCompany = async (id) => {
       return;
     }
   });
+};
+
+let editGroupCompanyDataId = ref();
+
+//for edit
+const editGroupCompany = async (data) => {
+  editGroupCompanyDataId.value = data;
+  setTimeout(callEditApiGroupCompany, 500);
+  // console.log("ini data id:" + data);
+};
+
+//for edit
+const callEditApiGroupCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(`/group_company/update_data/${editGroupCompanyDataId.value}`, {
+    group_company_code:
+      formEditStateGroupCompany.groupCompany.companyGroupCompanyCode,
+    group_company_name:
+      formEditStateGroupCompany.groupCompany.companyGroupCompanyName,
+    logo: formEditStateGroupCompany.groupCompany.companyGroupCompanyLogo,
+  });
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchGroupCompany();
 };
 </script>
 
@@ -730,7 +763,7 @@ const deleteGroupCompany = async (id) => {
                 >
                   Delete
                 </button>
-                <ModalAddgrupCompany @companygrup-saved="fetchGroupCompany"/>
+                <ModalAddGrupCompany @companygrup-saved="fetchGroupCompany" />
               </div>
             </div>
 
@@ -852,18 +885,14 @@ const deleteGroupCompany = async (id) => {
                     </span>
                   </td>
                   <td class="flex flex-wrap gap-2 justify-center">
-                    <!-- <ModalEdit
-                      @change-company="editCompany(data.id)"
+                    <ModalEditGrupCompany
+                      @changeGroupCompany="editGroupCompany(data.id)"
                       :formContent="[
-                        data.company_name,
-                        data.company_code,
-                        data.short_name,
-                        data.id_group_company,
-                        data.id_vendor,
+                        data.group_company_code,
+                        data.group_company_name,
                         data.logo_path,
-                        data.code_erp,
                       ]"
-                    /> -->
+                    />
                     <button @click="deleteGroupCompany(data.id)">
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
