@@ -758,7 +758,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewapprovalcanontravel',
+      path: '/viewapprovalcanontravel/:id',
       name: 'view approval cash advance non travel',
       component: CaNonTravelView,
       meta: {
