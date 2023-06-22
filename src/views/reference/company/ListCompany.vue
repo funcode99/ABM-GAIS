@@ -349,6 +349,20 @@ const deleteDataInCeklisGroupCompany = () => {
   }
 };
 
+const sortListGroupCompany = (sortBy) => {
+  if (sortedbyASCGroupCompany) {
+    sortedDataGroupCompany.value.sort((x, y) =>
+      x[sortBy] > y[sortBy] ? -1 : 1
+    );
+    sortedbyASCGroupCompany = false;
+  } else {
+    sortedDataGroupCompany.value.sort((x, y) =>
+      x[sortBy] < y[sortBy] ? -1 : 1
+    );
+    sortedbyASCGroupCompany = true;
+  }
+};
+
 const onChangePageGroupCompany = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
@@ -844,7 +858,7 @@ const callEditApiGroupCompany = async () => {
                     v-for="data in tableHeadGroupCompany"
                     :key="data.Id"
                     class="overflow-x-hidden cursor-pointer"
-                    @click="sortList(`${data.jsonData}`)"
+                    @click="sortListGroupCompany(`${data.jsonData}`)"
                   >
                     <span class="flex justify-center items-center gap-1">
                       <p class="font-JakartaSans font-bold text-sm">
@@ -925,7 +939,7 @@ const callEditApiGroupCompany = async () => {
                       v-for="data in tableHeadGroupCompany"
                       :key="data.Id"
                       class="overflow-x-hidden cursor-pointer"
-                      @click="sortList(`${data.jsonData}`)"
+                      @click="sortListGroupCompany(`${data.jsonData}`)"
                     >
                       <div class="flex justify-center items-center">
                         <p class="font-JakartaSans font-bold text-sm">
