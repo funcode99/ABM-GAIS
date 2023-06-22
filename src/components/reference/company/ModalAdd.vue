@@ -9,13 +9,17 @@ import { Modal } from "usemodal-vue3";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
-import { ref, onMounted, watch } from "vue";
+import { ref, watch } from "vue";
+
+import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
+const referenceFetch = useReferenceFetchResult();
 
 const emits = defineEmits(["unlockScrollbar", "company-saved"]);
 
 const selectedImage = ref(null);
 let selectedVendor = ref("Vendor");
 let selectedCodeErp = ref("ERP");
+let selectedGrupCompany = ref("Company");
 let companyCode = ref("");
 let companyName = ref("");
 let grupCompany = ref("");
@@ -27,20 +31,6 @@ let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 let iconfilename = ref(null);
 let imageUrl = ref(null);
-
-//for get vendor in select
-const fetchVendors = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/flight_trip/get_vendor");
-  vendorAirlines.value = res.data.data;
-  // console.log("ini data vendor" + JSON.stringify(res.data.data));
-};
-
-// onMounted(fetch);
-onMounted(() => {
-  fetchVendors();
-});
 
 // for image logo
 const onFileSelected = (event) => {
@@ -79,7 +69,7 @@ const callAddApi = async () => {
       company_code: companyCode.value,
       company_name: companyName.value,
       short_name: shortName.value,
-      group_company: grupCompany.value,
+      id_group_company: selectedGrupCompany.value,
       logo: selectedImage.value,
       id_vendor: selectedVendor.value,
       code_erp: selectedCodeErp.value,
@@ -103,7 +93,7 @@ const resetInput = () => {
   companyCode.value = "";
   companyName.value = "";
   shortName.value = "";
-  grupCompany.value = "";
+  selectedGrupCompany.value = "Company";
   selectedVendor.value = "Vendor";
   selectedCodeErp.value = "ERP";
   imageUrl.value = null;
@@ -115,6 +105,9 @@ watch(isVisible, () => {
   } else {
     resetInput();
   }
+
+  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
+  grupCompany.value = referenceFetch.fetchGrupCompanyResult;
 });
 </script>
 
@@ -219,13 +212,16 @@ watch(isVisible, () => {
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Group Company<span class="text-red">*</span></label
           >
-          <input
-            type="text"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Group Company"
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="grupCompany"
-          />
+            v-model="selectedGrupCompany"
+          >
+            <option value="" disabled selected>Grup Company</option>
+            <option v-for="data in grupCompany" :value="data.id">
+              {{ data.group_company_name }}
+            </option>
+          </select>
         </div>
 
         <div class="mb-6 w-full px-4">

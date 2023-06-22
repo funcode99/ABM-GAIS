@@ -1,36 +1,37 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import ModalAdd from "@/components/reference/company/ModalAdd.vue"
-import ModalEdit from "@/components/reference/company/ModalEdit.vue"
-import ModalView from "@/components/reference/company/ModalView.vue"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import ModalAdd from "@/components/reference/company/ModalAdd.vue";
+import ModalEdit from "@/components/reference/company/ModalEdit.vue";
+import ModalView from "@/components/reference/company/ModalView.vue";
 
-import fetchVendorUtils from "@/utils/Fetch/Reference/fetchVendorFlightTrip"
+import fetchVendorUtils from "@/utils/Fetch/Reference/fetchVendorFlightTrip";
+import fetchGrupCompanyUtils from "@/utils/Fetch/Reference/fetchGrupCompany";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import tableData from "@/components/table/tableData.vue"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
-import icon_receive from "@/assets/icon-receive.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
-import icondanger from "@/assets/Danger.png"
-import iconClose from "@/assets/navbar/icon_close.svg"
+import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-import { Workbook } from "exceljs"
-import { ref, onBeforeMount, computed, watch } from "vue"
+import { Workbook } from "exceljs";
+import { ref, onBeforeMount, computed, watch } from "vue";
 
-import { useReferenceFetchResult } from "@/stores/fetch/reference"
-import { useFormEditStore } from "@/stores/reference/company/edit-modal.js"
-import { useSidebarStore } from "@/stores/sidebar.js"
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
+import { useFormEditStore } from "@/stores/reference/company/edit-modal.js";
+import { useSidebarStore } from "@/stores/sidebar.js";
 
-const sidebar = useSidebarStore()
-const formEditState = useFormEditStore()
-const referenceFetch = useReferenceFetchResult()
+const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult();
 
 let companyCode = ref();
 let companyName = ref();
@@ -73,15 +74,16 @@ const callEditApi = async () => {
   fetch();
 };
 
-let sortedData = ref([])
-let addVendorData = ref([])
+let sortedData = ref([]);
+let addVendorData = ref([]);
+let addGrupCompanyData = ref([]);
 
 //for sort & search
-const search = ref("")
-let sortedbyASC = true
-let instanceArray = []
-const showFullText = ref({})
-let checkList = false
+const search = ref("");
+let sortedbyASC = true;
+let instanceArray = [];
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
 let showingValue = ref(1);
@@ -135,7 +137,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-}
+};
 
 //for sort
 const sortList = (sortBy) => {
@@ -149,14 +151,19 @@ const sortList = (sortBy) => {
 };
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetch()
-  fetchVendorUtils(addVendorData)
-})
+  getSessionForSidebar();
+  fetch();
+  fetchVendorUtils(addVendorData);
+  fetchGrupCompanyUtils(addGrupCompanyData);
+});
 
 watch(addVendorData, () => {
-  referenceFetch.fetchVendorAirlinesResult = addVendorData.value
-})
+  referenceFetch.fetchVendorAirlinesResult = addVendorData.value;
+});
+
+watch(addGrupCompanyData, () => {
+  referenceFetch.fetchGrupCompanyResult = addGrupCompanyData.value;
+});
 
 //for searching
 const filteredItems = (search) => {
@@ -181,10 +188,10 @@ const getSessionForSidebar = () => {
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get")
+  const res = await Api.get("/company/get");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-}
+};
 
 const deleteCompany = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -226,7 +233,7 @@ const deleteCompany = async (id) => {
       return;
     }
   });
-}
+};
 
 //for export
 const exportToExcel = () => {
@@ -267,7 +274,7 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-}
+};
 
 //for tablehead
 const tableHead = [
@@ -276,8 +283,7 @@ const tableHead = [
   { Id: 3, title: "Name", jsonData: "company_name" },
   { Id: 4, title: "Parent Company", jsonData: "group_company" },
   { Id: 5, title: "Actions" },
-]
-
+];
 </script>
 
 <template>
@@ -285,11 +291,9 @@ const tableHead = [
     <Navbar />
 
     <div class="flex w-screen content mt-[115px]">
-      
       <Sidebar class="flex-none" />
 
       <tableContainer>
-
         <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -528,7 +532,6 @@ const tableHead = [
             />
           </div>
         </tableTop>
-
       </tableContainer>
 
       <Footer />
