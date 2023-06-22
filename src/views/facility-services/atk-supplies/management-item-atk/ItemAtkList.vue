@@ -136,11 +136,19 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
+  changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id_company === element.id){
+      selectedCompany.value = id_company
+    }
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchSite = async (id, id_company) => {
@@ -250,10 +258,8 @@ const editValue = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get/${id}`);
-  // console.log(res.data.data)
-  // editData.value = res.data.data.data;
   idS.value = id
-  selectedCompany.value = res.data.data[0].id_company
+  selectedCompany.value = fetchGetCompanyID(res.data.data[0].id_company)
   selectedSite.value = fetchSite(res.data.data[0].id_site, res.data.data[0].id_company)
   selectedWarehouse.value = fetchWarehouse(res.data.data[0].id_warehouse, res.data.data[0].id_company)
   selectedUOM.value = fetchUOM(res.data.data[0].id_uom)
@@ -263,7 +269,6 @@ const editValue = async (id) => {
   remark.value = res.data.data[0].remarks
   idItems.value = res.data.data[0].code_item
   lockScrollbarEdit.value = true
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const save = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
