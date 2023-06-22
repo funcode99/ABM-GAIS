@@ -313,12 +313,14 @@
         roleId = 0
       }
 
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)
-        instanceArray = api.data.data
-        sortedData.value = instanceArray
-        onChangePage(1)
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)
+      instanceArray = api.data.data
+      sortedData.value = instanceArray
+
+      onChangePage(1)
+
     }
 
     const exportToExcel = () => {
