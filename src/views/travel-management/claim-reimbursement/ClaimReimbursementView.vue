@@ -9,6 +9,8 @@ import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import iconUpload from "@/assets/icon_upload.svg";
+import showicon from "@/assets/eye.png";
+
 import Api from "@/utils/Api";
 import moment from "moment";
 
@@ -64,8 +66,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/claim_reimbursement/get_data/${id}`);
   dataArr.value = res.data.data[0];
-  filename.value = dataArr.value.attachment;
-  selectedImage.value = dataArr.value.attachment_path;
+  selectedImage.value = dataArr.value.attachment;
   fetchDataItem(id);
 };
 
@@ -142,7 +143,9 @@ const saveFormHeader = async () => {
 const cancelHeader = () => {
   visibleHeader.value = false;
   editItem.value = false;
-  idEdit.value = ''
+  idEdit.value = "";
+  filename.value = "";
+  selectedImage.value = dataArr.value.attachment;
 };
 // END
 
@@ -394,7 +397,10 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
-            <div class="flex flex-col gap-2" v-if="dataArr.status == 'Completed'">
+            <div
+              class="flex flex-col gap-2"
+              v-if="dataArr.status == 'Completed'"
+            >
               <span class="font-JakartaSans font-medium text-sm"
                 >Transfered Date</span
               >
@@ -422,14 +428,36 @@ const inputClass =
               >
               <input
                 type="file"
-                id="logo_company"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+                id="file-input"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base hidden"
                 accept="application/pdf"
                 @change="onFileSelected"
                 :v-model="selectedImage"
                 :disabled="!visibleHeader"
               />
-              <div
+              <label
+                id="file-input-label"
+                for="file-input"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              >
+                <span v-if="selectedImage != null && !visibleHeader"
+                  ><a
+                    :href="dataArr.attachment_path"
+                    target="_blank"
+                    class="text-blue"
+                  >
+                    {{ selectedImage }}
+                  </a></span
+                >
+                <span v-else-if="visibleHeader && !filename">
+                  <div class="flex flex-wrap gap-4">
+                    <img :src="iconUpload" />
+                    Select a File
+                  </div></span
+                >
+                <span v-else-if="filename">{{ filename }}</span>
+              </label>
+              <!-- <div
                 v-if="filename != null && !visibleHeader"
                 class="py-2 font-JakartaSans font-medium text-sm"
               >
@@ -440,7 +468,7 @@ const inputClass =
                 >
                   {{ filename }}
                 </a>
-              </div>
+              </div> -->
             </div>
             <div class="flex flex-col gap-2">
               <label class="block mb-2 font-JakartaSans font-medium text-sm"
