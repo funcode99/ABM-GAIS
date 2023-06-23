@@ -17,6 +17,7 @@ export const useReferenceFetchResult = defineStore('reference', {
                 fetchSiteResult: [],
                 fetchVendorAirlinesResult: [],
                 fetchZonaIdResult: [],
+                fetchGrupCompanyResult:[],
             }
     }
 })

@@ -15,6 +15,8 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 
 let vendorAirlines = ref("");
+let grupCompany = ref("");
+let selectedGrupCompanyId = ref(props.formContent[3] || null);
 let selectedVendorId = ref(props.formContent[4] || null);
 let selectedImage = ref(props.formContent[5] || null);
 let selectedCodeErpId = ref(props.formContent[6] || null);
@@ -46,6 +48,7 @@ const currentcompanyGroup = ref(props.formContent[3]);
 
 watch(isVisible, () => {
   vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
+  grupCompany.value = referenceFetch.fetchGrupCompanyResult;
 });
 
 const inputStylingClass =
@@ -148,18 +151,21 @@ const inputStylingClass =
           />
         </div>
 
-        <div class="mb-6 text-start px-4 w-full cursor">
+        <div class="mb-6 text-start px-4 w-full">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Group Company<span class="text-red">*</span></label
           >
-          <input
-            v-model="currentcompanyGroup"
-            type="text"
-            :class="inputStylingClass"
+          <select
+            class="cursor-not-allowed font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
+            v-model="selectedGrupCompanyId"
             disabled
-            class="cursor-not-allowed"
-          />
+          >
+            <option disabled selected>Grup Company</option>
+            <option v-for="data in grupCompany" :value="data.id">
+              {{ data.group_company_name }}
+            </option>
+          </select>
         </div>
 
         <div class="mb-6 text-start px-4 w-full">

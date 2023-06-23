@@ -11,20 +11,11 @@ import Api from "@/utils/Api";
 
 import { ref, watch } from "vue";
 
-import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
-const referenceFetch = useReferenceFetchResult();
-
-const emits = defineEmits(["unlockScrollbar", "company-saved"]);
+const emits = defineEmits(["unlockScrollbar", "companygrup-saved"]);
 
 const selectedImage = ref(null);
-let selectedVendor = ref("Vendor");
-let selectedCodeErp = ref("ERP");
-let selectedGrupCompany = ref("Company");
-let companyCode = ref("");
-let companyName = ref("");
-let grupCompany = ref("");
-let vendorAirlines = ref("");
-let shortName = ref("");
+let companyCodegroup = ref("");
+let companyGroupName = ref("");
 const file = ref({});
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
@@ -54,7 +45,7 @@ const onFileSelected = (event) => {
   }
 };
 
-const saveCompany = async () => {
+const saveGroupCompany = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
@@ -65,14 +56,10 @@ const callAddApi = async () => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-    await Api.post(`/company/store`, {
-      company_code: companyCode.value,
-      company_name: companyName.value,
-      short_name: shortName.value,
-      id_group_company: selectedGrupCompany.value,
+    await Api.post(`/group_company/store`, {
+      group_company_code: companyCodegroup.value,
+      group_company_name: companyGroupName.value,
       logo: selectedImage.value,
-      id_vendor: selectedVendor.value,
-      code_erp: selectedCodeErp.value,
     });
 
     Swal.fire({
@@ -83,19 +70,16 @@ const callAddApi = async () => {
       timer: 1500,
     });
 
-    emits("company-saved");
+    emits("companygrup-saved");
   } catch (error) {
     console.log(error);
   }
 };
 
 const resetInput = () => {
-  companyCode.value = "";
-  companyName.value = "";
-  shortName.value = "";
-  selectedGrupCompany.value = "Company";
-  selectedVendor.value = "Vendor";
-  selectedCodeErp.value = "ERP";
+  companyCodegroup.value = "";
+  companyGroupName.value = "";
+
   imageUrl.value = null;
 };
 
@@ -105,9 +89,6 @@ watch(isVisible, () => {
   } else {
     resetInput();
   }
-
-  vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
-  grupCompany.value = referenceFetch.fetchGrupCompanyResult;
 });
 </script>
 
@@ -121,9 +102,15 @@ watch(isVisible, () => {
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <main>
-      <modalHeader @closeVisibility="isVisible = false" title="New Company" />
+      <modalHeader
+        @closeVisibility="isVisible = false"
+        title="New Group Company"
+      />
 
-      <form class="pt-4 modal-box-inner-company" @submit.prevent="saveCompany">
+      <form
+        class="pt-4 modal-box-inner-company"
+        @submit.prevent="saveGroupCompany"
+      >
         <div class="flex justify-center items-center">
           <div class="avatar">
             <div
@@ -178,81 +165,22 @@ watch(isVisible, () => {
           <input
             type="text"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Code"
+            placeholder="Code Company"
             required
-            v-model="companyCode"
+            v-model="companyCodegroup"
           />
         </div>
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Name<span class="text-red">*</span></label
+            >Group Name<span class="text-red">*</span></label
           >
           <input
             type="text"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Name Company"
+            placeholder="Group Name"
             required
-            v-model="companyName"
+            v-model="companyGroupName"
           />
-        </div>
-        <div class="mb-6 w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Short Name<span class="text-red">*</span></label
-          >
-          <input
-            type="text"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Name Company"
-            required
-            v-model="shortName"
-            maxlength="5"
-          />
-        </div>
-        <div class="mb-6 w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Group Company<span class="text-red">*</span></label
-          >
-          <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            required
-            v-model="selectedGrupCompany"
-          >
-            <option value="" disabled selected>Grup Company</option>
-            <option v-for="data in grupCompany" :value="data.id">
-              {{ data.group_company_name }}
-            </option>
-          </select>
-        </div>
-
-        <div class="mb-6 w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Vendor Airlines<span class="text-red">*</span></label
-          >
-          <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            required
-            v-model="selectedVendor"
-          >
-            <option disabled selected>Vendor</option>
-            <option v-for="vendor in vendorAirlines" :value="vendor.id">
-              {{ vendor.vendor }}
-            </option>
-          </select>
-        </div>
-
-        <div class="mb-6 w-full px-4">
-          <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >ERP<span class="text-red">*</span></label
-          >
-          <select
-            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            required
-            v-model="selectedCodeErp"
-          >
-            <option disabled selected>ERP</option>
-            <option value="SAP">SAP</option>
-            <option value="RAMCO">RAMCO</option>
-          </select>
         </div>
 
         <modalFooter @closeEdit="isVisible = false" class="pb-4" />

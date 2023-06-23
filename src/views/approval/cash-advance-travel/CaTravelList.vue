@@ -11,6 +11,8 @@ import icon_reset from "@/assets/icon_reset.svg";
 import icon_ceklis from "@/assets/icon_ceklis.svg";
 import iconClose from "@/assets/navbar/icon_close.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import iconView from "@/assets/view-details.png";
+
 import moment from "moment";
 
 import Api from "@/utils/Api";
@@ -152,7 +154,7 @@ const filterDataByType = async (id) => {
   lengthCounter = sortedData.value.length;
   totalPage.value = paginationArray.last_page;
   totalData.value = paginationArray.total;
-  showingValueFrom.value = paginationArray.from;
+  showingValueFrom.value = paginationArray.from ? paginationArray.from : 0;
   showingValueTo.value = paginationArray.to;
   showingValue.value = paginationArray.current_page;
 };
@@ -414,12 +416,12 @@ const rejectData = async (payload, id) => {
                     <td class="flex flex-wrap gap-4 justify-center">
                       <button
                         @click="
-                          $router.push(`/viewapprovalcatravel/${data.id}`)
+                          $router.push(`/viewapprovalcanontravel/${data.id}`)
                         "
                       >
-                        <img :src="icon_ceklis" class="w-6 h-6" />
+                        <img :src="iconView" class="w-6 h-6" />
                       </button>
-                      <label
+                      <!-- <label
                         for="my-modal-reject"
                         class="cursor-pointer"
                         @click="visibleModalReject = true"
@@ -431,7 +433,7 @@ const rejectData = async (payload, id) => {
                         :id="data.id"
                         @close="closeModalReject"
                         @reject="(data, id) => rejectData(data, id)"
-                      />
+                      /> -->
                     </td>
                   </tr>
                 </tbody>

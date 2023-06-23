@@ -180,7 +180,7 @@ const close = () => {
             </div>
             <input
               type="file"
-              class="px-4 py-1 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              class="font-JakartaSans capitalize block bg-white max-w[55%] lg:w-56 md:w-52 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               accept="application/pdf"
               @change="onFileSelected"
               v-value="selectedImage"
