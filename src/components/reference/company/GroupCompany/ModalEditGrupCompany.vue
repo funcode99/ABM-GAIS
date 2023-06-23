@@ -46,7 +46,8 @@ const submitEdit = () => {
     currentGroupCompanyCode.value;
   formEditStateGroupCompany.groupCompany.companyGroupCompanyName =
     currentGroupCompanyName.value;
-  formEditStateGroupCompany.groupCompany.companyGroupCompanyLogo = selectedImage.value;
+  formEditStateGroupCompany.groupCompany.companyGroupCompanyLogo =
+    selectedImage.value;
 
   isVisible.value = false;
   emits("changeGroupCompany");
@@ -153,14 +154,14 @@ const resetForm = () => {
         <p
           class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4 mb-6"
         >
-          Logo
+          Logo Company Group
         </p>
 
         <div class="mb-6 text-start px-4 w-full">
           <label
             for="code"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Code<span class="text-red">*</span></label
+            >Code Company Group<span class="text-red">*</span></label
           >
           <input
             v-model="currentGroupCompanyCode"
@@ -175,7 +176,7 @@ const resetForm = () => {
           <label
             for="name"
             class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Name<span class="text-red">*</span></label
+            >Company Group Name<span class="text-red">*</span></label
           >
           <input
             v-model="currentGroupCompanyName"
