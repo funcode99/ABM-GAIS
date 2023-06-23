@@ -36,7 +36,7 @@
   const search = ref("");
   const searchFilter = ref("");
   let sortedData = ref([]);
-  const selectedType = ref("");
+  const selectedType = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
   const status = ref("");
   let StatusItems = ref([])
   // const status = ref("");
@@ -84,11 +84,12 @@
 
   //for filter & reset button
   const resetData = () => {
-    selectedType.value = ''
+    selectedType.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"));
+
     status.value = ''
     start_date.value = ''
     end_date.value = ''
-    fetchData(showingValue.value, "", "", "", "",searchFilter.value,pageMultiplier.value)
+    fetchData(showingValue.value, selectedType.value, "", "", "",searchFilter.value,pageMultiplier.value)
     // sortedData.value = instanceArray;
     // status.value = "Type";
   };
@@ -340,7 +341,7 @@
                     Date
                   </p>
 
-                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" />
+                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" format="dd-MM-yyyy" />
                 </div>
               </div>
 
@@ -484,10 +485,16 @@
                       {{ data.status }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/viewstockinatk/${data.id}`">
+                      <router-link v-if="data.status == 'Draft'" :to="`/viewstockinatk/${data.id}`">
                         <img :src="editicon" class="w-6 h-6" />
                       </router-link>
-                      <button @click="deleteValue(data.id)">
+                      <button v-else disabled>
+                        <img :src="editicon" class="w-6 h-6" />
+                      </button>
+                      <button v-if="data.status == 'Draft'" @click="deleteValue(data.id)">
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
+                      <button v-else disabled>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>

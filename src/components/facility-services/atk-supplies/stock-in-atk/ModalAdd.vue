@@ -43,11 +43,13 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
+  changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
+  selectedCompany.value = id_company
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -67,6 +69,13 @@ const changeCompany = async (id_company) => {
   const res = await Api.get(`/site/get_by_company/${id_company}`);
   // console.log(res)
   Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(JSON.parse(localStorage.getItem("id_site")) === element.id){
+      selectedSite.value = element.id
+      changeSite(element.id)
+    }
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchBrand = async () => {
@@ -478,38 +487,38 @@ onMounted(() => {
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Warehouse
                 </th>
                 
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Item Name
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Quantity
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Brand
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   UOM
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Remarks
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Actions
                 </th>
@@ -517,13 +526,13 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]">{{ items.nameWarehouse }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namItem }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namaBrand }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namaUOM }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
-                <td class="border border-[#B9B9B9]">
+                <td class="border border-[#B9B9B9] text-center">{{ items.nameWarehouse }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namItem }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.qty }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaBrand }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaUOM }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.remarks }}</td>
+                <td class="border border-[#B9B9B9] text-center">
                   <div class="flex flex-wrap justify-center items-center gap-2">
                     <button @click="removeItems(i)">
                       <img :src="deleteicon" class="w-6 h-6" />
