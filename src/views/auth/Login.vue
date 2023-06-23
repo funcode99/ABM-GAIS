@@ -19,16 +19,11 @@
     try {
 
 
-        // store.commit('isLoading', true);
         const data = await Api.post('/login', 
         {
             username: username.value,
             password: password.value
         })
-
-        // tambah withCredentials malah error :(
-        // console.log(JSON.stringify(data))
-        //add local storage tomy 
  
         localStorage.setItem('id_role', JSON.stringify(data.data.users.code_role))
         localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))

@@ -104,9 +104,11 @@
             });
 
             if (sortedData.value.length == 1) {
-              fetchMenuUtils(instanceArray, addMenuData, sortedData)
+              // fetchMenuUtils(instanceArray, addMenuData, sortedData)
+              fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
             } else {
-              fetchMenuUtils(instanceArray, addMenuData, sortedData)
+              // fetchMenuUtils(instanceArray, addMenuData, sortedData)
+              fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
             }
 
           })
@@ -150,7 +152,8 @@
           timer: 1500,
       })
 
-      fetchMenuUtils(instanceArray, addMenuData, sortedData)
+      // fetchMenuUtils(instanceArray, addMenuData, sortedData)
+      fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
 
     }
 
@@ -194,7 +197,8 @@
           timer: 1500,
       })
 
-      fetchMenuUtils(instanceArray, addMenuData, sortedData)
+      // fetchMenuUtils(instanceArray, addMenuData, sortedData)
+      fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
 
       } catch (error) {
         console.log(error)
@@ -260,7 +264,7 @@
       console.log(id)
       console.log('masuk ke filter table')
         const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/menu/get?filter=${id}`)
         responseStatus.value = api.status
         instanceArray = api.data.data
