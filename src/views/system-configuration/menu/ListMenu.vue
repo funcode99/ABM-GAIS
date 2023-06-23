@@ -266,6 +266,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/menu/get?filter=${id}`)
+        console.log(api)
         responseStatus.value = api.status
         instanceArray = api.data.data
         sortedData.value = instanceArray

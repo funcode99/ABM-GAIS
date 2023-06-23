@@ -146,6 +146,7 @@ const resetCompanyAndRole = () => {
           </p>
 
           <select
+          :class="[$route.path !== '/menu' ? 'inline' : 'hidden']"
             v-model="companyId"
             class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
           >
@@ -156,6 +157,20 @@ const resetCompanyAndRole = () => {
               {{ data.company_name }}
             </option>
           </select>
+
+          <select
+          :class="[$route.path === '/menu' ? 'inline' : 'hidden']"
+            v-model="companyId"
+            class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+          >
+            <option hidden disabled value="company">
+              Company
+            </option>
+            <option v-for="data in companyData" :value="data.company_name" :key="data.id">
+              {{ data.company_name }}
+            </option>
+          </select>
+
         </div>
 
         <!-- show role on user table page -->
