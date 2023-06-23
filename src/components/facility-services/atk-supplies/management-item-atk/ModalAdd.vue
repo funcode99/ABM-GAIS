@@ -465,42 +465,42 @@ onMounted(() => {
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   Warehouse
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   ID Item
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   Item Name
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   Brand
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   UOM
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   Alert Quantity
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   Remarks
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   Actions
                 </th>
@@ -508,13 +508,13 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]">{{ items.nameWarehouse }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.code_item }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.item_name }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namaBrand }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namaUOM }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.alert_qty }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.nameWarehouse }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.code_item }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.item_name }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaBrand }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaUOM }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.alert_qty }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">
                     <button @click="removeItems(i)">
