@@ -269,9 +269,9 @@ onMounted(() => {
   >
 
   <input type="checkbox" v-if="addModal == true" id="my-modal-item-atk" class="modal-toggle" />
-  <div class="modal" v-if="addModal == true">
-    <div class="modal-dialog bg-white w-3/5">
-      <nav class="sticky top-0 z-50 bg-[#015289]">
+  <div class="modal " v-if="addModal == true" >
+    <div class="modal-dialog bg-white w-3/5 rounded-2xl">
+      <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl">
         <label
           @click="coba2"
           for="my-modal-item-atk"

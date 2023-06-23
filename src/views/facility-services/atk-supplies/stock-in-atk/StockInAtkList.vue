@@ -460,7 +460,7 @@
                   </tr>
                 </thead>
 
-                <tbody>
+                <tbody v-if="sortedData.length > 0">
                   <tr class="font-JakartaSans font-normal text-sm" v-for="(data, index) in sortedData" :key="data.id">
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
@@ -491,6 +491,11 @@
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
+                  </tr>
+                </tbody>
+                <tbody v-else>
+                  <tr>
+                    <td colspan="7">Data Not Found</td>
                   </tr>
                 </tbody>
               </table>

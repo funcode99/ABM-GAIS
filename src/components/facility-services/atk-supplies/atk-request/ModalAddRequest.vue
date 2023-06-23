@@ -236,8 +236,8 @@ onMounted(() => {
 
   <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
   <div class="modal" >
-    <div class="modal-dialog bg-white w-3/5">
-      <nav class="sticky top-0 z-50 bg-[#015289]" >
+    <div class="modal-dialog bg-white w-3/5 rounded-2xl">
+      <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl" >
         <label
         @click="coba2"
           for="my-modal-stock-in"
