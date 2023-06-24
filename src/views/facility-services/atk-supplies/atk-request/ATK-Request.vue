@@ -214,12 +214,12 @@ const format_date = (value) => {
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -540,6 +540,6 @@ tr th {
 }
 
 .my-date {
-  width: 200px !important;
+  width: 300px !important;
 }
 </style>

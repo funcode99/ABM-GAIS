@@ -272,10 +272,10 @@
 </script>
 
 <template>
-  <div class="flex flex-col w-full this" :class="lockScrollbar === true ? 'fixed' : ''">
+  <div class="flex flex-col w-full this h-[100vh]" :class="lockScrollbar === true ? 'fixed' : ''">
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500" :class="[
@@ -560,6 +560,6 @@
   }
 
   .my-date {
-    width: 200px !important;
+    width: 300px !important;
   }
 </style>
