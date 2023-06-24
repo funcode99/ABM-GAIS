@@ -30,7 +30,7 @@ const end_date = ref("");
 const search = ref("");
 const searchFilter = ref("");
 let sortedData = ref([]);
-const selectedType = ref("");
+const selectedType = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 const status = ref("");
 let StatusItems = ref([])
 const selectedTypeWarehouse = ref("");
@@ -71,11 +71,11 @@ const filterDataByType = () => {
 
 //for filter & reset button
 const resetData = () => {
-  selectedType.value = ''
+  selectedType.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"));
     status.value = ''
     start_date.value = ''
     end_date.value = ''
-    fetchData(showingValue.value, "", "", "", "",searchFilter.value,pageMultiplier.value)
+    fetchData(showingValue.value, selectedType.value, "", "", "",searchFilter.value,pageMultiplier.value)
 };
 
 //for check & uncheck all
@@ -218,12 +218,11 @@ const format_date = (value) => {
 
 <template>
   <div
-    class="flex flex-col w-full this"
-    :class="lockScrollbar === true ? 'fixed' : ''"
+    class="flex flex-col w-full this h-[100vh]"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -302,7 +301,7 @@ const format_date = (value) => {
                     Date
                   </p>
 
-                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" />
+                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" format="dd-MM-yyyy" />
                 </div>
               </div>
 
@@ -467,10 +466,16 @@ const format_date = (value) => {
                       {{ data.status }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/stockOpname/${data.id}`">
+                      <router-link v-if="data.status == 'Draft'" :to="`/stockOpname/${data.id}`">
                           <img :src="editicon" class="w-6 h-6" />
                       </router-link>
-                      <button @click="deleteValue(data.id)">
+                      <button v-else disabled>
+                        <img :src="editicon" class="w-6 h-6" />
+                      </button>
+                      <button v-if="data.status == 'Draft'" @click="deleteValue(data.id)">
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
+                      <button v-else disabled>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
@@ -544,6 +549,6 @@ tr th {
 }
 
 .my-date {
-  width: 200px !important;
+  width: 300px !important;
 }
 </style>

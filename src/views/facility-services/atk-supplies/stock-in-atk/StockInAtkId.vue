@@ -34,6 +34,7 @@ let Brand = ref("")
 let itemNames = ref("")
 let remark = ref("")
 let siteName = ref("")
+let companyName = ref("")
 let status = ref("")
 let statusValue = ref(false)
 let ItemTable = ref([])
@@ -45,6 +46,7 @@ const fetchDataById = async (id) => {
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
+    companyName.value = element.company_name
     stockName.value = element.no_stock_in
     createdDate.value = format_date(element.created_at)
     createdBy.value = element.employee_name
@@ -218,23 +220,24 @@ const format_date = (value) => {
             <div class="flex flex-col gap-2">
               
               <span class="font-JakartaSans font-medium text-sm"
+                >Company</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="companyName"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+            <div class="flex flex-col gap-2">
+              
+              <span class="font-JakartaSans font-medium text-sm"
                 >Site</span
               >
               <input
                 type="text"
                 disabled
                 v-model="siteName"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Status</span
-              >
-              <input
-                type="text"
-                disabled
-                v-model="status"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
