@@ -23,6 +23,7 @@ const route = useRoute();
 const router = useRouter();
 let dataArr = ref([]);
 let dataItem = ref([]);
+let dataApproval = ref([]);
 
 let lengthCounter = 0;
 let visibleModal = ref(false);
@@ -54,7 +55,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/approval_cash_advance/get_data/${id}`);
   dataArr.value = res.data.data[0];
-  fetchDataItem(id);
+  fetchDataItem(dataArr.value.id_ca);
 };
 
 const fetchDataItem = async (id) => {
@@ -76,7 +77,7 @@ const fetchDataEmployee = async () => {
   const res = await Api.get("/employee/approval_behalf", {
     params: payload,
   });
-  listEmployee.value = res.data;
+  listEmployee.value = res.data.data;
 };
 
 const closeModal = () => {
@@ -101,7 +102,7 @@ const approveData = async (payload) => {
       timer: 1500,
     });
     closeModal();
-    router.push({ path: `/viewapprovalcatravel/${id}` });
+    router.push({ path: `/approvalcatravel` });
   } else {
     Swal.fire({
       position: "center",
@@ -140,7 +141,7 @@ const rejectData = async (payload) => {
         timer: 1500,
       });
       closeModalReject();
-      router.push({ path: `/viewapprovalcatravel/${id}` });
+      router.push({ path: `/approvalcatravel` });
     } else {
       Swal.fire({
         position: "center",
@@ -153,10 +154,18 @@ const rejectData = async (payload) => {
   }
 };
 
+const fetchHistoryApproval = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/cash_advance/get_history_non_travel/${id}`);
+  dataApproval.value = res.data.data;
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(id);
   fetchDataEmployee();
+  fetchHistoryApproval();
 });
 
 const getSessionForSidebar = () => {
