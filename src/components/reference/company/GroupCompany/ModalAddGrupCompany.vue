@@ -1,5 +1,6 @@
 <script setup>
 import iconplus from "@/assets/navbar/icon_plus.svg";
+import iconDangerCircle from "@/assets/icon-danger-circle.png";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
@@ -46,6 +47,15 @@ const onFileSelected = (event) => {
 };
 
 const saveGroupCompany = async () => {
+  if (!selectedImage.value) {
+    Swal.fire({
+      iconHtml: `<img src="${iconDangerCircle}" />`,
+      title: "Image not selected",
+      text: "Please select an image before saving.",
+    });
+    return;
+  }
+
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
@@ -143,7 +153,6 @@ watch(isVisible, () => {
                   type="file"
                   id="file-input"
                   class="hidden"
-                  required
                   accept="image/*"
                   @change="onFileSelected"
                 />
@@ -155,29 +164,29 @@ watch(isVisible, () => {
         <p
           class="font-JakartaSans font-medium text-sm flex justify-center items-center pt-4 mb-6"
         >
-          Logo
+          Logo Company Group
         </p>
 
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Code<span class="text-red">*</span></label
+            >Code Company Group<span class="text-red">*</span></label
           >
           <input
             type="text"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Code Company"
+            placeholder="Code Company Group"
             required
             v-model="companyCodegroup"
           />
         </div>
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Group Name<span class="text-red">*</span></label
+            >Company Group Name<span class="text-red">*</span></label
           >
           <input
             type="text"
             class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Group Name"
+            placeholder="Company Group Name"
             required
             v-model="companyGroupName"
           />

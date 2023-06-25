@@ -1,5 +1,6 @@
 <script setup>
 import iconplus from "@/assets/navbar/icon_plus.svg";
+import iconDangerCircle from "@/assets/icon-danger-circle.png";
 
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
@@ -55,6 +56,15 @@ const onFileSelected = (event) => {
 };
 
 const saveCompany = async () => {
+  if (!selectedImage.value) {
+    Swal.fire({
+      iconHtml: `<img src="${iconDangerCircle}" />`,
+      title: "Image not selected",
+      text: "Please select an image before saving.",
+    });
+    return;
+  }
+
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
@@ -156,7 +166,6 @@ watch(isVisible, () => {
                   type="file"
                   id="file-input"
                   class="hidden"
-                  required
                   accept="image/*"
                   @change="onFileSelected"
                 />

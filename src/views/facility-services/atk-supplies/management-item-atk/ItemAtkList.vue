@@ -28,9 +28,9 @@ import Api from "@/utils/Api";
 const sidebar = useSidebarStore();
 
 //for sort & search
-let selectedCompany = ref("");
+let selectedCompany = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 let selectedWarehouse = ref("")
-let selectedSite = ref("Site");
+let selectedSite = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
 // let selectedWarehouse = ref("Warehouse")
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
@@ -71,21 +71,22 @@ let lenghtPagination = ref(0)
 const searchFilter = ref("");
 //for paginations
 const onChangePage = (pageOfItem) => {
-  fetchData(pageOfItem,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+  fetchData(pageOfItem,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
   // console.log(paginateIndex.value)
 };
 
 //for filter & reset button
 const filterDataByType = () => {
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
 };
 
 //for filter & reset button
 const resetData = () => {
   selectedType.value = ''
-  selectedCompany.value = ''
+  selectedCompany.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"))
   selectedWarehouse.value = ''
-  fetchData(showingValue.value,"","","",1,searchFilter.value,pageMultiplier.value)
+  selectedSite.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_site"))
+  fetchData(showingValue.value,"",selectedCompany.value,"",0,searchFilter.value,pageMultiplier.value,selectedSite.value)
 };
 
 //for check & uncheck all
@@ -136,7 +137,8 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
-  changeCompany(id_company)
+  // changeCompany(id_company)
+  fetchSite(JSON.parse(localStorage.getItem("id_site")),id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -212,10 +214,10 @@ const fetchCondition = async () => {
   id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
   // changeCompany()
 };
-const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse,alert_qty,searchFilter,pageMultiplier) => {
+const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse,alert_qty,searchFilter,pageMultiplier,selectedSite) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}&alert_qty=${alert_qty}&search=${searchFilter}&perPage=${pageMultiplier}`);
+  const res = await Api.get(`/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}&alert_qty=${alert_qty}&search=${searchFilter}&perPage=${pageMultiplier}&id_site=${selectedSite}`);
   itemdata.value = res.data.data.data;
   instanceArray = itemdata.value;
   // console.log(instanceArray)
@@ -293,7 +295,7 @@ const save = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
     lockScrollbarEdit.value = false
   }).catch((error) =>{
     Swal.fire({
@@ -350,7 +352,7 @@ const deleteValue = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+        fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
       });
     } else {
       return;
@@ -362,11 +364,11 @@ const deleteValue = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchCondition()
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
 });
 //for searching
 const filteredItems = (search) => {
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,search,pageMultiplier.value)
+  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,search,pageMultiplier.value,selectedSite.value)
   // sortedData.value = instanceArray;
   // const filteredR = sortedData.value.filter((item) => {
   //   // console.log(item)
@@ -383,7 +385,7 @@ const filteredItems = (search) => {
 };
 const perPage = async () => {
     // console.log(pageMultiplier.value)
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
     // console.log("ini data parent" + JSON.stringify(res.data.data));
   };
 const selectAlert = (checked) => {
@@ -391,7 +393,7 @@ const selectAlert = (checked) => {
   // console.log(checked)
   if(checked === false){
     valueChecked.value = 1
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
     // const filteredR = sortedData.value.filter((item) => {
     // if(item.current_stock <= item.alert_qty){
     //   return((item.alert_qty))
@@ -402,7 +404,7 @@ const selectAlert = (checked) => {
     // onChangePage(1);
   }else{
     valueChecked.value = 0
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
     // sortedData.value = instanceArray;
     // lengthCounter = sortedData.value.length;
     // onChangePage(1);
@@ -417,12 +419,12 @@ const getSessionForSidebar = () => {
 
 <template>
   <div
-    class="flex flex-col w-full this"
+    class="flex flex-col w-full this h-[100vh]"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -446,7 +448,7 @@ const getSessionForSidebar = () => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAdd @close="fetchData(showingValue,selectedType,selectedCompany,selectedWarehouse,valueChecked,searchFilter,pageMultiplier)" />
+              <ModalAdd @close="fetchData(showingValue,selectedType,selectedCompany,selectedWarehouse,valueChecked,searchFilter,pageMultiplier,selectedSite)" />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -705,14 +707,14 @@ const getSessionForSidebar = () => {
                             for="my-modal-item-edit-atk"
                             class="cursor-pointer absolute right-3 top-3"
                           >
-                            <img :src="iconClose" class="w-[24px] h-[24px] hover:scale-75" />
+                            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
                           </label>
-                          <p class="font-JakartaSans font-semibold text-white mx-4 py-2 text-start">
+                          <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start">
                             Edit Item
                           </p>
                         </nav>
 
-                        <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
+                        <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4 mb-6">
                           <img :src="icondanger2" class="w-5 h-5" />
                           <p class="font-JakartaSans font-semibold">
                             Item Info
@@ -889,10 +891,7 @@ const getSessionForSidebar = () => {
                               </div>
                               <div class="mb-6 w-full"></div>
                             </div>
-
-                        </main>
-
-                        <div class="sticky bottom-0 bg-white py-2">
+                            <div class="sticky bottom-0 bg-white pb-2">
                           <div class="flex justify-center gap-4 mr-6">
                             <button
                               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -902,6 +901,18 @@ const getSessionForSidebar = () => {
                             </button>
                           </div>
                         </div>
+                        </main>
+
+                        <!-- <div class="sticky bottom-0 bg-white pb-2">
+                          <div class="flex justify-center gap-4 mr-6">
+                            <button
+                              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                              @click="save"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div> -->
                       </div>
                     </div>
                       <button @click="deleteValue(data.id)">

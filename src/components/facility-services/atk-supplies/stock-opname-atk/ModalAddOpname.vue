@@ -300,7 +300,7 @@ onMounted(() => {
     @click="coba"
     for="my-modal-stock-in"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Opname</label
+    >+ Add Stock Opname</label
   >
 
   <input type="checkbox" v-if="addModal == true" id="my-modal-stock-in" class="modal-toggle" />
@@ -544,48 +544,48 @@ onMounted(() => {
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Warehouse
                 </th>
                 
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Item Name
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Adjusment Type
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Quantity
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Quantity Opname
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Brand
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   UOM
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Remarks
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Actions
                 </th>
@@ -593,14 +593,14 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]">{{ items.nameWarehouse }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namItem }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.adjusment }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.qtyOpname }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namaBrand }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.namaUOM }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.nameWarehouse }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namItem }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.adjusment }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.qty }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.qtyOpname }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaBrand }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaUOM }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.remarks }}</td>
                 <td class="border border-[#B9B9B9]">
                   <div class="flex flex-wrap justify-center items-center gap-2">
                     <button @click="removeItems(i)">
