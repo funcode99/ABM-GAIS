@@ -23,6 +23,7 @@ const route = useRoute();
 const router = useRouter();
 let dataArr = ref([]);
 let dataItem = ref([]);
+let dataApproval = ref([]);
 
 let lengthCounter = 0;
 let visibleModal = ref(false);
@@ -54,7 +55,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/approval_non_travel/get_data/${id}`);
   dataArr.value = res.data.data[0];
-  fetchDataItem(id);
+  fetchDataItem(dataArr.value.id_ca);
 };
 
 const fetchDataItem = async (id) => {
@@ -76,7 +77,7 @@ const fetchDataEmployee = async () => {
   const res = await Api.get("/employee/approval_behalf", {
     params: payload,
   });
-  listEmployee.value = res.data;
+  listEmployee.value = res.data.data;
 };
 
 const closeModal = () => {
@@ -101,7 +102,7 @@ const approveData = async (payload) => {
       timer: 1500,
     });
     closeModal();
-    router.push({ path: `/viewapprovalcanontravel/${id}` });
+    router.push({ path: `/approvalcanontravel` });
   } else {
     Swal.fire({
       position: "center",
@@ -140,7 +141,7 @@ const rejectData = async (payload) => {
         timer: 1500,
       });
       closeModalReject();
-      router.push({ path: `/viewapprovalcanontravel/${id}` });
+      router.push({ path: `/approvalcanontravel` });
     } else {
       Swal.fire({
         position: "center",
@@ -153,10 +154,18 @@ const rejectData = async (payload) => {
   }
 };
 
+const fetchHistoryApproval = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/cash_advance/get_history_non_travel/${id}`);
+  dataApproval.value = res.data.data;
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(id);
   fetchDataEmployee();
+  fetchHistoryApproval();
 });
 
 const getSessionForSidebar = () => {
@@ -181,12 +190,12 @@ const getSessionForSidebar = () => {
           <!-- HEADER -->
           <div class="flex justify-between">
             <router-link
-              to="/approvalcatravel"
+              to="/approvalcanontravel"
               class="flex items-center gap-2 py-4 mx-4"
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
               <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
-                Cash Advance Travel<span
+                Cash Advance Non Travel<span
                   class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
                 >
                   / {{ dataArr.no_ca }}
@@ -256,9 +265,7 @@ const getSessionForSidebar = () => {
               />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Event</span
-              >
+              <span class="font-JakartaSans font-medium text-sm">Event</span>
               <input
                 type="text"
                 disabled
@@ -346,22 +353,17 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Frequency
+                      Date
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Currency
+                      Cost centre
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Nominal
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Total
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -380,16 +382,13 @@ const getSessionForSidebar = () => {
                       {{ data.item_name }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ data.frequency }}
+                      {{ format_date(data.created_at) }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ data.currency_name }}
+                      {{ data.cost_center_name }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ format_price(data.nominal) }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">
-                      {{ format_price(data.total) }}
                     </td>
                     <td class="border border-[#B9B9B9]">{{ data.remarks }}</td>
                   </tr>
@@ -401,6 +400,14 @@ const getSessionForSidebar = () => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
+                <div class="bg-white">
+                  <ul class="steps steps-vertical">
+                    <li class="step step-primary" data-content="?">Register</li>
+                    <li class="step step-primary">Choose plan</li>
+                    <li class="step">Purchase</li>
+                    <li class="step">Receive Product</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
