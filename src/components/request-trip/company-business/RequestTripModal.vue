@@ -1,5 +1,8 @@
 <script setup>
-import { ref, watch, computed, onBeforeMount } from 'vue'
+import { ref, watch, onBeforeMount } from 'vue'
+import Api from '@/utils/Api'
+import { Modal } from 'usemodal-vue3'
+import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
 
 import iconClose from "@/assets/navbar/icon_close.svg"
 
@@ -16,11 +19,10 @@ import otherTransportationForm from '@/components/request-trip/modal-step-form/o
 import accomodationForm from '@/components/request-trip/modal-step-form/accomodation-form.vue'
 import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-advance-form.vue'
 
-import Api from '@/utils/Api'
-import { Modal } from 'usemodal-vue3'
 // import { Switch } from '@headlessui/vue'
   
     const enabled = ref(false)
+    let referenceFetch = useReferenceFetchResult()
 
     let instanceArray = []
     let optionDataPurposeofTrip = ref([])
@@ -403,19 +405,23 @@ import { Modal } from 'usemodal-vue3'
       }
     })
 
-    watch(selectedRequestor, (newValue) => {
-      requestor.value = newValue[0]
-      locationId.value = optionDataEmployeeRequestor.value[newValue[1]].id_site
-      location.value = optionDataEmployeeRequestor.value[newValue[1]].company_name
-      sn.value = optionDataEmployeeRequestor.value[newValue[1]].sn_employee
-      telephone.value = optionDataEmployeeRequestor.value[newValue[1]].phone_number
+    watch(optionDataEmployeeRequestor, () => {
+      
+      // telephone.value = optionDataEmployeeRequestor.value[newValue[1]].phone_number
+
+      requestor.value = optionDataEmployeeRequestor.value[0].id
+      locationId.value = optionDataEmployeeRequestor.value[0].id_site
+      location.value = optionDataEmployeeRequestor.value[0].company_name
+      sn.value = optionDataEmployeeRequestor.value[0].sn_employee
+      telephone.value = optionDataEmployeeRequestor.value[0].phone_number
+
     })
 
     const submitGuestTraveller = () => {
 
     }
 
-  const fetchDocumentCode = async () => {
+    const fetchDocumentCode = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/request_trip/get_document_code')
@@ -443,15 +449,12 @@ import { Modal } from 'usemodal-vue3'
       optionDataCity.value = api.data.data
     }
 
-    const fetchZona = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get('/zona/get')
-      optionDataZona.value = api.data.data
-      // console.log(api)
-      // gak boleh dicampur string
-      // console.log(optionDataZona.value)
-    }
+    // const fetchZona = async () => {
+    //   const token = JSON.parse(localStorage.getItem('token'))
+    //   Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    //   const api = await Api.get('/zona/get')
+    //   optionDataZona.value = api.data.data
+    // }
 
     const fetchFlight = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
@@ -502,7 +505,7 @@ import { Modal } from 'usemodal-vue3'
       fetchEmployeeRequestor()
       fetchSiteLocation()
       fetchCity()
-      fetchZona()
+      // fetchZona()
       fetchCompany()
       fetchFlight()
       fetchJobBand()
@@ -533,6 +536,39 @@ import { Modal } from 'usemodal-vue3'
       {id: 2, title: 'Travellers'},
       {id: 3, title: 'Taxi Voucher'}
     ]
+
+
+    let filterData = ref([])
+
+    const fetchTLKByJobBand = async () => {
+      let jobBandId = referenceFetch.fetchEmployeeByLoginResult[0].id_job_band
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/zona_job/get_by_job/${jobBandId}`)
+      filterData.value = api.data.data
+      console.log(filterData.value)
+      TLKperDay.value = filterData.value[0].tlk_rate
+    }
+
+    const fetchZonaByCity = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/zona/get_by_city/${toCity.value}`)
+      optionDataZona.value = api.data.data
+      console.log(optionDataZona.value)
+      zona.value = optionDataZona.value[0].id_zona
+      console.log('ini adalah nilai zona')
+      console.log(zona.value)
+    }
+
+    watch(zona, () => {
+      fetchTLKByJobBand()
+    })
+
+    watch(toCity, () => {
+      fetchZonaByCity()
+    })
+
 
 </script>
 
@@ -624,13 +660,12 @@ import { Modal } from 'usemodal-vue3'
         + Add Cash Advance
       </button>
 
-      <!-- for table -->
+      <!-- Step 1 & 2 FORM & Step x TABLE -->
       <div class="modal-box-inner-inner mt-4">
 
-          <!-- modal body step 1 & 2 -->
           <div :class="formStep == 0 ? 'h-[250px]' : 'max-h-[500px]' ">
 
-              <!-- step 1 form Requestor Info -->
+              <!-- Step 1 Requestor Info FORM -->
               <div class="text-left" :class="formStep == 0 ? 'block' : 'hidden'">
   
               <div :class="rowClass">
@@ -638,11 +673,9 @@ import { Modal } from 'usemodal-vue3'
                 <div :class="columnClass">
                   <div class="w-full">
                     <span>Requestor <span class="text-[#f5333f]">*</span></span>
-                    <select :class="inputStylingClass" v-model="selectedRequestor" required>
-                      <option v-for="(data, index) in optionDataEmployeeRequestor" :value="[data.id, index]">
-                        {{ data.employee_name }}
-                      </option>
-                    </select>
+                    <div>
+                      <input disabled :class="inputStylingClass" type="text" v-for="(data, index) in optionDataEmployeeRequestor" :value="data.employee_name" />
+                    </div>
                   </div>
                 </div>
   
@@ -659,7 +692,9 @@ import { Modal } from 'usemodal-vue3'
   
                 <div :class="columnClass">
                   <div class="w-full">
-                    <span class="block">SN <span class="text-red-star">*</span></span>
+                    <span class="block">
+                      SN <span class="text-red-star">*</span>
+                    </span>
                     <input disabled type="text" v-for="data in optionDataEmployeeRequestor" v-model="sn" :class="inputStylingClass" placeholder="SN Number" required />
                   </div>
   
@@ -676,7 +711,7 @@ import { Modal } from 'usemodal-vue3'
   
               </div>
   
-              <!-- step 2 form -->
+              <!-- Step 2 FORM -->
               <div class="text-left px-4 flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'">
   
                 <div :class="columnClass + ' mx-4'">
@@ -684,17 +719,22 @@ import { Modal } from 'usemodal-vue3'
                     <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
   
                     <select v-model="requestType" :class="inputStylingWithoutWidthClass" required>
+
                       <option v-for="data in optionDataPurposeofTrip" :value="[data.id, data.document_name]">
                         {{ data.document_name }}
                       </option>
+
                     </select>
               
                 </div>
   
                 <div :class="columnClass + ' mx-4 my-3'">
   
-                  <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                  <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" required v-model="notesToPurposeOfTrip">
+                  <span>
+                    Notes to Purpose of Trip
+                  </span>
+
+                  <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip">
   
                 </div>
   
@@ -716,14 +756,25 @@ import { Modal } from 'usemodal-vue3'
   
                   <!-- Zona -->
                   <div class="w-full">
+
                     <div :class="columnClass">
-                      <span>Zona<span class="text-red-star">*</span></span>
-                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" placeholder="Zona" v-model="zona" required>
-                        <option v-for="data in optionDataZona" :value="data?.id">
-                          {{ data.zona }}
+                      
+                      <span>
+                        Zona<span class="text-red-star">*</span>
+                      </span>
+                      
+                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
+                      @change="fetchTLKByJobBand"
+                      placeholder="Zona" 
+                      v-model="zona" 
+                      required>
+                        <option v-for="data in optionDataZona" :value="data.id">
+                          {{ data.zona_name }}
                         </option>
                       </select>
+
                     </div>
+
                   </div>
   
                 </div>
@@ -752,31 +803,40 @@ import { Modal } from 'usemodal-vue3'
                   
                   <!-- Date Departure -->
                   <div :class="columnClass">
-                    <span>Date Departure<span class="text-red-star">*</span> {{ formattedDepartureDate }}</span>
+                    <span>
+                      Date Departure<span class="text-red-star">*</span>
+                    </span>
                     <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate" :max="returnDate" required>
                   </div>
   
-                    <!-- Total TLK -->
+                  <!-- Total TLK -->
                   <div :class="columnClass">
-                    <span class="">Total TLK<span class="text-red-star">*</span></span>
+                    <span>
+                      Total TLK<span class="text-red-star">*</span>
+                    </span>
                     <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
                   </div>
   
                 </div>
   
                 <div :class="rowClass">
-                    <!-- Return date -->
-                    <div :class="columnClass">
-                        <span class="">Return Date<span class="text-red-star">*</span> {{ formattedReturnDate }} </span>
-                        <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
-                    </div>
-                    <div :class="columnClass">
-                    </div>
+
+                  <!-- Return Date -->
+                  <div :class="columnClass">
+                      <span>
+                        Return Date<span class="text-red-star">*</span>
+                      </span>
+                      <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
+                  </div>
+
+                  <div :class="columnClass">
+                  </div>
+
                 </div>
                 
               </div>
 
-              <!-- step 3 and so on, contain of table -->
+              <!-- Step 3 and so on, contain of TABLE -->
               <div class="pb-[80px]" v-if="requestType[1] == 'Company Business'">
   
                 <!-- step 3 form Traveller -->
@@ -1597,6 +1657,7 @@ import { Modal } from 'usemodal-vue3'
               <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
                 Back
               </button>
+
               <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                 Back
               </button>
@@ -1605,9 +1666,17 @@ import { Modal } from 'usemodal-vue3'
                 Next
               </button>
 
-              <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
-                Next
-              </button>
+              <div class="flex gap-4" v-else>
+
+                <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+                  Draft
+                </button>
+
+                <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+                  Submit
+                </button>
+
+              </div>
 
           </div>
           
@@ -1615,22 +1684,22 @@ import { Modal } from 'usemodal-vue3'
 
     </Modal>
 
-    <!-- Modal step 3 form modal Add Guest as Traveller -->  
+    <!-- Step 3 Modal Add Guest as Traveller -->  
     <guestAsTravellerForm :isOpen="isVisibleGuest" @changeVisibility="isVisibleGuest = false" />
 
-    <!-- Modal step 4 form modal Add Airlines -->
+    <!-- Step 4 Modal Add Airlines -->
     <airlinesForm :isOpen="isVisibleAirlines" @changeVisibility="isVisibleAirlines = false" />
 
-    <!-- Modal step 5 form modal Add Taxi Voucher -->
+    <!-- Step 5 Modal Add Taxi Voucher -->
     <taxiVoucherForm :isOpen="isVisibleTaxiVoucher" @changeVisibility="isVisibleTaxiVoucher = false" />
 
-    <!-- Modal step 6 form modal Add Other Transportation -->
+    <!-- Step 6 Modal Add Other Transportation -->
     <otherTransportationForm :isOpen="isVisibleOtherTransportation" @changeVisibility="isVisibleOtherTransportation = false" />
 
-    <!-- Modal step 7 form modal Add Accomodation -->
+    <!-- Step 7 Modal Add Accomodation -->
     <accomodationForm :isOpen="isVisibleAccomodation" @changeVisibility="isVisibleAccomodation = false" />
 
-    <!-- Modal step 8 form modal Add Cash Advance -->
+    <!-- Step 8 Modal Add Cash Advance -->
     <cashAdvanceForm :isOpen="isVisibleCashAdvance" @changeVisibility="isVisibleCashAdvance = false" />
 
 </template>

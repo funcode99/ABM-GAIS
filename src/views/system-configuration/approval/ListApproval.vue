@@ -112,7 +112,7 @@
       fetchMenuUtils(instanceArray, responseStatusMenu, responseMessageMenu, addMenuData)
       fetchCompanyUtils(instanceArray, addCompanyData)
       fetchDocumentCodeUtils(instanceArray, addDocumentData)
-      fetchApproverAuthoritiesUtils(instanceArray, addAuthoritiesData)
+      fetchApproverAuthoritiesUtils(addAuthoritiesData)
       fetch()
     })
 

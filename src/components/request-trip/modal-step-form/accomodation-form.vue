@@ -47,6 +47,7 @@
     <Modal v-model:visible="props.isOpen" v-model:offsetTop="modalPaddingHeight">
 
         <main>
+            
             <modalHeader @closeVisibility="$emit('changeVisibility')" :title="'Accomodation'" />
     
             <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="">
@@ -263,6 +264,7 @@
                 />
     
             </form>
+
         </main>
 
 

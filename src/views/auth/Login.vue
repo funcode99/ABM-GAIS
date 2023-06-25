@@ -69,12 +69,12 @@
 
 <template>
 
-  <div class="flex flex-col h-[100vh]">
+  <div class="flex flex-col h-screen">
     
     <NavbarLogin />
   
     <!-- content -->
-      <div class="flex items-center justify-center content py-[20px] lg:py-[30px] bg-[#e4e4e6]">
+      <div class="flex items-center justify-center content h-full py-[20px] lg:py-[30px] bg-[#e4e4e6]">
   
           <div class="flex flex-wrap items-center justify-center gap-8 bg-white px-[2%] lg:px-[6%] py-[1%] lg:py-[3%] rounded-lg">
             
@@ -162,7 +162,7 @@
 </template>
 
 <style scoped>
-  .content {
+  /* .content {
     flex: 1 1 auto !important;
-  }
+  } */
 </style>

@@ -8,6 +8,8 @@
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
+  import fetchApproverAuthoritiesNameUtils from '@/utils/Fetch/System-Configuration/fetchApproverAuthoritiesName'
+
   import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
   import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
   import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
@@ -25,13 +27,14 @@
   let isVisible = ref(false)
   let isAdding = ref(false)
   let modalPaddingHeight = "10vh"
-  const emits = defineEmits('addApprover')
+  const emits = defineEmits(['addApprover'])
 
   // for get Menu Dropdown
   let addMenuData = ref([])
   let addCompanyData = ref([])
   let addDocumentData = ref([])
   let addAuthoritiesData = ref([])
+  let addAuthoritiesNameData = ref([])
 
   let matrixName = ref('')
   let menu = ref('')
@@ -39,10 +42,11 @@
   let company = ref('')
   let minCA = ref('0')
   let maxCA = ref('0')
+  let approverAuthoritiesName = ref('')
 
   let dropdownRemoveList = ref([])
 
-  let currentAuthoritiesId = ref()
+  let currentAuthoritiesId = ref('')
 
   const addField = (fieldType, isi) => {
 
@@ -50,13 +54,13 @@
       dropdownRemoveList.value.push(isi)
     }
 
-      fieldType.push({
-            level : 1,
-            id_approval_auth : authorities.value,
-            // approverName : ''
+    fieldType.push({
+      level : 1,
+      id_approval_auth : authorities.value,
+      approverName: ''
     })
 
-}
+  }
 
   const removeField = (index, fieldType) => {
     fieldType.splice(index, 1)
@@ -87,7 +91,7 @@
           formState.approval.minCA = minCAPost.replaceAll(".", "")
           formState.approval.maxCA = maxCAPost.replaceAll(".", "")
 
-          currentAuthoritiesId.value = null
+          currentAuthoritiesId.value = ''
 
           emits('addApprover')
 
@@ -118,6 +122,14 @@
     }
 
   })
+
+  watch(company, () => {
+    company.value != '' && typeof currentAuthoritiesId.value == 'number' ? fetchApproverAuthoritiesNameUtils(company.value, currentAuthoritiesId.value, addAuthoritiesNameData) : company
+  })
+
+  const fetchApproverName = () => {
+    company.value != '' && typeof currentAuthoritiesId.value == 'number' ? fetchApproverAuthoritiesNameUtils(company.value, currentAuthoritiesId.value, addAuthoritiesNameData) : company
+  }
 
   const formatCurrency = (argument) => {
 
@@ -269,7 +281,10 @@
 
               <!-- bagian bawah -->
 
-              <h1 class="font-medium">Approver Lines <span class="text-red-star">*</span></h1>
+              <h1 class="font-medium">
+                Approver Lines <span class="text-red-star">*</span>
+                <!-- {{ currentAuthoritiesId }} -->
+              </h1>
               <hr class="border border-black">
       
               <!-- scroll nya di dalam kalau semua konten masuk di container ini -->
@@ -308,6 +323,8 @@
                     <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
                       
                       <!-- nilai awalnya PM -->
+
+                      {{ input.approverName }}
                       
                       <td v-if="input.id_approval_auth == ''">
                         0
@@ -321,7 +338,13 @@
                       </td>
         
                       <td>
-                        <select v-model="input.id_approval_auth" :id="index" :disabled="approverLines.length-1 > index ? true : false">
+                        <select 
+                          @change="fetchApproverName"
+                          class="border border-black rounded-lg"
+                          v-model="input.id_approval_auth" 
+                          :id="index" 
+                          :disabled="approverLines.length-1 > index ? true : false"
+                        >
                           <option 
                             v-for="data in addAuthoritiesData" 
                             :key="data.id" 
@@ -333,13 +356,22 @@
                         </select>
                       </td>
 
-                      <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full">
-    
-                      </td>
-        
                       <td>
                         <!-- <input type="text" class="px-2" v-model="input.approverName" /> -->
+                        <select class="w-full border border-black rounded-lg" v-model="input.approverName">
+                          <option
+                            v-for="name in addAuthoritiesNameData"
+                            :key="name.sn_employee"
+                          >
+                            {{ name.employee_name }}
+                          </option>
+                        </select>
                       </td>
+
+                      <!-- absolut true -->
+                      <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full">
+                      </td>
+        
         
                       <td class="flex flex-wrap gap-4 justify-center">
                         <button @click="removeField(index, approverLines)">

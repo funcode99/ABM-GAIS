@@ -19,20 +19,26 @@
         console.log(api)
         serverResponse.value = api.status
     }
+
+    let a = ref('isi')
+
+    a = 'berisi'
+
+    console.log(a)
+    console.log(a.value)
     
 </script>
 
 <template>
 
-    <NavbarLogin />
+    <div class="flex flex-col font-JakartaSans h-screen">
 
-    <section class="w-full h-screen font-JakartaSans">
-
-        <div class="flex items-center justify-center py-[30px] bg-[#e4e4e6] w-full h-full">
-
-                <div class="flex flex-col flex-wrap items-center justify-center gap-8 bg-white px-[6%] py-[3%] rounded-lg">
+        <NavbarLogin />
+    
+        <div class="flex items-center justify-center bg-[#e4e4e6] h-full">
+            <div class="flex flex-col flex-wrap items-center justify-center gap-8 bg-white px-[6%] py-[3%] rounded-lg">
                     
-                    <div v-if="serverResponse == 0" class="text-bold text-lg text-blue bg-lime-200 py-5 w-full text-center rounded-lg">
+                    <div v-if="serverResponse === 0" class="text-bold text-lg text-blue bg-lime-200 py-5 w-full text-center rounded-lg">
                         Waiting for response...
                     </div>
 
@@ -57,13 +63,20 @@
                         </div>
                     </div>
 
-
-                </div>
-
+            </div>
         </div>
 
-    </section>
+        <!-- <section class="w-full flex-auto font-JakartaSans">
+        </section> -->
+    
+        <Footer />
 
-    <Footer />
+    </div>
 
 </template>
+
+<style scoped>
+
+
+
+</style>

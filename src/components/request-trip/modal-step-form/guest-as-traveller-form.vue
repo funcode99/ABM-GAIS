@@ -11,7 +11,7 @@
 
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
-    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
+    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 
 </script>
@@ -32,7 +32,7 @@
                     <div :class="columnClass">
                         <div class="w-full">
                             <label :class="labelStylingClass">
-                                Type of Traveller<span class="text-red-star">*</span>
+                                Type of Travellers<span class="text-red-star">*</span>
                             </label>
                             <select v-model="typeOfTraveller" :class="inputStylingClass">
                             <option v-for="data in optionDataTravellerType" :value="data.id">

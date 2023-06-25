@@ -200,7 +200,7 @@
 
     const editExistingUser = async (data) => {
         editDataUserId.value = data
-        setTimeout(callEditApi, 1000)
+        setTimeout(callEditApi, 100)
     }
 
     const callEditApi = async () => {

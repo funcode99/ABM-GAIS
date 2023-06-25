@@ -75,7 +75,8 @@ const resetCompanyAndRole = () => {
     <div
       class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
     >
-      <p class="font-Poppins text-base capitalize text-[#0A0A0A] font-semibold">
+
+      <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
         {{ props.title }}
       </p>
 
@@ -89,7 +90,6 @@ const resetCompanyAndRole = () => {
             Delete Selected 
           </button>
         </div>
-
 
         <!-- modal add ini perlu di segregasi -->
         
@@ -129,13 +129,11 @@ const resetCompanyAndRole = () => {
       
     </div>
 
-    <!-- SORT & SEARCH -->
+    <!-- SORT, DATE, FILTER & SEARCH -->
     <div class="flex flex-wrap items-end px-4 py-2 gap-y-2" v-if="$route.path !== '/role'">
 
-      <!-- sort company -->
-      <div
-        class="flex items-end flex-wrap gap-4"
-      >
+      <!-- sort company, filter, reset -->
+      <div class="flex items-end flex-wrap gap-4">
 
         <!-- sort company filter -->
         <div class="flex flex-col gap-1">
@@ -227,6 +225,7 @@ const resetCompanyAndRole = () => {
       <div class="pt-2 flex md:mx-0">
 
         <div class="relative block">
+          
           <span class="absolute inset-y-0 left-0 flex items-center pl-2">
             <svg
               aria-hidden="true"
@@ -244,6 +243,7 @@ const resetCompanyAndRole = () => {
               ></path>
             </svg>
           </span>
+
           <input
             type="text"
             placeholder="Search..."
@@ -251,6 +251,7 @@ const resetCompanyAndRole = () => {
             v-model="search"
             @keyup="$emit('doSearch', search)"
           />
+          
         </div>
         
       </div>
