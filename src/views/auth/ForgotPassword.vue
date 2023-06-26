@@ -1,6 +1,7 @@
 <script setup>
     import Api from '@/utils/Api'
     import forgotPasswordImage from '@/assets/forgot-password.png'
+    import arrowLeft from '@/assets/Arrow-Left.png'
     import NavbarLogin from '@/components/layout/NavbarLogin.vue'
     import Footer from '@/components/layout/Footer.vue'
 
@@ -19,13 +20,6 @@
         console.log(api)
         serverResponse.value = api.status
     }
-
-    let a = ref('isi')
-
-    a = 'berisi'
-
-    console.log(a)
-    console.log(a.value)
     
 </script>
 
@@ -59,15 +53,23 @@
                             <form class="flex flex-col" @submit.prevent="forgotPassword">
                                 <label for="email" class="text-sm font-medium">Email<span class="text-[#f5333f] text-sm font-semibold">*</span></label>
                                 <input type="text" id="email" v-model="email" class="border-black border-2 px-4 py-3 rounded-lg mt-1" placeholder="Input Your Email">
+                                <div class="flex flex-col items-center">
+                                    <button @click="forgotPassword" class="bg-blue text-white py-3 px-11 rounded-lg w-[70%] mt-3">
+                                        Reset Password
+                                    </button>
+                                    <router-link to="/">
+                                        <div class="flex gap-2 items-center mt-4">
+                                            <img class="w-4 h-4" :src="arrowLeft" />
+                                            <span>Back to log in</span>
+                                        </div>
+                                    </router-link>
+                                </div>
                             </form>
                         </div>
                     </div>
 
             </div>
         </div>
-
-        <!-- <section class="w-full flex-auto font-JakartaSans">
-        </section> -->
     
         <Footer />
 
