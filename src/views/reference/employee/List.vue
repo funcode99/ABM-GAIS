@@ -68,8 +68,8 @@ const filterDataByCompany = () => {
 
 //for filter & reset button
 const resetData = () => {
-  // sortedData.value = instanceArray;
-  fetchEmployee();
+  sortedData.value = instanceArray;
+  // fetchEmployee();
   selectedCompany.value = "Company";
 };
 

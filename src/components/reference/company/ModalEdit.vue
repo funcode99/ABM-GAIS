@@ -45,7 +45,7 @@ const currentCompanyGrupCompanyId = ref(props.formContent[3]);
 const originalCompanyGrupCompanyId = ref(props.formContent[3]);
 const currentcompanyIdVendor = ref(props.formContent[4]);
 const originalcompanyIdVendor = ref(props.formContent[4]);
-const currentcompanyLogo = ref(props.formContent[5]);
+const currentcompanyLogo = ref(null);
 const originalcompanyLogo = ref(props.formContent[5]);
 const currentcompanyCodeErp = ref(props.formContent[6]);
 const originalcompanyCodeErp = ref(props.formContent[6]);
@@ -63,7 +63,7 @@ const submitEdit = () => {
   formEditState.company.companyShortName = currentcompanyShortName.value;
 
   formEditState.company.companyIdVendor = selectedVendorId.value;
-  formEditState.company.companyLogo = selectedImage.value;
+  formEditState.company.companyLogo = currentcompanyLogo.value;
   formEditState.company.companyCodeErp = selectedCodeErpId.value;
 
   isVisible.value = false;
@@ -75,6 +75,7 @@ const onFileSelected = (event) => {
   const file = event.target.files[0];
 
   if (file) {
+    currentcompanyLogo.value = file;
     selectedImage.value = file;
     iconfilename.value = file.name;
 
@@ -228,6 +229,7 @@ const resetForm = () => {
             type="text"
             id="name"
             :class="inputStylingClass"
+            maxlength="5"
             required
           />
         </div>

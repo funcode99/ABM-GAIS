@@ -826,7 +826,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewapprovalsettlement',
+      path: '/viewapprovalsettlement/:id',
       name: 'view approval settlement',
       component: ApprovalSettlementView,
       meta: {
@@ -860,7 +860,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewapprovalreimbursement',
+      path: '/viewapprovalreimbursement/:id',
       name: 'view approval reimbursement',
       component: ApporvalReimbursementView,
       meta: {

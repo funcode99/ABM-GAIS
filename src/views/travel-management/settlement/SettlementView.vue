@@ -46,7 +46,6 @@ const tableHeadDetailsItem = [
 
 const tableHeadDetailsItemNon = [
   { id: 1, title: "Item" },
-  { id: 2, title: "Date" },
   { id: 3, title: "Cost Centre" },
   { id: 4, title: "Nominal" },
   { id: 5, title: "Nominal Pemakaian Real" },
@@ -92,6 +91,7 @@ const edit = () => {
 const cancelHeader = () => {
   visibleHeader.value = false;
   editItem.value = false;
+  idEdit.value = ''
 };
 
 const editItems = (id) => {
@@ -137,13 +137,14 @@ const submit = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      route.push({ path: `/settlement/${idClaim}` });
+      fetchDataById(idSettlement);
     })
     .catch((e) => {
+      console.log(e);
       Swal.fire({
         position: "center",
         icon: "error",
-        title: e.response.data.error,
+        title: e.error,
         showConfirmButton: false,
         timer: 2000,
         timerProgressBar: true,
@@ -151,7 +152,6 @@ const submit = async () => {
         color: "#ffffff",
       });
     });
-  fetchDataById(idSettlement);
 };
 
 const generateType = (after, before) => {
@@ -236,7 +236,7 @@ const inputClass =
           <div class="flex justify-start gap-4 mx-10">
             <label
               v-if="
-                // (dataArr.status == 'Draft' || dataArr.status == 'Revision') &&
+                (dataArr.status == 'Draft' || dataArr.status == 'Revision') &&
                 !visibleHeader
               "
               @click="edit()"
@@ -276,7 +276,10 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
-            <div class="flex flex-col gap-2">
+            <div
+              class="flex flex-col gap-2"
+              v-if="dataArr.status == 'Completed'"
+            >
               <span class="font-JakartaSans font-medium text-sm"
                 >Transfer Date</span
               >
@@ -345,7 +348,7 @@ const inputClass =
               <input
                 type="text"
                 disabled
-                :value="dataArr.no_request_trip"
+                :value="dataArr.event"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -393,14 +396,11 @@ const inputClass =
                 </thead>
                 <tbody
                   class="font-JakartaSans font-normal text-xs"
-                  v-if="dataItem.length > 0"
+                  v-if="dataItem.length > 0 && dataArr.id_ca_type == '1'"
                 >
                   <tr v-for="(data, index) in dataItem" :key="data.id">
                     <td>
                       {{ data.item_name }}
-                    </td>
-                    <td>
-                      {{ data.frequency }}
                     </td>
                     <td>
                       {{ dataArr.currency_name }}
@@ -416,7 +416,7 @@ const inputClass =
                       />
                       {{ format_price(data.nominal_ca) }}
                     </td>
-                    <td v-if="dataArr.id_ca_type == '1'">
+                    <td>
                       {{ format_price(data.nominal_ca * data.frequency) }}
                     </td>
                     <td>
@@ -461,8 +461,8 @@ const inputClass =
                       <div
                         class="flex justify-center items-center"
                         v-if="
-                          //   (dataArr.status == 'Draft' ||
-                          //     dataArr.status == 'Revision') &&
+                          (dataArr.status == 'Draft' ||
+                            dataArr.status == 'Revision') &&
                           !editItem
                         "
                       >
@@ -486,7 +486,93 @@ const inputClass =
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else>
+                <tbody v-else-if="dataItem.length > 0 && dataArr.id_ca_type == '2'">
+                  <tr v-for="(data, index) in dataItem" :key="data.id">
+                    <td>
+                      {{ data.item_name }}
+                    </td>
+                    <td>
+                      {{ data.cost_center_name }}
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        name="remarks"
+                        :class="inputClass"
+                        required
+                        v-model="data.nominal_real"
+                        class="hidden"
+                      />
+                      {{ format_price(data.nominal_ca) }}
+                    </td>
+                    <td>
+                      <div v-if="data.id != idEdit">
+                        {{ format_price(data.nominal_real) }}
+                      </div>
+                      <input
+                        v-else
+                        type="number"
+                        :class="inputClass"
+                        required
+                        v-model="data.nominal_real"
+                        :disabled="data.id == idEdit ? false : true"
+                      />
+                    </td>
+                    <td>
+                      <div
+                        v-if="
+                          !visibleHeader || (visibleHeader && data.id != idEdit)
+                        "
+                        class="py-2 font-JakartaSans font-medium text-sm"
+                      >
+                        <a
+                          :href="data.attachment_path"
+                          target="_blank"
+                          class="text-blue"
+                        >
+                          {{ data.attachment }}
+                        </a>
+                      </div>
+                      <input
+                        v-else
+                        type="file"
+                        id="logo_company"
+                        class="px-4 py-1 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+                        accept="image/*"
+                        @change="onFileSelected($event, index, data.nominal)"
+                        :disabled="data.id == idEdit ? false : true"
+                      />
+                    </td>
+                    <td class="border border-[#B9B9B9]" v-if="visibleHeader">
+                      <div
+                        class="flex justify-center items-center"
+                        v-if="
+                          (dataArr.status == 'Draft' ||
+                            dataArr.status == 'Revision') &&
+                          !editItem
+                        "
+                      >
+                        <button>
+                          <img
+                            :src="editicon"
+                            class="w-6 h-6"
+                            @click="editItems(data.id)"
+                          />
+                        </button>
+                      </div>
+                      <div v-else>
+                        <button
+                          v-if="data.id == idEdit"
+                          class="btn btn-sm text-white capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                          @click="saveItems('edit', data.id, data)"
+                        >
+                          Save
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tbody v-else-if ="dataItem.length == 0">
                   <tr>
                     <DataNotFound :cnt-col="4" />
                   </tr>
