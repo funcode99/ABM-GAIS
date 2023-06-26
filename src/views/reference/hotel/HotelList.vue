@@ -1,39 +1,39 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import ModalAdd from "@/components/reference/hotel/ModalAdd.vue"
-import ModalEdit from "@/components/reference/hotel/ModalEdit.vue"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import ModalAdd from "@/components/reference/hotel/ModalAdd.vue";
+import ModalEdit from "@/components/reference/hotel/ModalEdit.vue";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import tableData from "@/components/table/tableData.vue"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import icon_receive from "@/assets/icon-receive.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
-import icondanger from "@/assets/Danger.png"
-import iconClose from "@/assets/navbar/icon_close.svg"
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
-import fetchHotelUtils from '@/utils/Fetch/Reference/fetchHotel'
-import fetchTypeOfHotelUtils from '@/utils/Fetch/Reference/fetchTypeOfHotel'
+import fetchCityUtils from "@/utils/Fetch/Reference/fetchCity";
+import fetchHotelUtils from "@/utils/Fetch/Reference/fetchHotel";
+import fetchTypeOfHotelUtils from "@/utils/Fetch/Reference/fetchTypeOfHotel";
 
-import { Workbook } from "exceljs"
+import { Workbook } from "exceljs";
 
-import { ref, onBeforeMount, computed, watch } from "vue"
-import { useFormEditStore } from "@/stores/reference/hotel/edit-modal.js"
-import { useSidebarStore } from "@/stores/sidebar.js"
-import { useReferenceFetchResult } from '@/stores/fetch/reference'
+import { ref, onBeforeMount, computed, watch } from "vue";
+import { useFormEditStore } from "@/stores/reference/hotel/edit-modal.js";
+import { useSidebarStore } from "@/stores/sidebar.js";
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 
-const sidebar = useSidebarStore()
-const formEditState = useFormEditStore()
-const referenceFetch = useReferenceFetchResult()
+const sidebar = useSidebarStore();
+const formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult();
 
 //for tablehead
 const tableHead = [
@@ -42,29 +42,29 @@ const tableHead = [
   { Id: 3, title: "City", jsonData: "city_name" },
   { Id: 4, title: "Type", jsonData: "type_accomodation" },
   { Id: 5, title: "Actions" },
-]
+];
 
-let hotelName = ref("")
-let hotelAddress = ref("")
-let hotelIdTypeHotel = ref("")
-let hotelIdCity = ref()
-let hotelEmail = ref("")
-let hotelPhoneNumber = ref("")
-let hotelRating = ref("")
+let hotelName = ref("");
+let hotelAddress = ref("");
+let hotelIdTypeHotel = ref("");
+let hotelIdCity = ref();
+let hotelEmail = ref("");
+let hotelPhoneNumber = ref("");
+let hotelRating = ref("");
 
-let editHotelDataId = ref()
+let editHotelDataId = ref();
 
-let sortedData = ref([])
-let HotelType = ref("")
-let addCityData = ref([])
+let sortedData = ref([]);
+let HotelType = ref("");
+let addCityData = ref([]);
 
 //for sort & search
-const search = ref("")
-let sortedbyASC = true
-let instanceArray = []
-let selectedHotel = ref("Type")
-const showFullText = ref({})
-let checkList = false
+const search = ref("");
+let sortedbyASC = true;
+let instanceArray = [];
+let selectedHotel = ref("Type");
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
 let showingValue = ref(1);
@@ -76,24 +76,25 @@ let paginateIndex = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-}
+};
 
 //for filter & reset button
 const filterDataByHotelType = () => {
   if (selectedHotel.value === "Type") {
-    sortedData.value = instanceArray
+    sortedData.value = instanceArray;
   } else {
     sortedData.value = instanceArray.filter(
       (item) => item.id_type_hotel === selectedHotel.value
-    )
+    );
   }
-}
+};
 
 //for filter & reset button
 const resetData = () => {
-  sortedData.value = instanceArray;
+  // sortedData.value = instanceArray;
+  fetchHotel();
   selectedHotel.value = "Type";
-}
+};
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -115,7 +116,7 @@ const selectAll = (checkValue) => {
     }
     btnDelete.style.display = "none";
   }
-}
+};
 
 const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
@@ -135,7 +136,7 @@ const deleteDataInCeklis = () => {
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-}
+};
 
 //for sort
 const sortList = (sortBy) => {
@@ -146,13 +147,13 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-}
+};
 
 //for edit
 const editHotel = async (data) => {
-  editHotelDataId.value = data
-  setTimeout(callEditApi, 500)
-}
+  editHotelDataId.value = data;
+  setTimeout(callEditApi, 500);
+};
 
 //for edit
 const callEditApi = async () => {
@@ -177,7 +178,7 @@ const callEditApi = async () => {
     timer: 1500,
   });
   fetchHotel();
-}
+};
 
 //for searching
 const filteredItems = (search) => {
@@ -192,11 +193,11 @@ const filteredItems = (search) => {
   });
   sortedData.value = filteredR;
   onChangePage(1);
-}
+};
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
-}
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
 
 //for get type hotel in select
 // const fetchGetHotel = async () => {
@@ -256,7 +257,7 @@ const deleteHotel = async (id) => {
       return;
     }
   });
-}
+};
 
 //for export
 const exportToExcel = () => {
@@ -298,33 +299,32 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-}
+};
 
-let baitArray = ref([])
+let baitArray = ref([]);
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchCityUtils(addCityData)
-  fetchHotelUtils(baitArray, sortedData)
-  fetchTypeOfHotelUtils(HotelType)
-})
+  getSessionForSidebar();
+  fetchCityUtils(addCityData);
+  fetchHotelUtils(baitArray, sortedData);
+  fetchTypeOfHotelUtils(HotelType);
+});
 
 watch(addCityData, () => {
-  referenceFetch.fetchCityResult = addCityData.value
-})
+  referenceFetch.fetchCityResult = addCityData.value;
+});
 
 watch(HotelType, () => {
-  referenceFetch.fetchTypeOfHotelResult = HotelType.value
-})
+  referenceFetch.fetchTypeOfHotelResult = HotelType.value;
+});
 
 const fetchHotel = () => {
-  fetchHotelUtils(instanceArray, sortedData)
-}
+  fetchHotelUtils(instanceArray, sortedData);
+};
 
 watch(baitArray, () => {
-  instanceArray = baitArray.value
-})
-
+  instanceArray = baitArray.value;
+});
 </script>
 
 <template>
