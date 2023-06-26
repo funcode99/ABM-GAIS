@@ -3,13 +3,9 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
-import ModalRejectShortcut from "@/components/approval/cash-advance-travel/ModalRejectShortcut.vue";
-import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import icon_ceklis from "@/assets/icon_ceklis.svg";
-import iconClose from "@/assets/navbar/icon_close.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import iconView from "@/assets/view-details.png";
 
