@@ -16,10 +16,12 @@ import moment from "moment";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const sidebar = useSidebarStore();
 const route = useRoute();
+const router = useRouter();
+
 let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
 
 let lockScrollbar = ref(false);
@@ -264,13 +266,13 @@ const submit = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
-      route.push({ path: `/viewclaimreimbursement/${idClaim}` });
+      fetchDataById(idClaim);
     })
     .catch((e) => {
       Swal.fire({
         position: "center",
         icon: "error",
-        title: e.response.data.error,
+        title: e.response.error,
         showConfirmButton: false,
         timer: 2000,
         timerProgressBar: true,

@@ -1,14 +1,23 @@
 <script setup>
+    import { ref } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import modalHeader from '@/components/modal/modalHeader.vue'
-    import confirmationButton from '@/components/molecules/confirmationButton.vue'
     import modalFooter from "@/components/modal/modalFooter.vue"
     const props = defineProps({
         isOpen: Boolean        
     })
 
-    let modalPaddingHeight = '15vh'
+    // Taxi Voucher
+    let nameTaxiVoucher = ref('')
+    let dateTaxiVoucher = ref('')
+    let departureTaxiVoucher = ref('')
+    let arrivalTaxiVoucher = ref('')
+    let amountTaxiVoucher = ref('')
+    let remarksTaxiVoucher = ref('')
+    let accountNameTaxiVoucher = ref('')
+    let voucherCodeTaxiVoucher = ref('')
 
+    let modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
@@ -17,6 +26,7 @@
 </script>
 
 <template>
+    
     <Modal v-model:visible="props.isOpen" v-model:offsetTop="modalPaddingHeight">
 
         <modalHeader @closeVisibility="$emit('changeVisibility')" :title="'Taxi Voucher'" />
@@ -131,9 +141,8 @@
 
         </form>
 
-        <!-- <confirmationButton @cancel-click="isVisibleTaxiVoucher = false" /> -->
-
     </Modal>
+
 </template>
 
 <style scoped>

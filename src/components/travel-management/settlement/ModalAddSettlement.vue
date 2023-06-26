@@ -106,12 +106,12 @@ const format_price = (value) => {
 const selectedImage = ref(null);
 let filename = ref(null);
 
-const onFileSelected = (event, id, nominal, dataId) => {
+const onFileSelected = (event, ind, nominal, dataId) => {
   const file = event.target.files[0];
   selectedImage.value = file ? file : null;
   filename.value = file.name;
-  tempItem.value[id].attachment = selectedImage.value;
-  tempItem.value[id_ca_detail].id = dataId;
+  tempItem.value[ind].attachment = selectedImage.value;
+  tempItem.value[ind].id = dataId;
 };
 // end
 
@@ -153,6 +153,7 @@ const close = () => {
 
 const nextStep = async (step) => {
   if (step == 0) {
+    stepForm.value += 1;
     let type_name = CAOption.value == 1 ? "travel" : "non_travel";
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -191,31 +192,43 @@ const nextStep = async (step) => {
       no_ca: detailHeaderData.value.no_ca,
       array_detail: tempItem.value,
     };
-    const api = await Api.post(`/settlement/store`, payload);
-    instanceArray = api.data.data;
-    detailItemData.value = instanceArray;
-    if (api.data.success) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: api.data.message,
-        showConfirmButton: false,
-        timer: 1500,
+    await Api.post(`/settlement/store`, payload)
+      .then((res) => {
+        instanceArray = res.data.data;
+        detailItemData.value = instanceArray;
+        if (res.data.success) {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: res.data.message,
+            showConfirmButton: false,
+            timer: 1500,
+          });
+          router.push({ path: `/settlement/${res.data.data.id}` });
+        } else {
+          Swal.fire({
+            html: "<b>Please fill in the form!</b>",
+            timer: 2000,
+            timerProgressBar: true,
+            position: "top-end",
+            background: "#EA5455",
+            color: "#ffffff",
+            showCancelButton: false,
+            showConfirmButton: false,
+            width: "300px",
+          });
+        }
+      })
+      .catch((error) => {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        // console.log(error.response.data.message)
       });
-      router.push({ path: `/settlement/${api.data.data.id}` });
-    } else {
-      Swal.fire({
-        html: "<b>Please fill in the form!</b>",
-        timer: 2000,
-        timerProgressBar: true,
-        position: "top-end",
-        background: "#EA5455",
-        color: "#ffffff",
-        showCancelButton: false,
-        showConfirmButton: false,
-        width: "300px",
-      });
-    }
   }
 };
 </script>
@@ -467,7 +480,7 @@ const nextStep = async (step) => {
             Cancel
           </label>
           <button
-            @click="nextStep(stepForm++)"
+            @click="nextStep(stepForm)"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-[#1F7793]"
           >
             {{ stepForm == 0 ? "Next" : "Save" }}
