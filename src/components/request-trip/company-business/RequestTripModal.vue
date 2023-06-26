@@ -261,16 +261,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let departureDate = ref('')
     let returnDate = ref('')
 
-    // Taxi Voucher
-    let nameTaxiVoucher = ref('')
-    let dateTaxiVoucher = ref('')
-    let departureTaxiVoucher = ref('')
-    let arrivalTaxiVoucher = ref('')
-    let amountTaxiVoucher = ref('')
-    let remarksTaxiVoucher = ref('')
-    let accountNameTaxiVoucher = ref('')
-    let voucherCodeTaxiVoucher = ref('')
-
     // Other Transportation
     let travellerOtherTransportation = ref('')
     let cityOtherTransportation = ref('')
@@ -328,7 +318,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let date2 = ref('')
     let margin = ref()
 
-    watch(departureDate, (newValue, oldValue) => {
+    watch(departureDate, (newValue) => {
       getDepartureDateYear = newValue.toString().substring(0,4)
       getDepartureDateMonth = newValue.toString().substring(5,7)
       getDepartureDateDay = newValue.toString().substring(8,10)
@@ -387,16 +377,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     })
 
     watch(optionDataEmployeeRequestor, () => {
-      
       // telephone.value = optionDataEmployeeRequestor.value[newValue[1]].phone_number
-
       requestor.value = optionDataEmployeeRequestor.value[0].id
       requestorName.value = optionDataEmployeeRequestor.value[0].employee_name
       locationId.value = optionDataEmployeeRequestor.value[0].id_site
       location.value = optionDataEmployeeRequestor.value[0].company_name
       sn.value = optionDataEmployeeRequestor.value[0].sn_employee
       telephone.value = optionDataEmployeeRequestor.value[0].phone_number
-
     })
 
     const submitGuestTraveller = () => {
@@ -430,13 +417,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       const api = await Api.get('/city')
       optionDataCity.value = api.data.data
     }
-
-    // const fetchZona = async () => {
-    //   const token = JSON.parse(localStorage.getItem('token'))
-    //   Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    //   const api = await Api.get('/zona/get')
-    //   optionDataZona.value = api.data.data
-    // }
 
     const fetchFlight = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
@@ -487,7 +467,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       fetchEmployeeRequestor()
       fetchSiteLocation()
       fetchCity()
-      // fetchZona()
       fetchCompany()
       fetchFlight()
       fetchJobBand()

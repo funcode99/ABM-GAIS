@@ -159,11 +159,6 @@
                                 Hotel Fare<span class="text-red-star">*</span>
                             </label>
                             <input type="text" :class="inputStylingClass" v-model="hotelFare" />
-                            <!-- <select :class="inputStylingClass" v-model="hotelFare">
-                                <option v-for="data in optionDataJobBand" :key="data.id">
-                                    {{ data.hotel_fare }}
-                                </option>
-                            </select> -->
                         </div>
                     </div>
     
@@ -186,11 +181,6 @@
                                 Flight Class<span class="text-red-star">*</span>
                             </label>
                             <input :class="inputStylingClass" type="text" v-model="flightClassGuestAsATraveller" />
-                            <!-- <select :class="inputStylingClass" v-model="flightClassGuestAsATraveller">
-                            <option v-for="data in optionDataFlightClass" :value="data.id">
-                                {{ data.flight_class }}
-                            </option>
-                            </select> -->
                         </div>
                     </div>
     

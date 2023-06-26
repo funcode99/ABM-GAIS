@@ -58,6 +58,7 @@
     let returnDateAirlines = ref('')
     let departureDateAirlines = ref('')
     let flightClassAirlines = ref('')
+    let flightIdAirlines = ref(0)
     let vendor = ref('')
 
     let employeeLoginData = ref()
@@ -70,11 +71,10 @@
 
     watch(employeeLoginData, () => {
         traveller.value = employeeLoginData.value[0].employee_name
+        flightIdAirlines.value = employeeLoginData.value[0].id_flight_class
+        flightClassAirlines.value = employeeLoginData.value[0].flight_class
     })
 
-    watch(cityData, () => {
-
-    })
 
     let modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
@@ -97,27 +97,23 @@
                     <div :class="rowClass">
         
                         <div :class="columnClass">
-                        <div class="w-full">
-                            <label :class="labelStylingClass">
-                                Traveller<span class="text-red-star">*</span>
-                            </label>
-                            <input :class="inputStylingClass" disabled type="text" v-model="traveller" />
-                        </div>
+
+                            <div class="w-full">
+                                <label :class="labelStylingClass">
+                                    Traveller<span class="text-red-star">*</span>
+                                </label>
+                                <input :class="inputStylingClass" disabled type="text" v-model="traveller" required />
+                            </div>
+
                         </div>
 
                         <div :class="columnClass">
         
                             <div class="w-full">
-
                                 <label :class="labelStylingClass">
                                     Flight Class<span class="text-red-star">*</span>
                                 </label>
-                                <select :class="inputStylingClass" v-model="flightClassAirlines">
-                                    <option selected hidden disabled>
-                                    Class
-                                    </option>
-                                </select>
-
+                                <input :class="inputStylingClass" disabled type="text" v-model="flightClassAirlines" required />
                             </div>
 
                         </div>
