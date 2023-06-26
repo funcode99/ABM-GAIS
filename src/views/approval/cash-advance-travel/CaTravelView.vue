@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalApprove from "@/components/approval/cash-advance-travel/ModalApprove.vue";
 import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
+import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -56,6 +57,7 @@ const fetchDataById = async (id) => {
   const res = await Api.get(`/approval_cash_advance/get_data/${id}`);
   dataArr.value = res.data.data[0];
   fetchDataItem(dataArr.value.id_ca);
+  fetchHistoryApproval(dataArr.value.id_document);
 };
 
 const fetchDataItem = async (id) => {
@@ -154,12 +156,13 @@ const rejectData = async (payload) => {
   }
 };
 
-const fetchHistoryApproval = async () => {
+const fetchHistoryApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/cash_advance/get_history_non_travel/${id}`);
+  const res = await Api.get(`/request_trip/get_history_approval/${id}`);
   dataApproval.value = res.data.data;
 };
+
 
 onBeforeMount(() => {
   getSessionForSidebar();
@@ -361,7 +364,7 @@ const getSessionForSidebar = () => {
                 </p>
               </div>
             </div>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto bg-white">
               <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
@@ -428,6 +431,7 @@ const getSessionForSidebar = () => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
+                <HistoryApproval :data-approval="dataApproval"/>
               </div>
             </div>
           </div>
