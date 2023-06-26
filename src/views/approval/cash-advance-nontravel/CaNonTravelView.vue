@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalApprove from "@/components/approval/cash-advance-travel/ModalApprove.vue";
 import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
+import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -23,6 +24,7 @@ const route = useRoute();
 const router = useRouter();
 let dataArr = ref([]);
 let dataItem = ref([]);
+let dataApproval = ref([]);
 
 let lengthCounter = 0;
 let visibleModal = ref(false);
@@ -54,7 +56,8 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/approval_non_travel/get_data/${id}`);
   dataArr.value = res.data.data[0];
-  fetchDataItem(id);
+  fetchDataItem(dataArr.value.id_ca);
+  fetchHistoryApproval(dataArr.value.id_document);
 };
 
 const fetchDataItem = async (id) => {
@@ -76,7 +79,7 @@ const fetchDataEmployee = async () => {
   const res = await Api.get("/employee/approval_behalf", {
     params: payload,
   });
-  listEmployee.value = res.data;
+  listEmployee.value = res.data.data;
 };
 
 const closeModal = () => {
@@ -101,7 +104,7 @@ const approveData = async (payload) => {
       timer: 1500,
     });
     closeModal();
-    router.push({ path: `/viewapprovalcanontravel/${id}` });
+    router.push({ path: `/approvalcanontravel` });
   } else {
     Swal.fire({
       position: "center",
@@ -140,7 +143,7 @@ const rejectData = async (payload) => {
         timer: 1500,
       });
       closeModalReject();
-      router.push({ path: `/viewapprovalcanontravel/${id}` });
+      router.push({ path: `/approvalcanontravel` });
     } else {
       Swal.fire({
         position: "center",
@@ -151,6 +154,13 @@ const rejectData = async (payload) => {
       });
     }
   }
+};
+
+const fetchHistoryApproval = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/cash_advance/get_history_non_travel/${id}`);
+  dataApproval.value = res.data.data;
 };
 
 onBeforeMount(() => {
@@ -181,12 +191,12 @@ const getSessionForSidebar = () => {
           <!-- HEADER -->
           <div class="flex justify-between">
             <router-link
-              to="/approvalcatravel"
+              to="/approvalcanontravel"
               class="flex items-center gap-2 py-4 mx-4"
             >
               <img :src="arrow" class="w-3 h-3" alt="" />
               <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
-                Cash Advance Travel<span
+                Cash Advance Non Travel<span
                   class="text-[#0a0a0a] font-semibold font-JakartaSans text-2xl"
                 >
                   / {{ dataArr.no_ca }}
@@ -256,9 +266,7 @@ const getSessionForSidebar = () => {
               />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Event</span
-              >
+              <span class="font-JakartaSans font-medium text-sm">Event</span>
               <input
                 type="text"
                 disabled
@@ -290,7 +298,7 @@ const getSessionForSidebar = () => {
 
           <!-- TAB & TABLE -->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]">
-            <div class="grid grid-cols-6">
+            <div class="grid grid-cols-8">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
                 @click="tabId = 1"
@@ -334,7 +342,7 @@ const getSessionForSidebar = () => {
                 </p>
               </div>
             </div>
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto bg-white">
               <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
@@ -346,22 +354,17 @@ const getSessionForSidebar = () => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Frequency
+                      Date
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Currency
+                      Cost centre
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Nominal
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Total
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -380,16 +383,13 @@ const getSessionForSidebar = () => {
                       {{ data.item_name }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ data.frequency }}
+                      {{ format_date(data.created_at) }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ data.currency_name }}
+                      {{ data.cost_center_name }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ format_price(data.nominal) }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">
-                      {{ format_price(data.total) }}
                     </td>
                     <td class="border border-[#B9B9B9]">{{ data.remarks }}</td>
                   </tr>
@@ -401,6 +401,7 @@ const getSessionForSidebar = () => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
+                <HistoryApproval :data-approval="dataApproval"/>
               </div>
             </div>
           </div>

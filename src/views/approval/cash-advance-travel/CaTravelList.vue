@@ -416,7 +416,7 @@ const rejectData = async (payload, id) => {
                     <td class="flex flex-wrap gap-4 justify-center">
                       <button
                         @click="
-                          $router.push(`/viewapprovalcanontravel/${data.id}`)
+                          $router.push(`/viewapprovalcatravel/${data.id}`)
                         "
                       >
                         <img :src="iconView" class="w-6 h-6" />

@@ -89,8 +89,7 @@ const tableHead = [
   { Id: 2, title: "Created Date", jsonData: "created_date" },
   { Id: 3, title: "CA No", jsonData: "no_ca" },
   { Id: 4, title: "Requestor", jsonData: "employee_name" },
-  { Id: 5, title: "Item", jsonData: "item_count" },
-  { Id: 6, title: "Currency", jsonData: "currency_name" },
+  { Id: 5, title: "Event", jsonData: "event" },
   { Id: 7, title: "Total", jsonData: "grand_total" },
   { Id: 8, title: "Status", jsonData: "status" },
 ];
@@ -408,9 +407,8 @@ const rejectData = async (payload, id) => {
                     <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
                     <td>{{ format_date(data.created_at) }}</td>
                     <td>{{ data.no_ca }}</td>
-                    <td>{{ data.employee_name }}</td>
-                    <td>{{ data.item_count }}</td>
-                    <td>{{ data.currency_name }}</td>
+                    <td>{{ data.requestor }}</td>
+                    <td>{{ data.event }}</td>
                     <td>{{ format_price(data.grand_total) }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
