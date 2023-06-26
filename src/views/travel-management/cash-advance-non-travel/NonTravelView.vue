@@ -213,6 +213,7 @@ const submit = async () => {
         showConfirmButton: false,
         timer: 1500,
       });
+      fetchDataById(idCaNon);
       router.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
     })
     .catch((e) => {
