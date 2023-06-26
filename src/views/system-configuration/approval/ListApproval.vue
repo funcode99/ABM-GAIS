@@ -111,7 +111,7 @@
       getSessionForSidebar()
       fetchMenuUtils(instanceArray, responseStatusMenu, responseMessageMenu, addMenuData)
       fetchCompanyUtils(instanceArray, addCompanyData)
-      fetchDocumentCodeUtils(instanceArray, addDocumentData)
+      fetchDocumentCodeUtils(addDocumentData)
       fetchApproverAuthoritiesUtils(addAuthoritiesData)
       fetch()
     })
