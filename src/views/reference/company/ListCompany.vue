@@ -250,7 +250,7 @@ const exportToExcel = () => {
     { title: "ID" },
     { title: "Code" },
     { title: "Name" },
-    { title: "Parent Company" },
+    { title: "Company Group" },
   ];
 
   // Menambahkan header kolom
@@ -286,7 +286,7 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Code", jsonData: "company_code" },
   { Id: 3, title: "Name", jsonData: "company_name" },
-  { Id: 4, title: "Parent Company", jsonData: "group_company_name" },
+  { Id: 4, title: "Company Group", jsonData: "group_company_name" },
   { Id: 5, title: "Actions" },
 ];
 

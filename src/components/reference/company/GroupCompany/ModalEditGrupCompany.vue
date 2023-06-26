@@ -32,7 +32,7 @@ const currentGroupCompanyCode = ref(props.formContent[0]);
 const originalGroupCompanyCode = ref(props.formContent[0]);
 const currentGroupCompanyName = ref(props.formContent[1]);
 const originalGroupCompanyName = ref(props.formContent[1]);
-const currentGroupCompanyLogo = ref(props.formContent[2]);
+const currentGroupCompanyLogo = ref(null);
 const originalGroupCompanyLogo = ref(props.formContent[2]);
 
 const submitEdit = () => {
@@ -47,7 +47,7 @@ const submitEdit = () => {
   formEditStateGroupCompany.groupCompany.companyGroupCompanyName =
     currentGroupCompanyName.value;
   formEditStateGroupCompany.groupCompany.companyGroupCompanyLogo =
-    selectedImage.value;
+    currentGroupCompanyLogo.value;
 
   isVisible.value = false;
   emits("changeGroupCompany");
@@ -58,6 +58,7 @@ const onFileSelected = (event) => {
   const file = event.target.files[0];
 
   if (file) {
+    currentGroupCompanyLogo.value = file;
     selectedImage.value = file;
     iconfilename.value = file.name;
 
