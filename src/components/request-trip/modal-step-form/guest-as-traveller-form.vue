@@ -13,6 +13,8 @@
     let optionDataTravellerType = ref([])
     let employeeLoginData = ref([])
 
+    let emits = defineEmits(['fetchTravellerGuest'])
+
     // Guest as a traveller
     let typeOfTraveller = ref('')
     let department = ref('')
@@ -34,6 +36,7 @@
     }
 
     const submitGuestTraveller = async () => {
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post('/travel_guest/store', {
@@ -47,9 +50,9 @@
             contact_no: contactNumber.value,
             id_type_traveller: typeOfTraveller.value,
             id_flight_class: flightId.value,
-            id_request_trip: AuthenticatorAssertionResponse.value
+            id_request_trip: localStorage.getItem('tripId')
         })
-        console.log(api)
+        emits('fetchTravellerGuest')
     }
 
     onBeforeMount(() => {

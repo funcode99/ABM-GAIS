@@ -36,6 +36,11 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let optionDataTransportationType = ref([])
 
     let travellerGuestTable = ref([])
+    let airlinesTable = ref([])
+    let taxiVoucherTable = ref([])
+    let otherTransportationTable = ref([])
+    let accomodationTable = ref([])
+    let cashAdvanceTable = ref([])
 
     let isVisibleGuest = ref(false)
     let isVisibleAirlines = ref(false)
@@ -52,7 +57,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let stepCounter = ref(7)
 
     // gara2 js nya error watch nya jadi ga jalan :(
-    watch(requestType, (newValue, oldValue) => {
+    watch(requestType, (newValue) => {
 
       if(newValue[1] == 'Company Business') {
         stepCounter.value = 7
@@ -239,8 +244,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
     const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative'
 
-    // Purpose of Trip API
-    let selectedRequestor = ref([])
+    // Purpose of Trip
     let requestor = ref('')
     let requestorName = ref('')
     let locationId = ref('')
@@ -260,36 +264,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let totalTLK = ref(0)
     let departureDate = ref('')
     let returnDate = ref('')
-
-    // Other Transportation
-    let travellerOtherTransportation = ref('')
-    let cityOtherTransportation = ref('')
-    let typeOfTransportationOtherTransportation = ref('')
-    let quantityOtherTransportation = ref('')
-    let fromDateOtherTransportation = ref('')
-    let toDateOtherTransportation = ref('')
-    let remarksOtherTransportation = ref('')
-
-    // Accomodation
-    let travellerAccomodation = ref('')
-    let genderAccomodation = ref('')
-    let hotelFareAccomodation = ref('')
-    let cityRequestedAccomodation = ref('')
-    let remarksRequestedAccomodation = ref('')
-    let checkInRequestedAccomodation = ref('')
-    let checkOutRequestedAccomodation = ref('')
-    let createGLRequestedAccomodation = ref(false)
-    let accomodationTypeRequestedAccomodation = ref('')
-    let vendorRequestedAccomodation = ref('')
-
-    // Cash Advance
-    let travellerCashAdvance = ref('')
-    let nominalCashAdvance = ref('')
-    let itemCashAdvance = ref('')
-    let totalCashAdvance = ref('')
-    let frequency = ref('')
-    let remarks = ref('')
-    let currency = ref('')
 
     const resetRef = () => {
       
@@ -356,23 +330,30 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     watch(formStep, async () => {
       if (formStep.value === 2) {
 
+        if(localStorage.getItem("tripId") !== undefined) {
           const token = JSON.parse(localStorage.getItem('token'))
           Api.defaults.headers.common.Authorization = `Bearer ${token}`
-          // const api = await Api.post('/request_trip/store', {
-          //   id_employee: requestor.value,
-          //   no_request_trip: '',
-          //   code_document: requestType.value[0],
-          //   id_site: locationId.value,
-          //   notes: notesToPurposeOfTrip.value,
-          //   id_city_from: fromCity.value,
-          //   id_city_to: toCity.value,
-          //   date_departure: departureDate.value,
-          //   date_arrival: returnDate.value,
-          //   id_zona: zona.value,
-          //   tlk_per_day: TLKperDay.value,
-          //   total_tlk: totalTLK
-          // })
-          // console.log(api)
+          const api = await Api.post('/request_trip/store', {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_site: locationId.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            no_request_trip: '',
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK
+          })
+          localStorage.setItem('tripId', api.data.data.id)
+          fetchTravellerGuest(api.data.data.id)
+        }
+        else {
+          fetchTravellerGuest(localStorage.getItem("tripId"))
+        }
+
       }
     })
 
@@ -385,10 +366,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       sn.value = optionDataEmployeeRequestor.value[0].sn_employee
       telephone.value = optionDataEmployeeRequestor.value[0].phone_number
     })
-
-    const submitGuestTraveller = () => {
-
-    }
 
     const fetchDocumentCode = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
@@ -454,12 +431,57 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     }
 
     // for request trip table
-    const fetchTravellerGuest = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get('/travel_guest/get')
-      travellerGuestTable.value = api.data.data
-      // console.log(travellerGuestTable.value)
+    const fetchTravellerGuest = async (tripId) => {
+
+      if(tripId) {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${tripId}`)
+        travellerGuestTable.value = api.data.data
+        console.log('berhasil mengambil data traveller guest!')
+      } else {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+        travellerGuestTable.value = api.data.data
+        console.log('berhasil mengambil data traveller guest!')
+      }
+
+    }
+
+    // for airlines table
+    const fetchAirlines = async () => {
+      if(tripId) {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${tripId}`)
+        airlinesTable.value = api.data.data
+      } else {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+        airlinesTable.value = api.data.data
+      }
+    }
+
+    // for taxi voucher table
+    const fetchTaxiVoucher = async () => {
+
+    }
+    
+    // for other transportation table
+    const fetchOtherTransportation = async () => {
+
+    }
+
+    // for accomodation table
+    const fetchAccomodation = async () => {
+
+    }
+
+    // for cash advance table
+    const fetchCashAdvance = async () => {
+
     }
 
     onBeforeMount(() => {
@@ -472,7 +494,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       fetchJobBand()
       fetchTypeOfTransportation()
 
-      fetchTravellerGuest()
       fetchTravellerType()
     })
 
@@ -524,6 +545,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       fetchZonaByCity()
     })
 
+    watch(isVisibleOpenModal, () => {
+      // resetInput()
+    })
 
 </script>
 
@@ -813,7 +837,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       <tbody>
                         <tr v-for="data in travellerGuestTable" :key="data.id">
                           <td>
-                            {{ data.employee_name }}
+                            {{ data.name_guest }}
                           </td>
                           <td>
                             <!-- belom ada sn -->
@@ -830,13 +854,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                             {{ data.departement }}
                           </td>
                           <td>
-                            {{ data.company_name }}
+                            {{ data.company }}
                           </td>
                           <td>
                             {{ data.type_traveller }}
                           </td>
                           <td>
-                            {{ data.maxHotelFare }}
+                            {{ data.hotel_fare }}
                           </td>
                           <td>
                             {{ data.flight_class }}
@@ -864,7 +888,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
+                        <tr v-for="data in airlinesTable" :key="data.id">
                           <td>
                             {{ data.name }}
                           </td>
@@ -904,7 +928,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
+                        <tr v-for="data in taxiVoucherTable" :key="data.id">
                             <td>
                               {{ data.name }}
                             </td>
@@ -950,7 +974,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
+                        <tr v-for="data in otherTransportationTable" :key="data.id">
                           <td>
                             {{ data.name }}
                           </td>
@@ -995,7 +1019,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
+                        <tr v-for="data in accomodationTable" :key="data.id">
                           <td>
                             {{ data.name }}
                           </td>
@@ -1043,7 +1067,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="data in tableBodyCashAdvance" :key="data.id">
+                        <tr v-for="data in cashAdvanceTable" :key="data.id">
                           <td>
                             {{ data.caNo }}
                           </td>
@@ -1644,7 +1668,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     </Modal>
 
     <!-- Step 3 Modal Add Guest as Traveller -->  
-    <guestAsTravellerForm :isOpen="isVisibleGuest" @changeVisibility="isVisibleGuest = false" />
+    <guestAsTravellerForm :isOpen="isVisibleGuest" @changeVisibility="isVisibleGuest = false" @fetchTravellerGuest="fetchTravellerGuest" />
 
     <!-- Step 4 Modal Add Airlines -->
     <airlinesForm :isOpen="isVisibleAirlines" @changeVisibility="isVisibleAirlines = false" />

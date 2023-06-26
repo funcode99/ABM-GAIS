@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, ref, watch } from 'vue'
+  import { ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
   import { ModelSelect } from 'vue-search-select'
 
@@ -92,10 +92,13 @@
     responseCompanyArray.value = referenceFetch.fetchCompanyResult
     responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
 
-    responseEmployeeArray.value.map((item) => {
-      item.value = item.id
-      item.text = item.employee_name
-    })
+    if(responseEmployeeArray.value !== undefined) {
+      responseEmployeeArray.value.map((item) => {
+        item.value = item.id
+        item.text = item.employee_name
+      })
+    }
+
 
   })
 
@@ -105,9 +108,12 @@
 
   watch(employeeId, () => {
     
-    result.value = responseEmployeeArray.value.filter((item) => {
-      return item.id == employeeId.value
-    })
+    if(responseEmployeeArray.value !== undefined) {
+      result.value = responseEmployeeArray.value.filter((item) => {
+        return item.id == employeeId.value
+      })
+    }
+
 
     if(result.value.length > 0) {
       company.value = result.value[0].id_company
@@ -317,7 +323,9 @@
     
                 <div v-if="!isLoading" class="mb-6 flex flex-col gap-2">
 
-                    <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+                    <label for="location" class="text-sm">
+                      Location <span class="text-red-star">*</span>
+                    </label>
                     
                     <select :disabled="isLoading || isEmployee" id="location" v-model="location" :class="inputStylingClass">
                       

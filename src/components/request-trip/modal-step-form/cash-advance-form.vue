@@ -1,4 +1,5 @@
 <script setup>
+    import { ref, onBeforeMount } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import modalHeader from '@/components/modal/modalHeader.vue'
     import confirmationButton from '@/components/molecules/confirmationButton.vue'
@@ -7,6 +8,16 @@
     const props = defineProps({
         isOpen: Boolean        
     })
+
+    // Cash Advance
+    let traveller = ref('')
+    let nominal = ref('')
+    let item = ref('')
+    let total = ref('')
+    let frequency = ref('')
+    let remarks = ref('')
+    let currency = ref('')
+
     let modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
@@ -24,27 +35,23 @@
                 
                 <div :class="rowClass">
     
-                <div :class="columnClass">
-                    <div class="w-full">
-                    <label :class="labelStylingClass">
-                        Traveller <span class="text-red-star">*</span>
-                    </label>
-                    <select :class="inputStylingClass">
-                        <option selected hidden disabled>
-                        Name
-                        </option>
-                    </select>
+                    <div :class="columnClass">
+                        <div class="w-full">
+                            <label :class="labelStylingClass">
+                                Traveller <span class="text-red-star">*</span>
+                            </label>
+                            <input :class="inputStylingClass" type="text" v-model="traveller" />
+                        </div>
                     </div>
-                </div>
-    
-                <div :class="columnClass">
-                    <div class="w-full">  
-                    <label :class=labelStylingClass>
-                        Nominal <span class="text-red-star">*</span>
-                    </label>
-                    <input type="text" placeholder="Nominal" :class="inputStylingClass">
+        
+                    <div :class="columnClass">
+                        <div class="w-full">  
+                            <label :class=labelStylingClass>
+                                Nominal <span class="text-red-star">*</span>
+                            </label>
+                            <input type="text" placeholder="Nominal" :class="inputStylingClass" v-model="nominal">
+                        </div>
                     </div>
-                </div>
     
                 </div>
     
