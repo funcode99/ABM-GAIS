@@ -369,7 +369,7 @@ onBeforeMount(() => {
               <div class="flex gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByType"
+                  @click="filterDataByType()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -413,7 +413,7 @@ onBeforeMount(() => {
                   type="text"
                   name="search"
                   v-model="filter.search"
-                  @keyup="filterDataByType"
+                  @keyup="filterDataByType()"
                 />
               </label>
             </div>

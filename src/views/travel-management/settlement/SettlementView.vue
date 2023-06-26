@@ -46,7 +46,6 @@ const tableHeadDetailsItem = [
 
 const tableHeadDetailsItemNon = [
   { id: 1, title: "Item" },
-  { id: 2, title: "Date" },
   { id: 3, title: "Cost Centre" },
   { id: 4, title: "Nominal" },
   { id: 5, title: "Nominal Pemakaian Real" },
@@ -276,7 +275,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2" v-if="dataArr.status == 'Completed'">
               <span class="font-JakartaSans font-medium text-sm"
                 >Transfer Date</span
               >
@@ -345,7 +344,7 @@ const inputClass =
               <input
                 type="text"
                 disabled
-                :value="dataArr.no_request_trip"
+                :value="dataArr.event"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -398,9 +397,6 @@ const inputClass =
                   <tr v-for="(data, index) in dataItem" :key="data.id">
                     <td>
                       {{ data.item_name }}
-                    </td>
-                    <td>
-                      {{ data.frequency }}
                     </td>
                     <td>
                       {{ dataArr.currency_name }}
