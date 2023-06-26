@@ -73,7 +73,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
     const tableHeadTravellers = [
     {id: 1, title: 'Name'},
-    {id: 2, title: 'SN'},
     {id: 3, title: 'Gender'},
     {id: 4, title: 'Contact No'},
     {id: 5, title: 'Department'},
@@ -330,7 +329,35 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     watch(formStep, async () => {
       if (formStep.value === 2) {
 
-        if(localStorage.getItem("tripId") !== undefined) {
+        // if(localStorage.getItem("tripId") !== undefined) {
+        //   const token = JSON.parse(localStorage.getItem('token'))
+        //   Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        //   const api = await Api.post('/request_trip/store', {
+        //     id_zona: zona.value,
+        //     id_city_to: toCity.value,
+        //     id_site: locationId.value,
+        //     id_employee: requestor.value,
+        //     id_city_from: fromCity.value,
+        //     no_request_trip: '',
+        //     code_document: requestType.value[0],
+        //     notes: notesToPurposeOfTrip.value,
+        //     date_departure: departureDate.value,
+        //     date_arrival: returnDate.value,
+        //     tlk_per_day: TLKperDay.value,
+        //     total_tlk: totalTLK
+        //   })
+        //   localStorage.setItem('tripId', api.data.data.id)
+        //   fetchTravellerGuest(api.data.data.id)
+        // }
+        // else {
+        //   fetchTravellerGuest(localStorage.getItem("tripId"))
+        // }
+
+      }
+    })
+
+    const savePurposeOfTrip = async () => {
+      if(localStorage.getItem("tripId") !== undefined) {
           const token = JSON.parse(localStorage.getItem('token'))
           Api.defaults.headers.common.Authorization = `Bearer ${token}`
           const api = await Api.post('/request_trip/store', {
@@ -349,13 +376,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
           })
           localStorage.setItem('tripId', api.data.data.id)
           fetchTravellerGuest(api.data.data.id)
+          formStep.value++
         }
         else {
           fetchTravellerGuest(localStorage.getItem("tripId"))
+          formStep.value++
         }
-
-      }
-    })
+    }
 
     watch(optionDataEmployeeRequestor, () => {
       // telephone.value = optionDataEmployeeRequestor.value[newValue[1]].phone_number
@@ -450,34 +477,37 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     }
 
     // for airlines table
-    const fetchAirlines = async () => {
-      if(tripId) {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${tripId}`)
-        airlinesTable.value = api.data.data
-      } else {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
-        airlinesTable.value = api.data.data
-      }
-    }
-
+    // const fetchAirlines = async () => {
+    //     const token = JSON.parse(localStorage.getItem('token'))
+    //     Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    //     const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+    //     airlinesTable.value = api.data.data  
+    // }
+    
     // for taxi voucher table
     const fetchTaxiVoucher = async () => {
-
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/taxi_voucher/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+        taxiVoucherTable.value = api.data.data
     }
     
     // for other transportation table
     const fetchOtherTransportation = async () => {
-
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/other_transport/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+        otherTransportationTable.value = api.data.data
     }
 
     // for accomodation table
     const fetchAccomodation = async () => {
-
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+        accomodationTable.value = api.data.data
     }
+    
 
     // for cash advance table
     const fetchCashAdvance = async () => {
@@ -695,7 +725,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
               </div>
   
               <!-- Step 2 FORM -->
-              <div class="text-left px-4 flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'">
+              <form class="text-left px-4 flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'" @submit.prevent="savePurposeOfTrip">
   
                 <div :class="columnClass + ' mx-4'">
           
@@ -816,8 +846,26 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                   </div>
 
                 </div>
+
+                <!-- change step button -->
+                <!-- left-0 right-0 bg-white bottom-0 px-5 py-2 -->
+                <div v-if="formStep === 1">
+
+                  <div class="flex justify-between font-bold py-2">
+
+                      <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
+                        Back
+                      </button>
+
+                      <button v-if="formStep < stepCounter" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
+                        Next
+                      </button>
+
+                  </div>
+
+                </div>
                 
-              </div>
+              </form>
 
               <!-- Step 3 and so on, contain of TABLE -->
               <div class="pb-[80px]" v-if="requestType[1] == 'Company Business'">
@@ -838,10 +886,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         <tr v-for="data in travellerGuestTable" :key="data.id">
                           <td>
                             {{ data.name_guest }}
-                          </td>
-                          <td>
-                            <!-- belom ada sn -->
-                            {{ data.sn }} 
                           </td>
                           <td>
                             {{ data.gender }}
@@ -936,22 +980,22 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                               {{ data.date }}
                             </td>
                             <td>
-                              {{ data.departure }}
+                              {{ data.id_departure_city }}
                             </td>
                             <td>
-                              {{ data.arrival }}
+                              {{ data.id_arrival_city }}
                             </td>
                             <td>
                               {{ data.amount }}
                             </td>
                             <td>
-                              {{ data.accountName }}
+                              {{ data.account_name }}
                             </td>
                             <td>
                               {{ data.remarks }}
                             </td>
                             <td>
-                              {{ data.status }}
+                              {{ data.code_status_doc }}
                             </td>
                             <td></td>
                         </tr>
@@ -979,22 +1023,22 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                             {{ data.name }}
                           </td>
                           <td>
-                            {{ data.type }}
+                            {{ data.id_type_transportation }}
                           </td>
                           <td>
-                            {{ data.fromDate }}
+                            {{ data.from_date }}
                           </td>
                           <td>
-                            {{ data.toDate }}
+                            {{ data.to_date }}
                           </td>
                           <td>
-                            {{ data.quantity }}
+                            {{ data.qty }}
                           </td>
                           <td>
-                            {{ data.city }}
+                            {{ data.id_city }}
                           </td>
                           <td>
-                            {{ data.status }}
+                            {{ data.code_status_doc }}
                           </td>
                           <td>
                               
@@ -1021,28 +1065,29 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       <tbody>
                         <tr v-for="data in accomodationTable" :key="data.id">
                           <td>
-                            {{ data.name }}
+                            <!-- {{ data.name }} -->
+                            {{ data.employee_name }}
                           </td>
                           <td>
-                            {{ data.hotelName }}
+                            {{ data.code_hotel }}
                           </td>
                           <td>
-                            {{ data.checkIn }}
+                            {{ data.check_in_date }}
                           </td>
                           <td>
-                            {{ data.checkOut }}
+                            {{ data.check_out_date }}
                           </td>
                           <td>
-                            {{ data.city }}
+                            {{ data.id_city }}
                           </td>
                           <td>
-                            {{ data.type }}
+                            {{ data.id_type_accomodation }}
                           </td>
                           <td>
-                            {{ data.sharingWith }}
+                            {{ data.sharing_w_name }}
                           </td>
                           <td>
-                            {{ data.status }}
+                            {{ data.code_status_doc }}
                           </td>
                           <td>
 
@@ -1633,7 +1678,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       </div>
 
       <!-- change step button -->
-      <div class="fixed left-0 right-0 bg-white bottom-0 px-5 py-2">
+      <div v-if="formStep !== 1" class="fixed left-0 right-0 bg-white bottom-0 px-5 py-2">
 
           <div class="flex justify-between font-bold">
 
@@ -1645,8 +1690,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                 Back
               </button>
 
-              <button v-if="formStep < stepCounter" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+              <button v-if="formStep < stepCounter" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
                 Next
+                <!-- :type="formStep === 1 ? 'submit' : 'button'" -->
               </button>
 
               <div class="flex gap-4" v-else>
@@ -1674,13 +1720,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     <airlinesForm :isOpen="isVisibleAirlines" @changeVisibility="isVisibleAirlines = false" />
 
     <!-- Step 5 Modal Add Taxi Voucher -->
-    <taxiVoucherForm :isOpen="isVisibleTaxiVoucher" @changeVisibility="isVisibleTaxiVoucher = false" />
+    <taxiVoucherForm :isOpen="isVisibleTaxiVoucher" @changeVisibility="isVisibleTaxiVoucher = false" @fetchTaxiVoucher="fetchTaxiVoucher" />
 
     <!-- Step 6 Modal Add Other Transportation -->
-    <otherTransportationForm :isOpen="isVisibleOtherTransportation" @changeVisibility="isVisibleOtherTransportation = false" />
+    <otherTransportationForm :isOpen="isVisibleOtherTransportation" @changeVisibility="isVisibleOtherTransportation = false" @fetchOtherTransportation="fetchOtherTransportation" />
 
     <!-- Step 7 Modal Add Accomodation -->
-    <accomodationForm :isOpen="isVisibleAccomodation" @changeVisibility="isVisibleAccomodation = false" />
+    <accomodationForm :isOpen="isVisibleAccomodation" @changeVisibility="isVisibleAccomodation = false" @fetchAccomodation="fetchAccomodation" />
 
     <!-- Step 8 Modal Add Cash Advance -->
     <cashAdvanceForm :isOpen="isVisibleCashAdvance" @changeVisibility="isVisibleCashAdvance = false" />

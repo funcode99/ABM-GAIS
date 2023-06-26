@@ -1,6 +1,7 @@
 <script setup>
     import { ref, onBeforeMount, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
+    import Api from '@/utils/Api'
     import modalHeader from '@/components/modal/modalHeader.vue'
     import modalFooter from "@/components/modal/modalFooter.vue"
 
@@ -10,16 +11,33 @@
     const props = defineProps({
         isOpen: Boolean        
     })
+
+    let emits = defineEmits('fetchTaxiVoucher')
     
     // Taxi Voucher
-    let nameTaxiVoucher = ref('')
-    let dateTaxiVoucher = ref('')
-    let departureTaxiVoucher = ref('')
-    let arrivalTaxiVoucher = ref('')
-    let amountTaxiVoucher = ref('')
-    let remarksTaxiVoucher = ref('')
-    let accountNameTaxiVoucher = ref('')
-    let voucherCodeTaxiVoucher = ref('')
+    let name = ref('')
+    let date = ref('')
+    let departure = ref('')
+    let arrival = ref('')
+    let amount = ref('')
+    let remarks = ref('')
+    let accountName = ref('')
+    let voucherCode = ref('')
+
+    const submitTaxiVoucher = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post('/taxi_voucher/store', {
+            id_request_trip: localStorage.getItem('tripId'),
+            amount: amount.value,
+            account_name: accountName.value,
+            remarks: remarks.value,
+            id_departure_city: departure.value,
+            id_arrival_city: arrival.value,
+            date: date.value
+        })
+        emits('fetchTaxiVoucher')
+    }
 
     let employeeLoginData = ref()
     let cityData = ref()
@@ -30,7 +48,7 @@
     })
 
     watch(employeeLoginData, () => {
-        nameTaxiVoucher.value = employeeLoginData.value[0].employee_name
+        name.value = employeeLoginData.value[0].employee_name
     })
 
     let modalPaddingHeight = '15vh'
@@ -47,25 +65,25 @@
 
         <modalHeader @closeVisibility="$emit('changeVisibility')" :title="'Taxi Voucher'" />
 
-        <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="">
+        <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="submitTaxiVoucher">
 
             <div :class="rowClass">
 
                 <div :class="columnClass">
-                <div class="w-full">
-                    <label :class="labelStylingClass">
-                        Name<span class="text-red-star">*</span>
-                    </label>
-                    <input type="text" :class="inputStylingClass" v-model="nameTaxiVoucher" required />
-                </div>
+                    <div class="w-full">
+                        <label :class="labelStylingClass">
+                            Name<span class="text-red-star">*</span>
+                        </label>
+                        <input type="text" :class="inputStylingClass" v-model="name" required />
+                    </div>
                 </div>
 
                 <div :class="columnClass">
                     <div class="w-full">
-                        <label class="block mb-2 font-JakartaSans font-medium text-sm"> 
+                        <label :class=labelStylingClass> 
                             Date<span class="text-red-star">*</span>
                         </label>
-                        <input v-model="dateTaxiVoucher" type="date" :class="inputStylingClass" :min="minDate" required>
+                        <input v-model="date" type="date" :class="inputStylingClass" :min="minDate" required />
                     </div>
                 </div>
 
@@ -78,7 +96,7 @@
                         <label :class="labelStylingClass">
                             Departure<span class="text-red-star">*</span>
                         </label>
-                        <select :class="inputStylingClass" v-model="departureTaxiVoucher">
+                        <select :class="inputStylingClass" v-model="departure" required>
                             <option v-for="data in cityData" :value="data.id">
                             {{ data.city_name }}
                             </option>
@@ -91,7 +109,7 @@
                     <label class="block mb-2 font-JakartaSans font-medium text-sm">
                         Arrival<span class="text-red-star">*</span>
                     </label>
-                    <select :class="inputStylingClass" v-model="arrivalTaxiVoucher">
+                    <select :class="inputStylingClass" v-model="arrival" required>
                         <option v-for="data in cityData" :value="data.id">
                             {{ data.city_name }}
                         </option>
@@ -108,7 +126,7 @@
                     <label :class="labelStylingClass">
                         Amount<span class="text-red-star">*</span>
                     </label>
-                    <input type="text" :class='inputStylingClass' placeholder="Amount" v-model="amountTaxiVoucher">
+                    <input type="text" :class='inputStylingClass' placeholder="Amount" v-model="amount" required>
                 </div>
                 </div>
 
@@ -117,7 +135,7 @@
                     <label :class="labelStylingClass">
                         <span>Remarks</span>
                     </label>
-                    <input type="text" :class='inputStylingClass' placeholder="Remarks" v-model="remarksTaxiVoucher">
+                    <input type="text" :class='inputStylingClass' placeholder="Remarks" v-model="remarks">
                 </div>
                 </div>
 
@@ -130,7 +148,7 @@
                         <label :class="labelStylingClass">
                             <span>Account Name</span>
                         </label>
-                        <input type="text" :class='inputStylingClass' placeholder="Account Name" v-model="accountNameTaxiVoucher">
+                        <input type="text" :class='inputStylingClass' placeholder="Account Name" v-model="accountName">
                     </div>
                 </div>
 
@@ -139,7 +157,7 @@
                         <label :class="labelStylingClass">
                             <span>Voucher Code</span>
                         </label>
-                        <input type="text" :class='inputStylingClass' placeholder="Voucher Code" v-model="voucherCodeTaxiVoucher">
+                        <input type="text" :class='inputStylingClass' placeholder="Voucher Code" v-model="voucherCode">
                     </div>
                 </div>
 

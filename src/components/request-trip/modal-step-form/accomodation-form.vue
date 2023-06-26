@@ -3,7 +3,6 @@
     import { Modal } from 'usemodal-vue3'
     import Api from '@/utils/Api'
     import modalHeader from '@/components/modal/modalHeader.vue'
-    import confirmationButton from '@/components/molecules/confirmationButton.vue'
     import modalFooter from '@/components/modal/modalFooter.vue'
 
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
@@ -65,7 +64,6 @@
     const submitAccomodation = async () => {
 
         createGL.value === true ? createGL.value = 1 : createGL.value = 0
-        console.log(hotelFare.value)
 
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`

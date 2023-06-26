@@ -1,15 +1,18 @@
 <script setup>
-    import Api from '@/utils/Api'
     import { ref, onBeforeMount, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
+    import Api from '@/utils/Api'
     import modalHeader from '@/components/modal/modalHeader.vue'
     import modalFooter from "@/components/modal/modalFooter.vue"
+
+    import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
+    import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
+
     const props = defineProps({
         isOpen: Boolean        
     })
 
-    import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
-    import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
+    let emits = defineEmits('fetchOtherTransportation')
 
     const fetchTypeOfTransportation = async () => {
         const token = JSON.parse(localStorage.getItem("token"))
@@ -19,13 +22,28 @@
     }
 
     // Other Transportation
-    let travellerOtherTransportation = ref('')
-    let cityOtherTransportation = ref('')
-    let typeOfTransportationOtherTransportation = ref('')
-    let quantityOtherTransportation = ref('')
-    let fromDateOtherTransportation = ref('')
-    let toDateOtherTransportation = ref('')
-    let remarksOtherTransportation = ref('')
+    let traveller = ref('')
+    let city = ref('')
+    let typeOfTransportation = ref('')
+    let quantity = ref('')
+    let fromDate = ref('')
+    let toDate = ref('')
+    let remarks = ref('')
+
+    const submitOtherTransportation = async () => {
+        const token = JSON.parse(localStorage.getItem("token"))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post('/other_transport/store', {
+            id_request_trip: localStorage.getItem('tripId'),
+            id_type_transportation: typeOfTransportation.value,
+            from_date: fromDate.value,
+            remarks: remarks.value,
+            to_date: toDate.value,
+            id_city: city.value,
+            qty: quantity.value,
+        })
+        emits('fetchOtherTransportation')
+    }
 
     let employeeLoginData = ref()
     let cityData = ref()
@@ -38,7 +56,7 @@
     })
 
     watch(employeeLoginData, () => {
-        travellerOtherTransportation.value = employeeLoginData.value[0].employee_name
+        traveller.value = employeeLoginData.value[0].employee_name
     })
 
     let modalPaddingHeight = '15vh'
@@ -56,7 +74,7 @@
             
             <modalHeader @closeVisibility="$emit('changeVisibility')" :title="'Other Transportation'" />
     
-            <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="">
+            <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="submitOtherTransportation">
     
                 <div :class="rowClass">
     
@@ -65,22 +83,21 @@
                                 <label :class="labelStylingClass">
                                     Traveller<span class="text-red-star">*</span>
                                 </label>
-                                <input :class="inputStylingClass" type="text" v-model="travellerOtherTransportation" disabled required />
+                                <input :class="inputStylingClass" type="text" v-model="traveller" disabled required />
                             </div>
                         </div>
     
                         <div :class="columnClass">
-                        <div class="w-full">
-                            <label
-                                class="block mb-2 font-JakartaSans font-medium text-sm"
-                                >City<span class="text-red-star">*</span></label
-                            >
-                            <select :class="inputStylingClass" v-model="cityOtherTransportation" required>
-                                <option v-for="data in cityData" :value="data.id">
-                                {{ data.city_name }}
-                                </option>
-                            </select>
-                        </div>
+                            <div class="w-full">
+                                <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                    City<span class="text-red-star">*</span>
+                                </label>
+                                <select :class="inputStylingClass" v-model="city" required>
+                                    <option v-for="data in cityData" :value="data.id">
+                                    {{ data.city_name }}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
     
                 </div>
@@ -92,8 +109,8 @@
                                 <label :class="labelStylingClass">
                                     Type of Transportation<span class="text-red-star">*</span>
                                 </label>
-                                <select :class="inputStylingClass" v-model="typeOfTransportationOtherTransportation" required>
-                                    <option v-for="data in typeOfTransportData" :key=data.id>
+                                <select :class="inputStylingClass" v-model="typeOfTransportation" required>
+                                    <option v-for="data in typeOfTransportData" :key="data.id" :value="data.id">
                                     {{ data.type_transportation }}
                                     </option>
                                 </select>
@@ -105,7 +122,7 @@
                                 <label class="block mb-2 font-JakartaSans font-medium text-sm">
                                 Quantity<span class="text-red-star">*</span>
                                 </label>
-                                <input type="text" placeholder="Quantity" :class=inputStylingClass v-model="quantityOtherTransportation" required>
+                                <input type="text" placeholder="Quantity" :class=inputStylingClass v-model="quantity" required>
                             </div>
                         </div>
     
@@ -118,7 +135,7 @@
                                 <label :class="labelStylingClass">
                                     From Date<span class="text-red-star">*</span>
                                 </label>
-                                <input v-model="fromDateOtherTransportation" type="date" :class="inputStylingClass" :min="minDate" required>
+                                <input v-model="fromDate" type="date" :class="inputStylingClass" :min="minDate" required>
                         </div>
                     </div>
     
@@ -127,7 +144,7 @@
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
                                 Remarks
                             </label>
-                            <input type="text" placeholder="Remarks" :class=inputStylingClass v-model="remarksOtherTransportation">
+                            <input type="text" placeholder="Remarks" :class=inputStylingClass v-model="remarks">
                         </div>
                     </div>
     
@@ -142,7 +159,7 @@
                             <label :class="labelStylingClass">
                             To Date<span class="text-red-star">*</span>
                             </label>
-                            <input v-model="toDateOtherTransportation" type="date" :class="inputStylingClass" :min="minDate" required>
+                            <input v-model="toDate" type="date" :class="inputStylingClass" :min="minDate" required>
     
                         </div>
     
