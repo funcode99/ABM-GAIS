@@ -43,6 +43,8 @@
     // for catch status & message response from server when status is not 2xx
     let responseStatus = ref('')
     let responseMessage = ref('')
+    let responseStatusMenu = ref('')
+    let responseMessageMenu = ref('')
     
     const search = ref('')
     let sortedData = ref([])
@@ -51,6 +53,7 @@
     let deleteArray = ref([])
     let addCompanyData = ref([])
     let addMenuData =  ref([])
+    let baitArray = ref([])
 
     //for paginations
     let showingValue = ref(1)
@@ -88,7 +91,7 @@
 
     onBeforeMount(() => {
       getSessionForSidebar()
-      fetchMenuUtils(instanceArray, addMenuData)
+      fetchMenuUtils(baitArray, responseStatusMenu, responseMessageMenu, addMenuData)
       fetchCompanyUtils(instanceArray, addCompanyData)
       fetch()
     })

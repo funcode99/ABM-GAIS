@@ -1,77 +1,76 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import ModalAdd from "@/components/reference/zona/ModalAdd.vue"
-import ModalEdit from "@/components/reference/zona/ModalEdit.vue"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import ModalAdd from "@/components/reference/zona/ModalAdd.vue";
+import ModalEdit from "@/components/reference/zona/ModalEdit.vue";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import tableData from "@/components/table/tableData.vue"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import icon_receive from "@/assets/icon-receive.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
-import icondanger from "@/assets/Danger.png"
-import iconClose from "@/assets/navbar/icon_close.svg"
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import icon_receive from "@/assets/icon-receive.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
-import fetchZonaUtils from '@/utils/Fetch/Reference/fetchZona.js'
-import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
-import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
-import fetchZonaIdUtils from "@/utils/Fetch/Reference/fetchZonaId"
+import fetchZonaUtils from "@/utils/Fetch/Reference/fetchZona.js";
+import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
+import fetchCityUtils from "@/utils/Fetch/Reference/fetchCity";
+import fetchZonaIdUtils from "@/utils/Fetch/Reference/fetchZonaId";
 
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-import { Workbook } from "exceljs"
-import { ref, onBeforeMount, computed, watch } from "vue"
-import { useSidebarStore } from "@/stores/sidebar.js"
-import { useFormEditStore } from "@/stores/reference/zona/edit-modal.js"
-import { useReferenceFetchResult } from '@/stores/fetch/reference'
+import { Workbook } from "exceljs";
+import { ref, onBeforeMount, computed, watch } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js";
+import { useFormEditStore } from "@/stores/reference/zona/edit-modal.js";
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 
-const sidebar = useSidebarStore()
-let formEditState = useFormEditStore()
-const referenceFetch = useReferenceFetchResult()
+const sidebar = useSidebarStore();
+let formEditState = useFormEditStore();
+const referenceFetch = useReferenceFetchResult();
 
 //for sort & search
-let sortedData = ref([])
-let Company = ref("")
-let addCityData = ref([])
-let addZonaIdData = ref([])
+let sortedData = ref([]);
+let Company = ref("");
+let addCityData = ref([]);
+let addZonaIdData = ref([]);
 
-const search = ref("")
-let sortedbyASC = true
-let instanceArray = []
-let selectedCompany = ref("Company")
-let sortedDataReactive = computed(() => sortedData.value)
-const showFullText = ref({})
-let checkList = false
+const search = ref("");
+let sortedbyASC = true;
+let instanceArray = [];
+let selectedCompany = ref("Company");
+let sortedDataReactive = computed(() => sortedData.value);
+const showFullText = ref({});
+let checkList = false;
 
 //for paginations
-let showingValue = ref(1)
-let pageMultiplier = ref(10)
-let pageMultiplierReactive = computed(() => pageMultiplier.value)
-let paginateIndex = ref(0)
-let editZonaDataid = ref()
+let showingValue = ref(1);
+let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let paginateIndex = ref(0);
+let editZonaDataid = ref();
 
 //for edit
 const editZona = async (data) => {
-  editZonaDataid.value = data
-  setTimeout(callEditApi, 500)
-}
+  editZonaDataid.value = data;
+  setTimeout(callEditApi, 500);
+};
 
 //for edit
 const callEditApi = async () => {
-  
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   await Api.post(`/zona/update_data/${editZonaDataid.value}`, {
     id_company: formEditState.zona.zonaIdCompany,
     id_zona: formEditState.zona.zonaName,
     id_city: formEditState.zona.zonaIdCity,
-  })
+  });
 
   Swal.fire({
     position: "center",
@@ -79,37 +78,34 @@ const callEditApi = async () => {
     title: "Your work has been saved",
     showConfirmButton: false,
     timer: 1500,
-  })
+  });
 
-  fetchZona()
-
-}
+  fetchZona();
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1
-  showingValue.value = pageOfItem
-}
+  paginateIndex.value = pageOfItem - 1;
+  showingValue.value = pageOfItem;
+};
 
 //for filter & reset button
 const filterDataByCompany = () => {
-  
   if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray
-  } 
-  else {
+    sortedData.value = instanceArray;
+  } else {
     sortedData.value = instanceArray.filter(
       (item) => item.id_company == selectedCompany.value
-    )
+    );
   }
-
-}
+};
 
 //for filter & reset button
 const resetData = () => {
-  sortedData.value = instanceArray
-  selectedCompany.value = "Company"
-}
+  // sortedData.value = instanceArray;
+  fetchZona();
+  selectedCompany.value = "Company";
+};
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
@@ -131,10 +127,9 @@ const selectAll = (checkValue) => {
     }
     btnDelete.style.display = "none";
   }
-}
+};
 
 const deleteDataInCeklis = () => {
-
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
@@ -148,12 +143,11 @@ const deleteDataInCeklis = () => {
   const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
-  )
+  );
   if (checkedCheckboxes.length === 0) {
     btnDelete.style.display = "none";
   }
-
-}
+};
 
 //for tablehead
 const tableHead = [
@@ -161,20 +155,18 @@ const tableHead = [
   { Id: 2, title: "Zona", jsonData: "zona_name" },
   { Id: 3, title: "City", jsonData: "city_name" },
   { Id: 5, title: "Actions" },
-]
+];
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
-    sortedbyASC = false
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedbyASC = false;
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
-    sortedbyASC = true
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedbyASC = true;
   }
-}
-
-
+};
 
 //for searching
 const filteredItems = (search) => {
@@ -189,20 +181,19 @@ const filteredItems = (search) => {
   });
   sortedData.value = filteredR;
   onChangePage(1);
-}
+};
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
-}
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
 
 const fetchZona = async () => {
-  fetchZonaUtils(instanceArray, sortedData)
-}
+  fetchZonaUtils(instanceArray, sortedData);
+};
 
 const deleteZona = async (id) => {
-  
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   Swal.fire({
     title:
@@ -234,14 +225,13 @@ const deleteZona = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchZona()
+        fetchZona();
       });
     } else {
-      return
+      return;
     }
-  })
-
-}
+  });
+};
 
 //for export
 const exportToExcel = () => {
@@ -280,39 +270,36 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-}
+};
 
-let baitArray = ref([])
+let baitArray = ref([]);
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchZonaUtils(baitArray, sortedData)
-  fetchCompanyUtils([], Company)
-  fetchCityUtils(addCityData)
-  fetchZonaIdUtils(addZonaIdData)
-})
+  getSessionForSidebar();
+  fetchZonaUtils(baitArray, sortedData);
+  fetchCompanyUtils([], Company);
+  fetchCityUtils(addCityData);
+  fetchZonaIdUtils(addZonaIdData);
+});
 
 watch(Company, () => {
-  referenceFetch.fetchCompanyResult = Company.value 
-})
+  referenceFetch.fetchCompanyResult = Company.value;
+});
 
 watch(addCityData, () => {
-  referenceFetch.fetchCityResult = addCityData.value
-})
+  referenceFetch.fetchCityResult = addCityData.value;
+});
 
 watch(addZonaIdData, () => {
-  referenceFetch.fetchZonaIdResult = addZonaIdData.value
-})
+  referenceFetch.fetchZonaIdResult = addZonaIdData.value;
+});
 
 watch(baitArray, () => {
-  instanceArray = baitArray.value
-})
-
-
+  instanceArray = baitArray.value;
+});
 </script>
 
 <template>
-
   <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
@@ -501,11 +488,7 @@ watch(baitArray, () => {
                 <td class="flex flex-wrap gap-4 justify-center">
                   <ModalEdit
                     @change-zona="editZona(data.id)"
-                    :formContent="[
-                      data.id_company,
-                      data.id_zona,
-                      data.id_city,
-                    ]"
+                    :formContent="[data.id_company, data.id_zona, data.id_city]"
                   />
                   <button @click="deleteZona(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
@@ -587,7 +570,6 @@ watch(baitArray, () => {
       <Footer />
     </div>
   </div>
-
 </template>
 
 <style scoped>

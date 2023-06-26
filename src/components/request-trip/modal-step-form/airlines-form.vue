@@ -1,9 +1,12 @@
 <script setup>
+    import { ref, onBeforeMount, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import modalHeader from '@/components/modal/modalHeader.vue'
-    import confirmationButton from '@/components/molecules/confirmationButton.vue'
     import modalFooter from "@/components/modal/modalFooter.vue"
     import checkButton from '@/components/molecules/checkButton.vue'
+
+    import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
+    import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
     import Airline1 from '@/assets/airlines-1.png'
     import Airline2 from '@/assets/airlines-2.png'
@@ -48,8 +51,32 @@
       }
     ]
 
-    let modalPaddingHeight = '15vh'
+    // Airlines
+    let traveller = ref('')
+    let arrival = ref('')
+    let departure = ref('')
+    let returnDateAirlines = ref('')
+    let departureDateAirlines = ref('')
+    let flightClassAirlines = ref('')
+    let flightIdAirlines = ref(0)
+    let vendor = ref('')
 
+    let employeeLoginData = ref()
+    let cityData = ref()
+
+    onBeforeMount(() => {
+        fetchEmployeeByLoginUtils(employeeLoginData)
+        fetchCityUtils(cityData)
+    })
+
+    watch(employeeLoginData, () => {
+        traveller.value = employeeLoginData.value[0].employee_name
+        flightIdAirlines.value = employeeLoginData.value[0].id_flight_class
+        flightClassAirlines.value = employeeLoginData.value[0].flight_class
+    })
+
+
+    let modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
@@ -70,30 +97,25 @@
                     <div :class="rowClass">
         
                         <div :class="columnClass">
-                        <div class="w-full">
-                            <label :class="labelStylingClass">
-                                Traveller<span class="text-red-star">*</span>
-                            </label>
-                            <select :class="inputStylingClass" v-model="traveller">
-                                <option v-for="(data, index) in optionDataEmployeeRequestor" :value="data.id">
-                                    {{ data.employee_name }}
-                                </option>
-                            </select>
+
+                            <div class="w-full">
+                                <label :class="labelStylingClass">
+                                    Traveller<span class="text-red-star">*</span>
+                                </label>
+                                <input :class="inputStylingClass" disabled type="text" v-model="traveller" required />
+                            </div>
+
                         </div>
-                        </div>
-        
+
                         <div :class="columnClass">
-                        <div class="w-full">
-                            <label
-                                class="block mb-2 font-JakartaSans font-medium text-sm"
-                                >Departure<span class="text-red-star">*</span></label
-                            >
-                            <select :class="inputStylingClass" v-model="departure">
-                            <option v-for="data in optionDataCity" :value="data.id">
-                                {{ data.city_name }}
-                            </option>
-                            </select>
-                        </div>
+        
+                            <div class="w-full">
+                                <label :class="labelStylingClass">
+                                    Flight Class<span class="text-red-star">*</span>
+                                </label>
+                                <input :class="inputStylingClass" disabled type="text" v-model="flightClassAirlines" required />
+                            </div>
+
                         </div>
         
                     </div>
@@ -101,25 +123,21 @@
                     <div :class="rowClass">
         
                         <div :class="columnClass">
-                        <div class="w-full">
-                            <label :class="labelStylingClass">
-                                Departure Date<span class="text-red-star">*</span>
-                            </label>
-                            <select :class="inputStylingClass" v-model="departureDateAirlines">
-                                <option selected hidden disabled>
-                                Date
-                                </option>
-                            </select>
-                        </div>
+                            <div class="w-full">
+                                <label :class="labelStylingClass">
+                                    Departure Date<span class="text-red-star">*</span>
+                                </label>
+                                <input type="date" :class="inputStylingClass" v-model="departureDateAirlines" />
+                            </div>
                         </div>
         
                         <div :class="columnClass">
-                        <div class="w-full">
-                            <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                            Return Date<span class="text-red-star">*</span>
-                            </label>
-                            <input type="date" v-model="returnDateAirlines" :class="inputStylingClass" />
-                        </div>
+                            <div class="w-full">
+                                <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                Return Date<span class="text-red-star">*</span>
+                                </label>
+                                <input type="date" :class="inputStylingClass" v-model="returnDateAirlines" />
+                            </div>
                         </div>
         
                     </div>
@@ -127,38 +145,33 @@
                     <!-- :class="rowClass" -->
                     <div class="flex justify-between mx-4 items-start gap-2 my-6">
         
-                        <div :class="columnClass">
-        
+                    <!-- Departure Location -->
+                    <div :class="columnClass">
                         <div class="w-full">
-        
-                            <label :class="labelStylingClass">
-                                Flight Class<span class="text-red-star">*</span>
-                            </label>
-                            <select :class="inputStylingClass" v-model="flightClassAirlines">
-                                <option selected hidden disabled>
-                                Class
-                                </option>
+                            <label
+                                class="block mb-2 font-JakartaSans font-medium text-sm"
+                                >Departure<span class="text-red-star">*</span></label
+                            >
+                            <select :class="inputStylingClass" v-model="departure">
+                            <option v-for="data in cityData" :value="data.id">
+                                {{ data.city_name }}
+                            </option>
                             </select>
-        
                         </div>
+                    </div>
         
-                        </div>
-        
-                        <div :class="columnClass">
+                    <div :class="columnClass">
                         <div class="w-full">
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                            Vendor<span class="text-red-star">*</span>
+                                Arrival<span class="text-red-star">*</span>
                             </label>
-                            <div>
-                            <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
-                            <label class="ml-4">Antavaya</label>
-                            </div>
-                            <div>
-                            <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
-                            <label class="ml-4">Aerowisata</label>
-                            </div>
+                            <select :class="inputStylingClass" v-model="arrival">
+                                <option v-for="data in cityData" :value="data.id">
+                                    {{ data.city_name }}
+                                </option>
+                            </select>
                         </div>
-                        </div>
+                    </div>
         
                     </div>
         
@@ -178,17 +191,20 @@
                             </Switch>
                         </div>
                         </div>
-        
+
                         <div :class="columnClass">
                         <div class="w-full">
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                Arrival<span class="text-red-star">*</span>
+                            Vendor<span class="text-red-star">*</span>
                             </label>
-                            <select :class="inputStylingClass" v-model="arrival">
-                                <option v-for="data in optionDataCity" :value="data.id">
-                                    {{ data.city_name }}
-                                </option>
-                            </select>
+                            <div>
+                            <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
+                            <label class="ml-4">Antavaya</label>
+                            </div>
+                            <div>
+                            <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
+                            <label class="ml-4">Aerowisata</label>
+                            </div>
                         </div>
                         </div>
         
@@ -208,7 +224,7 @@
                             </th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <!-- <tbody>
                             <tr v-for="data in airlinesDummy" :key="data.id">
                             <td>
                                 <img class="w-20 h-[18px]" :src="data.Airline">
@@ -238,7 +254,7 @@
                                 </button>
                             </td>
                             </tr>
-                        </tbody>
+                        </tbody> -->
                         </table>
                     </div>
 
@@ -248,8 +264,6 @@
                     />
     
                 </form>
-    
-                <!-- <confirmationButton @cancel-click="isVisibleAirlines = false" /> -->
             
             </main>
 

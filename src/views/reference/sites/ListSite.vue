@@ -1,16 +1,16 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import ModalAdd from "@/components/reference/sites/ModalAdd.vue"
-import ModalEdit from "@/components/reference/sites/ModalEdit.vue"
-import ModalView from "@/components/reference/sites/ModalView.vue"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import ModalAdd from "@/components/reference/sites/ModalAdd.vue";
+import ModalEdit from "@/components/reference/sites/ModalEdit.vue";
+import ModalView from "@/components/reference/sites/ModalView.vue";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import tableData from "@/components/table/tableData.vue"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
-import fetchCompanyUtils from '@/utils/Fetch/Reference/fetchCompany'
+import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
@@ -32,7 +32,7 @@ import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
-const referenceFetch = useReferenceFetchResult()
+const referenceFetch = useReferenceFetchResult();
 const sidebar = useSidebarStore();
 const formEditState = useFormEditStore();
 
@@ -63,9 +63,9 @@ const callViewApi = async () => {
 
 //for edit
 const editSite = async (data) => {
-  editSiteDataId.value = data
-  setTimeout(callEditApi, 500)
-}
+  editSiteDataId.value = data;
+  setTimeout(callEditApi, 500);
+};
 
 //for edit
 const callEditApi = async () => {
@@ -91,7 +91,7 @@ const search = ref("");
 let sortedData = ref([]);
 const selectedCompany = ref("Company");
 let sortedbyASC = true;
-let instanceArray = []
+let instanceArray = [];
 let Company = ref("");
 let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
@@ -122,7 +122,8 @@ const filterDataByCompany = () => {
 
 //for filter & reset button
 const resetData = () => {
-  sortedData.value = instanceArray;
+  // sortedData.value = instanceArray;
+  fetchSite();
   selectedCompany.value = "Company";
 };
 
@@ -186,7 +187,7 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-}
+};
 
 //for searching
 const filteredItems = (search) => {
@@ -214,7 +215,7 @@ const fetchSite = async () => {
   const res = await Api.get("/site/get_data");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-}
+};
 
 //delete site
 const deleteSite = async (id) => {
@@ -257,7 +258,7 @@ const deleteSite = async (id) => {
       return;
     }
   });
-}
+};
 
 //for export
 const exportToExcel = () => {
@@ -298,21 +299,20 @@ const exportToExcel = () => {
     a.click();
     URL.revokeObjectURL(url);
   });
-}
+};
 
-const addCompanyData = ref([])
+const addCompanyData = ref([]);
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchSite()
-  fetchCompanyUtils([], addCompanyData)
-})
+  getSessionForSidebar();
+  fetchSite();
+  fetchCompanyUtils([], addCompanyData);
+});
 
 watch(addCompanyData, () => {
-  referenceFetch.fetchCompanyResult = addCompanyData.value
-  Company.value = addCompanyData.value
-})
-
+  referenceFetch.fetchCompanyResult = addCompanyData.value;
+  Company.value = addCompanyData.value;
+});
 </script>
 
 <template>

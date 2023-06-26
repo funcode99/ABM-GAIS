@@ -64,6 +64,7 @@
     let addCompanyData = ref([])
     let addDocumentData = ref([])
     let addAuthoritiesData = ref([])
+    let baitArray = ref([])
 
     //for paginations
     const onChangePage = (pageOfItem) => {
@@ -109,9 +110,9 @@
 
     onBeforeMount(() => {
       getSessionForSidebar()
-      fetchMenuUtils(instanceArray, responseStatusMenu, responseMessageMenu, addMenuData)
+      fetchMenuUtils(baitArray, responseStatusMenu, responseMessageMenu, addMenuData)
       fetchCompanyUtils(instanceArray, addCompanyData)
-      fetchDocumentCodeUtils(instanceArray, addDocumentData)
+      fetchDocumentCodeUtils(addDocumentData)
       fetchApproverAuthoritiesUtils(addAuthoritiesData)
       fetch()
     })

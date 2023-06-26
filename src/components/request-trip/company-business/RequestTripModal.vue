@@ -4,11 +4,8 @@ import Api from '@/utils/Api'
 import { Modal } from 'usemodal-vue3'
 import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
 
-import iconClose from "@/assets/navbar/icon_close.svg"
-
 import arrow from '@/assets/arrow-multi-step-form.png'
 import check from '@/assets/step-done-check.png'
-
 
 import modalHeader from '@/components/modal/modalHeader.vue'
 
@@ -23,6 +20,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
     const enabled = ref(false)
     let referenceFetch = useReferenceFetchResult()
+
+    let filterData = ref([])
 
     let instanceArray = []
     let optionDataPurposeofTrip = ref([])
@@ -243,6 +242,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     // Purpose of Trip API
     let selectedRequestor = ref([])
     let requestor = ref('')
+    let requestorName = ref('')
     let locationId = ref('')
     let location = ref('')
     let sn = ref('')
@@ -254,41 +254,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let fromCityId = ref('')
     let toCityId = ref('')
     let zona = ref('')
+    let zonaName = ref('')
     let TLKperDay = ref(0)
     let totalDays = ref()
     let totalTLK = ref(0)
     let departureDate = ref('')
     let returnDate = ref('')
-
-    // Guest as a traveller
-    let typeOfTraveller = ref('')
-    let department = ref('')
-    let name = ref('')
-    let company = ref('')
-    let gender = ref('')
-    let hotelFare = ref('')
-    let NIK = ref('')
-    let flightClassGuestAsATraveller = ref('')
-    let contactNumber = ref('')
-    let notesGuestAsTraveller = ref('')
-
-    // Airlines
-    let traveller = ref('')
-    let departure = ref('')
-    let departureDateAirlines = ref('')
-    let arrival = ref('')
-    let flightClassAirlines = ref('')
-    let vendor = ref('')
-
-    // Taxi Voucher
-    let nameTaxiVoucher = ref('')
-    let dateTaxiVoucher = ref('')
-    let departureTaxiVoucher = ref('')
-    let arrivalTaxiVoucher = ref('')
-    let amountTaxiVoucher = ref('')
-    let remarksTaxiVoucher = ref('')
-    let accountNameTaxiVoucher = ref('')
-    let voucherCodeTaxiVoucher = ref('')
 
     // Other Transportation
     let travellerOtherTransportation = ref('')
@@ -347,7 +318,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let date2 = ref('')
     let margin = ref()
 
-    watch(departureDate, (newValue, oldValue) => {
+    watch(departureDate, (newValue) => {
       getDepartureDateYear = newValue.toString().substring(0,4)
       getDepartureDateMonth = newValue.toString().substring(5,7)
       getDepartureDateDay = newValue.toString().substring(8,10)
@@ -406,15 +377,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     })
 
     watch(optionDataEmployeeRequestor, () => {
-      
       // telephone.value = optionDataEmployeeRequestor.value[newValue[1]].phone_number
-
       requestor.value = optionDataEmployeeRequestor.value[0].id
+      requestorName.value = optionDataEmployeeRequestor.value[0].employee_name
       locationId.value = optionDataEmployeeRequestor.value[0].id_site
       location.value = optionDataEmployeeRequestor.value[0].company_name
       sn.value = optionDataEmployeeRequestor.value[0].sn_employee
       telephone.value = optionDataEmployeeRequestor.value[0].phone_number
-
     })
 
     const submitGuestTraveller = () => {
@@ -448,13 +417,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       const api = await Api.get('/city')
       optionDataCity.value = api.data.data
     }
-
-    // const fetchZona = async () => {
-    //   const token = JSON.parse(localStorage.getItem('token'))
-    //   Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    //   const api = await Api.get('/zona/get')
-    //   optionDataZona.value = api.data.data
-    // }
 
     const fetchFlight = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
@@ -505,7 +467,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       fetchEmployeeRequestor()
       fetchSiteLocation()
       fetchCity()
-      // fetchZona()
       fetchCompany()
       fetchFlight()
       fetchJobBand()
@@ -537,16 +498,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       {id: 3, title: 'Taxi Voucher'}
     ]
 
-
-    let filterData = ref([])
-
     const fetchTLKByJobBand = async () => {
       let jobBandId = referenceFetch.fetchEmployeeByLoginResult[0].id_job_band
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/zona_job/get_by_job/${jobBandId}`)
       filterData.value = api.data.data
-      console.log(filterData.value)
       TLKperDay.value = filterData.value[0].tlk_rate
     }
 
@@ -555,10 +512,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/zona/get_by_city/${toCity.value}`)
       optionDataZona.value = api.data.data
-      console.log(optionDataZona.value)
       zona.value = optionDataZona.value[0].id_zona
-      console.log('ini adalah nilai zona')
-      console.log(zona.value)
+      zonaName.value = optionDataZona.value[0].zona_name
     }
 
     watch(zona, () => {
@@ -672,17 +627,21 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
                 <div :class="columnClass">
                   <div class="w-full">
-                    <span>Requestor <span class="text-[#f5333f]">*</span></span>
+                    <span>
+                      Requestor <span class="text-[#f5333f]">*</span>
+                    </span>
                     <div>
-                      <input disabled :class="inputStylingClass" type="text" v-for="(data, index) in optionDataEmployeeRequestor" :value="data.employee_name" />
+                      <input disabled :class="inputStylingClass" type="text" required v-model="requestorName" />
                     </div>
                   </div>
                 </div>
   
                 <div :class="columnClass">
                   <div class="w-full">
-                    <span class="block">Location <span class="text-[#f5333f]">*</span></span>
-                    <input disabled type="text" v-for="data in optionDataEmployeeRequestor" v-model="location" :class="inputStylingClass" placeholder="Location" required />
+                    <span class="block">
+                      Location <span class="text-[#f5333f]">*</span>
+                    </span>
+                    <input disabled :class="inputStylingClass" type="text" required v-model="location" />
                   </div>
                 </div>
   
@@ -695,15 +654,15 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                     <span class="block">
                       SN <span class="text-red-star">*</span>
                     </span>
-                    <input disabled type="text" v-for="data in optionDataEmployeeRequestor" v-model="sn" :class="inputStylingClass" placeholder="SN Number" required />
+                    <input disabled :class="inputStylingClass" type="text" required v-model="sn" />
                   </div>
   
                 </div>
   
                 <div :class="columnClass">
                   <div class="w-full">
-                    <span class="block">Telephone <span class="text-red-star">*</span></span>
-                    <input disabled type="text" v-for="data in optionDataEmployeeRequestor" v-model="telephone" :class="inputStylingClass" placeholder="Telephone" required>
+                    <span class="block">Phone <span class="text-red-star">*</span></span>
+                    <input disabled :class="inputStylingClass" type="text" required v-model="telephone" />
                   </div>
                 </div>
   
@@ -766,9 +725,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
                       @change="fetchTLKByJobBand"
                       placeholder="Zona" 
-                      v-model="zona" 
+                      v-model="zonaName" 
                       required>
-                        <option v-for="data in optionDataZona" :value="data.id">
+                        <option v-for="data in optionDataZona" :value="data.zona_name">
                           {{ data.zona_name }}
                         </option>
                       </select>

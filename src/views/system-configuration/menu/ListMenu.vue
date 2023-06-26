@@ -58,6 +58,7 @@
     let addMenuData = ref([])
     let addCompanyData = ref([])
     let addMenuStatusData = ref([])
+    let baitArray = ref([])
 
     //for paginations
     const onChangePage = (pageOfItem) => {
@@ -104,10 +105,8 @@
             });
 
             if (sortedData.value.length == 1) {
-              // fetchMenuUtils(instanceArray, addMenuData, sortedData)
               fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
             } else {
-              // fetchMenuUtils(instanceArray, addMenuData, sortedData)
               fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
             }
 
@@ -152,7 +151,6 @@
           timer: 1500,
       })
 
-      // fetchMenuUtils(instanceArray, addMenuData, sortedData)
       fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
 
     }
@@ -197,7 +195,6 @@
           timer: 1500,
       })
 
-      // fetchMenuUtils(instanceArray, addMenuData, sortedData)
       fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
 
       } catch (error) {
@@ -227,7 +224,7 @@
       }
     }
 
-    let baitArray = ref([])
+
 
     onBeforeMount(() => {
       getSessionForSidebar()
