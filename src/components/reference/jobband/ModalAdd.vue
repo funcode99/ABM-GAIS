@@ -1,16 +1,16 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
-import { ref, onMounted, watch } from "vue"
-import { Modal } from "usemodal-vue3"
+import { ref, onMounted, watch } from "vue";
+import { Modal } from "usemodal-vue3";
 
-import Multiselect from "@vueform/multiselect"
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
+import Multiselect from "@vueform/multiselect";
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-import { useReferenceFetchResult } from '@/stores/fetch/reference'
-const referenceFetch = useReferenceFetchResult()
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
+const referenceFetch = useReferenceFetchResult();
 
 const emits = defineEmits(["unlockScrollbar", "jobband-saved"]);
 
@@ -34,10 +34,10 @@ let addZona = ref([]);
 const arrayDetail = ref([]);
 
 const saveJobBand = async () => {
-  isAdding.value = true
-  isVisible.value = !isVisible.value
-  setTimeout(callAddApi, 500)
-}
+  isAdding.value = true;
+  isVisible.value = !isVisible.value;
+  setTimeout(callAddApi, 500);
+};
 
 const callAddApi = async () => {
   try {
@@ -68,11 +68,11 @@ const callAddApi = async () => {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 const resetInputValues = () => {
   inputValues.value = [...initialInputValues.value];
-}
+};
 
 const resetInput = () => {
   jobBandName.value = "";
@@ -80,7 +80,7 @@ const resetInput = () => {
   mealsRate.value = "";
   companyIdArray.value = [];
   selectedFlightClass.value = "Flight";
-}
+};
 
 watch(isVisible, () => {
   if (isAdding.value == true) {
@@ -90,21 +90,21 @@ watch(isVisible, () => {
     resetInputValues();
   }
 
-  FlightClass.value = referenceFetch.fetchFlightClassResult
-  companyData.value = referenceFetch.fetchCompanyResult
+  FlightClass.value = referenceFetch.fetchFlightClassResult;
+  companyData.value = referenceFetch.fetchCompanyResult;
   companyData.value.map((item) => {
-    item.value = item.id
-  })
+    item.value = item.id;
+  });
 
-  addZona.value = referenceFetch.fetchZonaIdResult
-  inputZonaValues.value = referenceFetch.fetchZonaIdResult
-  inputZonaValues.value = inputZonaValues.value.map((item) => {
-    arrayDetail.value.push({
+  addZona.value = referenceFetch.fetchZonaIdResult;
+  inputZonaValues.value = referenceFetch.fetchZonaIdResult;
+  arrayDetail.value = inputZonaValues.value.map((item) => {
+    return {
       id_zona: item.id_zona,
       tlk_rate: "",
-    })
-  })
-})
+    };
+  });
+});
 
 function formatCurrency() {
   hotelFare.value = hotelFare.value.replace(/\D/g, "");
@@ -135,17 +135,16 @@ function formatCurrency() {
 }
 
 onMounted(() => {
-    inputValues.value = addZona.value.map(() => "")
-  initialInputValues.value = [...inputValues.value]
-})
-
+  inputValues.value = addZona.value.map(() => "");
+  initialInputValues.value = [...inputValues.value];
+});
 </script>
 
 <template>
-
   <button
     @click="isVisible = true"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+  >
     + Add New
   </button>
 
