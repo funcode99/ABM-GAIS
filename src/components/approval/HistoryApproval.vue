@@ -21,7 +21,7 @@ let classWaiting = "absolute flex items-center justify-center rounded-full w-8 h
 </script>
 
 <template>
-  <div class="container my-[30px] px-[30px]">
+  <div class="container my-[30px] px-[30px]" v-if="historyApproval">
 
     <div class="flex" v-for="(data, index) in historyApproval" :key="data.id">
       <div class="flex flex-col items-center mr-4">
@@ -50,6 +50,9 @@ let classWaiting = "absolute flex items-center justify-center rounded-full w-8 h
         <p class="text-gray-700 mt-1" v-if="data.date">Notes: {{ data.notes }}</p>
       </div>
     </div>
+  </div>
+  <div v-else>
+    <p class="text-center p-4">No Approval Log</p>
   </div>
 </template>
 <style></style>
