@@ -171,6 +171,7 @@ const format_date = (value) => {
             <div class="flex gap-2">
               <button
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+                v-if="status == 'Draft'"
               >
                 Edit
               </button>

@@ -298,7 +298,8 @@ const format_date = (value) => {
                     Date
                   </p>
 
-                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" />
+                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10"
+                  format="dd-MM-yyyy" />
                 </div>
               </div>
 
