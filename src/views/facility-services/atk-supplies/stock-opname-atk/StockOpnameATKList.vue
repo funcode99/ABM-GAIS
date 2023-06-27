@@ -466,12 +466,12 @@ const format_date = (value) => {
                       {{ data.status }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link v-if="data.status == 'Draft'" :to="`/stockOpname/${data.id}`">
+                      <router-link :to="`/stockOpname/${data.id}`">
                           <img :src="editicon" class="w-6 h-6" />
                       </router-link>
-                      <button v-else disabled>
+                      <!-- <button v-else disabled>
                         <img :src="editicon" class="w-6 h-6" />
-                      </button>
+                      </button> -->
                       <button v-if="data.status == 'Draft'" @click="deleteValue(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
