@@ -1,4 +1,7 @@
 <script setup>
+    import { inject } from 'vue'
+
+    const props = inject('travellerData')
     const tableHeadTravellers = [
         {id: 1, title: 'Name'},
         {id: 3, title: 'Gender'},
@@ -10,12 +13,10 @@
         {id: 9, title: 'Flight Class'},
         {id: 10, title: 'Action'}
     ]
+
 </script>
 
 <template>
-
-    <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">    
-    </div>
 
     <div class="overflow-x-auto mt-5">
 
@@ -30,7 +31,7 @@
         </thead>
 
         <tbody>
-          <tr v-for="data in travellerGuestTable" :key="data.id">
+          <tr v-for="data in props" :key="data.id">
             <td>
               {{ data.name_guest }}
             </td>
@@ -41,7 +42,6 @@
               {{ data.contact_no }}
             </td>
             <td>
-              <!-- kenapa departement nya cuma id -->
               {{ data.departement }}
             </td>
             <td>
@@ -67,3 +67,21 @@
     </div>
 
 </template>
+
+<style scoped>
+.table :where(th, td) {
+  padding: .5rem !important;
+}
+
+.table th {
+  background: #015289 !important;
+  border-color: #b9b9b9 !important;
+  border-width: 2px;
+  color: white;
+}
+
+.table td {
+  border-color: #b9b9b9 !important;
+  border-width: 2px;
+}
+</style>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onBeforeMount } from 'vue'
+import { ref, watch, onBeforeMount, provide } from 'vue'
 import Api from '@/utils/Api'
 import { Modal } from 'usemodal-vue3'
 import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
@@ -9,21 +9,21 @@ import check from '@/assets/step-done-check.png'
 
 import modalHeader from '@/components/modal/modalHeader.vue'
 
+import guestAsTravellerTable from '@/components/request-trip/table-step-form/guest-as-traveller-table.vue'
+import airlinesTable from '@/components/request-trip/table-step-form/airlines-table.vue'
+import taxiVoucherTable from '@/components/request-trip/table-step-form/taxi-voucher-table.vue'
+import otherTransportationTable from '@/components/request-trip/table-step-form/other-transportation-table.vue'
+
 import guestAsTravellerForm from '@/components/request-trip/modal-step-form/guest-as-traveller-form.vue'
 import airlinesForm from '@/components/request-trip/modal-step-form/airlines-form.vue'
 import taxiVoucherForm from '@/components/request-trip/modal-step-form/taxi-voucher-form.vue'
 import otherTransportationForm from '@/components/request-trip/modal-step-form/other-transportation-form.vue'
 import accomodationForm from '@/components/request-trip/modal-step-form/accomodation-form.vue'
 import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-advance-form.vue'
-
-// import { Switch } from '@headlessui/vue'
   
-    const enabled = ref(false)
     let referenceFetch = useReferenceFetchResult()
 
     let filterData = ref([])
-
-    let instanceArray = []
     let optionDataPurposeofTrip = ref([])
     let optionDataEmployeeRequestor = ref([])
     let optionDataCity = ref([])
@@ -41,6 +41,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let otherTransportationTable = ref([])
     let accomodationTable = ref([])
     let cashAdvanceTable = ref([])
+
+    provide('travellerData', travellerGuestTable)
+    provide('airlinesData', airlinesTable)
+    provide('taxiVoucherData', taxiVoucherTable)
+    provide('otherTransportationData', otherTransportationTable)
+    provide('accomodationData', accomodationTable)
+    provide('cashAdvanceData', cashAdvanceTable)
 
     let isVisibleGuest = ref(false)
     let isVisibleAirlines = ref(false)
@@ -71,160 +78,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
     })
 
-    const tableHeadTravellers = [
-    {id: 1, title: 'Name'},
-    {id: 3, title: 'Gender'},
-    {id: 4, title: 'Contact No'},
-    {id: 5, title: 'Department'},
-    {id: 6, title: 'Company'},
-    {id: 7, title: 'Type'},
-    {id: 8, title: 'Max Hotel Fare'},
-    {id: 9, title: 'Flight Class'},
-    {id: 10, title: 'Action'}
-    ]
-
-    const tableBodyTravellers = [
-      {
-        id: 1,
-        name: 'Gavin McFarland',
-        sn: '212123',
-        gender: 'Male',
-        contactNo: '(820)340234-3294',
-        department: 'IT',
-        company: 'PT ABM',
-        type: 'requestor',
-        maxHotelFare: '700.000',
-        flightClass: 'Economy'
-      },
-      {
-        id: 2,
-        name: 'Evelyn Reid',
-        sn: '322232',
-        gender: 'Female',
-        contactNo: '(260)360274-3514',
-        department: 'Sales',
-        company: 'PT ABC',
-        type: 'employee',
-        maxHotelFare: '700.000',
-        flightClass: 'Economy'
-      },
-    ]
-
-    const tableHeadAirlinesRequestTrip = [
-      {id: 1, title: 'Name'},
-      {id: 2, title: 'Departure'},
-      {id: 3, title: 'Arrival'},
-      {id: 4, title: 'Flight Number'},
-      {id: 5, title: 'Domestic/International'},
-      {id: 6, title: 'Status'},
-      {id: 7, title: 'Action'}
-    ]
-
-    const tableBodyAirlinesRequestTrip = [
-      {
-        id: 1,
-        name: 'Gavin McFarland',
-        departure: 'Jakarta',
-        arrival: 'Surabaya',
-        flightNumber: 'CL-212',
-        flightRegion: 'Domestic',
-        status: 'Pending'
-      },
-      {
-        id: 2,
-        name: 'Evelyn Reid',
-        departure: 'Jakarta',
-        arrival: 'Surabaya',
-        flightNumber: 'CL-212',
-        flightRegion: 'Domestic',
-        status: 'Pending'
-      },
-    ]
-
-    const tableHeadTaxiVoucher = [
-      {id: 1, title: 'Name'},
-      {id: 2, title: 'Date'},
-      {id: 3, title: 'Departure'},
-      {id: 4, title: 'Arrival'},
-      {id: 5, title: 'Amount'},
-      {id: 6, title: 'Account Name'},
-      {id: 7, title: 'Remarks'},
-      {id: 8, title: 'Status'},
-      {id: 9, title: 'Action'},
-    ]
-
-    const tableBodyTaxiVoucher = [
-      {
-        id: 1,
-        name: 'Gavin McFarland',
-        date: '223/12/23',
-        departure: 'Airport Sub',
-        arrival: 'Site A',
-        amount: '120.000',
-        accountName: '',
-        remarks: '',
-        status: ''
-      },
-    ]
-
-    const tableHeadOtherTransportation = [
-      {id: 1, title: 'Name'},
-      {id: 2, title: 'Type'},
-      {id: 3, title: 'From Date'},
-      {id: 4, title: 'To Date'},
-      {id: 5, title: 'Quantity'},
-      {id: 6, title: 'City'},
-      {id: 7, title: 'Status'},
-      {id: 8, title: 'Action'},
-    ]
-
-    const tableBodyOtherTransportation = [
-      {
-        id: 1,
-        name: 'Gavin McFarland',
-        type: 'Rent Car',
-        fromDate: '23/4/23',
-        toDate: '24/4/23',
-        quantity: '1',
-        city: 'Surabaya',
-        status: 'Pending'
-      }  
-    ]
-
-    const tableHeadAccomodationRequestTrip = [
-      {id: 1, title: 'Name'},
-      {id: 2, title: 'Hotel Name'},
-      {id: 3, title: 'Check In'},
-      {id: 4, title: 'Check Out'},
-      {id: 5, title: 'City'},
-      {id: 6, title: 'Type'},
-      {id: 7, title: 'Sharing With'},
-      {id: 8, title: 'Status'},
-      {id: 9, title: 'Action'}
-    ]
-
-    const tableBodyAccomodationRequestTrip = [
-      {
-        id: 1,
-        name: 'Gavin McFarland',
-        hotelName: 'Aston',
-        checkIn: '23/4/23',
-        checkOut: '24/4/23',
-        city: 'Surabaya',
-        type: 'Hotel',
-        sharingWith: 'Leo',
-        status: 'Pending'
-      }
-    ]
-
-    const tableHeadCashAdvance = [
-      {id: 1, title: 'Cash Advance No'},
-      {id: 2, title: 'Total'},
-      {id: 3, title: 'Notes'},
-      {id: 4, title: 'Status'},
-      {id: 5, title: 'Action'}
-    ]
-
     const tableBodyCashAdvance = [
       {
         id: 1,
@@ -250,12 +103,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let location = ref('')
     let sn = ref('')
     let telephone = ref('')
-    let purposeOfTrip = ref('')
     let notesToPurposeOfTrip = ref('')
     let fromCity = ref('')
     let toCity = ref('')
-    let fromCityId = ref('')
-    let toCityId = ref('')
     let zona = ref('')
     let zonaName = ref('')
     let TLKperDay = ref(0)
@@ -327,33 +177,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     })
 
     watch(formStep, async () => {
-      if (formStep.value === 2) {
-
-        // if(localStorage.getItem("tripId") !== undefined) {
-        //   const token = JSON.parse(localStorage.getItem('token'))
-        //   Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        //   const api = await Api.post('/request_trip/store', {
-        //     id_zona: zona.value,
-        //     id_city_to: toCity.value,
-        //     id_site: locationId.value,
-        //     id_employee: requestor.value,
-        //     id_city_from: fromCity.value,
-        //     no_request_trip: '',
-        //     code_document: requestType.value[0],
-        //     notes: notesToPurposeOfTrip.value,
-        //     date_departure: departureDate.value,
-        //     date_arrival: returnDate.value,
-        //     tlk_per_day: TLKperDay.value,
-        //     total_tlk: totalTLK
-        //   })
-        //   localStorage.setItem('tripId', api.data.data.id)
-        //   fetchTravellerGuest(api.data.data.id)
-        // }
-        // else {
-        //   fetchTravellerGuest(localStorage.getItem("tripId"))
-        // }
-
-      }
     })
 
     const savePurposeOfTrip = async () => {
@@ -406,8 +229,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/employee/get_by_login')
       optionDataEmployeeRequestor.value = api.data.data
-      console.log(api.data.data[0].employee_name)
-      // localStorage.setItem('loginName', api.data.data[0].employee_name)
     }
 
     const fetchSiteLocation = async () => {
@@ -486,14 +307,14 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     //     airlinesTable.value = api.data.data  
     // }
     
-    // for taxi voucher table
     const fetchTaxiVoucher = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/taxi_voucher/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
         taxiVoucherTable.value = api.data.data
     }
-    
+    // for taxi voucher table
+
     // for other transportation table
     const fetchOtherTransportation = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -869,272 +690,42 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                 <!-- step 3 form Traveller -->
                 <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
 
-                  <div class="overflow-x-auto mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadTravellers" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in travellerGuestTable" :key="data.id">
-                          <td>
-                            {{ data.name_guest }}
-
-                          </td>
-                          <td>
-                            {{ data.gender }}
-                          </td>
-                          <td>
-                            {{ data.contact_no }}
-                          </td>
-                          <td>
-                            <!-- kenapa departement nya cuma id -->
-                            {{ data.departement }}
-                          </td>
-                          <td>
-                            {{ data.company }}
-                          </td>
-                          <td>
-                            {{ data.type_traveller }}
-                          </td>
-                          <td>
-                            {{ data.hotel_fare }}
-                          </td>
-                          <td>
-                            {{ data.flight_class }}
-                          </td>
-                          <td>
-
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <guestAsTravellerTable />
 
                 </div>
 
                 <!-- step 4 form Airlines -->
                 <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
 
-                  <div class="overflow-x-auto mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in airlinesTable" :key="data.id">
-                          <td>
-                            {{ data.name }}
-                          </td>
-                          <td>
-                            {{ data.departure }}
-                          </td>
-                          <td>
-                            {{ data.arrival }}
-                          </td>
-                          <td>
-                            {{ data.flightNumber }}
-                          </td>
-                          <td>
-                            {{ data.flightRegion }}
-                          </td>
-                          <td>
-                            {{ data.status }}
-                          </td>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <airlinesTable />
 
                 </div>
 
                 <!-- step 5 form Taxi Voucher -->
                 <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
 
-                  <div class="overflow-x-auto mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in taxiVoucherTable" :key="data.id">
-                            <td>
-                              <!-- {{ data.name }} -->
-                              {{ employeeName }}
-                            </td>
-                            <td>
-                              {{ data.date }}
-                            </td>
-                            <td>
-                              {{ data.name_departure_city }}
-                            </td>
-                            <td>
-                              {{ data.name_arrival_city }}
-                            </td>
-                            <td>
-                              {{ data.amount }}
-                            </td>
-                            <td>
-                              {{ data.account_name }}
-                            </td>
-                            <td>
-                              {{ data.remarks }}
-                            </td>
-                            <td>
-
-                            </td>
-                            <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                    <taxiVoucherTable />
 
                 </div>
 
                 <!-- step 6 form Other Transportation -->
                 <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
 
-                  <div class="overflow-x-auto mt-5">
-
-                    <table class="table">
-                      
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadOtherTransportation" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        <tr v-for="data in otherTransportationTable" :key="data.id">
-                          <td>
-                            <!-- {{ data.name }} -->
-                            {{ employeeName }}
-                          </td>
-                          <td>
-                            {{ data.id_type_transportation }}
-                          </td>
-                          <td>
-                            {{ data.from_date }}
-                          </td>
-                          <td>
-                            {{ data.to_date }}
-                          </td>
-                          <td>
-                            {{ data.qty }}
-                          </td>
-                          <td>
-                            {{ data.id_city }}
-                          </td>
-                          <td>
-                            
-                          </td>
-                          <td>
-                              
-                          </td>
-                        </tr>
-                      </tbody>
-
-                    </table>
-
-                  </div>
+                    <otherTransportationTable />
 
                 </div>
 
                 <!-- step 7 form Accomodation -->
                 <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
 
-                  <div class="overflow-x-auto mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in accomodationTable" :key="data.id">
-                          <td>
-                            {{ employeeName }}
-                          </td>
-                          <td>
-                            {{ data.code_hotel }}
-                          </td>
-                          <td>
-                            {{ data.check_in_date }}
-                          </td>
-                          <td>
-                            {{ data.check_out_date }}
-                          </td>
-                          <td>
-                            {{ data.id_city }}
-                          </td>
-                          <td>
-                            {{ data.id_type_accomodation }}
-                          </td>
-                          <td>
-                            {{ data.sharing_w_name }}
-                          </td>
-                          <td>
-
-                          </td>
-                          <td>
-
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <accomodationTable />
 
                 </div>
 
                 <!-- step 8 form Cash Advance -->
                 <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
 
-                  <div class="overflow-x-auto mt-5 flex justify-center">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadCashAdvance" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in cashAdvanceTable" :key="data.id">
-                          <td>
-                            {{ data.caNo }}
-                          </td>
-                          <td>
-                            {{ data.total }}
-                          </td>
-                          <td>
-                            {{ data.notes }}
-                          </td>
-                          <td>
-                            {{ data.status }}
-                          </td>
-                          <td>
-                            
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <cashAdvanceTable />
 
                 </div>
 
@@ -1145,56 +736,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                   <!-- step 3 form Traveller -->
                   <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
     
-                    <div class="overflow-x-auto mt-5">
-
-                      <table class="table">
-
-                        <thead>
-                        <tr>
-                        <th v-for="data in tableHeadTravellers" :key="data.id">
-                        {{ data.title }}
-                        </th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        <tr v-for="data in tableBodyTravellers" :key="data.id">
-                        <td>
-                        {{ data.name }}
-                        </td>
-                        <td>
-                        {{ data.sn }}
-                        </td>
-                        <td>
-                        {{ data.gender }}
-                        </td>
-                        <td>
-                        {{ data.contactNo }}
-                        </td>
-                        <td>
-                        {{ data.department }}
-                        </td>
-                        <td>
-                        {{ data.company }}
-                        </td>
-                        <td>
-                        {{ data.type }}
-                        </td>
-                        <td>
-                        {{ data.maxHotelFare }}
-                        </td>
-                        <td>
-                        {{ data.flightClass }}
-                        </td>
-                        <td>
-        
-                        </td>
-                        </tr>
-                        </tbody>
-                        
-                      </table>
-
-                    </div>
+                    <guestAsTravellerTable />
   
                   </div>
   
@@ -1379,7 +921,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
                   </div>
   
-                  <!-- step 8 form -->
+                  <!-- step 8 form Cash Advance -->
                   <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
   
                     <div class="overflow-x-auto mt-5">
@@ -1426,51 +968,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       + Add Guest
                     </button>
   
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadTravellers" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyTravellers" :key="data.id">
-                            <td>
-                              {{ data.name }}
-                            </td>
-                            <td>
-                              {{ data.sn }}
-                            </td>
-                            <td>
-                              {{ data.gender }}
-                            </td>
-                            <td>
-                              {{ data.contactNo }}
-                            </td>
-                            <td>
-                              {{ data.department }}
-                            </td>
-                            <td>
-                              {{ data.company }}
-                            </td>
-                            <td>
-                              {{ data.type }}
-                            </td>
-                            <td>
-                              {{ data.maxHotelFare }}
-                            </td>
-                            <td>
-                              {{ data.flightClass }}
-                            </td>
-                            <td>
-  
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <guestAsTravellerTable />
   
                   </div>
   
