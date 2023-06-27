@@ -191,6 +191,9 @@ const addItem = async () => {
 
   itemsTable2.value.push({
     id_item: itemNames.value,
+    id_warehouse: selectedWarehouse.value,
+    id_brand:selectedBrand.value,
+    id_uom: selectedUOM.value,
     adjustment_type: selectedAdjusment.value,
     qty_adjustment : quantityOpname.value,
     remarks:remark.value,
@@ -238,10 +241,10 @@ const save = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
     id_company:selectedCompany.value,
-    id_departement:1,
+    // id_departement:1,
     id_site:selectedSite.value,
-    id_warehouse:selectedWarehouse.value,
-    id_employee:selectedEmployee.value,
+    // id_warehouse:selectedWarehouse.value,
+    // id_employee:selectedEmployee.value,
     remarks : remark.value,
     array_detail:itemsTable2.value
   }

@@ -8,13 +8,16 @@ import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import { useRouter } from 'vue-router'
 const router = useRouter()
-let selectedCompany = ref("Company");
-let selectedSite = ref("Site");
-let selectedWarehouse = ref("Warehouse")
+let selectedCompany = ref("");
+let selectedSite = ref("");
+let selectedWarehouse = ref("")
 let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
 let brandName = ref("");
+let warehouseName = ref("");
+let namaItem = ref("")
+let uomName = ref("")
 let Company = ref("");
 let Site = ref("");
 let Item = ref("")
@@ -122,6 +125,34 @@ const addItem = async () => {
     });
     return false
   }else {
+    const wh = Warehouse.value
+  for (let index = 0; index < wh.length; index++) {
+    const element = wh[index];
+    if(element.id == selectedWarehouse.value){
+      warehouseName.value = element.warehouse_name
+    }
+  }
+  const br = Brand.value
+  for (let index = 0; index < br.length; index++) {
+    const element = br[index];
+    if(element.id == selectedBrand.value){
+      brandName.value = element.brand_name
+    }
+  }
+  const uom = UOM.value
+  for (let index = 0; index < uom.length; index++) {
+    const element = uom[index];
+    if(element.id == selectedUOM.value){
+      uomName.value = element.uom_name
+    }
+  }
+  const it = Item.value
+  for (let index = 0; index < it.length; index++) {
+    const element = it[index];
+    if(element.id == itemNames.value){
+      namaItem.value = element.item_name
+    }
+  }
   itemsTable.value.push({
     id_company: selectedCompany.value,
     // id_departement: '',
@@ -133,6 +164,10 @@ const addItem = async () => {
     id_brand:selectedBrand.value,
     id_uom: selectedUOM.value,
     qty : alertQuantity.value,
+    nameWarehouse : warehouseName.value,
+    namaBrand : brandName.value,
+    namaUOM : uomName.value,
+    namItem : namaItem.value
   })
   resetButCompanyDisable()
   return itemsTable
@@ -234,8 +269,8 @@ onMounted(() => {
     >+ Add Request</label
   >
 
-  <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
-  <div class="modal" >
+  <input type="checkbox" v-if="addModal == true" id="my-modal-stock-in" class="modal-toggle" />
+  <div class="modal" v-if="addModal == true" >
     <div class="modal-dialog bg-white w-3/5 rounded-2xl">
       <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl" >
         <label
@@ -438,38 +473,38 @@ onMounted(() => {
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Warehouse
                 </th>
                 
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Item Name
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Quantity
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Brand
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   UOM
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Remarks
                 </th>
                 <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Actions
                 </th>
@@ -477,13 +512,13 @@ onMounted(() => {
             </thead>
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9]">{{ items.id_warehouse }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_item }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.qty }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_brand }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.id_uom }}</td>
-                <td class="border border-[#B9B9B9]">{{ items.remarks }}</td>
-                <td class="border border-[#B9B9B9]">
+                <td class="border border-[#B9B9B9] text-center">{{ items.nameWarehouse }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namItem }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.qty }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaBrand }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.namaUOM }}</td>
+                <td class="border border-[#B9B9B9] text-center">{{ items.remarks }}</td>
+                <td class="border border-[#B9B9B9] text-center">
                   <div class="flex flex-wrap justify-center items-center gap-2">
                     <button @click="removeItems(i)">
                       <img :src="deleteicon" class="w-6 h-6" />
