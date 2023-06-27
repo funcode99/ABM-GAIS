@@ -70,7 +70,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/settlement/get_data/${id}`);
   dataArr.value = res.data.data[0];
-  generateType(dataArr.total_real, dataArr.total_no);
+  generateType(dataArr.value.total_real, dataArr.value.total_ca);
   fetchDataItem(id);
 };
 
@@ -155,10 +155,10 @@ const submit = async () => {
 };
 
 const generateType = (after, before) => {
-  if (after > before) {
-    type.value = "Over";
-  } else if (after < before) {
-    type.value = "Less";
+  if (parseInt(after) > parseInt(before)) {
+    type.value = "Claim";
+  } else if (parseInt(after) < parseInt(before)) {
+    type.value = "Refund";
   } else {
     type.value = "Equal";
   }
