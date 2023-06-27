@@ -406,6 +406,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/employee/get_by_login')
       optionDataEmployeeRequestor.value = api.data.data
+      console.log(api.data.data[0].employee_name)
+      // localStorage.setItem('loginName', api.data.data[0].employee_name)
     }
 
     const fetchSiteLocation = async () => {
@@ -507,7 +509,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
         const api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
         accomodationTable.value = api.data.data
     }
-    
 
     // for cash advance table
     const fetchCashAdvance = async () => {
@@ -579,6 +580,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       // resetInput()
     })
 
+    let employeeName = localStorage.getItem('username')
+
 </script>
 
 <template>
@@ -595,8 +598,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       <modalHeader @closeVisibility="isVisibleOpenModal = !isVisibleOpenModal" :title="'New Request Trip'" />
 
       <!-- step circle -->
-      <div>
-
         <div class="flex justify-center pt-3 px-[10px] gap-x-[19px] h-[100px]">
   
           <!-- step 1 circle -->
@@ -640,11 +641,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
         </div>
 
-      </div>
-
-      <!-- masih company business, harus dipecah ke form lain nya juga -->
-      <!-- place all button add here -->
-      <!-- button nya dikeluarin agar tidak ikut kena scroll overflow -->
+      <!-- add button -->
       <button v-if="formStep == 2 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
           + Add Guest
       </button>
@@ -727,148 +724,147 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
               <!-- Step 2 FORM -->
               <form class="text-left px-4 flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'" @submit.prevent="savePurposeOfTrip">
   
-                <div :class="columnClass + ' mx-4'">
-          
-                    <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-  
-                    <select v-model="requestType" :class="inputStylingWithoutWidthClass" required>
+  <div :class="columnClass + ' mx-4'">
 
-                      <option v-for="data in optionDataPurposeofTrip" :value="[data.id, data.document_name]">
-                        {{ data.document_name }}
-                      </option>
+      <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
 
-                    </select>
-              
-                </div>
-  
-                <div :class="columnClass + ' mx-4 my-3'">
-  
-                  <span>
-                    Notes to Purpose of Trip
-                  </span>
+      <select v-model="requestType" :class="inputStylingWithoutWidthClass" required>
 
-                  <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip">
-  
-                </div>
-  
-                <h1 class="mx-4 mt-6">Itinerary</h1>
-                
-                <div :class="rowClass">
-  
-                  <!-- From -->
-                  <div class="w-full">
-                    <div :class="columnClass">
-                      <span>From<span class="text-red-star">*</span></span>
-                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" v-model="fromCity" required>
-                        <option v-for="data in optionDataCity" :value="data.id">
-                        {{ data.city_name }}
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-  
-                  <!-- Zona -->
-                  <div class="w-full">
+        <option v-for="data in optionDataPurposeofTrip" :value="[data.id, data.document_name]">
+          {{ data.document_name }}
+        </option>
 
-                    <div :class="columnClass">
-                      
-                      <span>
-                        Zona<span class="text-red-star">*</span>
-                      </span>
-                      
-                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
-                      @change="fetchTLKByJobBand"
-                      placeholder="Zona" 
-                      v-model="zonaName" 
-                      required>
-                        <option v-for="data in optionDataZona" :value="data.zona_name">
-                          {{ data.zona_name }}
-                        </option>
-                      </select>
+      </select>
 
-                    </div>
+  </div>
 
-                  </div>
+  <div :class="columnClass + ' mx-4 my-3'">
+
+    <span>
+      Notes to Purpose of Trip
+    </span>
+
+    <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip">
+
+  </div>
+
+  <h1 class="mx-4 mt-6">Itinerary</h1>
   
-                </div>
-  
-                <div :class="rowClass">
-  
-                  <!-- To -->
-                  <div :class="columnClass">
-                    <span>To<span class="text-red-star">*</span></span>
-                    <select :class="inputStylingClass" v-model="toCity" required>
-                      <option v-for="data in optionDataCity" :value="data.id">
-                        {{ data.city_name }}
-                      </option>
-                    </select>
-                  </div>
-                  
-                  <!-- TLK/Day -->
-                  <div :class="columnClass">
-                    <span>TLK/Day<span class="text-red-star">*</span></span>
-                    <input type="text" :class="inputStylingClass" placeholder="TLK/Day" v-model="TLKperDay" required>
-                  </div>
-  
-                </div>
-  
-                <div :class="rowClass">
-                  
-                  <!-- Date Departure -->
-                  <div :class="columnClass">
-                    <span>
-                      Date Departure<span class="text-red-star">*</span>
-                    </span>
-                    <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate" :max="returnDate" required>
-                  </div>
-  
-                  <!-- Total TLK -->
-                  <div :class="columnClass">
-                    <span>
-                      Total TLK<span class="text-red-star">*</span>
-                    </span>
-                    <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
-                  </div>
-  
-                </div>
-  
-                <div :class="rowClass">
+  <div :class="rowClass">
 
-                  <!-- Return Date -->
-                  <div :class="columnClass">
-                      <span>
-                        Return Date<span class="text-red-star">*</span>
-                      </span>
-                      <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
-                  </div>
+    <!-- From -->
+    <div class="w-full">
+      <div :class="columnClass">
+        <span>From<span class="text-red-star">*</span></span>
+        <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" v-model="fromCity" required>
+          <option v-for="data in optionDataCity" :value="data.id">
+          {{ data.city_name }}
+          </option>
+        </select>
+      </div>
+    </div>
 
-                  <div :class="columnClass">
-                  </div>
+    <!-- Zona -->
+    <div class="w-full">
 
-                </div>
+      <div :class="columnClass">
+        
+        <span>
+          Zona<span class="text-red-star">*</span>
+        </span>
+        
+        <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
+        @change="fetchTLKByJobBand"
+        placeholder="Zona" 
+        v-model="zonaName" 
+        required>
+          <option v-for="data in optionDataZona" :value="data.zona_name">
+            {{ data.zona_name }}
+          </option>
+        </select>
 
-                <!-- change step button -->
-                <!-- left-0 right-0 bg-white bottom-0 px-5 py-2 -->
-                <div v-if="formStep === 1">
+      </div>
 
-                  <div class="flex justify-between font-bold py-2">
+    </div>
 
-                      <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
-                        Back
-                      </button>
+  </div>
 
-                      <button v-if="formStep < stepCounter" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
-                        Next
-                      </button>
+  <div :class="rowClass">
 
-                  </div>
+    <!-- To -->
+    <div :class="columnClass">
+      <span>To<span class="text-red-star">*</span></span>
+      <select :class="inputStylingClass" v-model="toCity" required>
+        <option v-for="data in optionDataCity" :value="data.id">
+          {{ data.city_name }}
+        </option>
+      </select>
+    </div>
+    
+    <!-- TLK/Day -->
+    <div :class="columnClass">
+      <span>TLK/Day<span class="text-red-star">*</span></span>
+      <input type="text" :class="inputStylingClass" placeholder="TLK/Day" v-model="TLKperDay" required>
+    </div>
 
-                </div>
-                
+  </div>
+
+  <div :class="rowClass">
+    
+    <!-- Date Departure -->
+    <div :class="columnClass">
+      <span>
+        Date Departure<span class="text-red-star">*</span>
+      </span>
+      <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate" :max="returnDate" required>
+    </div>
+
+    <!-- Total TLK -->
+    <div :class="columnClass">
+      <span>
+        Total TLK<span class="text-red-star">*</span>
+      </span>
+      <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
+    </div>
+
+  </div>
+
+  <div :class="rowClass">
+
+    <!-- Return Date -->
+    <div :class="columnClass">
+        <span>
+          Return Date<span class="text-red-star">*</span>
+        </span>
+        <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
+    </div>
+
+    <div :class="columnClass">
+    </div>
+
+  </div>
+
+    <!-- change step button -->
+    <div class="sticky bottom-0 bg-white" v-if="formStep === 1">
+
+      <div class="flex justify-between font-bold py-2">
+
+          <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
+            Back
+          </button>
+
+          <button v-if="formStep < stepCounter" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
+            Next
+          </button>
+
+      </div>
+
+    </div>
+
               </form>
 
               <!-- Step 3 and so on, contain of TABLE -->
-              <div class="pb-[80px]" v-if="requestType[1] == 'Company Business'">
+              <div :class="formStep === 1 ? '' : 'pb-[80px]'" v-if="requestType[1] == 'Company Business'">
   
                 <!-- step 3 form Traveller -->
                 <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
@@ -886,6 +882,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         <tr v-for="data in travellerGuestTable" :key="data.id">
                           <td>
                             {{ data.name_guest }}
+
                           </td>
                           <td>
                             {{ data.gender }}
@@ -974,16 +971,17 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       <tbody>
                         <tr v-for="data in taxiVoucherTable" :key="data.id">
                             <td>
-                              {{ data.name }}
+                              <!-- {{ data.name }} -->
+                              {{ employeeName }}
                             </td>
                             <td>
                               {{ data.date }}
                             </td>
                             <td>
-                              {{ data.id_departure_city }}
+                              {{ data.name_departure_city }}
                             </td>
                             <td>
-                              {{ data.id_arrival_city }}
+                              {{ data.name_arrival_city }}
                             </td>
                             <td>
                               {{ data.amount }}
@@ -995,7 +993,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                               {{ data.remarks }}
                             </td>
                             <td>
-                              {{ data.code_status_doc }}
+
                             </td>
                             <td></td>
                         </tr>
@@ -1009,7 +1007,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                 <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
 
                   <div class="overflow-x-auto mt-5">
+
                     <table class="table">
+                      
                       <thead>
                         <tr>
                           <th v-for="data in tableHeadOtherTransportation" :key="data.id">
@@ -1017,10 +1017,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                           </th>
                         </tr>
                       </thead>
+
                       <tbody>
                         <tr v-for="data in otherTransportationTable" :key="data.id">
                           <td>
-                            {{ data.name }}
+                            <!-- {{ data.name }} -->
+                            {{ employeeName }}
                           </td>
                           <td>
                             {{ data.id_type_transportation }}
@@ -1038,14 +1040,16 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                             {{ data.id_city }}
                           </td>
                           <td>
-                            {{ data.code_status_doc }}
+                            
                           </td>
                           <td>
                               
                           </td>
                         </tr>
                       </tbody>
+
                     </table>
+
                   </div>
 
                 </div>
@@ -1065,8 +1069,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       <tbody>
                         <tr v-for="data in accomodationTable" :key="data.id">
                           <td>
-                            <!-- {{ data.name }} -->
-                            {{ data.employee_name }}
+                            {{ employeeName }}
                           </td>
                           <td>
                             {{ data.code_hotel }}
@@ -1087,7 +1090,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                             {{ data.sharing_w_name }}
                           </td>
                           <td>
-                            {{ data.code_status_doc }}
+
                           </td>
                           <td>
 
@@ -1679,37 +1682,37 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
       <!-- change step button -->
       <div v-if="formStep !== 1" class="fixed left-0 right-0 bg-white bottom-0 px-5 py-2">
-
-          <div class="flex justify-between font-bold">
-
-              <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
-                Back
-              </button>
-
-              <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
-                Back
-              </button>
-
-              <button v-if="formStep < stepCounter" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
-                Next
-                <!-- :type="formStep === 1 ? 'submit' : 'button'" -->
-              </button>
-
-              <div class="flex gap-4" v-else>
-
-                <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
-                  Draft
+  
+            <div class="flex justify-between font-bold">
+  
+                <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
+                  Back
                 </button>
-
-                <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
-                  Submit
+  
+                <button v-else disabled class="bg-zinc-300 border border-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+                  Back
                 </button>
-
-              </div>
-
-          </div>
-          
+  
+                <button v-if="formStep < stepCounter" @click="formStep++" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
+                  Next
+                </button>
+  
+                <div class="flex gap-4" v-else>
+  
+                  <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+                    Draft
+                  </button>
+  
+                  <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+                    Submit
+                  </button>
+  
+                </div>
+  
+            </div>
+            
       </div>
+     
 
     </Modal>
 

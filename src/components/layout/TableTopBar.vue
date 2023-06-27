@@ -72,9 +72,7 @@ const resetCompanyAndRole = () => {
   <div class="bg-white rounded-t-xl relative custom-card">
 
     <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-    <div
-      class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
-    >
+    <div class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2">
 
       <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
         {{ props.title }}
@@ -97,13 +95,11 @@ const resetCompanyAndRole = () => {
           @add-menu="$emit('increaseMenu')"
           v-if="props.modalAddType === 'menu'"
         />
-
         <ModalAddUser
           @fetchSiteForCompany="$emit('fetchSiteForCompany')"
           @add-user="$emit('increaseUser')"
           v-if="props.modalAddType === 'user'"
         />
-        
         <ModalAddApproval
           @add-approver="$emit('increaseApprover')"
           v-if="props.modalAddType === 'approval'"
@@ -317,8 +313,7 @@ const resetCompanyAndRole = () => {
       <select
         class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
         v-model="pageMultiplier"
-        @change="$emit('changeShowing', pageMultiplierReactive)"
-      >
+        @change="$emit('changeShowing', pageMultiplierReactive)">
         <option>10</option>
         <option>25</option>
         <option>50</option>

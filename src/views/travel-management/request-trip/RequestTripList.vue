@@ -16,10 +16,13 @@
     import icon_filter from "@/assets/icon_filter.svg"
     import icon_reset from "@/assets/icon_reset.svg"
     import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import icondanger from "@/assets/Danger.png"
+    import iconClose from "@/assets/navbar/icon_close.svg"
     import editicon from "@/assets/navbar/edit_icon.svg"
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import Api from '@/utils/Api'
+    import Swal from "sweetalert2"
 
     import { ref, computed, onBeforeMount, watch } from "vue"
 
@@ -39,6 +42,7 @@
     let showingValue = ref(1)
     let pageMultiplier = ref(10)
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
+    let paginateIndex = ref(0)
 
     //for check & uncheck all
     const selectAll = (checkValue) => {
@@ -115,6 +119,68 @@
     watch(employeeLoginData, () => {
       referenceFetch.fetchEmployeeByLoginResult = employeeLoginData.value
     })
+
+    const fillPageMultiplier = () => {
+      // ref harus pake .value biar ngaruh sama reactive :')
+      pageMultiplier.value = pageMultiplierReactive.value
+    }
+
+        //for paginations
+        const onChangePage = (pageOfItem) => {
+      paginateIndex.value = pageOfItem - 1;
+      showingValue.value = pageOfItem;
+    }
+
+    const deleteData = async (event) => {
+
+    Swal.fire({
+      title:
+        "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+      html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+      iconHtml: `<img src="${icondanger}" />`,
+      showCloseButton: true,
+      closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+      showCancelButton: true,
+      buttonsStyling: false,
+      cancelButtonText: "Cancel",
+      customClass: {
+        cancelButton: "swal-cancel-button",
+        confirmButton: "swal-confirm-button",
+      },
+      reverseButtons: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes",
+    })
+      
+    .then((result) => {
+      if (result.isConfirmed) {
+        Api.delete(`/request_trip/delete_data/${event}`)
+        .then((res) => {
+
+          Swal.fire({
+            title: "Successfully",
+            text: "Data has been deleted.",
+            icon: "success",
+            showCancelButton: false,
+            confirmButtonColor: "#015289",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+
+          if (sortedData.value.length == 1) {
+            router.go()
+          } else {
+            fetch()
+          }
+
+        })
+      } else {
+        return
+      }
+    })
+
+}
 
 </script>
 
@@ -264,6 +330,8 @@
               <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="pageMultiplier"
+                @change="fillPageMultiplier"
               >
                 <option>10</option>
                 <option>25</option>
@@ -277,8 +345,7 @@
 
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
 
-            <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
-              >
+            <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
 
                 <thead class="text-center font-JakartaSans text-sm font-bold h-10">
                   
@@ -307,6 +374,7 @@
                         </button>
                       </span>
                     </th>
+
                   </tr>
 
                 </thead>
@@ -315,13 +383,16 @@
                   
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData"
+                    v-for="data in sortedData.slice(
+                        paginateIndex * pageMultiplierReactive,
+                        (paginateIndex + 1) * pageMultiplierReactive
+                      )"
                     :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ index + 1 }}</td>
+                    <td>{{ data.no }}</td>
                     <td>{{ data.created_at }}</td>
                     <td>{{ data.no_request_trip }}</td>
                     <td>{{ data.employee_name }}</td>
@@ -331,7 +402,7 @@
                       <button>
                         <img :src="editicon" class="w-6 h-6" />
                       </button>
-                      <button>
+                      <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
