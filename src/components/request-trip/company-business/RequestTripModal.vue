@@ -36,9 +36,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let optionDataTransportationType = ref([])
 
     let travellerGuestTable = ref([])
-    let airlinesTable = ref([])
-    let taxiVoucherTable = ref([])
-    let otherTransportationTable = ref([])
+    // let airlinesTable = ref([])
+    // let taxiVoucherTable = ref([])
+    // let otherTransportationTable = ref([])
     let accomodationTable = ref([])
     let cashAdvanceTable = ref([])
 
