@@ -13,6 +13,8 @@ import guestAsTravellerTable from '@/components/request-trip/table-step-form/gue
 import airlinesTable from '@/components/request-trip/table-step-form/airlines-table.vue'
 import taxiVoucherTable from '@/components/request-trip/table-step-form/taxi-voucher-table.vue'
 import otherTransportationTable from '@/components/request-trip/table-step-form/other-transportation-table.vue'
+import accomodationTable from '@/components/request-trip/table-step-form/accomodation-table.vue'
+import cashAdvanceTable from '@/components/request-trip/table-step-form/cash-advance-table.vue'
 
 import guestAsTravellerForm from '@/components/request-trip/modal-step-form/guest-as-traveller-form.vue'
 import airlinesForm from '@/components/request-trip/modal-step-form/airlines-form.vue'
@@ -35,19 +37,19 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let optionDataJobBand = ref([])
     let optionDataTransportationType = ref([])
 
-    let travellerGuestTable = ref([])
-    let airlinesTable = ref([])
-    let taxiVoucherTable = ref([])
-    let otherTransportationTable = ref([])
-    let accomodationTable = ref([])
-    let cashAdvanceTable = ref([])
+    let travellerGuestTableData = ref([])
+    let airlinesTableData = ref([])
+    let taxiVoucherTableData = ref([])
+    let otherTransportationTableData = ref([])
+    let accomodationTableData = ref([])
+    let cashAdvanceTableData = ref([])
 
-    provide('travellerData', travellerGuestTable)
-    provide('airlinesData', airlinesTable)
-    provide('taxiVoucherData', taxiVoucherTable)
-    provide('otherTransportationData', otherTransportationTable)
-    provide('accomodationData', accomodationTable)
-    provide('cashAdvanceData', cashAdvanceTable)
+    provide('travellerData', travellerGuestTableData)
+    provide('airlinesData', airlinesTableData)
+    provide('taxiVoucherData', taxiVoucherTableData)
+    provide('otherTransportationData', otherTransportationTableData)
+    provide('accomodationData', accomodationTableData)
+    provide('cashAdvanceData', cashAdvanceTableData)
 
     let isVisibleGuest = ref(false)
     let isVisibleAirlines = ref(false)
