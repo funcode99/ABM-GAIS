@@ -186,6 +186,22 @@
     Company.value = res.data.data;
     // console.log("ini data parent" + JSON.stringify(res.data.data));
   };
+  const fetchGetCompanyID = async (id_company) => {
+  // changeCompany(id_company)
+  const token = JSON.parse(localStorage.getItem("token"));
+  // const id_company = JSON.parse(localStorage.getItem("id_company"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  Company.value = res.data.data;
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id_company === element.id){
+      selectedType.value = id_company
+    }
+  }
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
   const deleteValue = async (id) => {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -227,10 +243,16 @@
 
     // console.log("ini data parent" + JSON.stringify(res.data.data));
   };
+  const fetchCondition = async () => {
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  const id_role = JSON.parse(localStorage.getItem("id_role"));
+  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  // changeCompany()
+};
   onBeforeMount(() => {
     getSessionForSidebar();
     fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
-    fetchGetCompany()
+    fetchCondition()
     StatusItems.value.push({
       id: 0,
       name: 'Draft'
