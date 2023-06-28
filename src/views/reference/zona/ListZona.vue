@@ -90,31 +90,16 @@ const onChangePage = (pageOfItem) => {
 };
 
 //for filter & reset button
-// const filterDataByCompany = () => {
-//   if (selectedCompany.value === "Company") {
-//     sortedData.value = instanceArray;
-//   } else {
-//     sortedData.value = instanceArray.filter(
-//       (item) => item.id_company == selectedCompany.value
-//     );
-//   }
-// };
-
 const filterDataByCompany = async () => {
-  // const stringId = id.toString();
-  // console.log("INI Data ID : " + selectedCompany.value);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const api = await Api.get(`/zona/get?filter=${selectedCompany.value}`);
-  // console.log(api);
   instanceArray = api.data.data;
   sortedData.value = instanceArray;
-  // console.log(instanceArray);
 };
 
 //for filter & reset button
 const resetData = () => {
-  // sortedData.value = instanceArray;
   fetchZona();
   selectedCompany.value = "Company";
 };
