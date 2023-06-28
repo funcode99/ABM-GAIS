@@ -110,6 +110,7 @@ const filterDataByCompany = () => {
       (item) => item.id_company === selectedCompany.value
     );
   }
+  onChangePage(1);
 };
 
 //for filter & reset button

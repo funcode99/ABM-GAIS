@@ -101,6 +101,7 @@ const filterDataByCompany = async () => {
   const api = await Api.get(`/job_band?filter=${selectedCompany.value}`);
   instanceArray = api.data.data;
   sortedData.value = instanceArray;
+  onChangePage(1);
 };
 
 const resetData = () => {

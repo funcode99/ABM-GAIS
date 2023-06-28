@@ -87,6 +87,7 @@ const filterDataByHotelType = () => {
       (item) => item.id_type_hotel === selectedHotel.value
     );
   }
+  onChangePage(1);
 };
 
 //for filter & reset button
