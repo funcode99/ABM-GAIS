@@ -159,7 +159,7 @@ const rejectData = async (payload) => {
 const fetchHistoryApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/cash_advance/get_history_non_travel/${id}`);
+  const res = await Api.get(`/claim_reimbursement/approval_history/${id}`);
   dataApproval.value = res.data.data;
 };
 
