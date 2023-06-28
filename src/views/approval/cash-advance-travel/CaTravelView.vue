@@ -169,7 +169,6 @@ onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(id);
   fetchDataEmployee();
-  fetchHistoryApproval();
 });
 
 const getSessionForSidebar = () => {
