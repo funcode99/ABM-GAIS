@@ -39,6 +39,7 @@ let status = ref("")
 let statusValue = ref(false)
 let QuantityAdjusment = ref("")
 let adjusmentType = ref("")
+let ItemTable = ref([])
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -50,14 +51,7 @@ const fetchDataById = async (id) => {
     companyName.value = element.company_name
     stockName.value = element.no_stock_opname
     createdDate.value = format_date(element.created_at)
-    createdBy.value = element.employee_name
-    // Warehouse.value = element.warehouse_name
-    // itemNames.value = element.itemName
-    // idItems.value = element.id_item
-    // alertQuantity.value = element.qty
-    // brandName.value = element.brand_name
-    // UOMName.value = element.uom_name
-    // remark.value = element.remarks
+    createdBy.value = element.name_created
     siteName.value = element.site_name
     status.value = element.status
     // element.status == 'Submitted' ? !statusValue : statusValue
@@ -69,18 +63,29 @@ const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/stock_opname/get_by_stock_opname_id/${id}`);
-  console.log(res.data.data)
+  // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    Warehouse.value = element.warehouse_name
-    itemNames.value = element.item_name
-    idItems.value = element.code_item
-    alertQuantity.value = element.qty_before
-    brandName.value = element.brand_name
-    UOMName.value = element.uom_name
-    remark.value = element.remarks
-    QuantityAdjusment.value = element.qty_adjustment
-    adjusmentType.value = element.adjustment_type
+    ItemTable.value.push({
+        Warehouse: element.warehouse_name,
+        itemNames: element.item_name,
+        idItems: element.code_item,
+        alertQuantity: element.qty,
+        brandName: element.brand_name,
+        UOMName: element.uom_name,
+        remark: element.remarks,
+        QuantityAdjusment: element.qty_adjustment,
+        adjusmentType: element.adjustment_type
+      })
+    // Warehouse.value = element.warehouse_name
+    // itemNames.value = element.item_name
+    // idItems.value = element.code_item
+    // alertQuantity.value = element.qty_before
+    // brandName.value = element.brand_name
+    // UOMName.value = element.uom_name
+    // remark.value = element.remarks
+    // QuantityAdjusment.value = element.qty_adjustment
+    // adjusmentType.value = element.adjustment_type
     // siteName.value = element.site_name
     // element.status == 'Submitted' ? !statusValue : statusValue
   }
@@ -166,6 +171,7 @@ const format_date = (value) => {
             <div class="flex gap-2">
               <button
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
+                v-if="status == 'Draft'"
               >
                 Edit
               </button>
@@ -269,11 +275,6 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Quantity
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
                       Quantity Adjusment
                     </th>
                     <th
@@ -303,17 +304,16 @@ const format_date = (value) => {
                     </th> -->
                   </tr>
                 </thead>
-                <tbody class="font-JakartaSans font-normal text-xs">
+                <tbody class="font-JakartaSans font-normal text-xs" v-for="(value, ind) in ItemTable" :key="ind">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">{{ Warehouse }}</td>
-                    <td class="border border-[#B9B9B9]">{{ idItems }}</td>
-                    <td class="border border-[#B9B9B9]">{{ itemNames }}</td>
-                    <td class="border border-[#B9B9B9]">{{ alertQuantity }}</td>
-                    <td class="border border-[#B9B9B9]">{{ QuantityAdjusment }}</td>
-                    <td class="border border-[#B9B9B9]">{{ adjusmentType }}</td>
-                    <td class="border border-[#B9B9B9]">{{ brandName }}</td>
-                    <td class="border border-[#B9B9B9]">{{ UOMName }}</td>
-                    <td class="border border-[#B9B9B9]">{{ remark }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.itemNames }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.QuantityAdjusment }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.adjusmentType }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.brandName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                     <!-- <td class="border border-[#B9B9B9]">
                       <div class="flex justify-center items-center gap-2">
                         <button>

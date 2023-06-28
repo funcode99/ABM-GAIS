@@ -153,9 +153,9 @@
                                 >Departure<span class="text-red-star">*</span></label
                             >
                             <select :class="inputStylingClass" v-model="departure">
-                            <option v-for="data in cityData" :value="data.id">
-                                {{ data.city_name }}
-                            </option>
+                                <option v-for="data in cityData" :value="data.id">
+                                    {{ data.city_name }}
+                                </option>
                             </select>
                         </div>
                     </div>

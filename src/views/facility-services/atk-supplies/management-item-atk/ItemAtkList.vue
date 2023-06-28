@@ -31,6 +31,10 @@ const sidebar = useSidebarStore();
 let selectedCompany = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 let selectedWarehouse = ref("")
 let selectedSite = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
+
+let selectedCompany2 = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
+let selectedWarehouse2 = ref("")
+let selectedSite2 = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
 // let selectedWarehouse = ref("Warehouse")
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
@@ -71,22 +75,22 @@ let lenghtPagination = ref(0)
 const searchFilter = ref("");
 //for paginations
 const onChangePage = (pageOfItem) => {
-  fetchData(pageOfItem,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+  fetchData(pageOfItem,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
   // console.log(paginateIndex.value)
 };
 
 //for filter & reset button
 const filterDataByType = () => {
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+  fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
 };
 
 //for filter & reset button
 const resetData = () => {
   selectedType.value = ''
-  selectedCompany.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"))
-  selectedWarehouse.value = ''
-  selectedSite.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_site"))
-  fetchData(showingValue.value,"",selectedCompany.value,"",0,searchFilter.value,pageMultiplier.value,selectedSite.value)
+  selectedCompany2.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"))
+  selectedWarehouse2.value = ''
+  selectedSite2.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_site"))
+  fetchData(showingValue.value,"",selectedCompany2.value,selectedWarehouse2.value,0,searchFilter.value,pageMultiplier.value,selectedSite2.value)
 };
 
 //for check & uncheck all
@@ -149,11 +153,13 @@ const fetchGetCompanyID = async (id_company) => {
     const element = res.data.data[index];
     if(id_company === element.id){
       selectedCompany.value = id_company
+      selectedCompany2.value = id_company
     }
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchSite = async (id, id_company) => {
+  changeSite(JSON.parse(localStorage.getItem("id_site")))
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -162,13 +168,14 @@ const fetchSite = async (id, id_company) => {
     const element = res.data.data[index];
     if(id === element.id){
       selectedSite.value = id
+      selectedSite2.value = id
     }
   }
 };
-const fetchWarehouse = async (id, id_company) => {
+const fetchWarehouse = async (id, id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_company_id/${id_company}`);
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
   Warehouse.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -263,7 +270,7 @@ const editValue = async (id) => {
   idS.value = id
   selectedCompany.value = fetchGetCompanyID(res.data.data[0].id_company)
   selectedSite.value = fetchSite(res.data.data[0].id_site, res.data.data[0].id_company)
-  selectedWarehouse.value = fetchWarehouse(res.data.data[0].id_warehouse, res.data.data[0].id_company)
+  selectedWarehouse.value = fetchWarehouse(res.data.data[0].id_warehouse, res.data.data[0].id_site)
   selectedUOM.value = fetchUOM(res.data.data[0].id_uom)
   itemNames.value = res.data.data[0].item_name
   alertQuantity.value = res.data.data[0].alert_qty
@@ -295,7 +302,7 @@ const save = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
     lockScrollbarEdit.value = false
   }).catch((error) =>{
     Swal.fire({
@@ -352,7 +359,7 @@ const deleteValue = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+        fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
       });
     } else {
       return;
@@ -364,11 +371,11 @@ const deleteValue = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchCondition()
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+  fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
 });
 //for searching
 const filteredItems = (search) => {
-  fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,search,pageMultiplier.value,selectedSite.value)
+  fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,search,pageMultiplier.value,selectedSite2.value)
   // sortedData.value = instanceArray;
   // const filteredR = sortedData.value.filter((item) => {
   //   // console.log(item)
@@ -385,7 +392,7 @@ const filteredItems = (search) => {
 };
 const perPage = async () => {
     // console.log(pageMultiplier.value)
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
     // console.log("ini data parent" + JSON.stringify(res.data.data));
   };
 const selectAlert = (checked) => {
@@ -393,7 +400,7 @@ const selectAlert = (checked) => {
   // console.log(checked)
   if(checked === false){
     valueChecked.value = 1
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
     // const filteredR = sortedData.value.filter((item) => {
     // if(item.current_stock <= item.alert_qty){
     //   return((item.alert_qty))
@@ -404,7 +411,7 @@ const selectAlert = (checked) => {
     // onChangePage(1);
   }else{
     valueChecked.value = 0
-    fetchData(showingValue.value,selectedType.value,selectedCompany.value,selectedWarehouse.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite.value)
+    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
     // sortedData.value = instanceArray;
     // lengthCounter = sortedData.value.length;
     // onChangePage(1);
@@ -490,8 +497,8 @@ const getSessionForSidebar = () => {
                 <select
                 class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
-                v-model="selectedCompany"
-                @change="changeCompany(selectedCompany)"
+                v-model="selectedCompany2"
+                @change="changeCompany(selectedCompany2)"
               >
                 <option disabled selected>Company</option>
                 <option v-for="(company,i) in Company" :key="i" :value="company.id">
@@ -509,8 +516,8 @@ const getSessionForSidebar = () => {
                 <select
                 class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
-                v-model="selectedSite"
-                @change="changeSite(selectedSite)"
+                v-model="selectedSite2"
+                @change="changeSite(selectedSite2)"
               >
                 <option disabled selected>Site</option>
                 <option v-for="(site,i) in Site" :key="i" :value="site.id">
@@ -528,7 +535,7 @@ const getSessionForSidebar = () => {
                 <select
                   class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                   required
-                  v-model="selectedWarehouse"
+                  v-model="selectedWarehouse2"
                 >
                   <option disabled selected>Warehouse</option>
                   <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
@@ -698,8 +705,8 @@ const getSessionForSidebar = () => {
                       ><img :src="editicon" class="w-6 h-6"
                     /></label>
 
-                    <input type="checkbox" id="my-modal-item-edit-atk" class="modal-toggle" />
-                    <div v-if="lockScrollbarEdit" class="modal">
+                    <input type="checkbox"  id="my-modal-item-edit-atk" class="modal-toggle" />
+                    <div v-if="lockScrollbarEdit == true" class="modal">
                       <div class="modal-dialog bg-white w-3/5">
                         <nav class="sticky top-0 z-50 bg-[#015289]">
                           <label

@@ -14,7 +14,7 @@ let selectedWarehouse = ref("")
 let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
-let selectedAdjusment = ref("Adjusment Type")
+let selectedAdjusment = ref("")
 let quantityOpname = ref("")
 let brandName = ref("");
 let warehouseName = ref("");
@@ -132,7 +132,7 @@ const fetchCondition = async () => {
 };
 
 const addItem = async () => {
-  if(selectedCompany.value == '' || selectedSite.value == '' || selectedWarehouse.value == '' || selectedUOM.value == '' || itemNames.value == ''  || selectedBrand.value == ''){
+  if(selectedCompany.value == '' || selectedSite.value == '' || selectedWarehouse.value == '' || selectedUOM.value == '' || itemNames.value == ''  || selectedBrand.value == '' || quantityOpname.value == '' || selectedAdjusment.value == ''){
     Swal.fire({
       position: "center",
       icon: "error",
@@ -142,6 +142,20 @@ const addItem = async () => {
     });
     return false
   }else {
+    // console.log(selectedAdjusment.value)
+    // console.log(quantityOpname.value - alertQuantity.value)
+    if(selectedAdjusment.value == 'substraction'){
+      if(alertQuantity.value - quantityOpname.value < 0){
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: 'Quantity Opname melebihi Stock Quantity',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        return false
+      }
+    }
     const wh = Warehouse.value
   for (let index = 0; index < wh.length; index++) {
     const element = wh[index];
@@ -191,6 +205,9 @@ const addItem = async () => {
 
   itemsTable2.value.push({
     id_item: itemNames.value,
+    id_warehouse: selectedWarehouse.value,
+    id_brand:selectedBrand.value,
+    id_uom: selectedUOM.value,
     adjustment_type: selectedAdjusment.value,
     qty_adjustment : quantityOpname.value,
     remarks:remark.value,
@@ -238,10 +255,10 @@ const save = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
     id_company:selectedCompany.value,
-    id_departement:1,
+    // id_departement:1,
     id_site:selectedSite.value,
-    id_warehouse:selectedWarehouse.value,
-    id_employee:selectedEmployee.value,
+    // id_warehouse:selectedWarehouse.value,
+    // id_employee:selectedEmployee.value,
     remarks : remark.value,
     array_detail:itemsTable2.value
   }

@@ -3,35 +3,43 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalRejectShortcutAtk from "@/components/approval/atk-request/ModalRejectShortcutAtk.vue";
+// import ModalRejectShortcutAtk from "@/components/approval/atk-request/ModalRejectShortcutAtk.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_ceklis from "@/assets/icon_ceklis.svg";
+import iconClose from "@/assets/navbar/icon_close.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 
-import atkrequestdata from "../../../utils/Api/approval/atk-request/atkrequestdata.js";
+// import atkrequestdata from "../../../utils/Api/approval/atk-request/atkrequestdata.js";
 
 import { ref, onBeforeMount, computed } from "vue";
-
+import Api from "@/utils/Api";
 import { useSidebarStore } from "@/stores/sidebar.js";
+import Swal from "sweetalert2";
+import moment from 'moment';
 const sidebar = useSidebarStore();
 
 //for sort & search
-const date = ref();
+const start_date = ref("");
+const end_date = ref("");
 const search = ref("");
+const searchFilter = ref("");
 let sortedData = ref([]);
-const selectedType = ref("Item");
+const selectedType = ref("");
 let sortedbyASC = true;
+let itemdata = ref("")
 let instanceArray = [];
 let lengthCounter = 0;
-
+let Company = ref("");
+const status = ref("");
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let lenghtPagination = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -93,12 +101,29 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = atkrequestdata;
+const perPage = async () => {
+    // console.log(pageMultiplier.value)
+    fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+    // console.log("ini data parent" + JSON.stringify(res.data.data));
+  };
+const fetchData = async (page, selectedType, status, start_date, end_date,search,perpage) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/approval_request_atk/get_data?page=${page}&id_company=${selectedType}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`);
+  // console.log(res.data.data)
+  itemdata.value = res.data.data.data;
+  instanceArray = itemdata.value;
+  // console.log(instanceArray)
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
+  lenghtPagination = res.data.data.total
+    paginateIndex.value = res.data.data.current_page - 1
+    showingValue.value = res.data.data.current_page
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
 });
 
 //for searching
@@ -120,13 +145,18 @@ const filteredItems = (search) => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+const format_date = (value) => {
+  if (value) {
+           return moment(String(value)).format('DD-MM-YYYY')
+          }
+};
 </script>
 
 <template>
-  <div class="flex flex-col w-full this">
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
-    <div class="flex w-screen mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none fixed" />
 
       <div
@@ -186,6 +216,7 @@ const getSessionForSidebar = () => {
                     range
                     :enable-time-picker="false"
                     class="my-date lg:w-10"
+                    format="dd-MM-yyyy"
                   />
                 </div>
               </div>
@@ -249,6 +280,7 @@ const getSessionForSidebar = () => {
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
+              @change="perPage"
             >
               <option>10</option>
               <option>25</option>
@@ -299,40 +331,43 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
-                    :key="data.no"
+                    v-for="(data, index) in sortedData
+                    "
+                    :key="data.id"
                   >
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.no }}
+                      {{ (showingValue - 1) * pageMultiplier + 1 + index }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.created_date }}
+                      {{ format_date(data.created_at) }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.request_no }}
+                      {{ data.no_atk_request }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.requestor }}
+                      {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.quantity }}
+                      {{ data.item_count }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.status_type }}
+                      {{ data.status }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link to="/viewapprovalatkrrequest">
+                      <router-link disabled to="/viewapprovalatkrrequest">
                         <button>
                           <img :src="icon_ceklis" class="w-6 h-6" />
                         </button>
                       </router-link>
-                      <ModalRejectShortcutAtk />
+                      <router-link disabled to="/viewapprovalatkrrequest">
+                        <button>
+                          <img :src="iconClose" class="w-6 h-6" />
+                        </button>
+                      </router-link>
+                      <!-- <ModalRejectShortcutAtk /> -->
                     </td>
                   </tr>
                 </tbody>
@@ -346,11 +381,11 @@ const getSessionForSidebar = () => {
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              {{ Math.min(showingValue * pageMultiplier, lenghtPagination) }}
+              of {{ lenghtPagination }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="lenghtPagination"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
@@ -400,6 +435,6 @@ tr th {
 }
 
 .my-date {
-  width: 260px !important;
+  width: 300px !important;
 }
 </style>

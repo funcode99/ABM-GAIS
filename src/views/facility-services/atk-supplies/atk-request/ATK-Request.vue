@@ -30,7 +30,7 @@ const end_date = ref("");
 const search = ref("");
 const searchFilter = ref("");
 let sortedData = ref([]);
-const selectedType = ref("");
+const selectedType = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 const selectedTypeWarehouse = ref("");
 const status = ref("");
 let StatusItems = ref([])
@@ -67,11 +67,11 @@ const filterDataByType = () => {
 
 //for filter & reset button
 const resetData = () => {
-  selectedType.value = ''
+  selectedType.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"));
     status.value = ''
     start_date.value = ''
     end_date.value = ''
-    fetchData(showingValue.value, "", "", "", "",searchFilter.value,pageMultiplier.value)
+    fetchData(showingValue.value, selectedType.value, "", "", "",searchFilter.value,pageMultiplier.value)
 };
 
 //for check & uncheck all
@@ -138,6 +138,22 @@ const perPage = async () => {
     Company.value = res.data.data;
     // console.log("ini data parent" + JSON.stringify(res.data.data));
   };
+  const fetchGetCompanyID = async (id_company) => {
+  // changeCompany(id_company)
+  const token = JSON.parse(localStorage.getItem("token"));
+  // const id_company = JSON.parse(localStorage.getItem("id_company"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  Company.value = res.data.data;
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id_company === element.id){
+      selectedType.value = id_company
+    }
+  }
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 const deleteValue = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -180,10 +196,16 @@ const deleteValue = async (id) => {
     
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+const fetchCondition = async () => {
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  const id_role = JSON.parse(localStorage.getItem("id_role"));
+  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  // changeCompany()
+};
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
-    fetchGetCompany()
+  fetchCondition()
     StatusItems.value.push({
       id: 0,
       name: 'Draft'
@@ -298,7 +320,8 @@ const format_date = (value) => {
                     Date
                   </p>
 
-                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10" />
+                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10"
+                  format="dd-MM-yyyy" />
                 </div>
               </div>
 
