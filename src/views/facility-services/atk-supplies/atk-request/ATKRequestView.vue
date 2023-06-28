@@ -35,6 +35,7 @@ let itemNames = ref("")
 let remark = ref("")
 let siteName = ref("")
 let status = ref("")
+let ItemTable = ref([])
 let statusValue = ref(false)
 
 const fetchDataById = async (id) => {
@@ -56,7 +57,7 @@ const fetchDataById = async (id) => {
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_data_detail/${id}`);
+  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -278,25 +279,15 @@ const format_date = (value) => {
                     </th> -->
                   </tr>
                 </thead>
-                <tbody class="font-JakartaSans font-normal text-xs">
+                <tbody class="font-JakartaSans font-normal text-xs" v-for="(value, ind) in ItemTable" :key="ind">
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">{{ Warehouse }}</td>
-                    <td class="border border-[#B9B9B9]">{{ idItems }}</td>
-                    <td class="border border-[#B9B9B9]">{{ itemNames }}</td>
-                    <td class="border border-[#B9B9B9]">{{ alertQuantity }}</td>
-                    <td class="border border-[#B9B9B9]">{{ brandName }}</td>
-                    <td class="border border-[#B9B9B9]">{{ UOMName }}</td>
-                    <td class="border border-[#B9B9B9]">{{ remark }}</td>
-                    <!-- <td class="border border-[#B9B9B9]">
-                      <div class="flex justify-center items-center gap-2">
-                        <button>
-                          <img :src="editicon" class="w-6 h-6" />
-                        </button>
-                        <button>
-                          <img :src="deleteicon" class="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td> -->
+                    <td class="border border-[#B9B9B9]">{{ value.Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.itemNames }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.alertQuantity }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.brandName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                   </tr>
                 </tbody>
               </table>

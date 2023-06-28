@@ -342,19 +342,19 @@ const format_date = (value) => {
                       {{ (showingValue - 1) * pageMultiplier + 1 + index }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ format_date(data.created_date) }}
+                      {{ format_date(data.created_at) }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.request_no }}
+                      {{ data.no_atk_request }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.requestor }}
+                      {{ data.employee_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.quantity }}
+                      {{ data.item_count }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.status_type }}
+                      {{ data.status }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link disabled to="/viewapprovalatkrrequest">

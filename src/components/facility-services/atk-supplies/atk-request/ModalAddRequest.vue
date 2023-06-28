@@ -42,11 +42,13 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
+  changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
+  selectedCompany.value = id_company
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -66,6 +68,13 @@ const changeCompany = async (id_company) => {
   const res = await Api.get(`/site/get_by_company/${id_company}`);
   // console.log(res)
   Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(JSON.parse(localStorage.getItem("id_site")) === element.id){
+      selectedSite.value = element.id
+      changeSite(element.id)
+    }
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchBrand = async () => {
@@ -158,7 +167,7 @@ const addItem = async () => {
     // id_departement: '',
     id_site: selectedSite.value,
     id_warehouse: selectedWarehouse.value,
-    id_employee : selectedEmployee.value,
+    // id_employee : selectedEmployee.value,
     remarks:remark.value,
     id_item: itemNames.value,
     id_brand:selectedBrand.value,
@@ -209,10 +218,10 @@ const save = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
     id_company:selectedCompany.value,
-    id_departement : 1,
+    // id_departement : 1,
     id_site:selectedSite.value,
-    id_warehouse : selectedWarehouse.value,
-    id_employee:selectedEmployee.value,
+    // id_warehouse : selectedWarehouse.value,
+    // id_employee:selectedEmployee.value,
     remarks:"",
     array_detail:itemsTable.value
   }

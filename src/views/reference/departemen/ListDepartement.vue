@@ -108,19 +108,16 @@ const onChangePage = (pageOfItem) => {
 };
 
 //for filter & reset button
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.id_company == selectedCompany.value
-    );
-  }
+const filterDataByCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get(`/department?filter=${selectedCompany.value}`);
+  instanceArray = api.data.data;
+  sortedData.value = instanceArray;
 };
 
 //for filter & reset button
 const resetData = () => {
-  // sortedData.value = instanceArray;
   fetchDepartement();
   selectedCompany.value = "Company";
 };

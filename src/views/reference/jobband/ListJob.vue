@@ -94,18 +94,16 @@ const onChangePage = (pageOfItem) => {
   showingValue.value = pageOfItem;
 };
 
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.id_company == selectedCompany.value
-    );
-  }
+//for filter & reset button
+const filterDataByCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get(`/job_band?filter=${selectedCompany.value}`);
+  instanceArray = api.data.data;
+  sortedData.value = instanceArray;
 };
 
 const resetData = () => {
-  // sortedData.value = instanceArray;
   fetchJobBand();
   selectedCompany.value = "Company";
 };
