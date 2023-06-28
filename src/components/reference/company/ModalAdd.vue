@@ -13,6 +13,8 @@ import Api from "@/utils/Api";
 import { ref, watch } from "vue";
 
 import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
+import fetchGrupCompanyUtils from "@/utils/Fetch/Reference/fetchGrupCompany";
+
 const referenceFetch = useReferenceFetchResult();
 
 const emits = defineEmits(["unlockScrollbar", "company-saved"]);
@@ -32,22 +34,22 @@ let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 let iconfilename = ref(null);
 let imageUrl = ref(null);
+let instanceArray = [];
+let sortedData = ref([]);
 
-// for image logo
+let addGrupCompanyData = ref([]);
+
 const onFileSelected = (event) => {
   const file = event.target.files[0];
   selectedImage.value = file ? file : null;
   iconfilename = file.name;
 
-  // Create a FileReader instance
   const reader = new FileReader();
 
-  // Define the callback function when FileReader has finished reading the file
   reader.onload = () => {
     imageUrl.value = reader.result;
   };
 
-  // Read the selected file as a data URL
   if (file) {
     reader.readAsDataURL(file);
   } else {
@@ -116,7 +118,15 @@ watch(isVisible, () => {
     resetInput();
   }
 
+  if (isVisible.value == true) {
+    fetchGrupCompanyUtils(addGrupCompanyData);
+  }
+
   vendorAirlines.value = referenceFetch.fetchVendorAirlinesResult;
+});
+
+watch(addGrupCompanyData, () => {
+  referenceFetch.fetchGrupCompanyResult = addGrupCompanyData.value;
   grupCompany.value = referenceFetch.fetchGrupCompanyResult;
 });
 </script>
