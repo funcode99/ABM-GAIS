@@ -29,13 +29,13 @@ let dataApproval = ref([]);
 let lengthCounter = 0;
 let visibleModal = ref(false);
 let visibleModalReject = ref(false);
+let tabId = ref(1);
 
 let id = route.params.id;
 const code_role = JSON.parse(localStorage.getItem("id_role"));
 const company_id = JSON.parse(localStorage.getItem("id_company"));
 const site_id = JSON.parse(localStorage.getItem("id_site"));
 const employee_id = JSON.parse(localStorage.getItem("id_site"));
-let tabId = ref(1);
 
 const format_date = (value) => {
   if (value) {
