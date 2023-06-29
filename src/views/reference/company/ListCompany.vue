@@ -47,14 +47,11 @@ let companyCodeErp = ref();
 
 let editCompanyDataId = ref();
 
-//for edit
 const editCompany = async (data) => {
   editCompanyDataId.value = data;
   setTimeout(callEditApi, 500);
-  // console.log("ini data id:" + data);
 };
 
-//for edit
 const callEditApi = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -67,7 +64,6 @@ const callEditApi = async () => {
     logo: formEditState.company.companyLogo,
     code_erp: formEditState.company.companyCodeErp,
   });
-  // console.log(formEditState.company.companyCodeErp);
   Swal.fire({
     position: "center",
     icon: "success",
@@ -82,26 +78,22 @@ let sortedData = ref([]);
 let addVendorData = ref([]);
 let addGrupCompanyData = ref([]);
 
-//for sort & search
 const search = ref("");
 let sortedbyASC = true;
 let instanceArray = [];
 const showFullText = ref({});
 let checkList = false;
 
-//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
-//for check & uncheck all
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
   const btnDelete = document.getElementById("btnDelete");
@@ -127,13 +119,11 @@ const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
-      // Lakukan tindakan penghapusan data yang sesuai di sini
       const row = check[i].parentNode.parentNode;
       row.parentNode.removeChild(row);
     }
   }
 
-  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
   const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
@@ -143,7 +133,6 @@ const deleteDataInCeklis = () => {
   }
 };
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -170,7 +159,6 @@ watch(addGrupCompanyData, () => {
   referenceFetch.fetchGrupCompanyResult = addGrupCompanyData.value;
 });
 
-//for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
@@ -189,7 +177,6 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-//get all company
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -240,7 +227,6 @@ const deleteCompany = async (id) => {
   });
 };
 
-//for export
 const exportToExcel = () => {
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet("Company Data");
@@ -253,12 +239,10 @@ const exportToExcel = () => {
     { title: "Company Group" },
   ];
 
-  // Menambahkan header kolom
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  // Menambahkan data ke baris-baris selanjutnya
   sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
@@ -267,7 +251,6 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 5).value = data.group_company;
   });
 
-  // Menyimpan workbook menjadi file Excel
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -281,7 +264,6 @@ const exportToExcel = () => {
   });
 };
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Code", jsonData: "company_code" },
@@ -326,20 +308,17 @@ const fetchGroupCompany = async () => {
   const res = await Api.get("/group_company/get");
   instanceArrayGroupCompany = res.data.data;
   sortedDataGroupCompany.value = instanceArrayGroupCompany;
-  // console.log(instanceArrayGroupCompany);
 };
 
 const deleteDataInCeklisGroupCompany = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
-      // Lakukan tindakan penghapusan data yang sesuai di sini
       const row = check[i].parentNode.parentNode;
       row.parentNode.removeChild(row);
     }
   }
 
-  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
   const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
@@ -364,7 +343,7 @@ const sortListGroupCompany = (sortBy) => {
 };
 
 const onChangePageGroupCompany = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
+  paginateIndexGroupCompany.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
@@ -459,14 +438,11 @@ const deleteGroupCompany = async (id) => {
 
 let editGroupCompanyDataId = ref();
 
-//for edit
 const editGroupCompany = async (data) => {
   editGroupCompanyDataId.value = data;
   setTimeout(callEditApiGroupCompany, 500);
-  // console.log("ini data id:" + data);
 };
 
-//for edit
 const callEditApiGroupCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -987,6 +963,7 @@ const callEditApiGroupCompany = async () => {
                 }}
                 of {{ sortedDataGroupCompany.length }} entries
               </p>
+
               <vue-awesome-paginate
                 :total-items="sortedDataGroupCompany.length"
                 :items-per-page="parseInt(pageMultiplierReactiveGroupCompany)"

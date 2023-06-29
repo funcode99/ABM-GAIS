@@ -96,6 +96,7 @@ const filterDataByCompany = async () => {
   const api = await Api.get(`/zona/get?filter=${selectedCompany.value}`);
   instanceArray = api.data.data;
   sortedData.value = instanceArray;
+  onChangePage(1);
 };
 
 //for filter & reset button

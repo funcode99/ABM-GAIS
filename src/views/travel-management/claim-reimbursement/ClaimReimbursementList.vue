@@ -154,8 +154,8 @@ const fetch = async (id) => {
 const fetchTypeReimbursement = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("reimbursement");
-  instanceArray = api.data.data.data;
+  const api = await Api.get("employee/get_type");
+  instanceArray = api.data.data;
   listReimbursementType.value = instanceArray;
 };
 

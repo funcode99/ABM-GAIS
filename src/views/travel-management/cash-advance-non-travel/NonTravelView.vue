@@ -4,6 +4,7 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
 import Swal from "sweetalert2";
+import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
@@ -24,6 +25,8 @@ let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
 let lockScrollbar = ref(false);
 let dataArr = ref([]);
 let dataItem = ref([]);
+let dataApproval = ref([]);
+
 let lengthCounter = 0;
 let tempTotal = 0;
 let idCaNon = route.params.id;
@@ -38,6 +41,7 @@ let itemsItem = ref("");
 let itemsNominal = ref("");
 let itemsCostCentre = ref("");
 let itemsRemarks = ref("");
+let tabId = ref(1);
 
 const format_date = (value) => {
   if (value) {
@@ -58,6 +62,8 @@ const fetchDataById = async (id) => {
   const res = await Api.get(`/cash_advance/non_travel/${id}`);
   dataArr.value = res.data.data[0];
   fetchDataItem(id);
+  fetchHistoryApproval(id);
+
 };
 
 const fetchDataItem = async (id) => {
@@ -235,6 +241,13 @@ const resetItems = async () => {
   itemsNominal.value = "";
   itemsCostCentre.value = "";
   itemsRemarks.value = "";
+};
+
+const fetchHistoryApproval = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/cash_advance/get_history_non_travel/${id}`);
+  dataApproval.value = res.data.data;
 };
 
 onBeforeMount(() => {
@@ -516,16 +529,53 @@ const inputClass =
             </div>
           </div>
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
-            <div
-              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
-            >
+            <div class="grid grid-cols-10">
               <div
-                class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
-              ></div>
-              <p class="font-JakartaSans font-normal text-sm mx-8">Details</p>
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 1"
+              >
+                <div
+                  :class="
+                    tabId == 1
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 1
+                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Details
+                </p>
+              </div>
+              <div
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 2"
+                v-if="dataArr.status != 'Draft'"
+              >
+                <div
+                  :class="
+                    tabId == 2
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 2
+                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Approval
+                </p>
+              </div>
             </div>
-            <div class="overflow-x-auto">
-              <table class="table table-compact w-full">
+            <div class="overflow-x-auto bg-white">
+              <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
                     <th
@@ -659,6 +709,9 @@ const inputClass =
                   </tr>
                 </tbody>
               </table>
+              <div v-if="tabId == 2">
+                <HistoryApproval :data-approval="dataApproval" />
+              </div>
             </div>
           </div>
         </div>

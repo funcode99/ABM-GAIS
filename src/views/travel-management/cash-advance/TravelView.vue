@@ -4,6 +4,7 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
+import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -18,9 +19,11 @@ const sidebar = useSidebarStore();
 const route = useRoute();
 let dataArr = ref([]);
 let dataItem = ref([]);
+let dataApproval = ref([]);
 
 let lengthCounter = 0;
 let id = route.params.id;
+let tabId = ref(1);
 
 const format_date = (value) => {
   if (value) {
@@ -42,11 +45,19 @@ const fetchDataById = async (id) => {
   const res = await Api.get(`/cash_advance/travel/${id}`);
   dataArr.value = res.data.data[0];
   fetchDataItem(id);
+  fetchHistoryApproval(dataArr.value.id_request_trip);
 };
 
 const fetchDataItem = async (id) => {
   const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
   dataItem.value = res.data.data;
+};
+
+const fetchHistoryApproval = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_trip/get_history_approval/${id}`);
+  dataApproval.value = res.data.data;
 };
 
 onBeforeMount(() => {
@@ -173,17 +184,54 @@ const getSessionForSidebar = () => {
 
           <!-- TAB & TABLE -->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]">
-            <div
-              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
-            >
+            <div class="grid grid-cols-10">
               <div
-                class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
-              ></div>
-              <p class="font-JakartaSans font-normal text-sm mx-8">Details</p>
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 1"
+              >
+                <div
+                  :class="
+                    tabId == 1
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 1
+                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Details
+                </p>
+              </div>
+              <div
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 2"
+                v-if="dataArr.status != 'Draft'"
+              >
+                <div
+                  :class="
+                    tabId == 2
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 2
+                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Approval
+                </p>
+              </div>
             </div>
 
-            <div class="overflow-x-auto">
-              <table class="table table-compact w-full">
+            <div class="overflow-x-auto bg-white">
+              <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
                     <th
@@ -219,7 +267,10 @@ const getSessionForSidebar = () => {
                   </tr>
                 </thead>
 
-                <tbody class="font-JakartaSans font-normal text-xs" v-if="dataItem.length > 0">
+                <tbody
+                  class="font-JakartaSans font-normal text-xs"
+                  v-if="dataItem.length > 0"
+                >
                   <tr class="h-16" v-for="data in dataItem" :key="data.id">
                     <td class="border border-[#B9B9B9]">
                       {{ data.item_name }}
@@ -241,10 +292,13 @@ const getSessionForSidebar = () => {
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <DataNotFound :cnt-col="6"/>
+                    <DataNotFound :cnt-col="6" />
                   </tr>
                 </tbody>
               </table>
+              <div v-if="tabId == 2">
+                <HistoryApproval :data-approval="dataApproval" />
+              </div>
             </div>
           </div>
         </div>
