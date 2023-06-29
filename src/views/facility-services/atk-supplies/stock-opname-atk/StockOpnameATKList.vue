@@ -63,9 +63,9 @@ const filterDataByType = () => {
     const end = moment(String(start_date.value[1])).format('YYYY-MM-DD')
     // console.log(test)
     if (start_date.value[0] == undefined) {
-      fetchData(showingValue.value, selectedType.value, status.value, "", "",searchFilter.value,pageMultiplier.value)
+      fetchData(1, selectedType.value, status.value, "", "",searchFilter.value,pageMultiplier.value)
     }  else {
-      fetchData(showingValue.value, selectedType.value, status.value, start, end,searchFilter.value,pageMultiplier.value)
+      fetchData(1, selectedType.value, status.value, start, end,searchFilter.value,pageMultiplier.value)
     }
 };
 
@@ -225,7 +225,7 @@ onBeforeMount(() => {
 
 //for searching
 const filteredItems = (search) => {
-  fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,search,pageMultiplier.value)
+  fetchData(1, selectedType.value, status.value, start_date.value, end_date.value,search,pageMultiplier.value)
 };
 
 const getSessionForSidebar = () => {
@@ -479,7 +479,7 @@ const format_date = (value) => {
                       {{ format_date(data.updated_at) }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.employee_name }}
+                      {{ data.name_created }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}
@@ -505,7 +505,7 @@ const format_date = (value) => {
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <td colspan="7">Data Not Found</td>
+                    <td colspan="8">Data Not Found</td>
                   </tr>
                 </tbody>
               </table>
@@ -516,13 +516,29 @@ const format_date = (value) => {
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
-            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+            <p v-if="sortedData.length > 0" class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
               {{ Math.min(showingValue * pageMultiplier, lenghtPagination) }}
               of {{ lenghtPagination }} entries
             </p>
+            <p v-else class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+              Showing 0 to
+              0
+              of 0 entries
+            </p>
             <vue-awesome-paginate
+              v-if="sortedData.length > 0"
               :total-items="lenghtPagination"
+              :items-per-page="parseInt(pageMultiplierReactive)"
+              :on-click="onChangePage"
+              v-model="showingValue"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
+            />
+            <vue-awesome-paginate
+              v-else
+              total-items="0"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"

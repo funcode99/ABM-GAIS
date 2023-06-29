@@ -9,19 +9,76 @@ import ModalRejectAtk from "@/components/approval/atk-request/ModalRejectAtk.vue
 import arrow from "@/assets/request-trip-view-arrow.png";
 import icon_receive from "@/assets/icon-receive.svg";
 
-import { onBeforeMount } from "vue";
-
+import { onBeforeMount, ref } from "vue";
+import { useRouter } from 'vue-router'
 import { useSidebarStore } from "@/stores/sidebar.js";
-const sidebar = useSidebarStore();
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+import moment from 'moment';
 
+const sidebar = useSidebarStore();
+const router = useRouter()
 let lengthCounter = 0;
+let stockName = ref("")
+let createdDate = ref("")
+let createdBy = ref("")
+let siteName = ref("")
+let companyName = ref("")
+let status = ref("")
+let ItemTable = ref([])
+const idR = ref(router.currentRoute.value.params.id)
+
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get/${id}`);
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    companyName.value = element.company_name
+    stockName.value = element.no_atk_request
+    createdDate.value = format_date(element.created_at)
+    createdBy.value = element.employee_name
+    siteName.value = element.site_name
+    status.value = element.status
+  }
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchDetailById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    ItemTable.value.push({
+      Warehouse : element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+    })
+  }
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 
 onBeforeMount(() => {
   getSessionForSidebar();
+  fetchDataById(router.currentRoute.value.params.id)
+  fetchDetailById(router.currentRoute.value.params.id)
 });
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+const format_date = (value) => {
+  if (value) {
+           return moment(String(value)).format('DD-MM-YYYY')
+          }
 };
 </script>
 
@@ -47,18 +104,18 @@ const getSessionForSidebar = () => {
           >
             <img :src="arrow" class="w-3 h-3" alt="" />
             <h1 class="text-black text-4xl font-semibold font-JakartaSans">
-              Request No. 1232312
+              {{ stockName }}
             </h1>
           </router-link>
 
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
             <ModalApproveAtk />
             <ModalRejectAtk />
-            <button
+            <!-- <button
               class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
             >
               <img :src="icon_receive" class="w-6 h-6" />
-            </button>
+            </button> -->
           </div>
 
           <!-- FORM READ ONLY-->
@@ -70,16 +127,16 @@ const getSessionForSidebar = () => {
               <input
                 type="text"
                 disabled
-                value="23/4/2023"
+                v-model="createdDate"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm">Site</span>
+              <span class="font-JakartaSans font-medium text-sm">Requestor</span>
               <input
                 type="text"
                 disabled
-                value="Site A"
+                v-model="createdBy"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -88,23 +145,23 @@ const getSessionForSidebar = () => {
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
-                >Requestor</span
+                >Company</span
               >
               <input
                 type="text"
                 disabled
-                value="Lalisa Manoban"
+                v-model="companyName"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
-                >Warehouse</span
+                >Site</span
               >
               <input
                 type="text"
                 disabled
-                value="WH A"
+                v-model="siteName"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -127,6 +184,11 @@ const getSessionForSidebar = () => {
               <table class="table table-compact w-full">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Warehouse
+                    </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
@@ -159,38 +221,16 @@ const getSessionForSidebar = () => {
                     </th>
                   </tr>
                 </thead>
-                <tbody class="font-JakartaSans font-normal text-xs">
+                <tbody class="font-JakartaSans font-normal text-xs" v-for="(value, ind) in ItemTable" :key="ind">
                   <tr class="h-16">
-                    <td
-                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
-                    >
-                      2321
-                    </td>
-                    <td
-                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
-                    >
-                      Pen
-                    </td>
-                    <td
-                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
-                    >
-                      Pilot
-                    </td>
-                    <td
-                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
-                    >
-                      2
-                    </td>
-                    <td
-                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
-                    >
-                      Pcs
-                    </td>
-                    <td
-                      class="border border-[#B9B9B9] font-JakartaSans font-normal text-sm"
-                    >
-                      -
-                    </td>
+                    <td class="border border-[#B9B9B9]">{{ value.Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.itemNames }}</td>
+                    
+                    <td class="border border-[#B9B9B9]">{{ value.brandName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.alertQuantity }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                   </tr>
                 </tbody>
               </table>
