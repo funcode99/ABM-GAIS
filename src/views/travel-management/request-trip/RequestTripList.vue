@@ -60,37 +60,14 @@
       }
     }
 
-    // for Company Business & Site Visit Request Trip Table
-    const tableHeadCompanyBusiness = [
-      {id: 0, title: 'No'},
-      {id: 1, title: 'Created Date'},
-      {id: 2, title: 'Request No'},
-      {id: 3, title: 'Requestor'},
-      {id: 4, title: 'Purpose of Trip'},
-      {id: 5, title: 'Status'},
-      {id: 6, title: 'Action'}
-    ]
-
-    //for Field Break Request Trip Table
-    const tableHeadFieldBreak = [
-      { Id: 1, title: "No", jsonData: "no" },
-      { Id: 2, title: "Created Date", jsonData: "created_date" },
-      { Id: 3, title: "Request No", jsonData: "request_no" },
-      { Id: 4, title: "Requestor", jsonData: "requestor" },
-      { Id: 5, title: "Purpose of Trip", jsonData: "purpose_of_trip" },
-      { Id: 6, title: "Status", jsonData: "Status" },
-      { Id: 7, title: "Actions" },
-    ]
-
     //for Voucher Taxi Request Trip Table
     const tableHeadTaxiVoucher = [
       { Id: 1, title: "No", jsonData: "no" },
-      { Id: 2, title: "Created Date", jsonData: "createdDate" },
-      { Id: 3, title: "Request No", jsonData: "RequestNo" },
-      { Id: 4, title: "Requestor", jsonData: "Requestor" },
-      { Id: 5, title: "Purpose of Trip", jsonData: "PurposeOfTrip" },
-      { Id: 6, title: "Status", jsonData: "Status" },
-      { Id: 7, title: "Actions" },
+      { Id: 2, title: "Created Date", jsonData: "created_at" },
+      { Id: 3, title: "Request No", jsonData: "no_request_trip" },
+      { Id: 4, title: "Requestor", jsonData: "employee_name" },
+      { Id: 5, title: "Purpose of Trip", jsonData: "document_name" },
+      { Id: 6, title: "Status", jsonData: "status" },
     ]
 
     const fetch = async () => {
@@ -100,7 +77,7 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)      
         instanceArray = api.data.data
-        sortedData.value = instanceArray        
+        sortedData.value = instanceArray
       } catch (error) {
         console.log(error)
         sortedData.value = []
@@ -185,6 +162,34 @@
 
     }
 
+    let date = ref(['', ''])
+    let sortedbyASC = true
+
+    const sortList = (sortBy) => {
+      if(sortedbyASC) {
+        sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+        sortedbyASC = false
+      } else {
+        sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+        sortedbyASC = true
+      }
+    }
+
+    let search = ref('')
+
+    watch(search, () => {
+      filteredItems()
+    })
+
+    const filteredItems = () => {
+      sortedData.value = instanceArray
+        const filteredR = sortedData.value.filter(item => {
+          return item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1
+      })
+      sortedData.value = filteredR
+      onChangePage(1)
+    }
+
 </script>
 
 <template>
@@ -208,7 +213,7 @@
         <tableTop>
             
             <!-- TableTopBar -->
-            <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
+            <!-- USER, EXPORT BUTTON, ADD NEW BUTTON -->
             <div class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2">
 
               <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
@@ -235,8 +240,7 @@
                 <!-- SORT -->
                 <div class="flex flex-col gap-1">
 
-                  <p
-                    class="capitalize font-JakartaSans text-xs text-black font-medium">
+                  <p class="capitalize font-JakartaSans text-xs text-black font-medium">
                     Purpose of Trip
                   </p>
   
@@ -253,14 +257,18 @@
   
                 <!-- DATE -->
                 <div>
+
                   <p class="capitalize font-Fira text-xs text-black font-medium">
                     Date
                   </p>
-  
-                  <input
-                    type="date"
-                    class="border border-slate-300 h-[40px] rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+
+                  <!-- v-model="date" -->
+                  <VueDatePicker 
+                      range
+                      :enable-time-picker="false"
+                      format="yyyy-mm-dd"
                   />
+
                 </div>
   
                 <!-- FILTER -->
@@ -320,6 +328,7 @@
                     placeholder="Search..."
                     type="text"
                     name="search"
+                    v-model="search"
                   />
 
                 </label>
@@ -376,6 +385,10 @@
                           <img :src="arrowicon" class="w-[9px] h-3" />
                         </button>
                       </span>
+                    </th>
+
+                    <th>
+                      Actions
                     </th>
 
                   </tr>

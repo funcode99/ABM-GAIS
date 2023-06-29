@@ -42,7 +42,7 @@ let employeeName = localStorage.getItem('username')
 
     <div class="overflow-x-auto mt-5">
 
-        <table class="table">
+        <table class="table flex justify-center">
             
             <thead>
                         <tr>
