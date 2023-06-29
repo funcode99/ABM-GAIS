@@ -1,5 +1,8 @@
 <script setup>
-import { inject } from 'vue'
+import { inject } from "vue"
+import Api from "@/utils/Api"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
 
 const props = inject('taxiVoucherData')
 const tableHeadTaxiVoucher = [
@@ -13,6 +16,24 @@ const tableHeadTaxiVoucher = [
       {id: 8, title: 'Status'},
       {id: 9, title: 'Action'},
 ]
+
+const emits = defineEmits('fetchTaxiVoucher')
+
+const deleteData = async (id) => {
+    
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.delete(`/taxi_voucher/delete_data/${id}`)
+    
+    if(props.value.length === 1) {
+      props.value = []
+    } else {
+      emits('fetchTaxiVoucher')
+    }
+
+}
+
+let employeeName = localStorage.getItem('username')
 
 </script>
 
@@ -34,7 +55,6 @@ const tableHeadTaxiVoucher = [
             <tbody>
                 <tr v-for="data in props" :key="data.id">
                             <td>
-
                               {{ employeeName }}
                             </td>
                             <td>
@@ -58,7 +78,14 @@ const tableHeadTaxiVoucher = [
                             <td>
 
                             </td>
-                            <td></td>
+                            <td class="flex flex-wrap gap-4 justify-center">
+                              <button>
+                                <img :src="editicon" class="w-6 h-6" />
+                              </button>
+                              <button @click="deleteData(data.id)">
+                                <img :src="deleteicon" class="w-6 h-6" />
+                              </button>
+                          </td>
                 </tr>
             </tbody>
 

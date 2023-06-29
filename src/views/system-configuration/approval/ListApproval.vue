@@ -104,6 +104,7 @@
       } catch (error) {
         responseStatus.value = error.response.status
         responseMessage.value = error.response.data.message
+        sortedData.value = []
       }
 
     }
@@ -239,8 +240,7 @@
             });
 
             if (sortedData.value.length == 1) {
-              // router.go() 
-              fetch()
+                sortedData.value = []
             } else {
               fetch()
             }

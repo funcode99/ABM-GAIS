@@ -94,7 +94,7 @@
             });
 
             if (sortedData.value.length == 1) {
-              fetch()
+              sortedData.value = []
             } else {
               fetch()
             }
@@ -216,6 +216,7 @@
       } catch (error) {
         responseStatus.value = error.response.status
         responseMessage.value = error.response.data.message
+        sortedData.value = []
       }
 
     }

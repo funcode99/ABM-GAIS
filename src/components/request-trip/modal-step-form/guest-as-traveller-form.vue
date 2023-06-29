@@ -13,7 +13,7 @@
     let optionDataTravellerType = ref([])
     let employeeLoginData = ref([])
 
-    let emits = defineEmits(['fetchTravellerGuest'])
+    let emits = defineEmits(['fetchTravellerGuest', 'changeVisibility'])
 
     // Guest as a traveller
     let typeOfTraveller = ref('')
@@ -52,7 +52,10 @@
             id_flight_class: flightId.value,
             id_request_trip: localStorage.getItem('tripId')
         })
+        
         emits('fetchTravellerGuest')
+        emits('changeVisibility')
+
     }
 
     onBeforeMount(() => {

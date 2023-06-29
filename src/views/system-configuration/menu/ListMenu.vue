@@ -105,7 +105,7 @@
             });
 
             if (sortedData.value.length == 1) {
-              fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
+              sortedData.value = []
             } else {
               fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
             }
@@ -224,8 +224,6 @@
       }
     }
 
-
-
     onBeforeMount(() => {
       getSessionForSidebar()
       fetchMenuStatusUtils(instanceArray, addMenuStatusData)
@@ -258,12 +256,9 @@
     }
 
     const filterTable = async (id) => {
-      console.log(id)
-      console.log('masuk ke filter table')
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/menu/get?filter=${id}`)
-        console.log(api)
         responseStatus.value = api.status
         instanceArray = api.data.data
         sortedData.value = instanceArray

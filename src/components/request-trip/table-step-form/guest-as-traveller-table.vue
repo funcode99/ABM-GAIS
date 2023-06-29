@@ -1,5 +1,8 @@
 <script setup>
     import { inject } from 'vue'
+    import Api from '@/utils/Api'
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import editicon from "@/assets/navbar/edit_icon.svg"
 
     const props = inject('travellerData')
     const tableHeadTravellers = [
@@ -13,6 +16,23 @@
         {id: 9, title: 'Flight Class'},
         {id: 10, title: 'Action'}
     ]
+
+    const emits = defineEmits('fetchTravellerGuest')
+
+    const deleteData = async (id) => {
+        
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.delete(`/travel_guest/delete_data/${id}`)
+        
+        if(props.value.length === 1) {
+          props.value = []
+        } else {
+          emits('fetchTravellerGuest')
+        }
+
+    }
+
 
 </script>
 
@@ -56,8 +76,13 @@
             <td>
               {{ data.flight_class }}
             </td>
-            <td>
-    
+            <td class="flex flex-wrap gap-4 justify-center">
+              <button>
+                <img :src="editicon" class="w-6 h-6" />
+              </button>
+              <button @click="deleteData(data.id)">
+                <img :src="deleteicon" class="w-6 h-6" />
+              </button>
             </td>
           </tr>
         </tbody>

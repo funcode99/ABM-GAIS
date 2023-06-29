@@ -5,6 +5,8 @@
     import modalFooter from "@/components/modal/modalFooter.vue"
     import checkButton from '@/components/molecules/checkButton.vue'
 
+    import Api from '@/utils/Api'
+
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
@@ -51,6 +53,8 @@
       }
     ]
 
+    const emits = defineEmits(['fetchAirlines', 'changeVisibility'])
+
     // Airlines
     let traveller = ref('')
     let arrival = ref('')
@@ -75,6 +79,23 @@
         flightClassAirlines.value = employeeLoginData.value[0].flight_class
     })
 
+    const submitAirlines = async () => {
+        
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+        const api = await Api.post('/flight_trip/store', {
+            id_request_trip: localStorage.getItem('tripId'),
+            id_vendor: vendor.value,
+            flight_no: flightIdAirlines.value,
+            code_airlines: 10,
+            ticket_price: 2500000,    
+        })
+        
+        emits('fetchAirlines')
+        emits('changeVisibility')
+
+    }
 
     let modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
@@ -92,7 +113,7 @@
 
                 <modalHeader @closeVisibility="$emit('changeVisibility')" :title="'Airlines'" />
     
-                <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="">
+                <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="submitAirlines">
     
                     <div :class="rowClass">
         
@@ -113,7 +134,13 @@
                                 <label :class="labelStylingClass">
                                     Flight Class<span class="text-red-star">*</span>
                                 </label>
-                                <input :class="inputStylingClass" disabled type="text" v-model="flightClassAirlines" required />
+                                <input 
+                                    :class="inputStylingClass" 
+                                    v-model="flightClassAirlines" 
+                                    type="text" 
+                                    disabled 
+                                    required 
+                                />
                             </div>
 
                         </div>
@@ -142,7 +169,6 @@
         
                     </div>
                     
-                    <!-- :class="rowClass" -->
                     <div class="flex justify-between mx-4 items-start gap-2 my-6">
         
                     <!-- Departure Location -->
@@ -196,14 +222,15 @@
                         <div class="w-full">
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
                             Vendor<span class="text-red-star">*</span>
+                            {{ vendor }}
                             </label>
                             <div>
-                            <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
-                            <label class="ml-4">Antavaya</label>
+                                <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor" :value="1">
+                                <label class="ml-4">Antavaya</label>
                             </div>
                             <div>
-                            <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor">
-                            <label class="ml-4">Aerowisata</label>
+                                <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor" :value="2">
+                                <label class="ml-4">Aerowisata</label>
                             </div>
                         </div>
                         </div>

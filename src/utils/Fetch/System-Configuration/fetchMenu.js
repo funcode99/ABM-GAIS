@@ -13,6 +13,9 @@ const fetchMenu = async (instanceArray, responseStatus, responseMessage, ...anot
     } catch (error) {
         responseStatus.value = error.response.status
         responseMessage.value = error.response.data.message
+        anotherMenu.map((item) => {
+            item.value = []
+        })
     }
 }
 

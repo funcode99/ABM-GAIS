@@ -9,6 +9,7 @@
 
     let listCurrency = ref([])
     let employeeLoginData = ref([])
+    let emits = defineEmits(['fetchCashAdvance'])
     const props = defineProps({
         isOpen: Boolean        
     })
@@ -20,6 +21,55 @@
         listCurrency.value = api.data.data
     }
 
+    // Cash Advance
+    let traveller = ref('')
+    let nominal = ref()
+    let frequency = ref()
+    let item = ref(1)
+    let total = ref(0)
+    let remarks = ref('')
+    let remarksNotes = ref('')
+    let caId = ref(0)
+    let currency = ref([0, ''])
+    let grandTotal = ref(0)
+    let variableTotal = ref([frequency.value, nominal.value])
+
+    const submitCashAdvance = async () => {
+        const token = JSON.parse(localStorage.getItem("token"))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post('/cash_advance/store', {
+            type_ca: 1,
+            id_employee: caId.value,
+            id_request_trip: localStorage.getItem('tripId'),
+            remarks: remarks.value,
+            id_currency: currency.value[0],
+            grand_total: grandTotal.value,
+            arrayDetail: arrayDetail.value
+        })
+        console.log(api)
+        emits('fetchCashAdvance')
+    }
+
+    let arrayDetail = ref([])
+    let arrayDetailForm = ref([])
+
+    watch(variableTotal.value, () => {
+        console.log('perubahan di variable Total')
+        if(nominal != 0 & frequency != 0) {
+            total.value = nominal.value * frequency.value
+        }
+    })
+
+    watch(frequency, () => {
+        frequency.value = frequency.value.replace(/\D/g, "")
+        variableTotal.value[0] = frequency.value
+    })    
+
+    watch(nominal, () => {
+        nominal.value = nominal.value.replace(/\D/g, "")
+        variableTotal.value[1] = nominal.value
+    })  
+
     onBeforeMount(() => {
         fetchEmployeeByLoginUtils(employeeLoginData)
         fetchCurrency()
@@ -27,18 +77,32 @@
 
     watch(employeeLoginData, () => {
         traveller.value = employeeLoginData.value[0].employee_name
-        // hotelFare.value = employeeLoginData.value[0].hotel_fare
-        // gender.value = employeeLoginData.value[0].jenkel
+        caId.value = employeeLoginData.value[0].id
     })
 
-    // Cash Advance
-    let traveller = ref('')
-    let nominal = ref('')
-    let item = ref('')
-    let total = ref('')
-    let frequency = ref('')
-    let remarks = ref('')
-    let currency = ref('')
+    const addToArrayDetail = () => {
+        arrayDetailForm.value = {
+            id_item_ca: item.value,
+            frequency: frequency.value,
+            nominal: nominal.value,
+            total: total.value,
+            remarks: remarks.value,
+            currency: currency.value[1]
+        }
+        grandTotal.value += arrayDetailForm.value.total
+        arrayDetail.value.push(arrayDetailForm.value)
+        arrayDetailForm.value = {}
+    }
+
+    const tableHeadCashAdvance = [
+        {id: 1, title: 'Item'},
+        {id: 2, title: 'Frequency'},
+        {id: 3, title: 'Currency'},
+        {id: 4, title: 'Nominal'},
+        {id: 5, title: 'Total'},
+        {id: 6, title: 'Remarks'},
+        {id: 7, title: 'Actions'}
+    ]
 
     let modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
@@ -47,6 +111,7 @@
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const inputBlackStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm bg-[#4e4e4e] text-[#b8b8b8]'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
+
 </script>
 
 <template>
@@ -56,7 +121,7 @@
 
             <modalHeader @closeVisibility="$emit('changeVisibility')" :title="'Cash Advance'" />
     
-            <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="">
+            <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="submitCashAdvance">
                 
                 <div :class="rowClass">
     
@@ -76,7 +141,7 @@
                             <label :class=labelStylingClass>
                                 Grand Total
                             </label>
-                            <input type="text" placeholder="Grand Total" :class="inputBlackStylingClass">
+                            <input type="text" placeholder="Grand Total" :class="inputBlackStylingClass" v-model="grandTotal">
                         </div>
                     </div>
     
@@ -89,8 +154,8 @@
                         <label :class="labelStylingClass">
                             Currency <span class="text-red-star">*</span>
                         </label>
-                        <select :class="inputStylingClass">
-                            <option v-for="data in listCurrency" :key="data.id">
+                        <select :class="inputStylingClass" v-model="currency">
+                            <option v-for="data in listCurrency" :key="data.id" :value="[data.id, data.currency_name]">
                                 {{ data.currency_name }}
                             </option>
                         </select>
@@ -103,16 +168,23 @@
                             <label :class=labelStylingClass>
                                 Notes
                             </label>
-                            <textarea placeholder="Notes" :class="inputStylingClass"></textarea>
+                            <textarea placeholder="Notes" :class="inputStylingClass" v-model="remarksNotes"></textarea>
                         </div>
                     </div>
     
                 </div>
 
-                <form @submit.prevent="">
+                <div>
 
                     <div class="mx-4">
                         <h1>Details Item</h1>
+                        <h1>
+                            <!-- {{ currency }} -->
+                            <!-- {{ arrayDetail }}    -->
+                        </h1>
+                        <h1>
+                            <!-- {{ arrayDetailForm }} -->
+                        </h1>
                         <hr class="border border-black" />
                     </div>
 
@@ -124,7 +196,12 @@
                                 <label :class="labelStylingClass">
                                     Item <span class="text-red-star">*</span>
                                 </label>
-                                <input :class="inputStylingClass" v-model="item" placeholder="Item" />
+                                <!-- <input :class="inputStylingClass" v-model="item" placeholder="Item" /> -->
+                                <select :class="inputStylingClass" v-model="item">
+                                    <option value="1">Meals</option>
+                                    <option value="2">Transport</option>
+                                    <option value="3">Others</option>
+                                </select>
                             </div>
                         </div>
     
@@ -148,7 +225,7 @@
                             <label :class="labelStylingClass">
                                 Frequency <span class="text-red-star">*</span>
                             </label>
-                            <input type="text" placeholder="Frequency" :class="inputStylingClass">
+                            <input type="text" placeholder="Frequency" :class="inputStylingClass" v-model="frequency">
                             </div>
                         </div>
     
@@ -158,7 +235,7 @@
                                 <label :class=labelStylingClass>
                                     Total
                                 </label>
-                                <input type="text" placeholder="Total" :class="inputBlackStylingClass">
+                                <input type="text" placeholder="Total" :class="inputBlackStylingClass" disabled v-model="total">
                             </div>
                         </div>
     
@@ -168,20 +245,57 @@
                         <div :class="columnClass">
                             <div class="w-full">  
                             <label :class=labelStylingClass>
-                                Remarks <span class="text-red-star">*</span>
+                                Remarks
                             </label>
-                            <textarea placeholder="Notes" :class="inputStylingClass"></textarea>
+                            <textarea placeholder="Remarks" :class="inputStylingClass" v-model="remarks"></textarea>
                             </div>
                         </div>
                     </div>
 
                     <div class="flex justify-center">
-                        <button class="bg-blue-button text-white font-bold text-center px-11 py-3 rounded-lg">
+                        <button type="button" @click="addToArrayDetail" class="bg-blue-button text-white font-bold text-center px-11 py-3 rounded-lg">
                             Add
                         </button>
                     </div>
 
-                </form>
+                </div>
+
+                <div class="flex justify-center mt-3">
+                    <table class="table">
+                          <thead>
+                            <tr>
+                              <th v-for="data in tableHeadCashAdvance" :key="data.id">
+                                {{ data.title }}
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr v-for="data in arrayDetail" :key="data.id">
+                              <td>
+                                {{ data.id_item_ca }}
+                              </td>
+                              <td>
+                                {{ data.frequency }}
+                              </td>
+                              <td>
+                                {{ data.currency }}
+                              </td>
+                              <td>
+                                {{ data.nominal }}
+                              </td>
+                              <td>
+                                {{ data.total }}
+                              </td>
+                              <td>
+                                {{ data.remarks }}
+                              </td>
+                              <td>
+
+                              </td>
+                            </tr>
+                          </tbody>
+                    </table>
+                </div>
     
                 <modalFooter
                     @closeEdit="$emit('changeVisibility')"
@@ -212,4 +326,21 @@
         overflow-y: auto !important;
     }
 
+    .table :where(th, td) {
+  padding: .5rem !important;
+    }
+
+    .table th {
+    background: #015289 !important;
+    border-color: #b9b9b9 !important;
+    border-width: 2px;
+    color: white;
+    }
+
+    .table td {
+    border-color: #b9b9b9 !important;
+    border-width: 2px;
+    }
+
 </style>
+

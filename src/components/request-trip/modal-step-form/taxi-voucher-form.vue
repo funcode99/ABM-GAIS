@@ -12,7 +12,7 @@
         isOpen: Boolean        
     })
 
-    let emits = defineEmits('fetchTaxiVoucher')
+    let emits = defineEmits(['fetchTaxiVoucher', 'changeVisibility'])
     
     // Taxi Voucher
     let name = ref('')
@@ -25,8 +25,10 @@
     let voucherCode = ref('')
 
     const submitTaxiVoucher = async () => {
+        
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        
         const api = await Api.post('/taxi_voucher/store', {
             id_request_trip: localStorage.getItem('tripId'),
             amount: amount.value,
@@ -36,7 +38,10 @@
             id_arrival_city: arrival.value,
             date: date.value
         })
+
         emits('fetchTaxiVoucher')
+        emits('changeVisibility')
+
     }
 
     let employeeLoginData = ref()
@@ -131,12 +136,12 @@
                 </div>
 
                 <div :class="columnClass">
-                <div class="w-full">
-                    <label :class="labelStylingClass">
-                        <span>Remarks</span>
-                    </label>
-                    <input type="text" :class='inputStylingClass' placeholder="Remarks" v-model="remarks">
-                </div>
+                    <div class="w-full">
+                        <label :class="labelStylingClass">
+                            <span>Remarks</span>
+                        </label>
+                        <input type="text" :class='inputStylingClass' placeholder="Remarks" v-model="remarks">
+                    </div>
                 </div>
 
             </div>

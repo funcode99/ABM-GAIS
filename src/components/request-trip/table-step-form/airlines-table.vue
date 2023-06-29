@@ -1,5 +1,8 @@
 <script setup>
 import { inject } from 'vue'
+import Api from '@/utils/Api'
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
 
 const props = inject('airlinesData')
 const tableHeadAirlinesRequestTrip = [
@@ -12,6 +15,23 @@ const tableHeadAirlinesRequestTrip = [
       {id: 7, title: 'Action'}
 ]
 
+const emits = defineEmits('fetchAirlines')
+
+const deleteData = async (id) => {
+    
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.delete(`/flight_trip/delete_data/${id}`)
+    
+    if(props.value.length === 1) {
+      props.value = []
+    } else {
+      emits('fetchAirlines')
+    }
+
+}
+
+let employeeName = localStorage.getItem('username')
 </script>
 
 <template>
@@ -29,9 +49,9 @@ const tableHeadAirlinesRequestTrip = [
               </thead>
 
               <tbody>
-                        <tr v-for="data in props" :key="data.id">
+                <tr v-for="data in props" :key="data.id">
                           <td>
-                            {{ data.name }}
+                            <!-- {{ data.name }} -->
                           </td>
                           <td>
                             {{ data.departure }}
@@ -48,8 +68,15 @@ const tableHeadAirlinesRequestTrip = [
                           <td>
                             {{ data.status }}
                           </td>
-                          <td></td>
-                        </tr>
+                          <td class="flex flex-wrap gap-4 justify-center">
+                            <button>
+                              <img :src="editicon" class="w-6 h-6" />
+                            </button>
+                            <button @click="deleteData(data.id)">
+                              <img :src="deleteicon" class="w-6 h-6" />
+                            </button>
+                          </td>
+                </tr>
               </tbody>
 
         </table>

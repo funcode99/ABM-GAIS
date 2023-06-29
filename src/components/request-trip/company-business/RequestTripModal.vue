@@ -25,12 +25,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
     let referenceFetch = useReferenceFetchResult()
 
+    let isVisibleOpenModal = ref(false)
+
     let filterData = ref([])
     let optionDataPurposeofTrip = ref([])
     let optionDataEmployeeRequestor = ref([])
     let optionDataCity = ref([])
     let optionDataZona = ref([])
-    let optionDataSiteLocation = ref([])
     let optionDataFlightClass = ref([])
     let optionDataTravellerType = ref([])
     let optionDataCompany = ref([])
@@ -80,21 +81,11 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
     })
 
-    const tableBodyCashAdvance = [
-      {
-        id: 1,
-        caNo: '230505',
-        total: '800.000',
-        notes: 'abc',
-        status: 'Pending'
-      }
-    ]
-
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
-    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
+    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
 
-    const inputStylingWithoutWidthClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
+    const inputStylingWithoutWidthClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
     const circleStepBasicStylingClass = 'rounded-full border border-black w-11 h-11 bg-[#d9d9d9] flex flex-col items-center text-center relative'
 
@@ -115,10 +106,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let totalTLK = ref(0)
     let departureDate = ref('')
     let returnDate = ref('')
-
-    const resetRef = () => {
-      
-    }
 
     let dtToday = new Date();
     let month = dtToday.getMonth() + 1;
@@ -149,7 +136,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       getDepartureDateDay = newValue.toString().substring(8,10)
       formattedDepartureDate = getDepartureDateYear + '/' + getDepartureDateMonth + '/' + getDepartureDateDay
       date2 = new Date(formattedDepartureDate)
-      if(date2.value !== '') {
+      if(date2.value !== '' && date2.value !== undefined && date1.value !== '' && date2.value !== undefined) {
         margin = date1.getTime() - date2.getTime()
         totalDays = Math.ceil((margin/(1000*3600*24))+1)
         totalTLK = totalDays * TLKperDay.value
@@ -178,8 +165,16 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       }
     })
 
-    watch(formStep, async () => {
-    })
+    const resetProgressData = () => {
+
+      travellerGuestTableData.value = []
+      airlinesTableData.value = []
+      taxiVoucherTableData.value = []
+      otherTransportationTableData.value = []
+      accomodationTableData.value = []
+      cashAdvanceTableData.value = []
+
+    }
 
     const savePurposeOfTrip = async () => {
       if(localStorage.getItem("tripId") !== undefined) {
@@ -200,17 +195,24 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             total_tlk: totalTLK
           })
           localStorage.setItem('tripId', api.data.data.id)
-          fetchTravellerGuest(api.data.data.id)
           formStep.value++
+          resetProgressData()
         }
         else {
-          fetchTravellerGuest(localStorage.getItem("tripId"))
           formStep.value++
+          resetProgressData()
         }
     }
 
+    const submitRequestTrip = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
+      console.log(api)
+      console.log('berhasil submit request trip!')
+    }
+
     watch(optionDataEmployeeRequestor, () => {
-      // telephone.value = optionDataEmployeeRequestor.value[newValue[1]].phone_number
       requestor.value = optionDataEmployeeRequestor.value[0].id
       requestorName.value = optionDataEmployeeRequestor.value[0].employee_name
       locationId.value = optionDataEmployeeRequestor.value[0].id_site
@@ -231,13 +233,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/employee/get_by_login')
       optionDataEmployeeRequestor.value = api.data.data
-    }
-
-    const fetchSiteLocation = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      // const api = await Api.get('/site')
-      // optionDataSiteLocation.value = api.data.data
     }
 
     const fetchCity = async () => {
@@ -286,62 +281,105 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     const fetchTravellerGuest = async (tripId) => {
 
       if(tripId) {
-        const token = JSON.parse(localStorage.getItem('token'))
+        try {
+          const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${tripId}`)
-        travellerGuestTable.value = api.data.data
-        console.log('berhasil mengambil data traveller guest!')
+        travellerGuestTableData.value = api.data.data
+        console.log('berhasil mengambil data traveller guest!')          
+        } catch (error) {
+          travellerGuestTableData.value = []
+        }
+
       } else {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
-        travellerGuestTable.value = api.data.data
-        console.log('berhasil mengambil data traveller guest!')
+        try {
+          const token = JSON.parse(localStorage.getItem('token'))
+          Api.defaults.headers.common.Authorization = `Bearer ${token}`
+          const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+          travellerGuestTableData.value = api.data.data
+          console.log('berhasil mengambil data traveller guest!')          
+        } catch (error) {
+          console.log(error)
+          travellerGuestTableData.value = []
+        }
+
       }
 
     }
 
     // for airlines table
-    // const fetchAirlines = async () => {
-    //     const token = JSON.parse(localStorage.getItem('token'))
-    //     Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    //     const api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
-    //     airlinesTable.value = api.data.data  
-    // }
-    
+    const fetchAirlines = async () => {
+
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/flight_trip/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
+        airlinesTableData.value = api.data.data        
+      } catch (error) {
+        airlinesTableData.value = []
+      }
+
+    }
+  
+    // for taxi voucher table
     const fetchTaxiVoucher = async () => {
+
+      try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/taxi_voucher/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
-        taxiVoucherTable.value = api.data.data
+        taxiVoucherTableData.value = api.data.data        
+      } catch (error) {
+        taxiVoucherTableData.value = []
+      }
+
     }
-    // for taxi voucher table
 
     // for other transportation table
     const fetchOtherTransportation = async () => {
+      
+      try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/other_transport/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
-        otherTransportationTable.value = api.data.data
+        otherTransportationTableData.value = api.data.data        
+      } catch (error) {
+        otherTransportationTableData.value = []
+      }
+
     }
 
     // for accomodation table
     const fetchAccomodation = async () => {
+
+      try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem("tripId")}`)
-        accomodationTable.value = api.data.data
+        accomodationTableData.value = api.data.data        
+      } catch (error) {
+        accomodationTableData.value = []
+      }
+
     }
 
     // for cash advance table
     const fetchCashAdvance = async () => {
+
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem("tripId")}`)
+        cashAdvanceTableData.value = api.data.data        
+      } catch (error) {
+        cashAdvanceTableData.value = []
+      }
 
     }
 
     onBeforeMount(() => {
       fetchDocumentCode()
       fetchEmployeeRequestor()
-      fetchSiteLocation()
       fetchCity()
       fetchCompany()
       fetchFlight()
@@ -350,8 +388,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
       fetchTravellerType()
     })
-
-    let isVisibleOpenModal = ref(false)
 
     const companyBusinessStepList = [
       {id: 2, title: 'Travellers' },
@@ -401,9 +437,10 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
     watch(isVisibleOpenModal, () => {
       // resetInput()
+      formStep.value = 0
     })
 
-    let employeeName = localStorage.getItem('username')
+    const addButtonStylingClass = 'btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2'
 
 </script>
 
@@ -411,7 +448,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
     <button 
       @click="isVisibleOpenModal = !isVisibleOpenModal" 
-      class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+      :class="addButtonStylingClass">
       + Add New
     </button>
 
@@ -464,28 +501,28 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
         </div>
 
-      <!-- add button -->
-      <button v-if="formStep == 2 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <!-- add button for company business & site visit -->
+      <button v-if="formStep == 2 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleGuest = !isVisibleGuest" :class="addButtonStylingClass">
           + Add Guest
       </button>
 
-      <button v-if="formStep == 3 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 3 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleAirlines = !isVisibleAirlines" :class="addButtonStylingClass">
           + Add Airlines
       </button>
 
-      <button v-if="formStep == 4 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 4 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" :class="addButtonStylingClass">
           + Add Taxi Voucher
       </button>
 
-      <button v-if="formStep == 5 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 5 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" :class="addButtonStylingClass">
           + Add Other Transportation
       </button>
 
-      <button v-if="formStep == 6 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleAccomodation = !isVisibleAccomodation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 6 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleAccomodation = !isVisibleAccomodation" :class="addButtonStylingClass">
           + Add Accomodation
       </button>
 
-      <button v-if="formStep == 7 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleCashAdvance = !isVisibleCashAdvance" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2">
+      <button v-if="formStep == 7 && (requestType[1] == 'Company Business' || requestType[1] == 'Site Visit') " @click="isVisibleCashAdvance = !isVisibleCashAdvance" :class="addButtonStylingClass">
         + Add Cash Advance
       </button>
 
@@ -547,142 +584,142 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
               <!-- Step 2 FORM -->
               <form class="text-left px-4 flex flex-col" :class="formStep == 1 ? 'block' : 'hidden'" @submit.prevent="savePurposeOfTrip">
   
-  <div :class="columnClass + ' mx-4'">
+                <div :class="columnClass + ' mx-4'">
 
-      <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                    <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
 
-      <select v-model="requestType" :class="inputStylingWithoutWidthClass" required>
+                    <select v-model="requestType" :class="inputStylingWithoutWidthClass" required>
 
-        <option v-for="data in optionDataPurposeofTrip" :value="[data.id, data.document_name]">
-          {{ data.document_name }}
-        </option>
+                      <option v-for="data in optionDataPurposeofTrip" :value="[data.id, data.document_name]">
+                        {{ data.document_name }}
+                      </option>
 
-      </select>
+                    </select>
 
-  </div>
+                </div>
 
-  <div :class="columnClass + ' mx-4 my-3'">
+                <div :class="columnClass + ' mx-4 my-3'">
 
-    <span>
-      Notes to Purpose of Trip
-    </span>
+                  <span>
+                    Notes to Purpose of Trip
+                  </span>
 
-    <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip">
+                  <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip" />
 
-  </div>
+                </div>
 
-  <h1 class="mx-4 mt-6">Itinerary</h1>
-  
-  <div :class="rowClass">
+                <h1 class="mx-4 mt-6">Itinerary</h1>
+                
+                <div :class="rowClass">
 
-    <!-- From -->
-    <div class="w-full">
-      <div :class="columnClass">
-        <span>From<span class="text-red-star">*</span></span>
-        <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" v-model="fromCity" required>
-          <option v-for="data in optionDataCity" :value="data.id">
-          {{ data.city_name }}
-          </option>
-        </select>
-      </div>
-    </div>
+                  <!-- From -->
+                  <div class="w-full">
+                    <div :class="columnClass">
+                      <span>From<span class="text-red-star">*</span></span>
+                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" v-model="fromCity" required>
+                        <option v-for="data in optionDataCity" :value="data.id">
+                        {{ data.city_name }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
 
-    <!-- Zona -->
-    <div class="w-full">
+                  <!-- Zona -->
+                  <div class="w-full">
 
-      <div :class="columnClass">
-        
-        <span>
-          Zona<span class="text-red-star">*</span>
-        </span>
-        
-        <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
-        @change="fetchTLKByJobBand"
-        placeholder="Zona" 
-        v-model="zonaName" 
-        required>
-          <option v-for="data in optionDataZona" :value="data.zona_name">
-            {{ data.zona_name }}
-          </option>
-        </select>
+                    <div :class="columnClass">
+                      
+                      <span>
+                        Zona<span class="text-red-star">*</span>
+                      </span>
+                      
+                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
+                      @change="fetchTLKByJobBand"
+                      placeholder="Zona" 
+                      v-model="zonaName" 
+                      required>
+                        <option v-for="data in optionDataZona" :value="data.zona_name">
+                          {{ data.zona_name }}
+                        </option>
+                      </select>
 
-      </div>
+                    </div>
 
-    </div>
+                  </div>
 
-  </div>
+                </div>
 
-  <div :class="rowClass">
+                <div :class="rowClass">
 
-    <!-- To -->
-    <div :class="columnClass">
-      <span>To<span class="text-red-star">*</span></span>
-      <select :class="inputStylingClass" v-model="toCity" required>
-        <option v-for="data in optionDataCity" :value="data.id">
-          {{ data.city_name }}
-        </option>
-      </select>
-    </div>
-    
-    <!-- TLK/Day -->
-    <div :class="columnClass">
-      <span>TLK/Day<span class="text-red-star">*</span></span>
-      <input type="text" :class="inputStylingClass" placeholder="TLK/Day" v-model="TLKperDay" required>
-    </div>
+                  <!-- To -->
+                  <div :class="columnClass">
+                    <span>To<span class="text-red-star">*</span></span>
+                    <select :class="inputStylingClass" v-model="toCity" required>
+                      <option v-for="data in optionDataCity" :value="data.id">
+                        {{ data.city_name }}
+                      </option>
+                    </select>
+                  </div>
+                  
+                  <!-- TLK/Day -->
+                  <div :class="columnClass">
+                    <span>TLK/Day<span class="text-red-star">*</span></span>
+                    <input type="text" :class="inputStylingClass" placeholder="TLK/Day" v-model="TLKperDay" required disabled />
+                  </div>
 
-  </div>
+                </div>
 
-  <div :class="rowClass">
-    
-    <!-- Date Departure -->
-    <div :class="columnClass">
-      <span>
-        Date Departure<span class="text-red-star">*</span>
-      </span>
-      <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate" :max="returnDate" required>
-    </div>
+                <div :class="rowClass">
+                  
+                  <!-- Date Departure -->
+                  <div :class="columnClass">
+                    <span>
+                      Date Departure<span class="text-red-star">*</span>
+                    </span>
+                    <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate" :max="returnDate" required>
+                  </div>
 
-    <!-- Total TLK -->
-    <div :class="columnClass">
-      <span>
-        Total TLK<span class="text-red-star">*</span>
-      </span>
-      <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
-    </div>
+                  <!-- Total TLK -->
+                  <div :class="columnClass">
+                    <span>
+                      Total TLK<span class="text-red-star">*</span>
+                    </span>
+                    <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
+                  </div>
 
-  </div>
+                </div>
 
-  <div :class="rowClass">
+                <div :class="rowClass">
 
-    <!-- Return Date -->
-    <div :class="columnClass">
-        <span>
-          Return Date<span class="text-red-star">*</span>
-        </span>
-        <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
-    </div>
+                  <!-- Return Date -->
+                  <div :class="columnClass">
+                      <span>
+                        Return Date<span class="text-red-star">*</span>
+                      </span>
+                      <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
+                  </div>
 
-    <div :class="columnClass">
-    </div>
+                  <div :class="columnClass">
+                  </div>
 
-  </div>
+                </div>
 
-    <!-- change step button -->
-    <div class="sticky bottom-0 bg-white" v-if="formStep === 1">
+                  <!-- change step button -->
+                  <div class="sticky bottom-0 bg-white" v-if="formStep === 1">
 
-      <div class="flex justify-between font-bold py-2">
+                    <div class="flex justify-between font-bold py-2">
 
-          <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
-            Back
-          </button>
+                        <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
+                          Back
+                        </button>
 
-          <button v-if="formStep < stepCounter" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
-            Next
-          </button>
+                        <button v-if="formStep < stepCounter" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]" type="submit">
+                          Next
+                        </button>
 
-      </div>
+                    </div>
 
-    </div>
+                  </div>
 
               </form>
 
@@ -692,48 +729,48 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                 <!-- step 3 form Traveller -->
                 <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
 
-                  <guestAsTravellerTable />
+                  <guestAsTravellerTable @fetchTravellerGuest="fetchTravellerGuest" />
 
                 </div>
 
                 <!-- step 4 form Airlines -->
                 <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
 
-                  <airlinesTable />
+                  <airlinesTable @fetchAirlines="fetchAirlines" />
 
                 </div>
 
                 <!-- step 5 form Taxi Voucher -->
                 <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
 
-                    <taxiVoucherTable />
+                    <taxiVoucherTable @fetchTaxiVoucher="fetchTaxiVoucher" />
 
                 </div>
 
                 <!-- step 6 form Other Transportation -->
                 <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
 
-                    <otherTransportationTable />
+                    <otherTransportationTable @fetchOtherTransportation="fetchOtherTransportation" />
 
                 </div>
 
                 <!-- step 7 form Accomodation -->
                 <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
 
-                  <accomodationTable />
+                  <accomodationTable @fetchAccomodation="fetchAccomodation" />
 
                 </div>
 
                 <!-- step 8 form Cash Advance -->
                 <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
 
-                  <cashAdvanceTable />
+                  <cashAdvanceTable @fetchCashAdvance="fetchCashAdvance" />
 
                 </div>
 
               </div>
   
-              <div class="pb-[80px]" v-if="requestType[1] == 'Site Visit'">
+              <div :class="formStep === 1 ? '' : 'pb-[80px]'" v-if="requestType[1] == 'Site Visit'">
   
                   <!-- step 3 form Traveller -->
                   <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
@@ -745,228 +782,46 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                   <!-- step 4 form Airlines -->
                   <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
     
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
-                            <td>
-                              {{ data.name }}
-                            </td>
-                            <td>
-                              {{ data.departure }}
-                            </td>
-                            <td>
-                              {{ data.arrival }}
-                            </td>
-                            <td>
-                              {{ data.flightNumber }}
-                            </td>
-                            <td>
-                              {{ data.flightRegion }}
-                            </td>
-                            <td>
-                              {{ data.status }}
-                            </td>
-                            <td></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <airlinesTable />
   
                   </div>
   
                   <!-- step 5 form Taxi Voucher -->
                   <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
     
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
-                              <td>
-                                {{ data.name }}
-                              </td>
-                              <td>
-                                {{ data.date }}
-                              </td>
-                              <td>
-                                {{ data.departure }}
-                              </td>
-                              <td>
-                                {{ data.arrival }}
-                              </td>
-                              <td>
-                                {{ data.amount }}
-                              </td>
-                              <td>
-                                {{ data.accountName }}
-                              </td>
-                              <td>
-                                {{ data.remarks }}
-                              </td>
-                              <td>
-                                {{ data.status }}
-                              </td>
-                              <td>
-
-                              </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <taxiVoucherTable />
   
                   </div>
   
                   <!-- step 6 form Other Transportation -->
                   <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
     
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadOtherTransportation" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
-                            <td>
-                              {{ data.name }}
-                            </td>
-                            <td>
-                              {{ data.type }}
-                            </td>
-                            <td>
-                              {{ data.fromDate }}
-                            </td>
-                            <td>
-                              {{ data.toDate }}
-                            </td>
-                            <td>
-                              {{ data.quantity }}
-                            </td>
-                            <td>
-                              {{ data.city }}
-                            </td>
-                            <td>
-                              {{ data.status }}
-                            </td>
-                            <td>
-
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <otherTransportationTable />
   
                   </div>
   
                   <!-- step 7 form Accomodation -->
                   <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
   
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyAccomodationRequestTrip" :key="data.id">
-                            <td>
-                              {{ data.name }}
-                            </td>
-                            <td>
-                              {{ data.hotelName }}
-                            </td>
-                            <td>
-                              {{ data.checkIn }}
-                            </td>
-                            <td>
-                              {{ data.checkOut }}
-                            </td>
-                            <td>
-                              {{ data.city }}
-                            </td>
-                            <td>
-                              {{ data.type }}
-                            </td>
-                            <td>
-                              {{ data.sharingWith }}
-                            </td>
-                            <td>
-                              {{ data.status }}
-                            </td>
-                            <td>
-    
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <accomodationTable />
   
                   </div>
   
                   <!-- step 8 form Cash Advance -->
                   <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
   
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadCashAdvance" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyCashAdvance" :key="data.id">
-                            <td>
-                              {{ data.caNo }}
-                            </td>
-                            <td>
-                              {{ data.total }}
-                            </td>
-                            <td>
-                              {{ data.notes }}
-                            </td>
-                            <td>
-                              {{ data.status }}
-                            </td>
-                            <td>
-                              
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <cashAdvanceTable />
   
                   </div>
   
               </div>
   
-              <div class="pb-[80px]" v-if="requestType[1] == 'Field Break'">
+              <div :class="formStep === 1 ? '' : 'pb-[80px]'" v-if="requestType[1] == 'Field Break'">
   
                   <!-- step 3 form Traveller -->
                   <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
   
-                    <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                    <button @click="isVisibleGuest = !isVisibleGuest" :class="addButtonStylingClass">
                       + Add Guest
                     </button>
   
@@ -977,201 +832,49 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                   <!-- step 4 form Airlines -->
                   <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
   
-                  <button @click="isVisibleAirlines = !isVisibleAirlines" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                  <button @click="isVisibleAirlines = !isVisibleAirlines" :class="addButtonStylingClass">
                     + Add Airlines
                   </button>
   
-                  <div class="overflow-x-auto mt-5">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
-                            {{ data.title }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="data in tableBodyAirlinesRequestTrip" :key="data.id">
-                          <td>
-                            {{ data.name }}
-                          </td>
-                          <td>
-                            {{ data.departure }}
-                          </td>
-                          <td>
-                            {{ data.arrival }}
-                          </td>
-                          <td>
-                            {{ data.flightNumber }}
-                          </td>
-                          <td>
-                            {{ data.flightRegion }}
-                          </td>
-                          <td>
-                            {{ data.status }}
-                          </td>
-                          <td></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+                  <airlinesTable />
   
                   </div>
   
                   <!-- step 5 form Other Transportation -->
                   <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
   
-                    <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                    <button @click="isVisibleOtherTransportation = !isVisibleOtherTransportation" :class="addButtonStylingClass">
                       + Add Other Transportation
                     </button>
   
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadOtherTransportation" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyOtherTransportation" :key="data.id">
-                            <td>
-                              {{ data.name }}
-                            </td>
-                            <td>
-                              {{ data.type }}
-                            </td>
-                            <td>
-                              {{ data.fromDate }}
-                            </td>
-                            <td>
-                              {{ data.toDate }}
-                            </td>
-                            <td>
-                              {{ data.quantity }}
-                            </td>
-                            <td>
-                              {{ data.city }}
-                            </td>
-                            <td>
-                              {{ data.status }}
-                            </td>
-                            <td></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    <otherTransportationTable />
   
                   </div>
   
               </div>
   
-              <div class="pb-[80px]" v-if="requestType[1] == 'Taxi Voucher'">
+              <div :class="formStep === 1 ? '' : 'pb-[80px]'" v-if="requestType[1] == 'Taxi Voucher'">
   
                   <!-- step 3 form Traveller -->
                   <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
   
-                    <button @click="isVisibleGuest = !isVisibleGuest" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                    <button @click="isVisibleGuest = !isVisibleGuest" :class="addButtonStylingClass">
                       + Add Guest
                     </button>
       
-                      <div class="overflow-x-auto mt-5">
-                          <table class="table">
-                            <thead>
-                              <tr>
-                                <th v-for="data in tableHeadTravellers" :key="data.id">
-                                  {{ data.title }}
-                                </th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr v-for="data in tableBodyTravellers" :key="data.id">
-                                <td>
-                                  {{ data.name }}
-                                </td>
-                                <td>
-                                  {{ data.sn }}
-                                </td>
-                                <td>
-                                  {{ data.gender }}
-                                </td>
-                                <td>
-                                  {{ data.contactNo }}
-                                </td>
-                                <td>
-                                  {{ data.department }}
-                                </td>
-                                <td>
-                                  {{ data.company }}
-                                </td>
-                                <td>
-                                  {{ data.type }}
-                                </td>
-                                <td>
-                                  {{ data.maxHotelFare }}
-                                </td>
-                                <td>
-                                  {{ data.flightClass }}
-                                </td>
-                                <td>
-      
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                      </div>
+                    <guestAsTravellerTable />
   
                   </div>
   
                   <!-- step 4 form Taxi Voucher -->
                   <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
   
-                    <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green">
+                    <button @click="isVisibleTaxiVoucher = !isVisibleTaxiVoucher" :class="addButtonStylingClass">
                       + Add Taxi Voucher
                     </button>
   
-                    <div class="overflow-x-auto mt-5">
-                      <table class="table">
-                        <thead>
-                          <tr>
-                            <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
-                              {{ data.title }}
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="data in tableBodyTaxiVoucher" :key="data.id">
-                              <td>
-                                {{ data.name }}
-                              </td>
-                              <td>
-                                {{ data.date }}
-                              </td>
-                              <td>
-                                {{ data.departure }}
-                              </td>
-                              <td>
-                                {{ data.arrival }}
-                              </td>
-                              <td>
-                                {{ data.amount }}
-                              </td>
-                              <td>
-                                {{ data.accountName }}
-                              </td>
-                              <td>
-                                {{ data.remarks }}
-                              </td>
-                              <td>
-                                {{ data.status }}
-                              </td>
-                              <td></td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-  
+                    <taxiVoucherTable />
+                    
                   </div>
   
               </div>
@@ -1203,7 +906,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                     Draft
                   </button>
   
-                  <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+                  <button @click="submitRequestTrip" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                     Submit
                   </button>
   
@@ -1213,14 +916,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             
       </div>
      
-
     </Modal>
 
     <!-- Step 3 Modal Add Guest as Traveller -->  
     <guestAsTravellerForm :isOpen="isVisibleGuest" @changeVisibility="isVisibleGuest = false" @fetchTravellerGuest="fetchTravellerGuest" />
 
     <!-- Step 4 Modal Add Airlines -->
-    <airlinesForm :isOpen="isVisibleAirlines" @changeVisibility="isVisibleAirlines = false" />
+    <airlinesForm :isOpen="isVisibleAirlines" @changeVisibility="isVisibleAirlines = false" @fetchAirlines="fetchAirlines" />
 
     <!-- Step 5 Modal Add Taxi Voucher -->
     <taxiVoucherForm :isOpen="isVisibleTaxiVoucher" @changeVisibility="isVisibleTaxiVoucher = false" @fetchTaxiVoucher="fetchTaxiVoucher" />
@@ -1232,27 +934,11 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     <accomodationForm :isOpen="isVisibleAccomodation" @changeVisibility="isVisibleAccomodation = false" @fetchAccomodation="fetchAccomodation" />
 
     <!-- Step 8 Modal Add Cash Advance -->
-    <cashAdvanceForm :isOpen="isVisibleCashAdvance" @changeVisibility="isVisibleCashAdvance = false" />
+    <cashAdvanceForm :isOpen="isVisibleCashAdvance" @changeVisibility="isVisibleCashAdvance = false" @fetchCashAdvance="fetchCashAdvance" />
 
 </template>
 
 <style scoped>
-
-.table :where(th, td) {
-  padding: .5rem !important;
-}
-
-.table th {
-  background: #015289 !important;
-  border-color: #b9b9b9 !important;
-  border-width: 2px;
-  color: white;
-}
-
-.table td {
-  border-color: #b9b9b9 !important;
-  border-width: 2px;
-}
 
 :deep(.modal-vue3-content) {
   min-width: 650px !important;

@@ -16,9 +16,9 @@
     import icon_filter from "@/assets/icon_filter.svg"
     import icon_reset from "@/assets/icon_reset.svg"
     import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import editicon from "@/assets/navbar/edit_icon.svg"
     import icondanger from "@/assets/Danger.png"
     import iconClose from "@/assets/navbar/icon_close.svg"
-    import editicon from "@/assets/navbar/edit_icon.svg"
     import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
     import Api from '@/utils/Api'
@@ -60,6 +60,7 @@
       }
     }
 
+    // for Company Business & Site Visit Request Trip Table
     const tableHeadCompanyBusiness = [
       {id: 0, title: 'No'},
       {id: 1, title: 'Created Date'},
@@ -70,7 +71,7 @@
       {id: 6, title: 'Action'}
     ]
 
-    //for tableHeadFieldBreak
+    //for Field Break Request Trip Table
     const tableHeadFieldBreak = [
       { Id: 1, title: "No", jsonData: "no" },
       { Id: 2, title: "Created Date", jsonData: "created_date" },
@@ -81,7 +82,7 @@
       { Id: 7, title: "Actions" },
     ]
 
-    //for tableHeadVoucherTaxi
+    //for Voucher Taxi Request Trip Table
     const tableHeadTaxiVoucher = [
       { Id: 1, title: "No", jsonData: "no" },
       { Id: 2, title: "Created Date", jsonData: "createdDate" },
@@ -93,11 +94,18 @@
     ]
 
     const fetch = async () => {
+      
+      try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)      
         instanceArray = api.data.data
-        sortedData.value = instanceArray
+        sortedData.value = instanceArray        
+      } catch (error) {
+        console.log(error)
+        sortedData.value = []
+      }
+
     }
 
     const resetAndFetch = () => {
@@ -121,66 +129,61 @@
     })
 
     const fillPageMultiplier = () => {
-      // ref harus pake .value biar ngaruh sama reactive :')
       pageMultiplier.value = pageMultiplierReactive.value
     }
 
-        //for paginations
-        const onChangePage = (pageOfItem) => {
+    //for paginations
+    const onChangePage = (pageOfItem) => {
       paginateIndex.value = pageOfItem - 1;
       showingValue.value = pageOfItem;
     }
 
     const deleteData = async (event) => {
 
-    Swal.fire({
-      title:
-        "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-      html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-      iconHtml: `<img src="${icondanger}" />`,
-      showCloseButton: true,
-      closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-      showCancelButton: true,
-      buttonsStyling: false,
-      cancelButtonText: "Cancel",
-      customClass: {
-        cancelButton: "swal-cancel-button",
-        confirmButton: "swal-confirm-button",
-      },
-      reverseButtons: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes",
-    })
-      
-    .then((result) => {
-      if (result.isConfirmed) {
-        Api.delete(`/request_trip/delete_data/${event}`)
-        .then((res) => {
+      Swal.fire({
+        title:
+          "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+        html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+        iconHtml: `<img src="${icondanger}" />`,
+        showCloseButton: true,
+        closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+        showCancelButton: true,
+        buttonsStyling: false,
+        cancelButtonText: "Cancel",
+        customClass: {
+          cancelButton: "swal-cancel-button",
+          confirmButton: "swal-confirm-button",
+        },
+        reverseButtons: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      })
+        
+      .then((result) => {
+        if (result.isConfirmed) {
+          Api.delete(`/request_trip/delete_data/${event}`)
+          .then(() => {
 
-          Swal.fire({
-            title: "Successfully",
-            text: "Data has been deleted.",
-            icon: "success",
-            showCancelButton: false,
-            confirmButtonColor: "#015289",
-            showConfirmButton: false,
-            timer: 1500,
-          });
-
-          if (sortedData.value.length == 1) {
-            router.go()
-          } else {
             fetch()
-          }
 
-        })
-      } else {
-        return
-      }
-    })
+            Swal.fire({
+              title: "Successfully",
+              text: "Data has been deleted.",
+              icon: "success",
+              showCancelButton: false,
+              confirmButtonColor: "#015289",
+              showConfirmButton: false,
+              timer: 1500,
+            })
 
-}
+          })
+        } else {
+          return
+        }
+      })
+
+    }
 
 </script>
 
@@ -381,9 +384,8 @@
 
                 <tbody>
                   
-                  <tr
-                    class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
+                  <tr class="font-JakartaSans font-normal text-sm"
+                    v-for="(data, index) in sortedData.slice(
                         paginateIndex * pageMultiplierReactive,
                         (paginateIndex + 1) * pageMultiplierReactive
                       )"
@@ -392,7 +394,7 @@
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
-                    <td>{{ data.no }}</td>
+                    <td>{{ index + 1 + (paginateIndex * pageMultiplierReactive) }}</td>
                     <td>{{ data.created_at }}</td>
                     <td>{{ data.no_request_trip }}</td>
                     <td>{{ data.employee_name }}</td>
