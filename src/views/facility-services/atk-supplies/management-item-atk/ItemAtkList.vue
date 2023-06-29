@@ -30,11 +30,11 @@ const sidebar = useSidebarStore();
 //for sort & search
 let selectedCompany = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 let selectedWarehouse = ref("")
-let selectedSite = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
+let selectedSite = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' || JSON.parse(localStorage.getItem("id_role")) === 'SUPADM' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
 
 let selectedCompany2 = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 let selectedWarehouse2 = ref("")
-let selectedSite2 = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
+let selectedSite2 = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' || JSON.parse(localStorage.getItem("id_role")) === 'SUPADM' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
 // let selectedWarehouse = ref("Warehouse")
 let selectedUOM = ref("UOM")
 let selectedBrand = ref("Brand")
@@ -81,7 +81,7 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByType = () => {
-  fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+  fetchData(1,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
 };
 
 //for filter & reset button
@@ -89,7 +89,7 @@ const resetData = () => {
   selectedType.value = ''
   selectedCompany2.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"))
   selectedWarehouse2.value = ''
-  selectedSite2.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_site"))
+  selectedSite2.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' || JSON.parse(localStorage.getItem("id_role")) === 'SUPADM' ? '' : JSON.parse(localStorage.getItem("id_site"))
   fetchData(showingValue.value,"",selectedCompany2.value,selectedWarehouse2.value,0,searchFilter.value,pageMultiplier.value,selectedSite2.value)
 };
 
@@ -133,6 +133,7 @@ const sortList = (sortBy) => {
 };
 //for get company in select
 const fetchGetCompany = async () => {
+  // console.log('no id')
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
@@ -141,10 +142,9 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
-  // changeCompany(id_company)
-  fetchSite(JSON.parse(localStorage.getItem("id_site")),id_company)
+  // console.log('id')
+  fetchSite(selectedSite2.value,id_company)
   const token = JSON.parse(localStorage.getItem("token"));
-  // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
@@ -156,10 +156,24 @@ const fetchGetCompanyID = async (id_company) => {
       selectedCompany2.value = id_company
     }
   }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchGetCompanyID2 = async (id_company) => {
+  // console.log(id_company)
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  // Company.value = res.data.data;
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id_company === element.id){
+      selectedCompany.value = id_company
+      // selectedCompany2.value = id_company
+    }
+  }
 };
 const fetchSite = async (id, id_company) => {
-  changeSite(JSON.parse(localStorage.getItem("id_site")))
+  changeSite(id)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -169,6 +183,20 @@ const fetchSite = async (id, id_company) => {
     if(id === element.id){
       selectedSite.value = id
       selectedSite2.value = id
+    }
+  }
+};
+const fetchSite2 = async (id, id_company) => {
+  // changeSite(JSON.parse(localStorage.getItem("id_site")))
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if(id === element.id){
+      selectedSite.value = id
+      // selectedSite2.value = id
     }
   }
 };
@@ -184,10 +212,11 @@ const fetchWarehouse = async (id, id_site) => {
     }
   }
 };
-const fetchBrand = async (id, id_company) => {
+const fetchBrand = async (id, id_site) => {
+  // console.log(id)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  const res = await Api.get(`/brand/get_by_site_id/${id_site}`);
   Brand.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -196,10 +225,10 @@ const fetchBrand = async (id, id_company) => {
     }
   }
 };
-const fetchBrandCompany = async (id_company) => {
+const fetchBrandCompany = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  const res = await Api.get(`/brand/get_by_site_id/${id_site}`);
   Brand.value = res.data.data;
 };
 const fetchUOM = async (id) => {
@@ -237,7 +266,6 @@ const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse,ale
 };
 
 const changeCompany = async (id_company) => {
-  fetchBrandCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -246,6 +274,7 @@ const changeCompany = async (id_company) => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
+  fetchBrandCompany(id_site)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
@@ -268,13 +297,13 @@ const editValue = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get/${id}`);
   idS.value = id
-  selectedCompany.value = fetchGetCompanyID(res.data.data[0].id_company)
-  selectedSite.value = fetchSite(res.data.data[0].id_site, res.data.data[0].id_company)
+  selectedCompany.value = fetchGetCompanyID2(res.data.data[0].id_company)
+  selectedSite.value = fetchSite2(res.data.data[0].id_site, res.data.data[0].id_company)
   selectedWarehouse.value = fetchWarehouse(res.data.data[0].id_warehouse, res.data.data[0].id_site)
   selectedUOM.value = fetchUOM(res.data.data[0].id_uom)
   itemNames.value = res.data.data[0].item_name
   alertQuantity.value = res.data.data[0].alert_qty
-  selectedBrand.value = fetchBrand(res.data.data[0].id_brand, res.data.data[0].id_company)
+  selectedBrand.value = fetchBrand(res.data.data[0].id_brand, res.data.data[0].id_site)
   remark.value = res.data.data[0].remarks
   idItems.value = res.data.data[0].code_item
   lockScrollbarEdit.value = true
@@ -375,7 +404,7 @@ onBeforeMount(() => {
 });
 //for searching
 const filteredItems = (search) => {
-  fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,search,pageMultiplier.value,selectedSite2.value)
+  fetchData(1,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,search,pageMultiplier.value,selectedSite2.value)
   // sortedData.value = instanceArray;
   // const filteredR = sortedData.value.filter((item) => {
   //   // console.log(item)
@@ -930,7 +959,7 @@ const getSessionForSidebar = () => {
                 </tbody>
                 <tbody v-else>
                   <tr>
-                    <td colspan="8">Data Not Found</td>
+                    <td colspan="9">Data Not Found</td>
                   </tr>
                 </tbody>
               </table>
@@ -941,13 +970,29 @@ const getSessionForSidebar = () => {
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
-            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+            <p v-if="sortedData.length > 0" class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
               {{ Math.min(showingValue * pageMultiplier, lenghtPagination) }}
               of {{ lenghtPagination }} entries
             </p>
+            <p v-else class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+              Showing 0 to
+              0
+              of 0 entries
+            </p>
             <vue-awesome-paginate
+              v-if="sortedData.length > 0"
               :total-items="lenghtPagination"
+              :items-per-page="parseInt(pageMultiplierReactive)"
+              :on-click="onChangePage"
+              v-model="showingValue"
+              :max-pages-shown="4"
+              :show-breakpoint-buttons="false"
+              :show-jump-buttons="true"
+            />
+            <vue-awesome-paginate
+              v-else
+              total-items="0"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"

@@ -1,6 +1,59 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_done from "@/assets/icon_done.svg";
+
+import { onBeforeMount, ref } from "vue";
+import { useRouter } from 'vue-router'
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+const router = useRouter()
+const notesName = ref("")
+let item = ref([])
+const id = router.currentRoute.value.params.id
+
+const fetchDetailById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
+  // console.log(res.data.data)
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    item.value.push({
+      id : element.id,
+      qty: element.qty,
+    })
+  }
+
+  return item
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const submit = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  const payload = {
+    notes : notesName.value,
+    array_detail : item.value
+  }
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.post(`/approval_request_atk/approve/${router.currentRoute.value.params.id}`,payload);
+  Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // reset()
+    router.push({path: '/approvalatkrrequest'})
+  // console.log(res.data.data)
+  
+  
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+onBeforeMount(() => {
+  fetchDetailById(router.currentRoute.value.params.id)
+});
 </script>
 
 <template>
@@ -34,7 +87,7 @@ import icon_done from "@/assets/icon_done.svg";
           Are you sure want to approve this document?
         </p>
         <form class="pt-4">
-          <div class="flex flex-wrap justify-start gap-2">
+          <!-- <div class="flex flex-wrap justify-start gap-2">
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
@@ -72,16 +125,16 @@ import icon_done from "@/assets/icon_done.svg";
                 >
               </label>
             </div>
-          </div>
+          </div> -->
 
           <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
-          <input
+          <textarea
             type="text"
-            name="notes"
+            rows="5"
+            v-model="notesName"
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Notes"
-            required
-          />
+          ></textarea>
         </form>
       </main>
 
@@ -94,6 +147,7 @@ import icon_done from "@/assets/icon_done.svg";
           >
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            @click="submit"
           >
             Approve
           </button>

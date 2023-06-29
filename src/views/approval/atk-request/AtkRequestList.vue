@@ -109,7 +109,7 @@ const perPage = async () => {
 const fetchData = async (page, selectedType, status, start_date, end_date,search,perpage) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/approval_request_atk/get_data?page=${page}&id_company=${selectedType}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`);
+  Api.get(`/approval_request_atk/get_data?page=${page}&id_company=${selectedType}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`).then((res) => {
   // console.log(res.data.data)
   itemdata.value = res.data.data.data;
   instanceArray = itemdata.value;
@@ -119,6 +119,16 @@ const fetchData = async (page, selectedType, status, start_date, end_date,search
   lenghtPagination = res.data.data.total
     paginateIndex.value = res.data.data.current_page - 1
     showingValue.value = res.data.data.current_page
+  }).catch((error) =>{
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: error.response.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // console.log(error.response.data.message)
+  })
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 onBeforeMount(() => {
@@ -169,8 +179,8 @@ const format_date = (value) => {
         <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
-            <p class="font-JakartaSans text-4xl text-[#0A0A0A] font-semibold">
-              ATK Request
+            <p class="font-JakartaSans text-[#0A0A0A] font-semibold">
+              Approval ATK Request
             </p>
 
             <button
@@ -357,16 +367,16 @@ const format_date = (value) => {
                       {{ data.status }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link disabled to="/viewapprovalatkrrequest">
+                      <router-link  :to="`/viewapprovalatkrrequest/${data.id}`">
                         <button>
-                          <img :src="icon_ceklis" class="w-6 h-6" />
+                          <img :src="icon_ceklis" class="w-8 h-8" />
                         </button>
                       </router-link>
-                      <router-link disabled to="/viewapprovalatkrrequest">
+                      <!-- <router-link  to="/viewapprovalatkrrequest">
                         <button>
                           <img :src="iconClose" class="w-6 h-6" />
                         </button>
-                      </router-link>
+                      </router-link> -->
                       <!-- <ModalRejectShortcutAtk /> -->
                     </td>
                   </tr>

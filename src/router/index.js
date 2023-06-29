@@ -894,7 +894,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/viewapprovalatkrrequest',
+      path: '/viewapprovalatkrrequest/:id',
       name: 'view approval atk request',
       component: ApprovalAtkRequestView,
       meta: {
