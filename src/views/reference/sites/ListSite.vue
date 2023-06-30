@@ -194,13 +194,16 @@ const sortList = (sortBy) => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.site_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    const companyName = item.company_name
+      ? item.company_name.toLowerCase()
+      : "";
+    const siteName = item.site_name ? item.site_name.toLowerCase() : "";
     return (
-      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.site_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      companyName.indexOf(search.toLowerCase()) > -1 ||
+      siteName.indexOf(search.toLowerCase()) > -1
     );
   });
+
   sortedData.value = filteredR;
   onChangePage(1);
 };
