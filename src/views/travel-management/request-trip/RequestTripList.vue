@@ -258,12 +258,14 @@
                 <!-- DATE -->
                 <div>
 
+                  {{ date }}
+
                   <p class="capitalize font-Fira text-xs text-black font-medium">
                     Date
                   </p>
 
-                  <!-- v-model="date" -->
                   <VueDatePicker 
+                      v-model="date"
                       range
                       :enable-time-picker="false"
                       format="yyyy-mm-dd"

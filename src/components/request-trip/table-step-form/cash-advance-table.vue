@@ -19,7 +19,7 @@
         
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.delete(`/taxi_voucher/delete_data/${id}`)
+        const api = await Api.delete(`/cash_advance/delete_data/${id}`)
         
         if(props.value.length === 1) {
           props.value = []
@@ -35,6 +35,7 @@
     
     <div class="overflow-x-auto mt-5 flex justify-center">
         <table class="table">
+            
             <thead>
                         <tr>
                           <th v-for="data in tableHeadCashAdvance" :key="data.id">
@@ -42,8 +43,9 @@
                           </th>
                         </tr>
             </thead>
+
             <tbody>
-                        <tr v-for="data in props" :key="data.id">
+              <tr v-for="data in props" :key="data.id">
                           <td>
                             {{ data.no_ca }}
                           </td>
@@ -64,8 +66,9 @@
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>
                           </td>
-                        </tr>
+              </tr>
             </tbody>
+
         </table>
     </div>
 

@@ -2,6 +2,7 @@
     import { ref, onBeforeMount, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import Api from '@/utils/Api'
+    import checkButton from '@/components/molecules/checkButton.vue'
     import modalHeader from '@/components/modal/modalHeader.vue'
     import modalFooter from '@/components/modal/modalFooter.vue'
 
@@ -39,7 +40,7 @@
         isOpen: Boolean        
     })
 
-    const emits = defineEmits(['fetchAccomodation'])
+    const emits = defineEmits(['fetchAccomodation', 'changeVisibility'])
 
     // Accomodation
     let traveller = ref('')
@@ -55,7 +56,6 @@
     let accomodationType = ref([0, ''])
     let vendor = ref('')
     let codeHotel = ref(0)
-
 
     watch(accomodationType, () => {
         console.log(accomodationType.value)
@@ -80,13 +80,13 @@
             price: hotelFare.value,
             code_hotel: codeHotel.value
         })
-        console.log(api)
         emits('fetchAccomodation')
+        emits('changeVisibility')
     }
 
-    let employeeLoginData = ref([])
-    let typeOfHotelData = ref([])
-    let cityData = ref([])
+    const employeeLoginData = ref([])
+    const typeOfHotelData = ref([])
+    const cityData = ref([])
 
     onBeforeMount(() => {
         fetchEmployeeByLoginUtils(employeeLoginData)
@@ -100,11 +100,12 @@
         gender.value = employeeLoginData.value[0].jenkel
     })
 
-    let modalPaddingHeight = '15vh'
+    const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
+
 </script>
 
 <template>
