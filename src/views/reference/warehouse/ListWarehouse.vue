@@ -177,13 +177,18 @@ const sortList = (sortBy) => {
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
-    (item.warehouse_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    const warehouseName = item.warehouse_name
+      ? item.warehouse_name.toLowerCase()
+      : "";
+    const companyName = item.company_name
+      ? item.company_name.toLowerCase()
+      : "";
     return (
-      (item.warehouse_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
+      warehouseName.indexOf(search.toLowerCase()) > -1 ||
+      companyName.indexOf(search.toLowerCase()) > -1
     );
   });
+
   sortedData.value = filteredR;
   onChangePage(1);
 };

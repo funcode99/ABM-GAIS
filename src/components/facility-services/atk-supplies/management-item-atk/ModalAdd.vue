@@ -73,7 +73,7 @@ const fetchUOM = async () => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeCompany = async (id_company) => {
-  fetchBrandCompany(id_company)
+  // fetchBrandCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -88,25 +88,21 @@ const changeCompany = async (id_company) => {
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetchBrandCompany = async (id_company) => {
+const fetchBrandCompany = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/brand/get_by_company_id/${id_company}`);
+  const res = await Api.get(`/brand/get_by_site_id/${id_site}`);
   // console.log(res)
   Brand.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
+  fetchBrandCompany(id_site)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
   // console.log(res)
   Warehouse.value = res.data.data;
-  // warehouseName.value = res.data.data.filter(
-  //     (item) => item.id_warehouse === selectedWarehouse.value
-  //   );
-  // console.log(warehouseName.value)
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 //get kondisi local storage
 const fetchCondition = async () => {

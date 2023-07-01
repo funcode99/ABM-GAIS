@@ -34,6 +34,7 @@ let Brand = ref("")
 let itemNames = ref("")
 let remark = ref("")
 let siteName = ref("")
+let companyName = ref("")
 let status = ref("")
 let ItemTable = ref([])
 let statusValue = ref(false)
@@ -45,6 +46,7 @@ const fetchDataById = async (id) => {
   console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
+    companyName.value = element.company_name
     stockName.value = element.no_atk_request
     createdDate.value = format_date(element.created_at)
     createdBy.value = element.employee_name
@@ -141,21 +143,27 @@ const format_date = (value) => {
               >
                 Draft
               </button> -->
-              <button
-                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
-              >
+              <span
+                class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[120px] h-[50px] border-blue bg-white text-center">
                 {{status}}
-              </button>
+              </span>
+              <!-- <button
+                class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                @click="submit"
+              >
+                Submit
+              </button> -->
             </div>
           </div>
 
           <div class="flex justify-between ml-10">
             <div class="flex gap-2">
-              <!-- <button
+              <button
+                v-if="status == 'Draft'"
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
               >
                 Edit
-              </button> -->
+              </button>
               <button
                 v-if="status == 'Draft'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -202,23 +210,24 @@ const format_date = (value) => {
             <div class="flex flex-col gap-2">
               
               <span class="font-JakartaSans font-medium text-sm"
+                >Company</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="companyName"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+            <div class="flex flex-col gap-2">
+              
+              <span class="font-JakartaSans font-medium text-sm"
                 >Site</span
               >
               <input
                 type="text"
                 disabled
                 v-model="siteName"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-              />
-            </div>
-            <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Status</span
-              >
-              <input
-                type="text"
-                disabled
-                v-model="status"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>

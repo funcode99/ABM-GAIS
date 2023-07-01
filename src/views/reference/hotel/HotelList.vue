@@ -16,6 +16,9 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
+import gearicon from "@/assets/system-configuration-not-selected.png";
+import importIcon from "@/assets/import-data-icon.png";
+import downloadIcon from "@/assets/download-template-icon.png";
 
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
@@ -355,6 +358,32 @@ watch(baitArray, () => {
               >
                 Delete
               </button>
+
+              <div class="dropdown dropdown-end">
+                <button
+                  class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                >
+                  <img :src="gearicon" class="w-6 h-6" />
+                </button>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-56"
+                >
+                  <li>
+                    <a class="font-JakartaSans font-medium text-sm">
+                      <img :src="importIcon" class="w-6 h-6" />
+                      Import Data
+                    </a>
+                  </li>
+                  <li>
+                    <a class="font-JakartaSans font-medium text-sm">
+                      <img :src="downloadIcon" class="w-6 h-6" />
+                      Download Template
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
               <ModalAdd @hotel-saved="fetchHotel" />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
