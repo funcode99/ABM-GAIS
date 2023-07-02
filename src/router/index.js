@@ -72,6 +72,9 @@ import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/A
 import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
 import StockOpnameATKView from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKView.vue'
 
+import ManagementMeetingRoomList from '@/views/facility-services/management-meeting-room/ManagementMeetingRoomList.vue'
+
+
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
 import avoidduplicatedropdown from '@/views/experiment/avoidduplicatedropdown.vue'
@@ -1082,6 +1085,23 @@ const router = createRouter({
         return next('/')
       }
     },
+    {
+        path: '/management-meeting-room',
+        name: 'Management Meeting Room',
+        component: ManagementMeetingRoomList,
+        meta: {
+          title: 'Management Meeting Room'
+        },
+        beforeEnter: (to, from, next) => {
+          const token = localStorage.getItem('token');
+  
+          if (token) {
+            return next()
+          }
+  
+          return next('/')
+        }
+      },
   ]
 })
 
