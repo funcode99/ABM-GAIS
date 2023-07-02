@@ -1022,7 +1022,7 @@ const router = createRouter({
       name: 'ATK Request',
       component: ATKRequestList,
       meta: {
-        title: 'View Stock In ATK'
+        title: 'View Request ATK'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');

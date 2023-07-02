@@ -196,7 +196,7 @@ const format_date = (value) => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-              <div>
+              <!-- <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
@@ -211,7 +211,7 @@ const format_date = (value) => {
                     {{ data.name_item }}
                   </option>
                 </select>
-              </div>
+              </div> -->
 
               <div class="flex flex-wrap gap-4 items-center">
                 <div>
