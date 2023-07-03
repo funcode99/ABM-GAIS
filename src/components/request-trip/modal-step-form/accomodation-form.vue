@@ -100,6 +100,19 @@
         gender.value = employeeLoginData.value[0].jenkel
     })
 
+    watch(props, () => {
+        city.value = ''
+        remarks.value = ''
+        checkIn.value = ''
+        checkOut.value = ''
+        createGL.value = false
+        showSharingWith.value = false
+        sharingWith.value = ''
+        accomodationType.value = [0, '']
+        vendor.value = ''
+        codeHotel.value = 0
+    })
+
     const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'

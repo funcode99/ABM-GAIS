@@ -36,6 +36,7 @@
         <div class="flex gap-4">
             <buttonEditFormView />
             <buttonAddFormView />
+            <slot></slot>
         </div>
     </div>
 

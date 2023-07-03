@@ -5,10 +5,16 @@
     const props = defineProps({
         number: Number,
         title: String,
+        selectedTitle: String,
         limit: Number,
         image: String,
         stop: Boolean
     })
+
+    const emits = defineEmits('changeHeader')
+    const selected = () => {
+        emits('changeHeader')
+    }
 
 </script>
 
@@ -22,9 +28,10 @@
             <div class="flex items-center relative" :class="props.title != null ? 'gap-3' : ''">
                
                 <!-- tunjukin angka kalo angka nya ada for details -->
-                <button v-if="props.number != null" 
-                class="bg-blue opacity-30 click w-11 h-11 text-white rounded-full flex justify-center items-center"
-                @click="$emit('changeHeader')"
+                <button v-if="props.number != null"
+                :class="props.title == props.selectedTitle ? 'opacity-100' : 'opacity-30'"
+                class="bg-blue w-11 h-11 text-white rounded-full flex justify-center items-center"
+                @click="selected"
                 >
                     {{ props.number }}
                 </button>
