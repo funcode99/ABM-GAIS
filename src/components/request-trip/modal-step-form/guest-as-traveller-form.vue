@@ -68,7 +68,7 @@
         flightClassGuestAsATraveller.value = employeeLoginData.value[0].flight_class
     })
 
-    let modalPaddingHeight = '15vh'
+    const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'

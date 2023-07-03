@@ -54,35 +54,35 @@ let employeeName = localStorage.getItem('username')
 
             <tbody>
                 <tr v-for="data in props" :key="data.id">
-                          <td>
+                    <td>
                             {{ employeeName }}
-                          </td>
-                          <td>
+                    </td>
+                    <td>
                             {{ data.id_type_transportation }}
-                          </td>
-                          <td>
+                    </td>
+                    <td>
                             {{ data.from_date }}
-                          </td>
-                          <td>
+                    </td>
+                    <td>
                             {{ data.to_date }}
-                          </td>
-                          <td>
+                    </td>
+                    <td>
                             {{ data.qty }}
-                          </td>
-                          <td>
+                    </td>
+                    <td>
                             {{ data.id_city }}
-                          </td>
-                          <td>
+                    </td>
+                    <td>
                             
-                          </td>
-                          <td class="flex flex-wrap gap-4 justify-center">
+                    </td>
+                    <td class="flex flex-wrap gap-4 justify-center">
                             <button>
                               <img :src="editicon" class="w-6 h-6" />
                             </button>
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>
-                          </td>
+                    </td>
                 </tr>
             </tbody>
 

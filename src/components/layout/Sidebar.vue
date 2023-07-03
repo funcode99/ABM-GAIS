@@ -1723,7 +1723,7 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="#" class="cursor-pointer">
+                            <router-link to="/management-meeting-room" class="cursor-pointer">
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >

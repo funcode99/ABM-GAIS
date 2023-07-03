@@ -9,7 +9,7 @@
 
     let listCurrency = ref([])
     let employeeLoginData = ref([])
-    let emits = defineEmits(['fetchCashAdvance'])
+    let emits = defineEmits(['fetchCashAdvance', 'changeVisibility'])
     const props = defineProps({
         isOpen: Boolean        
     })
@@ -46,8 +46,8 @@
             grand_total: grandTotal.value,
             arrayDetail: arrayDetail.value
         })
-        console.log(api)
         emits('fetchCashAdvance')
+        emits('changeVisibility')
     }
 
     let arrayDetail = ref([])
@@ -104,7 +104,7 @@
         {id: 7, title: 'Actions'}
     ]
 
-    let modalPaddingHeight = '15vh'
+    const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const rowClassNotes = 'flex justify-between mx-4 items-start gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
@@ -261,15 +261,18 @@
                 </div>
 
                 <div class="flex justify-center mt-3">
+
                     <table class="table">
-                          <thead>
+                          
+                        <thead>
                             <tr>
                               <th v-for="data in tableHeadCashAdvance" :key="data.id">
                                 {{ data.title }}
                               </th>
                             </tr>
-                          </thead>
-                          <tbody>
+                        </thead>
+
+                        <tbody>
                             <tr v-for="data in arrayDetail" :key="data.id">
                               <td>
                                 {{ data.id_item_ca }}
@@ -293,8 +296,10 @@
 
                               </td>
                             </tr>
-                          </tbody>
+                        </tbody>
+
                     </table>
+
                 </div>
     
                 <modalFooter

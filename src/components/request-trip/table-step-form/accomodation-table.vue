@@ -23,7 +23,7 @@ import editicon from "@/assets/navbar/edit_icon.svg"
       
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.delete(`/taxi_voucher/delete_data/${id}`)
+      const api = await Api.delete(`/accomodation_trip/delete_data/${id}`)
       
       if(props.value.length === 1) {
         props.value = []
@@ -51,7 +51,7 @@ import editicon from "@/assets/navbar/edit_icon.svg"
             </thead>
 
             <tbody>
-                        <tr v-for="data in props" :key="data.id">
+              <tr v-for="data in props" :key="data.id">
                           <td>
                             {{ employeeName }}
                           </td>
@@ -84,7 +84,7 @@ import editicon from "@/assets/navbar/edit_icon.svg"
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>
                           </td>
-                        </tr>
+              </tr>
             </tbody>
 
         </table>
