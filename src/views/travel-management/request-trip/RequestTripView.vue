@@ -190,9 +190,9 @@
             <!-- {{  travellerGuestData }} -->
             <!-- {{ airlinesData }} -->
             <!-- {{ taxiVoucherData }} -->
-            {{ otherTransportationData }}
+            <!-- {{ otherTransportationData }} -->
             <!-- {{ accomodationData }} -->
-            <!-- {{ cashAdvanceData }} -->
+            {{ cashAdvanceData }}
 
                 <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
 

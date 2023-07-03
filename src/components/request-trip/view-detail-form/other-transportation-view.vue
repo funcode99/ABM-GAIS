@@ -3,8 +3,6 @@
 
     const props = inject('otherTransportationDataView')
 
-    console.log(props.value)
-
     let name = ref()
     let city = ref()
     let transportationType = ref()

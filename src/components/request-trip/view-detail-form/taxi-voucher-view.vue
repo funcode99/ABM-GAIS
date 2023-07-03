@@ -12,7 +12,7 @@
     let accountName = ref()
     let remarks = ref()
 
-    watch(props, () => {
+    if(props.value[0].amount !== undefined) {
         
         name.value = localStorage.getItem('username')
         departure.value = props.value[0].name_departure_city
@@ -23,7 +23,7 @@
         accountName.value = props.value[0].account_name
         remarks.value = props.value[0].remarks
 
-    })
+    }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -47,12 +47,12 @@
             </label>
                 
             <input 
+                v-model="name"
                 type="text"
                 placeholder="Name"
                 :class="inputStylingClass"
                 required
             /> 
-
 
             </div>
 
@@ -66,7 +66,8 @@
                 Departure<span class="text-red-star">*</span>
             </label>
 
-            <input 
+            <input
+                v-model="departure"
                 type="text"
                 placeholder="Departure"
                 :class="inputStylingClass"
@@ -82,39 +83,41 @@
         <div :class="rowClass">
 
         <div :class="columnClass">
-        <div class="w-full">
-            
-            <label :class="labelStylingClass">
-            Date<span class="text-red-star">*</span>
-            </label>
+            <div class="w-full">
+                
+                <label :class="labelStylingClass">
+                Date<span class="text-red-star">*</span>
+                </label>
 
-            <input 
-            type="text"
-            placeholder="Date"
-            :class="inputStylingClass"
-            required
-            />
+                <input 
+                v-model="date"
+                type="text"
+                placeholder="Date"
+                :class="inputStylingClass"
+                required
+                />
 
 
-        </div>
+            </div>
         </div>
 
         <div :class="columnClass">
-        <div class="w-full">
-            
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Arrival<span class="text-red-star">*</span></label
-            >
-            
-            <input 
-                type="text"  
-                placeholder="City"
-                :class="inputStylingClass"
-                required
-            />
+            <div class="w-full">
+                
+                <label
+                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Arrival<span class="text-red-star">*</span></label
+                >
+                
+                <input 
+                    v-model="arrival"
+                    type="text"
+                    placeholder="City"
+                    :class="inputStylingClass"
+                    required
+                />
 
-        </div>
+            </div>
         </div>
 
         </div>
@@ -126,17 +129,29 @@
             <label :class="labelStylingClass">
                 Amount<span class="text-red-star">*</span>
             </label>
-            <input type="text" :class='inputStylingClass' placeholder="Amount">
+            <input
+                v-model="amount"
+                type="text" 
+                :class='inputStylingClass' 
+                placeholder="Amount"
+                required 
+            />
         </div>
         </div>
 
         <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-                <span>Voucher Code</span>
-            </label>
-            <input type="text" :class='inputStylingClass' placeholder="Voucher">
-        </div>
+            <div class="w-full">
+                <label :class="labelStylingClass">
+                    <span>Voucher Code</span>
+                </label>
+                <input 
+                    v-model="voucherCode" 
+                    type="text" 
+                    :class='inputStylingClass' 
+                    placeholder="Voucher" 
+                    required 
+                />
+            </div>
         </div>
 
         </div>
@@ -144,21 +159,26 @@
         <div :class="rowClassStart">
 
         <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-                <span>Account Name</span><span class="text-red-star">*</span>
-            </label>
-            <input type="text" :class='inputStylingClass' placeholder="Account Name">
-        </div>
+            <div class="w-full">
+                <label :class="labelStylingClass">
+                    <span>Account Name</span><span class="text-red-star">*</span>
+                </label>
+                <input
+                    v-model="accountName" 
+                    type="text" 
+                    :class='inputStylingClass' 
+                    placeholder="Account Name" 
+                />
+            </div>
         </div>
 
         <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-            Remarks
-            </label>
-            <textarea :class="inputStylingClass" placeholder="Remarks"></textarea>
-        </div>
+            <div class="w-full">
+                <label :class="labelStylingClass">
+                Remarks
+                </label>
+                <textarea v-model="remarks" :class="inputStylingClass" placeholder="Remarks"></textarea>
+            </div>
         </div>
 
         </div>
