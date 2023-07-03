@@ -43,8 +43,7 @@ let lenghtPagination = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
+  fetchData(pageOfItem, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
 };
 
 //for filter & reset button
