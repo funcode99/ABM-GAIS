@@ -8,6 +8,7 @@ import ModalEdit from "@/components/reference/city/ModalEdit.vue";
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
@@ -16,13 +17,10 @@ import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
-
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
-
 import { ref, onBeforeMount, computed } from "vue";
-
 import { useFormEditStore } from "@/stores/reference/city/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
@@ -34,14 +32,11 @@ let cityName = ref();
 
 let editCityDataId = ref();
 
-//for edit
 const editCity = async (data) => {
   editCityDataId.value = data;
   setTimeout(callEditApi, 500);
-  // console.log("ini data:" + data);
 };
 
-//for edit
 const callEditApi = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -59,7 +54,6 @@ const callEditApi = async () => {
   fetchCity();
 };
 
-//for sort & search
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
@@ -71,19 +65,16 @@ let sortAscending = true;
 const showFullText = ref({});
 let checkList = false;
 
-//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
-//for check & uncheck all
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
   const btnDelete = document.getElementById("btnDelete");
@@ -109,13 +100,11 @@ const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
-      // Lakukan tindakan penghapusan data yang sesuai di sini
       const row = check[i].parentNode.parentNode;
       row.parentNode.removeChild(row);
     }
   }
 
-  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
   const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
@@ -125,7 +114,6 @@ const deleteDataInCeklis = () => {
   }
 };
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "City Code", jsonData: "city_code" },
@@ -133,7 +121,6 @@ const tableHead = [
   { Id: 4, title: "Actions" },
 ];
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? 1 : -1));
@@ -151,7 +138,6 @@ onBeforeMount(() => {
   lengthCounter = sortedData.value.length;
 });
 
-//for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
@@ -171,7 +157,6 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-//get all city
 const fetchCity = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -181,7 +166,6 @@ const fetchCity = async () => {
   lengthCounter = sortedData.value.length;
 };
 
-//delete city
 const deleteCity = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -224,7 +208,6 @@ const deleteCity = async (id) => {
   });
 };
 
-//for export
 const exportToExcel = () => {
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet("City Data");
@@ -236,12 +219,10 @@ const exportToExcel = () => {
     { title: "City Name" },
   ];
 
-  // Menambahkan header kolom
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  // Menambahkan data ke baris-baris selanjutnya
   sortedDataReactive.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
@@ -249,7 +230,6 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 4).value = data.city_name;
   });
 
-  // Menyimpan workbook menjadi file Excel
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -417,6 +397,42 @@ const exportToExcel = () => {
                 </td>
               </tr>
             </tbody>
+          </tableData>
+
+          <tableData
+            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
+
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
+                >
+                  <div class="flex justify-center items-center">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <SkeletonLoadingTable :column="5" :row="5" />
           </tableData>
 
           <div v-else>
