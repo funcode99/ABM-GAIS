@@ -27,7 +27,7 @@ const end_date = ref("");
 const search = ref("");
 const searchFilter = ref("");
 let sortedData = ref([]);
-const selectedType = ref("");
+const selectedType = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 let sortedbyASC = true;
 let itemdata = ref("")
 let instanceArray = [];
@@ -49,19 +49,23 @@ const onChangePage = (pageOfItem) => {
 
 //for filter & reset button
 const filterDataByType = () => {
-  if (selectedType.value === "") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
-    );
-  }
+  const start = moment(String(start_date.value[0])).format('YYYY-MM-DD')
+    const end = moment(String(start_date.value[1])).format('YYYY-MM-DD')
+    // console.log(test)
+    if (start_date.value[0] == undefined) {
+      fetchData(1, selectedType.value, status.value, "", "",searchFilter.value,pageMultiplier.value)
+    }  else {
+      fetchData(1, selectedType.value, status.value, start, end,searchFilter.value,pageMultiplier.value)
+    }
 };
 
 //for filter & reset button
 const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedType.value = "Type";
+  selectedType.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"));
+    status.value = ''
+    start_date.value = ''
+    end_date.value = ''
+    fetchData(showingValue.value, selectedType.value, "", "", "",searchFilter.value,pageMultiplier.value) 
 };
 
 //for check & uncheck all
@@ -84,9 +88,9 @@ const selectAll = (checkValue) => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "Request No", jsonData: "request_no" },
-  { Id: 4, title: "Requestor", jsonData: "requestor" },
-  { Id: 5, title: "Quantity", jsonData: "status" },
+  { Id: 3, title: "Request No", jsonData: "no_atk_request" },
+  { Id: 4, title: "Requestor", jsonData: "employee_name" },
+  { Id: 5, title: "Item Count", jsonData: "item_count" },
   { Id: 6, title: "Status", jsonData: "status" },
   { Id: 7, title: "Actions" },
 ];
@@ -138,18 +142,7 @@ onBeforeMount(() => {
 
 //for searching
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.id_item.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.request_no.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.id_item.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.request_no.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
+  fetchData(1, selectedType.value, status.value, start_date.value, end_date.value,search,pageMultiplier.value)
 };
 
 const getSessionForSidebar = () => {
@@ -222,7 +215,7 @@ const format_date = (value) => {
                   </p>
 
                   <VueDatePicker
-                    v-model="date"
+                    v-model="start_date"
                     range
                     :enable-time-picker="false"
                     class="my-date lg:w-10"

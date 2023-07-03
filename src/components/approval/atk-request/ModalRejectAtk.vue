@@ -82,14 +82,14 @@
             </div>
           </div>
 
-          <div class="flex flex-wrap justify-start gap-2">
+          <!-- <div class="flex flex-wrap justify-start gap-2">
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input type="radio" name="radio-10" class="radio checked:bg-green" checked />
                 <span class="font-JakartaSans font-medium text-xs">Fully Rejected</span>
               </label>
             </div>
-          </div>
+          </div> -->
 
           <p class="font-JakartaSans font-medium text-sm py-2">
             Notes<span class="text-red">*</span>
