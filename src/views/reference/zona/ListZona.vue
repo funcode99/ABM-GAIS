@@ -45,6 +45,7 @@ let addZonaIdData = ref([]);
 const search = ref("");
 let sortedbyASC = true;
 let instanceArray = [];
+let responseStatus = null;
 let selectedCompany = ref("Company");
 let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
@@ -92,6 +93,7 @@ const filterDataByCompany = async () => {
   const api = await Api.get(`/zona/get?filter=${selectedCompany.value}`);
   instanceArray = api.data.data;
   sortedData.value = instanceArray;
+  responseStatus = api.status;
   onChangePage(1);
 };
 
@@ -482,7 +484,11 @@ watch(baitArray, () => {
           </tableData>
 
           <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+            v-else-if="
+              sortedData.length == 0 &&
+              instanceArray.length == 0 &&
+              responseStatus == 404
+            "
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
