@@ -1,0 +1,149 @@
+<script setup>
+    import { ref, inject, onBeforeMount, watch } from 'vue'
+
+    const props = inject('otherTransportationDataView')
+
+    let name = ref()
+    let city = ref()
+    let transportationType = ref()
+    let quantity = ref()
+    let fromDate = ref()
+    let remarks = ref()
+    let toDate = ref()
+
+    watch(props, () => {
+      
+      name.value = localStorage.getItem('username')
+      city.value = props.value[0]
+      transportationType.value = props.value[0]
+      quantity.value = props.value[0]
+      fromDate.value = props.value[0]
+      remarks.value = props.value[0]
+      toDate.value = props.value[0]
+
+    })
+
+    const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
+    const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
+    const columnClass = 'flex flex-col flex-1'
+    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
+    const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
+
+</script>
+
+
+<template>
+    <div>
+                              
+      <div :class="rowClass">
+  
+        <!-- Traveller -->
+        <div :class="columnClass">
+
+          <div class="w-full">
+
+                <label :class="labelStylingClass">
+                    Traveller<span class="text-red-star">*</span>
+                </label>
+
+                <input 
+                  type="text"
+                  :class="inputStylingClass"
+                  placeholder="Name"
+                  required
+                />
+
+          </div>
+
+        </div>
+        
+        <!-- City -->
+        <div :class="columnClass">
+
+          <div class="w-full">
+            
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              City<span class="text-red-star">*</span>
+            </label>
+
+            <input type="text" :class="inputStylingClass" placeholder="City" required />
+
+          </div>
+
+        </div>
+  
+      </div>
+  
+      <div :class="rowClass">
+  
+        <!-- Type of Transportation -->
+        <div :class="columnClass">
+            <div class="w-full">
+                
+              <label :class="labelStylingClass">
+                Type of Transportation<span class="text-red-star">*</span>
+              </label>
+
+              <input type="text" :class="inputStylingClass" placeholder="Type" required />
+
+            </div>
+        </div>
+  
+        <!-- Quantity -->
+        <div :class="columnClass">
+          <div class="w-full">
+
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Quantity<span class="text-red-star">*</span>
+            </label>
+
+            <input type="text" placeholder="Quantity" :class=inputStylingClass required>
+          
+          </div>
+        </div>
+  
+      </div>
+  
+      <div :class="rowClass">
+  
+        <div :class="columnClass">
+          <div class="w-full">
+            
+            <label :class="labelStylingClass">
+              From Date<span class="text-red-star">*</span>
+            </label>
+
+            <input type="date" :class="inputStylingClass" placeholder="From Date" required />  
+
+          </div>
+        </div>
+  
+        <div :class="columnClass">
+          <div class="w-full">
+
+            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+              Remarks<span class="text-red-star">*</span>
+            </label>
+                                
+            <input type="text" placeholder="Remarks" :class=inputStylingClass required>
+
+          </div>
+        </div>
+  
+      </div>
+  
+      <div :class="rowClass">
+  
+        <div :class="columnClass">
+          <div class="w-full">
+            <label :class="labelStylingClass">
+              To Date<span class="text-red-star">*</span>
+            </label>
+            <input type="date" :class="inputStylingClass" placeholder="To Date" required />
+          </div>
+        </div>
+  
+      </div>
+  
+    </div>
+</template>

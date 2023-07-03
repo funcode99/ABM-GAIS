@@ -390,6 +390,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     }
 
     onBeforeMount(() => {
+
       fetchDocumentCode()
       fetchEmployeeRequestor()
       fetchCity()
@@ -400,6 +401,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       fetchTypeOfTransportation()
 
       fetchTravellerType()
+      
     })
 
     const companyBusinessStepList = [

@@ -1,5 +1,5 @@
 <script setup>
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, onBeforeMount, provide } from 'vue'
     
     import miniABM from '@/assets/mini-abm.png'
     import userImg from '@/assets/3-user.png'
@@ -16,6 +16,11 @@
     import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
 
     import guestAsTravellerFormView from '@/components/request-trip/view-detail-form/guest-as-traveller-view.vue'
+    import airlinesFormView from '@/components/request-trip/view-detail-form/airlines-view.vue'
+    import taxiVoucherFormView from '@/components/request-trip/view-detail-form/taxi-voucher-view.vue'
+    import otherTransportationFormView from '@/components/request-trip/view-detail-form/other-transportation-view.vue'
+    import accomodationFormView from '@/components/request-trip/view-detail-form/accomodation-view.vue'
+    import cashAdvanceFormView from '@/components/request-trip/view-detail-form/cash-advance-view.vue'
 
     import arrow from '@/assets/request-trip-view-arrow.png'
 
@@ -29,13 +34,20 @@
     let showAirlines = ref(true)
     let headerTitle = ref('Traveller')
 
-    let purposeOfTripData = ref()
-    let travellerGuestData = ref()
-    let airlinesData = ref()
-    let taxiVoucherData = ref()
-    let otherTransportationData = ref()
-    let accomodationData = ref()
-    let cashAdvanceData = ref()
+    let purposeOfTripData = ref([{}])
+    let travellerGuestData = ref([{}])
+    let airlinesData = ref([{}])
+    let taxiVoucherData = ref([{}])
+    let otherTransportationData = ref([{}])
+    let accomodationData = ref([{}])
+    let cashAdvanceData = ref([{}])
+
+    provide('travellerDataView', travellerGuestData)
+    provide('airlinesDataView', airlinesData)
+    provide('taxiVoucherDataView', taxiVoucherData)
+    provide('otherTransportationDataView', otherTransportationData)
+    provide('accomodationDataView', accomodationData)
+    provide('cashAdvanceDataView', cashAdvanceData)
 
     const getPurposeOfTrip = async () => {
       try {
@@ -45,7 +57,7 @@
         purposeOfTripData.value = api.data.data
       } catch (error) {
         console.log(error)
-        purposeOfTripData.value = ''
+        purposeOfTripData.value = [{}]
       }      
     }
 
@@ -54,11 +66,11 @@
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)      
+        let api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
         travellerGuestData.value = api.data.data
       } catch (error) {
         console.log(error)
-        travellerGuestData.value = ''
+        travellerGuestData.value = [{}]
       }
 
     }
@@ -71,7 +83,7 @@
         airlinesData.value = api.data.data
       } catch (error) {
         console.log(error)
-        airlinesData.value = ''
+        airlinesData.value = [{}]
       }
     }
  
@@ -83,7 +95,7 @@
         taxiVoucherData.value = api.data.data
       } catch (error) {
         console.log(error)
-        taxiVoucherData.value = ''
+        taxiVoucherData.value = [{}]
       }
     }
 
@@ -95,7 +107,7 @@
         otherTransportationData.value = api.data.data
       } catch (error) {
         console.log(error)
-        otherTransportationData.value = ''
+        otherTransportationData.value = [{}]
       }
     }
 
@@ -107,7 +119,7 @@
         accomodationData.value = api.data.data
       } catch (error) {
         console.log(error)
-        accomodationData.value = ''
+        accomodationData.value = [{}]
       }
     }
 
@@ -119,7 +131,7 @@
         cashAdvanceData.value = api.data.data
       } catch (error) {
         console.log(error)
-        cashAdvanceData.value = ''
+        cashAdvanceData.value = [{}]
       }
     }
 
@@ -146,8 +158,6 @@
       headerTitle.value = title
     }
 
-    
-
 </script>
 
 <template>
@@ -163,7 +173,7 @@
             <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin duration-500 ease-in-out"
             :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
                
-            {{  travellerGuestData[0] }}
+            <!-- {{  travellerGuestData }} -->
             <!-- {{ airlinesData }} -->
             <!-- {{ taxiVoucherData }} -->
             <!-- {{ otherTransportationData }} -->
@@ -283,928 +293,23 @@
                           </detailsFormHeader>
 
                           <!-- form Step 3 -->
-                          <div v-if="headerTitle == 'Traveller'" class="ml-8">
-
-                              <div :class="rowClass">
-
-                                    <div :class="columnClass">
-                                        <div class="w-full">
-                                          
-                                          <label :class="labelStylingClass">
-                                              Name <span class="text-red-star">*</span>
-                                          </label>
-                                          
-                                          <input
-                                            type="text"
-                                            placeholder="Name"
-                                            :class="inputStylingClass"
-                                            required
-                                          />
-
-                                        </div>
-                                    </div>
-
-                                    <div :class="columnClass">
-
-                                      <div class="w-full">
-
-                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                            Department<span class="text-red-star">*</span>
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            placeholder="Department"
-                                            :class="inputStylingClass"
-                                            required
-                                        />
-
-                                      </div>
-
-                                    </div>
-
-                                    <div :class="columnClass">
-
-                                      <div class="w-full">
-                                        
-                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                          Flight Class <span class="text-red-star">*</span>
-                                        </label>
-                                        
-                                        <input 
-                                          type="text"
-                                          placeholder="Flight Class"
-                                          :class="inputStylingClass"
-                                          required
-                                        />
-
-                                      </div>
-
-                                    </div>
-
-                              </div>
-
-                              <div :class="rowClass">
-
-                                    <div :class="columnClass">
-                                      <div class="w-full">
-                                          
-                                          <label :class="labelStylingClass">
-                                              SN<span class="text-red-star">*</span>
-                                          </label>
-
-                                          <input 
-                                            type="text"
-                                            placeholder="SN"
-                                            :class="inputStylingClass"
-                                            required
-                                          />
-
-                                      </div>
-                                    </div>
-
-                                    <div :class="columnClass">
-
-                                      <div class="w-full">
-
-                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                            Company<span class="text-red-star">*</span>
-                                        </label>
-
-                                        <input 
-                                            type="text"
-                                            :class="inputStylingClass"
-                                            placeholder="Company"
-                                            required
-                                        />
-
-                                        <!-- <select :class="inputStylingClass">
-                                            <option selected hidden disabled>
-                                              Company
-                                            </option>
-                                        </select> -->
-
-                                      </div>
-
-                                    </div>
-
-                                    <div :class="columnClass"></div>
-
-                              </div>
-
-                              <div :class="rowClass">
-
-                                    <div :class="columnClass">
-                                      <div class="w-full">
-                                          <label :class="labelStylingClass">
-                                              Gender<span class="text-red-star">*</span>
-                                          </label>
-                                          <select :class="inputStylingClass">
-                                            <option selected hidden disabled>
-                                              Male
-                                            </option>
-                                            <option selected hidden disabled>
-                                              Female
-                                            </option>
-                                          </select>
-                                      </div>
-                                    </div>
-
-                                    <div :class="columnClass">
-                                      <div class="w-full">
-                                        <label
-                                            class="block mb-2 font-JakartaSans font-medium text-sm"
-                                            >Hotel Fare<span class="text-red-star">*</span></label
-                                        >
-                                        <select :class="inputStylingClass">
-                                            <option selected hidden disabled>
-                                              Fare
-                                            </option>
-                                          </select>
-                                      </div>
-                                    </div>
-
-                                    <div :class="columnClass"></div>
-
-                              </div>
-
-                              <div :class="rowClass">
-
-                                    <div :class="columnClass">
-                                      <div class="w-full">
-                                          <label :class="labelStylingClass">
-                                              NIK<span class="text-red-star">*</span>
-                                          </label>
-                                          <input type="text" placeholder="NIK" :class="inputStylingClass">
-                                      </div>
-                                    </div>
-
-                                    <div :class="columnClass">
-                                      <div class="w-full">
-                                        <label
-                                            class="block mb-2 font-JakartaSans font-medium text-sm"
-                                            >Flight Entitlement<span class="text-red-star">*</span></label
-                                        >
-                                        <select :class="inputStylingClass">
-                                            <option selected hidden disabled>
-                                              Flight Entitlement
-                                            </option>
-                                          </select>
-                                      </div>
-                                    </div>
-
-                                    <div :class=columnClass></div>
-
-                              </div>
-
-                              <div :class="rowClass">
-
-                                    <div :class="columnClass">
-                                      <div class="w-full">
-                                          <label :class="labelStylingClass">
-                                              Contact No<span class="text-red-star">*</span>
-                                          </label>
-                                          <input :class="inputStylingClass" type="text" placeholder="Contact No">
-                                      </div>
-                                    </div>
-
-                                    <div :class="columnClass">
-                                      <div class="w-full">
-                                        <label
-                                            :class="labelStylingClass"
-                                            >Notes<span class="text-red-star">*</span></label
-                                        >
-                                        <input type="text" placeholder="Notes" :class="inputStylingClass">
-                                      </div>
-                                    </div>
-
-                                    <div :class="columnClass"></div>
-
-                              </div>
-
-                          </div>
+                          <guestAsTravellerFormView :apiData="travellerGuestData" v-if="headerTitle == 'Traveller'" class="ml-8" />
 
                           <!-- form Step 4 -->
-                          <div v-if="headerTitle == 'Airlines'" class="ml-8">
-                            
-                            <div :class="rowClass">
-
-                              <div :class="columnClass">
-                                    
-                                <div class="w-full">
-                                        
-                                        <label :class="labelStylingClass">
-                                            Name<span class="text-red-star">*</span>
-                                        </label>
-
-                                        <input 
-                                            :class="inputStylingClass"
-                                            placeholder="Name"
-                                            required
-                                        />
-
-                                        <!-- <select :class="inputStylingClass">
-                                          <option selected hidden disabled>
-                                            Name
-                                          </option>
-                                        </select> -->
-
-                                </div>
-
-                              </div>
-
-                              <div :class="columnClass">
-
-                                <div class="w-full">
-                                        
-                                    <label :class="labelStylingClass">
-                                      Domestic/International<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      :class="inputStylingClass"
-                                      placeholder="Domestic/International"
-                                      required
-                                    />
-
-                                </div>
-
-                              </div>
-
-                              <div :class="columnClass"></div>
-
-                            </div>
-
-                            <div :class="rowClass">
-
-                              <div :class="columnClass">
-                                  
-                                  <div class="w-full">
-
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                        Departure<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Departure"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-
-                              </div>
-
-                              <div :class="columnClass">
-
-                                <div class="w-full">
-
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                      Price<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Price"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                </div>
-
-                              </div>
-
-                              <div :class="columnClass"></div>
-
-                            </div>
-
-                            <div :class="rowClass">
-
-                              <div :class="columnClass">
-                                  
-                                  <div class="w-full">
-
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                        Arrival<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Arrival"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-
-                              </div>
-
-                              <div :class="columnClass">
-                                  
-                                  <div class="w-full">
-
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                        Status<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Status"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-
-                              </div>
-
-                              <div :class="columnClass"></div>
-
-                            </div>
-
-                            <div class="flex justify-between mx-4 items-start gap-2 my-6">
-
-                                <div :class="columnClass">
-                                  
-                                  <div class="w-full">
-                                      
-                                    <label :class="labelStylingClass">
-                                      Flight Number<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Flight Number"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-
-                                </div>
-
-                                <!-- <div :class="columnClass">
-                                  <div class="w-full">
-                                    <label
-                                        class="block mb-2 font-JakartaSans font-medium text-sm"
-                                        >Vendor<span class="text-red-star">*</span></label
-                                    >
-                                    <div>
-                                      <input class="w-6 h-6" type="radio" name="vendor">
-                                      <label class="ml-4">Antavaya</label>
-                                    </div>
-                                    <div>
-                                      <input class="w-6 h-6" type="radio" name="vendor">
-                                      <label class="ml-4">Aerowisata</label>
-                                    </div>
-                                  </div>
-                                </div> -->
-
-                                <div :class="columnClass"></div>
-
-                            </div>
-
-                          </div>
+                          <airlinesFormView :apiData="airlinesData" v-if="headerTitle == 'Airlines'" class="ml-8" />
 
                           <!-- form Step 5 -->
-                          <div v-if="headerTitle == 'Taxi Voucher'" class="ml-8">
-
-                              <div :class="rowClass">
-
-                                <div :class="columnClass">
-
-                                  <div class="w-full">
-                                      
-                                    <label :class="labelStylingClass">
-                                      Name<span class="text-red-star">*</span>
-                                    </label>
-                                      
-                                    <input 
-                                      type="text"
-                                      placeholder="Name"
-                                      :class="inputStylingClass"
-                                      required
-                                    /> 
-                                    
-                                    <!-- <select :class="inputStylingClass">
-                                        <option selected hidden disabled>
-                                          Name
-                                        </option>
-                                      </select> -->
-
-
-
-                                  </div>
-
-                                </div>
-
-                                <div :class="columnClass">
-
-                                  <div class="w-full">
-                                    
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                      Departure<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Departure"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-
-                                </div>
-
-                              </div>
-
-                              <div :class="rowClass">
-
-                              <div :class="columnClass">
-                                <div class="w-full">
-                                    
-                                  <label :class="labelStylingClass">
-                                    Date<span class="text-red-star">*</span>
-                                  </label>
-
-                                  <input 
-                                    type="text"
-                                    placeholder="Date"
-                                    :class="inputStylingClass"
-                                    required
-                                  />
-
-                                    <!-- <select :class="inputStylingClass">
-                                      <option selected hidden disabled>
-                                        City
-                                      </option>
-                                    </select> -->
-
-                                </div>
-                              </div>
-
-                              <div :class="columnClass">
-                                <div class="w-full">
-                                  <label
-                                      class="block mb-2 font-JakartaSans font-medium text-sm"
-                                      >Arrival<span class="text-red-star">*</span></label
-                                  >
-                                  <!-- <select :class="inputStylingClass">
-                                      <option selected hidden disabled>
-                                        City
-                                      </option>
-                                    </select> -->
-                                    
-                                    <input 
-                                      type="text"  
-                                      placeholder="City"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                </div>
-                              </div>
-
-                              </div>
-
-                              <div :class="rowClass">
-
-                              <div :class="columnClass">
-                                <div class="w-full">
-                                    <label :class="labelStylingClass">
-                                        Amount<span class="text-red-star">*</span>
-                                    </label>
-                                    <input type="text" :class='inputStylingClass' placeholder="Amount">
-                                </div>
-                              </div>
-
-                              <div :class="columnClass">
-                                <div class="w-full">
-                                    <label :class="labelStylingClass">
-                                        <span>Voucher Code</span>
-                                    </label>
-                                    <input type="text" :class='inputStylingClass' placeholder="Voucher">
-                                </div>
-                              </div>
-
-                              </div>
-
-                              <div :class="rowClassStart">
-
-                              <div :class="columnClass">
-                                <div class="w-full">
-                                    <label :class="labelStylingClass">
-                                        <span>Account Name</span><span class="text-red-star">*</span>
-                                    </label>
-                                    <input type="text" :class='inputStylingClass' placeholder="Account Name">
-                                </div>
-                              </div>
-
-                              <div :class="columnClass">
-                                <div class="w-full">
-                                  <label :class="labelStylingClass">
-                                    Remarks
-                                  </label>
-                                  <textarea :class="inputStylingClass" placeholder="Remarks"></textarea>
-                                </div>
-                              </div>
-
-                              </div>
-
-                          </div>
+                          <taxiVoucherFormView :apiData="taxiVoucherData" v-if="headerTitle == 'Taxi Voucher'" class="ml-8" />
 
                           <!-- form Step 6 -->
-                          <div v-if="headerTitle == 'Other Transportation'" class="ml-8">
-                              
-                            <div :class="rowClass">
-
-<div :class="columnClass">
-  <div class="w-full">
-      <label :class="labelStylingClass">
-          Traveller<span class="text-red-star">*</span>
-      </label>
-      <select :class="inputStylingClass">
-        <option selected hidden disabled>
-          Name
-        </option>
-      </select>
-  </div>
-</div>
-
-<div :class="columnClass">
-  <div class="w-full">
-    <label
-        class="block mb-2 font-JakartaSans font-medium text-sm"
-        >City<span class="text-red-star">*</span></label
-    >
-    <select :class="inputStylingClass">
-        <option selected hidden disabled>
-          City
-        </option>
-      </select>
-  </div>
-</div>
-
-                            </div>
-
-                            <div :class="rowClass">
-
-                            <div :class="columnClass">
-                              <div class="w-full">
-                                  <label :class="labelStylingClass">
-                                      Type of Transportation<span class="text-red-star">*</span>
-                                  </label>
-                                  <select :class="inputStylingClass">
-                                    <option selected hidden disabled>
-                                      City
-                                    </option>
-                                    <option>
-                                      RWA HO Office Car
-                                    </option>
-                                    <option>
-                                      Rent Car
-                                    </option>
-                                    <option>
-                                      TIA Site Car
-                                    </option>
-                                    <option>
-                                      CK MIFA Site Car
-                                    </option>
-                                    <option>
-                                      TIA HO Car
-                                    </option>
-                                    <option>
-                                      SSB Pool Car
-                                    </option>
-                                  </select>
-                              </div>
-                            </div>
-
-                            <div :class="columnClass">
-                              <div class="w-full">
-                                <label
-                                    class="block mb-2 font-JakartaSans font-medium text-sm"
-                                    >Quantity<span class="text-red-star">*</span></label
-                                >
-                                <input type="text" placeholder="Quantity" :class=inputStylingClass>
-                              </div>
-                            </div>
-
-                            </div>
-
-                            <div :class="rowClass">
-
-                              <div :class="columnClass">
-                              <div class="w-full">
-                              <label :class="labelStylingClass">
-                                From Date<span class="text-red-star">*</span>
-                              </label>
-                              <select :class="inputStylingClass">
-                              <option selected hidden disabled>
-                                Date
-                              </option>
-                              </select>
-                              </div>
-                              </div>
-
-                              <div :class="columnClass">
-                              <div class="w-full">
-                              <label
-                                class="block mb-2 font-JakartaSans font-medium text-sm"
-                                >Remarks<span class="text-red-star">*</span></label
-                              >
-                              <input type="text" placeholder="Remarks" :class=inputStylingClass>
-                              </div>
-                              </div>
-
-                            </div>
-
-                            <div :class="rowClass">
-
-                            <div :class="columnClass">
-                              <div class="w-full">
-                                <label :class="labelStylingClass">
-                                  To Date<span class="text-red-star">*</span>
-                                </label>
-                                <select :class="inputStylingClass">
-                                <option selected hidden disabled>
-                                  Date
-                                </option>
-                                </select>
-                              </div>
-                            </div>
-
-                            </div>
-
-                          </div>
+                          <otherTransportationFormView :apiData="otherTransportationData" v-if="headerTitle == 'Other Transportation'" class="ml-8" />
 
                           <!-- form Step 7 -->
-                          <div v-if="headerTitle == 'Accomodation'" class="ml-8">
-                              
-                              <div :class="rowClass">
-  
-                                <div :class="columnClass">
-
-                                  <div class="w-full">
-                                      
-                                    <label :class="labelStylingClass">
-                                      Name<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Name"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-
-                                </div>
-                                
-                                <div :class="columnClass">
-                                  <div class="w-full">
-                                    
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                        City<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="City"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-                                </div>
-  
-                              </div>
-  
-                              <div :class="rowClass">
-  
-                                <div :class="columnClass">
-
-                                  <div class="w-full">
-                                      
-                                    <label :class="labelStylingClass">
-                                      Hotel Name<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="text"
-                                      placeholder="Hotel Name"
-                                      :class="inputStylingClass"
-                                      required
-                                    />
-
-                                  </div>
-
-                                </div>
-    
-                                <div :class="columnClass">
-                                  
-                                  <div class="w-full">
-
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                        Type<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input type="text" placeholder="Type" :class=inputStylingClass>
-                                  
-                                  </div>
-
-                                </div>
-  
-                              </div>
-  
-                              <div :class="rowClass">
-  
-                                <div :class="columnClass">
-                                  
-                                  <div class="w-full">
-
-                                    <label :class="labelStylingClass">
-                                      Check In<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <input 
-                                      type="date"
-                                      :class="inputStylingClass"
-                                      placeholder="Date"
-                                      required
-                                    />
-
-                                  </div>
-
-                                </div>
-  
-                                <div :class="columnClass">
-
-                                  <div class="w-full">
-                                    
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                      Sharing With
-                                    </label>
-
-                                    <input type="text" placeholder="Sharing With" :class=inputStylingClass>
-                                  
-                                  </div>
-
-                                </div>
-  
-                              </div>
-  
-                              <div :class="rowClass">
-  
-                                <div :class="columnClass">
-                                  <div class="w-full">
-
-                                    <label :class="labelStylingClass">
-                                      To Date<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <!-- <select :class="inputStylingClass">
-                                    <option selected hidden disabled>
-                                      Date
-                                    </option>
-                                    </select> -->
-
-                                    <input 
-                                      type="date"
-                                      :class="inputStylingClass"
-                                      placeholder="Date"
-                                      required
-                                    />
-
-                                  </div>
-                                </div>
-  
-                              </div>
-  
-                          </div>
+                          <accomodationFormView :apiData="accomodationData" v-if="headerTitle == 'Accomodation'" class="ml-8" />
 
                           <!-- form Step 8 -->
-                          <div v-if="headerTitle == 'Cash Advance'" class="ml-8">
+                          <cashAdvanceFormView :apiData="cashAdvanceData" v-if="headerTitle == 'Cash Advance'" class="ml-8" />
 
-                              <div :class="rowClass">
-                                
-                                <div :class="columnClass">
-                                  <label>Traveller</label>
-                                  <input :class="inputStylingClass" placeholder="Name" />
-                                </div>
-
-                                <div :class="columnClass">
-                                  <label>Total</label>
-                                  <input :class="inputStylingClass" placeholder="Total" />
-                                </div>
-
-                                <div :class="columnClass">
-                                  
-                                </div>
-
-                              </div>
-
-                              <div :class="rowClass">
-                                
-                                <div :class="columnClass">
-                                  
-                                  <label :class="labelStylingClass">
-                                    Notes  
-                                  </label>
-                                  
-                                  <textarea :class="inputStylingClass" placeholder="Notes"></textarea>
-                                
-                                </div>
-
-                                <div></div>
-                                <div></div>
-
-                              </div>
-
-                              <div class="mx-4">
-                                <h1 class="font-medium">Details Item</h1>
-                                <hr class="border border-black" />
-                              </div>
-
-                              <form @submit.prevent="">
-
-                                <div :class="rowClass">
-                                  
-                                  <div :class="columnClass">
-                                    <label :class="labelStylingClass">
-                                      Item <span class="text-red-star">*</span>
-                                    </label>
-                                    <input :class="inputStylingClass" placeholder="Item" />
-                                  </div>
-                                  
-                                  <div :class="columnClass">
-                                    <label :class="labelStylingClass">
-                                      Nominal <span class="text-red-star">*</span>
-                                    </label>
-                                    <input :class="inputStylingClass" placeholder="Nominal" />
-                                  </div>
-
-                                  <div :class="columnClass"></div>
-
-                                </div>
-                                
-                                <div :class="rowClass">
-                                
-                                  <div :class="columnClass">
-                                    <label :class="labelStylingClass">
-                                      Frequency<span class="text-red-star">*</span>
-                                    </label>
-                                    <input :class="inputStylingClass" placeholder="Frequency" />
-                                  </div>
-                                  
-                                  <div :class="columnClass">
-                                    <label :class="labelStylingClass">
-                                      Total
-                                    </label>
-                                    <input :class="inputStylingClass" placeholder="Total" />
-                                  </div>
-
-                                  <div :class="columnClass"></div>
-
-                                </div>
-                                
-                                <div :class="rowClassStart">
-                                
-                                  <div :class="columnClass">
-
-                                    <label :class="labelStylingClass">
-                                      Currency<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <select :class="inputStylingClass">
-                                      <option>
-                                        Currency
-                                      </option>
-                                    </select>
-                                  
-                                  </div>
-
-                                  <div :class="columnClass">
-                                    
-                                    <label :class="labelStylingClass">
-                                      Remarks<span class="text-red-star">*</span>
-                                    </label>
-
-                                    <textarea :class="inputStylingClass" placeholder="Remarks"></textarea>
-
-                                  </div>
-
-                                  <div :class="columnClass"></div>
-
-                                </div>
-
-                              </form>
-
-                          </div>
 
                         </div>
 

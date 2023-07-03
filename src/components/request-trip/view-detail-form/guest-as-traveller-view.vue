@@ -1,6 +1,29 @@
 <script setup>
-    
-    import { ref, onBeforeMount } from 'vue'
+    import { ref, inject, onBeforeMount, watch } from 'vue'
+
+    const props = inject('travellerDataView')
+
+    let name = ref()
+    let department = ref()
+    let flightClass = ref()
+    let sn = ref()
+    let company = ref()
+    let gender = ref()
+    let type = ref()
+    let contactNo = ref()
+    let maxHotelFare = ref()
+
+    watch(props, () => {
+        name.value = props.value[0].name_guest
+        department.value = props.value[0].departement
+        flightClass.value = props.value[0].flight_class
+        sn.value = props.value[0]
+        company.value = props.value[0].company
+        gender.value = props.value[0].gender
+        type.value = props.value[0].type_traveller
+        contactNo.value = props.value[0].contact_no
+        maxHotelFare.value = props.value[0].hotel_fare
+    })
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -15,167 +38,159 @@
         
         <div :class="rowClass">
 
-<div :class="columnClass">
-    <div class="w-full">
-      
-      <label :class="labelStylingClass">
-          Name <span class="text-red-star">*</span>
-      </label>
-      
-      <input
-        type="text"
-        placeholder="Name"
-        :class="inputStylingClass"
-        required
-      />
+            <div :class="columnClass">
+                
+                <div class="w-full">
+                    
+                    <label :class="labelStylingClass">
+                        Name<span class="text-red-star">*</span>
+                    </label>
+                    
+                    <input
+                        v-model="name"
+                        type="text"
+                        placeholder="Name"
+                        :class="inputStylingClass"
+                        required
+                    />
 
-    </div>
-</div>
+                </div>
 
-<div :class="columnClass">
+            </div>
 
-  <div class="w-full">
+            <div :class="columnClass">
 
-    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-        Department<span class="text-red-star">*</span>
-    </label>
+                <div class="w-full">
 
-    <input
-        type="text"
-        placeholder="Department"
-        :class="inputStylingClass"
-        required
-    />
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                        Department<span class="text-red-star">*</span>
+                    </label>
 
-  </div>
+                    <input
+                        v-model="department"
+                        type="text"
+                        placeholder="Department"
+                        :class="inputStylingClass"
+                        required
+                    />
 
-</div>
+                </div>
 
-<div :class="columnClass">
+            </div>
 
-  <div class="w-full">
-    
-    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-      Flight Class <span class="text-red-star">*</span>
-    </label>
-    
-    <input 
-      type="text"
-      placeholder="Flight Class"
-      :class="inputStylingClass"
-      required
-    />
+            <div :class="columnClass">
 
-  </div>
+                <div class="w-full">
+                    
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                    Flight Class <span class="text-red-star">*</span>
+                    </label>
+                    
+                    <input 
+                    v-model="flightClass"
+                    type="text"
+                    placeholder="Flight Class"
+                    :class="inputStylingClass"
+                    required
+                    />
 
-</div>
+                </div>
 
-        </div>
-
-        <div :class="rowClass">
-
-        <div :class="columnClass">
-        <div class="w-full">
-            
-            <label :class="labelStylingClass">
-                SN<span class="text-red-star">*</span>
-            </label>
-
-            <input 
-                type="text"
-                placeholder="SN"
-                :class="inputStylingClass"
-                required
-            />
-
-        </div>
-        </div>
-
-        <div :class="columnClass">
-
-        <div class="w-full">
-
-            <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                Company<span class="text-red-star">*</span>
-            </label>
-
-            <input 
-                type="text"
-                :class="inputStylingClass"
-                placeholder="Company"
-                required
-            />
-
-        </div>
-
-        </div>
-
-        <div :class="columnClass"></div>
+            </div>
 
         </div>
 
         <div :class="rowClass">
 
-        <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-                Gender<span class="text-red-star">*</span>
-            </label>
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                Male
-                </option>
-                <option selected hidden disabled>
-                Female
-                </option>
-            </select>
-        </div>
-        </div>
+            <!-- SN -->
+            <div :class="columnClass">
+            <div class="w-full">
+                
+                <label :class="labelStylingClass">
+                    SN<span class="text-red-star">*</span>
+                </label>
 
-        <div :class="columnClass">
-        <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Hotel Fare<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                Fare
-                </option>
-            </select>
-        </div>
-        </div>
+                <input 
+                    type="text"
+                    placeholder="SN"
+                    :class="inputStylingClass"
+                    required
+                />
 
-        <div :class="columnClass"></div>
+            </div>
+            </div>
+
+            <!-- Company -->
+            <div :class="columnClass">
+
+                <div class="w-full">
+
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                        Company<span class="text-red-star">*</span>
+                    </label>
+
+                    <input
+                        v-model="company"
+                        type="text"
+                        :class="inputStylingClass"
+                        placeholder="Company"
+                        required
+                    />
+
+                </div>
+
+            </div>
+
+            <div :class="columnClass"></div>
 
         </div>
 
         <div :class="rowClass">
 
-        <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-                NIK<span class="text-red-star">*</span>
-            </label>
-            <input type="text" placeholder="NIK" :class="inputStylingClass">
-        </div>
-        </div>
+            <!-- Gender -->
+            <div :class="columnClass">
 
-        <div :class="columnClass">
-        <div class="w-full">
-            <label
-                class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Flight Entitlement<span class="text-red-star">*</span></label
-            >
-            <select :class="inputStylingClass">
-                <option selected hidden disabled>
-                Flight Entitlement
-                </option>
-            </select>
-        </div>
-        </div>
+                <div class="w-full">
+                    
+                    <label :class="labelStylingClass">
+                        Gender<span class="text-red-star">*</span>
+                    </label>
 
-        <div :class=columnClass></div>
+                    <select :class="inputStylingClass" v-model="gender">
+                        <option value="L" selected hidden disabled>
+                        Male
+                        </option>
+                        <option value="P" selected hidden disabled>
+                        Female
+                        </option>
+                    </select>
+
+                </div>
+
+            </div>
+
+            <!-- Traveller Type -->
+            <div :class="columnClass">
+
+                <div class="w-full">
+                    
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                        Type<span class="text-red-star">*</span>
+                    </label>
+
+                    <input 
+                        v-model="type"
+                        type="text"
+                        placeholder="Type"
+                        :class="inputStylingClass"
+                        required
+                    />
+
+                </div>
+
+            </div>
+
+            <div :class="columnClass"></div>
 
         </div>
 
@@ -186,18 +201,19 @@
             <label :class="labelStylingClass">
                 Contact No<span class="text-red-star">*</span>
             </label>
-            <input :class="inputStylingClass" type="text" placeholder="Contact No">
+            <input :class="inputStylingClass" type="text" placeholder="Contact No" v-model="contactNo">
         </div>
         </div>
 
         <div :class="columnClass">
-        <div class="w-full">
-            <label
-                :class="labelStylingClass"
-                >Notes<span class="text-red-star">*</span></label
-            >
-            <input type="text" placeholder="Notes" :class="inputStylingClass">
-        </div>
+
+            <div class="w-full">
+                <label :class="labelStylingClass">
+                    Max Hotel Fare<span class="text-red-star">*</span>
+                </label>
+                <input type="text" placeholder="Notes" :class="inputStylingClass" v-model="maxHotelFare">
+            </div>
+
         </div>
 
         <div :class="columnClass"></div>
