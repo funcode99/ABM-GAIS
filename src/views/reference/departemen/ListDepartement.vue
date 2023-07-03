@@ -44,6 +44,7 @@ let addGLAccountData = ref([]);
 const search = ref("");
 const selectedCompany = ref("Company");
 let sortedbyASC = true;
+let responseStatus = null;
 let instanceArray = [];
 const showFullText = ref({});
 let checkList = false;
@@ -106,6 +107,7 @@ const filterDataByCompany = async () => {
   const api = await Api.get(`/department?filter=${selectedCompany.value}`);
   instanceArray = api.data.data;
   sortedData.value = instanceArray;
+  responseStatus = api.status;
   onChangePage(1);
 };
 
@@ -504,7 +506,11 @@ watch(addGLAccountData, () => {
           </tableData>
 
           <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+            v-else-if="
+              sortedData.length == 0 &&
+              instanceArray.length == 0 &&
+              responseStatus == 404
+            "
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
