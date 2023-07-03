@@ -136,13 +136,16 @@
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
-    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
+    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 
     const closeBar = ref(true)
     const changeSelected = (title) => {
       headerTitle.value = title
     }
+
+    
+
 </script>
 
 <template>
@@ -157,7 +160,14 @@
 
             <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin duration-500 ease-in-out"
             :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
-                
+               
+            {{  travellerGuestData[0] }}
+            <!-- {{ airlinesData }} -->
+            <!-- {{ taxiVoucherData }} -->
+            <!-- {{ otherTransportationData }} -->
+            <!-- {{ accomodationData }} -->
+            <!-- {{ cashAdvanceData }} -->
+
                 <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
 
                     <div class="flex items-center gap-2">
@@ -167,20 +177,30 @@
                       </router-link>
 
                       <h1 class="text-blue font-semibold">
-                        Request Trip<span class="text-[#0a0a0a]"> / TRV-ABM/1232/23.04</span>
+                        Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[0].no_request_trip }}</span>
                       </h1>
 
                       <div class="flex-1"></div>
 
-                      <div class="bg-[#8b8b8b] min-w-[114px] h-[42px] text-center text-base font-bold rounded-t-lg rounded-bl-3xl rounded-br-lg border flex items-center justify-center border-black">
+                      <div class=" min-w-[114px] h-[42px] text-center text-base font-bold rounded-t-lg rounded-bl-3xl rounded-br-lg border flex items-center justify-center border-black px-3">
                         {{ purposeOfTripData[0].status }}
                       </div>
                       
                     </div>
 
                     <div class="flex gap-4 mt-6 mb-3 ml-5">
-                        <buttonEditFormView @click="isEditing = true" />
-                        <buttonSaveFormView />
+                        
+                      <buttonEditFormView @click="isEditing = true" />
+                      <buttonSaveFormView v-if="isEditing" @click="isEditing = false" />
+                        
+                      <button v-if="!isEditing" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                        Submit
+                      </button>
+                        
+                      <button v-if="isEditing" @click="isEditing = false" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                        Cancel
+                      </button>
+
                     </div>
 
                     <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
@@ -254,12 +274,13 @@
                               Issued Ticket
                             </button>
 
-                            <button class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                            <button v-if="purposeOfTripData[0].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                               Revise
                             </button>
 
                           </detailsFormHeader>
 
+                          <!-- form Step 3 -->
                           <div v-if="headerTitle == 'Traveller'" class="ml-8">
 
                               <div :class="rowClass">
@@ -461,6 +482,7 @@
 
                           </div>
 
+                          <!-- form Step 4 -->
                           <div v-if="headerTitle == 'Airlines'" class="ml-8">
                             
                             <div :class="rowClass">
@@ -644,6 +666,7 @@
 
                           </div>
 
+                          <!-- form Step 5 -->
                           <div v-if="headerTitle == 'Taxi Voucher'" class="ml-8">
 
                               <div :class="rowClass">
@@ -791,6 +814,7 @@
 
                           </div>
 
+                          <!-- form Step 6 -->
                           <div v-if="headerTitle == 'Other Transportation'" class="ml-8">
                               
                             <div :class="rowClass">
@@ -915,6 +939,7 @@
 
                           </div>
 
+                          <!-- form Step 7 -->
                           <div v-if="headerTitle == 'Accomodation'" class="ml-8">
                               
                               <div :class="rowClass">
@@ -1060,6 +1085,7 @@
   
                           </div>
 
+                          <!-- form Step 8 -->
                           <div v-if="headerTitle == 'Cash Advance'" class="ml-8">
 
                               <div :class="rowClass">
@@ -1094,7 +1120,7 @@
 
                                 <div></div>
                                 <div></div>
-                                
+
                               </div>
 
                               <div class="mx-4">
@@ -1242,8 +1268,6 @@
 
                     </div>
 
-                    <!-- diluar approval -->
-
                 </div>
 
             </div>
@@ -1255,7 +1279,3 @@
     <Footer />
 
 </template>
-
-<style scoped>
-
-</style>
