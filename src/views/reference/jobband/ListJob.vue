@@ -79,6 +79,7 @@ const callEditApi = async () => {
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
+let responseStatus = null;
 let instanceArray = [];
 let selectedCompany = ref("Company");
 
@@ -101,6 +102,7 @@ const filterDataByCompany = async () => {
   const api = await Api.get(`/job_band?filter=${selectedCompany.value}`);
   instanceArray = api.data.data;
   sortedData.value = instanceArray;
+  responseStatus = api.status;
   onChangePage(1);
 };
 
@@ -505,7 +507,11 @@ watch(addFlightClassData, () => {
           </tableData>
 
           <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+            v-else-if="
+              sortedData.length == 0 &&
+              instanceArray.length == 0 &&
+              responseStatus == 404
+            "
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
