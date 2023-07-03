@@ -77,6 +77,7 @@ const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let isFilter = false;
 let selectedCompany = ref("Company");
 let Company = ref("");
 let sortedDataReactive = computed(() => sortedData.value);
@@ -94,10 +95,11 @@ const onChangePage = (pageOfItem) => {
 };
 
 const filterDataByCompany = () => {
+  isFilter = true;
   if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
+    sortedData.value = instanceArray.value;
   } else {
-    sortedData.value = instanceArray.filter(
+    sortedData.value = instanceArray.value.filter(
       (item) => item.id_company === selectedCompany.value
     );
   }
@@ -159,7 +161,8 @@ const sortList = (sortBy) => {
 };
 
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
+  isFilter = true;
+  sortedData.value = instanceArray.value;
   const filteredR = sortedData.value.filter((item) => {
     (item.brand_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
@@ -185,6 +188,7 @@ onBeforeMount(() => {
 });
 
 const fetchBrand = () => {
+  instanceArray = [];
   fetchBrandUtils(instanceArray, sortedData);
 };
 
@@ -284,7 +288,7 @@ watch(addSiteByCompanyData, () => {
 });
 
 watch(baitArray, () => {
-  instanceArray = baitArray.value;
+  instanceArray.value = baitArray.value;
 });
 </script>
 
@@ -503,7 +507,11 @@ watch(baitArray, () => {
           </tableData>
 
           <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+            v-else-if="
+              sortedData.length == 0 &&
+              instanceArray.length == 0 &&
+              isFilter == false
+            "
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
