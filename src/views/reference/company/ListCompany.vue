@@ -8,12 +8,13 @@ import ModalView from "@/components/reference/company/ModalView.vue";
 import ModalAddGrupCompany from "@/components/reference/company/GroupCompany/ModalAddGrupCompany.vue";
 import ModalEditGrupCompany from "@/components/reference/company/GroupCompany/ModalEditGrupCompany.vue";
 
-import fetchVendorUtils from "@/utils/Fetch/Reference/fetchVendorFlightTrip";
-import fetchGrupCompanyUtils from "@/utils/Fetch/Reference/fetchGrupCompany";
-
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
+
+import fetchVendorUtils from "@/utils/Fetch/Reference/fetchVendorFlightTrip";
+import fetchGrupCompanyUtils from "@/utils/Fetch/Reference/fetchGrupCompany";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
@@ -665,6 +666,44 @@ const callEditApiGroupCompany = async () => {
               </tbody>
             </tableData>
 
+            <tableData
+              v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+            >
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="checked"
+                        @click="selectAll((checkList = !checkList))"
+                      />
+                    </div>
+                  </th>
+
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                      <button v-if="data.jsonData" class="ml-2">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <SkeletonLoadingTable :column="6" :row="5" />
+            </tableData>
+
             <div v-else>
               <tableData>
                 <thead
@@ -891,6 +930,47 @@ const callEditApiGroupCompany = async () => {
               </tbody>
             </tableData>
 
+            <tableData
+              v-else-if="
+                sortedDataGroupCompany.length == 0 &&
+                instanceArrayGroupCompany.length == 0
+              "
+            >
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="checked"
+                        @click="selectAll((checkList = !checkList))"
+                      />
+                    </div>
+                  </th>
+
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                      <button v-if="data.jsonData" class="ml-2">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <SkeletonLoadingTable :column="6" :row="5" />
+            </tableData>
+
             <div v-else>
               <tableData>
                 <thead
@@ -1012,7 +1092,7 @@ tr th {
 
 .readmore-text {
   display: inline-block;
-  max-width: 200px; /* Atur sesuai kebutuhan */
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

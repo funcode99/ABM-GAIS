@@ -538,7 +538,7 @@ tr th {
 
 .readmore-text {
   display: inline-block;
-  max-width: 200px; /* Atur sesuai kebutuhan */
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
