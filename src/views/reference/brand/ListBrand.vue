@@ -8,6 +8,7 @@ import ModalEdit from "@/components/reference/brand/ModalEdit.vue";
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import fetchBrandUtils from "@/utils/Fetch/Reference/fetchBrand";
 import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
@@ -42,14 +43,11 @@ const menuAccessStore = useMenuAccessStore();
 
 let editBrandDataId = ref();
 
-//for edit
 const editBrand = async (data) => {
   editBrandDataId.value = data;
   setTimeout(callEditApi, 500);
-  // console.log("ini data id:" + data);
 };
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Brand Name", jsonData: "brand_name" },
@@ -57,7 +55,6 @@ const tableHead = [
   { Id: 4, title: "Actions" },
 ];
 
-//for edit
 const callEditApi = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -76,7 +73,6 @@ const callEditApi = async () => {
   fetchBrand();
 };
 
-//for sort, search, & filter
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
@@ -87,19 +83,16 @@ let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
 let checkList = false;
 
-//for paginations & showing
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
-//for filter & reset button
 const filterDataByCompany = () => {
   if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
@@ -111,14 +104,11 @@ const filterDataByCompany = () => {
   onChangePage(1);
 };
 
-//for filter & reset button
 const resetData = () => {
-  // sortedData.value = instanceArray;
   fetchBrand();
   selectedCompany.value = "Company";
 };
 
-//for check & uncheck all
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
   const btnDelete = document.getElementById("btnDelete");
@@ -144,13 +134,11 @@ const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
-      // Lakukan tindakan penghapusan data yang sesuai di sini
       const row = check[i].parentNode.parentNode;
       row.parentNode.removeChild(row);
     }
   }
 
-  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
   const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
@@ -160,7 +148,6 @@ const deleteDataInCeklis = () => {
   }
 };
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -171,7 +158,6 @@ const sortList = (sortBy) => {
   }
 };
 
-//for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
@@ -202,7 +188,6 @@ const fetchBrand = () => {
   fetchBrandUtils(instanceArray, sortedData);
 };
 
-//delete brand
 const deleteBrand = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -245,7 +230,6 @@ const deleteBrand = async (id) => {
   });
 };
 
-//for export
 const exportToExcel = () => {
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet("Brand Data");
@@ -257,12 +241,10 @@ const exportToExcel = () => {
     { title: "Company" },
   ];
 
-  // Menambahkan header kolom
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  // Menambahkan data ke baris-baris selanjutnya
   sortedDataReactive.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
@@ -270,7 +252,6 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 4).value = data.company_name;
   });
 
-  // Menyimpan workbook menjadi file Excel
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -521,52 +502,84 @@ watch(baitArray, () => {
             </tbody>
           </tableData>
 
-          <div v-else>
-            <tableData>
-              <thead
-                class="text-center font-JakartaSans text-sm font-bold h-10"
-              >
-                <tr>
-                  <th>
-                    <div class="flex justify-center">
-                      <input
-                        type="checkbox"
-                        name="checked"
-                        @click="selectAll((checkList = !checkList))"
-                      />
-                    </div>
-                  </th>
+          <tableData
+            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
 
-                  <th
-                    v-for="data in tableHead"
-                    :key="data.Id"
-                    class="overflow-x-hidden cursor-pointer"
-                    @click="sortList(`${data.jsonData}`)"
-                  >
-                    <div class="flex justify-center items-center">
-                      <p class="font-JakartaSans font-bold text-sm">
-                        {{ data.title }}
-                      </p>
-                      <button v-if="data.jsonData" class="ml-2">
-                        <img :src="arrowicon" class="w-[9px] h-3" />
-                      </button>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
+                >
+                  <div class="flex justify-center items-center">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
 
-              <tbody>
-                <tr>
-                  <td
-                    colspan="5"
-                    class="text-center font-JakartaSans text-base font-medium"
-                  >
-                    Data not Found
-                  </td>
-                </tr>
-              </tbody>
-            </tableData>
-          </div>
+            <SkeletonLoadingTable :column="5" :row="5" />
+          </tableData>
+
+          <tableData v-else>
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
+
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
+                >
+                  <div class="flex justify-center items-center">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td
+                  colspan="5"
+                  class="text-center font-JakartaSans text-base font-medium"
+                >
+                  Data not Found
+                </td>
+              </tr>
+            </tbody>
+          </tableData>
 
           <!-- PAGINATION -->
           <div
@@ -624,7 +637,7 @@ tr th {
 
 .readmore-text {
   display: inline-block;
-  max-width: 200px; /* Atur sesuai kebutuhan */
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;

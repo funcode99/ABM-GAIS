@@ -10,6 +10,10 @@ const router = useRouter()
 const notesName = ref("")
 let item = ref([])
 const id = router.currentRoute.value.params.id
+const itemName = ref("")
+const uomName = ref("")
+const quantity = ref("")
+const qtyAwal = ref("")
 
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -18,22 +22,35 @@ const fetchDetailById = async (id) => {
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    item.value.push({
-      id : element.id,
-      qty: element.qty,
-    })
+    itemName.value = element.item_name
+    uomName.value = element.uom_name
+    qtyAwal.value = element.qty
+    quantity.value = element.qty
   }
-
-  return item
   
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const submit = async () => {
+  if(quantity.value > qtyAwal.value){
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: 'Input Quantity tidak boleh lebih dari stock management item',
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false
+  }else{
+    item.value.push({
+      id : router.currentRoute.value.params.id,
+      qty: quantity.value,
+    })
+   
   const token = JSON.parse(localStorage.getItem("token"));
   const payload = {
     notes : notesName.value,
-    array_detail : item.value
+    array_detail : item.value,
   }
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.post(`/approval_request_atk/approve/${router.currentRoute.value.params.id}`,payload);
@@ -48,7 +65,7 @@ const submit = async () => {
     router.push({path: '/approvalatkrrequest'})
   // console.log(res.data.data)
   
-  
+  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 onBeforeMount(() => {
@@ -87,45 +104,44 @@ onBeforeMount(() => {
           Are you sure want to approve this document?
         </p>
         <form class="pt-4">
-          <!-- <div class="flex flex-wrap justify-start gap-2">
+          <div class="flex flex-wrap justify-start gap-2">
             <div class="form-control">
-              <label class="label cursor-pointer gap-4">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                Item </label>
                 <input
-                  type="radio"
-                  name="radio-10"
-                  class="radio checked:bg-blue"
-                  checked
+                  type="text"
+                  v-model="itemName"
+                  disabled="true"
+                  style="background-color: 	#D3D3D3;"
+                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 />
-                <span class="font-JakartaSans font-medium text-xs"
-                  >Approval On Behave</span
-                >
-              </label>
             </div>
-            <select
-              class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              required
-            >
-              <option disabled selected>Name</option>
-              <option>Name A</option>
-              <option>Name B</option>
-            </select>
+            <div class="form-control">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                UOM </label>
+                <input
+                  type="text"
+                  v-model="uomName"
+                  disabled="true"
+                  style="background-color: 	#D3D3D3;"
+                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                />
+            </div>
           </div>
 
           <div class="flex flex-wrap justify-start">
             <div class="form-control">
-              <label class="label cursor-pointer gap-4">
+              <label class="block mt-2 font-JakartaSans font-medium text-sm">
+                Quantity </label>
                 <input
-                  type="radio"
-                  name="radio-10"
-                  class="radio checked:bg-green"
-                  checked
+                  type="text"
+                  v-model="quantity"
+                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  required
                 />
-                <span class="font-JakartaSans font-medium text-xs"
-                  >Fully Approve</span
-                >
-              </label>
+              
             </div>
-          </div> -->
+          </div>
 
           <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
           <textarea

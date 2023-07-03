@@ -8,6 +8,7 @@ import ModalEdit from "@/components/reference/jobband/ModalEdit.vue";
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
 import fetchFlightClassUtils from "@/utils/Fetch/Reference/fetchFlightClass";
@@ -78,6 +79,7 @@ const callEditApi = async () => {
 const search = ref("");
 let sortedData = ref([]);
 let sortedbyASC = true;
+let responseStatus = null;
 let instanceArray = [];
 let selectedCompany = ref("Company");
 
@@ -94,13 +96,13 @@ const onChangePage = (pageOfItem) => {
   showingValue.value = pageOfItem;
 };
 
-//for filter & reset button
 const filterDataByCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const api = await Api.get(`/job_band?filter=${selectedCompany.value}`);
   instanceArray = api.data.data;
   sortedData.value = instanceArray;
+  responseStatus = api.status;
   onChangePage(1);
 };
 
@@ -502,6 +504,46 @@ watch(addFlightClassData, () => {
                 </td>
               </tr>
             </tbody>
+          </tableData>
+
+          <tableData
+            v-else-if="
+              sortedData.length == 0 &&
+              instanceArray.length == 0 &&
+              responseStatus == 404
+            "
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
+
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
+                >
+                  <div class="flex justify-center items-center">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <SkeletonLoadingTable :column="6" :row="5" />
           </tableData>
 
           <div v-else>
