@@ -15,6 +15,8 @@
     import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
     import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
 
+    import guestAsTravellerFormView from '@/components/request-trip/view-detail-form/guest-as-traveller-view.vue'
+
     import arrow from '@/assets/request-trip-view-arrow.png'
 
     import { useSidebarStore } from "@/stores/sidebar.js"

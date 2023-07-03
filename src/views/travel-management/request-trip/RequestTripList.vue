@@ -259,8 +259,6 @@
                 <!-- DATE -->
                 <div>
 
-                  {{ date }}
-
                   <p class="capitalize font-Fira text-xs text-black font-medium">
                     Date
                   </p>
