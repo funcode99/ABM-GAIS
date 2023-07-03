@@ -104,6 +104,20 @@
         {id: 7, title: 'Actions'}
     ]
 
+    watch(props, () => {
+        traveller.value = ''
+        nominal.value = ''
+        frequency.value = ''
+        item.value = 1
+        total.value = 0
+        remarks.value = ''
+        remarksNotes.value = ''
+        caId.value = 0
+        currency.value = [0, '']
+        grandTotal.value = 0
+        variableTotal.value = [frequency.value, nominal.value]
+    })
+
     const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const rowClassNotes = 'flex justify-between mx-4 items-start gap-3 my-3'
@@ -178,13 +192,6 @@
 
                     <div class="mx-4">
                         <h1>Details Item</h1>
-                        <h1>
-                            <!-- {{ currency }} -->
-                            <!-- {{ arrayDetail }}    -->
-                        </h1>
-                        <h1>
-                            <!-- {{ arrayDetailForm }} -->
-                        </h1>
                         <hr class="border border-black" />
                     </div>
 

@@ -68,6 +68,19 @@
         flightClassGuestAsATraveller.value = employeeLoginData.value[0].flight_class
     })
 
+    watch(props, () => {
+        console.log('isi props visibility berubah')
+        typeOfTraveller.value = ''
+        department.value = ''
+        name.value = ''
+        company.value = ''
+        gender.value = ''
+        hotelFare.value = ''
+        NIK.value = ''
+        contactNumber.value = ''
+        notesGuestAsTraveller.value = ''
+    })
+
     const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'

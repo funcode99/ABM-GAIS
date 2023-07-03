@@ -12,8 +12,8 @@
         isOpen: Boolean        
     })
 
-    let emits = defineEmits(['fetchOtherTransportation', 'changeVisibility'])
-
+    const emits = defineEmits(['fetchOtherTransportation', 'changeVisibility'])
+    
     const fetchTypeOfTransportation = async () => {
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -58,6 +58,15 @@
 
     watch(employeeLoginData, () => {
         traveller.value = employeeLoginData.value[0].employee_name
+    })
+
+    watch(props, () => {
+         city.value = ''
+         typeOfTransportation.value = ''
+         quantity.value = ''
+         fromDate.value = ''
+         toDate.value = ''
+         remarks.value = ''
     })
 
     const modalPaddingHeight = '15vh'

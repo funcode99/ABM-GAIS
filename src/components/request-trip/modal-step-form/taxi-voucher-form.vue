@@ -56,6 +56,16 @@
         name.value = employeeLoginData.value[0].employee_name
     })
 
+    watch(props, () => {
+        date.value = ''
+        departure.value = ''
+        arrival.value = ''
+        amount.value = ''
+        remarks.value = ''
+        accountName.value = ''
+        voucherCode.value = ''
+    })
+
     let modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'

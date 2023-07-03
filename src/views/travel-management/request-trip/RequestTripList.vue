@@ -190,6 +190,10 @@
       onChangePage(1)
     }
 
+    const assignRequestTripId = (tripId) => {
+      localStorage.setItem('tripIdView', tripId)
+    }
+
 </script>
 
 <template>
@@ -244,10 +248,7 @@
                     Purpose of Trip
                   </p>
   
-                  <select
-                    v-model="requestTripType"
-                    class="font-JakartaSans capitalize block bg-white w-[200px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  >
+                  <select v-model="requestTripType" class="font-JakartaSans capitalize block bg-white w-[200px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm">
                     <option value="">All Purpose</option>
                     <option v-for="data in documentCodeData" :key="data.id" :value="data.id">
                       {{ data.document_name }}
@@ -257,8 +258,6 @@
   
                 <!-- DATE -->
                 <div>
-
-                  {{ date }}
 
                   <p class="capitalize font-Fira text-xs text-black font-medium">
                     Date
@@ -416,9 +415,11 @@
                     <td>{{ data.document_name }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <button>
-                        <img :src="editicon" class="w-6 h-6" />
-                      </button>
+                      <router-link to="/request-view" @click="assignRequestTripId(data.id)">
+                        <button>
+                          <img :src="editicon" class="w-6 h-6" />
+                        </button>
+                      </router-link>
                       <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
