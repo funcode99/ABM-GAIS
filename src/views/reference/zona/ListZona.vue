@@ -98,6 +98,7 @@ const filterDataByCompany = async () => {
 };
 
 const resetData = () => {
+  responseStatus = null;
   fetchZona();
   selectedCompany.value = "Company";
 };
@@ -159,7 +160,8 @@ const sortList = (sortBy) => {
 };
 
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
+  responseStatus = null;
+  sortedData.value = instanceArray.value;
   const filteredR = sortedData.value.filter((item) => {
     (item.company_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
@@ -414,7 +416,7 @@ watch(baitArray, () => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0">
+          <tableData v-if="sortedData.length > 0 && responseStatus == null">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
                 <th>
