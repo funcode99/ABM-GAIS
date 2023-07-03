@@ -3,6 +3,8 @@
 
     const props = inject('otherTransportationDataView')
 
+    console.log(props.value)
+
     let name = ref()
     let city = ref()
     let transportationType = ref()
@@ -11,17 +13,15 @@
     let remarks = ref()
     let toDate = ref()
 
-    watch(props, () => {
-      
+    if(props.value[0].city_name !== undefined) {
       name.value = localStorage.getItem('username')
-      city.value = props.value[0]
-      transportationType.value = props.value[0]
-      quantity.value = props.value[0]
-      fromDate.value = props.value[0]
-      remarks.value = props.value[0]
-      toDate.value = props.value[0]
-
-    })
+      city.value = props.value[0].city_name
+      transportationType.value = props.value[0].type_transportation
+      quantity.value = props.value[0].qty
+      fromDate.value = props.value[0].from_date
+      remarks.value = props.value[0].remarks
+      toDate.value = props.value[0].to_date
+    }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -47,6 +47,7 @@
                 </label>
 
                 <input 
+                  v-model="name"
                   type="text"
                   :class="inputStylingClass"
                   placeholder="Name"
@@ -66,7 +67,7 @@
               City<span class="text-red-star">*</span>
             </label>
 
-            <input type="text" :class="inputStylingClass" placeholder="City" required />
+            <input v-model="city" type="text" :class="inputStylingClass" placeholder="City" required />
 
           </div>
 
@@ -84,7 +85,7 @@
                 Type of Transportation<span class="text-red-star">*</span>
               </label>
 
-              <input type="text" :class="inputStylingClass" placeholder="Type" required />
+              <input v-model="transportationType" type="text" :class="inputStylingClass" placeholder="Type" required />
 
             </div>
         </div>
@@ -97,7 +98,7 @@
               Quantity<span class="text-red-star">*</span>
             </label>
 
-            <input type="text" placeholder="Quantity" :class=inputStylingClass required>
+            <input v-model="quantity" type="text" placeholder="Quantity" :class=inputStylingClass required>
           
           </div>
         </div>
@@ -106,6 +107,7 @@
   
       <div :class="rowClass">
   
+        <!-- From Date -->
         <div :class="columnClass">
           <div class="w-full">
             
@@ -113,19 +115,20 @@
               From Date<span class="text-red-star">*</span>
             </label>
 
-            <input type="date" :class="inputStylingClass" placeholder="From Date" required />  
+            <input v-model="fromDate" type="date" :class="inputStylingClass" placeholder="From Date" required />  
 
           </div>
         </div>
   
+        <!-- Remarks -->
         <div :class="columnClass">
           <div class="w-full">
 
             <label class="block mb-2 font-JakartaSans font-medium text-sm">
               Remarks<span class="text-red-star">*</span>
             </label>
-                                
-            <input type="text" placeholder="Remarks" :class=inputStylingClass required>
+
+            <textarea v-model="remarks" placeholder="Remarks" :class="inputStylingClass" required></textarea>
 
           </div>
         </div>
@@ -134,12 +137,13 @@
   
       <div :class="rowClass">
   
+        <!-- To Date -->
         <div :class="columnClass">
           <div class="w-full">
             <label :class="labelStylingClass">
               To Date<span class="text-red-star">*</span>
             </label>
-            <input type="date" :class="inputStylingClass" placeholder="To Date" required />
+            <input v-model="toDate" type="date" :class="inputStylingClass" placeholder="To Date" required />
           </div>
         </div>
   

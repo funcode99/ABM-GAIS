@@ -25,6 +25,18 @@
         maxHotelFare.value = props.value[0].hotel_fare
     })
 
+    if(props.value[0].name_guest !== undefined) {
+        name.value = props.value[0].name_guest
+        department.value = props.value[0].departement
+        flightClass.value = props.value[0].flight_class
+        sn.value = props.value[0]
+        company.value = props.value[0].company
+        gender.value = props.value[0].gender
+        type.value = props.value[0].type_traveller
+        contactNo.value = props.value[0].contact_no
+        maxHotelFare.value = props.value[0].hotel_fare
+    }
+
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'

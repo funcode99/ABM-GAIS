@@ -1,4 +1,5 @@
 <script setup>
+    import { inject, ref } from 'vue'
     import stepLine from '@/assets/step-line.png'
     import profileImage from '@/assets/profile.png'
 
@@ -8,7 +9,8 @@
         selectedTitle: String,
         limit: Number,
         image: String,
-        stop: Boolean
+        stop: Boolean,
+        data: String
     })
 
     const emits = defineEmits('changeHeader')
@@ -59,7 +61,7 @@
                         <img :src="profileImage" class="w-3 h-3" />
                     </div>
                     <div>
-                        <h1 class="text-sm">Rayhan (Atasan) was approved your document</h1>
+                        <h1 class="text-sm">{{ props.data }}</h1>
                         <h1 class="text-[#8c8c8c] text-xs">Selasa, 12 April 2023</h1>
                         <h1 class="text-[#8c8c8c] text-xs">08:30:25 AM</h1>
                     </div>

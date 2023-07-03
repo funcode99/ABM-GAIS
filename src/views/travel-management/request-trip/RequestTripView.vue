@@ -41,6 +41,7 @@
     let otherTransportationData = ref([{}])
     let accomodationData = ref([{}])
     let cashAdvanceData = ref([{}])
+    let approvalStatusData = ref([{}])
 
     provide('travellerDataView', travellerGuestData)
     provide('airlinesDataView', airlinesData)
@@ -127,11 +128,23 @@
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)      
+        let api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)    
         cashAdvanceData.value = api.data.data
       } catch (error) {
         console.log(error)
         cashAdvanceData.value = [{}]
+      }
+    }
+
+    const getApprovalStatus = async () => {
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        let api = await Api.get(`/request_trip/get_history_approval/${localStorage.getItem('tripIdView')}`)    
+        approvalStatusData.value = api.data.data
+      } catch (error) {
+        console.log(error)
+        approvalStatusData.value = [{}]
       }
     }
 
@@ -144,6 +157,7 @@
       getOtherTransportation()
       getAccomodation()
       getCashAdvance()
+      getApprovalStatus()
 
     })
 
@@ -176,7 +190,7 @@
             <!-- {{  travellerGuestData }} -->
             <!-- {{ airlinesData }} -->
             <!-- {{ taxiVoucherData }} -->
-            <!-- {{ otherTransportationData }} -->
+            {{ otherTransportationData }}
             <!-- {{ accomodationData }} -->
             <!-- {{ cashAdvanceData }} -->
 
@@ -355,14 +369,7 @@
 
                       <div class="py-12 px-4">
 
-                        <!-- harus refresh page dulu baru props nya masuk -->
-                        <multiStepCircleVertical :image="userImg" formType="traveller"  />
-                        <multiStepCircleVertical :image="userImg" formType="airlines" />
-                        <multiStepCircleVertical :image="userImg" formType="taxi-voucher" />
-                        <multiStepCircleVertical :image="userImg" formType="other-transportation" />
-                        <multiStepCircleVertical :image="userImg" formType="accomodation" />
-                        <!-- closeBar isi nya true -->
-                        <multiStepCircleVertical :image="userImg" formType="cash-advance" :stop="closeBar" />
+                        <multiStepCircleVertical :image="userImg" v-for="(data, index) in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? closeBar : false" />
 
                       </div>
 
