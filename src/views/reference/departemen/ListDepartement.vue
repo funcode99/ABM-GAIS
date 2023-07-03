@@ -8,6 +8,7 @@ import ModalEdit from "@/components/reference/departement/ModalEdit.vue";
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
@@ -18,7 +19,6 @@ import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 
 import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany.js";
-// import fetchDepartmentUtils from "@/utils/Fetch/Reference/fetchDepartment.js";
 import fetchAllEmployeeUtils from "@/utils/Fetch/Reference/fetchAllEmployee.js";
 import fetchGLAccountUtils from "@/utils/Fetch/Reference/fetchGLAccount";
 
@@ -41,7 +41,6 @@ let sortedData = ref([]);
 let addEmployeeData = ref([]);
 let addGLAccountData = ref([]);
 
-//for sort & search
 const search = ref("");
 const selectedCompany = ref("Company");
 let sortedbyASC = true;
@@ -49,7 +48,6 @@ let instanceArray = [];
 const showFullText = ref({});
 let checkList = false;
 
-//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
@@ -57,23 +55,19 @@ let paginateIndex = ref(0);
 
 let editDepartementDataid = ref();
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Name", jsonData: "departement_name" },
-  // { Id: 3, title: "Cost Center", jsonData: "cost_center" },
   { Id: 3, title: "Status", jsonData: "status_name" },
   { Id: 4, title: "Departement Head", jsonData: "departement_head" },
   { Id: 5, title: "Actions" },
 ];
 
-//for edit
 const editDepartement = async (data) => {
   editDepartementDataid.value = data;
   setTimeout(callEditApi, 500);
 };
 
-//for edit
 const callEditApi = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
 
@@ -101,13 +95,11 @@ const callEditApi = async () => {
   fetchDepartement();
 };
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
-//for filter & reset button
 const filterDataByCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -117,13 +109,11 @@ const filterDataByCompany = async () => {
   onChangePage(1);
 };
 
-//for filter & reset button
 const resetData = () => {
   fetchDepartement();
   selectedCompany.value = "Company";
 };
 
-//for check & uncheck all
 const selectAll = (checkValue) => {
   const check = document.getElementsByName("checks");
   const btnDelete = document.getElementById("btnDelete");
@@ -149,13 +139,11 @@ const deleteDataInCeklis = () => {
   const check = document.getElementsByName("checks");
   for (let i = 0; i < check.length; i++) {
     if (check[i].type === "checkbox" && check[i].checked) {
-      // Lakukan tindakan penghapusan data yang sesuai di sini
       const row = check[i].parentNode.parentNode;
       row.parentNode.removeChild(row);
     }
   }
 
-  // Setelah penghapusan, sembunyikan kembali button hapus jika tidak ada checkbox yang terceklis
   const btnDelete = document.getElementById("btnDelete");
   const checkedCheckboxes = document.querySelectorAll(
     'input[name="checks"]:checked'
@@ -165,7 +153,6 @@ const deleteDataInCeklis = () => {
   }
 };
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -176,7 +163,6 @@ const sortList = (sortBy) => {
   }
 };
 
-//for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
@@ -198,7 +184,6 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-//delete departement
 const deleteDepartement = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -241,7 +226,6 @@ const deleteDepartement = async (id) => {
   });
 };
 
-//for export
 const exportToExcel = () => {
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet("Departement Data");
@@ -250,26 +234,21 @@ const exportToExcel = () => {
     { title: "Nomor" },
     { title: "ID" },
     { title: "Name" },
-    // { title: "Cost Center" },
     { title: "Status" },
     { title: "Departement Head" },
   ];
 
-  // Menambahkan header kolom
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  // Menambahkan data ke baris-baris selanjutnya
   sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.departement_name;
-    // worksheet.getCell(rowIndex + 2, 4).value = data.cost_center;
     worksheet.getCell(rowIndex + 2, 4).value = data.departement_head_name;
   });
 
-  // Menyimpan workbook menjadi file Excel
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -297,7 +276,6 @@ const fetchDepartement = async () => {
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  // fetchDepartmentUtils(instanceArray, sortedData)
   fetchCompanyUtils(instanceArray, Company);
   fetchAllEmployeeUtils(instanceArray, addEmployeeData);
   fetchGLAccountUtils(addGLAccountData);
@@ -525,6 +503,42 @@ watch(addGLAccountData, () => {
             </tbody>
           </tableData>
 
+          <tableData
+            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
+
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
+                >
+                  <div class="flex justify-center items-center">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <SkeletonLoadingTable :column="6" :row="5" />
+          </tableData>
+
           <div v-else>
             <tableData>
               <thead
@@ -628,7 +642,7 @@ tr th {
 
 .readmore-text {
   display: inline-block;
-  max-width: 200px; /* Atur sesuai kebutuhan */
+  max-width: 200px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -637,7 +651,6 @@ tr th {
 
 .readmore-text:hover {
   max-width: 400px;
-  /* max-width: 100%; */
   white-space: nowrap;
   word-break: break-word;
 }
