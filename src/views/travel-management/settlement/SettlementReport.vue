@@ -1,26 +1,20 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
 
-import TableTopBar from '@/components/layout/TableTopBar.vue'
-import ModalAddSettlement from '@/components/travel-management/settlement/ModalAddSettlement.vue'
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
 
-import icon_receive from "@/assets/icon-receive.svg"
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import editicon from "@/assets/navbar/edit_icon.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icon_receive from "@/assets/icon-receive.svg";
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import settlementdata from "@/utils/Api/tms-settlement/settlementdata.js"
-import Api from '@/utils/Api'
+import { ref, onBeforeMount, computed } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js";
+const sidebar = useSidebarStore();
 
-import { ref, onBeforeMount, computed } from "vue"
-import { useSidebarStore } from "@/stores/sidebar.js"
-const sidebar = useSidebarStore()
-
-//for sort, search, & filter
 const selectedStatus = ref("Status");
 const selectedCatype = ref("Type");
 const date = ref();
@@ -30,19 +24,16 @@ let sortedbyASC = true;
 let instanceArray = [];
 let lengthCounter = 0;
 
-//for paginations & showing
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
-//for check & uncheck all
 const selectAll = (checkValue) => {
   const checkList = checkValue;
   if (checkList == true) {
@@ -58,85 +49,34 @@ const selectAll = (checkValue) => {
   }
 };
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
   { Id: 3, title: "Settlement No", jsonData: "settlement_no" },
   { Id: 4, title: "Requestor", jsonData: "requestor" },
-  { Id: 5, title: "CA", jsonData: "ca" },
-  { Id: 6, title: "Total", jsonData: "total" },
-  { Id: 7, title: "Status", jsonData: "status" }
+  { Id: 5, title: "CA No", jsonData: "ca" },
+  { Id: 6, title: "Nominal Real", jsonData: "total" },
+  { Id: 7, title: "Status", jsonData: "status" },
 ];
 
-//for sort
-const sortList = (sortBy) => {
-  if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
-    sortedbyASC = false
-  } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
-    sortedbyASC = true
-  }
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-
-//for searching
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.settlement_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.settlement_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1)
-}
-
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
-}
-
-
-const fetch = async () => {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const api = await Api.get('/settlement')      
-      instanceArray = api.data.data
-      sortedData.value = instanceArray
-      lengthCounter = sortedData.value.length
-}
-
 onBeforeMount(() => {
-  fetch()
   getSessionForSidebar();
 });
-
 </script>
 
 <template>
-
-  <div class="flex flex-col w-full h-[100vh] this">
-
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
-    <div class="flex w-screen h-full mt-[115px]">
-  
+    <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
-      <div class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          
+      <tableContainer>
+        <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
@@ -146,58 +86,66 @@ onBeforeMount(() => {
             >
               Settlement Reports
             </p>
-            <div class="flex gap-4">
-              <ModalAddSettlement />
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-              >
-                <img :src="icon_receive" class="w-6 h-6" />
-              </button>
-            </div>
           </div>
 
           <!-- SORT, DATE & SEARCH -->
-          <div class="flex gap-2 px-4 pb-2 justify-between">
-
-            <div class="flex gap-6">
-
-              <div class="flex flex-col">
-                <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+          <div class="flex items-center mx-4">
+            <label for="simple-search" class="sr-only">Search</label>
+            <div class="relative w-full">
+              <div
+                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+              >
+                <svg
+                  aria-hidden="true"
+                  class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  Status
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedStatus"
-                >
-                  <option disabled selected>Status</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.status }}
-                  </option>
-                </select>
+                  <path
+                    fill-rule="evenodd"
+                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
               </div>
+              <input
+                type="text"
+                id="simple-search"
+                class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Search"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="w-36 p-2.5 ml-2 text-sm rounded-lg font-medium text-white text-sm font-JakartaSans font-bold capitalize border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+            >
+              Search
+            </button>
+          </div>
 
-              <div class="flex flex-col">
+          <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
+            <div class="flex gap-6">
+              <div class="flex flex-col pt-[2px]">
                 <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
                   CA Type
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-24 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCatype"
                 >
                   <option disabled selected>Type</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.ca_type }}
-                  </option>
+                  <option>Travel</option>
+                  <option>Non Travel</option>
                 </select>
               </div>
 
-              <div class="flex flex-col mb-[14px]">
+              <div class="flex flex-col">
                 <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium"
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
                   Date
                 </p>
@@ -209,8 +157,23 @@ onBeforeMount(() => {
                 />
               </div>
 
+              <div class="flex flex-col pt-[3px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Status
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedStatus"
+                >
+                  <option disabled selected>Status</option>
+                  <option>Active</option>
+                  <option>Non Active</option>
+                </select>
+              </div>
 
-              <div class="flex gap-4 items-center">
+              <div class="flex gap-4 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                 >
@@ -228,43 +191,19 @@ onBeforeMount(() => {
                   Reset
                 </button>
               </div>
-
             </div>
 
-            <div class="flex py-2">
-              <label class="relative block">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </span>
-                <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
-                  type="text"
-                  name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
-                />
-              </label>
+            <div class="flex items-center pt-4">
+              <button
+                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+              >
+                <img :src="icon_receive" class="w-6 h-6" />
+              </button>
             </div>
-
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-2 pb-4 px-4 h-4">
+          <div class="flex items-center gap-1 py-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
@@ -329,13 +268,12 @@ onBeforeMount(() => {
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ index + 1 }}</td>
-                    <td>{{ data.created_at.slice(0,10) }}</td>
+                    <td>{{ data.created_at.slice(0, 10) }}</td>
                     <td>{{ data.no_settlement }}</td>
                     <td>{{ data.requestor }}</td>
                     <td>{{ data.no_ca }}</td>
                     <td>{{ data.nominal_ca }}</td>
                     <td>{{ data.code_status }}</td>
-
                   </tr>
                 </tbody>
               </table>
@@ -361,25 +299,15 @@ onBeforeMount(() => {
               :show-jump-buttons="true"
             />
           </div>
+        </tableTop>
+      </tableContainer>
 
-        </div>
-
-      </div>
-
+      <Footer />
     </div>
-    
   </div>
-  
-  <Footer class="fixed bottom-0 left-0 right-0" />
-
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-
 th {
   padding: 2px;
   text-align: left;
@@ -406,7 +334,22 @@ tr th {
   overflow-x: hidden;
 }
 
+.readmore-text {
+  display: inline-block;
+  max-width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 400px;
+  white-space: nowrap;
+  word-break: break-word;
+}
+
 .my-date {
-  width: 220px !important;
+  width: 280px !important;
 }
 </style>
