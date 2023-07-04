@@ -25,7 +25,7 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const listStatus = [
   { id: 1, title: "Available" },
-  { id: 2, title: "Unavailable" },
+  { id: 2, title: "Booked" },
 ];
 let statusForm = ref("add");
 let visibleModal = ref(false);
@@ -48,6 +48,11 @@ let filter = reactive({
   capacity: "",
   search: "",
 });
+
+const id_site = JSON.parse(localStorage.getItem("id_site"));
+const id_company = JSON.parse(localStorage.getItem("id_company"));
+const id_role = JSON.parse(localStorage.getItem("id_role"));
+
 //for paginations
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -115,8 +120,11 @@ const fetch = async (id) => {
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("master_meeting_room/get/", { params: payload });
+  let api = await Api.get(`master_meeting_room/get`, {
+    params: payload,
+  });
   paginationArray = api.data.data;
+
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -141,13 +149,16 @@ const getSessionForSidebar = () => {
 const filterDataByType = async (id) => {
   let payload = {
     search: filter.search,
-    status: filter.status,
+    available_status: filter.status,
     capacity: filter.capacity,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
-  const api = await Api.get("master_meeting_room/get/", { params: payload });
+  let api = await Api.get(`master_meeting_room/get`, {
+    params: payload,
+  });
   paginationArray = api.data.data;
+
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -502,7 +513,16 @@ onBeforeMount(() => {
                     <td>{{ data.code_meeting_room }}</td>
                     <td>{{ data.name_meeting_room }}</td>
                     <td>{{ data.capacity }}</td>
-                    <td>{{ data.available_status }}</td>
+                    <td>
+                      <span
+                        :class="
+                          data.available_status == 'Available'
+                            ? 'status-done'
+                            : 'status-revision'
+                        "
+                        >{{ data.available_status }}</span
+                      >
+                    </td>
                     <td>{{ data.company_code }} - {{ data.company_name }}</td>
                     <td>
                       <div class="flex justify-center items-center gap-2">
@@ -588,5 +608,20 @@ tr th {
 
 .my-date {
   width: 260px !important;
+}
+
+.status-revision {
+  color: #ef3022;
+  font-weight: 800;
+}
+
+.status-default {
+  color: #2970ff;
+  font-weight: 800;
+}
+
+.status-done {
+  color: #00c851;
+  font-weight: 800;
 }
 </style>

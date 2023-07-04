@@ -74,7 +74,9 @@ import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/A
 import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
 import StockOpnameATKView from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKView.vue'
 
-import ManagementMeetingRoomList from '@/views/facility-services/management-meeting-room/ManagementMeetingRoomList.vue'
+import ManagementMeetingRoomList from '@/views/facility-services/meeting-room/ManagementMeetingRoomList.vue'
+import BookingMeetingRoomList from '@/views/facility-services/meeting-room/booking/BookingMeetingRoomList.vue'
+import BookingMeetingRoomView from '@/views/facility-services/meeting-room/booking/BookingMeetingRoomView.vue'
 
 
 //experiment
@@ -1042,7 +1044,7 @@ const router = createRouter({
       name: 'ATK Request',
       component: ATKRequestList,
       meta: {
-        title: 'View Request ATK'
+        title: 'View Stock In ATK'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');
@@ -1106,22 +1108,56 @@ const router = createRouter({
       }
     },
     {
-      path: '/management-meeting-room',
-      name: 'Management Meeting Room',
-      component: ManagementMeetingRoomList,
-      meta: {
-        title: 'Management Meeting Room'
-      },
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('token');
+        path: '/management-meeting-room',
+        name: 'Management Meeting Room',
+        component: ManagementMeetingRoomList,
+        meta: {
+            title: 'Management Meeting Room'
+        },
+        beforeEnter: (to, from, next) => {
+            const token = localStorage.getItem('token');
 
-        if (token) {
-          return next()
+            if (token) {
+            return next()
+            }
+
+            return next('/')
         }
-
-        return next('/')
-      }
     },
+    {
+        path: '/booking-meeting-room',
+        name: 'Booking Meeting Room',
+        component: BookingMeetingRoomList,
+        meta: {
+            title: 'Booking Meeting Room'
+        },
+        beforeEnter: (to, from, next) => {
+            const token = localStorage.getItem('token');
+
+            if (token) {
+            return next()
+            }
+
+            return next('/')
+        }
+    },
+    {
+        path: '/booking-meeting-room/:id',
+        name: 'View Booking Meeting Room',
+        component: BookingMeetingRoomView,
+        meta: {
+            title: 'View Booking Meeting Room'
+        },
+        beforeEnter: (to, from, next) => {
+            const token = localStorage.getItem('token');
+    
+            if (token) {
+            return next()
+            }
+    
+            return next('/')
+        }
+        },
   ]
 })
 
