@@ -299,7 +299,7 @@ watch(addSiteByCompanyData, () => {
 });
 
 watch(baitArray, () => {
-  instanceArray = baitArray.value;
+  instanceArray.value = baitArray.value;
 });
 </script>
 
