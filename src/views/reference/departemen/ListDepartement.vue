@@ -271,6 +271,7 @@ const fetchDepartement = async () => {
     const api = await Api.get("/department/");
     instanceArray = api.data.data;
     sortedData.value = instanceArray;
+    responseStatus = api.status;
   } catch (error) {
     console.log(error);
   }
@@ -509,7 +510,7 @@ watch(addGLAccountData, () => {
             v-else-if="
               sortedData.length == 0 &&
               instanceArray.length == 0 &&
-              responseStatus == 404
+              responseStatus == null
             "
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
