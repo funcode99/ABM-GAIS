@@ -47,6 +47,8 @@ import SettlementReport from '@/views/travel-management/settlement/SettlementRep
 import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
 import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue"
 
+import PoolcarReport from "@/views/travel-management/pool-car/PoolcarReport.vue"
+
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
 import CaTravelView from "@/views/approval/cash-advance-travel/CaTravelView.vue"
@@ -640,22 +642,22 @@ const router = createRouter({
       }
     },
     {
-        path: '/settlement/:id',
-        name: 'View Settlement',
-        component: SettlementView,
-        meta: {
-          title: 'View Settlement'
-        },
-        beforeEnter: (to, from, next) => {
-          const token = localStorage.getItem('token');
-  
-          if (token) {
-            return next()
-          }
-  
-          return next('/')
-        }
+      path: '/settlement/:id',
+      name: 'View Settlement',
+      component: SettlementView,
+      meta: {
+        title: 'View Settlement'
       },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
     {
       path: '/settlement-report',
       name: 'Settlement Reports',
@@ -696,6 +698,24 @@ const router = createRouter({
       component: ClaimReimbursementView,
       meta: {
         title: 'View Claim Reimbursement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+
+    {
+      path: '/poolcar-report',
+      name: 'Pool Car Reports',
+      component: PoolcarReport,
+      meta: {
+        title: 'Settlement Report'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');
@@ -1086,22 +1106,22 @@ const router = createRouter({
       }
     },
     {
-        path: '/management-meeting-room',
-        name: 'Management Meeting Room',
-        component: ManagementMeetingRoomList,
-        meta: {
-          title: 'Management Meeting Room'
-        },
-        beforeEnter: (to, from, next) => {
-          const token = localStorage.getItem('token');
-  
-          if (token) {
-            return next()
-          }
-  
-          return next('/')
-        }
+      path: '/management-meeting-room',
+      name: 'Management Meeting Room',
+      component: ManagementMeetingRoomList,
+      meta: {
+        title: 'Management Meeting Room'
       },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
   ]
 })
 

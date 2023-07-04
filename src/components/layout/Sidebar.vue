@@ -444,7 +444,7 @@ onMounted(() => {
                                 <p class="mr-[70px]">Settlement Report</p>
                               </li>
                             </router-link>
-                            <router-link to="#" class="cursor-pointer">
+                            <router-link to="/poolcar-report" class="cursor-pointer">
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
