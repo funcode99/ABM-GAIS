@@ -188,7 +188,7 @@
                     <div :class="columnClass">
                         <div class="w-full">
                             <label :class="labelStylingClass">
-                                NIK<span class="text-red-star">*</span>
+                                NIK
                             </label>
                             <input type="text" placeholder="NIK" :class="inputStylingClass" v-model="NIK">
                         </div>
