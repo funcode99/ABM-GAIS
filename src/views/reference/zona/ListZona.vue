@@ -487,7 +487,7 @@ watch(baitArray, () => {
             v-else-if="
               sortedData.length == 0 &&
               instanceArray.length == 0 &&
-              responseStatus == 404
+              responseStatus == null
             "
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">

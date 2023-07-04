@@ -194,6 +194,7 @@ const fetchJobBand = async () => {
   const res = await Api.get("/job_band/");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
+  responseStatus = res.status;
 };
 
 const deleteJobBand = async (id) => {
@@ -510,7 +511,7 @@ watch(addFlightClassData, () => {
             v-else-if="
               sortedData.length == 0 &&
               instanceArray.length == 0 &&
-              responseStatus == 404
+              responseStatus == null
             "
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">

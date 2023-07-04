@@ -140,7 +140,7 @@ let minDate = year + "-" + month + "-" + day;
               <label
                 for="date_start"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Begin Date<span class="text-red">*</span></label
+                >Date of Hire<span class="text-red">*</span></label
               >
               <input
                 type="date"
