@@ -13,10 +13,11 @@ const props = defineProps({
 });
 
 const emits = defineEmits(["close"]);
+const id_role = JSON.parse(localStorage.getItem("id_role"));
 
 const listStatus = [
   { id: 1, title: "Available" },
-  { id: 2, title: "Unavailable" },
+  { id: 2, title: "Booked" },
 ];
 
 let listCompany = ref([]);
@@ -35,7 +36,8 @@ let name_meeting_room = ref("");
 let capacity = ref("");
 let itemsId = 0;
 
-let selectSite = ref(true)
+let localIdSite = ref("");
+let selectSite = ref(true);
 
 const rowClass = "flex justify-between px-6 items-center gap-2";
 const colClass = "mb-6 w-full";
@@ -50,12 +52,37 @@ const fetchCompany = async () => {
   listCompany.value = api.data.data;
 };
 
-const fetchSite = async () => {
+const fetchCompanyID = async (id_comp) => {
+  fetchSite(id_comp);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`site/get_by_company/${id_company.value}`);
+  const res = await Api.get(`/company/get/${id_comp}`);
+  listCompany.value = res.data.data;
+  id_company.value = id_comp;
+};
+
+const fetchSite = async (id_comp) => {
+  let idComp = id_comp ? id_comp : id_company.value;
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get(`site/get_by_company/${idComp}`);
   listSite.value = api.data.data;
-  selectSite.value = false
+  selectSite.value = false;
+  for (let index = 0; index < api.data.data.length; index++) {
+    const element = api.data.data[index];
+    if (type.value == "add") {
+      if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
+        id_site.value = element.id;
+      }
+    } else {
+      if (id_site.value === element.id) {
+        id_site.value = element.id;
+      }
+    }
+    if (id_role == "ADM") {
+      listSite.value = listSite.value.filter((e) => e.id === id_site.value);
+    }
+  }
 };
 
 const fetchDataById = async (id) => {
@@ -70,7 +97,7 @@ const fetchDataById = async (id) => {
   name_meeting_room.value = dataArr.value.name_meeting_room;
   available_status.value = dataArr.value.available_status;
   capacity.value = dataArr.value.capacity;
-  fetchSite()
+  fetchSite(id_company.value);
 };
 // END
 
@@ -126,8 +153,13 @@ const save = async (payload) => {
   }
 };
 
+const fetchCondition = async () => {
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company);
+};
+
 onMounted(() => {
-  fetchCompany();
+  fetchCondition();
   if (type.value == "edit" && idItem.value != 0) {
     fetchDataById(idItem.value);
   }
@@ -168,7 +200,12 @@ const close = () => {
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Company<span class="text-red">*</span></label
             >
-            <select v-model="id_company" id="id_company" :class="inputClass" @change="fetchSite">
+            <select
+              v-model="id_company"
+              id="id_company"
+              :class="inputClass"
+              @change="fetchSite()"
+            >
               <option disabled selected>Company</option>
               <option
                 v-for="data in listCompany"
@@ -183,9 +220,18 @@ const close = () => {
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Site<span class="text-red">*</span></label
             >
-            <select v-model="id_site" id="id_site" :class="inputClass" :disabled="selectSite">
+            <select
+              v-model="id_site"
+              id="id_site"
+              :class="inputClass"
+              :disabled="selectSite"
+            >
               <option disabled selected>Site</option>
-              <option v-for="data in listSite" :key="data.id" :value="data.id">
+              <option
+                v-for="data in listSite"
+                :key="data.id"
+                :value="data.id"
+              >
                 {{ data.site_code }} - {{ data.site_name }}
               </option>
             </select>
