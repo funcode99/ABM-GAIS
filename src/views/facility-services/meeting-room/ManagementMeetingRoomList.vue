@@ -83,6 +83,7 @@ const tableHead = [
   { Id: 4, title: "Capacity", jsonData: "capacity" },
   { Id: 5, title: "Available Status", jsonData: "available_status" },
   { Id: 6, title: "Company", jsonData: "company_name" },
+  { Id: 7, title: "Site", jsonData: "site_name" },
 ];
 
 //for sort
@@ -313,7 +314,7 @@ onBeforeMount(() => {
             </p>
             <div class="flex gap-4">
               <div
-                v-if="deleteArray.length > 0"
+                v-if="deleteArray.length > 0 && id_role != 'EMPLY'"
                 class="flex gap-2 items-center"
               >
                 <h1 class="font-semibold">{{ deleteArray.length }} Selected</h1>
@@ -326,6 +327,7 @@ onBeforeMount(() => {
               </div>
 
               <label
+                v-if="id_role != 'EMPLY'"
                 @click="openModal('add', '')"
                 for="my-modal-3"
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
@@ -489,7 +491,7 @@ onBeforeMount(() => {
                         </button>
                       </span>
                     </th>
-                    <th>
+                    <th v-if="id_role != 'EMPLY'">
                       <div class="text-center">Actions</div>
                     </th>
                   </tr>
@@ -524,7 +526,8 @@ onBeforeMount(() => {
                       >
                     </td>
                     <td>{{ data.company_code }} - {{ data.company_name }}</td>
-                    <td>
+                    <td>{{ data.site_name }}</td>
+                    <td v-if="id_role != 'EMPLY'">
                       <div class="flex justify-center items-center gap-2">
                         <label
                           @click="openModal('edit', data.id)"

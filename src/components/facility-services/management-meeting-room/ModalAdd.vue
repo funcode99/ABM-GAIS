@@ -79,9 +79,11 @@ const fetchSite = async (id_comp) => {
         id_site.value = element.id;
       }
     }
-    if (id_role == "ADM") {
-      listSite.value = listSite.value.filter((e) => e.id === id_site.value);
-    }
+  }
+  if (id_role == "ADM") {
+    listSite.value = listSite.value.filter(
+      (e) => e.id == localStorage.getItem("id_site")
+    );
   }
 };
 
@@ -227,11 +229,7 @@ const close = () => {
               :disabled="selectSite"
             >
               <option disabled selected>Site</option>
-              <option
-                v-for="data in listSite"
-                :key="data.id"
-                :value="data.id"
-              >
+              <option v-for="data in listSite" :key="data.id" :value="data.id">
                 {{ data.site_code }} - {{ data.site_name }}
               </option>
             </select>

@@ -206,7 +206,7 @@ const deleteData = async (event) => {
     confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
-      Api.delete(`/master_meeting_room/delete_data/${event}`).then((res) => {
+      Api.delete(`/booking_meeting_room/delete_data/${event}`).then((res) => {
         Swal.fire({
           title: "Successfully",
           text: "Data has been deleted.",
@@ -252,23 +252,23 @@ const deleteCheckedArray = () => {
       let payload = {
         id: deleteArray.value,
       };
-      Api.delete(`/master_meeting_room/delete_data/`, { params: payload }).then(
-        (res) => {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 1500,
-          });
+      Api.delete(`/booking_meeting_room/delete_data/`, {
+        params: payload,
+      }).then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
 
-          if (sortedData.value.length == 1) {
-            router.go();
-          } else {
-            fetch();
-          }
+        if (sortedData.value.length == 1) {
+          router.go();
+        } else {
+          fetch();
         }
-      );
+      });
     } else {
       return;
     }
