@@ -91,9 +91,9 @@
         
           <div :class="columnClass">
             <label :class="labelStylingClass">
-              Frequency<span class="text-red-star">*</span>
+              Days<span class="text-red-star">*</span>
             </label>
-            <input :class="inputStylingClass" placeholder="Frequency" />
+            <input :class="inputStylingClass" placeholder="Days" />
           </div>
           
           <div :class="columnClass">
