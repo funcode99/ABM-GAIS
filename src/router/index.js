@@ -70,6 +70,8 @@ import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/
 import StockInAtkID from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkId.vue"
 import StockOpnameAtkID from "@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameAtkID.vue"
 import ATKRequestList from '@/views/facility-services/atk-supplies/atk-request/ATK-Request.vue'
+import DOCDeliveryList from '@/views/facility-services/document-delivery/DOC-Delivery.vue'
+import DOCDeliveryListID from '@/views/facility-services/document-delivery/DOCDeliveryView.vue'
 import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/ATKRequestView.vue'
 import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
 import StockOpnameATKView from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKView.vue'
@@ -1044,7 +1046,41 @@ const router = createRouter({
       name: 'ATK Request',
       component: ATKRequestList,
       meta: {
-        title: 'View Stock In ATK'
+        title: 'View Request In ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/doc-delivery/:id',
+      name: 'doc-delivery-id',
+      component: DOCDeliveryListID,
+      meta: {
+        title: 'Detail Document Delivery'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/doc-delivery',
+      name: 'Doc-delivery',
+      component: DOCDeliveryList,
+      meta: {
+        title: 'View Document Delivery'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');
