@@ -280,11 +280,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/flight',
-      name: 'flight',
+      path: '/classtransportation',
+      name: 'Class Transportation',
       component: ListFlight,
       meta: {
-        title: "Flight Class",
+        title: "Class Transportation",
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');

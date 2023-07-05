@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 
-import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue"
+import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
 import dashboardIcon from "@/assets/dashboard-icon.png";
 import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png";
@@ -47,15 +47,14 @@ onMounted(() => {
 </script>
 
 <template>
-
   <!-- ga perlu pake class transition kalo mau pake transition di tailwind -->
   <div
     class="mt-[115px] hidden sm:flex sm:flex-col fixed top-0 bottom-0 overflow-y-auto bg-white zInfinite font-JakartaSans this ease-in-out duration-500"
     :class="sidebar.isWide === true ? 'w-[260px]' : 'w-[100px]'"
   >
-
     <!-- grow/shrink sidebar button -->
-    <div class="fixed top-[155px] w-[32px] h-[32px] bg-blue rounded-full sm:flex justify-center items-center hidden cursor-pointer ease-in-out duration-500 z-Infinite"
+    <div
+      class="fixed top-[155px] w-[32px] h-[32px] bg-blue rounded-full sm:flex justify-center items-center hidden cursor-pointer ease-in-out duration-500 z-Infinite"
       @click="sidebar.changeWide"
       :class="
         sidebar.isWide === true ? 'left-[240px]' : '-scale-x-100 left-[84px]'
@@ -65,7 +64,8 @@ onMounted(() => {
     </div>
 
     <!-- sidebar search -->
-    <div class="ml-6 pt-7 flex"
+    <div
+      class="ml-6 pt-7 flex"
       :class="sidebar.isWide === true ? '' : 'hidden'"
     >
       <div
@@ -88,7 +88,6 @@ onMounted(() => {
       <div class="sidebar scroller">
         <div class="px-4 flex flex-col items-center">
           <ul id="myMenu" class="pb-20">
-
             <li>
               <div
                 class="flex justify-center items-center cursor-pointer py-4"
@@ -100,7 +99,9 @@ onMounted(() => {
 
             <!-- dashboard -->
             <li>
-              <router-link to="/dashboard" class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
+              <router-link
+                to="/dashboard"
+                class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
               >
                 <img :src="dashboardIcon" class="w-6 h-6" alt="" />
                 <!-- transition ga berlaku untuk teks / ngilangin objek -->
@@ -112,7 +113,6 @@ onMounted(() => {
 
             <!-- travel management -->
             <li>
-
               <button
                 @click="sidebar.increment(travel)"
                 class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
@@ -161,7 +161,10 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrow"
+                      />
                     </div>
 
                     <div
@@ -172,7 +175,10 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrowSelected"
+                      />
                     </div>
                   </div>
                 </div>
@@ -185,7 +191,6 @@ onMounted(() => {
                     class="pl-4 pb-4 sm:flex sm:flex-col hidden"
                   >
                     <ul class="flex flex-col gap-4 pt-4 px-2">
-
                       <router-link to="/request" class="cursor-pointer">
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
@@ -258,7 +263,9 @@ onMounted(() => {
                         </div>
                       </router-link>
 
-                      <router-link to="/claimreimbursement" class="cursor-pointer"
+                      <router-link
+                        to="/claimreimbursement"
+                        class="cursor-pointer"
                       >
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
@@ -400,7 +407,6 @@ onMounted(() => {
                       </router-link>
 
                       <button class="cursor-pointer text-left">
-
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
                         >
@@ -429,10 +435,15 @@ onMounted(() => {
                             <img class="w-5 h-5" :src="groupIcon" alt="" />
                           </a>
                         </div>
-                        
+
                         <div class="ml-5 mt-[10px]">
-                          <ul class="flex flex-col gap-[10px] text-base font-normal">
-                            <router-link to="/settlement-report" class="cursor-pointer">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link
+                              to="/settlement-report"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -444,7 +455,10 @@ onMounted(() => {
                                 <p class="mr-[70px]">Settlement Report</p>
                               </li>
                             </router-link>
-                            <router-link to="/poolcar-report" class="cursor-pointer">
+                            <router-link
+                              to="/poolcar-report"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -458,14 +472,11 @@ onMounted(() => {
                             </router-link>
                           </ul>
                         </div>
-
                       </button>
-
                     </ul>
                   </div>
                 </collapse-transition>
               </div>
-              
             </li>
 
             <!-- system configuration -->
@@ -516,7 +527,10 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrow"
+                      />
                     </div>
 
                     <div
@@ -527,7 +541,10 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrowSelected"
+                      />
                     </div>
                   </div>
                 </div>
@@ -535,75 +552,74 @@ onMounted(() => {
 
               <div :class="sidebar.isWide === true ? '' : 'hidden'">
                 <collapse-transition dimension="height" :duration="500">
-
                   <div
                     v-if="sidebar.sidebarMenu.systemConfiguration == true"
                     class="pl-4 pb-4 sm:flex sm:flex-col hidden"
-                  >                    
-                  <ul class="flex flex-col gap-4 pt-4 px-2">
+                  >
+                    <ul class="flex flex-col gap-4 pt-4 px-2">
                       <router-link to="/user" class="cursor-pointer">
-                          <div
-                            class="flex gap-[10px] items-center cursor-pointer"
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[
+                              $route.path == '/user' ? 'hidden' : 'inline',
+                            ]"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[
+                              $route.path == '/user' ? 'inline' : 'hidden',
+                            ]"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <p
+                            class="flex items-center w-full justify-between"
+                            :class="[
+                              $route.path == '/user'
+                                ? `anchorImage anchorSubMenu`
+                                : '',
+                            ]"
                           >
-                            <img
-                              class="h-[2px] w-2"
-                              :class="[
-                                $route.path == '/user' ? 'hidden' : 'inline',
-                              ]"
-                              :src="submenuLine"
-                              alt=""
-                            />
-                            <img
-                              class="h-[2px] w-2"
-                              :class="[
-                                $route.path == '/user' ? 'inline' : 'hidden',
-                              ]"
-                              :src="submenuLineSelected"
-                              alt=""
-                            />
-                            <p
-                              class="flex items-center w-full justify-between"
-                              :class="[
-                                $route.path == '/user'
-                                  ? `anchorImage anchorSubMenu`
-                                  : '',
-                              ]"
-                            >
-                              User <img class="w-5 h-5" :src="groupIcon" />
-                            </p>
-                          </div>
+                            User <img class="w-5 h-5" :src="groupIcon" />
+                          </p>
+                        </div>
                       </router-link>
                       <router-link to="/role" class="cursor-pointer">
-                            <div
-                              class="flex gap-[10px] items-center cursor-pointer"
-                            >
-                              <img
-                                class="h-[2px] w-2"
-                                :class="[
-                                  $route.path == '/role' ? 'hidden' : 'inline',
-                                ]"
-                                :src="submenuLine"
-                                alt=""
-                              />
-                              <img
-                                class="h-[2px] w-2"
-                                :class="[
-                                  $route.path == '/role' ? 'inline' : 'hidden',
-                                ]"
-                                :src="submenuLineSelected"
-                                alt=""
-                              />
-                              <p
-                                class="flex items-center w-full justify-between"
-                                :class="[
-                                  $route.path == '/role'
-                                    ? `anchorImage anchorSubMenu`
-                                    : '',
-                                ]"
-                              >
-                                Role <img class="w-5 h-5" :src="groupIcon" alt="" />
-                              </p>
-                            </div>
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[
+                              $route.path == '/role' ? 'hidden' : 'inline',
+                            ]"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[
+                              $route.path == '/role' ? 'inline' : 'hidden',
+                            ]"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <p
+                            class="flex items-center w-full justify-between"
+                            :class="[
+                              $route.path == '/role'
+                                ? `anchorImage anchorSubMenu`
+                                : '',
+                            ]"
+                          >
+                            Role <img class="w-5 h-5" :src="groupIcon" alt="" />
+                          </p>
+                        </div>
                       </router-link>
                       <router-link to="/menu" class="cursor-pointer">
                         <div
@@ -757,7 +773,10 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrow"
+                      />
                     </div>
 
                     <div
@@ -768,7 +787,10 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrowSelected"
+                      />
                     </div>
                   </div>
                 </div>
@@ -777,19 +799,14 @@ onMounted(() => {
 
             <!-- reference sub menu new -->
             <div :class="sidebar.isWide === true ? '' : 'hidden'">
-
               <!-- hidden ga ngaruh disini -->
               <collapse-transition dimension="height" :duration="500">
-                
                 <div
                   v-if="sidebar.sidebarMenu.reference == true"
                   class="pl-4 pb-4 sm:flex sm:flex-col overflow-y-auto ease-in-out duration-500"
                 >
-
                   <ul class="flex flex-col gap-4 pt-4 px-2">
-                    
                     <router-link to="/employee" class="cursor-pointer">
-
                       <div class="flex gap-[10px] items-center cursor-pointer">
                         <img
                           class="h-[2px] w-2"
@@ -819,7 +836,6 @@ onMounted(() => {
                           <img class="w-5 h-5" :src="groupIcon" alt="" />
                         </p>
                       </div>
-
                     </router-link>
 
                     <router-link to="/company" class="cursor-pointer">
@@ -886,12 +902,17 @@ onMounted(() => {
                       </div>
                     </router-link>
 
-                    <router-link to="/flight" class="cursor-pointer">
+                    <router-link
+                      to="/classtransportation"
+                      class="cursor-pointer"
+                    >
                       <div class="flex gap-[10px] items-center cursor-pointer">
                         <img
                           class="h-[2px] w-2"
                           :class="[
-                            $route.path == '/flight' ? 'hidden' : 'inline',
+                            $route.path == '/classtransportation'
+                              ? 'hidden'
+                              : 'inline',
                           ]"
                           :src="submenuLine"
                           alt=""
@@ -899,7 +920,9 @@ onMounted(() => {
                         <img
                           class="h-[2px] w-2"
                           :class="[
-                            $route.path == '/flight' ? 'inline' : 'hidden',
+                            $route.path == '/classtransportation'
+                              ? 'inline'
+                              : 'hidden',
                           ]"
                           :src="submenuLineSelected"
                           alt=""
@@ -907,12 +930,12 @@ onMounted(() => {
                         <p
                           class="flex items-center w-full justify-between"
                           :class="[
-                            $route.path == '/flight'
+                            $route.path == '/classtransportation'
                               ? `anchorImage anchorSubMenu`
                               : '',
                           ]"
                         >
-                          Flight Class<img
+                          Class Transportation<img
                             class="w-5 h-5"
                             :src="groupIcon"
                             alt=""
@@ -1262,15 +1285,12 @@ onMounted(() => {
                       </div>
                     </router-link>
                   </ul>
-
                 </div>
-
               </collapse-transition>
             </div>
 
             <!-- approval menu -->
             <li>
-
               <button
                 @click="sidebar.increment(approval)"
                 class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4 w-full"
@@ -1320,7 +1340,10 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrow"
+                      />
                     </div>
 
                     <div
@@ -1331,7 +1354,10 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrowSelected"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1612,13 +1638,12 @@ onMounted(() => {
                   </div>
                 </collapse-transition>
               </div>
-
             </li>
 
             <!-- ffs menu -->
             <li>
-              
-              <button class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4 w-full"
+              <button
+                class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4 w-full"
                 @click="sidebar.increment(facility)"
                 :class="
                   sidebar.sidebarMenu.facilityServiceSystem == true
@@ -1666,7 +1691,10 @@ onMounted(() => {
                           : '-rotate-180 opacity-0'
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrow" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrow"
+                      />
                     </div>
 
                     <div
@@ -1677,7 +1705,10 @@ onMounted(() => {
                           : ''
                       "
                     >
-                      <img :class="sidebar.isWide === true ? '' : 'hidden'" :src="expandArrowSelected" />
+                      <img
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                        :src="expandArrowSelected"
+                      />
                     </div>
                   </div>
                 </div>
@@ -1723,7 +1754,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="/management-meeting-room" class="cursor-pointer">
+                            <router-link
+                              to="/management-meeting-room"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1771,7 +1805,9 @@ onMounted(() => {
                         </div>
 
                         <div class="ml-5 mt-[10px]">
-                          <ul class="flex flex-col gap-[10px] text-base font-normal">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
                             <router-link
                               to="/managementitem"
                               class="cursor-pointer"
@@ -1795,7 +1831,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="/stockinatk" class="cursor-pointer">
+                            <router-link
+                              to="/stockinatk"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1815,7 +1854,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="/stock-opname-atk" class="cursor-pointer">
+                            <router-link
+                              to="/stock-opname-atk"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1835,7 +1877,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="/atk-request" class="cursor-pointer">
+                            <router-link
+                              to="/atk-request"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1855,16 +1900,12 @@ onMounted(() => {
                   </div>
                 </collapse-transition>
               </div>
-
             </li>
-
           </ul>
         </div>
       </div>
     </div>
-
   </div>
-
 </template>
 
 <style scoped>

@@ -24,13 +24,13 @@ const submitEdit = () => {
   isAdding.value = true;
 
   if (!formEditState.flight) {
-    formEditState.flight = {}; // Inisialisasi objek flight jika belum ada
+    formEditState.flight = {};
   }
 
   formEditState.flight.flightClassName = flightClassName.value;
 
   isVisible.value = false;
-  emits("changeFlight"); // Memanggil event 'changeFlight'
+  emits("changeFlight");
 };
 
 const inputStylingClass =
@@ -54,13 +54,13 @@ watch(isVisible, () => {
     <main>
       <modalHeader
         @closeVisibility="isVisible = false"
-        title="Edit Flight Class"
+        title="Edit Class Transportation"
       />
 
       <form class="pt-4" @submit.prevent="submitEdit">
         <div class="mb-6 text-start px-4 w-full">
           <label class="block mb-2 font-JakartaSans font-medium text-sm">
-            Flight Class<span class="text-red">*</span>
+            Class Transportation<span class="text-red">*</span>
           </label>
 
           <input
