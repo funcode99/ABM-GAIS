@@ -52,10 +52,10 @@ const selectAll = (checkValue) => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "Settlement No", jsonData: "settlement_no" },
-  { Id: 4, title: "Requestor", jsonData: "requestor" },
-  { Id: 5, title: "CA No", jsonData: "ca" },
-  { Id: 6, title: "Nominal Real", jsonData: "total" },
+  { Id: 3, title: "Car", jsonData: "settlement_no" },
+  { Id: 4, title: "From Date", jsonData: "requestor" },
+  { Id: 5, title: "To Date", jsonData: "ca" },
+  { Id: 6, title: "KM Travelled", jsonData: "total" },
   { Id: 7, title: "Status", jsonData: "status" },
 ];
 
@@ -84,7 +84,7 @@ onBeforeMount(() => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Settlement Reports
+              Pool Car Usage Reports
             </p>
           </div>
 
@@ -131,15 +131,15 @@ onBeforeMount(() => {
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
-                  CA Type
+                  Car
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCatype"
                 >
                   <option disabled selected>Type</option>
-                  <option>Travel</option>
-                  <option>Non Travel</option>
+                  <option>Car A</option>
+                  <option>Car B</option>
                 </select>
               </div>
 

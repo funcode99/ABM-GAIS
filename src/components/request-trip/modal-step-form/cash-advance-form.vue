@@ -236,9 +236,9 @@
                         <div :class="columnClass">
                             <div class="w-full">
                             <label :class="labelStylingClass">
-                                Frequency <span class="text-red-star">*</span>
+                                Days <span class="text-red-star">*</span>
                             </label>
-                            <input type="text" placeholder="Frequency" :class="inputStylingClass" v-model="frequency">
+                            <input type="text" placeholder="Days" :class="inputStylingClass" v-model="frequency">
                             </div>
                         </div>
     

@@ -47,6 +47,8 @@ import SettlementReport from '@/views/travel-management/settlement/SettlementRep
 import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
 import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue"
 
+import PoolcarReport from "@/views/travel-management/pool-car/PoolcarReport.vue"
+
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"
 import CaTravelView from "@/views/approval/cash-advance-travel/CaTravelView.vue"
@@ -68,11 +70,15 @@ import StockInAtkView from "@/views/facility-services/atk-supplies/stock-in-atk/
 import StockInAtkID from "@/views/facility-services/atk-supplies/stock-in-atk/StockInAtkId.vue"
 import StockOpnameAtkID from "@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameAtkID.vue"
 import ATKRequestList from '@/views/facility-services/atk-supplies/atk-request/ATK-Request.vue'
+import DOCDeliveryList from '@/views/facility-services/document-delivery/DOC-Delivery.vue'
+import DOCDeliveryListID from '@/views/facility-services/document-delivery/DOCDeliveryView.vue'
 import ATKRequestView from '@/views/facility-services/atk-supplies/atk-request/ATKRequestView.vue'
 import StockOpnameATKList from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKList.vue'
 import StockOpnameATKView from '@/views/facility-services/atk-supplies/stock-opname-atk/StockOpnameATKView.vue'
 
-import ManagementMeetingRoomList from '@/views/facility-services/management-meeting-room/ManagementMeetingRoomList.vue'
+import ManagementMeetingRoomList from '@/views/facility-services/meeting-room/ManagementMeetingRoomList.vue'
+import BookingMeetingRoomList from '@/views/facility-services/meeting-room/booking/BookingMeetingRoomList.vue'
+import BookingMeetingRoomView from '@/views/facility-services/meeting-room/booking/BookingMeetingRoomView.vue'
 
 
 //experiment
@@ -640,22 +646,22 @@ const router = createRouter({
       }
     },
     {
-        path: '/settlement/:id',
-        name: 'View Settlement',
-        component: SettlementView,
-        meta: {
-          title: 'View Settlement'
-        },
-        beforeEnter: (to, from, next) => {
-          const token = localStorage.getItem('token');
-  
-          if (token) {
-            return next()
-          }
-  
-          return next('/')
-        }
+      path: '/settlement/:id',
+      name: 'View Settlement',
+      component: SettlementView,
+      meta: {
+        title: 'View Settlement'
       },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
     {
       path: '/settlement-report',
       name: 'Settlement Reports',
@@ -696,6 +702,24 @@ const router = createRouter({
       component: ClaimReimbursementView,
       meta: {
         title: 'View Claim Reimbursement'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+
+    {
+      path: '/poolcar-report',
+      name: 'Pool Car Reports',
+      component: PoolcarReport,
+      meta: {
+        title: 'Settlement Report'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');
@@ -1022,7 +1046,41 @@ const router = createRouter({
       name: 'ATK Request',
       component: ATKRequestList,
       meta: {
-        title: 'View Request ATK'
+        title: 'View Request In ATK'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/doc-delivery/:id',
+      name: 'doc-delivery-id',
+      component: DOCDeliveryListID,
+      meta: {
+        title: 'Detail Document Delivery'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/doc-delivery',
+      name: 'Doc-delivery',
+      component: DOCDeliveryList,
+      meta: {
+        title: 'View Document Delivery'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');
@@ -1090,18 +1148,52 @@ const router = createRouter({
         name: 'Management Meeting Room',
         component: ManagementMeetingRoomList,
         meta: {
-          title: 'Management Meeting Room'
+            title: 'Management Meeting Room'
         },
         beforeEnter: (to, from, next) => {
-          const token = localStorage.getItem('token');
-  
-          if (token) {
+            const token = localStorage.getItem('token');
+
+            if (token) {
             return next()
-          }
-  
-          return next('/')
+            }
+
+            return next('/')
         }
-      },
+    },
+    {
+        path: '/booking-meeting-room',
+        name: 'Booking Meeting Room',
+        component: BookingMeetingRoomList,
+        meta: {
+            title: 'Booking Meeting Room'
+        },
+        beforeEnter: (to, from, next) => {
+            const token = localStorage.getItem('token');
+
+            if (token) {
+            return next()
+            }
+
+            return next('/')
+        }
+    },
+    {
+        path: '/booking-meeting-room/:id',
+        name: 'View Booking Meeting Room',
+        component: BookingMeetingRoomView,
+        meta: {
+            title: 'View Booking Meeting Room'
+        },
+        beforeEnter: (to, from, next) => {
+            const token = localStorage.getItem('token');
+    
+            if (token) {
+            return next()
+            }
+    
+            return next('/')
+        }
+        },
   ]
 })
 

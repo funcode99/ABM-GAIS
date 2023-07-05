@@ -4,7 +4,7 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
 
-import ModalAddMeetingRoom from "@/components/facility-services/management-meeting-room/ModalAdd.vue";
+import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue";
 import selectAllCheckbox from "@/utils/selectAllCheckbox";
 
 import icon_receive from "@/assets/icon-receive.svg";
@@ -24,16 +24,19 @@ import { ref, onBeforeMount, computed, onMounted, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const listStatus = [
-  { id: 1, title: "Available" },
-  { id: 2, title: "Unavailable" },
+  { id: 0, title: "Draft" },
+  { id: 1, title: "Booked" },
+  { id: 10, title: "Done" },
+  { id: 9, title: "Cancelled" },
 ];
 let statusForm = ref("add");
 let visibleModal = ref(false);
 let idItem = ref(0);
 //for sort & search
-const search = ref("");
 let sortedData = ref([]);
 let deleteArray = ref([]);
+let listRoom = ref([]);
+
 let sortedbyASC = true;
 let instanceArray = [];
 let paginationArray = [];
@@ -45,9 +48,12 @@ const showFullText = ref({});
 let checkList = false;
 let filter = reactive({
   status: "",
-  capacity: "",
+  date: "",
   search: "",
+  room: "",
 });
+const id_site = JSON.parse(localStorage.getItem("id_site"));
+
 //for paginations
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -73,12 +79,20 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "ID Meeting Room", jsonData: "created_at" },
-  { Id: 3, title: "Meeting Room Name", jsonData: "name_meeting_room" },
-  { Id: 4, title: "Capacity", jsonData: "capacity" },
-  { Id: 5, title: "Available Status", jsonData: "available_status" },
-  { Id: 6, title: "Company", jsonData: "company_name" },
+  { Id: 2, title: "Booking No", jsonData: "no_booking_meeting" },
+  { Id: 3, title: "Requestor", jsonData: "employee_name" },
+  { Id: 4, title: "Title", jsonData: "title" },
+  { Id: 5, title: "Meeting Room", jsonData: "available_status" },
+  { Id: 6, title: "Date", jsonData: "start_date" },
+  { Id: 7, title: "Time", jsonData: "status" },
+  { Id: 8, title: "Status", jsonData: "status" },
 ];
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
 
 //for sort
 const sortList = (sortBy) => {
@@ -115,7 +129,7 @@ const fetch = async (id) => {
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("master_meeting_room/get/", { params: payload });
+  const api = await Api.get("book_meeting_room/get", { params: payload });
   paginationArray = api.data.data;
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
@@ -126,10 +140,18 @@ const fetch = async (id) => {
   showingValueTo.value = paginationArray.to;
 };
 
+const fetchListRoom = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get(`master_meeting_room/get_by_site/${id_site}`);
+  listRoom.value = api.data.data;
+};
+
 const resetData = () => {
   filter.search = "";
   filter.status = "";
-  filter.capacity = "";
+  filter.date = "";
+  filter.room = "";
   deleteArray.value = [];
   fetch();
 };
@@ -141,12 +163,14 @@ const getSessionForSidebar = () => {
 const filterDataByType = async (id) => {
   let payload = {
     search: filter.search,
-    status: filter.status,
-    capacity: filter.capacity,
+    code_status_doc: filter.status,
+    start_date: filter.date ? filter.date[0] : "",
+    end_date: filter.date ? filter.date[1] : "",
+    id_meeting_room: filter.room,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
-  const api = await Api.get("master_meeting_room/get/", { params: payload });
+  const api = await Api.get("book_meeting_room/get/", { params: payload });
   paginationArray = api.data.data;
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
@@ -182,7 +206,7 @@ const deleteData = async (event) => {
     confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
-      Api.delete(`/master_meeting_room/delete_data/${event}`).then((res) => {
+      Api.delete(`/booking_meeting_room/delete_data/${event}`).then((res) => {
         Swal.fire({
           title: "Successfully",
           text: "Data has been deleted.",
@@ -228,23 +252,23 @@ const deleteCheckedArray = () => {
       let payload = {
         id: deleteArray.value,
       };
-      Api.delete(`/master_meeting_room/delete_data/`, { params: payload }).then(
-        (res) => {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 1500,
-          });
+      Api.delete(`/booking_meeting_room/delete_data/`, {
+        params: payload,
+      }).then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
 
-          if (sortedData.value.length == 1) {
-            router.go();
-          } else {
-            fetch();
-          }
+        if (sortedData.value.length == 1) {
+          router.go();
+        } else {
+          fetch();
         }
-      );
+      });
     } else {
       return;
     }
@@ -271,6 +295,7 @@ const inputClass =
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
+  fetchListRoom();
 });
 </script>
 
@@ -298,7 +323,7 @@ onBeforeMount(() => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Management Meeting Room
+              Booking Meeting Room
             </p>
             <div class="flex gap-4">
               <div
@@ -321,7 +346,7 @@ onBeforeMount(() => {
               >
                 + Add New
               </label>
-              <ModalAddMeetingRoom
+              <ModalAddBookingRoom
                 v-if="visibleModal"
                 @close="closeModal"
                 :status="statusForm"
@@ -344,15 +369,21 @@ onBeforeMount(() => {
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
-                  Capacity
+                  Room
                 </p>
-                <input
-                  v-model="filter.capacity"
-                  type="number"
-                  name="remarks"
-                  :class="inputClass"
-                  placeholder="Capacity"
-                />
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="filter.room"
+                >
+                  <option disabled selected>Room</option>
+                  <option
+                    v-for="data in listRoom"
+                    :key="data.id"
+                    :value="data.id"
+                  >
+                    {{ data.name_meeting_room }}
+                  </option>
+                </select>
               </div>
               <div>
                 <p
@@ -368,11 +399,22 @@ onBeforeMount(() => {
                   <option
                     v-for="data in listStatus"
                     :key="data.id"
-                    :value="data.title"
+                    :value="data.id"
                   >
                     {{ data.title }}
                   </option>
                 </select>
+              </div>
+              <div>
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >Date</label
+                >
+                <VueDatePicker
+                  v-model="filter.date"
+                  range
+                  :enable-time-picker="false"
+                  placeholder="Select Date"
+                />
               </div>
 
               <div class="flex gap-4 items-center pt-6">
@@ -499,19 +541,34 @@ onBeforeMount(() => {
                       />
                     </td>
                     <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
-                    <td>{{ data.code_meeting_room }}</td>
+                    <td>{{ data.no_booking_meeting }}</td>
+                    <td>{{ data.employee_name }}</td>
+                    <td>{{ data.title }}</td>
                     <td>{{ data.name_meeting_room }}</td>
-                    <td>{{ data.capacity }}</td>
-                    <td>{{ data.available_status }}</td>
-                    <td>{{ data.company_code }} - {{ data.company_name }}</td>
+                    <td>
+                      {{ format_date(data.start_date) }} -
+                      {{ format_date(data.end_date) }}
+                    </td>
+                    <td>{{ data.start_time }} - {{ data.end_time }}</td>
+                    <td>
+                      <span
+                        :class="
+                          data.status == 'Done' || data.status == 'Booked'
+                            ? 'status-done'
+                            : data.status == 'Draft'
+                            ? 'status-default'
+                            : 'status-revision'
+                        "
+                        >{{ data.status }}</span
+                      >
+                    </td>
                     <td>
                       <div class="flex justify-center items-center gap-2">
-                        <label
-                          @click="openModal('edit', data.id)"
-                          for="my-modal-3"
-                        >
-                          <img :src="editicon" class="w-6 h-6" />
-                        </label>
+                        <router-link :to="`/booking-meeting-room/${data.id}`">
+                          <button>
+                            <img :src="editicon" class="w-6 h-6" />
+                          </button>
+                        </router-link>
                         <button @click="deleteData(data.id)">
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
@@ -588,5 +645,20 @@ tr th {
 
 .my-date {
   width: 260px !important;
+}
+
+.status-revision {
+  color: #ef3022;
+  font-weight: 800;
+}
+
+.status-default {
+  color: #2970ff;
+  font-weight: 800;
+}
+
+.status-done {
+  color: #00c851;
+  font-weight: 800;
 }
 </style>
