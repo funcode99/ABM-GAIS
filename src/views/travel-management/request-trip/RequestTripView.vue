@@ -170,6 +170,29 @@
       const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
     }
 
+    const submitPurposeOfTrip = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripId")}`, {
+        id_employee: purposeOfTripData.value[0].id_employee,
+        no_request_trip: purposeOfTripData.value[0].no_request_trip,
+        code_document: purposeOfTripData.value[0].code_document,
+        id_site: purposeOfTripData.value[0].id_site,
+        notes: notes.value,
+        file: file.value,
+        id_city_from: purposeOfTripData.value[0].id_city_from,
+        id_city_to: purposeOfTripData.value[0].id_city_to,
+        date_departure: purposeOfTripData.value[0].date_departure,
+        date_arrival: purposeOfTripData.value[0].date_arrival,
+        id_zona: purposeOfTripData.value[0].id_zona,
+        tlk_per_day: purposeOfTripData.value[0].tlk_per_day,
+        total_tlk: purposeOfTripData.value[0].total_tlk
+      })
+
+    }
+
     const closeBar = ref(true)
     const changeSelected = (title) => {
       headerTitle.value = title
@@ -190,6 +213,7 @@
 
     watch(headerTitle, () => {
       assignSelectedData()
+      dataIndex.value = 0
     })
 
     const increment = () => {
@@ -201,6 +225,12 @@
       assignSelectedData()
       dataIndex.value > 0 ? dataIndex.value-- : dataIndex.value
     }
+
+    let notes = ref()
+    let file = ref()
+    watch(purposeOfTripData, () => {
+      notes.value = purposeOfTripData.value[currentIndex].notes
+    })
 
 </script>
 
@@ -216,14 +246,7 @@
 
             <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin duration-500 ease-in-out"
             :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
-               
-            <!-- {{ purposeOfTripData }} -->
-            <!-- {{ travellerGuestData }} -->
-            <!-- {{ airlinesData }} -->
-            <!-- {{ taxiVoucherData }} -->
-            <!-- {{ otherTransportationData }} -->
-            <!-- {{ accomodationData }} -->
-            <!-- {{ cashAdvanceData }} -->
+          
 
                 <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
 
@@ -248,7 +271,7 @@
                     <div class="flex gap-4 mt-6 mb-3 ml-5">
                         
                       <buttonEditFormView @click="isEditing = true" />
-                      <buttonSaveFormView v-if="isEditing" @click="isEditing = false" />
+                      <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
                         
                       <button @click="submitRequestTrip" v-if="!isEditing" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                         Submit
@@ -264,19 +287,27 @@
 
                         <div class="flex flex-col gap-2">
                                 <span>Date Created <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[currentIndex].created_at" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                                <input 
+                                  type="text" 
+                                  disabled 
+                                  :value="purposeOfTripData[currentIndex].created_at" 
+                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                                />
                         </div>
 
                         <div class="flex flex-col gap-2">
                               <span>File Attachment <span class="text-[#f5333f]">*</span></span>
-                              <input type="text" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" disabled />
+                              <input 
+                                type="text" 
+                                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                                :disabled="!isEditing" 
+                              />
                         </div>
 
                         <div class="flex flex-col gap-2">
                                 <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                                <input 
+                                <input
                                   type="text" 
-                                  disabled 
                                   :value="purposeOfTripData[currentIndex].document_name" 
                                   class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
                                 />
@@ -289,7 +320,12 @@
 
                         <div class="flex flex-col gap-2">
                                 <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[currentIndex].notes"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                                <input 
+                                  v-model="notes"
+                                  type="text" 
+                                  :disabled="!isEditing" 
+                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                                />
                         </div>
 
                     </div>

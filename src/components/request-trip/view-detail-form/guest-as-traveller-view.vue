@@ -66,7 +66,6 @@
         }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
-    const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
