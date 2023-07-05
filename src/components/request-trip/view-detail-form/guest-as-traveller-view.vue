@@ -1,5 +1,10 @@
 <script setup>
-    import { ref, inject, onBeforeMount, watch } from 'vue'
+    import { ref, inject, watch } from 'vue'
+
+    const status = defineProps({
+        isEditing: Boolean,
+        currentIndex: Number
+    })
 
     const props = inject('travellerDataView')
 
@@ -13,29 +18,52 @@
     let contactNo = ref()
     let maxHotelFare = ref()
 
-    watch(props, () => {
-        name.value = props.value[0].name_guest
-        department.value = props.value[0].departement
-        flightClass.value = props.value[0].flight_class
-        sn.value = props.value[0]
-        company.value = props.value[0].company
-        gender.value = props.value[0].gender
-        type.value = props.value[0].type_traveller
-        contactNo.value = props.value[0].contact_no
-        maxHotelFare.value = props.value[0].hotel_fare
+    const assignValue = () => {
+        name.value = props.value[status.currentIndex].name_guest
+        department.value = props.value[status.currentIndex].departement
+        flightClass.value = props.value[status.currentIndex].flight_class
+        sn.value = props.value[status.currentIndex]
+        company.value = props.value[status.currentIndex].company
+        gender.value = props.value[status.currentIndex].gender
+        type.value = props.value[status.currentIndex].type_traveller
+        contactNo.value = props.value[status.currentIndex].contact_no
+        maxHotelFare.value = props.value[status.currentIndex].hotel_fare
+    }
+
+    watch(status, () => {
+        assignValue()
     })
 
+    watch(props, () => {
+        
+        if(props.value[0].name_guest !== undefined) {
+           name.value = props.value[0].name_guest
+           department.value = props.value[0].departement
+           flightClass.value = props.value[0].flight_class
+           sn.value = props.value[0]
+           company.value = props.value[0].company
+           gender.value = props.value[0].gender
+           type.value = props.value[0].type_traveller
+           contactNo.value = props.value[0].contact_no
+           maxHotelFare.value = props.value[0].hotel_fare
+        } else {
+        assignValue()
+        }
+        
+    })
+
+
     if(props.value[0].name_guest !== undefined) {
-        name.value = props.value[0].name_guest
-        department.value = props.value[0].departement
-        flightClass.value = props.value[0].flight_class
-        sn.value = props.value[0]
-        company.value = props.value[0].company
-        gender.value = props.value[0].gender
-        type.value = props.value[0].type_traveller
-        contactNo.value = props.value[0].contact_no
-        maxHotelFare.value = props.value[0].hotel_fare
-    }
+           name.value = props.value[0].name_guest
+           department.value = props.value[0].departement
+           flightClass.value = props.value[0].flight_class
+           sn.value = props.value[0]
+           company.value = props.value[0].company
+           gender.value = props.value[0].gender
+           type.value = props.value[0].type_traveller
+           contactNo.value = props.value[0].contact_no
+           maxHotelFare.value = props.value[0].hotel_fare
+        }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -64,6 +92,7 @@
                         placeholder="Name"
                         :class="inputStylingClass"
                         required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -84,6 +113,7 @@
                         placeholder="Department"
                         :class="inputStylingClass"
                         required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -104,6 +134,7 @@
                     placeholder="Flight Class"
                     :class="inputStylingClass"
                     required
+                    :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -127,6 +158,7 @@
                     placeholder="SN"
                     :class="inputStylingClass"
                     required
+                    :disabled="!status.isEditing"
                 />
 
             </div>
@@ -147,6 +179,7 @@
                         :class="inputStylingClass"
                         placeholder="Company"
                         required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -168,7 +201,7 @@
                         Gender<span class="text-red-star">*</span>
                     </label>
 
-                    <select :class="inputStylingClass" v-model="gender">
+                    <select :class="inputStylingClass" v-model="gender" :disabled="!status.isEditing">
                         <option value="L" selected hidden disabled>
                         Male
                         </option>
@@ -196,6 +229,7 @@
                         placeholder="Type"
                         :class="inputStylingClass"
                         required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -213,7 +247,13 @@
             <label :class="labelStylingClass">
                 Contact No<span class="text-red-star">*</span>
             </label>
-            <input :class="inputStylingClass" type="text" placeholder="Contact No" v-model="contactNo">
+            <input 
+                type="text" 
+                :class="inputStylingClass" 
+                placeholder="Contact No" 
+                v-model="contactNo"
+                :disabled="!status.isEditing"
+            />
         </div>
         </div>
 
@@ -223,7 +263,13 @@
                 <label :class="labelStylingClass">
                     Max Hotel Fare<span class="text-red-star">*</span>
                 </label>
-                <input type="text" placeholder="Notes" :class="inputStylingClass" v-model="maxHotelFare">
+                <input
+                    type="text" 
+                    placeholder="Notes" 
+                    :class="inputStylingClass" 
+                    v-model="maxHotelFare"
+                    :disabled="!status.isEditing" 
+                />
             </div>
 
         </div>

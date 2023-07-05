@@ -55,7 +55,7 @@
 
     watch(variableTotal.value, () => {
         console.log('perubahan di variable Total')
-        if(nominal != 0 & frequency != 0) {
+        if(nominal.value != 0 & frequency.value != 0) {
             total.value = nominal.value * frequency.value
         }
     })
@@ -105,7 +105,7 @@
     ]
 
     watch(props, () => {
-        traveller.value = ''
+        traveller.value = employeeLoginData.value[0].employee_name
         nominal.value = ''
         frequency.value = ''
         item.value = 1
@@ -155,7 +155,13 @@
                             <label :class=labelStylingClass>
                                 Grand Total
                             </label>
-                            <input type="text" placeholder="Grand Total" :class="inputBlackStylingClass" v-model="grandTotal">
+                            <input 
+                                type="text" 
+                                placeholder="Grand Total" 
+                                :class="inputBlackStylingClass" 
+                                v-model="grandTotal" 
+                                disabled 
+                            />
                         </div>
                     </div>
     

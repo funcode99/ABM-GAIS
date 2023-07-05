@@ -1,6 +1,9 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
 
+    const status = defineProps({
+      isEditing: Boolean
+    })
     const props = inject('otherTransportationDataView')
 
     let name = ref()
@@ -50,6 +53,7 @@
                   :class="inputStylingClass"
                   placeholder="Name"
                   required
+                  :disabled="!status.isEditing"
                 />
 
           </div>
@@ -65,7 +69,14 @@
               City<span class="text-red-star">*</span>
             </label>
 
-            <input v-model="city" type="text" :class="inputStylingClass" placeholder="City" required />
+            <input 
+              v-model="city" 
+              type="text" 
+              :class="inputStylingClass" 
+              placeholder="City" 
+              required 
+              :disabled="!status.isEditing"
+            />
 
           </div>
 
@@ -83,7 +94,14 @@
                 Type of Transportation<span class="text-red-star">*</span>
               </label>
 
-              <input v-model="transportationType" type="text" :class="inputStylingClass" placeholder="Type" required />
+              <input 
+                v-model="transportationType" 
+                type="text" 
+                :class="inputStylingClass" 
+                placeholder="Type" 
+                required
+                :disabled="!status.isEditing" 
+              />
 
             </div>
         </div>
@@ -96,7 +114,14 @@
               Quantity<span class="text-red-star">*</span>
             </label>
 
-            <input v-model="quantity" type="text" placeholder="Quantity" :class=inputStylingClass required>
+            <input 
+              v-model="quantity" 
+              type="text" 
+              placeholder="Quantity" 
+              :class=inputStylingClass 
+              required 
+              :disabled="!status.isEditing"
+            />
           
           </div>
         </div>
@@ -113,7 +138,14 @@
               From Date<span class="text-red-star">*</span>
             </label>
 
-            <input v-model="fromDate" type="date" :class="inputStylingClass" placeholder="From Date" required />  
+            <input 
+              v-model="fromDate" 
+              type="date" 
+              :class="inputStylingClass" 
+              placeholder="From Date" 
+              required 
+              :disabled="!status.isEditing"
+            />  
 
           </div>
         </div>
@@ -126,7 +158,13 @@
               Remarks<span class="text-red-star">*</span>
             </label>
 
-            <textarea v-model="remarks" placeholder="Remarks" :class="inputStylingClass" required></textarea>
+            <textarea 
+              v-model="remarks" 
+              placeholder="Remarks" 
+              :class="inputStylingClass" 
+              required
+              :disabled="!status.isEditing"
+            ></textarea>
 
           </div>
         </div>
@@ -141,7 +179,14 @@
             <label :class="labelStylingClass">
               To Date<span class="text-red-star">*</span>
             </label>
-            <input v-model="toDate" type="date" :class="inputStylingClass" placeholder="To Date" required />
+            <input 
+              v-model="toDate" 
+              type="date" 
+              :class="inputStylingClass" 
+              placeholder="To Date" 
+              required 
+              :disabled="!status.isEditing"  
+            />
           </div>
         </div>
   

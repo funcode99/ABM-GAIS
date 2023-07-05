@@ -157,7 +157,7 @@
   }
 
   .zInfinite {
-    z-index: 999;
+    z-index: 9999999999 !important;
   }
 
   .slide-enter-from

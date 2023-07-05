@@ -1,10 +1,12 @@
 <script setup>
-    import { ref, onBeforeMount, provide } from 'vue'
+    import { ref, onBeforeMount, provide, watch } from 'vue'
     
     import miniABM from '@/assets/mini-abm.png'
     import userImg from '@/assets/3-user.png'
 
     import Api from '@/utils/Api'
+
+    import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
     
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
@@ -33,6 +35,7 @@
     let showTravel = ref(true)
     let showAirlines = ref(true)
     let headerTitle = ref('Traveller')
+    let currentIndex = 0
 
     let purposeOfTripData = ref([{}])
     let travellerGuestData = ref([{}])
@@ -161,15 +164,42 @@
 
     })
 
-    const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
-    const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
-    const columnClass = 'flex flex-col flex-1'
-    const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
-    const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
+    const submitRequestTrip = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
+    }
 
     const closeBar = ref(true)
     const changeSelected = (title) => {
       headerTitle.value = title
+    }
+
+    let dataIndex = ref(0)
+    let currentSelectedData = ref(travellerGuestData.value)
+
+    const assignSelectedData = () => {
+      headerTitle.value === 'Traveller' ? currentSelectedData.value = travellerGuestData.value 
+      : headerTitle.value === 'Airlines' ? currentSelectedData.value = airlinesData.value 
+      : headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value 
+      : headerTitle.value === 'Other Transportation' ? currentSelectedData.value = otherTransportationData.value
+      : headerTitle.value === 'Accomodation' ? currentSelectedData.value = accomodationData.value
+      : headerTitle.value === 'Cash Advance' ? currentSelectedData.value = cashAdvanceData.value
+      : travellerGuestData.value
+    }
+
+    watch(headerTitle, () => {
+      assignSelectedData()
+    })
+
+    const increment = () => {
+      assignSelectedData()
+      dataIndex.value + 1 !== currentSelectedData.value.length ? dataIndex.value++ : dataIndex.value
+    }
+
+    const decrement = () => {
+      assignSelectedData()
+      dataIndex.value > 0 ? dataIndex.value-- : dataIndex.value
     }
 
 </script>
@@ -187,12 +217,13 @@
             <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin duration-500 ease-in-out"
             :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
                
-            <!-- {{  travellerGuestData }} -->
+            <!-- {{ purposeOfTripData }} -->
+            <!-- {{ travellerGuestData }} -->
             <!-- {{ airlinesData }} -->
             <!-- {{ taxiVoucherData }} -->
             <!-- {{ otherTransportationData }} -->
             <!-- {{ accomodationData }} -->
-            {{ cashAdvanceData }}
+            <!-- {{ cashAdvanceData }} -->
 
                 <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
 
@@ -203,13 +234,13 @@
                       </router-link>
 
                       <h1 class="text-blue font-semibold">
-                        Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[0].no_request_trip }}</span>
+                        Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[currentIndex].no_request_trip }}</span>
                       </h1>
 
                       <div class="flex-1"></div>
 
                       <div class=" min-w-[114px] h-[42px] text-center text-base font-bold rounded-t-lg rounded-bl-3xl rounded-br-lg border flex items-center justify-center border-black px-3">
-                        {{ purposeOfTripData[0].status }}
+                        {{ purposeOfTripData[currentIndex].status }}
                       </div>
                       
                     </div>
@@ -219,7 +250,7 @@
                       <buttonEditFormView @click="isEditing = true" />
                       <buttonSaveFormView v-if="isEditing" @click="isEditing = false" />
                         
-                      <button v-if="!isEditing" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                      <button @click="submitRequestTrip" v-if="!isEditing" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                         Submit
                       </button>
                         
@@ -233,7 +264,7 @@
 
                         <div class="flex flex-col gap-2">
                                 <span>Date Created <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[0].created_at" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                                <input type="text" disabled :value="purposeOfTripData[currentIndex].created_at" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
                         </div>
 
                         <div class="flex flex-col gap-2">
@@ -243,17 +274,22 @@
 
                         <div class="flex flex-col gap-2">
                                 <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[0].document_name" class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                                <input 
+                                  type="text" 
+                                  disabled 
+                                  :value="purposeOfTripData[currentIndex].document_name" 
+                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                                />
                         </div>
 
                         <div class="flex flex-col gap-2">
                                 <span>Requestor <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[0].employee_name"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                                <input type="text" disabled :value="purposeOfTripData[currentIndex].employee_name"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
                         </div>
 
                         <div class="flex flex-col gap-2">
                                 <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[0].notes"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                                <input type="text" disabled :value="purposeOfTripData[currentIndex].notes"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
                         </div>
 
                     </div>
@@ -296,34 +332,50 @@
                             
                           <detailsFormHeader :title="headerTitle">
 
-                            <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
-                              Issued Ticket
-                            </button>
+                            <buttonEditFormView v-if="isEditing" />
+                            <buttonAddFormView v-if="isEditing" />
 
-                            <button v-if="purposeOfTripData[0].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                            <!-- <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                              Issued Ticket
+                            </button> -->
+
+                            <button v-if="purposeOfTripData[currentIndex].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                               Revise
                             </button>
+
+                            <div class="flex gap-4">
+                              
+                                <button @click="decrement">
+                                  Back
+                                </button>
+
+                                  Data {{ dataIndex+1 }} of {{ currentSelectedData.length }}
+                              
+                                <button @click="increment">
+                                Next
+                                </button>
+
+                            </div>
 
                           </detailsFormHeader>
 
                           <!-- form Step 3 -->
-                          <guestAsTravellerFormView :apiData="travellerGuestData" v-if="headerTitle == 'Traveller'" class="ml-8" />
+                          <guestAsTravellerFormView v-if="headerTitle == 'Traveller'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
 
                           <!-- form Step 4 -->
-                          <airlinesFormView :apiData="airlinesData" v-if="headerTitle == 'Airlines'" class="ml-8" />
+                          <airlinesFormView :apiData="airlinesData" v-if="headerTitle == 'Airlines'" class="ml-8" :isEditing="isEditing" />
 
                           <!-- form Step 5 -->
-                          <taxiVoucherFormView :apiData="taxiVoucherData" v-if="headerTitle == 'Taxi Voucher'" class="ml-8" />
+                          <taxiVoucherFormView :apiData="taxiVoucherData" v-if="headerTitle == 'Taxi Voucher'" class="ml-8" :isEditing="isEditing" />
 
                           <!-- form Step 6 -->
-                          <otherTransportationFormView :apiData="otherTransportationData" v-if="headerTitle == 'Other Transportation'" class="ml-8" />
+                          <otherTransportationFormView :apiData="otherTransportationData" v-if="headerTitle == 'Other Transportation'" class="ml-8" :isEditing="isEditing" />
 
                           <!-- form Step 7 -->
-                          <accomodationFormView :apiData="accomodationData" v-if="headerTitle == 'Accomodation'" class="ml-8" />
+                          <accomodationFormView :apiData="accomodationData" v-if="headerTitle == 'Accomodation'" class="ml-8" :isEditing="isEditing" />
 
                           <!-- form Step 8 -->
-                          <cashAdvanceFormView :apiData="cashAdvanceData" v-if="headerTitle == 'Cash Advance'" class="ml-8" />
-
+                          <cashAdvanceFormView :apiData="cashAdvanceData" v-if="headerTitle == 'Cash Advance'" class="ml-8" :isEditing="isEditing" />
 
                         </div>
 

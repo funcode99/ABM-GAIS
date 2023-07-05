@@ -129,7 +129,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let formattedDepartureDate = ref()
     let formattedReturnDate = ref()
 
-    let date1 = ref()
+    let date1 = ref('')
     let date2 = ref('')
     let margin = ref()
 
@@ -139,7 +139,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       getDepartureDateDay = newValue.toString().substring(8,10)
       formattedDepartureDate = getDepartureDateYear + '/' + getDepartureDateMonth + '/' + getDepartureDateDay
       date2 = new Date(formattedDepartureDate)
-      if(date2.value !== '' && date2.value !== undefined && date1.value !== '' && date2.value !== undefined) {
+      if(date1.value !== '') {
         margin = date1.getTime() - date2.getTime()
         totalDays = Math.ceil((margin/(1000*3600*24))+1)
         totalTLK = totalDays * TLKperDay.value
@@ -152,8 +152,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
         getReturnDateDay = newValue.toString().substring(8,10)
         formattedReturnDate = getReturnDateYear + '/' + getReturnDateMonth + '/' + getReturnDateDay
         date1 = new Date(formattedReturnDate)
-        // yesss dapet hasil nya
-        if(date2.value !== '') {
+        if(date2.value  !== '') {
           margin = date1.getTime() - date2.getTime()
           totalDays = Math.ceil((margin/(1000*3600*24))+1)
           totalTLK = totalDays * TLKperDay.value
@@ -161,7 +160,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     })
 
     watch(TLKperDay, () => {
-      if(date2.value !== '') {
+      if(date1.value !== '' && date2.value !== '') {
         margin = date1.getTime() - date2.getTime()
         totalDays = Math.ceil((margin/(1000*3600*24))+1)
         totalTLK = totalDays * TLKperDay.value
@@ -183,6 +182,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       if(localStorage.getItem("tripId") !== undefined) {
           const token = JSON.parse(localStorage.getItem('token'))
           Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+        if(requestType[1] == 'Site Visit') {
+          
           const api = await Api.post('/request_trip/store', {
             id_zona: zona.value,
             id_city_to: toCity.value,
@@ -197,9 +199,28 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             id_site: siteVisitLocation.value,
             file: siteVisitAttachmentFile.value,
             no_request_trip: '',
-            // id_site: locationId.value,
           })
           localStorage.setItem('tripId', api.data.data.id)
+
+        } else {
+          
+          const api = await Api.post('/request_trip/store', {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            no_request_trip: '',
+            id_site: locationId.value,
+          })
+          localStorage.setItem('tripId', api.data.data.id)
+        
+        }
           formStep.value++
           resetProgressData()
         }
@@ -214,7 +235,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
       console.log(api)
-      console.log('berhasil submit request trip!')
     }
 
     watch(optionDataEmployeeRequestor, () => {
