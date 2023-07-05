@@ -1870,6 +1870,33 @@ onMounted(() => {
                           </ul>
                         </div>
                       </button>
+                      
+                      <button class="cursor-pointer text-left">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <router-link to="/doc-delivery" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                Document Delivery
+                                <img class="w-4 h-4" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                        </div>
+                      </button>
                     </ul>
                   </div>
                 </collapse-transition>

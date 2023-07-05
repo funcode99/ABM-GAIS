@@ -117,8 +117,8 @@
               <div class="form-control">
                 <label class="block mt-2 font-JakartaSans font-medium text-sm">
                   Item </label>
-                <input type="hidden" v-model="value.idItem" />
-                <input type="text" v-model="value.id" disabled="true" style="background-color: 	#D3D3D3;"
+                <input type="hidden" v-model="value.id" />
+                <input type="text" v-model="value.itemName" disabled="true" style="background-color: 	#D3D3D3;"
                   class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer" />
               </div>
               <div class="form-control">
