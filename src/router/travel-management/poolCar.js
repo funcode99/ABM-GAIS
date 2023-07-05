@@ -24,7 +24,7 @@ const poolCarRoutes = [
             "@/views/travel-management/pool-car/management/PoolCarList.vue"
           ),
         meta: {
-          title: "Pool Car Request",
+          title: "Pool Car Management",
         },
       },
       {
@@ -40,9 +40,9 @@ const poolCarRoutes = [
         path: "request/:id",
         name: "PoolCarRequestDetail",
         component: () =>
-          import("@/views/travel-management/pool-car/request/PoolCarList.vue"),
+          import("@/views/travel-management/pool-car/request/PoolCarView.vue"),
         meta: {
-          title: "Pool Car",
+          title: "Pool Car Request",
         },
       },
     ],

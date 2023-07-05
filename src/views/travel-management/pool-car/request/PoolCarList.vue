@@ -17,15 +17,16 @@ import { fetchPoolCarRequest } from "@/utils/Api/travel-management/poolCar"
 
 const headers = [
   {
-    text: "Created Date",
-    key: "created_date",
-    value: "created_date",
-  },
-  {
     text: "Request No",
     key: "request_no",
     value: "request_no",
   },
+  {
+    text: "Created Date",
+    key: "created_date",
+    value: "created_date",
+  },
+
   {
     text: "From Date",
     key: "from_date",
@@ -193,6 +194,19 @@ onMounted(() => {
         :api-method="fetchPoolCarRequest"
         show-select
       >
+        <template #[`item-request_no`]="{ item }">
+          <router-link
+            :to="{
+              name: 'PoolCarRequestDetail',
+              params: {
+                id: item.request_no,
+              },
+            }"
+          >
+            <span class="font-bold text-primary"> {{ item.request_no }}</span>
+          </router-link>
+        </template>
+
         <template #item-actions>
           <div class="flex justify-center items-center gap-2">
             <button>

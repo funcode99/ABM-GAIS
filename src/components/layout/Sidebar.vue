@@ -38,11 +38,11 @@ let approval = "approval"
 let facility = "facilityServiceSystem"
 
 onMounted(() => {
-  let scroller = window.document.querySelector(".scroller")
-  scroller.scrollTop = sidebar.scrollValue
-  scroller.addEventListener("scroll", () => {
-    sidebar.scrollValue = Math.round(scroller.scrollTop)
-  })
+  // let scroller = window.document.querySelector(".scroller")
+  // scroller.scrollTop = sidebar.scrollValue
+  // scroller.addEventListener("scroll", () => {
+  //   sidebar.scrollValue = Math.round(scroller.scrollTop)
+  // })
 })
 </script>
 

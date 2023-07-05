@@ -47,7 +47,7 @@ import SettlementReport from "@/views/travel-management/settlement/SettlementRep
 import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
 import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue"
 
-import poolCarRoutes from "./travel-management/pool-car"
+import poolCarRoutes from "./travel-management/poolCar"
 
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue"

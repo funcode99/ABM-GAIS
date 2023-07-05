@@ -6,7 +6,7 @@ import { stringify } from "qs"
 
 const SEARCH_DEBOUNCE_MS = 500
 
-defineEmits(["update:selectedItems"])
+const emit = defineEmits(["update:selectedItems", "row:click"])
 
 const props = defineProps({
   headers: {
@@ -19,19 +19,10 @@ const props = defineProps({
     //    sortable: Boolean
     // }
   },
-  items: {
-    type: Array,
-    default: () => [
-      {
-        created_date: "24",
-        request_no: "25",
-      },
-      {
-        created_date: "55",
-        request_no: "56",
-      },
-    ],
-  },
+  // items: {
+  //   type: Array,
+  //   default: () => [],
+  // },
   apiParams: {
     type: Object,
     default: () => {},
@@ -52,23 +43,40 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  filter: {
+    type: Object,
+    default: () => {},
+  },
 })
 
 const paging = ref({
   page: 1,
   limit: 10,
-  totalData: 89,
+  totalData: 1,
 })
+
+const items = ref([])
 
 const headerKeys = computed(() => {
   return props.headers.map(({ key }) => key) ?? []
 })
 
+watch(paging, () => {
+  getData()
+})
+
+watch(props.filter, () => {
+  getData()
+})
+
 const getData = debounce(async function () {
   // const { sortBy, sortDesc, page, limit } = paging
 
+
+  
+
   try {
-    const result = await props.apiMethod({
+    const res = await props.apiMethod({
       params: {
         perPage: paging.value.limit,
         page: paging.value.page,
@@ -77,7 +85,8 @@ const getData = debounce(async function () {
       paramsSerializer: (params) => stringify(params),
     })
 
-    paging.totalData = result.data.total || 0
+    paging.totalData = res.data.total || 0
+    items.value = res.data.data
   } catch (error) {
     console.error(error)
   }
@@ -107,9 +116,7 @@ onMounted(() => {
     </div>
   </slot>
 
-  <div
-    class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
-  >
+  <div class="px-4 py-2 bg-white rounded-xl box-border block overflow-x-hidden">
     <table
       class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
     >
@@ -149,8 +156,10 @@ onMounted(() => {
       <tbody>
         <slot name="body">
           <tr
-            class="font-JakartaSans font-normal text-sm"
+            v-if="items.length > 0"
             v-for="(item, index) in items"
+            class="font-JakartaSans font-normal text-sm"
+            @click="emit('row:click')"
           >
             <td v-if="showSelect">
               <input type="checkbox" name="checks" :value="item" />
@@ -165,6 +174,12 @@ onMounted(() => {
                   item[headerKey] !== undefined ? item[headerKey] || "-" : "-"
                 }}
               </slot>
+            </td>
+          </tr>
+
+          <tr v-else>
+            <td height="200px" colspan="100%" align="center">
+              <slot name="not-found"> No Data Available </slot>
             </td>
           </tr>
         </slot>
@@ -186,9 +201,8 @@ onMounted(() => {
           :items-per-page="parseInt(paging.limit)"
           v-model="paging.page"
           :max-pages-shown="4"
-          :show-breakpoint-buttons="false"
-          :show-jump-buttons="true"
-          :onclick="getData()"
+          :show-breakpoint-buttons="true"
+          :show-jump-buttons="false"
         />
       </div>
     </slot>
@@ -215,7 +229,7 @@ tr th {
 
 .table-zebra tbody tr:hover td {
   background-color: rgb(193, 192, 192);
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .backgroundHeight {

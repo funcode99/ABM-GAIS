@@ -1,0 +1,251 @@
+<script setup>
+import { Modal } from "usemodal-vue3"
+import { onMounted, ref } from "vue"
+import { useCurrencyInput } from "vue-currency-input"
+
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
+import Multiselect from "@vueform/multiselect"
+
+import FieldTitle from "@/components/atomics/FieldTitle.vue"
+
+import {
+  fetchCarType,
+  fethDrivers,
+  saveCarData,
+} from "@/utils/Api/travel-management/poolCar.js"
+import fetchCompanyRefs from "@/utils/Fetch/Reference/fetchCompany"
+import fetchSiteRefs from "@/utils/Fetch/Reference/fetchSite"
+import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
+
+const dialog = ref(false)
+
+const references = ref({
+  company: [],
+  site: [],
+  carType: [],
+  status: [
+    { label: "Active", value: 1 },
+    { label: "Under Maintenance", value: 0 },
+  ],
+})
+
+const form = ref({
+  company: null,
+  site: null,
+  carname: null,
+  plate: null,
+  carType: null,
+  driver: null,
+  transmision: null,
+  odometer: null,
+  status: null,
+})
+
+const saveCar = async () => {
+  try {
+    const body = {
+      car_name: form.value.carname,
+      id_company: form.value.company,
+      id_site: form.value.site,
+      plate: form.value.plate,
+      id_car_type: form.value.carType,
+      id_driver: form.value.driver,
+      odometer: form.value.odometer,
+      transmision: form.value.transmision,
+      transmisi: form.value.transmision,
+      status: form.value.status,
+    }
+
+    var form_data = new FormData()
+
+    for (var key in body) {
+      form_data.append(key, body[key])
+    }
+
+    const res = await saveCarData(form_data)
+
+    if (res.success) {
+
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+onMounted(async () => {
+  references.value.company = await fetchCompanyRefs()
+  references.value.site = await fetchSiteRefs()
+  references.value.carType = await fetchCarType()
+  references.value.driver = await fethDrivers()
+})
+</script>
+
+<template>
+  <button
+    @click="dialog = true"
+    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+  >
+    + Add New
+  </button>
+
+  <Modal v-model:visible="dialog">
+    <form @submit.prevent="saveCar">
+      <main class="overflow-y-scroll">
+        <modalHeader @closeVisibility="dialog = false" title="New Car" />
+
+        <div class="p-5 grid gap-3 h-auto">
+          <div>
+            <FieldTitle label="Company" mandatory />
+
+            <Multiselect
+              v-model="form.company"
+              mode="single"
+              placeholder="Select Company"
+              :options="references.company"
+              track-by="company_code"
+              label="company_name"
+              valueProp="id"
+              required
+              clear
+              searchable
+            >
+            </Multiselect>
+          </div>
+
+          <div>
+            <FieldTitle label="Site" mandatory />
+
+            <Multiselect
+              v-model="form.site"
+              mode="single"
+              placeholder="Select Site"
+              :options="references.site"
+              track-by="site_code"
+              label="site_name"
+              valueProp="id"
+              required
+              clear
+              searchable
+            >
+            </Multiselect>
+          </div>
+
+          <div>
+            <FieldTitle label="Car Name" mandatory />
+
+            <input
+              v-model="form.carname"
+              type="text"
+              placeholder="Input Car Name"
+              required
+            />
+          </div>
+
+          <div>
+            <FieldTitle label="Plate" mandatory />
+
+            <input
+              v-model="form.plate"
+              type="text"
+              placeholder="Input Plate"
+              required
+            />
+          </div>
+
+          <div>
+            <FieldTitle label="Odometer" mandatory />
+
+            <!-- <input
+              v-model="form.odometer"
+              type="number"
+              placeholder="Input Odometer"
+              required
+            /> -->
+
+            <CurrencyInput
+              v-model="form.odometer"
+              placeholder="Input Odometer"
+            />
+          </div>
+
+          <div class="flex gap-5">
+            <div class="flex-1">
+              <FieldTitle label="Car Type" mandatory />
+
+              <Multiselect
+                v-model="form.carType"
+                mode="single"
+                placeholder="Select Car Type"
+                :options="references.carType"
+                track-by="type_car"
+                label="type_car"
+                valueProp="id"
+                required
+                clear
+                searchable
+              >
+              </Multiselect>
+            </div>
+
+            <div class="flex-1">
+              <FieldTitle label="Transmission" mandatory />
+
+              <Multiselect
+                v-model="form.transmision"
+                mode="single"
+                placeholder="Select Transmision"
+                :options="['Automatic', 'Manual']"
+                required
+                clear
+                searchable
+              >
+              </Multiselect>
+            </div>
+          </div>
+
+          <div class="flex gap-5">
+            <div class="flex-1">
+              <FieldTitle label="Status" mandatory />
+
+              <Multiselect
+                v-model="form.status"
+                mode="single"
+                placeholder="Select Status"
+                :options="references.status"
+                track-by="value"
+                label="label"
+                valueProp="value"
+                required
+                clear
+                searchable
+              >
+              </Multiselect>
+            </div>
+
+            <div class="flex-1">
+              <FieldTitle label="Driver" mandatory />
+
+              <Multiselect
+                v-model="form.driver"
+                mode="single"
+                placeholder="Select Driver"
+                :options="references.driver"
+                track-by="id"
+                label="name"
+                valueProp="id"
+                required
+                clear
+                searchable
+              >
+              </Multiselect>
+            </div>
+          </div>
+        </div>
+      </main>
+      <modalFooter @closeEdit="dialog = false" class="py-3" />
+    </form>
+  </Modal>
+</template>
+
+<style scoped></style>

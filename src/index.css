@@ -2,9 +2,35 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  input {
+    @apply py-2 px-4 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-medium text-base;
+  }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 .pagination-container {
   display: flex;
   align-items: center;
+}
+
+:deep(.modal-vue3-wrap div:nth-child(2)) {
+  overflow-y: visible !important;
+}
+
+.multiselect-wrapper {
+  z-index: auto !important;
 }
 
 .paginate-buttons {
@@ -22,7 +48,8 @@
   background-color: #fff;
   border: 1px solid #015289;
   border-radius: 0.25rem;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .paginate-buttons:hover {
@@ -31,7 +58,7 @@
   border-color: #015289;
 }
 
-.active-page{
+.active-page {
   color: #fff;
   background-color: #015289;
   border-color: #015289;
@@ -41,17 +68,13 @@
   margin: -8px;
 }
 
-.modal-vue3-wrap div:nth-child(2) {
-  overflow-y: hidden !important;
-}
-
 .modal-vue3-content {
   border-radius: 16px !important;
   height: fit-content;
   width: 100%;
   overflow-x: hidden !important;
   overflow-y: hidden !important;
-  overscroll-behavior: contain !important;  
+  overscroll-behavior: contain !important;
 }
 
 .modal-vue3-body {
@@ -61,8 +84,6 @@
   padding: 0px 0px !important;
   max-height: 100% !important;
 }
-
-
 
 .modal-vue3-header,
 .modal-vue3-footer {
@@ -86,9 +107,12 @@
   border-color: rgb(14 165 233 / var(--tw-border-opacity)) !important;
   --tw-ring-opacity: 1 !important;
   --tw-ring-color: rgb(14 165 233 / var(--tw-ring-opacity)) !important;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000) !important;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
+    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
+    calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
+    var(--tw-shadow, 0 0 #0000) !important;
 }
 
 .v3ti-tag {
@@ -126,9 +150,9 @@
 }
 
 .swal-cancel-button {
-  color: #1F7793 !important;
+  color: #1f7793 !important;
   background-color: #ffffff !important;
-  border: 1px solid #1F7793 !important;
+  border: 1px solid #1f7793 !important;
   font-size: 16px !important;
   font-weight: bold !important;
   padding: 8px 16px !important;
@@ -137,14 +161,14 @@
 }
 
 .swal-cancel-button:hover {
-  background-color: #1F7793 !important;
+  background-color: #1f7793 !important;
   color: #ffffff !important;
 }
 
 .swal-confirm-button {
   color: #ffffff !important;
-  background-color: #F04438 !important;
-  border: 1px solid #F04438 !important;
+  background-color: #f04438 !important;
+  border: 1px solid #f04438 !important;
   font-size: 16px !important;
   font-weight: bold !important;
   padding: 8px 16px !important;
@@ -154,11 +178,11 @@
 
 .swal-confirm-button:hover {
   background-color: #ffffff !important;
-  color: #F04438 !important;
+  color: #f04438 !important;
 }
 
 /* apply effect until 639px width */
-@media screen and (max-width:640px) {
+@media screen and (max-width: 640px) {
   .clean-margin {
     margin-left: 0px;
   }
@@ -171,7 +195,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #015289; 
+  background: #015289;
   border-radius: 10px;
 }
 
@@ -180,7 +204,7 @@
   color: black;
 }
 
-input[type=radio] {
+input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
   border-radius: 50%;
@@ -188,7 +212,7 @@ input[type=radio] {
   border: 1px solid black;
 }
 
-input[type=radio]:checked {
+input[type="radio"]:checked {
   background: #1f7793;
 }
 
