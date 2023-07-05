@@ -325,7 +325,7 @@ watch(addCompanyData, () => {
               >
                 Delete
               </button>
-              <ModalAdd @site-saved="fetchSite" />
+              <!-- <ModalAdd @site-saved="fetchSite" /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
@@ -493,7 +493,7 @@ watch(addCompanyData, () => {
                       data.detail,
                     ]"
                   />
-                  <ModalEdit
+                  <!-- <ModalEdit
                     @change-site="editSite(data.id)"
                     :formContent="[
                       data.site_name,
@@ -503,7 +503,7 @@ watch(addCompanyData, () => {
                   />
                   <button @click="deleteSite(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
+                  </button> -->
                 </td>
               </tr>
             </tbody>
