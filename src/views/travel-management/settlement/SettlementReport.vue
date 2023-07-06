@@ -53,7 +53,7 @@ const tableHead = [
   { Id: 2, title: "Created Date", jsonData: "created_at" },
   { Id: 3, title: "Settlement No", jsonData: "no_settlement" },
   { Id: 4, title: "Requestor", jsonData: "employee_name" },
-  { Id: 5, title: "CA No", jsonData: "no_ca" },
+  { Id: 5, title: "CA No", jsonData: "nomor_ca" },
   { Id: 6, title: "Nominal Real", jsonData: "total_real" },
   { Id: 7, title: "Status", jsonData: "status" },
 ];
