@@ -96,7 +96,7 @@ const fetchSettlementReport = async (id) => {
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/settlement/get_data", { params });
+  const res = await Api.get("/settlement/report", { params });
   instanceArray = res.data.data;
   sortedData.value = instanceArray.data;
   totalPage.value = instanceArray.last_page;
