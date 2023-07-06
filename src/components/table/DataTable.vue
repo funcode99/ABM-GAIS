@@ -83,6 +83,8 @@ watch(
 const getData = debounce(async function () {
   // const { sortBy, sortDesc, page, limit } = paging
 
+  console.log("Table GetData")
+
   try {
     const res = await props.apiMethod({
       params: {
@@ -99,6 +101,8 @@ const getData = debounce(async function () {
     console.error(error)
   }
 }, SEARCH_DEBOUNCE_MS)
+
+defineExpose({ getData })
 
 onMounted(() => {
   getData()

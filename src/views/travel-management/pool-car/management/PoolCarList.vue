@@ -62,7 +62,7 @@ const headers = ref([
 ])
 
 const selectedItems = ref([])
-const tableRef = ref(0)
+const dataTableRef = ref()
 const formDialogRef = ref()
 const selectedData = ref({})
 
@@ -98,6 +98,10 @@ const setEditedData = (item) => {
   formDialogRef.value.dialog = true
 }
 
+const success = () => {
+  dataTableRef.value.getData()
+}
+
 const reset = () => {
   filter.site.value = null
   filter.keyword = null
@@ -119,7 +123,7 @@ onMounted(() => {
         <div class="flex items-center gap-4">
           <FormDialog
             ref="formDialogRef"
-            @success="ref.dataTable.etData()"
+            @success="success()"
             :data="selectedData"
           >
           </FormDialog>
@@ -217,6 +221,7 @@ onMounted(() => {
         :headers="headers"
         :api-method="fetchCarMaster"
         :api-params="computedFilter"
+        ref="dataTableRef"
         show-select
       >
         <template #item-status="{ item }">

@@ -32,7 +32,12 @@ const fetchCarMaster = async (params) => {
 
 const saveCarData = async (body) => {
   try {
-    const res = await Api.post(`${CAR_ENDPOINT}/store`, body)
+    let res
+    if (body.id) {
+      res = await Api.post(`${CAR_ENDPOINT}/store`, body)
+    } else {
+      res = await Api.post(`${CAR_ENDPOINT}/update_data`, body)
+    }
 
     return res
   } catch (error) {
@@ -99,5 +104,5 @@ export {
   fetchCarType,
   fethDrivers,
   saveCarData,
-  deleteCarById
+  deleteCarById,
 }

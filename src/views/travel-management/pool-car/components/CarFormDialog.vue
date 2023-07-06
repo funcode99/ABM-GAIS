@@ -38,38 +38,30 @@ const references = ref({
     { label: "Active", value: 1 },
     { label: "Under Maintenance", value: 0 },
   ],
+  drver: [],
 })
 
 const form = ref({})
 
 const setForm = () => {
   form.value = {
-    company: null,
-    site: null,
-    carname: null,
+    id: null,
+    car_name: null,
+    id_company: null,
+    id_site: null,
     plate: null,
-    carType: null,
-    driver: null,
-    transmision: null,
+    id_car_type: null,
+    id_driver: null,
     odometer: null,
+    transmision: null,
+    transmisi: null,
     status: null,
   }
 }
 
 const saveCar = async () => {
   try {
-    const body = {
-      car_name: form.value.carname,
-      id_company: form.value.company,
-      id_site: form.value.site,
-      plate: form.value.plate,
-      id_car_type: form.value.carType,
-      id_driver: form.value.driver,
-      odometer: form.value.odometer,
-      transmision: form.value.transmision,
-      transmisi: form.value.transmision,
-      status: form.value.status,
-    }
+    const body = { ...form.value }
 
     var form_data = new FormData()
 
@@ -99,7 +91,9 @@ const saveCar = async () => {
 
 watch(dialog, () => {
   setForm()
+  if (props.data) Object.assign(form.value, props.data)
 })
+
 defineExpose({ dialog })
 
 onMounted(async () => {
@@ -121,14 +115,17 @@ onMounted(async () => {
   <Modal v-model:visible="dialog">
     <form @submit.prevent="saveCar">
       <main class="overflow-y-scroll">
-        <modalHeader @closeVisibility="dialog = false" title="New Car" />
+        <modalHeader
+          @closeVisibility="dialog = false"
+          :title="data ? 'Update Car' : 'New Car'"
+        />
 
         <div class="p-5 grid gap-3 h-auto">
           <div>
             <FieldTitle label="Company" mandatory />
 
             <Multiselect
-              v-model="form.company"
+              v-model="form.id_company"
               mode="single"
               placeholder="Select Company"
               :options="references.company"
@@ -146,7 +143,7 @@ onMounted(async () => {
             <FieldTitle label="Site" mandatory />
 
             <Multiselect
-              v-model="form.site"
+              v-model="form.id_site"
               mode="single"
               placeholder="Select Site"
               :options="references.site"
@@ -164,7 +161,7 @@ onMounted(async () => {
             <FieldTitle label="Car Name" mandatory />
 
             <input
-              v-model="form.carname"
+              v-model="form.car_name"
               type="text"
               placeholder="Input Car Name"
               required
@@ -203,7 +200,7 @@ onMounted(async () => {
               <FieldTitle label="Car Type" mandatory />
 
               <Multiselect
-                v-model="form.carType"
+                v-model="form.id_car_type"
                 mode="single"
                 placeholder="Select Car Type"
                 :options="references.carType"
@@ -221,7 +218,7 @@ onMounted(async () => {
               <FieldTitle label="Transmission" mandatory />
 
               <Multiselect
-                v-model="form.transmision"
+                v-model="form.transmisi"
                 mode="single"
                 placeholder="Select Transmision"
                 :options="['Automatic', 'Manual']"
@@ -256,7 +253,7 @@ onMounted(async () => {
               <FieldTitle label="Driver" mandatory />
 
               <Multiselect
-                v-model="form.driver"
+                v-model="form.id_driver"
                 mode="single"
                 placeholder="Select Driver"
                 :options="references.driver"
