@@ -94,7 +94,7 @@ const getData = debounce(async function () {
     })
 
     paging.value.totalData = res.data.total || 0
-    items.value = res.data.data
+    items.value = res.data.data || []
   } catch (error) {
     console.error(error)
   }

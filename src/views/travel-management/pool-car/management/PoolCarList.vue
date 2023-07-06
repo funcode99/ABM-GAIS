@@ -63,7 +63,7 @@ const headers = ref([
 
 const selectedItems = ref([])
 const tableRef = ref(0)
-const formDialogRef = ref(0)
+const formDialogRef = ref()
 const selectedData = ref({})
 
 const filter = reactive({
@@ -95,12 +95,12 @@ const fethSiteReference = async () => {
 
 const setEditedData = (item) => {
   selectedData.value = { ...item }
-  formDialogRef.dialog = true
+  formDialogRef.value.dialog = true
 }
 
 const reset = () => {
-  filter.value.site.value = null
-  filter.value.keyword = null
+  filter.site.value = null
+  filter.keyword = null
 }
 
 onMounted(() => {
@@ -216,7 +216,6 @@ onMounted(() => {
         @update:selectedItems="selectedItems = $event"
         :headers="headers"
         :api-method="fetchCarMaster"
-        :key="tableKey"
         :api-params="computedFilter"
         show-select
       >

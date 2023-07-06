@@ -100,6 +100,7 @@ const saveCar = async () => {
 watch(dialog, () => {
   setForm()
 })
+defineExpose({ dialog })
 
 onMounted(async () => {
   references.value.company = await fetchCompanyRefs()
