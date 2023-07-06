@@ -112,7 +112,7 @@ watch(isVisible, () => {
 
 <style scoped>
 :deep(.modal-vue3-content) {
-  max-height: 300px !important;
+  max-height: 320px !important;
   max-width: 510px !important;
 }
 </style>
