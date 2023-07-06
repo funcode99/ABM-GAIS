@@ -1,5 +1,24 @@
 <script setup>
-    import { ref, inject, watch } from 'vue'
+    import { ref, inject, onBeforeMount, watch } from 'vue'
+    import Api from '@/utils/Api'
+
+    let travellerTypeData = ref()
+
+    const getTravellerType = async () => {
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.get('/travel_guest/get_type_traveller')
+            travellerTypeData.value = api.data.data
+            console.log('menarik berhasil')
+    }
+
+    onBeforeMount(() => {
+            getTravellerType()
+    })
+
+    watch(travellerTypeData, () => {
+        assignValue()
+    })
 
     const status = defineProps({
         isEditing: Boolean,
@@ -25,7 +44,7 @@
         sn.value = props.value[status.currentIndex]
         company.value = props.value[status.currentIndex].company
         gender.value = props.value[status.currentIndex].gender
-        type.value = props.value[status.currentIndex].type_traveller
+        type.value = props.value[status.currentIndex].id_type_traveller
         contactNo.value = props.value[status.currentIndex].contact_no
         maxHotelFare.value = props.value[status.currentIndex].hotel_fare
     }
@@ -35,6 +54,7 @@
     })
 
     watch(props, () => {
+        console.log('props berubah')
         
         if(props.value[0].name_guest !== undefined) {
            name.value = props.value[0].name_guest
@@ -60,10 +80,28 @@
            sn.value = props.value[0]
            company.value = props.value[0].company
            gender.value = props.value[0].gender
-           type.value = props.value[0].type_traveller
+           type.value = props.value[0].id_type_traveller
            contactNo.value = props.value[0].contact_no
            maxHotelFare.value = props.value[0].hotel_fare
-        }
+    }
+
+    const updateTravelGuest = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post('/travel_guest/store', {
+            nik: props.value[status.currentIndex].nik,
+            notes: props.value[status.currentIndex].notes,
+            gender: gender.value,
+            company: company.value,
+            name_guest: name.value,
+            hotel_fare: maxHotelFare.value,
+            departement: department.value,
+            contact_no: contactNo.value,
+            id_type_traveller: type.value,
+            id_flight_class: props.value[status.currentIndex].id_flight_class,
+            id_request_trip: props.value[status.currentIndex].id_request_trip
+        })
+    }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
@@ -75,6 +113,8 @@
 <template>
     <div>
         
+        {{ props[status.currentIndex] }}
+
         <div :class="rowClass">
 
             <div :class="columnClass">
@@ -127,13 +167,13 @@
                     Flight Class <span class="text-red-star">*</span>
                     </label>
                     
-                    <input 
-                    v-model="flightClass"
-                    type="text"
-                    placeholder="Flight Class"
-                    :class="inputStylingClass"
-                    required
-                    :disabled="!status.isEditing"
+                    <input
+                        v-model="flightClass"
+                        type="text"
+                        placeholder="Flight Class"
+                        :class="inputStylingClass"
+                        required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -157,7 +197,7 @@
                     placeholder="SN"
                     :class="inputStylingClass"
                     required
-                    :disabled="!status.isEditing"
+                    disabled
                 />
 
             </div>
@@ -222,14 +262,25 @@
                         Type<span class="text-red-star">*</span>
                     </label>
 
-                    <input 
+                    <select                         
+                        v-model="type"
+                        :class="inputStylingClass"
+                        :disabled="!status.isEditing"
+                        required
+                    >
+                        <option v-for="data in travellerTypeData" :key="data.id" :value="data.id">
+                            {{ data.type_traveller }}
+                        </option>
+                    </select>
+
+                    <!-- <input 
                         v-model="type"
                         type="text"
                         placeholder="Type"
                         :class="inputStylingClass"
                         required
                         :disabled="!status.isEditing"
-                    />
+                    /> -->
 
                 </div>
 
