@@ -150,6 +150,7 @@ onMounted(() => {
           <FormDialog
             ref="formDialogRef"
             @success="success()"
+            @reset-data="selectedData = {}"
             :data="selectedData"
           >
           </FormDialog>
