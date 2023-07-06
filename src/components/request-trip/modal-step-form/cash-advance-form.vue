@@ -55,7 +55,7 @@
 
     watch(variableTotal.value, () => {
         console.log('perubahan di variable Total')
-        if(nominal.value != 0 & frequency.value != 0) {
+        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
             total.value = nominal.value * frequency.value
         }
     })
