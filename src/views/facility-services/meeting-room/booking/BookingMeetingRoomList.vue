@@ -85,7 +85,8 @@ const tableHead = [
   { Id: 5, title: "Meeting Room", jsonData: "available_status" },
   { Id: 6, title: "Date", jsonData: "start_date" },
   { Id: 7, title: "Time", jsonData: "status" },
-  { Id: 8, title: "Status", jsonData: "status" },
+  { Id: 8, title: "Site", jsonData: "site_name" },
+  { Id: 9, title: "Status", jsonData: "status" },
 ];
 
 const format_date = (value) => {
@@ -206,7 +207,7 @@ const deleteData = async (event) => {
     confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
-      Api.delete(`/booking_meeting_room/delete_data/${event}`).then((res) => {
+      Api.delete(`/book_meeting_room/delete_data/${event}`).then((res) => {
         Swal.fire({
           title: "Successfully",
           text: "Data has been deleted.",
@@ -252,7 +253,7 @@ const deleteCheckedArray = () => {
       let payload = {
         id: deleteArray.value,
       };
-      Api.delete(`/booking_meeting_room/delete_data/`, {
+      Api.delete(`/book_meeting_room/delete_data/`, {
         params: payload,
       }).then((res) => {
         Swal.fire({
@@ -550,6 +551,7 @@ onBeforeMount(() => {
                       {{ format_date(data.end_date) }}
                     </td>
                     <td>{{ data.start_time }} - {{ data.end_time }}</td>
+                    <td>{{ data.site_name }}</td>
                     <td>
                       <span
                         :class="
