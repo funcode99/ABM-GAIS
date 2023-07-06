@@ -459,6 +459,9 @@ const inputClass =
                       {{ data.item_name }}
                     </td>
                     <td>
+                      {{ data.frequency }}
+                    </td>
+                    <td>
                       {{ dataArr.currency_name }}
                     </td>
                     <td>
