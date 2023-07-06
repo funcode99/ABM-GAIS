@@ -250,6 +250,7 @@ const close = () => {
               range
               :enable-time-picker="false"
               placeholder="Select Date"
+              :min-date="new Date()"
             />
           </div>
           <div :class="colClass">
