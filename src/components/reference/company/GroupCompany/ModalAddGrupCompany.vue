@@ -192,7 +192,7 @@ watch(isVisible, () => {
           />
         </div>
 
-        <modalFooter @closeEdit="isVisible = false" class="pb-4" />
+        <modalFooter @closeEdit="isVisible = false" class="pb-2" />
       </form>
     </main>
   </Modal>
@@ -200,7 +200,7 @@ watch(isVisible, () => {
 
 <style scoped>
 :deep(.modal-vue3-content) {
-  max-height: 400px !important;
+  max-height: 450px !important;
   max-width: 510px !important;
 }
 
