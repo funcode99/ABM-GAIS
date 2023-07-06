@@ -61,6 +61,7 @@ const headers = ref([
     text: "Actions",
     key: "actions",
     value: "actions",
+    noExport: true,
   },
 ])
 
@@ -116,6 +117,10 @@ const reset = () => {
   filter.keyword = null
 }
 
+const exportToXLS = () => {
+  dataTableRef.value.exportToXls()
+}
+
 const deleteData = async () => {
   try {
     const carId = selectedData.value.id
@@ -150,6 +155,7 @@ onMounted(() => {
           </FormDialog>
 
           <button
+            @click="exportToXLS()"
             class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
           >
             <img :src="icon_receive" class="w-6 h-6" />
@@ -242,6 +248,7 @@ onMounted(() => {
         :headers="headers"
         :api-method="fetchCarMaster"
         :api-params="computedFilter"
+        export-fileName="Pool Car List"
         ref="dataTableRef"
         show-select
       >

@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from "vue"
 import debounce from "lodash/debounce"
 import { stringify } from "qs"
+import exportExcel from "@/utils/exportToExcel.js"
 
 import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
@@ -20,10 +21,7 @@ const props = defineProps({
     //    sortable: Boolean
     // }
   },
-  // items: {
-  //   type: Array,
-  //   default: () => [],
-  // },
+
   apiParams: {
     type: Object,
     default: () => {},
@@ -45,6 +43,10 @@ const props = defineProps({
     default: () => [],
   },
   filter: {
+    type: Object,
+    default: () => {},
+  },
+  exportFileName: {
     type: Object,
     default: () => {},
   },
@@ -100,7 +102,26 @@ const getData = debounce(async function () {
   }
 }, SEARCH_DEBOUNCE_MS)
 
-defineExpose({ getData })
+const exportToXls = async () => {
+  const formatedHeader = props.headers
+    .filter(({ noExport }) => !noExport)
+    .map(({ text, value }, index) => {
+      return {
+        no: index + 1,
+        title: text,
+        value: value,
+      }
+    })
+
+  await exportExcel(
+    props.exportFileName,
+    formatedHeader,
+    items,
+    ...formatedHeader.map(({ value }) => value)
+  )
+}
+
+defineExpose({ getData, exportToXls })
 
 onMounted(() => {
   getData()
@@ -115,6 +136,7 @@ onMounted(() => {
         <select
           class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
           v-model="paging.limit"
+          @change="getData()"
         >
           <option>10</option>
           <option>25</option>
