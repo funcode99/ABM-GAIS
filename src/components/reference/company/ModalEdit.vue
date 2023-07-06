@@ -150,7 +150,7 @@ const resetForm = () => {
               <div class="flex justify-center items-center">
                 <label
                   for="file-input"
-                  class="cursor-pointer flex items-center justify-center"
+                  class="cursor-not-allowed flex items-center justify-center"
                 >
                   <div
                     class="w-[100px] h-[100px] rounded-full bg-[#D9D9D9] flex items-center justify-center"
@@ -173,9 +173,10 @@ const resetForm = () => {
                 <input
                   type="file"
                   id="file-input"
-                  class="hidden"
+                  class="hidden cursor-not-allowed"
                   accept="image/*"
                   @change="onFileSelected"
+                  disabled
                 />
               </div>
             </div>
@@ -200,6 +201,8 @@ const resetForm = () => {
             id="name"
             :class="inputStylingClass"
             required
+            disabled
+            class="cursor-not-allowed"
           />
         </div>
 
@@ -215,6 +218,8 @@ const resetForm = () => {
             id="name"
             :class="inputStylingClass"
             required
+            disabled
+            class="cursor-not-allowed"
           />
         </div>
 
@@ -231,6 +236,8 @@ const resetForm = () => {
             :class="inputStylingClass"
             maxlength="5"
             required
+            disabled
+            class="cursor-not-allowed"
           />
         </div>
 
