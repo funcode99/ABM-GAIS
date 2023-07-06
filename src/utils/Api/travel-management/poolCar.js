@@ -1,3 +1,4 @@
+import Swal from "sweetalert2"
 import Api from "@/utils/Api"
 
 const ENDPOINT = "pool_car"
@@ -32,7 +33,12 @@ const fetchCarMaster = async (params) => {
 
 const saveCarData = async (body) => {
   try {
-    const res = await Api.post(`${CAR_ENDPOINT}/store`, body)
+    let res
+    if (body.id) {
+      res = await Api.post(`${CAR_ENDPOINT}/store`, body)
+    } else {
+      res = await Api.post(`${CAR_ENDPOINT}/update_data`, body)
+    }
 
     return res
   } catch (error) {
@@ -42,9 +48,21 @@ const saveCarData = async (body) => {
 
 const deleteCarById = async (carId) => {
   try {
-    const res = await Api.delete(`${CAR_ENDPOINT}/${carId}`)
+    const res = await Api.delete(`${CAR_ENDPOINT}/delete_data/${carId}`)
 
-    return res
+    if (res.data.success) {
+      console.log(res)
+
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Succeess to Delete Car Data",
+        showConfirmButton: false,
+        timer: 1500,
+      })
+    }
+
+    return res.data
   } catch (error) {
     console.error(error)
   }
@@ -99,5 +117,5 @@ export {
   fetchCarType,
   fethDrivers,
   saveCarData,
-  deleteCarById
+  deleteCarById,
 }

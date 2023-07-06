@@ -21,7 +21,10 @@ import { numberFilter } from "@/utils/filters"
 import {
   fetchCarMaster,
   getAllSite,
+  deleteCarById,
 } from "@/utils/Api/travel-management/poolCar"
+
+import ConfirmDialog from "@/components/molecules/ConfirmDialog.vue"
 
 const headers = ref([
   {
@@ -62,9 +65,10 @@ const headers = ref([
 ])
 
 const selectedItems = ref([])
-const tableRef = ref(0)
-const formDialogRef = ref(0)
+const dataTableRef = ref()
+const formDialogRef = ref()
 const selectedData = ref({})
+const deleteDialog = ref(false)
 
 const filter = reactive({
   site: {
@@ -95,12 +99,33 @@ const fethSiteReference = async () => {
 
 const setEditedData = (item) => {
   selectedData.value = { ...item }
-  formDialogRef.dialog = true
+  formDialogRef.value.dialog = true
+}
+
+const setDeleteDialog = (item) => {
+  selectedData.value = { ...item }
+  deleteDialog.value = true
+}
+
+const success = () => {
+  dataTableRef.value.getData()
 }
 
 const reset = () => {
-  filter.value.site.value = null
-  filter.value.keyword = null
+  filter.site.value = null
+  filter.keyword = null
+}
+
+const deleteData = async () => {
+  try {
+    const carId = selectedData.value.id
+
+    await deleteCarById(carId)
+
+    success()
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 onMounted(() => {
@@ -119,7 +144,7 @@ onMounted(() => {
         <div class="flex items-center gap-4">
           <FormDialog
             ref="formDialogRef"
-            @success="ref.dataTable.etData()"
+            @success="success()"
             :data="selectedData"
           >
           </FormDialog>
@@ -216,8 +241,8 @@ onMounted(() => {
         @update:selectedItems="selectedItems = $event"
         :headers="headers"
         :api-method="fetchCarMaster"
-        :key="tableKey"
         :api-params="computedFilter"
+        ref="dataTableRef"
         show-select
       >
         <template #item-status="{ item }">
@@ -233,8 +258,14 @@ onMounted(() => {
             <button @click="setEditedData(item)">
               <img :src="icon_edit" class="w-6 h-6" />
             </button>
-            <button>
+            <button @click="setDeleteDialog(item)">
               <img :src="icon_delete" class="w-6 h-6" />
+
+              <ConfirmDialog
+                v-if="deleteDialog"
+                @confirm="deleteData"
+                @cancel="deleteDialog = false"
+              ></ConfirmDialog>
             </button>
           </div>
         </template>

@@ -49,8 +49,6 @@ let filter = reactive({
   search: "",
 });
 
-const id_site = JSON.parse(localStorage.getItem("id_site"));
-const id_company = JSON.parse(localStorage.getItem("id_company"));
 const id_role = JSON.parse(localStorage.getItem("id_role"));
 
 //for paginations
@@ -310,7 +308,9 @@ onBeforeMount(() => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Management Meeting Room
+              <span v-if="id_role == 'EMPLY'">Meeting Room</span>
+              <span v-else>Management Meeting Room</span>
+
             </p>
             <div class="flex gap-4">
               <div
