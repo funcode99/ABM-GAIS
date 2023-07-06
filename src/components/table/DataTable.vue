@@ -1,8 +1,9 @@
 <script setup>
-import arrowicon from "@/assets/navbar/icon_arrow.svg"
 import { computed, onMounted, ref, watch } from "vue"
 import debounce from "lodash/debounce"
 import { stringify } from "qs"
+
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
 const SEARCH_DEBOUNCE_MS = 500
 
@@ -61,19 +62,26 @@ const headerKeys = computed(() => {
   return props.headers.map(({ key }) => key) ?? []
 })
 
-watch(paging, () => {
-  getData()
-})
+watch(
+  props.filter,
+  () => {
+    paging.page = 0
+    getData()
+  },
+  { deep: true }
+)
 
-watch(props.filter, () => {
-  getData()
-})
+watch(
+  () => props.apiParams,
+  () => {
+    paging.page = 0
+    getData()
+  },
+  { deep: true }
+)
 
 const getData = debounce(async function () {
   // const { sortBy, sortDesc, page, limit } = paging
-
-
-  
 
   try {
     const res = await props.apiMethod({
@@ -85,7 +93,7 @@ const getData = debounce(async function () {
       paramsSerializer: (params) => stringify(params),
     })
 
-    paging.totalData = res.data.total || 0
+    paging.value.totalData = res.data.total || 0
     items.value = res.data.data
   } catch (error) {
     console.error(error)
@@ -165,7 +173,7 @@ onMounted(() => {
               <input type="checkbox" name="checks" :value="item" />
             </td>
             <td v-if="tableNumber">
-              {{ index + 1 }}
+              {{ (paging.page - 1) * paging.limit + index + 1 }}
             </td>
 
             <td v-for="headerKey in headerKeys" :key="`${index}-${headerKey}`">

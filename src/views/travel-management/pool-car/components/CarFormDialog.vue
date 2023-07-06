@@ -1,7 +1,8 @@
 <script setup>
 import { Modal } from "usemodal-vue3"
-import { onMounted, ref } from "vue"
-import { useCurrencyInput } from "vue-currency-input"
+import { onMounted, ref, watch } from "vue"
+
+import Swal from "sweetalert2"
 
 import modalHeader from "@/components/modal/modalHeader.vue"
 import modalFooter from "@/components/modal/modalFooter.vue"
@@ -18,6 +19,15 @@ import fetchCompanyRefs from "@/utils/Fetch/Reference/fetchCompany"
 import fetchSiteRefs from "@/utils/Fetch/Reference/fetchSite"
 import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
 
+const emit = defineEmits(["success"])
+
+const props = defineProps({
+  data: {
+    type: Object,
+    default: () => {},
+  },
+})
+
 const dialog = ref(false)
 
 const references = ref({
@@ -30,17 +40,21 @@ const references = ref({
   ],
 })
 
-const form = ref({
-  company: null,
-  site: null,
-  carname: null,
-  plate: null,
-  carType: null,
-  driver: null,
-  transmision: null,
-  odometer: null,
-  status: null,
-})
+const form = ref({})
+
+const setForm = () => {
+  form.value = {
+    company: null,
+    site: null,
+    carname: null,
+    plate: null,
+    carType: null,
+    driver: null,
+    transmision: null,
+    odometer: null,
+    status: null,
+  }
+}
 
 const saveCar = async () => {
   try {
@@ -65,13 +79,27 @@ const saveCar = async () => {
 
     const res = await saveCarData(form_data)
 
-    if (res.success) {
+    if (res.data.success) {
+      dialog.value = false
 
+      emit("success")
+
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Succeess to Save",
+        showConfirmButton: true,
+        timer: 1500,
+      })
     }
   } catch (error) {
     console.error(error)
   }
 }
+
+watch(dialog, () => {
+  setForm()
+})
 
 onMounted(async () => {
   references.value.company = await fetchCompanyRefs()

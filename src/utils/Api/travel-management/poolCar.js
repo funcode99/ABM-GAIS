@@ -24,7 +24,7 @@ const fetchCarMaster = async (params) => {
   try {
     const res = await Api.get(`${CAR_ENDPOINT}/get`, params)
 
-    return res
+    return res.data
   } catch (error) {
     console.error(error)
   }
@@ -34,7 +34,17 @@ const saveCarData = async (body) => {
   try {
     const res = await Api.post(`${CAR_ENDPOINT}/store`, body)
 
-    return res.data.data
+    return res
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const deleteCarById = async (carId) => {
+  try {
+    const res = await Api.delete(`${CAR_ENDPOINT}/${carId}`)
+
+    return res
   } catch (error) {
     console.error(error)
   }
@@ -89,4 +99,5 @@ export {
   fetchCarType,
   fethDrivers,
   saveCarData,
+  deleteCarById
 }
