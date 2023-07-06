@@ -192,7 +192,7 @@ onMounted(() => {
           <div class="flex gap-4 flex-wrap flex-1">
             <button
               @click="tableKey++"
-              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+              class="h-[45px] btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
               <span>
                 <img :src="icon_filter" class="w-5 h-5" />
@@ -202,7 +202,7 @@ onMounted(() => {
 
             <button
               @click="reset"
-              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[45px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
             >
               <span>
                 <img :src="icon_reset" class="w-5 h-5" />
@@ -233,7 +233,7 @@ onMounted(() => {
             </span>
 
             <input
-              class="placeholder:text-slate-400 placeholder:font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="placeholder:text-slate-400 placeholder:font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               placeholder="Search..."
               type="text"
               name="search"

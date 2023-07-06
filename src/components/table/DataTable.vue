@@ -59,6 +59,7 @@ const paging = ref({
 })
 
 const items = ref([])
+const loading = ref(true)
 
 const headerKeys = computed(() => {
   return props.headers.map(({ key }) => key) ?? []
@@ -86,6 +87,8 @@ const getData = debounce(async function () {
   // const { sortBy, sortDesc, page, limit } = paging
 
   try {
+    items.value = []
+    loading.value = true
     const res = await props.apiMethod({
       params: {
         perPage: paging.value.limit,
@@ -99,6 +102,8 @@ const getData = debounce(async function () {
     items.value = res.data.data || []
   } catch (error) {
     console.error(error)
+  } finally {
+    loading.value = false
   }
 }, SEARCH_DEBOUNCE_MS)
 
@@ -190,7 +195,7 @@ onMounted(() => {
           <tr
             v-if="items.length > 0"
             v-for="(item, index) in items"
-            class="font-JakartaSans font-normal text-sm"
+            class="font-JakartaSans font-normal text-sm data-item"
             @click="emit('row:click')"
           >
             <td v-if="showSelect">
@@ -206,6 +211,21 @@ onMounted(() => {
                   item[headerKey] !== undefined ? item[headerKey] || "-" : "-"
                 }}
               </slot>
+            </td>
+          </tr>
+
+          <tr v-else-if="loading">
+            <td colspan="100%" height="200px">
+              <div class="w-[auto] flex justify-center align-center">
+                <svg class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+                  <path
+                    class="opacity-75 text-primary"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                <span class="text-base"> Loading Data...</span>
+              </div>
             </td>
           </tr>
 
@@ -259,7 +279,7 @@ tr th {
   color: white;
 }
 
-.table-zebra tbody tr:hover td {
+.table-zebra tbody tr.data-item:hover td {
   background-color: rgb(193, 192, 192);
   /* cursor: pointer; */
 }
