@@ -2,6 +2,9 @@
     import { ref, inject, onBeforeMount, watch } from 'vue'
 
     const props = inject('accomodationDataView')
+    const status = defineProps({
+      isEditing: Boolean
+    })
 
     let name = ref()
     let city = ref()
@@ -45,11 +48,12 @@
               </label>
 
               <input
-                                      v-model="name"
-                                      type="text"
-                                      placeholder="Name"
-                                      :class="inputStylingClass"
-                                      required
+                v-model="name"
+                type="text"
+                placeholder="Name"
+                :class="inputStylingClass"
+                required
+                :disabled="!status.isEditing"
               />
 
             </div>

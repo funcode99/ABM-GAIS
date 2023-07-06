@@ -51,7 +51,7 @@ let employeeName = localStorage.getItem('username')
               <tbody>
                 <tr v-for="data in props" :key="data.id">
                           <td>
-                            <!-- {{ data.name }} -->
+                            {{ employeeName }}
                           </td>
                           <td>
                             {{ data.departure }}
@@ -60,10 +60,10 @@ let employeeName = localStorage.getItem('username')
                             {{ data.arrival }}
                           </td>
                           <td>
-                            {{ data.flightNumber }}
+                            {{ data.flight_no }}
                           </td>
                           <td>
-                            {{ data.flightRegion }}
+                            Domestic
                           </td>
                           <td>
                             {{ data.status }}

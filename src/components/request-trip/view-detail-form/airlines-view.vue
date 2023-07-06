@@ -1,6 +1,9 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
 
+    const statusEdit = defineProps({
+      isEditing: Boolean
+    })
     const props = inject('airlinesDataView')
 
     let name = ref()
@@ -29,9 +32,10 @@
 </script>
 
 <template>
+
     <div>
                             
-                            <div :class="rowClass">
+          <div :class="rowClass">
 
                               <div :class="columnClass">
                                     
@@ -45,6 +49,7 @@
                                             :class="inputStylingClass"
                                             placeholder="Name"
                                             required
+                                            :disabled="!statusEdit.isEditing"
                                         />
 
                                 </div>
@@ -64,6 +69,7 @@
                                       :class="inputStylingClass"
                                       placeholder="Domestic/International"
                                       required
+                                      :disabled="!statusEdit.isEditing"
                                     />
 
                                 </div>
@@ -72,9 +78,9 @@
 
                               <div :class="columnClass"></div>
 
-                            </div>
+          </div>
 
-                            <div :class="rowClass">
+          <div :class="rowClass">
 
                               <div :class="columnClass">
                                   
@@ -89,6 +95,7 @@
                                       placeholder="Departure"
                                       :class="inputStylingClass"
                                       required
+                                      :disabled="!statusEdit.isEditing"
                                     />
 
                                   </div>
@@ -108,6 +115,7 @@
                                       placeholder="Price"
                                       :class="inputStylingClass"
                                       required
+                                      :disabled="!statusEdit.isEditing"
                                     />
 
                                 </div>
@@ -116,9 +124,9 @@
 
                               <div :class="columnClass"></div>
 
-                            </div>
+          </div>
 
-                            <div :class="rowClass">
+          <div :class="rowClass">
 
                               <div :class="columnClass">
                                   
@@ -133,6 +141,7 @@
                                       placeholder="Arrival"
                                       :class="inputStylingClass"
                                       required
+                                      :disabled="!statusEdit.isEditing"
                                     />
 
                                   </div>
@@ -152,6 +161,7 @@
                                       placeholder="Status"
                                       :class="inputStylingClass"
                                       required
+                                      :disabled="!statusEdit.isEditing"
                                     />
 
                                   </div>
@@ -160,9 +170,9 @@
 
                               <div :class="columnClass"></div>
 
-                            </div>
+          </div>
 
-                            <div class="flex justify-between mx-4 items-start gap-2 my-6">
+          <div class="flex justify-between mx-4 items-start gap-2 my-6">
 
                                 <div :class="columnClass">
                                   
@@ -177,6 +187,7 @@
                                       placeholder="Flight Number"
                                       :class="inputStylingClass"
                                       required
+                                      :disabled="!statusEdit.isEditing"
                                     />
 
                                   </div>
@@ -185,7 +196,8 @@
 
                                 <div :class="columnClass"></div>
 
-                            </div>
+          </div>
 
     </div>
+    
 </template>

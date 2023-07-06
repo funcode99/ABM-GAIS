@@ -2,6 +2,9 @@
     import { ref, inject, onBeforeMount, watch } from 'vue'
 
     const props = inject('cashAdvanceDataView')
+    const status = defineProps({
+      isEditing: Boolean
+    })
 
     let name = localStorage.getItem('username')
     let grandTotal = ref()
@@ -23,121 +26,156 @@
 </script>
 
 <template>
-    <div>
 
-      <div :class="rowClass">
-        
-        <div :class="columnClass">
-          <label>Traveller</label>
-          <input v-model="name" :class="inputStylingClass" placeholder="Name" />
-        </div>
-
-        <div :class="columnClass">
-          <label>Grand Total</label>
-          <input v-model="grandTotal" :class="inputStylingClass" placeholder="Grand Total" />
-        </div>
-
-        <div :class="columnClass">
-          
-        </div>
-
-      </div>
-
-      <div :class="rowClass">
-        
-        <div :class="columnClass">
-          
-          <label :class="labelStylingClass">
-            Notes  
-          </label>
-          
-          <textarea :class="inputStylingClass" placeholder="Notes"></textarea>
-        
-        </div>
-
-        <div></div>
-        <div></div>
-
-      </div>
-
-      <div class="mx-4">
-        <h1 class="font-medium">Details Item</h1>
-        <hr class="border border-black" />
-      </div>
-
-      <form @submit.prevent="">
-
+      <div>
+  
         <div :class="rowClass">
           
           <div :class="columnClass">
-            <label :class="labelStylingClass">
-              Item <span class="text-red-star">*</span>
-            </label>
-            <input :class="inputStylingClass" placeholder="Item" />
+            <label>Traveller</label>
+            <input 
+              v-model="name" 
+              :class="inputStylingClass" 
+              placeholder="Name" 
+              :disabled="!status.isEditing"
+              />
           </div>
-          
+  
           <div :class="columnClass">
-            <label :class="labelStylingClass">
-              Nominal <span class="text-red-star">*</span>
-            </label>
-            <input :class="inputStylingClass" placeholder="Nominal" />
+            <label>Grand Total</label>
+            <input 
+              v-model="grandTotal" 
+              :class="inputStylingClass" 
+              placeholder="Grand Total"
+              :disabled="!status.isEditing"
+            />
           </div>
-
-          <div :class="columnClass"></div>
-
+  
+          <div :class="columnClass">
+            
+          </div>
+  
         </div>
-        
+  
         <div :class="rowClass">
-        
-          <div :class="columnClass">
-            <label :class="labelStylingClass">
-              Frequency<span class="text-red-star">*</span>
-            </label>
-            <input :class="inputStylingClass" placeholder="Frequency" />
-          </div>
           
-          <div :class="columnClass">
-            <label :class="labelStylingClass">
-              Total
-            </label>
-            <input :class="inputStylingClass" placeholder="Total" />
-          </div>
-
-          <div :class="columnClass"></div>
-
-        </div>
-        
-        <div :class="rowClassStart">
-        
-          <div :class="columnClass">
-
-            <label :class="labelStylingClass">
-              Currency<span class="text-red-star">*</span>
-            </label>
-
-            <select :class="inputStylingClass">
-              <option>
-                Currency
-              </option>
-            </select>
-          
-          </div>
-
           <div :class="columnClass">
             
             <label :class="labelStylingClass">
-              Remarks<span class="text-red-star">*</span>
+              Notes  
             </label>
-
-            <textarea :class="inputStylingClass" placeholder="Remarks"></textarea>
-
+            
+            <textarea 
+              :class="inputStylingClass" 
+              placeholder="Notes" 
+              :disabled="!status.isEditing"></textarea>
+          
           </div>
-
-          <div :class="columnClass"></div>
-
+  
+          <div></div>
+          <div></div>
+  
         </div>
+  
+        <div class="mx-4">
+          <h1 class="font-medium">Details Item</h1>
+          <hr class="border border-black" />
+        </div>
+  
+        <form @submit.prevent="">
+  
+          <div :class="rowClass">
+            
+            <div :class="columnClass">
+              <label :class="labelStylingClass">
+                Item <span class="text-red-star">*</span>
+              </label>
+              <input 
+                :class="inputStylingClass" 
+                placeholder="Item" 
+                :disabled="!status.isEditing"
+              />
+            </div>
+            
+            <div :class="columnClass">
+              <label :class="labelStylingClass">
+                Nominal <span class="text-red-star">*</span>
+              </label>
+              <input 
+                :class="inputStylingClass" 
+                placeholder="Nominal"
+                :disabled="!status.isEditing" 
+              />
+            </div>
+  
+            <div :class="columnClass"></div>
+  
+          </div>
+          
+          <div :class="rowClass">
+          
+            <div :class="columnClass">
+              <label :class="labelStylingClass">
+                Frequency<span class="text-red-star">*</span>
+              </label>
+              <input 
+                :class="inputStylingClass" 
+                placeholder="Frequency"
+                :disabled="!status.isEditing" 
+              />
+            </div>
+            
+            <div :class="columnClass">
+              <label :class="labelStylingClass">
+                Total
+              </label>
+              <input 
+                :class="inputStylingClass" 
+                placeholder="Total" 
+                :disabled="!status.isEditing" 
+              />
+            </div>
+  
+            <div :class="columnClass"></div>
+  
+          </div>
+          
+          <div :class="rowClassStart">
+          
+            <div :class="columnClass">
+  
+              <label :class="labelStylingClass">
+                Currency<span class="text-red-star">*</span>
+              </label>
+  
+              <select :class="inputStylingClass" :disabled="!status.isEditing">
+                <option>
+                  Currency
+                </option>
+              </select>
+            
+            </div>
+  
+            <div :class="columnClass">
+              
+              <label :class="labelStylingClass">
+                Remarks<span class="text-red-star">*</span>
+              </label>
+  
+              <textarea :class="inputStylingClass" placeholder="Remarks" :disabled="!status.isEditing"></textarea>
+  
+            </div>
+  
+            <div :class="columnClass"></div>
+  
+          </div>
+  
+        </form>
+  
+      </div>
 
-      </form>
-
-    </div>
 </template>
+
+<style scoped>
+
+</style>

@@ -1,49 +1,50 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref } from "vue"
 
 import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
-import dashboardIcon from "@/assets/dashboard-icon.png";
-import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png";
-import travelManagementSystemSelected from "@/assets/travel-management-system-selected.png";
-import systemConfigurationIcon from "@/assets/system-configuration-not-selected.png";
-import systemConfigurationIconSelected from "@/assets/system-configuration-selected.png";
-import referenceIcon from "@/assets/reference.png";
-import referenceIconSelected from "@/assets/reference-selected.png";
-import approvalIcon from "@/assets/approval.png";
-import approvalSelected from "@/assets/approval-selected.png";
-import submenuLine from "@/assets/submenu-line.png";
-import submenuLineSelected from "@/assets/submenu-line-selected.png";
-import submenuInner from "@/assets/inner-sub-menu.png";
-import facilityIcon from "@/assets/facilityIcon.png";
-import facilityIconSelected from "@/assets/facilityIconSelected.png";
+import dashboardIcon from "@/assets/dashboard-icon.png"
+import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png"
+import travelManagementSystemSelected from "@/assets/travel-management-system-selected.png"
+import systemConfigurationIcon from "@/assets/system-configuration-not-selected.png"
+import systemConfigurationIconSelected from "@/assets/system-configuration-selected.png"
+import referenceIcon from "@/assets/reference.png"
+import referenceIconSelected from "@/assets/reference-selected.png"
+import approvalIcon from "@/assets/approval.png"
+import approvalSelected from "@/assets/approval-selected.png"
+import submenuLine from "@/assets/submenu-line.png"
+import submenuLineSelected from "@/assets/submenu-line-selected.png"
+import submenuInner from "@/assets/inner-sub-menu.png"
+import facilityIcon from "@/assets/facilityIcon.png"
+import facilityIconSelected from "@/assets/facilityIconSelected.png"
 
-import searchIcon from "@/assets/Icons.png";
-import expandArrow from "@/assets/ExpandArrow.png";
-import expandArrowSelected from "@/assets/expand-arrow-selected.png";
-import groupIcon from "@/assets/Group.png";
-import chevronIcon from "@/assets/chevron-white-medium.png";
+import searchIcon from "@/assets/Icons.png"
+import expandArrow from "@/assets/ExpandArrow.png"
+import expandArrowSelected from "@/assets/expand-arrow-selected.png"
+import groupIcon from "@/assets/Group.png"
+import chevronIcon from "@/assets/chevron-white-medium.png"
 
 // harus pake ekstensi kalo enggak gak bakal kebaca
-import { useSidebarStore } from "@/stores/sidebar.js";
+import { useSidebarStore } from "@/stores/sidebar.js"
 
-const sidebar = useSidebarStore();
-const searchSidebarValue = ref("");
+const sidebar = useSidebarStore()
+const searchSidebarValue = ref("")
+const id_role = JSON.parse(localStorage.getItem("id_role"));
 
 // masukkin params ke actions harus pake variable ga boleh pake primitive data langsung
-let system = "systemConfiguration";
-let reference = "reference";
-let travel = "travelManagementSystem";
-let approval = "approval";
-let facility = "facilityServiceSystem";
+let system = "systemConfiguration"
+let reference = "reference"
+let travel = "travelManagementSystem"
+let approval = "approval"
+let facility = "facilityServiceSystem"
 
 onMounted(() => {
-  let scroller = window.document.querySelector(".scroller");
-  scroller.scrollTop = sidebar.scrollValue;
-  scroller.addEventListener("scroll", () => {
-    sidebar.scrollValue = Math.round(scroller.scrollTop);
-  });
-});
+  // let scroller = window.document.querySelector(".scroller")
+  // scroller.scrollTop = sidebar.scrollValue
+  // scroller.addEventListener("scroll", () => {
+  //   sidebar.scrollValue = Math.round(scroller.scrollTop)
+  // })
+})
 </script>
 
 <template>
@@ -376,7 +377,7 @@ onMounted(() => {
                         </div>
                       </button>
 
-                      <router-link to="#" class="cursor-pointer">
+                      <button class="cursor-pointer text-left">
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
                         >
@@ -392,7 +393,8 @@ onMounted(() => {
                             :src="submenuLineSelected"
                             alt=""
                           />
-                          <p
+                          <a
+                            href="#"
                             class="flex items-center w-full justify-between"
                             :class="[
                               $route.path == '#'
@@ -402,9 +404,46 @@ onMounted(() => {
                           >
                             Pool Car
                             <img class="w-5 h-5" :src="groupIcon" alt="" />
-                          </p>
+                          </a>
                         </div>
-                      </router-link>
+
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link
+                              :to="{ name: 'PoolCarManagement' }"
+                              class="cursor-pointer"
+                            >
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                <p class="mr-[70px]">Pool Car Management</p>
+                              </li>
+                            </router-link>
+                            <router-link
+                              :to="{ name: 'PoolCarRequest' }"
+                              class="cursor-pointer"
+                            >
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                <p class="mr-10">Pool Car Request</p>
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+                      </button>
 
                       <button class="cursor-pointer text-left">
                         <div
@@ -1766,12 +1805,51 @@ onMounted(() => {
                                   alt=""
                                   class="w-2 h-2"
                                 />
-                                Management Meeting Room
+                                <span v-if="id_role == 'EMPLY'">Meeting Room</span>
+                                <span v-else>Management Meeting Room</span>
                                 <img class="w-5 h-5" :src="groupIcon" alt="" />
                               </li>
                             </router-link>
                           </ul>
                         </div>
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="/booking-meeting-room" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Booking Meeting Room
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+                        <!-- <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="/dashboard-meeting-room" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Dashboard Meeting Room
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div> -->
                       </button>
 
                       <button class="cursor-pointer text-left">
@@ -1894,6 +1972,33 @@ onMounted(() => {
                               </li>
                             </router-link>
                           </ul>
+                        </div>
+                      </button>
+                      
+                      <button class="cursor-pointer text-left">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <router-link to="/doc-delivery" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                Document Delivery
+                                <img class="w-4 h-4" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
                         </div>
                       </button>
                     </ul>

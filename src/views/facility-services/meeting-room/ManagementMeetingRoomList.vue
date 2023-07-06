@@ -25,7 +25,7 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const listStatus = [
   { id: 1, title: "Available" },
-  { id: 2, title: "Unavailable" },
+  { id: 2, title: "Booked" },
 ];
 let statusForm = ref("add");
 let visibleModal = ref(false);
@@ -48,6 +48,9 @@ let filter = reactive({
   capacity: "",
   search: "",
 });
+
+const id_role = JSON.parse(localStorage.getItem("id_role"));
+
 //for paginations
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -78,6 +81,7 @@ const tableHead = [
   { Id: 4, title: "Capacity", jsonData: "capacity" },
   { Id: 5, title: "Available Status", jsonData: "available_status" },
   { Id: 6, title: "Company", jsonData: "company_name" },
+  { Id: 7, title: "Site", jsonData: "site_name" },
 ];
 
 //for sort
@@ -115,8 +119,11 @@ const fetch = async (id) => {
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("master_meeting_room/get/", { params: payload });
+  let api = await Api.get(`master_meeting_room/get`, {
+    params: payload,
+  });
   paginationArray = api.data.data;
+
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -141,13 +148,16 @@ const getSessionForSidebar = () => {
 const filterDataByType = async (id) => {
   let payload = {
     search: filter.search,
-    status: filter.status,
+    available_status: filter.status,
     capacity: filter.capacity,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
-  const api = await Api.get("master_meeting_room/get/", { params: payload });
+  let api = await Api.get(`master_meeting_room/get`, {
+    params: payload,
+  });
   paginationArray = api.data.data;
+
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -298,11 +308,13 @@ onBeforeMount(() => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Management Meeting Room
+              <span v-if="id_role == 'EMPLY'">Meeting Room</span>
+              <span v-else>Management Meeting Room</span>
+
             </p>
             <div class="flex gap-4">
               <div
-                v-if="deleteArray.length > 0"
+                v-if="deleteArray.length > 0 && id_role != 'EMPLY'"
                 class="flex gap-2 items-center"
               >
                 <h1 class="font-semibold">{{ deleteArray.length }} Selected</h1>
@@ -315,6 +327,7 @@ onBeforeMount(() => {
               </div>
 
               <label
+                v-if="id_role != 'EMPLY'"
                 @click="openModal('add', '')"
                 for="my-modal-3"
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
@@ -478,7 +491,7 @@ onBeforeMount(() => {
                         </button>
                       </span>
                     </th>
-                    <th>
+                    <th v-if="id_role != 'EMPLY'">
                       <div class="text-center">Actions</div>
                     </th>
                   </tr>
@@ -502,9 +515,19 @@ onBeforeMount(() => {
                     <td>{{ data.code_meeting_room }}</td>
                     <td>{{ data.name_meeting_room }}</td>
                     <td>{{ data.capacity }}</td>
-                    <td>{{ data.available_status }}</td>
-                    <td>{{ data.company_code }} - {{ data.company_name }}</td>
                     <td>
+                      <span
+                        :class="
+                          data.available_status == 'Available'
+                            ? 'status-done'
+                            : 'status-revision'
+                        "
+                        >{{ data.available_status }}</span
+                      >
+                    </td>
+                    <td>{{ data.company_code }} - {{ data.company_name }}</td>
+                    <td>{{ data.site_name }}</td>
+                    <td v-if="id_role != 'EMPLY'">
                       <div class="flex justify-center items-center gap-2">
                         <label
                           @click="openModal('edit', data.id)"
@@ -588,5 +611,20 @@ tr th {
 
 .my-date {
   width: 260px !important;
+}
+
+.status-revision {
+  color: #ef3022;
+  font-weight: 800;
+}
+
+.status-default {
+  color: #2970ff;
+  font-weight: 800;
+}
+
+.status-done {
+  color: #00c851;
+  font-weight: 800;
 }
 </style>

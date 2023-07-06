@@ -1,5 +1,29 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
+    import Api from '@/utils/Api'
+
+    let travellerTypeData = ref()
+
+    const getTravellerType = async () => {
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.get('/travel_guest/get_type_traveller')
+            travellerTypeData.value = api.data.data
+            console.log('menarik berhasil')
+    }
+
+    onBeforeMount(() => {
+            getTravellerType()
+    })
+
+    watch(travellerTypeData, () => {
+        assignValue()
+    })
+
+    const status = defineProps({
+        isEditing: Boolean,
+        currentIndex: Number
+    })
 
     const props = inject('travellerDataView')
 
@@ -13,32 +37,73 @@
     let contactNo = ref()
     let maxHotelFare = ref()
 
-    watch(props, () => {
-        name.value = props.value[0].name_guest
-        department.value = props.value[0].departement
-        flightClass.value = props.value[0].flight_class
-        sn.value = props.value[0]
-        company.value = props.value[0].company
-        gender.value = props.value[0].gender
-        type.value = props.value[0].type_traveller
-        contactNo.value = props.value[0].contact_no
-        maxHotelFare.value = props.value[0].hotel_fare
+    const assignValue = () => {
+        name.value = props.value[status.currentIndex].name_guest
+        department.value = props.value[status.currentIndex].departement
+        flightClass.value = props.value[status.currentIndex].flight_class
+        sn.value = props.value[status.currentIndex]
+        company.value = props.value[status.currentIndex].company
+        gender.value = props.value[status.currentIndex].gender
+        type.value = props.value[status.currentIndex].id_type_traveller
+        contactNo.value = props.value[status.currentIndex].contact_no
+        maxHotelFare.value = props.value[status.currentIndex].hotel_fare
+    }
+
+    watch(status, () => {
+        assignValue()
     })
 
+    watch(props, () => {
+        console.log('props berubah')
+        
+        if(props.value[0].name_guest !== undefined) {
+           name.value = props.value[0].name_guest
+           department.value = props.value[0].departement
+           flightClass.value = props.value[0].flight_class
+           sn.value = props.value[0]
+           company.value = props.value[0].company
+           gender.value = props.value[0].gender
+           type.value = props.value[0].type_traveller
+           contactNo.value = props.value[0].contact_no
+           maxHotelFare.value = props.value[0].hotel_fare
+        } else {
+        assignValue()
+        }
+        
+    })
+
+
     if(props.value[0].name_guest !== undefined) {
-        name.value = props.value[0].name_guest
-        department.value = props.value[0].departement
-        flightClass.value = props.value[0].flight_class
-        sn.value = props.value[0]
-        company.value = props.value[0].company
-        gender.value = props.value[0].gender
-        type.value = props.value[0].type_traveller
-        contactNo.value = props.value[0].contact_no
-        maxHotelFare.value = props.value[0].hotel_fare
+           name.value = props.value[0].name_guest
+           department.value = props.value[0].departement
+           flightClass.value = props.value[0].flight_class
+           sn.value = props.value[0]
+           company.value = props.value[0].company
+           gender.value = props.value[0].gender
+           type.value = props.value[0].id_type_traveller
+           contactNo.value = props.value[0].contact_no
+           maxHotelFare.value = props.value[0].hotel_fare
+    }
+
+    const updateTravelGuest = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post('/travel_guest/store', {
+            nik: props.value[status.currentIndex].nik,
+            notes: props.value[status.currentIndex].notes,
+            gender: gender.value,
+            company: company.value,
+            name_guest: name.value,
+            hotel_fare: maxHotelFare.value,
+            departement: department.value,
+            contact_no: contactNo.value,
+            id_type_traveller: type.value,
+            id_flight_class: props.value[status.currentIndex].id_flight_class,
+            id_request_trip: props.value[status.currentIndex].id_request_trip
+        })
     }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
-    const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
@@ -48,6 +113,8 @@
 <template>
     <div>
         
+        {{ props[status.currentIndex] }}
+
         <div :class="rowClass">
 
             <div :class="columnClass">
@@ -64,6 +131,7 @@
                         placeholder="Name"
                         :class="inputStylingClass"
                         required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -84,6 +152,7 @@
                         placeholder="Department"
                         :class="inputStylingClass"
                         required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -98,12 +167,13 @@
                     Flight Class <span class="text-red-star">*</span>
                     </label>
                     
-                    <input 
-                    v-model="flightClass"
-                    type="text"
-                    placeholder="Flight Class"
-                    :class="inputStylingClass"
-                    required
+                    <input
+                        v-model="flightClass"
+                        type="text"
+                        placeholder="Flight Class"
+                        :class="inputStylingClass"
+                        required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -127,6 +197,7 @@
                     placeholder="SN"
                     :class="inputStylingClass"
                     required
+                    disabled
                 />
 
             </div>
@@ -147,6 +218,7 @@
                         :class="inputStylingClass"
                         placeholder="Company"
                         required
+                        :disabled="!status.isEditing"
                     />
 
                 </div>
@@ -168,7 +240,7 @@
                         Gender<span class="text-red-star">*</span>
                     </label>
 
-                    <select :class="inputStylingClass" v-model="gender">
+                    <select :class="inputStylingClass" v-model="gender" :disabled="!status.isEditing">
                         <option value="L" selected hidden disabled>
                         Male
                         </option>
@@ -190,13 +262,25 @@
                         Type<span class="text-red-star">*</span>
                     </label>
 
-                    <input 
+                    <select                         
+                        v-model="type"
+                        :class="inputStylingClass"
+                        :disabled="!status.isEditing"
+                        required
+                    >
+                        <option v-for="data in travellerTypeData" :key="data.id" :value="data.id">
+                            {{ data.type_traveller }}
+                        </option>
+                    </select>
+
+                    <!-- <input 
                         v-model="type"
                         type="text"
                         placeholder="Type"
                         :class="inputStylingClass"
                         required
-                    />
+                        :disabled="!status.isEditing"
+                    /> -->
 
                 </div>
 
@@ -213,7 +297,13 @@
             <label :class="labelStylingClass">
                 Contact No<span class="text-red-star">*</span>
             </label>
-            <input :class="inputStylingClass" type="text" placeholder="Contact No" v-model="contactNo">
+            <input 
+                type="text" 
+                :class="inputStylingClass" 
+                placeholder="Contact No" 
+                v-model="contactNo"
+                :disabled="!status.isEditing"
+            />
         </div>
         </div>
 
@@ -223,7 +313,13 @@
                 <label :class="labelStylingClass">
                     Max Hotel Fare<span class="text-red-star">*</span>
                 </label>
-                <input type="text" placeholder="Notes" :class="inputStylingClass" v-model="maxHotelFare">
+                <input
+                    type="text" 
+                    placeholder="Notes" 
+                    :class="inputStylingClass" 
+                    v-model="maxHotelFare"
+                    :disabled="!status.isEditing" 
+                />
             </div>
 
         </div>

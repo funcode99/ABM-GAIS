@@ -1,6 +1,9 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
     
+    const status = defineProps({
+        isEditing: Boolean
+    })
     const props = inject('taxiVoucherDataView')
 
     let name = ref()
@@ -52,6 +55,7 @@
                 placeholder="Name"
                 :class="inputStylingClass"
                 required
+                :disabled="!status.isEditing"
             /> 
 
             </div>
@@ -72,6 +76,7 @@
                 placeholder="Departure"
                 :class="inputStylingClass"
                 required
+                :disabled="!status.isEditing"
             />
 
             </div>
@@ -95,6 +100,7 @@
                 placeholder="Date"
                 :class="inputStylingClass"
                 required
+                :disabled="!status.isEditing"
                 />
 
 
@@ -115,6 +121,7 @@
                     placeholder="City"
                     :class="inputStylingClass"
                     required
+                    :disabled="!status.isEditing"
                 />
 
             </div>
@@ -134,7 +141,8 @@
                 type="text" 
                 :class='inputStylingClass' 
                 placeholder="Amount"
-                required 
+                required
+                :disabled="!status.isEditing"
             />
         </div>
         </div>
@@ -149,7 +157,8 @@
                     type="text" 
                     :class='inputStylingClass' 
                     placeholder="Voucher" 
-                    required 
+                    required
+                    :disabled="!status.isEditing"
                 />
             </div>
         </div>
@@ -167,7 +176,9 @@
                     v-model="accountName" 
                     type="text" 
                     :class='inputStylingClass' 
-                    placeholder="Account Name" 
+                    placeholder="Account Name"
+                    required
+                    :disabled="!status.isEditing"
                 />
             </div>
         </div>
@@ -177,7 +188,11 @@
                 <label :class="labelStylingClass">
                 Remarks
                 </label>
-                <textarea v-model="remarks" :class="inputStylingClass" placeholder="Remarks"></textarea>
+                <textarea 
+                :disabled="!status.isEditing"
+                v-model="remarks" 
+                :class="inputStylingClass" 
+                placeholder="Remarks"></textarea>
             </div>
         </div>
 
