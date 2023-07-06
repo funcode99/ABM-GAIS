@@ -1,11 +1,10 @@
 <script setup>
     import { ref, onBeforeMount, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
+    import Api from '@/utils/Api'
     import modalHeader from '@/components/modal/modalHeader.vue'
     import modalFooter from "@/components/modal/modalFooter.vue"
     import checkButton from '@/components/molecules/checkButton.vue'
-
-    import Api from '@/utils/Api'
 
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
@@ -64,14 +63,24 @@
     let flightClassAirlines = ref('')
     let flightIdAirlines = ref(0)
     let vendor = ref('')
+    let bundleData = ref([0, 0])
 
     let employeeLoginData = ref()
     let cityData = ref()
+
+    let airlinesData = ref()
 
     onBeforeMount(() => {
         fetchEmployeeByLoginUtils(employeeLoginData)
         fetchCityUtils(cityData)
     })
+
+    const fetchAirlines = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/flight_schedule')
+        airlinesData.value = api.data.data
+    }
 
     watch(employeeLoginData, () => {
         traveller.value = employeeLoginData.value[0].employee_name
@@ -95,9 +104,9 @@
         const api = await Api.post('/flight_trip/store', {
             id_request_trip: localStorage.getItem('tripId'),
             id_vendor: vendor.value,
-            flight_no: flightIdAirlines.value,
-            code_airlines: 10,
-            ticket_price: 2500000,    
+            flight_no: bundleData.value[0],
+            code_airlines: flightIdAirlines.value,
+            ticket_price: bundleData.value[1],    
         })
         
         emits('fetchAirlines')
@@ -230,7 +239,6 @@
                         <div class="w-full">
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
                             Vendor<span class="text-red-star">*</span>
-                            {{ vendor }}
                             </label>
                             <div>
                                 <input class="w-6 h-6" type="radio" name="vendor" v-model="vendor" :value="1">
@@ -245,9 +253,11 @@
         
                     </div>
         
-                    <checkButton />
+                    <checkButton @click="fetchAirlines" />
         
                     <h1 class="mt-4 text-center text-sm font-bold">Flight Schedule</h1>
+                 
+
                     <hr class="w-full border border-black">
         
                     <div class="overflow-x-auto block">
@@ -259,37 +269,38 @@
                             </th>
                             </tr>
                         </thead>
-                        <!-- <tbody>
-                            <tr v-for="data in airlinesDummy" :key="data.id">
+                        <tbody>
+                            <tr v-for="data in airlinesData" :key="data.id">
                             <td>
-                                <img class="w-20 h-[18px]" :src="data.Airline">
+                                <!-- <img class="w-20 h-[18px]" :src="data.Airline"> -->
+                                {{ data.airlines }}
                             </td>
                             <td>
-                                {{ data.flightNo }}
+                                {{ data.flight_no }}
                             </td>
                             <td>
-                                {{ data.Depart }}
+                                {{ data.depart }}
                             </td>
                             <td>
-                                {{ data.Arrival }}
+                                {{ data.arrival }}
                             </td>
                             <td>
-                                {{ data.Stops }}
-                                {{ data.StopsMethod}}
+                                {{ data.stops }}
+                                <!-- {{ data.StopsMethod}} -->
                             </td>
                             <td>
-                                {{ data.Class }}
+                                {{ data.class }}
                             </td>
                             <td>
-                                {{ data.Price }}
+                                {{ data.price }}
                             </td>
-                            <td>
-                                <button class="bg-green text-white rounded-lg px-4 py-3 font-bold">
+                            <td @click="bundleData = [data.flight_no, data.price]">
+                                <button type="button" :class="bundleData[0] === data.flight_no ? 'bg-blue' : 'bg-green'" class=" text-white rounded-lg px-4 py-3 font-bold">
                                 Select
                                 </button>
                             </td>
                             </tr>
-                        </tbody> -->
+                        </tbody>
                         </table>
                     </div>
 

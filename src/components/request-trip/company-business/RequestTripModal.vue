@@ -180,12 +180,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
     const savePurposeOfTrip = async () => {
       if(localStorage.getItem("tripId") !== undefined) {
-          const token = JSON.parse(localStorage.getItem('token'))
-          Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
         if(requestType[1] == 'Site Visit') {
-          
-          const api = await Api.post('/request_trip/store', {
+          const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
             id_zona: zona.value,
             id_city_to: toCity.value,
             id_employee: requestor.value,
@@ -200,10 +200,47 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             file: siteVisitAttachmentFile.value,
             no_request_trip: '',
           })
-          localStorage.setItem('tripId', api.data.data.id)
-
-        } else {
-          
+        } 
+        
+        else if (requestType[1] == 'Field Break')
+        {
+          const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            id_site: siteVisitLocation.value,
+            file: siteVisitAttachmentFile.value,
+            no_request_trip: '',
+          })
+        }
+        
+        else {  
+          const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            no_request_trip: '',
+            id_site: locationId.value,
+          })
+        }
+          formStep.value++
+          resetProgressData()
+        }
+        else {
           const api = await Api.post('/request_trip/store', {
             id_zona: zona.value,
             id_city_to: toCity.value,
@@ -219,12 +256,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             id_site: locationId.value,
           })
           localStorage.setItem('tripId', api.data.data.id)
-        
-        }
-          formStep.value++
-          resetProgressData()
-        }
-        else {
           formStep.value++
           resetProgressData()
         }
@@ -234,7 +265,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
-      console.log(api)
     }
 
     watch(optionDataEmployeeRequestor, () => {
@@ -949,7 +979,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
                 <div class="flex gap-4" v-else>
   
-                  <button class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
+                  <button @click="isVisibleOpenModal = !isVisibleOpenModal" class="bg-blue text-white py-3 px-11 rounded-lg max-w-[141px]">
                     Draft
                   </button>
   

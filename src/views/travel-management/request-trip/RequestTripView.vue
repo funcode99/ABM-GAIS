@@ -270,7 +270,7 @@
 
                     <div class="flex gap-4 mt-6 mb-3 ml-5">
                         
-                      <buttonEditFormView @click="isEditing = true" />
+                      <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
                       <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
                         
                       <button @click="submitRequestTrip" v-if="!isEditing" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
