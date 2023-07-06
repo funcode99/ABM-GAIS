@@ -21,7 +21,10 @@ import { numberFilter } from "@/utils/filters"
 import {
   fetchCarMaster,
   getAllSite,
+  deleteCarById,
 } from "@/utils/Api/travel-management/poolCar"
+
+import ConfirmDialog from "@/components/molecules/ConfirmDialog.vue"
 
 const headers = ref([
   {
@@ -65,6 +68,7 @@ const selectedItems = ref([])
 const dataTableRef = ref()
 const formDialogRef = ref()
 const selectedData = ref({})
+const deleteDialog = ref(false)
 
 const filter = reactive({
   site: {
@@ -98,6 +102,11 @@ const setEditedData = (item) => {
   formDialogRef.value.dialog = true
 }
 
+const setDeleteDialog = (item) => {
+  selectedData.value = { ...item }
+  deleteDialog.value = true
+}
+
 const success = () => {
   dataTableRef.value.getData()
 }
@@ -105,6 +114,18 @@ const success = () => {
 const reset = () => {
   filter.site.value = null
   filter.keyword = null
+}
+
+const deleteData = async () => {
+  try {
+    const carId = selectedData.value.id
+
+    await deleteCarById(carId)
+
+    success()
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 onMounted(() => {
@@ -237,8 +258,14 @@ onMounted(() => {
             <button @click="setEditedData(item)">
               <img :src="icon_edit" class="w-6 h-6" />
             </button>
-            <button>
+            <button @click="setDeleteDialog(item)">
               <img :src="icon_delete" class="w-6 h-6" />
+
+              <ConfirmDialog
+                v-if="deleteDialog"
+                @confirm="deleteData"
+                @cancel="deleteDialog = false"
+              ></ConfirmDialog>
             </button>
           </div>
         </template>

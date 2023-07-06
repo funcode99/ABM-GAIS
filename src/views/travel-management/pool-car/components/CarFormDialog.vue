@@ -79,7 +79,7 @@ const saveCar = async () => {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Succeess to Save",
+        title: "Succeess to Save Car Data",
         showConfirmButton: true,
         timer: 1500,
       })

@@ -83,8 +83,6 @@ watch(
 const getData = debounce(async function () {
   // const { sortBy, sortDesc, page, limit } = paging
 
-  console.log("Table GetData")
-
   try {
     const res = await props.apiMethod({
       params: {
