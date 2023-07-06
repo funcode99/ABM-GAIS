@@ -493,7 +493,7 @@ onMounted(() => {
                                 <p class="mr-[70px]">Settlement Report</p>
                               </li>
                             </router-link>
-                            <router-link to="#" class="cursor-pointer">
+                            <router-link to="/poolcar-report" class="cursor-pointer">
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1782,7 +1782,7 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="#" class="cursor-pointer">
+                            <router-link to="/management-meeting-room" class="cursor-pointer">
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -1792,6 +1792,25 @@ onMounted(() => {
                                   class="w-2 h-2"
                                 />
                                 Management Meeting Room
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="/booking-meeting-room" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Booking Meeting Room
                                 <img class="w-5 h-5" :src="groupIcon" alt="" />
                               </li>
                             </router-link>
@@ -1919,6 +1938,33 @@ onMounted(() => {
                               </li>
                             </router-link>
                           </ul>
+                        </div>
+                      </button>
+                      
+                      <button class="cursor-pointer text-left">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <router-link to="/doc-delivery" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                Document Delivery
+                                <img class="w-4 h-4" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
                         </div>
                       </button>
                     </ul>

@@ -4,10 +4,6 @@
     import formView from '@/assets/form-view.png'
     import tableView from '@/assets/table-view.png'
 
-    // salah nya disini ternyata
-    import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
-    import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
-
     const props = defineProps({
         title: String
     })
@@ -34,8 +30,7 @@
     <div class="flex items-center gap-7 ml-8">
         <h1 class="text-2xl font-medium">{{ props.title }}</h1>
         <div class="flex gap-4">
-            <buttonEditFormView />
-            <buttonAddFormView />
+            <slot></slot>
         </div>
     </div>
 

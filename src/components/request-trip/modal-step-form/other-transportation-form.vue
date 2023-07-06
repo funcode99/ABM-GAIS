@@ -12,8 +12,8 @@
         isOpen: Boolean        
     })
 
-    let emits = defineEmits('fetchOtherTransportation')
-
+    const emits = defineEmits(['fetchOtherTransportation', 'changeVisibility'])
+    
     const fetchTypeOfTransportation = async () => {
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -43,6 +43,7 @@
             qty: quantity.value,
         })
         emits('fetchOtherTransportation')
+        emits('changeVisibility')
     }
 
     let employeeLoginData = ref()
@@ -59,7 +60,16 @@
         traveller.value = employeeLoginData.value[0].employee_name
     })
 
-    let modalPaddingHeight = '15vh'
+    watch(props, () => {
+         city.value = ''
+         typeOfTransportation.value = ''
+         quantity.value = ''
+         fromDate.value = ''
+         toDate.value = ''
+         remarks.value = ''
+    })
+
+    const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'

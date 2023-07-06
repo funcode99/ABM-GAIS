@@ -9,7 +9,7 @@
 
     let listCurrency = ref([])
     let employeeLoginData = ref([])
-    let emits = defineEmits(['fetchCashAdvance'])
+    let emits = defineEmits(['fetchCashAdvance', 'changeVisibility'])
     const props = defineProps({
         isOpen: Boolean        
     })
@@ -46,8 +46,8 @@
             grand_total: grandTotal.value,
             arrayDetail: arrayDetail.value
         })
-        console.log(api)
         emits('fetchCashAdvance')
+        emits('changeVisibility')
     }
 
     let arrayDetail = ref([])
@@ -55,7 +55,7 @@
 
     watch(variableTotal.value, () => {
         console.log('perubahan di variable Total')
-        if(nominal != 0 & frequency != 0) {
+        if(nominal.value != 0 & frequency.value != 0) {
             total.value = nominal.value * frequency.value
         }
     })
@@ -104,7 +104,21 @@
         {id: 7, title: 'Actions'}
     ]
 
-    let modalPaddingHeight = '15vh'
+    watch(props, () => {
+        traveller.value = employeeLoginData.value[0].employee_name
+        nominal.value = ''
+        frequency.value = ''
+        item.value = 1
+        total.value = 0
+        remarks.value = ''
+        remarksNotes.value = ''
+        caId.value = 0
+        currency.value = [0, '']
+        grandTotal.value = 0
+        variableTotal.value = [frequency.value, nominal.value]
+    })
+
+    const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const rowClassNotes = 'flex justify-between mx-4 items-start gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
@@ -141,7 +155,13 @@
                             <label :class=labelStylingClass>
                                 Grand Total
                             </label>
-                            <input type="text" placeholder="Grand Total" :class="inputBlackStylingClass" v-model="grandTotal">
+                            <input 
+                                type="text" 
+                                placeholder="Grand Total" 
+                                :class="inputBlackStylingClass" 
+                                v-model="grandTotal" 
+                                disabled 
+                            />
                         </div>
                     </div>
     
@@ -178,13 +198,6 @@
 
                     <div class="mx-4">
                         <h1>Details Item</h1>
-                        <h1>
-                            <!-- {{ currency }} -->
-                            <!-- {{ arrayDetail }}    -->
-                        </h1>
-                        <h1>
-                            <!-- {{ arrayDetailForm }} -->
-                        </h1>
                         <hr class="border border-black" />
                     </div>
 
@@ -223,9 +236,9 @@
                         <div :class="columnClass">
                             <div class="w-full">
                             <label :class="labelStylingClass">
-                                Frequency <span class="text-red-star">*</span>
+                                Days <span class="text-red-star">*</span>
                             </label>
-                            <input type="text" placeholder="Frequency" :class="inputStylingClass" v-model="frequency">
+                            <input type="text" placeholder="Days" :class="inputStylingClass" v-model="frequency">
                             </div>
                         </div>
     
@@ -261,15 +274,18 @@
                 </div>
 
                 <div class="flex justify-center mt-3">
+
                     <table class="table">
-                          <thead>
+                          
+                        <thead>
                             <tr>
                               <th v-for="data in tableHeadCashAdvance" :key="data.id">
                                 {{ data.title }}
                               </th>
                             </tr>
-                          </thead>
-                          <tbody>
+                        </thead>
+
+                        <tbody>
                             <tr v-for="data in arrayDetail" :key="data.id">
                               <td>
                                 {{ data.id_item_ca }}
@@ -293,8 +309,10 @@
 
                               </td>
                             </tr>
-                          </tbody>
+                        </tbody>
+
                     </table>
+
                 </div>
     
                 <modalFooter

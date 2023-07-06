@@ -3,34 +3,27 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-// import ModalAdd from "@/components/reference/employee/ModalAdd.vue";
-// import ModalEdit from "@/components/reference/employee/ModalEdit.vue";
 import ModalView from "@/components/reference/employee/ModalView.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
-// import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
-// import icondanger from "@/assets/Danger.png";
-// import iconClose from "@/assets/navbar/icon_close.svg";
-
-// import Swal from "sweetalert2";
 
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
 
-import { ref, onBeforeMount, onMounted, computed } from "vue";
-
+import { ref, onBeforeMount, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
 
-//for sort & search
 const search = ref("");
 let sortedData = ref([]);
 const selectedCompany = ref("Company");
@@ -43,19 +36,16 @@ let sortedDataReactive = computed(() => sortedData.value);
 const showFullText = ref({});
 let checkList = false;
 
-//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
 };
 
-//for filter & reset button
 const filterDataByCompany = () => {
   if (selectedCompany.value === "Company") {
     sortedData.value = instanceArray;
@@ -67,30 +57,11 @@ const filterDataByCompany = () => {
   onChangePage(1);
 };
 
-//for filter & reset button
 const resetData = () => {
   sortedData.value = instanceArray;
-  // fetchEmployee();
   selectedCompany.value = "Company";
 };
 
-//for check & uncheck all
-// const selectAll = (checkValue) => {
-//   const checkList = checkValue;
-//   if (checkList == true) {
-//     let check = document.getElementsByName("checks");
-//     for (let i = 0; i < check.length; i++) {
-//       if (check[i].type == "checkbox") check[i].checked = true;
-//     }
-//   } else {
-//     let check = document.getElementsByName("checks");
-//     for (let i = 0; i < check.length; i++) {
-//       if (check[i].type == "checkbox") check[i].checked = false;
-//     }
-//   }
-// };
-
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "SN", jsonData: "sn_employee" },
@@ -101,7 +72,6 @@ const tableHead = [
   { Id: 7, title: "Actions" },
 ];
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -120,7 +90,6 @@ onBeforeMount(() => {
   lengthCounter = sortedData.value.length;
 });
 
-//for searching
 const filteredItems = (search) => {
   sortedData.value = instanceArray;
   const filteredR = sortedData.value.filter((item) => {
@@ -140,71 +109,22 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-//for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
-// get all employee
 const fetchEmployee = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/employee/get/");
-  // console.log("ini data employe" + JSON.stringify(res.data.data.data));
   instanceArray = res.data.data;
-  // console.log("ini data instance array" + JSON.stringify(instanceArray));
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 };
 
-//delete employee
-// const deleteBrand = async (id) => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-//   Swal.fire({
-//     title:
-//       "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-//     html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-//     iconHtml: `<img src="${icondanger}" />`,
-//     showCloseButton: true,
-//     closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-//     showCancelButton: true,
-//     buttonsStyling: false,
-//     cancelButtonText: "Cancel",
-//     customClass: {
-//       cancelButton: "swal-cancel-button",
-//       confirmButton: "swal-confirm-button",
-//     },
-//     reverseButtons: true,
-//     confirmButtonColor: "#3085d6",
-//     cancelButtonColor: "#d33",
-//     confirmButtonText: "Yes",
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-//       Api.delete(`/employee/delete_data/${id}`).then((res) => {
-//         Swal.fire({
-//           title: "Successfully",
-//           text: "Employee has been deleted.",
-//           icon: "success",
-//           showCancelButton: false,
-//           confirmButtonColor: "#015289",
-//           showConfirmButton: false,
-//           timer: 1500,
-//         });
-//         fetchBrand();
-//       });
-//     } else {
-//       return;
-//     }
-//   });
-// };
-
-//for export
 const exportToExcel = () => {
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet("Employee Data");
@@ -219,12 +139,10 @@ const exportToExcel = () => {
     { title: "Phone" },
   ];
 
-  // Menambahkan header kolom
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  // Menambahkan data ke baris-baris selanjutnya
   sortedDataReactive.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
@@ -235,7 +153,6 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 7).value = data.phone_number;
   });
 
-  // Menyimpan workbook menjadi file Excel
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -269,7 +186,6 @@ const exportToExcel = () => {
               Employee
             </p>
             <div class="flex gap-4">
-              <!-- <ModalAdd @unlockScrollbar="lockScrollbar = !lockScrollbar" /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
@@ -373,16 +289,6 @@ const exportToExcel = () => {
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
-                <!-- <th>
-                  <div class="flex justify-center">
-                    <input
-                      type="checkbox"
-                      name="checked"
-                      @click="selectAll((checkList = !checkList))"
-                    />
-                  </div>
-                </th> -->
-
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -410,12 +316,9 @@ const exportToExcel = () => {
                 )"
                 :key="data.id"
               >
-                <!-- <td style="width: 5%">
-                  <input type="checkbox" name="checks" />
-                </td> -->
                 <td style="width: 5%">{{ data.no }}</td>
                 <td style="width: 10%">{{ data.sn_employee }}</td>
-                <td style="width: 40%">
+                <td style="width: 35%">
                   <span
                     :class="[
                       'readmore-text',
@@ -425,7 +328,7 @@ const exportToExcel = () => {
                     {{ data.employee_name }}
                   </span>
                 </td>
-                <td style="width: 5%">{{ data.jenkel }}</td>
+                <td style="width: 10%">{{ data.jenkel }}</td>
                 <td style="width: 10%">{{ data.email }}</td>
                 <td style="width: 10%">{{ data.phone_number }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
@@ -450,15 +353,35 @@ const exportToExcel = () => {
                       data.sn_atasan_2,
                     ]"
                   />
-                  <!-- <ModalEdit
-                    @unlock-scrollbar="lockScrollbar = !lockScrollbar"
-                  />
-                  <button>
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button> -->
                 </td>
               </tr>
             </tbody>
+          </tableData>
+
+          <tableData
+            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
+                >
+                  <div class="flex justify-center items-center">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                    <button v-if="data.jsonData" class="ml-2">
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <SkeletonLoadingTable :column="7" :row="5" />
           </tableData>
 
           <div v-else>
@@ -467,16 +390,6 @@ const exportToExcel = () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
-                  <th>
-                    <div class="flex justify-center">
-                      <!-- <input
-                        type="checkbox"
-                        name="checked"
-                        @click="selectAll((checkList = !checkList))"
-                      /> -->
-                    </div>
-                  </th>
-
                   <th
                     v-for="data in tableHead"
                     :key="data.Id"

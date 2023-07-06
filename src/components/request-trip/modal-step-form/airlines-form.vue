@@ -79,6 +79,14 @@
         flightClassAirlines.value = employeeLoginData.value[0].flight_class
     })
 
+    watch(props, () => {
+        arrival.value = ''
+        departure.value = ''
+        returnDateAirlines.value = ''
+        departureDateAirlines.value = ''
+        vendor.value = ''
+    })
+
     const submitAirlines = async () => {
         
         const token = JSON.parse(localStorage.getItem('token'))

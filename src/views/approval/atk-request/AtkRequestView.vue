@@ -109,8 +109,8 @@ const format_date = (value) => {
           </router-link>
 
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
-            <ModalApproveAtk />
-            <ModalRejectAtk />
+            <ModalApproveAtk v-if="status == 'Waiting Approval'" />
+            <ModalRejectAtk v-if="status == 'Waiting Approval'" />
             <!-- <button
               class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
             >

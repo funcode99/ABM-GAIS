@@ -63,6 +63,8 @@ const fetchUOM = async () => {
 const changeCompany = async (id_company) => {
   // changeUomBrand(id_company)
   // fetItems(id_company)
+  disableCompany.value = JSON.parse(localStorage.getItem("id_role")) == 'EMPLY' ? true : false
+  disableSite.value = JSON.parse(localStorage.getItem("id_role")) == 'EMPLY' ? true : false
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -96,7 +98,7 @@ const fetItems = async (id_warehouse) => {
 const changeUomBrand = async (id_item) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get_by_company/${selectedCompany.value}`);
+  const res = await Api.get(`/management_atk/get_by_warehouse_id/${selectedWarehouse.value}`);
   // console.log(id_item)
   // Warehouse.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {

@@ -31,6 +31,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let optionDataPurposeofTrip = ref([])
     let optionDataEmployeeRequestor = ref([])
     let optionDataCity = ref([])
+    let optionDataSite = ref([])
     let optionDataZona = ref([])
     let optionDataFlightClass = ref([])
     let optionDataTravellerType = ref([])
@@ -106,6 +107,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let totalTLK = ref(0)
     let departureDate = ref('')
     let returnDate = ref('')
+    let siteVisitLocation = ref('')
+    let siteVisitAttachmentFile = ref('')
 
     let dtToday = new Date();
     let month = dtToday.getMonth() + 1;
@@ -126,7 +129,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let formattedDepartureDate = ref()
     let formattedReturnDate = ref()
 
-    let date1 = ref()
+    let date1 = ref('')
     let date2 = ref('')
     let margin = ref()
 
@@ -136,7 +139,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       getDepartureDateDay = newValue.toString().substring(8,10)
       formattedDepartureDate = getDepartureDateYear + '/' + getDepartureDateMonth + '/' + getDepartureDateDay
       date2 = new Date(formattedDepartureDate)
-      if(date2.value !== '' && date2.value !== undefined && date1.value !== '' && date2.value !== undefined) {
+      if(date1.value !== '') {
         margin = date1.getTime() - date2.getTime()
         totalDays = Math.ceil((margin/(1000*3600*24))+1)
         totalTLK = totalDays * TLKperDay.value
@@ -149,8 +152,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
         getReturnDateDay = newValue.toString().substring(8,10)
         formattedReturnDate = getReturnDateYear + '/' + getReturnDateMonth + '/' + getReturnDateDay
         date1 = new Date(formattedReturnDate)
-        // yesss dapet hasil nya
-        if(date2.value !== '') {
+        if(date2.value  !== '') {
           margin = date1.getTime() - date2.getTime()
           totalDays = Math.ceil((margin/(1000*3600*24))+1)
           totalTLK = totalDays * TLKperDay.value
@@ -158,7 +160,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     })
 
     watch(TLKperDay, () => {
-      if(date2.value !== '') {
+      if(date1.value !== '' && date2.value !== '') {
         margin = date1.getTime() - date2.getTime()
         totalDays = Math.ceil((margin/(1000*3600*24))+1)
         totalTLK = totalDays * TLKperDay.value
@@ -180,21 +182,45 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       if(localStorage.getItem("tripId") !== undefined) {
           const token = JSON.parse(localStorage.getItem('token'))
           Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+        if(requestType[1] == 'Site Visit') {
+          
           const api = await Api.post('/request_trip/store', {
             id_zona: zona.value,
             id_city_to: toCity.value,
-            id_site: locationId.value,
             id_employee: requestor.value,
             id_city_from: fromCity.value,
-            no_request_trip: '',
             code_document: requestType.value[0],
             notes: notesToPurposeOfTrip.value,
             date_departure: departureDate.value,
             date_arrival: returnDate.value,
             tlk_per_day: TLKperDay.value,
-            total_tlk: totalTLK
+            total_tlk: totalTLK,
+            id_site: siteVisitLocation.value,
+            file: siteVisitAttachmentFile.value,
+            no_request_trip: '',
           })
           localStorage.setItem('tripId', api.data.data.id)
+
+        } else {
+          
+          const api = await Api.post('/request_trip/store', {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            no_request_trip: '',
+            id_site: locationId.value,
+          })
+          localStorage.setItem('tripId', api.data.data.id)
+        
+        }
           formStep.value++
           resetProgressData()
         }
@@ -209,7 +235,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
       console.log(api)
-      console.log('berhasil submit request trip!')
     }
 
     watch(optionDataEmployeeRequestor, () => {
@@ -240,6 +265,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`;
       const api = await Api.get('/city')
       optionDataCity.value = api.data.data
+    }
+
+    const fetchSite = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      const api = await Api.get('/site/get_data')
+      optionDataSite.value = api.data.data
     }
 
     const fetchFlight = async () => {
@@ -378,15 +410,18 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     }
 
     onBeforeMount(() => {
+
       fetchDocumentCode()
       fetchEmployeeRequestor()
       fetchCity()
+      fetchSite()
       fetchCompany()
       fetchFlight()
       fetchJobBand()
       fetchTypeOfTransportation()
 
       fetchTravellerType()
+      
     })
 
     const companyBusinessStepList = [
@@ -439,6 +474,10 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       // resetInput()
       formStep.value = 0
     })
+
+    const updateFile = (event) => {
+      siteVisitAttachmentFile.value = event.target.files[0]
+    }
 
     const addButtonStylingClass = 'btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green ml-2'
 
@@ -598,14 +637,34 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
                 </div>
 
+                <div v-if="requestType[1] == 'Site Visit'" :class="columnClass + ' mx-4 my-3'">
+                  
+                  <label for="site">
+                    Site <span class="text-[#f5333f]">*</span>
+                  </label>
+
+                  <select id="site" v-model="siteVisitLocation" :class="inputStylingWithoutWidthClass" required>
+                    <!-- :required="requestType[1] == 'Site Visit' ? true : false" -->
+                    <option v-for="data in optionDataSite" :key="data.id" :value="data.id">
+                      {{ data.site_name }}
+                    </option>
+                  </select>
+
+                </div>
+
                 <div :class="columnClass + ' mx-4 my-3'">
 
-                  <span>
+                  <label for="notesToTrip">
                     Notes to Purpose of Trip
-                  </span>
+                  </label>
 
-                  <input type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip" />
+                  <input id="notesToTrip" type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip" />
 
+                </div>
+
+                <div v-if="requestType[1] == 'Site Visit'" :class="columnClass + ' mx-4 my-3'">
+                  <label for="attachment">File Attachment<span class="text-[#f5333f]">*</span></label>
+                  <input type="file" id="attachment" @change="updateFile" :class="inputStylingWithoutWidthClass" />
                 </div>
 
                 <h1 class="mx-4 mt-6">Itinerary</h1>
@@ -728,44 +787,32 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
                 <!-- step 3 form Traveller -->
                 <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
-
                   <guestAsTravellerTable @fetchTravellerGuest="fetchTravellerGuest" />
-
                 </div>
 
                 <!-- step 4 form Airlines -->
                 <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
-
                   <airlinesTable @fetchAirlines="fetchAirlines" />
-
                 </div>
 
                 <!-- step 5 form Taxi Voucher -->
                 <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
-
                     <taxiVoucherTable @fetchTaxiVoucher="fetchTaxiVoucher" />
-
                 </div>
 
                 <!-- step 6 form Other Transportation -->
                 <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
-
                     <otherTransportationTable @fetchOtherTransportation="fetchOtherTransportation" />
-
                 </div>
 
                 <!-- step 7 form Accomodation -->
                 <div class="px-2" :class="formStep == 6 ? 'block' : 'hidden'">
-
                   <accomodationTable @fetchAccomodation="fetchAccomodation" />
-
                 </div>
 
                 <!-- step 8 form Cash Advance -->
                 <div class="px-2" :class="formStep == 7 ? 'block' : 'hidden'">
-
                   <cashAdvanceTable @fetchCashAdvance="fetchCashAdvance" />
-
                 </div>
 
               </div>

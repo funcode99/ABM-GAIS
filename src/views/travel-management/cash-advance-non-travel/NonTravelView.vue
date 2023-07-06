@@ -63,7 +63,6 @@ const fetchDataById = async (id) => {
   dataArr.value = res.data.data[0];
   fetchDataItem(id);
   fetchHistoryApproval(id);
-
 };
 
 const fetchDataItem = async (id) => {
@@ -300,7 +299,9 @@ const inputClass =
               <button
                 type="button"
                 :class="
-                  dataArr.status == 'Revision' || dataArr.status == 'Rejected'
+                  dataArr.status == 'Revision' ||
+                  dataArr.status == 'Rejected' ||
+                  dataArr.status == 'Fully Rejected'
                     ? ' btn btn-sm border-none mx-4 capitalize status-revision'
                     : 'btn btn-sm border-none mx-4 capitalize status-default'
                 "
@@ -312,7 +313,9 @@ const inputClass =
           <div class="flex justify-start gap-4 mx-10">
             <label
               v-if="
-                (dataArr.status == 'Draft' || dataArr.status == 'Revision') &&
+                (dataArr.status == 'Draft' ||
+                  dataArr.status == 'Revision' ||
+                  dataArr.status == 'Fully Rejected') &&
                 !visibleHeader
               "
               @click="edit()"
@@ -342,7 +345,9 @@ const inputClass =
             />-->
             <button
               v-if="
-                (dataArr.status == 'Draft' || dataArr.status == 'Revision') &&
+                (dataArr.status == 'Draft' ||
+                  dataArr.status == 'Revision' ||
+                  dataArr.status == 'Fully Rejected') &&
                 !visibleHeader
               "
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -434,7 +439,9 @@ const inputClass =
             <button
               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
               v-if="
-                (dataArr.status == 'Draft' || dataArr.status == 'Revision') &&
+                (dataArr.status == 'Draft' ||
+                  dataArr.status == 'Revision' ||
+                  dataArr.status == 'Fully Rejected') &&
                 !addItem &&
                 !editItem &&
                 visibleHeader
@@ -672,7 +679,8 @@ const inputClass =
                         class="flex justify-center items-center"
                         v-if="
                           (dataArr.status == 'Draft' ||
-                            dataArr.status == 'Revision') &&
+                            dataArr.status == 'Revision' ||
+                            dataArr.status == 'Fully Rejected') &&
                           !editItem
                         "
                       >

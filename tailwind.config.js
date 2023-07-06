@@ -16,6 +16,7 @@ module.exports = {
         "blue-button": "#1F7793",
         primary: "#005289",
         secondary: "#1F7793",
+        orange: "#ff9900",
       },
     },
   },

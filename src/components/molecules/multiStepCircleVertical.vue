@@ -1,14 +1,22 @@
 <script setup>
+    import { inject, ref } from 'vue'
     import stepLine from '@/assets/step-line.png'
     import profileImage from '@/assets/profile.png'
 
     const props = defineProps({
         number: Number,
         title: String,
+        selectedTitle: String,
         limit: Number,
         image: String,
-        stop: Boolean
+        stop: Boolean,
+        data: String
     })
+
+    const emits = defineEmits('changeHeader')
+    const selected = () => {
+        emits('changeHeader')
+    }
 
 </script>
 
@@ -22,9 +30,10 @@
             <div class="flex items-center relative" :class="props.title != null ? 'gap-3' : ''">
                
                 <!-- tunjukin angka kalo angka nya ada for details -->
-                <button v-if="props.number != null" 
-                class="bg-blue opacity-30 click w-11 h-11 text-white rounded-full flex justify-center items-center"
-                @click="$emit('changeHeader')"
+                <button v-if="props.number != null"
+                :class="props.title == props.selectedTitle ? 'opacity-100' : 'opacity-30'"
+                class="bg-blue w-11 h-11 text-white rounded-full flex justify-center items-center"
+                @click="selected"
                 >
                     {{ props.number }}
                 </button>
@@ -52,7 +61,7 @@
                         <img :src="profileImage" class="w-3 h-3" />
                     </div>
                     <div>
-                        <h1 class="text-sm">Rayhan (Atasan) was approved your document</h1>
+                        <h1 class="text-sm">{{ props.data }}</h1>
                         <h1 class="text-[#8c8c8c] text-xs">Selasa, 12 April 2023</h1>
                         <h1 class="text-[#8c8c8c] text-xs">08:30:25 AM</h1>
                     </div>
