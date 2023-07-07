@@ -17,6 +17,7 @@ const props = defineProps({
         hideCurrencySymbolOnFocus: false,
         hideNegligibleDecimalDigitsOnFocus: false,
         currencyDisplay: "hidden",
+        hideGroupingSeparatorOnFocus: false,
       }
     },
   },

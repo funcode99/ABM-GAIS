@@ -63,6 +63,7 @@ const tabActive = ref("Details")
 const formDialog = ref(false)
 const userRole = localStorage.getItem("id_role")
 const checkupList = ref([])
+const dataExisting = ref([])
 
 const isDriver = computed(() => {
   return userRole == "DRVR"
@@ -92,17 +93,8 @@ const fetchPoolRequest = async () => {
   dataFormDialog.value = res.data[0]
 }
 
-const getFormData = async () => {
-  const requestId = route.params.id
-
-  const res = await fetchDriverCarCheckupByRequesId(requestId)
-
-  checkupList.value = res.data.data
-}
-
 onMounted(async () => {
   await fetchPoolRequest()
-  await getFormData()
 })
 </script>
 
@@ -212,7 +204,7 @@ onMounted(async () => {
               {{ numberFilter(item.odometer) }}
             </template>
 
-            <template #item-actions="{ item }">
+            <template #item-actions="{ item }" v-if="dataFormDialog">
               <button
                 @click="formDialog = true"
                 class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
@@ -233,9 +225,9 @@ onMounted(async () => {
                 </svg>
               </button>
               <DriverFormDialog
+                v-if="formDialog"
                 :model-value="formDialog"
                 :data="dataFormDialog"
-                :checkupList="checkupList"
                 @update:model-value="formDialog = $event"
               />
             </template>

@@ -30,6 +30,20 @@ const fetchPoolCarRequestById = async (requestId) => {
   }
 }
 
+const saveCarInspection = async (body) => {
+  try {
+    const res = await Api.post(`${ENDPOINT}/store_check`, body, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    return res
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const fetchDriverCarCheckupByRequesId = async (requestId) => {
   try {
     const res = await Api.get(`${ENDPOINT}/get_check/${requestId}`)
@@ -138,4 +152,5 @@ export {
   deleteCarById,
   fetchPoolCarRequestById,
   fetchDriverCarCheckupByRequesId,
+  saveCarInspection,
 }
