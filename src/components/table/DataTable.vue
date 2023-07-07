@@ -21,7 +21,14 @@ const props = defineProps({
     //    sortable: Boolean
     // }
   },
-
+  data: {
+    type: Array,
+    default: [],
+  },
+  pagination: {
+    type: Boolean,
+    default: true,
+  },
   apiParams: {
     type: Object,
     default: () => {},
@@ -83,6 +90,14 @@ watch(
   { deep: true }
 )
 
+watch(
+  () => props.data,
+  () => {
+    items.value = props.data
+  },
+  { deep: true }
+)
+
 const getData = debounce(async function () {
   // const { sortBy, sortDesc, page, limit } = paging
 
@@ -138,14 +153,18 @@ const sortTableByKey = (key, orderBy) => {
 defineExpose({ getData, exportToXls })
 
 onMounted(() => {
-  getData()
+  if (props.data.length == 0) {
+    getData()
+  } else {
+    items.value = props.data
+  }
 })
 </script>
 
 <template>
   <slot name="item-per-page">
-    <div>
-      <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+    <div v-if="pagination" class="my-5">
+      <div class="flex items-center gap-1 h-4">
         <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
         <select
           class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
@@ -162,9 +181,7 @@ onMounted(() => {
     </div>
   </slot>
 
-  <div
-    class="bg-white rounded-xl box-border block overflow-x-auto w-[auto] mx-5 my-2"
-  >
+  <div class="bg-white rounded-xl box-border block overflow-x-auto w-[auto]">
     <table
       class="table table-zebra table-compact border w-full h-full block rounded-lg overflow-auto"
     >
@@ -259,6 +276,7 @@ onMounted(() => {
   </div>
   <slot name="footer">
     <div
+      v-if="pagination"
       class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
     >
       <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">

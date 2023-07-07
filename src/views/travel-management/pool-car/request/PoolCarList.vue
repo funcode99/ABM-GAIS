@@ -215,7 +215,7 @@ onMounted(() => {
           </label>
         </div>
       </div>
-      <div>
+      <div class="px-5">
         <DataTable
           v-model:selectedItems="selectedItems"
           @update:selectedItems="selectedItems = $event"
@@ -253,9 +253,9 @@ onMounted(() => {
 
           <template #item-actions>
             <div class="flex justify-center items-center gap-2">
-              <button>
+              <!-- <button>
                 <img :src="icon_edit" class="w-6 h-6" />
-              </button>
+              </button> -->
               <button @click="">
                 <img :src="icon_delete" class="w-6 h-6" />
               </button>

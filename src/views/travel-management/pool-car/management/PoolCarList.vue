@@ -242,42 +242,43 @@ onMounted(() => {
           </label>
         </div>
       </div>
+      <div class="px-5">
+        <DataTable
+          v-model:selectedItems="selectedItems"
+          @update:selectedItems="selectedItems = $event"
+          :headers="headers"
+          :api-method="fetchCarMaster"
+          :api-params="computedFilter"
+          export-fileName="Pool Car List"
+          ref="dataTableRef"
+          show-select
+        >
+          <template #item-status="{ item }">
+            {{ !item.status ? "Under Maintance" : "Active" }}
+          </template>
 
-      <DataTable
-        v-model:selectedItems="selectedItems"
-        @update:selectedItems="selectedItems = $event"
-        :headers="headers"
-        :api-method="fetchCarMaster"
-        :api-params="computedFilter"
-        export-fileName="Pool Car List"
-        ref="dataTableRef"
-        show-select
-      >
-        <template #item-status="{ item }">
-          {{ !item.status ? "Under Maintance" : "Active" }}
-        </template>
+          <template #item-odometer="{ item }">
+            {{ numberFilter(item.odometer) }}
+          </template>
 
-        <template #item-odometer="{ item }">
-          {{ numberFilter(item.odometer) }}
-        </template>
+          <template #item-actions="{ item }">
+            <div class="flex justify-center items-center gap-2">
+              <button @click="setEditedData(item)">
+                <img :src="icon_edit" class="w-6 h-6" />
+              </button>
+              <button @click="setDeleteDialog(item)">
+                <img :src="icon_delete" class="w-6 h-6" />
 
-        <template #item-actions="{ item }">
-          <div class="flex justify-center items-center gap-2">
-            <button @click="setEditedData(item)">
-              <img :src="icon_edit" class="w-6 h-6" />
-            </button>
-            <button @click="setDeleteDialog(item)">
-              <img :src="icon_delete" class="w-6 h-6" />
-
-              <ConfirmDialog
-                v-if="deleteDialog"
-                @confirm="deleteData"
-                @cancel="deleteDialog = false"
-              ></ConfirmDialog>
-            </button>
-          </div>
-        </template>
-      </DataTable>
+                <ConfirmDialog
+                  v-if="deleteDialog"
+                  @confirm="deleteData"
+                  @cancel="deleteDialog = false"
+                ></ConfirmDialog>
+              </button>
+            </div>
+          </template>
+        </DataTable>
+      </div>
     </tableTop>
   </tableContainer>
 </template>

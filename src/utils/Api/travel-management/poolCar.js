@@ -30,6 +30,16 @@ const fetchPoolCarRequestById = async (requestId) => {
   }
 }
 
+const fetchDriverCarCheckupByRequesId = async (requestId) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/get_check/${requestId}`)
+
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 // Pool Car Managemenet
 const fetchCarMaster = async (params) => {
   try {
@@ -61,8 +71,6 @@ const deleteCarById = async (carId) => {
     const res = await Api.delete(`${CAR_ENDPOINT}/delete_data/${carId}`)
 
     if (res.data.success) {
-      console.log(res)
-
       Swal.fire({
         position: "center",
         icon: "success",
@@ -129,4 +137,5 @@ export {
   saveCarData,
   deleteCarById,
   fetchPoolCarRequestById,
+  fetchDriverCarCheckupByRequesId,
 }

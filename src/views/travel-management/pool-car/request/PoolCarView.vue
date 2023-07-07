@@ -1,39 +1,58 @@
 <script setup>
-import { onMounted, ref } from "vue"
+import { computed, onMounted, ref } from "vue"
 
 import { useRoute } from "vue-router"
+
+import { toFilterDate, numberFilter } from "@/utils/filters"
 
 import tableContainer from "@/components/table/tableContainer.vue"
 import tableTop from "@/components/table/tableTop.vue"
 import PageTitle from "@/components/atomics/PageTitle.vue"
 import DriverFormDialog from "./DriverFormDialog.vue"
+import DataTable from "@/components/table/DataTable.vue"
 
 import left_chevron_icon from "@/assets/request-trip-view-arrow.png"
+
+import {
+  fetchPoolCarRequestById,
+  fetchDriverCarCheckupByRequesId,
+} from "@/utils/Api/travel-management/poolCar"
 
 const headers = [
   {
     text: "Name",
-    key: "name",
+    key: "requestor_name",
+    value: "requestor_name",
   },
   {
     text: "Car",
-    key: "car",
+    key: "plate",
+    value: "plate",
   },
   {
     text: "Driver",
-    key: "driver",
+    key: "driver_name",
+    value: "driver_name",
   },
   {
     text: "From Date",
-    key: "fromDate",
+    key: "from_date",
+    value: "from_date",
   },
   {
     text: "To Date",
-    key: "toDate",
+    key: "to_date",
+    value: "to_date",
   },
   {
     text: "Odometer",
     key: "odometer",
+    value: "odometer",
+  },
+  {
+    text: "Actions",
+    key: "actions",
+    value: "actions",
   },
 ]
 
@@ -42,19 +61,49 @@ const route = useRoute()
 const tabs = ref(["Details"])
 const tabActive = ref("Details")
 const formDialog = ref(false)
+const userRole = localStorage.getItem("id_role")
+const checkupList = ref([])
+
+const isDriver = computed(() => {
+  return userRole == "DRVR"
+})
+
+const dataFormDialog = ref({
+  is_usable: 0,
+  notes: "",
+  odometer: 0,
+})
 
 const items = ref([
   {
-    name: "lol",
-    car: "Ertiga",
-    driver: "Anton",
-    fromDate: "24-06-2023",
-    toDate: "26-06-2023",
-    odometer: 250,
+    name: "",
+    car: "",
+    driver: "",
+    fromDate: "",
+    toDate: "",
+    odometer: 0,
   },
 ])
 
-onMounted(() => {})
+const fetchPoolRequest = async () => {
+  const requestId = route.params.id
+  const res = await fetchPoolCarRequestById(requestId)
+  items.value = res.data
+  dataFormDialog.value = res.data[0]
+}
+
+const getFormData = async () => {
+  const requestId = route.params.id
+
+  const res = await fetchDriverCarCheckupByRequesId(requestId)
+
+  checkupList.value = res.data.data
+}
+
+onMounted(async () => {
+  await fetchPoolRequest()
+  await getFormData()
+})
 </script>
 
 <template>
@@ -86,7 +135,7 @@ onMounted(() => {})
         <div
           class="card flex w-[114px] text-sm capitalize text-center font-bold item-center border border-[#292D32] rounded-lg rounded-bl-3xl p-2 m-5"
         >
-          waiting car & driver
+          {{ items[0].status }}
         </div>
       </div>
 
@@ -95,6 +144,7 @@ onMounted(() => {})
         <div class="flex flex-col gap-2">
           <span class="font-medium text-sm">Created Date</span>
           <input
+            :value="items[0].created_at"
             type="text"
             disabled
             class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
@@ -104,6 +154,7 @@ onMounted(() => {})
         <div class="flex flex-col gap-2">
           <span class="font-medium text-sm">Reference</span>
           <input
+            :value="items[0].no_pool_car"
             type="text"
             disabled
             class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
@@ -113,6 +164,7 @@ onMounted(() => {})
         <div class="flex flex-col gap-2">
           <span class="font-medium text-sm">Created By</span>
           <input
+            :value="items[0].created_by"
             type="text"
             disabled
             class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
@@ -142,53 +194,52 @@ onMounted(() => {})
           </tab>
         </div>
 
-        <div>
-          <table width="100%">
-            <thead>
-              <tr>
-                <th
-                  v-for="header in headers"
-                  class="bg-primary text-white p-3 text-sm"
-                >
-                  {{ header.text }}
-                </th>
-                <th class="bg-primary text-white p-3 text-sm">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in items">
-                <td class="p-2" v-for="header in headers">
-                  {{ item[header.key] }}
-                </td>
-                <td align="center">
-                  <button
-                    @click="formDialog = true"
-                    class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="1.5"
-                      stroke="currentColor"
-                      class="w-6 h-6"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M12 4.5v15m7.5-7.5h-15"
-                      />
-                    </svg>
-                  </button>
+        <div class="">
+          <DataTable :headers="headers" :data="items" :pagination="false">
+            <template #item-created_at="{ item }">
+              {{ toFilterDate(item.create_at, "DD/MM/YYYY") }}
+            </template>
 
-                  <DriverFormDialog
-                    :model-value="formDialog"
-                    @update:model-value="formDialog = $event"
+            <template #item-from_date="{ item }">
+              {{ toFilterDate(item.from_date, "DD/MM/YYYY") }}
+            </template>
+
+            <template #item-to_date="{ item }">
+              {{ toFilterDate(item.to_date, "DD/MM/YYYY") }}
+            </template>
+
+            <template #item-odometer="{ item }">
+              {{ numberFilter(item.odometer) }}
+            </template>
+
+            <template #item-actions="{ item }">
+              <button
+                @click="formDialog = true"
+                class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
                   />
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </svg>
+              </button>
+              <DriverFormDialog
+                :model-value="formDialog"
+                :data="dataFormDialog"
+                :checkupList="checkupList"
+                @update:model-value="formDialog = $event"
+              />
+            </template>
+          </DataTable>
         </div>
       </div>
     </tableTop>
