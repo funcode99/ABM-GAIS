@@ -47,7 +47,7 @@ const props = defineProps({
     default: () => {},
   },
   exportFileName: {
-    type: Object,
+    type: String,
     default: () => {},
   },
 })
@@ -126,6 +126,14 @@ const exportToXls = async () => {
   )
 }
 
+const sortTableByKey = (key, orderBy) => {
+  items.value = items.value.sort(function (a, b) {
+    var x = orderBy ? a[key] : b[key]
+    var y = orderBy ? b[key] : a[key]
+    return x < y ? -1 : x > y ? 1 : 0
+  })
+}
+
 defineExpose({ getData, exportToXls })
 
 onMounted(() => {
@@ -175,6 +183,13 @@ onMounted(() => {
             <th
               v-for="header in headers"
               class="overflow-x-hidden cursor-pointer"
+              :set="(orderBy = true)"
+              @click="
+                () => {
+                  sortTableByKey(header.key, orderBy)
+                  orderBy = !orderBy
+                }
+              "
             >
               <slot :key="header.key" :name="`header_${header.key}`">
                 <span class="flex justify-center items-center gap-1">

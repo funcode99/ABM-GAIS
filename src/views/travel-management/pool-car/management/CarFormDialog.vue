@@ -115,11 +115,11 @@ onMounted(async () => {
   </button>
 
   <Modal v-model:visible="dialog" @onUnVisible="emits('resetData')">
+    <modalHeader
+      @closeVisibility="dialog = false"
+      :title="data.id ? 'Update Car' : 'New Car'"
+    />
     <main class="overflow-y-scroll">
-      <modalHeader
-        @closeVisibility="dialog = false"
-        :title="data.id ? 'Update Car' : 'New Car'"
-      />
       <form @submit.prevent="saveCar">
         <div class="p-5 grid gap-3 h-auto">
           <div>

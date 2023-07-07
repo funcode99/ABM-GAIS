@@ -6,7 +6,7 @@ import tableTop from "@/components/table/tableTop.vue"
 import DataTable from "@/components/table/DataTable.vue"
 
 import PageTitle from "@/components/atomics/PageTitle.vue"
-import FormDialog from "../components/CarFormDialog.vue"
+import FormDialog from "./CarFormDialog.vue"
 
 import icon_receive from "@/assets/icon-receive.svg"
 import icon_filter from "@/assets/icon_filter.svg"
