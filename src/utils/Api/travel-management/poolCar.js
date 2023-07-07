@@ -14,7 +14,17 @@ const fetchPoolCarRequest = async (params) => {
   try {
     const res = await Api.get(`${ENDPOINT}/get_data`, params)
 
-    return res
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchPoolCarRequestById = async (requestId) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/get_data/${requestId}`)
+
+    return res.data
   } catch (error) {
     console.error(error)
   }
@@ -118,4 +128,5 @@ export {
   fethDrivers,
   saveCarData,
   deleteCarById,
+  fetchPoolCarRequestById,
 }

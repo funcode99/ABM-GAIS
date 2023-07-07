@@ -100,6 +100,7 @@ const getData = debounce(async function () {
 
     paging.value.totalData = res.data.total || 0
     items.value = res.data.data || []
+    // items.value = []
   } catch (error) {
     console.error(error)
   } finally {
@@ -161,21 +162,23 @@ onMounted(() => {
     </div>
   </slot>
 
-  <div class="px-4 py-2 bg-white rounded-xl box-border block overflow-x-hidden">
+  <div
+    class="bg-white rounded-xl box-border block overflow-x-auto w-[auto] mx-5 my-2"
+  >
     <table
-      class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+      class="table table-zebra table-compact border w-full h-full block rounded-lg overflow-auto"
     >
       <thead class="text-center font-JakartaSans text-sm font-bold h-10">
         <tr>
           <slot v-if="showSelect" name="selection">
-            <th>
+            <th width="50px" class="p-3">
               <div class="flex justify-center">
                 <input type="checkbox" name="checked" />
               </div>
             </th>
           </slot>
 
-          <th v-if="tableNumber" align="center">
+          <th width="50px" class="p-3" v-if="tableNumber" align="center">
             <span class="flex justify-center items-center gap-1"> No </span>
           </th>
 
@@ -184,6 +187,7 @@ onMounted(() => {
               v-for="header in headers"
               class="overflow-x-hidden cursor-pointer"
               :set="(orderBy = true)"
+              width="auto"
               @click="
                 () => {
                   sortTableByKey(header.key, orderBy)
@@ -192,7 +196,7 @@ onMounted(() => {
               "
             >
               <slot :key="header.key" :name="`header_${header.key}`">
-                <span class="flex justify-center items-center gap-1">
+                <span class="flex justify-center items-center gap-1 p-3">
                   {{ header.text }}
 
                   <button v-if="header.sortable ?? true">
@@ -252,28 +256,27 @@ onMounted(() => {
         </slot>
       </tbody>
     </table>
-
-    <slot name="footer">
-      <div
-        class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
-      >
-        <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-          Showing {{ paging.limit * (paging.page - 1) + 1 }} to
-          {{ paging.limit * paging.page }}
-          of {{ paging.totalData }} entries
-        </p>
-
-        <vue-awesome-paginate
-          :total-items="paging.totalData"
-          :items-per-page="parseInt(paging.limit)"
-          v-model="paging.page"
-          :max-pages-shown="4"
-          :show-breakpoint-buttons="true"
-          :show-jump-buttons="false"
-        />
-      </div>
-    </slot>
   </div>
+  <slot name="footer">
+    <div
+      class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+    >
+      <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+        Showing {{ paging.limit * (paging.page - 1) + 1 }} to
+        {{ paging.limit * paging.page }}
+        of {{ paging.totalData }} entries
+      </p>
+
+      <vue-awesome-paginate
+        :total-items="paging.totalData"
+        :items-per-page="parseInt(paging.limit)"
+        v-model="paging.page"
+        :max-pages-shown="4"
+        :show-breakpoint-buttons="true"
+        :show-jump-buttons="false"
+      />
+    </div>
+  </slot>
 </template>
 
 <style scoped>
@@ -301,9 +304,5 @@ tr th {
 
 .backgroundHeight {
   min-height: calc(100vh - 115px);
-}
-
-.this {
-  overflow-x: hidden;
 }
 </style>
