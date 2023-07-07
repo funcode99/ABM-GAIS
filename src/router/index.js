@@ -80,6 +80,7 @@ import DOCDeliveryListID from "@/views/facility-services/document-delivery/DOCDe
 import ManagementMeetingRoomList from "@/views/facility-services/meeting-room/ManagementMeetingRoomList.vue"
 import BookingMeetingRoomList from "@/views/facility-services/meeting-room/booking/BookingMeetingRoomList.vue"
 import BookingMeetingRoomView from "@/views/facility-services/meeting-room/booking/BookingMeetingRoomView.vue"
+import DashboardMeetingRoom from '@/views/facility-services/meeting-room/dashboard/DashboardMeetingRoom.vue'
 
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
@@ -1192,6 +1193,23 @@ const router = createRouter({
 
         return next("/")
       },
+    },
+    {
+        path: '/dashboard-meeting-room',
+        name: 'Dashboard Meeting Room',
+        component: DashboardMeetingRoom,
+        meta: {
+            title: 'Dashboard Meeting Room'
+        },
+        beforeEnter: (to, from, next) => {
+            const token = localStorage.getItem('token');
+
+            if (token) {
+            return next()
+            }
+
+            return next('/')
+        }
     },
   ],
 })

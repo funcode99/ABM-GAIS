@@ -1831,7 +1831,7 @@ onMounted(() => {
                             </router-link>
                           </ul>
                         </div>
-                        <!-- <div class="ml-5 mt-[10px]">
+                        <div class="ml-5 mt-[10px]">
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
@@ -1849,7 +1849,7 @@ onMounted(() => {
                               </li>
                             </router-link>
                           </ul>
-                        </div> -->
+                        </div>
                       </button>
 
                       <button class="cursor-pointer text-left">
