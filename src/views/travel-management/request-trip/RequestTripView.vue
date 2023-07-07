@@ -51,6 +51,8 @@
     let dataIndex = ref(0)
     let currentSelectedData = ref(travellerGuestData.value)
 
+    let showingValue = ref(1)
+
     provide('travellerDataView', travellerGuestData)
     provide('airlinesDataView', airlinesData)
     provide('taxiVoucherDataView', taxiVoucherData)
@@ -199,16 +201,6 @@
       : travellerGuestData.value
     }
 
-    const increment = () => {
-      assignSelectedData()
-      dataIndex.value + 1 !== currentSelectedData.value.length ? dataIndex.value++ : dataIndex.value
-    }
-
-    const decrement = () => {
-      assignSelectedData()
-      dataIndex.value > 0 ? dataIndex.value-- : dataIndex.value
-    }
-
     onBeforeMount(() => {
       getPurposeOfTrip()
       getTravellerGuest()
@@ -239,6 +231,13 @@
 
     const resetTypeOfSubmit = () => {
       typeOfSubmitToProps.value = 'none'
+    }
+
+    const onChangePage = (pageOfItem) => {
+      assignSelectedData()
+      if(dataIndex.value-1 !== currentSelectedData.value.length) {
+        dataIndex.value = pageOfItem-1
+      }
     }
 
 </script>
@@ -388,17 +387,23 @@
                               Revise
                             </button>
 
-                            <div class="flex gap-4">
-                              
-                                <button @click="decrement">
-                                  Back
-                                </button>
 
-                                  Data {{ dataIndex+1 }} of {{ currentSelectedData.length }}
-                              
-                                <button @click="increment">
-                                  Next
-                                </button>
+                            <div class="flex flex-wrap gap-4 justify-center lg:justify-between items-center mx-4 py-2">
+
+                            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                              Showing {{ showingValue }} 
+                              of {{ currentSelectedData.length }} entries
+                            </p>
+
+                            <vue-awesome-paginate
+                              :total-items="currentSelectedData.length"
+                              :items-per-page="1"
+                              :on-click="onChangePage"
+                              v-model="showingValue"
+                              :max-pages-shown="3"
+                              :show-breakpoint-buttons="false"
+                              :show-jump-buttons="true"
+                            />
 
                             </div>
 
@@ -479,7 +484,7 @@
 
                       <div class="py-12 px-4">
 
-                        <multiStepCircleVertical :image="userImg" v-for="(data, index) in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? true : false" />
+                        <multiStepCircleVertical :image="userImg" v-for="data in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? true : false" />
 
                       </div>
 
