@@ -262,7 +262,6 @@ const exportToExcel = () => {
                 <VueDatePicker
                   v-model="date"
                   range
-                  @input="handleDateRangeChange(date)"
                   :enable-time-picker="false"
                   class="my-date"
                 />
