@@ -510,7 +510,7 @@ const callEditApiGroupCompany = async () => {
                 >
                   Delete
                 </button>
-                <ModalAdd @company-saved="fetch" />
+                <!-- <ModalAdd @company-saved="fetch" /> -->
                 <button
                   class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                   @click="exportToExcel"
@@ -658,9 +658,9 @@ const callEditApiGroupCompany = async () => {
                         data.code_erp,
                       ]"
                     />
-                    <button @click="deleteCompany(data.id)">
+                    <!-- <button @click="deleteCompany(data.id)">
                       <img :src="deleteicon" class="w-6 h-6" />
-                    </button>
+                    </button> -->
                   </td>
                 </tr>
               </tbody>
