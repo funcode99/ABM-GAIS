@@ -10,7 +10,7 @@ const fetchStatusPoolCarRequest = async () => {
   try {
     const res = await Api.get(`${ENDPOINT}/status`)
 
-    return res
+    return res.data
   } catch (error) {
     console.error()
   }

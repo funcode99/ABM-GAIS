@@ -111,7 +111,7 @@ const deleteDataInCeklis = () => {
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Flight Class", jsonData: "flight_class" },
+  { Id: 2, title: "Class Transportation", jsonData: "flight_class" },
   { Id: 3, title: "Actions" },
 ];
 
@@ -183,7 +183,7 @@ const deleteFlight = async (id) => {
       Api.delete(`/flight_class/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
-          text: "Flight Class has been deleted.",
+          text: "Class Transportation Class has been deleted.",
           icon: "success",
           showCancelButton: false,
           confirmButtonColor: "#015289",
@@ -200,12 +200,12 @@ const deleteFlight = async (id) => {
 
 const exportToExcel = () => {
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("Flight Data");
+  const worksheet = workbook.addWorksheet("Class Transportation Data");
 
   const tableHead = [
     { title: "Nomor" },
     { title: "ID" },
-    { title: "Flight Class" },
+    { title: "Class Transportation" },
   ];
 
   tableHead.forEach((column, index) => {
@@ -225,7 +225,7 @@ const exportToExcel = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "flight_data.xlsx";
+    a.download = "class_transportation.xlsx";
     a.click();
     URL.revokeObjectURL(url);
   });
@@ -248,7 +248,7 @@ const exportToExcel = () => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              flight class
+              Class Transportation
             </p>
             <div class="flex gap-4">
               <button

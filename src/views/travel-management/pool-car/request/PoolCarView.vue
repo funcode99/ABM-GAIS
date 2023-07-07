@@ -1,14 +1,14 @@
 <script setup>
+import { onMounted, ref } from "vue"
+
 import { useRoute } from "vue-router"
 
 import tableContainer from "@/components/table/tableContainer.vue"
 import tableTop from "@/components/table/tableTop.vue"
-
 import PageTitle from "@/components/atomics/PageTitle.vue"
+import DriverFormDialog from "./DriverFormDialog.vue"
 
 import left_chevron_icon from "@/assets/request-trip-view-arrow.png"
-
-import { onMounted, ref } from "vue"
 
 const headers = [
   {
@@ -41,6 +41,7 @@ const route = useRoute()
 
 const tabs = ref(["Details"])
 const tabActive = ref("Details")
+const formDialog = ref(false)
 
 const items = ref([
   {
@@ -77,7 +78,7 @@ onMounted(() => {})
 
           <h1>
             <span class="text-[#0a0a0a] font-semibold text-2xl">
-              / {{ route.params.id }}
+              / {{ route.params.requestNumber }}
             </span>
           </h1>
         </PageTitle>
@@ -151,12 +152,39 @@ onMounted(() => {})
                 >
                   {{ header.text }}
                 </th>
+                <th class="bg-primary text-white p-3 text-sm">Action</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="item in items">
                 <td class="p-2" v-for="header in headers">
                   {{ item[header.key] }}
+                </td>
+                <td align="center">
+                  <button
+                    @click="formDialog = true"
+                    class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      class="w-6 h-6"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>
+                  </button>
+
+                  <DriverFormDialog
+                    :model-value="formDialog"
+                    @update:model-value="formDialog = $event"
+                  />
                 </td>
               </tr>
             </tbody>

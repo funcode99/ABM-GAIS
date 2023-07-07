@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue"
 
-import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue"
+import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
 import dashboardIcon from "@/assets/dashboard-icon.png"
 import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png"
@@ -494,7 +494,10 @@ onMounted(() => {
                                 <p class="mr-[70px]">Settlement Report</p>
                               </li>
                             </router-link>
-                            <router-link to="/poolcar-report" class="cursor-pointer">
+                            <router-link
+                              to="/poolcar-report"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -938,12 +941,17 @@ onMounted(() => {
                       </div>
                     </router-link>
 
-                    <router-link to="/flight" class="cursor-pointer">
+                    <router-link
+                      to="/classtransportation"
+                      class="cursor-pointer"
+                    >
                       <div class="flex gap-[10px] items-center cursor-pointer">
                         <img
                           class="h-[2px] w-2"
                           :class="[
-                            $route.path == '/flight' ? 'hidden' : 'inline',
+                            $route.path == '/classtransportation'
+                              ? 'hidden'
+                              : 'inline',
                           ]"
                           :src="submenuLine"
                           alt=""
@@ -951,7 +959,9 @@ onMounted(() => {
                         <img
                           class="h-[2px] w-2"
                           :class="[
-                            $route.path == '/flight' ? 'inline' : 'hidden',
+                            $route.path == '/classtransportation'
+                              ? 'inline'
+                              : 'hidden',
                           ]"
                           :src="submenuLineSelected"
                           alt=""
@@ -959,12 +969,12 @@ onMounted(() => {
                         <p
                           class="flex items-center w-full justify-between"
                           :class="[
-                            $route.path == '/flight'
+                            $route.path == '/classtransportation'
                               ? `anchorImage anchorSubMenu`
                               : '',
                           ]"
                         >
-                          Flight Class<img
+                          Class Transportation<img
                             class="w-5 h-5"
                             :src="groupIcon"
                             alt=""
@@ -1783,7 +1793,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="/management-meeting-room" class="cursor-pointer">
+                            <router-link
+                              to="/management-meeting-room"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >

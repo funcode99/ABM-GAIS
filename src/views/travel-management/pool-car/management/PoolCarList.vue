@@ -6,7 +6,7 @@ import tableTop from "@/components/table/tableTop.vue"
 import DataTable from "@/components/table/DataTable.vue"
 
 import PageTitle from "@/components/atomics/PageTitle.vue"
-import FormDialog from "../components/CarFormDialog.vue"
+import FormDialog from "./CarFormDialog.vue"
 
 import icon_receive from "@/assets/icon-receive.svg"
 import icon_filter from "@/assets/icon_filter.svg"
@@ -61,6 +61,7 @@ const headers = ref([
     text: "Actions",
     key: "actions",
     value: "actions",
+    noExport: true,
   },
 ])
 
@@ -116,6 +117,10 @@ const reset = () => {
   filter.keyword = null
 }
 
+const exportToXLS = () => {
+  dataTableRef.value.exportToXls()
+}
+
 const deleteData = async () => {
   try {
     const carId = selectedData.value.id
@@ -145,11 +150,13 @@ onMounted(() => {
           <FormDialog
             ref="formDialogRef"
             @success="success()"
+            @reset-data="selectedData = {}"
             :data="selectedData"
           >
           </FormDialog>
 
           <button
+            @click="exportToXLS()"
             class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
           >
             <img :src="icon_receive" class="w-6 h-6" />
@@ -185,7 +192,7 @@ onMounted(() => {
           <div class="flex gap-4 flex-wrap flex-1">
             <button
               @click="tableKey++"
-              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+              class="h-[45px] btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
               <span>
                 <img :src="icon_filter" class="w-5 h-5" />
@@ -195,7 +202,7 @@ onMounted(() => {
 
             <button
               @click="reset"
-              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+              class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[45px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
             >
               <span>
                 <img :src="icon_reset" class="w-5 h-5" />
@@ -226,7 +233,7 @@ onMounted(() => {
             </span>
 
             <input
-              class="placeholder:text-slate-400 placeholder:font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              class="placeholder:text-slate-400 placeholder:font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               placeholder="Search..."
               type="text"
               name="search"
@@ -242,6 +249,7 @@ onMounted(() => {
         :headers="headers"
         :api-method="fetchCarMaster"
         :api-params="computedFilter"
+        export-fileName="Pool Car List"
         ref="dataTableRef"
         show-select
       >
