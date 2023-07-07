@@ -2,8 +2,10 @@
     import { ref, inject, onBeforeMount, watch } from 'vue'
 
     const status = defineProps({
-      isEditing: Boolean
+      isEditing: Boolean,
+      currentIndex: Number
     })
+
     const props = inject('otherTransportationDataView')
 
     let name = ref()
@@ -14,18 +16,45 @@
     let remarks = ref()
     let toDate = ref()
 
-    if(props.value[0].city_name !== undefined) {
+    const assignValue = () => {
       name.value = localStorage.getItem('username')
-      city.value = props.value[0].city_name
-      transportationType.value = props.value[0].type_transportation
-      quantity.value = props.value[0].qty
-      fromDate.value = props.value[0].from_date
-      remarks.value = props.value[0].remarks
-      toDate.value = props.value[0].to_date
+      city.value = props.value[status.currentIndex].city_name
+      transportationType.value = props.value[status.currentIndex].type_transportation
+      quantity.value = props.value[status.currentIndex].qty
+      fromDate.value = props.value[status.currentIndex].from_date
+      remarks.value = props.value[status.currentIndex].remarks
+      toDate.value = props.value[status.currentIndex].to_date
+    }
+
+    watch(status, () => {
+      assignValue()
+    })
+
+    watch(props, () => {
+      if(props.value[0].city_name !== undefined) {
+        name.value = localStorage.getItem('username')
+        city.value = props.value[0].city_name
+        transportationType.value = props.value[0].type_transportation
+        quantity.value = props.value[0].qty
+        fromDate.value = props.value[0].from_date
+        remarks.value = props.value[0].remarks
+        toDate.value = props.value[0].to_date
+      } else {
+        assignValue()
+      }
+    })
+
+    if(props.value[0].city_name !== undefined) {
+        name.value = localStorage.getItem('username')
+        city.value = props.value[0].city_name
+        transportationType.value = props.value[0].type_transportation
+        quantity.value = props.value[0].qty
+        fromDate.value = props.value[0].from_date
+        remarks.value = props.value[0].remarks
+        toDate.value = props.value[0].to_date
     }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
-    const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
