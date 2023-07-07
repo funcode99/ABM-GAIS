@@ -162,6 +162,7 @@ onMounted(async () => {
             <FieldTitle label="Car Name" mandatory />
 
             <input
+              class="v-text-field"
               v-model="form.car_name"
               type="text"
               placeholder="Input Car Name"
@@ -173,6 +174,7 @@ onMounted(async () => {
             <FieldTitle label="Plate" mandatory />
 
             <input
+              class="v-text-field"
               v-model="form.plate"
               type="text"
               placeholder="Input Plate"
@@ -191,6 +193,7 @@ onMounted(async () => {
             /> -->
 
             <CurrencyInput
+              class="v-text-field"
               v-model="form.odometer"
               placeholder="Input Odometer"
             />
