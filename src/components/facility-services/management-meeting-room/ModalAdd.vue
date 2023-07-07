@@ -17,7 +17,7 @@ const id_role = JSON.parse(localStorage.getItem("id_role"));
 
 const listStatus = [
   { id: 1, title: "Available" },
-  { id: 2, title: "Booked" },
+  { id: 2, title: "Unavailable" },
 ];
 
 let listCompany = ref([]);
