@@ -78,7 +78,7 @@ onMounted(() => {})
 
           <h1>
             <span class="text-[#0a0a0a] font-semibold text-2xl">
-              / {{ route.params.id }}
+              / {{ route.params.requestNumber }}
             </span>
           </h1>
         </PageTitle>
