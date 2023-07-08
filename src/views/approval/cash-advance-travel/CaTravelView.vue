@@ -320,7 +320,7 @@ const getSessionForSidebar = () => {
 
           <!-- TAB & TABLE -->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]">
-            <div class="grid grid-cols-10">
+            <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
                 @click="tabId = 1"
@@ -431,7 +431,10 @@ const getSessionForSidebar = () => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval" />
+                <HistoryApproval
+                  :data-approval="dataApproval"
+                  :current-level="dataArr.current_level"
+                />
               </div>
             </div>
           </div>

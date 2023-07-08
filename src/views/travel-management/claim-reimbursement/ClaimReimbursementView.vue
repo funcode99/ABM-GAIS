@@ -594,8 +594,7 @@ const inputClass =
             </div>
           </div>
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
-            
-            <div class="grid grid-cols-10">
+            <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
                 @click="tabId = 1"
@@ -669,7 +668,7 @@ const inputClass =
                 </thead>
                 <tbody
                   class="font-JakartaSans font-normal text-xs"
-                  v-if="dataItem.length > 0"
+                  v-if="dataItem && dataItem.length > 0"
                 >
                   <tr class="h-16" v-for="item in dataItem" :key="item.id">
                     <td class="border border-[#B9B9B9]">
@@ -760,7 +759,10 @@ const inputClass =
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval" />
+                <HistoryApproval
+                  :data-approval="dataApproval"
+                  :current-level="dataArr.current_level"
+                />
               </div>
             </div>
           </div>

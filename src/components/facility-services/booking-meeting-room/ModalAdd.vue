@@ -337,7 +337,7 @@ const close = () => {
 }
 
 .modal-box-inner {
-  height: 600px;
+  height: 650px;
   --tw-scale-x: 0.9;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

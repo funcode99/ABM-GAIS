@@ -81,7 +81,7 @@ const fetchDataById = async (id) => {
 const fetchDataItem = async (id) => {
   const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`);
   dataItem.value = res.data.data;
-  console.log(dataItem.value)
+  console.log(dataItem.value);
 };
 
 let listEmployee = ref([]);
@@ -299,7 +299,7 @@ const getSessionForSidebar = () => {
 
           <!-- TAB & TABLE -->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]">
-            <div class="grid grid-cols-10">
+            <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
                 @click="tabId = 1"
@@ -429,7 +429,9 @@ const getSessionForSidebar = () => {
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else-if="dataItem.length > 0 && dataArr.id_ca_type == '2'">
+                <tbody
+                  v-else-if="dataItem.length > 0 && dataArr.id_ca_type == '2'"
+                >
                   <tr v-for="(data, index) in dataItem" :key="data.id">
                     <td>
                       {{ data.item_name }}
@@ -488,14 +490,17 @@ const getSessionForSidebar = () => {
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else-if ="dataItem.length == 0">
+                <tbody v-else-if="dataItem.length == 0">
                   <tr>
                     <DataNotFound :cnt-col="4" />
                   </tr>
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval"/>
+                <HistoryApproval
+                  :data-approval="dataApproval"
+                  :current-level="dataArr.current_level"
+                />
               </div>
             </div>
           </div>

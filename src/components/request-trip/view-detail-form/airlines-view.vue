@@ -2,8 +2,10 @@
     import { ref, inject, onBeforeMount, watch } from 'vue'
 
     const statusEdit = defineProps({
-      isEditing: Boolean
+        isEditing: Boolean,
+        currentIndex: Number
     })
+
     const props = inject('airlinesDataView')
 
     let name = ref()
@@ -14,49 +16,74 @@
     let status = ref()
     let flightNumber = ref()
 
-    watch(props, () => {
-      name.value = props.value[0]
-      flightType.value = props.value[0]
-      departure.value = props.value[0]
-      price.value = props.value[0]
-      arrival.value = props.value[0]
-      status.value = props.value[0]
-      flightNumber.value = props.value[0]
+    const assignValue = () => {
+        name.value = localStorage.getItem('username')
+        flightType.value = props.value[statusEdit.currentIndex]
+        departure.value = props.value[statusEdit.currentIndex]
+        price.value = props.value[statusEdit.currentIndex].ticket_price
+        arrival.value = props.value[statusEdit.currentIndex]
+        status.value = props.value[statusEdit.currentIndex].id_vendor
+        flightNumber.value = props.value[statusEdit.currentIndex].flight_no
+    }
+
+    watch(statusEdit, () => {
+      assignValue()
     })
 
+    watch(props, () => {
+      name.value = localStorage.getItem('username')
+      flightType.value = props.value[0]
+      departure.value = props.value[0]
+      price.value = props.value[0].ticket_price
+      arrival.value = props.value[0]
+      status.value = props.value[0].id_vendor
+      flightNumber.value = props.value[0].flight_no
+    })
+
+    if(props.value[0].ticket_price !== undefined) {
+      name.value = localStorage.getItem('username')
+      flightType.value = props.value[0]
+      departure.value = props.value[0]
+      price.value = props.value[0].ticket_price
+      arrival.value = props.value[0]
+      status.value = props.value[0].id_vendor
+      flightNumber.value = props.value[0].flight_no
+    }
+
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
-    const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
+
 </script>
 
 <template>
 
     <div>
-                            
+
           <div :class="rowClass">
 
-                              <div :class="columnClass">
+              <div :class="columnClass">
                                     
                                 <div class="w-full">
                                         
-                                        <label :class="labelStylingClass">
+                                  <label :class="labelStylingClass">
                                             Name<span class="text-red-star">*</span>
-                                        </label>
+                                  </label>
 
-                                        <input 
+                                  <input 
+                                            v-model="name"
                                             :class="inputStylingClass"
                                             placeholder="Name"
                                             required
                                             :disabled="!statusEdit.isEditing"
-                                        />
+                                  />
 
                                 </div>
 
-                              </div>
+              </div>
 
-                              <div :class="columnClass">
+              <div :class="columnClass">
 
                                 <div class="w-full">
                                         
@@ -74,15 +101,15 @@
 
                                 </div>
 
-                              </div>
+              </div>
 
-                              <div :class="columnClass"></div>
+              <div :class="columnClass"></div>
 
           </div>
 
           <div :class="rowClass">
 
-                              <div :class="columnClass">
+            <div :class="columnClass">
                                   
                                   <div class="w-full">
 
@@ -100,9 +127,9 @@
 
                                   </div>
 
-                              </div>
+            </div>
 
-                              <div :class="columnClass">
+            <div :class="columnClass">
 
                                 <div class="w-full">
 
@@ -111,6 +138,7 @@
                                     </label>
 
                                     <input 
+                                      v-model="price"
                                       type="text"
                                       placeholder="Price"
                                       :class="inputStylingClass"
@@ -120,15 +148,15 @@
 
                                 </div>
 
-                              </div>
+            </div>
 
-                              <div :class="columnClass"></div>
+            <div :class="columnClass"></div>
 
           </div>
 
           <div :class="rowClass">
 
-                              <div :class="columnClass">
+            <div :class="columnClass">
                                   
                                   <div class="w-full">
 
@@ -146,9 +174,9 @@
 
                                   </div>
 
-                              </div>
+            </div>
 
-                              <div :class="columnClass">
+            <div :class="columnClass">
                                   
                                   <div class="w-full">
 
@@ -156,7 +184,8 @@
                                         Status<span class="text-red-star">*</span>
                                     </label>
 
-                                    <input 
+                                    <input
+                                      v-model="status"
                                       type="text"
                                       placeholder="Status"
                                       :class="inputStylingClass"
@@ -166,15 +195,15 @@
 
                                   </div>
 
-                              </div>
+            </div>
 
-                              <div :class="columnClass"></div>
+            <div :class="columnClass"></div>
 
           </div>
 
           <div class="flex justify-between mx-4 items-start gap-2 my-6">
 
-                                <div :class="columnClass">
+            <div :class="columnClass">
                                   
                                   <div class="w-full">
                                       
@@ -183,6 +212,7 @@
                                     </label>
 
                                     <input 
+                                      v-model="flightNumber"
                                       type="text"
                                       placeholder="Flight Number"
                                       :class="inputStylingClass"
@@ -192,9 +222,9 @@
 
                                   </div>
 
-                                </div>
+            </div>
 
-                                <div :class="columnClass"></div>
+            <div :class="columnClass"></div>
 
           </div>
 

@@ -179,7 +179,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     }
 
     const savePurposeOfTrip = async () => {
-      if(localStorage.getItem("tripId") !== undefined) {
+      
+      // ternyata isi nya null cok
+      if(localStorage.getItem("tripId") !== null) {
 
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -239,8 +241,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
         }
           formStep.value++
           resetProgressData()
-        }
-        else {
+      }
+      else {
           const api = await Api.post('/request_trip/store', {
             id_zona: zona.value,
             id_city_to: toCity.value,
@@ -258,7 +260,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
           localStorage.setItem('tripId', api.data.data.id)
           formStep.value++
           resetProgressData()
-        }
+      }
+
     }
 
     const submitRequestTrip = async () => {
@@ -503,6 +506,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     watch(isVisibleOpenModal, () => {
       // resetInput()
       formStep.value = 0
+      localStorage.removeItem('tripId')
     })
 
     const updateFile = (event) => {
