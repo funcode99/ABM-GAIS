@@ -298,7 +298,7 @@ onMounted(async () => {
         <modalFooter
           @closeEdit="emits('update:modelValue', false)"
           class="py-3"
-          :noSaveBtn="!isDriver || data.status == 'Done'"
+          :noSaveBtn="!isEditable"
         />
       </form>
     </main>

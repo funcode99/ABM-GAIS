@@ -267,7 +267,12 @@ onMounted(async () => {
             <template #item-actions="{ item }" v-if="dataFormDialog">
               <button
                 v-if="items[0].status == 'Driver Check' && isDriver"
-                @click="formDialog = true"
+                @click="
+                  () => {
+                    formDialog = true
+                    isEditable = true
+                  }
+                "
                 class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
               >
                 <svg
@@ -291,7 +296,7 @@ onMounted(async () => {
                 :data="dataFormDialog"
                 @update:model-value="formDialog = $event"
                 @success="fetchPoolRequest()"
-                :disabled="items[0].status == 'Done' || isEditable"
+                :isEditable="isEditable"
               />
             </template>
           </DataTable>
