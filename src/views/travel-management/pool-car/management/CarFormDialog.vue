@@ -14,6 +14,7 @@ import {
   fetchCarType,
   fethDrivers,
   saveCarData,
+  updateCarData,
 } from "@/utils/Api/travel-management/poolCar.js"
 import fetchCompanyRefs from "@/utils/Fetch/Reference/fetchCompany"
 import fetchSiteRefs from "@/utils/Fetch/Reference/fetchSite"
@@ -59,7 +60,8 @@ const setForm = () => {
 
 const saveCar = async () => {
   try {
-    console.log("dwada")
+    let res
+
     const body = { ...form.value }
 
     var form_data = new FormData()
@@ -68,7 +70,11 @@ const saveCar = async () => {
       form_data.append(key, body[key])
     }
 
-    const res = await saveCarData(form_data)
+    if (body.id) {
+      res = await updateCarData(form_data)
+    } else {
+      res = await saveCarData(form_data)
+    }
 
     if (res.data.success) {
       dialog.value = false
