@@ -235,7 +235,7 @@ const deleteValue = async (id) => {
     confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
-      Api.delete(`/request_atk/delete_data/${id}`).then((res) => {
+      Api.delete(`document_delivery/delete_data/${id}`).then((res) => {
         Swal.fire({
           title: "Successfully",
           text: res.data.message,
@@ -630,7 +630,7 @@ const closeModal = () => {
                         <img :src="editicon" class="w-6 h-6" />
                       </router-link>
                       <button
-                        v-if="data.status == 'Draft'"
+                        v-if="data.status == 'Created'"
                         @click="deleteValue(data.id)"
                       >
                         <img :src="deleteicon" class="w-6 h-6" />
