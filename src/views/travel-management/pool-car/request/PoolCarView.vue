@@ -165,6 +165,7 @@ onMounted(async () => {
         <div v-else></div>
 
         <button
+          v-if="isDriver || items[0].status == 'Ready'"
           class="btn bg-primary"
           @click="
             () => {
