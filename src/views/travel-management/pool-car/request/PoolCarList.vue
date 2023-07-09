@@ -54,12 +54,12 @@ const headers = [
     key: "status",
     value: "status",
   },
-  {
-    text: "Actions",
-    key: "actions",
-    value: "actions",
-    sortable: false,
-  },
+  // {
+  //   text: "Actions",
+  //   key: "actions",
+  //   value: "actions",
+  //   sortable: false,
+  // },
 ]
 
 const filter = ref({
@@ -260,16 +260,14 @@ onMounted(async () => {
             </router-link>
           </template>
 
-          <template #item-actions>
+          <!-- <template #item-actions>
             <div class="flex justify-center items-center gap-2">
-              <!-- <button>
-                <img :src="icon_edit" class="w-6 h-6" />
-              </button> -->
+             
               <button @click="">
                 <img :src="icon_delete" class="w-6 h-6" />
               </button>
             </div>
-          </template>
+          </template> -->
         </DataTable>
       </div>
     </tableTop>
