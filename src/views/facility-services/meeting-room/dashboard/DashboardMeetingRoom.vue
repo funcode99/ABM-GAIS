@@ -33,6 +33,7 @@ let filter = reactive({
   room: "",
 });
 let selectSite = ref(true);
+let id_site = ref("")
 
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -66,14 +67,8 @@ const fetchSite = async () => {
   selectSite.value = false;
   for (let index = 0; index < api.data.data.length; index++) {
     const element = api.data.data[index];
-    if (type.value == "add") {
-      if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
-        id_site.value = element.id;
-      }
-    } else {
-      if (id_site.value === element.id) {
-        id_site.value = element.id;
-      }
+    if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
+      id_site.value = element.id;
     }
   }
   if (id_role == "ADM") {
