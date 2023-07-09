@@ -54,12 +54,30 @@ const fetchDriverCarCheckupByRequesId = async (requestId) => {
   }
 }
 
+const setPoolRequestStatus = async (requestId) => {
+  try {
+    return await Api.post(`${ENDPOINT}/update_status/${requestId}`)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 // Pool Car Managemenet
 const fetchCarMaster = async (params) => {
   try {
     const res = await Api.get(`${CAR_ENDPOINT}/get`, params)
 
     return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchPoolCarStatus = async (params) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/status`, params)
+
+    return res.data.data || []
   } catch (error) {
     console.error(error)
   }
@@ -153,4 +171,6 @@ export {
   fetchPoolCarRequestById,
   fetchDriverCarCheckupByRequesId,
   saveCarInspection,
+  setPoolRequestStatus,
+  fetchPoolCarStatus,
 }

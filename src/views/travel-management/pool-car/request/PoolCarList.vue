@@ -8,6 +8,7 @@ const sidebar = useSidebarStore()
 import tableContainer from "@/components/table/tableContainer.vue"
 import tableTop from "@/components/table/tableTop.vue"
 import DataTable from "@/components/table/DataTable.vue"
+import Multiselect from "@vueform/multiselect"
 
 import PageTitle from "@/components/atomics/PageTitle.vue"
 
@@ -16,8 +17,10 @@ import icon_reset from "@/assets/icon_reset.svg"
 import icon_edit from "@/assets/navbar/edit_icon.svg"
 import icon_delete from "@/assets/navbar/delete_icon.svg"
 
-import fetchStatusRef from "@/utils/Fetch/Reference/fetchPoolCarRequestStatus"
-import { fetchPoolCarRequest } from "@/utils/Api/travel-management/poolCar"
+import {
+  fetchPoolCarRequest,
+  fetchPoolCarStatus,
+} from "@/utils/Api/travel-management/poolCar"
 
 const headers = [
   {
@@ -61,11 +64,11 @@ const headers = [
 
 const filter = ref({
   status: {
-    items: ["Waiting Car & Driver", "Driver Check", "Ready", "Done"],
+    items: [],
     value: "",
   },
   date: null,
-  keyword: "",
+  search: "",
 })
 
 const selectedItems = ref([])
@@ -74,13 +77,7 @@ const size = ref(0)
 const resetFilter = () => {
   filter.value.status.value = null
   filter.value.date = null
-  filter.value.keyword = ""
-}
-
-const getStatusRef = async () => {
-  const res = await fetchStatusRef()
-
-  filter.value.status.items = res.data.data ?? []
+  filter.value.search = ""
 }
 
 const setContainerSize = (screenSize) => {
@@ -88,6 +85,15 @@ const setContainerSize = (screenSize) => {
   const sidebarSize = sidebar.isWide ? 260 : 100
   size.value = screenSize - sidebarSize - padding
 }
+
+const filterQuery = computed(() => {
+  return {
+    start_date: (filter.value.date || [])[0] || null,
+    end_date: (filter.value.date || [])[1] || null,
+    search: filter.value.search,
+    status: filter.value.status.value,
+  }
+})
 
 watch(sidebar, () => {
   setContainerSize(window.innerWidth)
@@ -101,8 +107,9 @@ onMounted(() => {
   })
 })
 
-onMounted(() => {
-  getStatusRef()
+onMounted(async () => {
+  filter.value.status.items = await fetchPoolCarStatus()
+
   setContainerSize(window.innerWidth)
 
   window.addEventListener("resize", () => {
@@ -129,18 +136,19 @@ onMounted(() => {
               Status
             </p>
 
-            <select
+            <Multiselect
               v-model="filter.status.value"
-              class="font-JakartaSans capitalize block bg-white w-[200px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
+              mode="single"
+              placeholder="Select Status"
+              label="status"
+              track-by="status"
+              :options="filter.status.items"
+              valueProp="code"
+              clear
+              searchable
+              class="w-[300px]"
             >
-              <option
-                v-for="data in filter.status.items"
-                :key="data"
-                :value="data.code"
-              >
-                {{ data.status }}
-              </option>
-            </select>
+            </Multiselect>
           </div>
 
           <!-- DATE -->
@@ -210,7 +218,7 @@ onMounted(() => {
               placeholder="Search..."
               type="text"
               name="search"
-              v-model="filter.keyword"
+              v-model="filter.search"
             />
           </label>
         </div>
@@ -221,6 +229,7 @@ onMounted(() => {
           @update:selectedItems="selectedItems = $event"
           :headers="headers"
           :api-method="fetchPoolCarRequest"
+          :api-params="filterQuery"
           show-select
         >
           <template #item-created_at="{ item }">
