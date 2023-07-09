@@ -113,18 +113,13 @@ const fetchDataById = async () => {
   const api = await Api.get(`employee/get`);
   listEmployee.value = api.data.data;
 
-  let tempParticipant = dataForm.value.participant
-    .replace("/", "")
-    .replace("[", "")
-    .replace("]", "");
-
   let numberArray = [];
 
-  if (tempParticipant.includes(",")) {
-    participant.value = tempParticipant.split(",");
+  if (dataForm.value.participant.includes(",")) {
+    participant.value = dataForm.value.participant.split(",");
     participant.value.forEach((ele) => numberArray.push(+ele));
   } else {
-    numberArray.push(parseInt(tempParticipant.replace('"', '')))
+    numberArray.push(dataForm.value.participant)
   }
 
   selectedEmployee.value = numberArray;
