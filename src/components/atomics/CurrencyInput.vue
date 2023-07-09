@@ -15,9 +15,10 @@ const props = defineProps({
         currency: "EUR",
         hideGroupingSeparatorOnFocus: false,
         hideCurrencySymbolOnFocus: false,
-        hideNegligibleDecimalDigitsOnFocus: false,
+        hideNegligibleDecimalDigitsOnFocus: true,
         currencyDisplay: "hidden",
         hideGroupingSeparatorOnFocus: false,
+        precision: 0,
       }
     },
   },

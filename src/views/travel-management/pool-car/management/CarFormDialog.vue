@@ -44,7 +44,6 @@ const form = ref({})
 
 const setForm = () => {
   form.value = {
-    id: null,
     car_name: null,
     id_company: null,
     id_site: null,

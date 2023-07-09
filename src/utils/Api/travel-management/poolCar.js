@@ -87,9 +87,9 @@ const saveCarData = async (body) => {
   try {
     let res
     if (body.id) {
-      res = await Api.post(`${CAR_ENDPOINT}/store`, body)
-    } else {
       res = await Api.post(`${CAR_ENDPOINT}/update_data`, body)
+    } else {
+      res = await Api.post(`${CAR_ENDPOINT}/store`, body)
     }
 
     return res
