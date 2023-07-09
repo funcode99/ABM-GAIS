@@ -262,9 +262,6 @@ onMounted(async () => {
 
           <template #item-actions>
             <div class="flex justify-center items-center gap-2">
-              <!-- <button>
-                <img :src="icon_edit" class="w-6 h-6" />
-              </button> -->
               <button @click="">
                 <img :src="icon_delete" class="w-6 h-6" />
               </button>
