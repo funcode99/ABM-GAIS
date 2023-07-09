@@ -33,20 +33,33 @@
         maxHotelFare.value = props.value[status.currentIndex].hotel_fare
     }
 
+    const resetValue = () => {
+        name.value = ''
+        department.value = ''
+        sn.value = ''
+        company.value = ''
+        gender.value = ''
+        type.value = ''
+        contactNo.value = ''
+        maxHotelFare.value = ''
+    }
+
     watch(status, () => {
         if (status.typeOfSubmitData === 'Edit') {
             updateTravelGuest()
         }
-        else if (status.typeOfSubmitData === 'Add') {
+        else if (status.typeOfSubmitData === 'Submit Add') {
             addTravelGuest()
         }
         else if (status.typeOfSubmitData === 'Delete') {
             deleteTravelGuest()
         }
+        else if (status.typeOfSubmitData === 'Add') {
+            resetValue()
+        }
         else {
             assignValue()
         }
-            
     })
 
     watch(props, () => {
@@ -77,6 +90,29 @@
            maxHotelFare.value = props.value[0].hotel_fare
     }
 
+    const addTravelGuest = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post(`/travel_guest/store`, {
+            // nik: props.value[status.currentIndex].nik,
+            // notes: props.value[status.currentIndex].notes,
+            gender: gender.value,
+            company: company.value,
+            name_guest: name.value,
+            hotel_fare: maxHotelFare.value,
+            departement: department.value,
+            contact_no: contactNo.value,
+            id_type_traveller: type.value,
+            id_flight_class: props.value[status.currentIndex].id_flight_class,
+            id_request_trip: props.value[status.currentIndex].id_request_trip,
+            id_company: props.value[status.currentIndex].id_company,
+            id_employee: props.value[status.currentIndex].id_employee
+        })
+        console.log(api)
+        emits('fetchGuestTraveller')
+        emits('resetTypeOfSubmitData')
+    }
+
     const updateTravelGuest = async () => {
 
         const token = JSON.parse(localStorage.getItem('token'))
@@ -96,7 +132,6 @@
             id_company: props.value[status.currentIndex].id_company,
             id_employee: props.value[status.currentIndex].id_employee
         })
-        console.log(api)
         emits('fetchGuestTraveller')
         emits('resetTypeOfSubmitData')
     }
@@ -218,9 +253,9 @@
                     type="text"
                     placeholder="SN"
                     :class="inputStylingClass"
-                    required
                     disabled
-                />
+                    />
+                    <!-- required -->
 
             </div>
             </div>

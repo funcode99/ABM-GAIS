@@ -43,8 +43,9 @@
             remarks: remarks.value,
             id_currency: currency.value[0],
             grand_total: grandTotal.value,
-            arrayDetail: arrayDetail.value
+            array_detail: arrayDetail.value
         })
+        console.log(api)
         emits('fetchCashAdvance')
         emits('changeVisibility')
     }
@@ -187,7 +188,10 @@
                             <label :class=labelStylingClass>
                                 Notes
                             </label>
-                            <textarea placeholder="Notes" :class="inputStylingClass" v-model="remarksNotes"></textarea>
+                            <textarea 
+                                placeholder="Notes" 
+                                :class="inputStylingClass" 
+                                v-model="remarksNotes"></textarea>
                         </div>
                     </div>
     

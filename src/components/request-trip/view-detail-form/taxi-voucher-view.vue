@@ -54,7 +54,7 @@
             date.value = props.value[0].date
             arrival.value = props.value[0].name_arrival_city
             amount.value = props.value[0].amount
-            voucherCode.value = props.value[0]
+            voucherCode.value = props.value[0].code_voucher
             accountName.value = props.value[0].account_name
             remarks.value = props.value[0].remarks
     } 
