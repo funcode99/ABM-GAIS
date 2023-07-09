@@ -1,8 +1,8 @@
 <script setup>
 import { ref, watch, onBeforeMount, provide } from 'vue'
-import Api from '@/utils/Api'
 import { Modal } from 'usemodal-vue3'
 import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
+import Api from '@/utils/Api'
 
 import arrow from '@/assets/arrow-multi-step-form.png'
 import check from '@/assets/step-done-check.png'
@@ -268,6 +268,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
+      isVisibleOpenModal.value = !isVisibleOpenModal.value
     }
 
     watch(optionDataEmployeeRequestor, () => {

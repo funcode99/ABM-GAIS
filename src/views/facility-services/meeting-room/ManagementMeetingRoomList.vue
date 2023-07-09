@@ -50,7 +50,7 @@ let filter = reactive({
 });
 
 const id_role = JSON.parse(localStorage.getItem("id_role"));
-const exception = ["ADMTR","EMPLY"]
+const exception = ["ADMTR", "EMPLY"];
 //for paginations
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -172,93 +172,132 @@ const filterDataByType = async (id) => {
 
 // delete data
 const deleteData = async (event) => {
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Api.delete(`/master_meeting_room/delete_data/${event}`).then((res) => {
+  let payload = {
+    id: event,
+  };
+  Api.post(`master_meeting_room/delete_check`, payload)
+    .then((res) => {
+      if (res.data.success == true) {
         Swal.fire({
-          title: "Successfully",
-          text: "Data has been deleted.",
-          icon: "success",
-          showCancelButton: false,
-          confirmButtonColor: "#015289",
-          showConfirmButton: false,
-          timer: 1500,
+          title:
+            "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+          html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+          iconHtml: `<img src="${icondanger}" />`,
+          showCloseButton: true,
+          closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+          showCancelButton: true,
+          buttonsStyling: false,
+          cancelButtonText: "Cancel",
+          customClass: {
+            cancelButton: "swal-cancel-button",
+            confirmButton: "swal-confirm-button",
+          },
+          reverseButtons: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Api.delete(`/master_meeting_room/delete_data/${event}`).then(
+              (res) => {
+                Swal.fire({
+                  title: "Successfully",
+                  text: "Data has been deleted.",
+                  icon: "success",
+                  showCancelButton: false,
+                  confirmButtonColor: "#015289",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                if (sortedData.value.length == 1) {
+                  router.go();
+                } else {
+                  fetch();
+                }
+              }
+            );
+          } else {
+            return;
+          }
         });
-
-        if (sortedData.value.length == 1) {
-          router.go();
-        } else {
-          fetch();
-        }
+      }
+    })
+    .catch((e) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: e.response.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: "#EA5455",
+        color: "#ffffff",
       });
-    } else {
-      return;
-    }
-  });
+    });
 };
 const deleteCheckedArray = () => {
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      let payload = {
-        id: deleteArray.value,
-      };
-      Api.delete(`/master_meeting_room/delete_data/`, { params: payload }).then(
-        (res) => {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-
-          if (sortedData.value.length == 1) {
-            router.go();
+  let payload = {
+    id: deleteArray.value,
+  };
+  Api.post(`master_meeting_room/delete_check`, payload)
+    .then((res) => {
+      if (res.data.success == true) {
+        Swal.fire({
+          title:
+            "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+          html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+          iconHtml: `<img src="${icondanger}" />`,
+          showCloseButton: true,
+          closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+          showCancelButton: true,
+          buttonsStyling: false,
+          cancelButtonText: "Cancel",
+          customClass: {
+            cancelButton: "swal-cancel-button",
+            confirmButton: "swal-confirm-button",
+          },
+          reverseButtons: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            Api.delete(`/master_meeting_room/delete_data/${event}`).then(
+              (res) => {
+                Swal.fire({
+                  title: "Successfully",
+                  text: "Data has been deleted.",
+                  icon: "success",
+                  showCancelButton: false,
+                  confirmButtonColor: "#015289",
+                  showConfirmButton: false,
+                  timer: 1500,
+                });
+                if (sortedData.value.length == 1) {
+                  router.go();
+                } else {
+                  fetch();
+                }
+              }
+            );
           } else {
-            fetch();
+            return;
           }
-        }
-      );
-    } else {
-      return;
-    }
-  });
+        });
+      }
+    })
+    .catch((e) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: e.response.data.message,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: "#EA5455",
+        color: "#ffffff",
+      });
+    });
 };
 // end
 
@@ -310,7 +349,6 @@ onBeforeMount(() => {
             >
               <span v-if="id_role == 'EMPLY'">Meeting Room</span>
               <span v-else>Management Meeting Room</span>
-
             </p>
             <div class="flex gap-4">
               <div
@@ -326,7 +364,7 @@ onBeforeMount(() => {
                 </button>
               </div>
               <label
-                v-if="(!exception.includes(id_role))"
+                v-if="!exception.includes(id_role)"
                 @click="openModal('add', '')"
                 for="my-modal-3"
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"

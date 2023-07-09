@@ -478,7 +478,7 @@ onBeforeMount(() => {
                 <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData"
+                    v-for="(data) in sortedData"
                     :key="data.no"
                   >
                     <td>
@@ -489,7 +489,7 @@ onBeforeMount(() => {
                         v-model="deleteArray"
                       />
                     </td>
-                    <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
+                    <td>{{ data.no }}</td>
                     <td>{{ format_date(data.created_at) }}</td>
                     <td>{{ data.no_ca }}</td>
                     <td>{{ data.employee_name }}</td>

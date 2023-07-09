@@ -292,7 +292,7 @@ const openModal = (type, id) => {
   visibleModal.value = true;
   statusForm.value = type;
   if (id) {
-    idItem.value = id;
+    idItem.value = parseInt(id);
   }
 };
 
@@ -353,7 +353,7 @@ onBeforeMount(() => {
 
               <label
                 v-if="id_role != 'ADMTR'"
-                @click="openModal('add', '')"
+                @click="openModal('add', 0)"
                 for="my-modal-3"
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
               >
@@ -564,7 +564,7 @@ onBeforeMount(() => {
                     </td>
                     <td>{{ data.start_time }} - {{ data.end_time }}</td>
                     <td>{{ data.site_name }}</td>
-                    <td v-if="id_role != 'ADMTR'">
+                    <td>
                       <span
                         :class="
                           data.status == 'Done' || data.status == 'Booked'
@@ -576,7 +576,7 @@ onBeforeMount(() => {
                         >{{ data.status }}</span
                       >
                     </td>
-                    <td>
+                    <td v-if="id_role != 'ADMTR'">
                       <div class="flex justify-center items-center gap-2">
                         <router-link :to="`/booking-meeting-room/${data.id}`">
                           <button>
