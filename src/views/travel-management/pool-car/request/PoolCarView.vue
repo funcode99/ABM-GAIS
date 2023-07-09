@@ -16,6 +16,7 @@ import left_chevron_icon from "@/assets/request-trip-view-arrow.png"
 import {
   fetchPoolCarRequestById,
   fetchDriverCarCheckupByRequesId,
+  setPoolRequestStatus,
 } from "@/utils/Api/travel-management/poolCar"
 
 const headers = [
@@ -93,6 +94,23 @@ const fetchPoolRequest = async () => {
   dataFormDialog.value = res.data[0]
 }
 
+const doneRequestTrip = async () => {
+  const requestId = route.params.id
+  const res = setPoolRequestStatus(requestId)
+
+  if (res.data.success == "success") {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Succeess to Delete Car Data",
+      showConfirmButton: false,
+      timer: 1500,
+    })
+
+    await fetchPoolRequest()
+  }
+}
+
 onMounted(async () => {
   await fetchPoolRequest()
 })
@@ -125,12 +143,45 @@ onMounted(async () => {
         </PageTitle>
 
         <div
+          :class="{ 'bg-green text-white border-none': items[0].status == 'Done' }"
           class="card flex w-[114px] text-sm capitalize text-center font-bold item-center border border-[#292D32] rounded-lg rounded-bl-3xl p-2 m-5"
         >
           {{ items[0].status }}
         </div>
       </div>
 
+      <div class="px-10 py-5 flex justify-between">
+        <button
+          v-if="items[0].status == 'Ready'"
+          class="btn h-[5px] btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+          @click="doneRequestTrip()"
+        >
+          Done
+        </button>
+
+        <button
+          class="btn bg-primary"
+          v-if="items[0].status == 'Ready'"
+          @click="formDialog = true"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
+            />
+          </svg>
+
+          p2h
+        </button>
+      </div>
       <!-- Data -->
       <div class="grid grid-cols-2 gap-y-3 px-10">
         <div class="flex flex-col gap-2">
@@ -206,6 +257,7 @@ onMounted(async () => {
 
             <template #item-actions="{ item }" v-if="dataFormDialog">
               <button
+                v-if="items[0].status == 'Driver Check' && isDriver"
                 @click="formDialog = true"
                 class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
               >
@@ -229,6 +281,7 @@ onMounted(async () => {
                 :model-value="formDialog"
                 :data="dataFormDialog"
                 @update:model-value="formDialog = $event"
+                @success="fetchPoolRequest()"
               />
             </template>
           </DataTable>

@@ -24,6 +24,8 @@ import {
   deleteCarById,
 } from "@/utils/Api/travel-management/poolCar"
 
+import fetchCompany from "@/utils/Fetch/Reference/fetchCompany.js"
+
 import ConfirmDialog from "@/components/molecules/ConfirmDialog.vue"
 
 const headers = ref([
@@ -76,6 +78,10 @@ const filter = reactive({
     items: [],
     value: null,
   },
+  company: {
+    items: [],
+    value: null,
+  },
   keyword: null,
 })
 
@@ -83,6 +89,7 @@ const computedFilter = computed(() => {
   return {
     id_site: filter.site.value,
     search: filter.keyword,
+    id_company: filter.company.value,
   }
 })
 
@@ -133,8 +140,9 @@ const deleteData = async () => {
   }
 }
 
-onMounted(() => {
-  fethSiteReference()
+onMounted(async () => {
+  await fethSiteReference()
+  filter.company.items = await fetchCompany()
 })
 </script>
 
@@ -180,6 +188,28 @@ onMounted(() => {
               label="site_name"
               track-by="site_code"
               :options="filter.site.items"
+              valueProp="id"
+              clear
+              searchable
+              class="w-[300px]"
+            >
+            </Multiselect>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <p
+              class="capitalize font-JakartaSans text-xs text-black font-medium"
+            >
+              Company
+            </p>
+
+            <Multiselect
+              v-model="filter.company.value"
+              mode="single"
+              placeholder="Select Company"
+              label="company_name"
+              track-by="company_name"
+              :options="filter.company.items"
               valueProp="id"
               clear
               searchable
