@@ -30,6 +30,7 @@ const route = useRoute()
 const props = defineProps({
   modelValue: false,
   data: Object,
+  isEditable: Boolean,
 })
 
 const form = ref({
@@ -50,6 +51,11 @@ const form = ref({
 
 const checkupList = ref([])
 const dataExisting = ref({})
+const userRole = localStorage.getItem("id_role")
+
+const isDriver = computed(() => {
+  return userRole == "DRVR"
+})
 
 const references = ref({
   company: [],
@@ -171,47 +177,12 @@ onMounted(async () => {
               v-model="form.odometer"
               :value="form.odometer"
               placeholder="Input Odometer"
+              :disabled="!isEditable"
               required
             />
           </div>
         </div>
         <div class="lg:h-[40vh] overflow-auto">
-          <!-- <div v-for="matrix in checkupList" class="grid grid-cols-4 gap-5"> -->
-          <!-- <div class="flex">
-              <div v-if="matrix.header_name">
-                {{ matrix.header_name }}<span class="text-error">*</span>
-              </div>
-              <div v-else class="">{{ matrix.detail_name }}</div>
-            </div>
-
-            <div>
-              <input
-                v-if="matrix.detail_name"
-                :name="item"
-                type="radio"
-                class="radio"
-              />
-            </div>
-            <div>
-              Good
-            </div>
-            <div>
-              <input
-                v-if="matrix.detail_name"
-                :name="item"
-                type="radio"
-                class="radio"
-              />
-            </div>
-            <div>
-              <input
-                v-if="matrix.detail_name"
-                :name="item"
-                type="radio"
-                class="radio"
-              />
-            </div>
-          </div> -->
           <table width="100%" class="my-5">
             <tr v-for="matrix in checkupList">
               <th
@@ -233,6 +204,7 @@ onMounted(async () => {
                   :value="1"
                   class="radio radio-primary"
                   v-model="form.data[matrix.id_detail]"
+                  :disabled="!isEditable"
                 />
               </th>
 
@@ -244,6 +216,7 @@ onMounted(async () => {
                   :value="2"
                   class="radio radio-primary"
                   v-model="form.data[matrix.id_detail]"
+                  :disabled="!isEditable"
                 />
               </th>
 
@@ -255,6 +228,7 @@ onMounted(async () => {
                   :value="3"
                   class="radio radio-primary"
                   v-model="form.data[matrix.id_detail]"
+                  :disabled="!isEditable"
                 />
               </th>
             </tr>
@@ -275,6 +249,7 @@ onMounted(async () => {
                   :value="1"
                   class="radio radio-primary"
                   v-model="form.is_usable"
+                  :disabled="!isEditable"
                   required
                 />
               </td>
@@ -290,6 +265,7 @@ onMounted(async () => {
                   :value="0"
                   class="radio radio-primary"
                   v-model="form.is_usable"
+                  :disabled="!isEditable"
                   required
                 />
               </td>
@@ -312,6 +288,7 @@ onMounted(async () => {
                   v-model="form.notes"
                   class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                   placeholder="Notes"
+                  :disabled="!isEditable"
                   required
                 ></textarea>
               </td>
@@ -321,6 +298,7 @@ onMounted(async () => {
         <modalFooter
           @closeEdit="emits('update:modelValue', false)"
           class="py-3"
+          :noSaveBtn="!isDriver || data.status == 'Done'"
         />
       </form>
     </main>

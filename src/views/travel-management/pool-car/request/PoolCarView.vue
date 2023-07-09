@@ -65,6 +65,7 @@ const formDialog = ref(false)
 const userRole = localStorage.getItem("id_role")
 const checkupList = ref([])
 const dataExisting = ref([])
+const isEditable = ref(true)
 
 const isDriver = computed(() => {
   return userRole == "DRVR"
@@ -143,7 +144,9 @@ onMounted(async () => {
         </PageTitle>
 
         <div
-          :class="{ 'bg-green text-white border-none': items[0].status == 'Done' }"
+          :class="{
+            'bg-green text-white border-none': items[0].status == 'Done',
+          }"
           class="card flex w-[114px] text-sm capitalize text-center font-bold item-center border border-[#292D32] rounded-lg rounded-bl-3xl p-2 m-5"
         >
           {{ items[0].status }}
@@ -152,17 +155,23 @@ onMounted(async () => {
 
       <div class="px-10 py-5 flex justify-between">
         <button
-          v-if="items[0].status == 'Ready'"
+          v-if="items[0].status == 'Ready' && isDriver"
           class="btn h-[5px] btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
           @click="doneRequestTrip()"
         >
           Done
         </button>
 
+        <div v-else></div>
+
         <button
           class="btn bg-primary"
-          v-if="items[0].status == 'Ready'"
-          @click="formDialog = true"
+          @click="
+            () => {
+              formDialog = true
+              isEditable = false
+            }
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -282,6 +291,7 @@ onMounted(async () => {
                 :data="dataFormDialog"
                 @update:model-value="formDialog = $event"
                 @success="fetchPoolRequest()"
+                :disabled="items[0].status == 'Done' || isEditable"
               />
             </template>
           </DataTable>
