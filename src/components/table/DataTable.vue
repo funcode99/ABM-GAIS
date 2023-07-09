@@ -289,6 +289,7 @@ onMounted(() => {
         :total-items="paging.totalData"
         :items-per-page="parseInt(paging.limit)"
         v-model="paging.page"
+        :on-click="getData"
         :max-pages-shown="4"
         :show-breakpoint-buttons="true"
         :show-jump-buttons="false"
