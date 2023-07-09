@@ -25,6 +25,7 @@
       checkIn.value = props.value[status.currentIndex].check_in_date
       sharingWith.value = props.value[status.currentIndex].sharing_w_name
       checkOut.value = props.value[status.currentIndex].check_out_date
+
     }
 
     watch(status, () => {

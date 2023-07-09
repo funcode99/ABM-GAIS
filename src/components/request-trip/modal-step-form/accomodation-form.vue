@@ -2,9 +2,9 @@
     import { ref, onBeforeMount, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import Api from '@/utils/Api'
-    import checkButton from '@/components/molecules/checkButton.vue'
     import modalHeader from '@/components/modal/modalHeader.vue'
     import modalFooter from '@/components/modal/modalFooter.vue'
+    import checkButton from '@/components/molecules/checkButton.vue'
 
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchTypeOfHotelUtils from "@/utils/Fetch/Reference/fetchTypeOfHotel"
@@ -17,24 +17,6 @@
       {id: 4, title: 'Room Type'},
       {id: 5, title: 'Price'},
       {id: 6, title: 'Confirm'}
-    ]
-    const accomodationDummy = [
-    {
-        id: 1,
-        HotelName: 'Aston',
-        Location: 'Gubeng, Surabaya',
-        HotelRating: 'Jakarta',
-        RoomType: 'Surabaya',
-        Price: '950.000',
-      },
-      {
-        id: 2,
-        HotelName: 'Harris Hotel',
-        Location: 'Entalsewu, Surabaya',
-        HotelRating: 'Jakarta',
-        RoomType: 'Surabaya',
-        Price: '1.104.000',
-      }
     ]
     const props = defineProps({
         isOpen: Boolean        
@@ -55,16 +37,18 @@
     let sharingWith = ref('')
     let accomodationType = ref([0, ''])
     let vendor = ref('')
+
+    let price = ref(0)
     let codeHotel = ref(0)
+
+    let accomodationData = ref()
 
     watch(accomodationType, () => {
         console.log(accomodationType.value)
     })
 
     const submitAccomodation = async () => {
-
         createGL.value === true ? createGL.value = 1 : createGL.value = 0
-
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post('/accomodation_trip/store', {
@@ -113,6 +97,36 @@
         codeHotel.value = 0
     })
 
+    let dataLength = ref(0)
+    let selectRoomAndPrice = ref([])
+    let selectRoomAndPriceData = ref([])
+    let bundleData = ref()
+
+    const fetchAccomodation = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/get_hotel')
+        accomodationData.value = api.data.data
+        dataLength.value = accomodationData.value.length
+        for(let i=0; i<accomodationData.value.length; i++) {
+            selectRoomAndPrice.value.push({})
+            selectRoomAndPriceData.value.push({})
+        }
+        for(let i=0; i<accomodationData.value.length; i++) {
+            selectRoomAndPriceData.value[i] = accomodationData.value[i].room_type[0]
+        }
+    }
+
+    const insertToArraySequence = (index, data) => {
+        // gak bisa di push karena dia objek bukan array
+        selectRoomAndPrice.value[index] = data
+    }
+
+    const assignHotelData = (data, forPrice) => {
+        codeHotel.value = data.code_hotel
+        price.value = forPrice.price
+    }
+
     const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
@@ -133,41 +147,54 @@
     
                 <div :class="rowClass">
     
+                    <!-- Traveller -->
                     <div :class="columnClass">
-                    <div class="w-full">
-                        <label :class="labelStylingClass">
-                            Traveller<span class="text-red-star">*</span>
-                        </label>
-                        <input :class="inputStylingClass" type="text" disabled v-model="traveller" />
-                    </div>
+                        <div class="w-full">
+                            <label :class="labelStylingClass">
+                                Traveller<span class="text-red-star">*</span>
+                            </label>
+                            <input 
+                                v-model="traveller" 
+                                :class="inputStylingClass" 
+                                type="text" 
+                                disabled 
+                            />
+                        </div>
                     </div>
     
+                    <!-- Gender -->
                     <div :class="columnClass">
-                    <div class="w-full">
-                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                        Gender
-                        </label>
-                        <select :class="inputStylingClass" v-model="gender">
-                            <option value="L">
-                                Male
-                            </option>
-                            <option value="P">
-                                Female
-                            </option>
-                        </select>
-                    </div>
+                        <div class="w-full">
+                            <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                            Gender
+                            </label>
+                            <select :class="inputStylingClass" v-model="gender">
+                                <option value="L">
+                                    Male
+                                </option>
+                                <option value="P">
+                                    Female
+                                </option>
+                            </select>
+                        </div>
                     </div>
     
                 </div>
     
                 <div :class="rowClass">
     
+                    <!-- Hotel Fare -->
                     <div :class="columnClass">
                         <div class="w-full">
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                            Hotel Fare
+                                Hotel Fare
                             </label>
-                            <input type="text" placeholder="Max Fare" :class="inputStylingClass" v-model="hotelFare">
+                            <input 
+                                type="text" 
+                                placeholder="Max Fare" 
+                                :class="inputStylingClass" 
+                                v-model="hotelFare" 
+                            />
                         </div>
                     </div>
     
@@ -178,17 +205,19 @@
     
                 <div :class="rowClass">
     
+                    <!-- City -->
                     <div :class="columnClass">
                         <div class="w-full">
-                        <label :class="labelStylingClass">City</label>
-                        <select :class="inputStylingClass" v-model="city">
-                            <option v-for="data in cityData" :value="data.id">
-                            {{ data.city_name }}
-                            </option>
-                        </select>
+                            <label :class="labelStylingClass">City</label>
+                            <select :class="inputStylingClass" v-model="city">
+                                <option v-for="data in cityData" :value="data.id">
+                                {{ data.city_name }}
+                                </option>
+                            </select>
                         </div>
                     </div>
     
+                    <!-- Remarks will show if accomodation type is hotel -->
                     <div v-if="accomodationType[1] == 'Hotel'" :class="columnClass">
 
                         <div class="w-full">
@@ -202,6 +231,7 @@
     
                 <div :class="rowClass">
     
+                    <!-- Check In -->
                     <div :class="columnClass">
                         <div class="w-full">
                             <label :class="labelStylingClass">
@@ -211,6 +241,7 @@
                         </div>
                     </div>
     
+                    <!-- Sharing with -->
                     <div :class="columnClass">
 
                         <div class="w-full">
@@ -233,6 +264,7 @@
     
                 <div :class="rowClass">
     
+                    <!-- Check Out -->
                     <div :class="columnClass">
                         <div class="w-full">
                             <label :class="labelStylingClass">
@@ -242,6 +274,7 @@
                         </div>
                     </div>
     
+                    <!-- Create GL -->
                     <div :class="columnClass">
                         <div class="flex flex-col gap-2">
                             <span :class="labelStylingClass">Create GL?</span>
@@ -256,6 +289,7 @@
     
                 <div class="flex justify-between mx-4 items-start gap-2 my-6">
     
+                    <!-- Accomodation Type -->
                     <div :class="columnClass">
                         <label :class="labelStylingClass">
                             Accomodation Type
@@ -267,6 +301,7 @@
                         </select>
                     </div>
     
+                    <!-- Vendor -->
                     <div :class="columnClass">
                         <div class="w-full">
 
@@ -289,9 +324,10 @@
     
                 </div>
     
-                <checkButton />
+                <checkButton @click="fetchAccomodation" />
     
                 <h1 class="mt-2 font-bold text-center">Accomodation Availability</h1>
+
                 <hr class="border border-black">
     
                 <div class="overflow-x-auto block">
@@ -300,37 +336,42 @@
     
                         <thead>
                             <tr>
-                            <th v-for="data in tableHeadAccomodation" :key=data.id>
-                                {{ data.title }}
-                            </th>
+                                <th v-for="data in tableHeadAccomodation" :key=data.id>
+                                    {{ data.title }}
+                                </th>
                             </tr>
                         </thead>
     
                         <tbody>
-                            <tr v-for="data in accomodationDummy" :key=data.id>
-                            <td>
-                                {{ data.HotelName }}
-                            </td>
-                            <td>
-                                {{ data.Location }}
-                            </td>
-                            <td>
-                                {{ data.HotelRating }}
-                            </td>
-                            <td>
-                                {{ data.RoomType }}
-                            </td>
-                            <td>
-                                {{ data.Price }}
-                            </td>
-                            <td>
-                                <button class="bg-green text-white rounded-lg px-4 py-3 font-bold">
-                                Select
-                                </button>
-                            </td>
+                            <tr v-for="(data, index) in accomodationData">
+                                <td>
+                                    {{ data.hotel }}
+                                </td>
+                                <td>
+                                    {{ data.location }}
+                                </td>
+                                <td class="text-center">
+                                    {{ data.rating }}
+                                </td>
+                                <td>
+                                    <select @change="insertToArraySequence(index, selectRoomAndPriceData[index])" :id="index" v-model="selectRoomAndPriceData[index]">
+                                        <option v-for="option in data.room_type" :value="option">
+                                            {{ option.room }}
+                                        </option>
+                                    </select>
+                                </td>
+                                <td>
+                                    {{ selectRoomAndPriceData[index].price }}
+                                    <!-- {{ selectRoomAndPrice[index].price }} -->
+                                </td>
+                                <td @click="bundleData = data.code_hotel">
+                                    <button @click="assignHotelData(data, selectRoomAndPriceData[index])" type="button" :class="bundleData === data.code_hotel ? 'bg-blue' : 'bg-green'" class="text-white rounded-lg px-4 py-3 font-bold">
+                                        Select
+                                    </button>
+                                </td>
                             </tr>
                         </tbody>
-    
+
                     </table>
     
                 </div>

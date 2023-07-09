@@ -31,6 +31,7 @@
     const sidebar = useSidebarStore()
 
     let isEditing = ref(false)
+    let isAdding = ref(false)
 
     let tab = ref('details')
     let headerTitle = ref('Traveller')
@@ -49,6 +50,7 @@
     let file = ref()
     let notes = ref()
     let dataIndex = ref(0)
+    let detailIndex = ref(0)
     let currentSelectedData = ref(travellerGuestData.value)
 
     let showingValue = ref(1)
@@ -227,6 +229,9 @@
 
     const changeType = (typeOfSubmit) => {
       typeOfSubmitToProps.value = typeOfSubmit
+      if(typeOfSubmit === 'Add') {
+        isAdding.value = true
+      }
     }
 
     const resetTypeOfSubmit = () => {
@@ -374,14 +379,14 @@
                         <!-- details form -->
                         <form class="flex-1" @submit.prevent="">
                             
-                          <detailsFormHeader :title="headerTitle">
+                          <detailsFormHeader :title="headerTitle" v-if="!isAdding">
 
                             <buttonEditFormView v-if="isEditing" @click="changeType('Edit')" />
                             <buttonAddFormView v-if="isEditing" @click="changeType('Add')" />
 
-                            <!-- <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                            <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" v-if="isEditing == 'R'">
                               Issued Ticket
-                            </button> -->
+                            </button>
 
                             <button v-if="purposeOfTripData[currentIndex].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                               Revise
@@ -414,11 +419,15 @@
 
                           </detailsFormHeader>
 
+                          <detailsFormHeader :title="headerTitle" v-if="isAdding">
+                            <buttonAddFormView @click="changeType('Submit Add')" />
+                          </detailsFormHeader>
+
                           <!-- form Step 3 -->
                           <guestAsTravellerFormView
+                            v-if="headerTitle == 'Traveller'"
                             @fetchGuestTraveller="getTravellerGuest"
                             @resetTypeOfSubmitData = "resetTypeOfSubmit"
-                            v-if="headerTitle == 'Traveller'" 
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
@@ -438,7 +447,7 @@
                           <accomodationFormView v-if="headerTitle == 'Accomodation'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
 
                           <!-- form Step 8 -->
-                          <cashAdvanceFormView v-if="headerTitle == 'Cash Advance'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
+                          <cashAdvanceFormView v-if="headerTitle == 'Cash Advance'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" :currentDetailIndex="detailIndex" />
 
                         </form>
 
@@ -473,27 +482,26 @@
 
                     <div v-else-if="tab == 'approval'">
 
-                    <div class="flex justify-start">
-                      <div class="flex flex-col items-center">
-                        <img :src="miniABM" class="h-[60px] w-60" />
-                        <h1 class="text-2xl font-medium leading-7">Approval</h1>
-                      </div>
-                    </div>
-
-                    <div class="flex justify-center">
-
-                      <div class="py-12 px-4">
-
-                        <multiStepCircleVertical :image="userImg" v-for="data in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? true : false" />
-
+                      <div class="flex justify-start">
+                        <div class="flex flex-col items-center">
+                          <img :src="miniABM" class="h-[60px] w-60" />
+                          <h1 class="text-2xl font-medium leading-7">Approval</h1>
+                        </div>
                       </div>
 
-                    <div>
+                      <div class="flex justify-center">
 
-</div>
+                        <div class="py-12 px-4">
 
+                          <multiStepCircleVertical :image="userImg" v-for="data in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? true : false" />
 
-                    </div>
+                        </div>
+
+                        <div>
+
+                        </div>
+
+                      </div>
 
                     </div>
 
