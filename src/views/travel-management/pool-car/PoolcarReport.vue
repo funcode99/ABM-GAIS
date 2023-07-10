@@ -270,7 +270,7 @@ const exportToExcel = () => {
           </div>
 
           <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
-            <div class="flex gap-6">
+            <div class="flex gap-2">
               <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
@@ -323,7 +323,7 @@ const exportToExcel = () => {
                 </select>
               </div>
 
-              <div class="flex flex-col">
+              <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
@@ -337,7 +337,7 @@ const exportToExcel = () => {
                 />
               </div>
 
-              <div class="flex flex-col pt-[3px]">
+              <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
@@ -572,6 +572,6 @@ tr th {
 }
 
 .my-date {
-  width: 280px !important;
+  width: 200px !important;
 }
 </style>
