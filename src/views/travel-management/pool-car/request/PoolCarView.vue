@@ -54,6 +54,7 @@ const headers = [
     text: "Actions",
     key: "actions",
     value: "actions",
+    sortable: false,
   },
 ]
 
@@ -62,13 +63,14 @@ const route = useRoute()
 const tabs = ref(["Details"])
 const tabActive = ref("Details")
 const formDialog = ref(false)
-const userRole = localStorage.getItem("id_role")
 const checkupList = ref([])
 const dataExisting = ref([])
 const isEditable = ref(true)
 
 const isDriver = computed(() => {
-  return userRole == "DRVR"
+  const userRole = localStorage.getItem("id_role")
+
+  return userRole == `"DRVR"`
 })
 
 const dataFormDialog = ref({
@@ -165,7 +167,7 @@ onMounted(async () => {
         <div v-else></div>
 
         <button
-          v-if="isDriver || items[0].status == 'Ready'"
+          v-if="isDriver"
           class="btn bg-primary"
           @click="
             () => {
