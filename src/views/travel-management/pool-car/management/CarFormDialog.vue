@@ -14,12 +14,13 @@ import {
   fetchCarType,
   fethDrivers,
   saveCarData,
+  updateCarData,
 } from "@/utils/Api/travel-management/poolCar.js"
 import fetchCompanyRefs from "@/utils/Fetch/Reference/fetchCompany"
 import fetchSiteRefs from "@/utils/Fetch/Reference/fetchSite"
 import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
 
-const emit = defineEmits(["success"])
+const emits = defineEmits(["success", "resetData"])
 
 const props = defineProps({
   data: {
@@ -27,8 +28,6 @@ const props = defineProps({
     default: () => {},
   },
 })
-
-const dialog = ref(false)
 
 const references = ref({
   company: [],
@@ -38,14 +37,14 @@ const references = ref({
     { label: "Active", value: 1 },
     { label: "Under Maintenance", value: 0 },
   ],
-  drver: [],
+  driver: [],
 })
 
+const dialog = ref(false)
 const form = ref({})
 
 const setForm = () => {
   form.value = {
-    id: null,
     car_name: null,
     id_company: null,
     id_site: null,
@@ -61,6 +60,8 @@ const setForm = () => {
 
 const saveCar = async () => {
   try {
+    let res
+
     const body = { ...form.value }
 
     var form_data = new FormData()
@@ -69,18 +70,22 @@ const saveCar = async () => {
       form_data.append(key, body[key])
     }
 
-    const res = await saveCarData(form_data)
+    if (body.id) {
+      res = await updateCarData(form_data)
+    } else {
+      res = await saveCarData(form_data)
+    }
 
     if (res.data.success) {
       dialog.value = false
 
-      emit("success")
+      emits("success")
 
       Swal.fire({
         position: "center",
         icon: "success",
         title: "Succeess to Save Car Data",
-        showConfirmButton: true,
+        showConfirmButton: false,
         timer: 1500,
       })
     }
@@ -91,7 +96,10 @@ const saveCar = async () => {
 
 watch(dialog, () => {
   setForm()
-  if (props.data) Object.assign(form.value, props.data)
+
+  if (props.data.id) {
+    Object.assign(form.value, props.data)
+  }
 })
 
 defineExpose({ dialog })
@@ -112,14 +120,13 @@ onMounted(async () => {
     + Add New
   </button>
 
-  <Modal v-model:visible="dialog">
-    <form @submit.prevent="saveCar">
-      <main class="overflow-y-scroll">
-        <modalHeader
-          @closeVisibility="dialog = false"
-          :title="data ? 'Update Car' : 'New Car'"
-        />
-
+  <Modal v-model:visible="dialog" @onUnVisible="emits('resetData')">
+    <modalHeader
+      @closeVisibility="dialog = false"
+      :title="data.id ? 'Update Car' : 'New Car'"
+    />
+    <main class="overflow-y-scroll">
+      <form @submit.prevent="saveCar()">
         <div class="p-5 grid gap-3 h-auto">
           <div>
             <FieldTitle label="Company" mandatory />
@@ -161,6 +168,7 @@ onMounted(async () => {
             <FieldTitle label="Car Name" mandatory />
 
             <input
+              class="v-text-field"
               v-model="form.car_name"
               type="text"
               placeholder="Input Car Name"
@@ -172,6 +180,7 @@ onMounted(async () => {
             <FieldTitle label="Plate" mandatory />
 
             <input
+              class="v-text-field"
               v-model="form.plate"
               type="text"
               placeholder="Input Plate"
@@ -190,6 +199,7 @@ onMounted(async () => {
             /> -->
 
             <CurrencyInput
+              class="v-text-field"
               v-model="form.odometer"
               placeholder="Input Odometer"
             />
@@ -250,7 +260,7 @@ onMounted(async () => {
             </div>
 
             <div class="flex-1">
-              <FieldTitle label="Driver" mandatory />
+              <FieldTitle label="Driver" />
 
               <Multiselect
                 v-model="form.id_driver"
@@ -260,7 +270,6 @@ onMounted(async () => {
                 track-by="id"
                 label="name"
                 valueProp="id"
-                required
                 clear
                 searchable
               >
@@ -268,9 +277,9 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-      </main>
-      <modalFooter @closeEdit="dialog = false" class="py-3" />
-    </form>
+        <modalFooter @closeEdit="dialog = false" class="py-3" />
+      </form>
+    </main>
   </Modal>
 </template>
 

@@ -5,6 +5,8 @@ import Footer from "@/components/layout/Footer.vue";
 import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue";
 import Swal from "sweetalert2";
 
+import icondanger from "@/assets/Danger.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 import arrow from "@/assets/request-trip-view-arrow.png";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import Api from "@/utils/Api";
@@ -19,6 +21,7 @@ const route = useRoute();
 const router = useRouter();
 
 let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
+const id_role = JSON.parse(localStorage.getItem("id_role"));
 
 let dataArr = ref([]);
 
@@ -53,38 +56,110 @@ const format_date = (value) => {
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`book_meeting_room/get/${id}`);
-  dataArr.value = res.data.data[0];
+  const api = await Api.get(`book_meeting_room/get/${id}`);
+  dataArr.value = api.data.data[0];
 };
 
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   Api.post(`cash_advance/submit/${idBook}`)
-//     .then((res) => {
-//       let status = res.data.success == true ? "success" : "error";
-//       Swal.fire({
-//         position: "center",
-//         icon: status,
-//         title: res.data.message,
-//         showConfirmButton: false,
-//         timer: 1500,
-//       });
-//       fetchDataById(idBook);
-//       router.push({ path: `/viewcashadvancenontravel/${idBook}` });
-//     })
-//     .catch((e) => {
-//       Swal.fire({
-//         position: "center",
-//         icon: "error",
-//         title: e.response.data.error,
-//         showConfirmButton: false,
-//         timer: 2000,
-//         timerProgressBar: true,
-//         background: "#EA5455",
-//         color: "#ffffff",
-//       });
-//     });
+  Api.post(`/book_meeting_room/book/${idBook}`)
+    .then((res) => {
+      let status = res.data.success == true ? "success" : "error";
+      Swal.fire({
+        position: "center",
+        icon: status,
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      fetchDataById(idBook);
+    })
+    .catch((e) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: e.response.data.error,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: "#EA5455",
+        color: "#ffffff",
+      });
+    });
+};
+
+const cancelled = async () => {
+  Swal.fire({
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to cancelled this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will cancelled this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.post(`adm_book_meeting_room/cancel/${idBook}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Data has been cancelled.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        if (sortedData.value.length == 1) {
+          router.go();
+        } else {
+          fetch();
+        }
+      });
+    } else {
+      return;
+    }
+  });
+};
+
+const done = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  Api.post(`adm_book_meeting_room/done/${idBook}`)
+    .then((res) => {
+      let status = res.data.success == true ? "success" : "error";
+      Swal.fire({
+        position: "center",
+        icon: status,
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      fetchDataById(idBook);
+    })
+    .catch((e) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: e.response.data.error,
+        showConfirmButton: false,
+        timer: 2000,
+        timerProgressBar: true,
+        background: "#EA5455",
+        color: "#ffffff",
+      });
+    });
 };
 
 const openModal = (type, id) => {
@@ -161,12 +236,7 @@ const inputClass =
           </div>
           <div class="flex justify-start gap-4 mx-10">
             <label
-              v-if="
-                (dataArr.status == 'Draft' ||
-                  dataArr.status == 'Revision' ||
-                  dataArr.status == 'Fully Rejected') &&
-                !visibleHeader
-              "
+              v-if="dataArr.status == 'Draft'"
               @click="openModal('edit', '')"
               for="my-modal-3"
               class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
@@ -174,23 +244,32 @@ const inputClass =
               Edit
             </label>
             <ModalAddBookingRoom
-                v-if="visibleModal"
-                @close="closeModal"
-                :status="statusForm"
-                :id="idBook"
-                :data="dataArr"
-              />
+              v-if="visibleModal"
+              @close="closeModal"
+              :status="statusForm"
+              :id="idBook"
+              :data="dataArr"
+            />
             <button
-              v-if="
-                (dataArr.status == 'Draft' ||
-                  dataArr.status == 'Revision' ||
-                  dataArr.status == 'Fully Rejected') &&
-                !visibleHeader
-              "
+              v-if="dataArr.status == 'Draft'"
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               @click="submit"
             >
               Book
+            </button>
+            <button
+              v-if="dataArr.status == 'Booked'"
+              class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+              @click="cancelled"
+            >
+              Cancelled
+            </button>
+            <button
+              v-if="dataArr.status == 'Booked'"
+              class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              @click="done"
+            >
+              Done
             </button>
           </div>
 

@@ -53,7 +53,8 @@ let filter = reactive({
   room: "",
 });
 const id_site = JSON.parse(localStorage.getItem("id_site"));
-
+const id_role = JSON.parse(localStorage.getItem("id_role"));
+const roles = ["ADMTR"];
 //for paginations
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -144,8 +145,13 @@ const fetch = async (id) => {
 const fetchListRoom = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`master_meeting_room/get_by_site/${id_site}`);
-  listRoom.value = api.data.data;
+  if (id_role == "ADMTR") {
+    const api = await Api.get(`master_meeting_room/get`);
+    listRoom.value = api.data.data;
+  } else {
+    const api = await Api.get(`master_meeting_room/get_by_site/${id_site}`);
+    listRoom.value = api.data.data;
+  }
 };
 
 const resetData = () => {
@@ -171,8 +177,13 @@ const filterDataByType = async (id) => {
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
-  const api = await Api.get("book_meeting_room/get/", { params: payload });
-  paginationArray = api.data.data;
+  if (id_role == "EMPLY") {
+    const api = await Api.get("book_meeting_room/get", { params: payload });
+    paginationArray = api.data.data;
+  } else {
+    const api = await Api.get("adm_book_meeting_room/get", { params: payload });
+    paginationArray = api.data.data;
+  }
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -281,7 +292,7 @@ const openModal = (type, id) => {
   visibleModal.value = true;
   statusForm.value = type;
   if (id) {
-    idItem.value = id;
+    idItem.value = parseInt(id);
   }
 };
 
@@ -328,7 +339,7 @@ onBeforeMount(() => {
             </p>
             <div class="flex gap-4">
               <div
-                v-if="deleteArray.length > 0"
+                v-if="deleteArray.length > 0 && id_role != 'ADMTR'"
                 class="flex gap-2 items-center"
               >
                 <h1 class="font-semibold">{{ deleteArray.length }} Selected</h1>
@@ -341,7 +352,8 @@ onBeforeMount(() => {
               </div>
 
               <label
-                @click="openModal('add', '')"
+                v-if="id_role != 'ADMTR'"
+                @click="openModal('add', 0)"
                 for="my-modal-3"
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
               >
@@ -521,7 +533,7 @@ onBeforeMount(() => {
                         </button>
                       </span>
                     </th>
-                    <th>
+                    <th v-if="id_role != 'ADMTR'">
                       <div class="text-center">Actions</div>
                     </th>
                   </tr>
@@ -564,7 +576,7 @@ onBeforeMount(() => {
                         >{{ data.status }}</span
                       >
                     </td>
-                    <td>
+                    <td v-if="id_role != 'ADMTR'">
                       <div class="flex justify-center items-center gap-2">
                         <router-link :to="`/booking-meeting-room/${data.id}`">
                           <button>

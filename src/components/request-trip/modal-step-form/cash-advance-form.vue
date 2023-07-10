@@ -32,20 +32,20 @@
     let caId = ref(0)
     let currency = ref([0, ''])
     let grandTotal = ref(0)
-    let variableTotal = ref([frequency.value, nominal.value])
 
     const submitCashAdvance = async () => {
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post('/cash_advance/store', {
             type_ca: 1,
-            id_employee: caId.value,
+            id_employee: localStorage.getItem('id_employee'),
             id_request_trip: localStorage.getItem('tripId'),
             remarks: remarks.value,
             id_currency: currency.value[0],
             grand_total: grandTotal.value,
-            arrayDetail: arrayDetail.value
+            array_detail: arrayDetail.value
         })
+        console.log(api)
         emits('fetchCashAdvance')
         emits('changeVisibility')
     }
@@ -53,21 +53,22 @@
     let arrayDetail = ref([])
     let arrayDetailForm = ref([])
 
-    watch(variableTotal.value, () => {
-        console.log('perubahan di variable Total')
-        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
-            total.value = nominal.value * frequency.value
-        }
+    watch(props, () => {
+        arrayDetail.value = []
     })
 
     watch(frequency, () => {
         frequency.value = frequency.value.replace(/\D/g, "")
-        variableTotal.value[0] = frequency.value
+        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
+            total.value = nominal.value * frequency.value
+        }
     })    
 
     watch(nominal, () => {
         nominal.value = nominal.value.replace(/\D/g, "")
-        variableTotal.value[1] = nominal.value
+        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
+            total.value = nominal.value * frequency.value
+        }
     })  
 
     onBeforeMount(() => {
@@ -115,7 +116,6 @@
         caId.value = 0
         currency.value = [0, '']
         grandTotal.value = 0
-        variableTotal.value = [frequency.value, nominal.value]
     })
 
     const modalPaddingHeight = '15vh'
@@ -188,7 +188,10 @@
                             <label :class=labelStylingClass>
                                 Notes
                             </label>
-                            <textarea placeholder="Notes" :class="inputStylingClass" v-model="remarksNotes"></textarea>
+                            <textarea 
+                                placeholder="Notes" 
+                                :class="inputStylingClass" 
+                                v-model="remarksNotes"></textarea>
                         </div>
                     </div>
     

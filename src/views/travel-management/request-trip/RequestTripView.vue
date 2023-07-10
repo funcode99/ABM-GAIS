@@ -3,6 +3,7 @@
     
     import miniABM from '@/assets/mini-abm.png'
     import userImg from '@/assets/3-user.png'
+    import deleteDocumentIcon from '@/assets/delete_document_icon.png'
 
     import Api from '@/utils/Api'
 
@@ -30,12 +31,12 @@
     const sidebar = useSidebarStore()
 
     let isEditing = ref(false)
+    let isAdding = ref(false)
 
     let tab = ref('details')
-    let showTravel = ref(true)
-    let showAirlines = ref(true)
     let headerTitle = ref('Traveller')
     let currentIndex = 0
+    let typeOfSubmitToProps = ref('none')
 
     let purposeOfTripData = ref([{}])
     let travellerGuestData = ref([{}])
@@ -45,6 +46,14 @@
     let accomodationData = ref([{}])
     let cashAdvanceData = ref([{}])
     let approvalStatusData = ref([{}])
+
+    let file = ref()
+    let notes = ref()
+    let dataIndex = ref(0)
+    let detailIndex = ref(0)
+    let currentSelectedData = ref(travellerGuestData.value)
+
+    let showingValue = ref(1)
 
     provide('travellerDataView', travellerGuestData)
     provide('airlinesDataView', airlinesData)
@@ -151,19 +160,6 @@
       }
     }
 
-    onBeforeMount(() => {
-
-      getPurposeOfTrip()
-      getTravellerGuest()
-      getAirlines()
-      getTaxiVoucher()
-      getOtherTransportation()
-      getAccomodation()
-      getCashAdvance()
-      getApprovalStatus()
-
-    })
-
     const submitRequestTrip = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -193,13 +189,9 @@
 
     }
 
-    const closeBar = ref(true)
     const changeSelected = (title) => {
       headerTitle.value = title
     }
-
-    let dataIndex = ref(0)
-    let currentSelectedData = ref(travellerGuestData.value)
 
     const assignSelectedData = () => {
       headerTitle.value === 'Traveller' ? currentSelectedData.value = travellerGuestData.value 
@@ -211,26 +203,47 @@
       : travellerGuestData.value
     }
 
+    onBeforeMount(() => {
+      getPurposeOfTrip()
+      getTravellerGuest()
+      getAirlines()
+      getTaxiVoucher()
+      getOtherTransportation()
+      getAccomodation()
+      getCashAdvance()
+      getApprovalStatus()
+    })
+
+    watch(purposeOfTripData, () => {
+      notes.value = purposeOfTripData.value[currentIndex].notes
+    })
+
     watch(headerTitle, () => {
       assignSelectedData()
       dataIndex.value = 0
     })
 
-    const increment = () => {
-      assignSelectedData()
-      dataIndex.value + 1 !== currentSelectedData.value.length ? dataIndex.value++ : dataIndex.value
-    }
-
-    const decrement = () => {
-      assignSelectedData()
-      dataIndex.value > 0 ? dataIndex.value-- : dataIndex.value
-    }
-
-    let notes = ref()
-    let file = ref()
-    watch(purposeOfTripData, () => {
-      notes.value = purposeOfTripData.value[currentIndex].notes
+    watch(travellerGuestData, () => {
+      currentSelectedData.value = travellerGuestData.value
     })
+
+    const changeType = (typeOfSubmit) => {
+      typeOfSubmitToProps.value = typeOfSubmit
+      if(typeOfSubmit === 'Add') {
+        isAdding.value = true
+      }
+    }
+
+    const resetTypeOfSubmit = () => {
+      typeOfSubmitToProps.value = 'none'
+    }
+
+    const onChangePage = (pageOfItem) => {
+      assignSelectedData()
+      if(dataIndex.value-1 !== currentSelectedData.value.length) {
+        dataIndex.value = pageOfItem-1
+      }
+    }
 
 </script>
 
@@ -364,56 +377,79 @@
                         </div>
 
                         <!-- details form -->
-                        <div class="flex-1">
+                        <form class="flex-1" @submit.prevent="">
                             
-                          <detailsFormHeader :title="headerTitle">
+                          <detailsFormHeader :title="headerTitle" v-if="!isAdding">
 
-                            <buttonEditFormView v-if="isEditing" />
-                            <buttonAddFormView v-if="isEditing" />
+                            <buttonEditFormView v-if="isEditing" @click="changeType('Edit')" />
+                            <buttonAddFormView v-if="isEditing" @click="changeType('Add')" />
 
-                            <!-- <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                            <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" v-if="isEditing == 'R'">
                               Issued Ticket
-                            </button> -->
+                            </button>
 
                             <button v-if="purposeOfTripData[currentIndex].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                               Revise
                             </button>
 
-                            <div class="flex gap-4">
-                              
-                                <button @click="decrement">
-                                  Back
-                                </button>
 
-                                  Data {{ dataIndex+1 }} of {{ currentSelectedData.length }}
-                              
-                                <button @click="increment">
-                                Next
-                                </button>
+                            <div class="flex flex-wrap gap-4 justify-center lg:justify-between items-center mx-4 py-2">
+
+                            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                              Showing {{ showingValue }} 
+                              of {{ currentSelectedData.length }} entries
+                            </p>
+
+                            <vue-awesome-paginate
+                              :total-items="currentSelectedData.length"
+                              :items-per-page="1"
+                              :on-click="onChangePage"
+                              v-model="showingValue"
+                              :max-pages-shown="3"
+                              :show-breakpoint-buttons="false"
+                              :show-jump-buttons="true"
+                            />
 
                             </div>
 
+                            <button v-if="isEditing" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold absolute right-8 flex gap-2" @click="changeType('Delete')">
+                              <img :src="deleteDocumentIcon" class="w-6 h-6" />
+                              Delete
+                            </button>
+
+                          </detailsFormHeader>
+
+                          <detailsFormHeader :title="headerTitle" v-if="isAdding">
+                            <buttonAddFormView @click="changeType('Submit Add')" />
                           </detailsFormHeader>
 
                           <!-- form Step 3 -->
-                          <guestAsTravellerFormView v-if="headerTitle == 'Traveller'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
+                          <guestAsTravellerFormView
+                            v-if="headerTitle == 'Traveller'"
+                            @fetchGuestTraveller="getTravellerGuest"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
+                            class="ml-8" 
+                            :isEditing="isEditing" 
+                            :currentIndex="dataIndex" 
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                          />
 
                           <!-- form Step 4 -->
-                          <airlinesFormView :apiData="airlinesData" v-if="headerTitle == 'Airlines'" class="ml-8" :isEditing="isEditing" />
+                          <airlinesFormView v-if="headerTitle == 'Airlines'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
 
                           <!-- form Step 5 -->
-                          <taxiVoucherFormView :apiData="taxiVoucherData" v-if="headerTitle == 'Taxi Voucher'" class="ml-8" :isEditing="isEditing" />
+                          <taxiVoucherFormView v-if="headerTitle == 'Taxi Voucher'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
 
                           <!-- form Step 6 -->
-                          <otherTransportationFormView :apiData="otherTransportationData" v-if="headerTitle == 'Other Transportation'" class="ml-8" :isEditing="isEditing" />
+                          <otherTransportationFormView v-if="headerTitle == 'Other Transportation'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
 
                           <!-- form Step 7 -->
-                          <accomodationFormView :apiData="accomodationData" v-if="headerTitle == 'Accomodation'" class="ml-8" :isEditing="isEditing" />
+                          <accomodationFormView v-if="headerTitle == 'Accomodation'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
 
                           <!-- form Step 8 -->
-                          <cashAdvanceFormView :apiData="cashAdvanceData" v-if="headerTitle == 'Cash Advance'" class="ml-8" :isEditing="isEditing" />
+                          <cashAdvanceFormView v-if="headerTitle == 'Cash Advance'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" :currentDetailIndex="detailIndex" />
 
-                        </div>
+                        </form>
 
                     </div>
                         
@@ -446,27 +482,26 @@
 
                     <div v-else-if="tab == 'approval'">
 
-                    <div class="flex justify-start">
-                      <div class="flex flex-col items-center">
-                        <img :src="miniABM" class="h-[60px] w-60" />
-                        <h1 class="text-2xl font-medium leading-7">Approval</h1>
-                      </div>
-                    </div>
-
-                    <div class="flex justify-center">
-
-                      <div class="py-12 px-4">
-
-                        <multiStepCircleVertical :image="userImg" v-for="(data, index) in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? closeBar : false" />
-
+                      <div class="flex justify-start">
+                        <div class="flex flex-col items-center">
+                          <img :src="miniABM" class="h-[60px] w-60" />
+                          <h1 class="text-2xl font-medium leading-7">Approval</h1>
+                        </div>
                       </div>
 
-                    <div>
+                      <div class="flex justify-center">
 
-</div>
+                        <div class="py-12 px-4">
 
+                          <multiStepCircleVertical :image="userImg" v-for="data in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? true : false" />
 
-                    </div>
+                        </div>
+
+                        <div>
+
+                        </div>
+
+                      </div>
 
                     </div>
 

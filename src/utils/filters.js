@@ -1,7 +1,7 @@
+import moment from "moment"
+
 const numberFilter = (value, option = {}) => {
-  if (typeof value !== "number") {
-    return value
-  }
+  
   const formated = new Intl.NumberFormat("en-ID", {
     currency: "USD",
     ...option,
@@ -9,4 +9,8 @@ const numberFilter = (value, option = {}) => {
   return formated
 }
 
-export { numberFilter }
+const toFilterDate = (value, toFormat, fromFormat) => {
+  return moment(value, fromFormat).format(toFormat)
+}
+
+export { numberFilter, toFilterDate }

@@ -14,7 +14,49 @@ const fetchPoolCarRequest = async (params) => {
   try {
     const res = await Api.get(`${ENDPOINT}/get_data`, params)
 
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchPoolCarRequestById = async (requestId) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/get_data/${requestId}`)
+
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const saveCarInspection = async (body) => {
+  try {
+    const res = await Api.post(`${ENDPOINT}/store_check`, body, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
     return res
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchDriverCarCheckupByRequesId = async (requestId) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/get_check/${requestId}`)
+
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const setPoolRequestStatus = async (requestId) => {
+  try {
+    return await Api.post(`${ENDPOINT}/update_status/${requestId}`)
   } catch (error) {
     console.error(error)
   }
@@ -31,16 +73,27 @@ const fetchCarMaster = async (params) => {
   }
 }
 
+const fetchPoolCarStatus = async (params) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/status`, params)
+
+    return res.data.data || []
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const saveCarData = async (body) => {
   try {
-    let res
-    if (body.id) {
-      res = await Api.post(`${CAR_ENDPOINT}/store`, body)
-    } else {
-      res = await Api.post(`${CAR_ENDPOINT}/update_data`, body)
-    }
+    return await Api.post(`${CAR_ENDPOINT}/store`, body)
+  } catch (error) {
+    console.error(error)
+  }
+}
 
-    return res
+const updateCarData = async (body) => {
+  try {
+    return await Api.post(`${CAR_ENDPOINT}/update_data`, body)
   } catch (error) {
     console.error(error)
   }
@@ -51,8 +104,6 @@ const deleteCarById = async (carId) => {
     const res = await Api.delete(`${CAR_ENDPOINT}/delete_data/${carId}`)
 
     if (res.data.success) {
-      console.log(res)
-
       Swal.fire({
         position: "center",
         icon: "success",
@@ -118,4 +169,10 @@ export {
   fethDrivers,
   saveCarData,
   deleteCarById,
+  fetchPoolCarRequestById,
+  fetchDriverCarCheckupByRequesId,
+  saveCarInspection,
+  setPoolRequestStatus,
+  fetchPoolCarStatus,
+  updateCarData,
 }

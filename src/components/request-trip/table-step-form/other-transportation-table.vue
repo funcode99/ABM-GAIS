@@ -40,9 +40,9 @@ let employeeName = localStorage.getItem('username')
 
 <template>
 
-    <div class="overflow-x-auto mt-5">
+    <div class="overflow-x-auto mt-5 flex justify-center">
 
-        <table class="table flex justify-center">
+        <table class="table">
             
             <thead>
                         <tr>

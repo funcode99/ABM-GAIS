@@ -2,9 +2,11 @@
 import icon_done from "@/assets/icon_done.svg";
 import { ref } from "vue";
 import moment from "moment";
+import userImg from '@/assets/3-user.png'
 
 const props = defineProps({
   dataApproval: Array,
+  currentLevel: Number
 });
 
 const format_date = (value) => {
@@ -14,6 +16,7 @@ const format_date = (value) => {
 };
 
 let historyApproval = ref(props.dataApproval);
+let level = ref(props.currentLevel);
 
 let classDone = "absolute flex items-center justify-center rounded-full w-8 h-8 ring-4 bg-blue"
 let classWaiting = "absolute flex items-center justify-center rounded-full w-8 h-8 ring-0 bg-slate-200"
@@ -30,9 +33,9 @@ let classWaiting = "absolute flex items-center justify-center rounded-full w-8 h
             class="flex items-center justify-center w-10 h-10 border rounded-full"
           >
             <span
-              :class="data.date ? classDone : classWaiting"
+              :class="index < level ? classDone : classWaiting"
             >
-              <img :src="icon_done" class="w-3 h-3" alt="" />
+              <img :src="userImg" class="w-4 h-4" alt="" />
               <polyline
                 fill="none"
                 stroke-miterlimit="10"

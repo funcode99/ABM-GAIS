@@ -1,9 +1,11 @@
 <script setup>
-    import { ref, inject, onBeforeMount, watch } from 'vue'
+    import { ref, inject, watch } from 'vue'
     
     const status = defineProps({
-        isEditing: Boolean
+        isEditing: Boolean,
+        currentIndex: Number
     })
+
     const props = inject('taxiVoucherDataView')
 
     let name = ref()
@@ -15,18 +17,47 @@
     let accountName = ref()
     let remarks = ref()
 
-    if(props.value[0].amount !== undefined) {
-        
+    const assignValue = () => {
         name.value = localStorage.getItem('username')
-        departure.value = props.value[0].name_departure_city
-        date.value = props.value[0].date
-        arrival.value = props.value[0].name_arrival_city
-        amount.value = props.value[0].amount
-        voucherCode.value = props.value[0]
-        accountName.value = props.value[0].account_name
-        remarks.value = props.value[0].remarks
-
+        departure.value = props.value[status.currentIndex].name_departure_city
+        date.value = props.value[status.currentIndex].date
+        arrival.value = props.value[status.currentIndex].name_arrival_city
+        amount.value = props.value[status.currentIndex].amount
+        voucherCode.value = props.value[status.currentIndex]
+        accountName.value = props.value[status.currentIndex].account_name
+        remarks.value = props.value[status.currentIndex].remarks
     }
+
+    watch(status, () => {
+        assignValue()
+    })
+
+    watch(props, () => {
+        if(props.value[0].amount !== undefined) {
+            name.value = localStorage.getItem('username')
+            departure.value = props.value[0].name_departure_city
+            date.value = props.value[0].date
+            arrival.value = props.value[0].name_arrival_city
+            amount.value = props.value[0].amount
+            voucherCode.value = props.value[0]
+            accountName.value = props.value[0].account_name
+            remarks.value = props.value[0].remarks
+        }
+        else {
+            assignValue()
+        }
+    })
+
+    if(props.value[0].amount !== undefined) {
+            name.value = localStorage.getItem('username')
+            departure.value = props.value[0].name_departure_city
+            date.value = props.value[0].date
+            arrival.value = props.value[0].name_arrival_city
+            amount.value = props.value[0].amount
+            voucherCode.value = props.value[0].code_voucher
+            accountName.value = props.value[0].account_name
+            remarks.value = props.value[0].remarks
+    } 
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -41,160 +72,160 @@
 
         <div :class="rowClass">
 
-        <div :class="columnClass">
+            <div :class="columnClass">
 
-            <div class="w-full">
-                
-            <label :class="labelStylingClass">
-                Name<span class="text-red-star">*</span>
-            </label>
-                
-            <input 
-                v-model="name"
-                type="text"
-                placeholder="Name"
-                :class="inputStylingClass"
-                required
-                :disabled="!status.isEditing"
-            /> 
-
-            </div>
-
-        </div>
-
-        <div :class="columnClass">
-
-            <div class="w-full">
-            
-            <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                Departure<span class="text-red-star">*</span>
-            </label>
-
-            <input
-                v-model="departure"
-                type="text"
-                placeholder="Departure"
-                :class="inputStylingClass"
-                required
-                :disabled="!status.isEditing"
-            />
-
-            </div>
-
-        </div>
-
-        </div>
-
-        <div :class="rowClass">
-
-        <div :class="columnClass">
-            <div class="w-full">
-                
+                <div class="w-full">
+                    
                 <label :class="labelStylingClass">
-                Date<span class="text-red-star">*</span>
+                    Name<span class="text-red-star">*</span>
+                </label>
+                    
+                <input 
+                    v-model="name"
+                    type="text"
+                    placeholder="Name"
+                    :class="inputStylingClass"
+                    required
+                    :disabled="!status.isEditing"
+                /> 
+
+                </div>
+
+            </div>
+
+            <div :class="columnClass">
+
+                <div class="w-full">
+                
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                    Departure<span class="text-red-star">*</span>
                 </label>
 
-                <input 
-                v-model="date"
-                type="text"
-                placeholder="Date"
-                :class="inputStylingClass"
-                required
-                :disabled="!status.isEditing"
-                />
-
-
-            </div>
-        </div>
-
-        <div :class="columnClass">
-            <div class="w-full">
-                
-                <label
-                    class="block mb-2 font-JakartaSans font-medium text-sm"
-                    >Arrival<span class="text-red-star">*</span></label
-                >
-                
-                <input 
-                    v-model="arrival"
+                <input
+                    v-model="departure"
                     type="text"
-                    placeholder="City"
+                    placeholder="Departure"
                     :class="inputStylingClass"
                     required
                     :disabled="!status.isEditing"
                 />
 
+                </div>
+
             </div>
-        </div>
 
         </div>
 
         <div :class="rowClass">
 
-        <div :class="columnClass">
-        <div class="w-full">
-            <label :class="labelStylingClass">
-                Amount<span class="text-red-star">*</span>
-            </label>
-            <input
-                v-model="amount"
-                type="text" 
-                :class='inputStylingClass' 
-                placeholder="Amount"
-                required
-                :disabled="!status.isEditing"
-            />
-        </div>
+            <div :class="columnClass">
+                <div class="w-full">
+                    
+                    <label :class="labelStylingClass">
+                    Date<span class="text-red-star">*</span>
+                    </label>
+
+                    <input 
+                    v-model="date"
+                    type="text"
+                    placeholder="Date"
+                    :class="inputStylingClass"
+                    required
+                    :disabled="!status.isEditing"
+                    />
+
+
+                </div>
+            </div>
+
+            <div :class="columnClass">
+                <div class="w-full">
+                    
+                    <label
+                        class="block mb-2 font-JakartaSans font-medium text-sm"
+                        >Arrival<span class="text-red-star">*</span></label
+                    >
+                    
+                    <input 
+                        v-model="arrival"
+                        type="text"
+                        placeholder="City"
+                        :class="inputStylingClass"
+                        required
+                        :disabled="!status.isEditing"
+                    />
+
+                </div>
+            </div>
+
         </div>
 
-        <div :class="columnClass">
+        <div :class="rowClass">
+
+            <div :class="columnClass">
             <div class="w-full">
                 <label :class="labelStylingClass">
-                    <span>Voucher Code</span>
+                    Amount<span class="text-red-star">*</span>
                 </label>
-                <input 
-                    v-model="voucherCode" 
+                <input
+                    v-model="amount"
                     type="text" 
                     :class='inputStylingClass' 
-                    placeholder="Voucher" 
+                    placeholder="Amount"
                     required
                     :disabled="!status.isEditing"
                 />
             </div>
-        </div>
+            </div>
+
+            <div :class="columnClass">
+                <div class="w-full">
+                    <label :class="labelStylingClass">
+                        <span>Voucher Code</span>
+                    </label>
+                    <input 
+                        v-model="voucherCode" 
+                        type="text" 
+                        :class='inputStylingClass' 
+                        placeholder="Voucher" 
+                        required
+                        :disabled="!status.isEditing"
+                    />
+                </div>
+            </div>
 
         </div>
 
         <div :class="rowClassStart">
 
-        <div :class="columnClass">
-            <div class="w-full">
-                <label :class="labelStylingClass">
-                    <span>Account Name</span><span class="text-red-star">*</span>
-                </label>
-                <input
-                    v-model="accountName" 
-                    type="text" 
-                    :class='inputStylingClass' 
-                    placeholder="Account Name"
-                    required
-                    :disabled="!status.isEditing"
-                />
+            <div :class="columnClass">
+                <div class="w-full">
+                    <label :class="labelStylingClass">
+                        <span>Account Name</span><span class="text-red-star">*</span>
+                    </label>
+                    <input
+                        v-model="accountName" 
+                        type="text" 
+                        :class='inputStylingClass' 
+                        placeholder="Account Name"
+                        required
+                        :disabled="!status.isEditing"
+                    />
+                </div>
             </div>
-        </div>
 
-        <div :class="columnClass">
-            <div class="w-full">
-                <label :class="labelStylingClass">
-                Remarks
-                </label>
-                <textarea 
-                :disabled="!status.isEditing"
-                v-model="remarks" 
-                :class="inputStylingClass" 
-                placeholder="Remarks"></textarea>
+            <div :class="columnClass">
+                <div class="w-full">
+                    <label :class="labelStylingClass">
+                    Remarks
+                    </label>
+                    <textarea 
+                    :disabled="!status.isEditing"
+                    v-model="remarks" 
+                    :class="inputStylingClass" 
+                    placeholder="Remarks"></textarea>
+                </div>
             </div>
-        </div>
 
         </div>
 

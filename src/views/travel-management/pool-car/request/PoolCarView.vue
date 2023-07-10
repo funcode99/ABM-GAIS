@@ -1,39 +1,60 @@
 <script setup>
+import { computed, onMounted, ref } from "vue"
+
 import { useRoute } from "vue-router"
+
+import { toFilterDate, numberFilter } from "@/utils/filters"
 
 import tableContainer from "@/components/table/tableContainer.vue"
 import tableTop from "@/components/table/tableTop.vue"
-
 import PageTitle from "@/components/atomics/PageTitle.vue"
+import DriverFormDialog from "./DriverFormDialog.vue"
+import DataTable from "@/components/table/DataTable.vue"
 
 import left_chevron_icon from "@/assets/request-trip-view-arrow.png"
 
-import { onMounted, ref } from "vue"
+import {
+  fetchPoolCarRequestById,
+  fetchDriverCarCheckupByRequesId,
+  setPoolRequestStatus,
+} from "@/utils/Api/travel-management/poolCar"
 
 const headers = [
   {
     text: "Name",
-    key: "name",
+    key: "requestor_name",
+    value: "requestor_name",
   },
   {
     text: "Car",
-    key: "car",
+    key: "plate",
+    value: "plate",
   },
   {
     text: "Driver",
-    key: "driver",
+    key: "driver_name",
+    value: "driver_name",
   },
   {
     text: "From Date",
-    key: "fromDate",
+    key: "from_date",
+    value: "from_date",
   },
   {
     text: "To Date",
-    key: "toDate",
+    key: "to_date",
+    value: "to_date",
   },
   {
     text: "Odometer",
     key: "odometer",
+    value: "odometer",
+  },
+  {
+    text: "Actions",
+    key: "actions",
+    value: "actions",
+    sortable: false,
   },
 ]
 
@@ -41,19 +62,61 @@ const route = useRoute()
 
 const tabs = ref(["Details"])
 const tabActive = ref("Details")
+const formDialog = ref(false)
+const checkupList = ref([])
+const dataExisting = ref([])
+const isEditable = ref(true)
+
+const isDriver = computed(() => {
+  const userRole = localStorage.getItem("id_role")
+
+  return userRole == `"DRVR"`
+})
+
+const dataFormDialog = ref({
+  is_usable: 0,
+  notes: "",
+  odometer: 0,
+})
 
 const items = ref([
   {
-    name: "lol",
-    car: "Ertiga",
-    driver: "Anton",
-    fromDate: "24-06-2023",
-    toDate: "26-06-2023",
-    odometer: 250,
+    name: "",
+    car: "",
+    driver: "",
+    fromDate: "",
+    toDate: "",
+    odometer: 0,
   },
 ])
 
-onMounted(() => {})
+const fetchPoolRequest = async () => {
+  const requestId = route.params.id
+  const res = await fetchPoolCarRequestById(requestId)
+  items.value = res.data
+  dataFormDialog.value = res.data[0]
+}
+
+const doneRequestTrip = async () => {
+  const requestId = route.params.id
+  const res = setPoolRequestStatus(requestId)
+
+  if (res.data.success == "success") {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Succeess to Delete Car Data",
+      showConfirmButton: false,
+      timer: 1500,
+    })
+
+    await fetchPoolRequest()
+  }
+}
+
+onMounted(async () => {
+  await fetchPoolRequest()
+})
 </script>
 
 <template>
@@ -77,23 +140,66 @@ onMounted(() => {})
 
           <h1>
             <span class="text-[#0a0a0a] font-semibold text-2xl">
-              / {{ route.params.id }}
+              / {{ route.params.requestNumber }}
             </span>
           </h1>
         </PageTitle>
 
         <div
+          :class="{
+            'bg-green text-white border-none': items[0].status == 'Done',
+          }"
           class="card flex w-[114px] text-sm capitalize text-center font-bold item-center border border-[#292D32] rounded-lg rounded-bl-3xl p-2 m-5"
         >
-          waiting car & driver
+          {{ items[0].status }}
         </div>
       </div>
 
+      <div class="px-10 py-5 flex justify-between">
+        <button
+          v-if="items[0].status == 'Ready' && isDriver"
+          class="btn h-[5px] btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+          @click="doneRequestTrip()"
+        >
+          Done
+        </button>
+
+        <div v-else></div>
+
+        <button
+          v-if="isDriver"
+          class="btn bg-primary"
+          @click="
+            () => {
+              formDialog = true
+              isEditable = false
+            }
+          "
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
+            />
+          </svg>
+
+          p2h
+        </button>
+      </div>
       <!-- Data -->
       <div class="grid grid-cols-2 gap-y-3 px-10">
         <div class="flex flex-col gap-2">
           <span class="font-medium text-sm">Created Date</span>
           <input
+            :value="items[0].created_at"
             type="text"
             disabled
             class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
@@ -103,6 +209,7 @@ onMounted(() => {})
         <div class="flex flex-col gap-2">
           <span class="font-medium text-sm">Reference</span>
           <input
+            :value="items[0].no_pool_car"
             type="text"
             disabled
             class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
@@ -112,6 +219,7 @@ onMounted(() => {})
         <div class="flex flex-col gap-2">
           <span class="font-medium text-sm">Created By</span>
           <input
+            :value="items[0].created_by"
             type="text"
             disabled
             class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
@@ -141,26 +249,60 @@ onMounted(() => {})
           </tab>
         </div>
 
-        <div>
-          <table width="100%">
-            <thead>
-              <tr>
-                <th
-                  v-for="header in headers"
-                  class="bg-primary text-white p-3 text-sm"
+        <div class="">
+          <DataTable :headers="headers" :data="items" :pagination="false">
+            <template #item-created_at="{ item }">
+              {{ toFilterDate(item.create_at, "DD/MM/YYYY") }}
+            </template>
+
+            <template #item-from_date="{ item }">
+              {{ toFilterDate(item.from_date, "DD/MM/YYYY") }}
+            </template>
+
+            <template #item-to_date="{ item }">
+              {{ toFilterDate(item.to_date, "DD/MM/YYYY") }}
+            </template>
+
+            <template #item-odometer="{ item }">
+              {{ numberFilter(item.odometer) }}
+            </template>
+
+            <template #item-actions="{ item }" v-if="dataFormDialog">
+              <button
+                v-if="items[0].status == 'Driver Check' && isDriver"
+                @click="
+                  () => {
+                    formDialog = true
+                    isEditable = true
+                  }
+                "
+                class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6"
                 >
-                  {{ header.text }}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in items">
-                <td class="p-2" v-for="header in headers">
-                  {{ item[header.key] }}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+              </button>
+              <DriverFormDialog
+                v-if="formDialog"
+                :model-value="formDialog"
+                :data="dataFormDialog"
+                @update:model-value="formDialog = $event"
+                @success="fetchPoolRequest()"
+                :isEditable="isEditable"
+              />
+            </template>
+          </DataTable>
         </div>
       </div>
     </tableTop>

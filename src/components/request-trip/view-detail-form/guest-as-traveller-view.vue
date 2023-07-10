@@ -2,30 +2,14 @@
     import { ref, inject, onBeforeMount, watch } from 'vue'
     import Api from '@/utils/Api'
 
-    let travellerTypeData = ref()
-
-    const getTravellerType = async () => {
-            const token = JSON.parse(localStorage.getItem('token'))
-            Api.defaults.headers.common.Authorization = `Bearer ${token}`
-            const api = await Api.get('/travel_guest/get_type_traveller')
-            travellerTypeData.value = api.data.data
-            console.log('menarik berhasil')
-    }
-
-    onBeforeMount(() => {
-            getTravellerType()
-    })
-
-    watch(travellerTypeData, () => {
-        assignValue()
-    })
-
     const status = defineProps({
         isEditing: Boolean,
-        currentIndex: Number
+        currentIndex: Number,
+        typeOfSubmitData: String
     })
 
     const props = inject('travellerDataView')
+    const emits = defineEmits('fetchGuestTraveller', 'resetTypeOfSubmitData')
 
     let name = ref()
     let department = ref()
@@ -49,13 +33,36 @@
         maxHotelFare.value = props.value[status.currentIndex].hotel_fare
     }
 
+    const resetValue = () => {
+        name.value = ''
+        department.value = ''
+        sn.value = ''
+        company.value = ''
+        gender.value = ''
+        type.value = ''
+        contactNo.value = ''
+        maxHotelFare.value = ''
+    }
+
     watch(status, () => {
-        assignValue()
+        if (status.typeOfSubmitData === 'Edit') {
+            updateTravelGuest()
+        }
+        else if (status.typeOfSubmitData === 'Submit Add') {
+            addTravelGuest()
+        }
+        else if (status.typeOfSubmitData === 'Delete') {
+            deleteTravelGuest()
+        }
+        else if (status.typeOfSubmitData === 'Add') {
+            resetValue()
+        }
+        else {
+            assignValue()
+        }
     })
 
     watch(props, () => {
-        console.log('props berubah')
-        
         if(props.value[0].name_guest !== undefined) {
            name.value = props.value[0].name_guest
            department.value = props.value[0].departement
@@ -69,9 +76,7 @@
         } else {
         assignValue()
         }
-        
     })
-
 
     if(props.value[0].name_guest !== undefined) {
            name.value = props.value[0].name_guest
@@ -85,10 +90,34 @@
            maxHotelFare.value = props.value[0].hotel_fare
     }
 
-    const updateTravelGuest = async () => {
+    const addTravelGuest = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.post('/travel_guest/store', {
+        const api = await Api.post(`/travel_guest/store`, {
+            // nik: props.value[status.currentIndex].nik,
+            // notes: props.value[status.currentIndex].notes,
+            gender: gender.value,
+            company: company.value,
+            name_guest: name.value,
+            hotel_fare: maxHotelFare.value,
+            departement: department.value,
+            contact_no: contactNo.value,
+            id_type_traveller: type.value,
+            id_flight_class: props.value[status.currentIndex].id_flight_class,
+            id_request_trip: props.value[status.currentIndex].id_request_trip,
+            id_company: props.value[status.currentIndex].id_company,
+            id_employee: props.value[status.currentIndex].id_employee
+        })
+        console.log(api)
+        emits('fetchGuestTraveller')
+        emits('resetTypeOfSubmitData')
+    }
+
+    const updateTravelGuest = async () => {
+
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post(`/travel_guest/update_data/${props.value[status.currentIndex].id}`, {
             nik: props.value[status.currentIndex].nik,
             notes: props.value[status.currentIndex].notes,
             gender: gender.value,
@@ -99,9 +128,39 @@
             contact_no: contactNo.value,
             id_type_traveller: type.value,
             id_flight_class: props.value[status.currentIndex].id_flight_class,
-            id_request_trip: props.value[status.currentIndex].id_request_trip
+            id_request_trip: props.value[status.currentIndex].id_request_trip,
+            id_company: props.value[status.currentIndex].id_company,
+            id_employee: props.value[status.currentIndex].id_employee
         })
+        emits('fetchGuestTraveller')
+        emits('resetTypeOfSubmitData')
     }
+
+    const deleteTravelGuest = async() => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.delete(`/travel_guest/delete_data/${props.value[status.currentIndex].id}`)
+        console.log(api)
+        emits('fetchGuestTraveller')
+        emits('resetTypeOfSubmitData')
+    }
+
+    let travellerTypeData = ref()
+
+    watch(travellerTypeData, () => {
+        assignValue()
+    })
+
+    const getTravellerType = async () => {
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.get('/travel_guest/get_type_traveller')
+            travellerTypeData.value = api.data.data
+    }
+
+    onBeforeMount(() => {
+        getTravellerType()
+    })
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
@@ -112,8 +171,6 @@
 
 <template>
     <div>
-        
-        {{ props[status.currentIndex] }}
 
         <div :class="rowClass">
 
@@ -196,9 +253,9 @@
                     type="text"
                     placeholder="SN"
                     :class="inputStylingClass"
-                    required
                     disabled
-                />
+                    />
+                    <!-- required -->
 
             </div>
             </div>
@@ -241,11 +298,11 @@
                     </label>
 
                     <select :class="inputStylingClass" v-model="gender" :disabled="!status.isEditing">
-                        <option value="L" selected hidden disabled>
-                        Male
+                        <option value="L">
+                            Male
                         </option>
-                        <option value="P" selected hidden disabled>
-                        Female
+                        <option value="P">
+                            Female
                         </option>
                     </select>
 

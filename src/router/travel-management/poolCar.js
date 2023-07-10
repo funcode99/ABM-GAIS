@@ -37,7 +37,7 @@ const poolCarRoutes = [
         },
       },
       {
-        path: "request/:id",
+        path: "request/:requestNumber/:id",
         name: "PoolCarRequestDetail",
         component: () =>
           import("@/views/travel-management/pool-car/request/PoolCarView.vue"),

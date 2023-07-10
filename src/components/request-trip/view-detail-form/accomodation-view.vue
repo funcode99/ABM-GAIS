@@ -1,10 +1,13 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
 
-    const props = inject('accomodationDataView')
+
     const status = defineProps({
-      isEditing: Boolean
+      isEditing: Boolean,
+      currentIndex: Number
     })
+
+    const props = inject('accomodationDataView')
 
     let name = ref()
     let city = ref()
@@ -13,6 +16,35 @@
     let checkIn = ref()
     let sharingWith = ref()
     let checkOut = ref()
+
+    const assignValue = () => {
+      name.value = localStorage.getItem('username')
+      city.value = props.value[status.currentIndex].city_name
+      hotelName.value = props.value[status.currentIndex].hotel_name
+      type.value = props.value[status.currentIndex].type_accomodation
+      checkIn.value = props.value[status.currentIndex].check_in_date
+      sharingWith.value = props.value[status.currentIndex].sharing_w_name
+      checkOut.value = props.value[status.currentIndex].check_out_date
+
+    }
+
+    watch(status, () => {
+      assignValue()
+    })
+
+    watch(props, () => {
+      if(props.value[0].city_name !== undefined) {
+        name.value = localStorage.getItem('username')
+        city.value = props.value[0].city_name
+        hotelName.value = props.value[0].hotel_name
+        type.value = props.value[0].type_accomodation
+        checkIn.value = props.value[0].check_in_date
+        sharingWith.value = props.value[0].sharing_w_name
+        checkOut.value = props.value[0].check_out_date
+      } else {
+        assignValue()  
+      }
+    })
 
     if(props.value[0].city_name !== undefined) {
         
@@ -27,7 +59,6 @@
     }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
-    const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'

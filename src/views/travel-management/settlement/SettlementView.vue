@@ -76,7 +76,6 @@ const fetchDataById = async (id) => {
   generateType(dataArr.value.total_real, dataArr.value.total_ca);
   fetchDataItem(id);
   fetchHistoryApproval(id);
-
 };
 
 const fetchDataItem = async (id) => {
@@ -96,7 +95,7 @@ const edit = () => {
 const cancelHeader = () => {
   visibleHeader.value = false;
   editItem.value = false;
-  idEdit.value = ''
+  idEdit.value = "";
 };
 
 const editItems = (id) => {
@@ -384,7 +383,7 @@ const inputClass =
 
           <!-- TAB & TABLE-->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
-            <div class="grid grid-cols-10">
+            <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
                 @click="tabId = 1"
@@ -545,7 +544,9 @@ const inputClass =
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else-if="dataItem.length > 0 && dataArr.id_ca_type == '2'">
+                <tbody
+                  v-else-if="dataItem.length > 0 && dataArr.id_ca_type == '2'"
+                >
                   <tr v-for="(data, index) in dataItem" :key="data.id">
                     <td>
                       {{ data.item_name }}
@@ -631,14 +632,17 @@ const inputClass =
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else-if ="dataItem.length == 0">
+                <tbody v-else-if="dataItem.length == 0">
                   <tr>
                     <DataNotFound :cnt-col="4" />
                   </tr>
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval" />
+                <HistoryApproval
+                  :data-approval="dataApproval"
+                  :current-level="dataArr.current_level"
+                />
               </div>
             </div>
           </div>

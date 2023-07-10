@@ -9,9 +9,6 @@
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
-    import Airline1 from '@/assets/airlines-1.png'
-    import Airline2 from '@/assets/airlines-2.png'
-
     const props = defineProps({
         isOpen: Boolean        
     })
@@ -25,31 +22,6 @@
       {id: 6, title: 'Class'},
       {id: 7, title: 'Price'},
       {id: 8, title: 'Confirm'},
-    ]
-
-    const airlinesDummy = [
-      {
-        id: 1,
-        Airline: Airline1,
-        flightNo: 'QG-121',
-        Depart: 'Jakarta',
-        Arrival: 'Surabaya',
-        Stops: '2h 30m',
-        StopsMethod: 'Direct',
-        Class: 'Economy',
-        Price: '832.000'
-      },
-      {
-        id: 2,
-        Airline: Airline2,
-        flightNo: 'QG-121',
-        Depart: 'Jakarta',
-        Arrival: 'Surabaya',
-        Stops: '2h 30m',
-        StopsMethod: 'Direct',
-        Class: 'Economy',
-        Price: '832.000'
-      }
     ]
 
     const emits = defineEmits(['fetchAirlines', 'changeVisibility'])
