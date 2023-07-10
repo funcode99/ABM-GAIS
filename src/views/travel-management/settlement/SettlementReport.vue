@@ -253,7 +253,7 @@ const exportToExcel = () => {
                 </select>
               </div>
 
-              <div class="flex flex-col">
+              <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
