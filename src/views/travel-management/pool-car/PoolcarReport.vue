@@ -31,6 +31,11 @@ const date = ref();
 const dateStart = ref();
 const dateEnd = ref();
 
+let Company = ref([]);
+let Car = ref([]);
+let Departement = ref([]);
+let Status = ref([]);
+
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
@@ -88,18 +93,19 @@ const fetchPoolCarReport = async (id) => {
   }
 
   const params = {
-    ca_type: selectedCartype.value,
     start_date: dateStart.value,
     end_date: dateEnd.value,
     status: selectedStatus.value,
     search: search.value,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
+    id_company: selectedCompany.value,
+    id_departement: selectedDepartement.value,
+    type_car: selectedCartype.value,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/pool_car/report", { params });
-  console.log(res.data.data.data);
   instanceArray = res.data.data;
   sortedData.value = instanceArray.data;
   totalPage.value = instanceArray.last_page;
@@ -108,9 +114,40 @@ const fetchPoolCarReport = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
+const fetchCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+};
+
+const fetchCar = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/car/get_type");
+  Car.value = res.data.data;
+};
+
+const fetchDepartement = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get_departement/${id_company}`);
+  Departement.value = res.data.data;
+};
+
+const fetchStatus = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/pool_car/status");
+  Status.value = res.data.data;
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchPoolCarReport();
+  fetchCompany();
+  fetchCar();
+  fetchStatus();
 });
 
 const format_date = (value) => {
@@ -120,7 +157,9 @@ const format_date = (value) => {
 };
 
 const resetData = () => {
-  selectedCartype.value = "";
+  (selectedCompany.value = ""),
+    (selectedDepartement.value = ""),
+    (selectedCartype.value = "");
   selectedStatus.value = "";
   dateStart.value = "";
   dateEnd.value = "";
@@ -241,10 +280,12 @@ const exportToExcel = () => {
                 <select
                   class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCompany"
+                  @change="fetchDepartement(selectedCompany)"
                 >
                   <option disabled selected>Company</option>
-                  <option>Company A</option>
-                  <option>Company B</option>
+                  <option v-for="data in Company" :value="data.id">
+                    {{ data.company_name }}
+                  </option>
                 </select>
               </div>
 
@@ -259,8 +300,9 @@ const exportToExcel = () => {
                   v-model="selectedDepartement"
                 >
                   <option disabled selected>Departement</option>
-                  <option>Departement A</option>
-                  <option>Departement B</option>
+                  <option v-for="data in Departement" :value="data.id">
+                    {{ data.departement_name }}
+                  </option>
                 </select>
               </div>
 
@@ -275,8 +317,9 @@ const exportToExcel = () => {
                   v-model="selectedCartype"
                 >
                   <option disabled selected>Type</option>
-                  <option>Car A</option>
-                  <option>Car B</option>
+                  <option v-for="data in Car" :value="data.id">
+                    {{ data.type_car }}
+                  </option>
                 </select>
               </div>
 
@@ -305,10 +348,9 @@ const exportToExcel = () => {
                   v-model="selectedStatus"
                 >
                   <option disabled selected>Status</option>
-                  <option value="0">Waiting Car & Driver</option>
-                  <option value="1">Driver Check</option>
-                  <option value="2">Ready</option>
-                  <option value="3">Done</option>
+                  <option v-for="data in Status" :value="data.code">
+                    {{ data.status }}
+                  </option>
                 </select>
               </div>
 
