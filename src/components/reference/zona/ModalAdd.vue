@@ -1,38 +1,41 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
 
-import { ref, watch } from "vue"
-import { Modal } from "usemodal-vue3"
+import icondanger from "@/assets/icon-danger-circle.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
 
-import Swal from "sweetalert2"
-import Api from "@/utils/Api"
+import { ref, watch } from "vue";
+import { Modal } from "usemodal-vue3";
 
-import Multiselect from "@vueform/multiselect"
+import Swal from "sweetalert2";
+import Api from "@/utils/Api";
 
-import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
-const referenceFetch = useReferenceFetchResult()
+import Multiselect from "@vueform/multiselect";
 
-const emits = defineEmits(["unlockScrollbar", "zona-saved"])
+import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
+const referenceFetch = useReferenceFetchResult();
 
-let zonaName = ref("")
-let isVisible = ref(false)
-let modalPaddingHeight = "25vh"
-let isAdding = ref(false)
-let selectedZona = ref("Zona")
-let Zona = ref("")
+const emits = defineEmits(["unlockScrollbar", "zona-saved"]);
 
-let companyData = ref(null)
-let companyIdArray = ref(null)
-let cityData = ref(null)
-let cityIdArray = ref(null)
-let addZonaId = ref([])
+let zonaName = ref("");
+let isVisible = ref(false);
+let modalPaddingHeight = "25vh";
+let isAdding = ref(false);
+let selectedZona = ref("Zona");
+let Zona = ref("");
+
+let companyData = ref(null);
+let companyIdArray = ref(null);
+let cityData = ref(null);
+let cityIdArray = ref(null);
+let addZonaId = ref([]);
 
 const saveZona = async () => {
   isAdding.value = true;
   isVisible.value = !isVisible.value;
   setTimeout(callAddApi, 500);
-}
+};
 
 const callAddApi = async () => {
   try {
@@ -55,8 +58,24 @@ const callAddApi = async () => {
     emits("zona-saved");
   } catch (error) {
     console.log(error);
+
+    let errorMessage = error.response.data;
+
+    if (error.response && error.response.data && error.response.data.message) {
+      errorMessage = error.response.data.error;
+    }
+
+    Swal.fire({
+      position: "center",
+      iconHtml: `<img src="${icondanger}" />`,
+      closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+      title: "Error",
+      text: errorMessage,
+      showConfirmButton: false,
+      showCloseButton: true,
+    });
   }
-}
+};
 
 const resetInput = () => {
   selectedZona.value = "Zona";
@@ -66,25 +85,23 @@ const resetInput = () => {
 
 watch(isVisible, () => {
   if (isAdding.value == true) {
-    isAdding.value = false
+    isAdding.value = false;
   } else {
-    resetInput()
+    resetInput();
   }
 
-  companyData.value = referenceFetch.fetchCompanyResult
+  companyData.value = referenceFetch.fetchCompanyResult;
   companyData.value.map((item) => {
-    item.value = item.id
-  })
+    item.value = item.id;
+  });
 
-  cityData.value = referenceFetch.fetchCityResult
+  cityData.value = referenceFetch.fetchCityResult;
   cityData.value.map((item) => {
-    item.value = item.id
-  })
+    item.value = item.id;
+  });
 
-  Zona.value = referenceFetch.fetchZonaIdResult
-
-})
-
+  Zona.value = referenceFetch.fetchZonaIdResult;
+});
 </script>
 
 <template>
