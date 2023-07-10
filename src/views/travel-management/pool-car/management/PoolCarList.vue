@@ -221,7 +221,7 @@ onMounted(async () => {
           <!-- FILTER -->
           <div class="flex gap-4 flex-wrap flex-1">
             <button
-              @click="tableKey++"
+              @click="dataTableRef.getData()"
               class="h-[45px] btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
               <span>
