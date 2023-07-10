@@ -2,8 +2,9 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/departement/ModalAdd.vue";
-import ModalEdit from "@/components/reference/departement/ModalEdit.vue";
+// import ModalAdd from "@/components/reference/departement/ModalAdd.vue";
+// import ModalEdit from "@/components/reference/departement/ModalEdit.vue";
+import ModalView from "@/components/reference/departement/ModalView.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
@@ -325,7 +326,7 @@ watch(addGLAccountData, () => {
               >
                 Delete
               </button>
-              <ModalAdd @departement-saved="fetchDepartement" />
+              <!-- <ModalAdd @departement-saved="fetchDepartement" /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
@@ -481,11 +482,21 @@ watch(addGLAccountData, () => {
                     {{ data.departement_name }}
                   </span>
                 </td>
-                <!-- <td style="width: 10%">{{ data.cost_center }}</td> -->
                 <td style="width: 10%">{{ data.status_name }}</td>
                 <td style="width: 20%">{{ data.departement_head_name }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit
+                  <ModalView
+                    :formContent="[
+                      data.id_company,
+                      data.departement_code,
+                      data.departement_name,
+                      data.profit_center,
+                      data.id_gl_account,
+                      data.is_active,
+                      data.departement_head,
+                    ]"
+                  />
+                  <!-- <ModalEdit
                     @change-departement="editDepartement(data.id)"
                     :formContent="[
                       data.id_company,
@@ -500,7 +511,7 @@ watch(addGLAccountData, () => {
                   />
                   <button @click="deleteDepartement(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
+                  </button> -->
                 </td>
               </tr>
             </tbody>
