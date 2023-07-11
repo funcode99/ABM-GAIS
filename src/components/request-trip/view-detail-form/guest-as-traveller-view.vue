@@ -372,7 +372,7 @@
                 </label>
                 <input
                     type="text" 
-                    placeholder="Notes" 
+                    placeholder="Notes"
                     :class="inputStylingClass" 
                     v-model="maxHotelFare"
                     :disabled="!status.isEditing" 

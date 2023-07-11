@@ -279,7 +279,7 @@ onMounted(async () => {
     <modalFooter
       @closeEdit="dialog = false"
       class="py-3"
-      :noSaveBtn="data.status != 'Driver Check'"
+      :noSaveBtn="data.status == 'Driver Check'"
     />
   </Modal>
 </template>

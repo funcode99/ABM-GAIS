@@ -5,9 +5,10 @@
     const props = inject('cashAdvanceDataView')
     const status = defineProps({
       isEditing: Boolean,
-      currentIndex: Number,
-      currentDetailIndex: Number
+      currentIndex: Number
     })
+
+    let currentDetailIndex = ref(1)
 
     let name = localStorage.getItem('username')
     let grandTotal = ref()
@@ -21,7 +22,7 @@
     let remarks = ref()
 
     let caId = ref()
-    let caDetailData = ref([])
+    let caDetailData = ref([{}])
     let currentAPIfetchData = ref()
 
     onBeforeMount(() => {
@@ -51,26 +52,27 @@
     })
 
     const assignValue = () => {
-        
+        // CA Travel Header
         grandTotal.value = props.value[status.currentIndex].grand_total
         // notes.value = caDetailData.value[status.currentIndex]
 
-        item.value = caDetailData.value[status.currentIndex].item_name
-        nominal.value = caDetailData.value[status.currentIndex].nominal
-        frequency.value = caDetailData.value[status.currentIndex].frequency
-        total.value = caDetailData.value[status.currentIndex].total
-        currency.value = caDetailData.value[status.currentIndex].currency_name
-        remarks.value = caDetailData.value[status.currentIndex].remarks
+        // CA Detail by CA ID (CA ID nya berubah)
         caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
     }
 
-    const assignDetailValue = () => {
-
+    const assignDetailValue = (ItemNumber) => {
+        // ini untuk ganti CA Detail dengan CA ID yang sama
+        // console.log(caDetailData.value)
+        item.value = caDetailData.value[ItemNumber-1].nama_item
+        nominal.value = caDetailData.value[ItemNumber-1].nominal
+        frequency.value = caDetailData.value[ItemNumber-1].frequency
+        total.value = caDetailData.value[ItemNumber-1].total
+        currency.value = caDetailData.value[ItemNumber-1].currency_name
+        remarks.value = caDetailData.value[ItemNumber-1].remarks
     }
 
     watch(status, () => {
       assignValue()
-      assignDetailValue()
     })
 
     watch(props, () => {
@@ -84,13 +86,12 @@
 
     watch(caDetailData, () => {
       if(caDetailData.value[0].nominal !== undefined) {
-        item.value = caDetailData.value[0].item_name
+        item.value = caDetailData.value[0].nama_item
         nominal.value = caDetailData.value[0].nominal
         frequency.value = caDetailData.value[0].frequency
         total.value = caDetailData.value[0].total
         currency.value = caDetailData.value[0].currency_name
         remarks.value = caDetailData.value[0].remarks
-        // caId.value = currentAPIfetchData.value.data.data[0].id
       } else {
         assignValue()
       }
@@ -173,7 +174,28 @@
   
         <div class="mx-4">
 
-          <h1 class="font-medium">Details Item</h1>
+          <div class="flex items-center gap-10">
+            <h1 class="font-medium">Details Item</h1>
+
+            <div class="flex gap-4 ml-8 mb-2">
+              <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                Showing {{ currentDetailIndex }} 
+                of {{ caDetailData.length }} entries
+              </p>
+  
+              <vue-awesome-paginate
+                :total-items="caDetailData.length"
+                :items-per-page="1"
+                :on-click="assignDetailValue"
+                v-model="currentDetailIndex"
+                :max-pages-shown="3"
+                :show-breakpoint-buttons="false"
+                :show-jump-buttons="true"
+              />
+            </div>
+            
+
+          </div>
 
           <!-- <div>
             {{ caDetailData }}

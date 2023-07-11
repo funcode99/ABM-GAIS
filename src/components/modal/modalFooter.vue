@@ -1,12 +1,13 @@
 <script setup>
 const emits = defineEmits(["closeEdit"])
 
-defineProps({
+const props = defineProps({
   noSaveBtn: {
     type: Boolean,
-    default: false,
+    default: true,
   },
 })
+
 </script>
 
 <template>
@@ -28,6 +29,7 @@ defineProps({
       >
         Save
       </button>
+      
     </div>
   </div>
 </template>

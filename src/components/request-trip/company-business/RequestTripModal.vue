@@ -186,7 +186,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-        if(requestType[1] == 'Site Visit') {
+        if(requestType.value[1] == 'Site Visit') {
+
           const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
             id_zona: zona.value,
             id_city_to: toCity.value,
@@ -202,11 +203,67 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             file: siteVisitAttachmentFile.value,
             no_request_trip: '',
           })
+
+          console.log(api)
+          console.log('membuat request trip site visit dengan id yang sudah ada')
+
         } 
         
-        else if (requestType[1] == 'Field Break')
-        {
+        else if (requestType.value[1] == 'Field Break') {
+          
           const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            file: siteVisitAttachmentFile.value,
+            no_request_trip: '',
+            id_site: localStorage.getItem('id_site')
+          })
+
+          console.log(api)
+          console.log('membuat request trip field break dengan id yang sudah ada')
+
+        }
+        
+        else {
+
+          const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            no_request_trip: '',
+            id_site: localStorage.getItem('id_site')
+          })
+
+          console.log(api)
+          console.log('membuat request trip dengan id yang sudah ada')
+
+        }
+
+        formStep.value++
+        resetProgressData()
+
+      }
+
+      else {
+        
+        if(requestType.value[1] == 'Site Visit') {
+
+          const api = await Api.post('/request_trip/store', {
             id_zona: zona.value,
             id_city_to: toCity.value,
             id_employee: requestor.value,
@@ -221,10 +278,16 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             file: siteVisitAttachmentFile.value,
             no_request_trip: '',
           })
+
+          console.log(api)
+          console.log('membuat request trip site visit dengan id baru')
+          localStorage.setItem('tripId', api.data.data.id)
+
         }
-        
-        else {  
-          const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
+
+        else if (requestType.value[1] == 'Field Break') {
+
+          const api = await Api.post('/request_trip/store', {
             id_zona: zona.value,
             id_city_to: toCity.value,
             id_employee: requestor.value,
@@ -235,14 +298,19 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             date_arrival: returnDate.value,
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
+            file: siteVisitAttachmentFile.value,
             no_request_trip: '',
-            id_site: locationId.value,
+            id_site: localStorage.getItem('id_site')
           })
+
+          console.log(api)
+          console.log('membuat request trip field break dengan id baru')
+          localStorage.setItem('tripId', api.data.data.id)
+
         }
-          formStep.value++
-          resetProgressData()
-      }
-      else {
+
+        else {
+
           const api = await Api.post('/request_trip/store', {
             id_zona: zona.value,
             id_city_to: toCity.value,
@@ -255,11 +323,18 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
             no_request_trip: '',
-            id_site: locationId.value,
+            id_site: localStorage.getItem('id_site')
           })
+
+          console.log(api)
+          console.log('membuat request trip dengan id baru')
           localStorage.setItem('tripId', api.data.data.id)
-          formStep.value++
-          resetProgressData()
+
+        }
+
+        formStep.value++
+        resetProgressData()
+
       }
 
     }
@@ -697,9 +772,18 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
                 </div>
 
-                <div v-if="requestType[1] == 'Site Visit'" :class="columnClass + ' mx-4 my-3'">
+                <div v-if="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break' " :class="columnClass + ' mx-4 my-3'">
+                  
                   <label for="attachment">File Attachment<span class="text-[#f5333f]">*</span></label>
-                  <input type="file" id="attachment" @change="updateFile" :class="inputStylingWithoutWidthClass" />
+                  
+                  <input 
+                    type="file" 
+                    id="attachment" 
+                    @change="updateFile" 
+                    :class="inputStylingWithoutWidthClass" 
+                    required 
+                  />
+
                 </div>
 
                 <h1 class="mx-4 mt-6">Itinerary</h1>
