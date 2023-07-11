@@ -1,37 +1,37 @@
 <script setup>
-import Swal from "sweetalert2"
-import { computed, ref, onMounted, watch } from "vue"
-import { Modal } from "usemodal-vue3"
-import { useRoute } from "vue-router"
+import Swal from "sweetalert2";
+import { computed, ref, onMounted, watch } from "vue";
+import { Modal } from "usemodal-vue3";
+import { useRoute } from "vue-router";
 
-import Multiselect from "@vueform/multiselect"
+import Multiselect from "@vueform/multiselect";
 
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
-import FieldTitle from "@/components/atomics/FieldTitle.vue"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
+import FieldTitle from "@/components/atomics/FieldTitle.vue";
 
-import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
+import CurrencyInput from "@/components/atomics/CurrencyInput.vue";
 
 import {
   fetchDriverCarCheckupByRequesId,
   saveCarInspection,
-} from "@/utils/Api/travel-management/poolCar"
+} from "@/utils/Api/travel-management/poolCar";
 
 import {
   fetchCarType,
   fethDrivers,
   saveCarData,
-} from "@/utils/Api/travel-management/poolCar.js"
+} from "@/utils/Api/travel-management/poolCar.js";
 
-const emits = defineEmits(["update:modelValue"])
+const emits = defineEmits(["update:modelValue", "success"]);
 
-const route = useRoute()
+const route = useRoute();
 
 const props = defineProps({
   modelValue: false,
   data: Object,
   isEditable: Boolean,
-})
+});
 
 const form = ref({
   driver: null,
@@ -47,21 +47,21 @@ const form = ref({
   //     value: 1,
   //   },
   // ],
-})
+});
 
-const checkupList = ref([])
-const dataExisting = ref({})
-const userRole = localStorage.getItem("id_role")
+const checkupList = ref([]);
+const dataExisting = ref({});
+const userRole = localStorage.getItem("id_role");
 
 const isDriver = computed(() => {
-  return userRole == "DRVR"
-})
+  return userRole == "DRVR";
+});
 
 const references = ref({
   company: [],
 
   driver: [],
-})
+});
 
 watch(
   () => checkupList.value,
@@ -69,21 +69,21 @@ watch(
     checkupList.value
       .filter(({ detail_name }) => detail_name)
       .forEach(({ id_detail, value }) => {
-        form.value.data[id_detail] = value
-      })
+        form.value.data[id_detail] = value;
+      });
   }
-)
+);
 
 const getFormData = async () => {
-  const requestId = route.params.id
+  const requestId = route.params.id;
 
-  const res = await fetchDriverCarCheckupByRequesId(requestId)
+  const res = await fetchDriverCarCheckupByRequesId(requestId);
 
-  checkupList.value = res.data.data
-  dataExisting.value = res.data.data_existing
+  checkupList.value = res.data.data;
+  dataExisting.value = res.data.data_existing;
 
-  form.value = { ...form.value, ...dataExisting.value }
-}
+  form.value = { ...form.value, ...dataExisting.value };
+};
 
 const saveForm = async () => {
   const body = {
@@ -92,16 +92,16 @@ const saveForm = async () => {
     is_usable: form.value.is_usable,
     notes: form.value.notes,
     data: Object.entries(form.value.data).map((item) => {
-      return { id_detail_check: item[0], value: item[1] }
+      return { id_detail_check: item[0], value: item[1] };
     }),
 
     // {
     //     id_detail_check: 1,
     //     value: 1,
     //   },
-  }
+  };
 
-  const res = await saveCarInspection(body)
+  const res = await saveCarInspection(body);
 
   if (res.data.success) {
     Swal.fire({
@@ -110,18 +110,18 @@ const saveForm = async () => {
       title: "Success to Save Car Inspection",
       showConfirmButton: false,
       timer: 1500,
-    })
+    });
 
-    emits("update:modelValue", false)
+    emits("update:modelValue", false);
+
+    emits("success");
   }
-
-  console.log(res)
-}
+};
 
 onMounted(async () => {
-  references.value.driver = await fethDrivers()
-  await getFormData()
-})
+  references.value.driver = await fethDrivers();
+  await getFormData();
+});
 </script>
 
 <template>
@@ -296,9 +296,9 @@ onMounted(async () => {
           </table>
         </div>
         <modalFooter
+          v-if="isEditable"
           @closeEdit="emits('update:modelValue', false)"
           class="py-3"
-          :noSaveBtn="!isEditable"
         />
       </form>
     </main>

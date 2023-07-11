@@ -1,30 +1,31 @@
 <script setup>
-import { useCurrencyInput } from "vue-currency-input"
+import { useCurrencyInput } from "vue-currency-input";
 
 const props = defineProps({
   modelValue: Number, // Vue 2: value
   options: {
     type: Object,
     default: () => {
-      return {
-        currency: undefined,
-        locale: undefined,
-        hidden: false,
-        symbol: null,
-        narrowSymbol: true,
-        currency: "EUR",
-        hideGroupingSeparatorOnFocus: false,
-        hideCurrencySymbolOnFocus: false,
-        hideNegligibleDecimalDigitsOnFocus: true,
-        currencyDisplay: "hidden",
-        hideGroupingSeparatorOnFocus: false,
-        precision: 0,
-      }
+      return {};
     },
   },
-})
+});
 
-const { inputRef } = useCurrencyInput(props.options)
+const defaultOptions = {
+  currency: undefined,
+  locale: undefined,
+  hidden: false,
+  symbol: null,
+  narrowSymbol: true,
+  currency: "EUR",
+  hideGroupingSeparatorOnFocus: false,
+  hideCurrencySymbolOnFocus: false,
+  hideNegligibleDecimalDigitsOnFocus: true,
+  currencyDisplay: "hidden",
+  hideGroupingSeparatorOnFocus: false,
+};
+
+const { inputRef } = useCurrencyInput({ ...props.options, ...defaultOptions });
 </script>
 
 <template>
