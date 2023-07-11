@@ -207,6 +207,15 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 };
+
+const clearSearch = () => {
+  search.value = "";
+  fetchPoolCarReport();
+};
+
+const showClearButton = computed(() => {
+  return search.value !== "";
+});
 </script>
 
 <template>
@@ -231,35 +240,35 @@ const exportToExcel = () => {
 
           <!-- SORT, DATE & SEARCH -->
           <div class="flex items-center mx-4">
-            <label for="simple-search" class="sr-only">Search</label>
-            <div class="relative w-full">
-              <div
-                class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+            <input
+              class="nosubmit placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              type="text"
+              placeholder="Search..."
+              v-model="search"
+            />
+
+            <button
+              v-if="showClearButton"
+              @click="clearSearch"
+              type="button"
+              class="cursor-pointer absolute right-40"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                class="h-4 w-4"
               >
-                <svg
-                  aria-hidden="true"
-                  class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </div>
-              <input
-                type="text"
-                id="simple-search"
-                class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Search"
-                required
-                v-model="search"
-                @keyup="fetchPoolCarReport()"
-              />
-            </div>
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+
             <button
               @click="fetchPoolCarReport()"
               type="submit"
@@ -278,7 +287,7 @@ const exportToExcel = () => {
                   Company
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCompany"
                   @change="fetchDepartement(selectedCompany)"
                 >
@@ -296,7 +305,7 @@ const exportToExcel = () => {
                   Departement
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedDepartement"
                 >
                   <option disabled selected>Departement</option>
@@ -313,7 +322,7 @@ const exportToExcel = () => {
                   Car
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCartype"
                 >
                   <option disabled selected>Type</option>
@@ -344,7 +353,7 @@ const exportToExcel = () => {
                   Status
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedStatus"
                 >
                   <option disabled selected>Status</option>
@@ -354,7 +363,7 @@ const exportToExcel = () => {
                 </select>
               </div>
 
-              <div class="flex gap-4 items-center pt-7">
+              <div class="flex gap-2 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   @click="fetchPoolCarReport()"
@@ -573,5 +582,11 @@ tr th {
 
 .my-date {
   width: 200px !important;
+}
+
+input.nosubmit {
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat 13px center;
 }
 </style>
