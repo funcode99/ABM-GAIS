@@ -1,4 +1,6 @@
 <script setup>
+import Swal from "sweetalert2";
+
 import { computed, onMounted, ref } from "vue";
 
 import { useRoute } from "vue-router";
@@ -101,11 +103,11 @@ const doneRequestTrip = async () => {
   const requestId = route.params.id;
   const res = setPoolRequestStatus(requestId);
 
-  if (res.data.success == "success") {
+  if (res.data.success) {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Succeess to Delete Car Data",
+      title: "Succeess to Update Car Request Status",
       showConfirmButton: false,
       timer: 1500,
     });
