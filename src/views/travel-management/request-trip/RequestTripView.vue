@@ -62,12 +62,16 @@
     provide('accomodationDataView', accomodationData)
     provide('cashAdvanceDataView', cashAdvanceData)
 
+    let purposeOfTripName = ref('')
+
     const getPurposeOfTrip = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         let api = await Api.get(`/request_trip/get/${localStorage.getItem('tripIdView')}`)      
         purposeOfTripData.value = api.data.data
+        file.value = purposeOfTripData.value[currentIndex].file
+        purposeOfTripName.value = purposeOfTripData.value[currentIndex].document_name
       } catch (error) {
         console.log(error)
         purposeOfTripData.value = [{}]
@@ -296,13 +300,15 @@
 
                     </div>
 
+                    {{ purposeOfTripData }}
+
                     <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
 
                         <div class="flex flex-col gap-2">
                                 <span>Date Created <span class="text-[#f5333f]">*</span></span>
                                 <input 
                                   type="text" 
-                                  disabled 
+                                  disabled
                                   :value="purposeOfTripData[currentIndex].created_at" 
                                   class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
                                 />
@@ -311,7 +317,7 @@
                         <div class="flex flex-col gap-2">
                               <span>File Attachment <span class="text-[#f5333f]">*</span></span>
                               <input 
-                                type="text" 
+                                type="file"
                                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
                                 :disabled="!isEditing" 
                               />
@@ -363,7 +369,21 @@
                         <!-- step circle -->
                         <div>
 
-                            <div class="py-12 px-4">
+                            <div class="py-12 px-4" v-if="purposeOfTripName === 'Field Break'">
+                                <multiStepCircleVertical number="1" title="Traveller" 
+                                @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
+                                <multiStepCircleVertical number="2" title="Airlines" 
+                                @change-header="changeSelected('Airlines')" :selectedTitle="headerTitle" />
+                                <multiStepCircleVertical number="3" title="Other Transportation" @change-header="changeSelected('Other Transportation')" :selectedTitle="headerTitle" limit="3"  />
+                            </div>
+
+                            <div class="py-12 px-4" v-else-if="purposeOfTripName === 'Taxi Voucher'">
+                              <multiStepCircleVertical number="1" title="Traveller" 
+                                @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
+                                <multiStepCircleVertical number="2" title="Taxi Voucher" @change-header="changeSelected('Taxi Voucher')" :selectedTitle="headerTitle" limit="2"  />
+                            </div>
+
+                            <div class="py-12 px-4" v-else>
                                 <multiStepCircleVertical number="1" title="Traveller" 
                                 @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
                                 <multiStepCircleVertical number="2" title="Airlines" 
@@ -395,20 +415,20 @@
 
                             <div class="flex flex-wrap gap-4 justify-center lg:justify-between items-center mx-4 py-2">
 
-                            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                              Showing {{ showingValue }} 
-                              of {{ currentSelectedData.length }} entries
-                            </p>
+                              <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                                Showing {{ showingValue }} 
+                                of {{ currentSelectedData.length }} entries
+                              </p>
 
-                            <vue-awesome-paginate
-                              :total-items="currentSelectedData.length"
-                              :items-per-page="1"
-                              :on-click="onChangePage"
-                              v-model="showingValue"
-                              :max-pages-shown="3"
-                              :show-breakpoint-buttons="false"
-                              :show-jump-buttons="true"
-                            />
+                              <vue-awesome-paginate
+                                :total-items="currentSelectedData.length"
+                                :items-per-page="1"
+                                :on-click="onChangePage"
+                                v-model="showingValue"
+                                :max-pages-shown="3"
+                                :show-breakpoint-buttons="false"
+                                :show-jump-buttons="true"
+                              />
 
                             </div>
 

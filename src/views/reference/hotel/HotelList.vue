@@ -80,9 +80,9 @@ const onChangePage = (pageOfItem) => {
 
 const filterDataByHotelType = () => {
   if (selectedHotel.value === "Type") {
-    sortedData.value = instanceArray;
+    sortedData.value = instanceArray.value;
   } else {
-    sortedData.value = instanceArray.filter(
+    sortedData.value = instanceArray.value.filter(
       (item) => item.id_type_hotel === selectedHotel.value
     );
   }
@@ -172,7 +172,7 @@ const callEditApi = async () => {
 };
 
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
+  sortedData.value = instanceArray.value;
   const filteredR = sortedData.value.filter((item) => {
     (item.hotel_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
@@ -291,7 +291,7 @@ const fetchHotel = () => {
 };
 
 watch(baitArray, () => {
-  instanceArray = baitArray.value;
+  instanceArray.value = baitArray.value;
 });
 </script>
 
