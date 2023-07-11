@@ -80,9 +80,9 @@ const onChangePage = (pageOfItem) => {
 
 const filterDataByHotelType = () => {
   if (selectedHotel.value === "Type") {
-    sortedData.value = instanceArray;
+    sortedData.value = instanceArray.value;
   } else {
-    sortedData.value = instanceArray.filter(
+    sortedData.value = instanceArray.value.filter(
       (item) => item.id_type_hotel === selectedHotel.value
     );
   }
@@ -291,7 +291,7 @@ const fetchHotel = () => {
 };
 
 watch(baitArray, () => {
-  instanceArray = baitArray.value;
+  instanceArray.value = baitArray.value;
 });
 </script>
 
