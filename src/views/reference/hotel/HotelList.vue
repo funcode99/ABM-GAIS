@@ -172,7 +172,7 @@ const callEditApi = async () => {
 };
 
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
+  sortedData.value = instanceArray.value;
   const filteredR = sortedData.value.filter((item) => {
     (item.hotel_name.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.city_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
