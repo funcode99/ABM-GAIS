@@ -85,14 +85,15 @@ const fetchPoolCarStatus = async (params) => {
 
 const saveCarData = async (body) => {
   try {
-    let res
-    if (body.id) {
-      res = await Api.post(`${CAR_ENDPOINT}/store`, body)
-    } else {
-      res = await Api.post(`${CAR_ENDPOINT}/update_data`, body)
-    }
+    return await Api.post(`${CAR_ENDPOINT}/store`, body)
+  } catch (error) {
+    console.error(error)
+  }
+}
 
-    return res
+const updateCarData = async (body) => {
+  try {
+    return await Api.post(`${CAR_ENDPOINT}/update_data`, body)
   } catch (error) {
     console.error(error)
   }
@@ -173,4 +174,5 @@ export {
   saveCarInspection,
   setPoolRequestStatus,
   fetchPoolCarStatus,
+  updateCarData,
 }

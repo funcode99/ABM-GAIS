@@ -719,7 +719,7 @@ const router = createRouter({
       name: "Pool Car Reports",
       component: PoolcarReport,
       meta: {
-        title: "Settlement Report",
+        title: "Pool Car Reports",
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem("token")

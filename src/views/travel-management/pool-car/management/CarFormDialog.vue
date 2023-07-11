@@ -14,6 +14,7 @@ import {
   fetchCarType,
   fethDrivers,
   saveCarData,
+  updateCarData,
 } from "@/utils/Api/travel-management/poolCar.js"
 import fetchCompanyRefs from "@/utils/Fetch/Reference/fetchCompany"
 import fetchSiteRefs from "@/utils/Fetch/Reference/fetchSite"
@@ -44,7 +45,6 @@ const form = ref({})
 
 const setForm = () => {
   form.value = {
-    id: null,
     car_name: null,
     id_company: null,
     id_site: null,
@@ -60,6 +60,8 @@ const setForm = () => {
 
 const saveCar = async () => {
   try {
+    let res
+
     const body = { ...form.value }
 
     var form_data = new FormData()
@@ -68,7 +70,11 @@ const saveCar = async () => {
       form_data.append(key, body[key])
     }
 
-    const res = await saveCarData(form_data)
+    if (body.id) {
+      res = await updateCarData(form_data)
+    } else {
+      res = await saveCarData(form_data)
+    }
 
     if (res.data.success) {
       dialog.value = false
@@ -120,167 +126,160 @@ onMounted(async () => {
       :title="data.id ? 'Update Car' : 'New Car'"
     />
     <main class="overflow-y-scroll">
-      <form @submit.prevent="saveCar" disabled>
-        <fieldset :disabled="data.status != 'Driver Check'">
-          <div class="p-5 grid gap-3 h-auto">
-            <div>
-              <FieldTitle label="Company" mandatory />
+      <form @submit.prevent="saveCar()">
+        <div class="p-5 grid gap-3 h-auto">
+          <div>
+            <FieldTitle label="Company" mandatory />
 
-              <Multiselect
-                v-model="form.id_company"
-                mode="single"
-                placeholder="Select Company"
-                :options="references.company"
-                track-by="company_code"
-                label="company_name"
-                valueProp="id"
-                required
-                clear
-                searchable
-              >
-              </Multiselect>
-            </div>
+            <Multiselect
+              v-model="form.id_company"
+              mode="single"
+              placeholder="Select Company"
+              :options="references.company"
+              track-by="company_code"
+              label="company_name"
+              valueProp="id"
+              required
+              clear
+              searchable
+            >
+            </Multiselect>
+          </div>
 
-            <div>
-              <FieldTitle label="Site" mandatory />
+          <div>
+            <FieldTitle label="Site" mandatory />
 
-              <Multiselect
-                v-model="form.id_site"
-                mode="single"
-                placeholder="Select Site"
-                :options="references.site"
-                track-by="site_code"
-                label="site_name"
-                valueProp="id"
-                required
-                clear
-                searchable
-              >
-              </Multiselect>
-            </div>
+            <Multiselect
+              v-model="form.id_site"
+              mode="single"
+              placeholder="Select Site"
+              :options="references.site"
+              track-by="site_code"
+              label="site_name"
+              valueProp="id"
+              required
+              clear
+              searchable
+            >
+            </Multiselect>
+          </div>
 
-            <div>
-              <FieldTitle label="Car Name" mandatory />
+          <div>
+            <FieldTitle label="Car Name" mandatory />
 
-              <input
-                class="v-text-field"
-                v-model="form.car_name"
-                type="text"
-                placeholder="Input Car Name"
-                required
-              />
-            </div>
+            <input
+              class="v-text-field"
+              v-model="form.car_name"
+              type="text"
+              placeholder="Input Car Name"
+              required
+            />
+          </div>
 
-            <div>
-              <FieldTitle label="Plate" mandatory />
+          <div>
+            <FieldTitle label="Plate" mandatory />
 
-              <input
-                class="v-text-field"
-                v-model="form.plate"
-                type="text"
-                placeholder="Input Plate"
-                required
-              />
-            </div>
+            <input
+              class="v-text-field"
+              v-model="form.plate"
+              type="text"
+              placeholder="Input Plate"
+              required
+            />
+          </div>
 
-            <div>
-              <FieldTitle label="Odometer" mandatory />
+          <div>
+            <FieldTitle label="Odometer" mandatory />
 
-              <!-- <input
+            <!-- <input
               v-model="form.odometer"
               type="number"
               placeholder="Input Odometer"
               required
             /> -->
 
-              <CurrencyInput
-                class="v-text-field"
-                v-model="form.odometer"
-                placeholder="Input Odometer"
-              />
+            <CurrencyInput
+              class="v-text-field"
+              v-model="form.odometer"
+              placeholder="Input Odometer"
+            />
+          </div>
+
+          <div class="flex gap-5">
+            <div class="flex-1">
+              <FieldTitle label="Car Type" mandatory />
+
+              <Multiselect
+                v-model="form.id_car_type"
+                mode="single"
+                placeholder="Select Car Type"
+                :options="references.carType"
+                track-by="type_car"
+                label="type_car"
+                valueProp="id"
+                required
+                clear
+                searchable
+              >
+              </Multiselect>
             </div>
 
-            <div class="flex gap-5">
-              <div class="flex-1">
-                <FieldTitle label="Car Type" mandatory />
+            <div class="flex-1">
+              <FieldTitle label="Transmission" mandatory />
 
-                <Multiselect
-                  v-model="form.id_car_type"
-                  mode="single"
-                  placeholder="Select Car Type"
-                  :options="references.carType"
-                  track-by="type_car"
-                  label="type_car"
-                  valueProp="id"
-                  required
-                  clear
-                  searchable
-                >
-                </Multiselect>
-              </div>
-
-              <div class="flex-1">
-                <FieldTitle label="Transmission" mandatory />
-
-                <Multiselect
-                  v-model="form.transmisi"
-                  mode="single"
-                  placeholder="Select Transmision"
-                  :options="['Automatic', 'Manual']"
-                  required
-                  clear
-                  searchable
-                >
-                </Multiselect>
-              </div>
-            </div>
-
-            <div class="flex gap-5">
-              <div class="flex-1">
-                <FieldTitle label="Status" mandatory />
-
-                <Multiselect
-                  v-model="form.status"
-                  mode="single"
-                  placeholder="Select Status"
-                  :options="references.status"
-                  track-by="value"
-                  label="label"
-                  valueProp="value"
-                  required
-                  clear
-                  searchable
-                >
-                </Multiselect>
-              </div>
-
-              <div class="flex-1">
-                <FieldTitle label="Driver" mandatory />
-
-                <Multiselect
-                  v-model="form.id_driver"
-                  mode="single"
-                  placeholder="Select Driver"
-                  :options="references.driver"
-                  track-by="id"
-                  label="name"
-                  valueProp="id"
-                  required
-                  clear
-                  searchable
-                >
-                </Multiselect>
-              </div>
+              <Multiselect
+                v-model="form.transmisi"
+                mode="single"
+                placeholder="Select Transmision"
+                :options="['Automatic', 'Manual']"
+                required
+                clear
+                searchable
+              >
+              </Multiselect>
             </div>
           </div>
-        </fieldset>
+
+          <div class="flex gap-5">
+            <div class="flex-1">
+              <FieldTitle label="Status" mandatory />
+
+              <Multiselect
+                v-model="form.status"
+                mode="single"
+                placeholder="Select Status"
+                :options="references.status"
+                track-by="value"
+                label="label"
+                valueProp="value"
+                required
+                clear
+                searchable
+              >
+              </Multiselect>
+            </div>
+
+            <div class="flex-1">
+              <FieldTitle label="Driver" />
+
+              <Multiselect
+                v-model="form.id_driver"
+                mode="single"
+                placeholder="Select Driver"
+                :options="references.driver"
+                track-by="id"
+                label="name"
+                valueProp="id"
+                clear
+                searchable
+              >
+              </Multiselect>
+            </div>
+          </div>
+        </div>
+        <modalFooter @closeEdit="dialog = false" class="py-3" />
       </form>
     </main>
-    <modalFooter
-      @closeEdit="dialog = false"
-      class="py-3"
-      :noSaveBtn="data.status == 'Driver Check'"
-    />
   </Modal>
 </template>
 

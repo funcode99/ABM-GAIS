@@ -54,6 +54,7 @@ const headers = [
     text: "Actions",
     key: "actions",
     value: "actions",
+    sortable: false,
   },
 ]
 
@@ -62,12 +63,14 @@ const route = useRoute()
 const tabs = ref(["Details"])
 const tabActive = ref("Details")
 const formDialog = ref(false)
-const userRole = localStorage.getItem("id_role")
 const checkupList = ref([])
 const dataExisting = ref([])
+const isEditable = ref(true)
 
 const isDriver = computed(() => {
-  return userRole == "DRVR"
+  const userRole = localStorage.getItem("id_role")
+
+  return userRole == `"DRVR"`
 })
 
 const dataFormDialog = ref({
@@ -143,7 +146,9 @@ onMounted(async () => {
         </PageTitle>
 
         <div
-          :class="{ 'bg-green text-white border-none': items[0].status == 'Done' }"
+          :class="{
+            'bg-green text-white border-none': items[0].status == 'Done',
+          }"
           class="card flex w-[114px] text-sm capitalize text-center font-bold item-center border border-[#292D32] rounded-lg rounded-bl-3xl p-2 m-5"
         >
           {{ items[0].status }}
@@ -152,17 +157,24 @@ onMounted(async () => {
 
       <div class="px-10 py-5 flex justify-between">
         <button
-          v-if="items[0].status == 'Ready'"
+          v-if="items[0].status == 'Ready' && isDriver"
           class="btn h-[5px] btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
           @click="doneRequestTrip()"
         >
           Done
         </button>
 
+        <div v-else></div>
+
         <button
+          v-if="isDriver"
           class="btn bg-primary"
-          v-if="items[0].status == 'Ready'"
-          @click="formDialog = true"
+          @click="
+            () => {
+              formDialog = true
+              isEditable = false
+            }
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -258,7 +270,12 @@ onMounted(async () => {
             <template #item-actions="{ item }" v-if="dataFormDialog">
               <button
                 v-if="items[0].status == 'Driver Check' && isDriver"
-                @click="formDialog = true"
+                @click="
+                  () => {
+                    formDialog = true
+                    isEditable = true
+                  }
+                "
                 class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
               >
                 <svg
@@ -282,6 +299,7 @@ onMounted(async () => {
                 :data="dataFormDialog"
                 @update:model-value="formDialog = $event"
                 @success="fetchPoolRequest()"
+                :isEditable="isEditable"
               />
             </template>
           </DataTable>

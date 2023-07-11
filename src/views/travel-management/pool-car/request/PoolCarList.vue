@@ -73,6 +73,7 @@ const filter = ref({
 
 const selectedItems = ref([])
 const size = ref(0)
+const tableRef = ref()
 
 const resetFilter = () => {
   filter.value.status.value = null
@@ -169,7 +170,7 @@ onMounted(async () => {
           <!-- FILTER -->
           <div class="flex gap-4 flex-wrap flex-1">
             <button
-              @click="getData"
+              @click="tableRef.getData()"
               class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[45px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
               <span>
@@ -230,6 +231,7 @@ onMounted(async () => {
           :headers="headers"
           :api-method="fetchPoolCarRequest"
           :api-params="filterQuery"
+          ref="tableRef"
           show-select
         >
           <template #item-created_at="{ item }">
@@ -262,9 +264,6 @@ onMounted(async () => {
 
           <template #item-actions>
             <div class="flex justify-center items-center gap-2">
-              <!-- <button>
-                <img :src="icon_edit" class="w-6 h-6" />
-              </button> -->
               <button @click="">
                 <img :src="icon_delete" class="w-6 h-6" />
               </button>

@@ -57,6 +57,10 @@ const props = defineProps({
     type: String,
     default: () => {},
   },
+  noDebounce: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const paging = ref({
@@ -85,7 +89,8 @@ watch(
   () => props.apiParams,
   () => {
     paging.page = 0
-    getData()
+
+    if (!props.noDebounce) getData()
   },
   { deep: true }
 )
@@ -289,6 +294,7 @@ onMounted(() => {
         :total-items="paging.totalData"
         :items-per-page="parseInt(paging.limit)"
         v-model="paging.page"
+        :on-click="getData"
         :max-pages-shown="4"
         :show-breakpoint-buttons="true"
         :show-jump-buttons="false"
