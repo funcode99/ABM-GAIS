@@ -42,6 +42,9 @@
           localStorage.setItem('username', username)
         }
 
+        if (data.data.users.code_role == 'EMPLY') {
+          localStorage.setItem('username', username.value)
+        }
 
         // $cookies.set('token', data.data.data.access_token)
         // store.commit('isLoading', false)
