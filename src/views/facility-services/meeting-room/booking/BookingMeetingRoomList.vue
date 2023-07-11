@@ -15,6 +15,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
+import viewicon from "@/assets/eye.png";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -580,10 +581,12 @@ onBeforeMount(() => {
                       <div class="flex justify-center items-center gap-2">
                         <router-link :to="`/booking-meeting-room/${data.id}`">
                           <button>
-                            <img :src="editicon" class="w-6 h-6" />
+                            <img :src="viewicon" class="w-6 h-6" v-if="['Done', 'Cancelled'].includes(data.status)"/>
+                            <img :src="editicon" class="w-6 h-6" v-else/>
+
                           </button>
                         </router-link>
-                        <button @click="deleteData(data.id)">
+                        <button @click="deleteData(data.id)" v-if="data.status == 'Draft'">
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
                       </div>

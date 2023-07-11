@@ -110,7 +110,7 @@ const cancelled = async () => {
     confirmButtonText: "Yes",
   }).then((result) => {
     if (result.isConfirmed) {
-      Api.post(`adm_book_meeting_room/cancel/${idBook}`).then((res) => {
+      Api.post(`book_meeting_room/cancel/${idBook}`).then((res) => {
         Swal.fire({
           title: "Successfully",
           text: "Data has been cancelled.",
@@ -120,13 +120,8 @@ const cancelled = async () => {
           showConfirmButton: false,
           timer: 1500,
         });
-
-        if (sortedData.value.length == 1) {
-          router.go();
-        } else {
-          fetch();
-        }
       });
+      fetchDataById(idBook);
     } else {
       return;
     }
@@ -136,7 +131,7 @@ const cancelled = async () => {
 const done = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  Api.post(`adm_book_meeting_room/done/${idBook}`)
+  Api.post(`book_meeting_room/done/${idBook}`)
     .then((res) => {
       let status = res.data.success == true ? "success" : "error";
       Swal.fire({
@@ -223,11 +218,11 @@ const inputClass =
               <button
                 type="button"
                 :class="
-                  dataArr.status == 'Revision' ||
-                  dataArr.status == 'Rejected' ||
-                  dataArr.status == 'Fully Rejected'
+                  dataArr.status == 'Cancelled'
                     ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize  '
+                    : dataArr.status == 'Booked'
+                    ? 'btn btn-sm border-none mx-4 capitalize  status-done'
+                    : 'btn btn-sm border-none mx-4 capitalize'
                 "
               >
                 {{ dataArr.status }}
@@ -264,13 +259,13 @@ const inputClass =
             >
               Cancelled
             </button>
-            <button
+            <!-- <button
               v-if="dataArr.status == 'Booked'"
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               @click="done"
             >
               Done
-            </button>
+            </button> -->
           </div>
 
           <!-- FORM READ ONLY-->
@@ -392,6 +387,10 @@ const inputClass =
 
 .status-default {
   background: #2970ff;
+}
+
+.status-done {
+  background: #00c851;
 }
 
 :disabled {
