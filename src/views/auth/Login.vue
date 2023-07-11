@@ -39,13 +39,9 @@
 
         if(typeof data.data.users.name == 'string') {
           let username = data.data.users.name.replaceAll('"', '')
-          localStorage.setItem('username', username)
+          localStorage.setItem('username', username == '-' ? data.data.users.employee_name : username)
         }
-
-        if (data.data.users.code_role == 'EMPLY') {
-          localStorage.setItem('username', username.value)
-        }
-
+        
         // $cookies.set('token', data.data.data.access_token)
         // store.commit('isLoading', false)
 

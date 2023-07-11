@@ -113,17 +113,16 @@ const fetchDataById = async () => {
   const api = await Api.get(`employee/get`);
   listEmployee.value = api.data.data;
 
-  let numberArray = [];
+  //   let numberArray = [];
 
-  if (dataForm.value.participant.includes(",")) {
-    participant.value = dataForm.value.participant.split(",");
-    participant.value.forEach((ele) => numberArray.push(+ele));
-  } else {
-    numberArray.push(dataForm.value.participant)
-  }
+  //   if (dataForm.value.participant.includes(",")) {
+  //     participant.value = dataForm.value.participant.split(",");
+  //     participant.value.forEach((ele) => numberArray.push(+ele));
+  //   } else {
+  //     numberArray.push(dataForm.value.participant)
+  //   }
 
-  selectedEmployee.value = numberArray;
-//   console.log(numberArray);
+  selectedEmployee.value = dataForm.value.participant;
 };
 // END
 
@@ -156,21 +155,27 @@ const saveForm = async () => {
 };
 
 const edit = async (payload) => {
-  const api = await Api.post(
-    `book_meeting_room/update_data/${idItem.value}`,
-    payload
-  );
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  if (api.data.success) {
-    close();
-    router.push({ path: `/booking-meeting-room/${idItem.value}` });
-  }
+  Api.post(`book_meeting_room/update_data/${idItem.value}`, payload)
+    .then((res) => {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      close();
+      router.push({ path: `/booking-meeting-room/${idItem.value}` });
+    })
+    .catch((error) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: error.response.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    });
 };
 
 const save = async (payload) => {
