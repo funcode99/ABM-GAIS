@@ -299,6 +299,7 @@ onMounted(async () => {
           v-if="isEditable"
           @closeEdit="emits('update:modelValue', false)"
           class="py-3"
+          :noSaveBtn="!isEditable"
         />
       </form>
     </main>
