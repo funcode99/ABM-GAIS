@@ -5,7 +5,7 @@ import Footer from "@/components/layout/Footer.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import ModalAdd from "@/components/facility-services/document-delivery/ModalAddDelivery.vue";
+import ModalAddDelivery from "@/components/facility-services/document-delivery/ModalAddDelivery.vue";
 
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -18,27 +18,16 @@ const sidebar = useSidebarStore();
 const router = useRouter();
 let lengthCounter = 0;
 const idDetail = router.currentRoute.value.params.id;
+const type = router.currentRoute.value.params.type;
+
 const id_role = JSON.parse(localStorage.getItem("id_role"));
 
 // for modal
 let statusForm = ref("add");
 let visibleModal = ref(false);
 let idItem = ref(0);
-
-let status = ref("");
-let ItemTable = ref([]);
-let lockScrollbarEdit = ref(false);
-const selectedCompany = ref("");
-const selectedSite = ref("");
-const selectedWarehouse = ref("");
-const selectedBrand = ref("");
-const selectedUOM = ref("");
-const notes = ref("");
-let disableCompany = ref(false);
-let disableSite = ref(false);
-let itemsTable = ref([]);
+const btnLabelSubmit = ref("");
 let dataArr = ref([]);
-const roles = ["SUPADM", "ADM", "RCPTN"];
 
 const tableHead = [
   { Id: 1, title: "Sender", jsonData: "sender_name" },
@@ -60,8 +49,18 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`document_delivery/get/${id}`);
   dataArr.value = res.data.data[0];
+  labelSubmit(dataArr.value.status);
 };
 
+const labelSubmit = (status) => {
+  if (status == "Created") {
+    btnLabelSubmit.value = "Received";
+  } else if (status == "Received") {
+    btnLabelSubmit.value = "Delivering";
+  } else if (status == "Delivering") {
+    btnLabelSubmit.value = "Delivered";
+  }
+};
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(idDetail);
@@ -83,12 +82,12 @@ const closeModal = () => {
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  if (dataArr.status == "Created" && roles.includes(id_role)) {
-    delivering();
-  } else if (dataArr.status == "Delivering" && roles.includes(id_role)) {
-    delivered();
-  } else if (dataArr.status == "Delivered" && id_role == "EMPLY") {
+  if (dataArr.value.status == "Created") {
     received();
+  } else if (dataArr.value.status == "Received") {
+    delivering();
+  } else if (dataArr.value.status == "Delivering") {
+    delivered();
   } else {
     Swal.fire({
       position: "center",
@@ -190,9 +189,7 @@ const getSessionForSidebar = () => {
 </script>
 
 <template>
-  <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
-  >
+  <div class="flex flex-col w-full this min-h-[300px]">
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
@@ -226,7 +223,7 @@ const getSessionForSidebar = () => {
                 Draft
               </button> -->
               <span
-                class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[120px] h-[50px] border-blue bg-white text-center"
+                class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[120px] h-[40px] border-blue bg-white text-center"
               >
                 {{ dataArr.status }}
               </span>
@@ -239,7 +236,7 @@ const getSessionForSidebar = () => {
             </div>
           </div>
 
-          <div class="flex justify-between ml-10">
+          <div class="flex justify-between ml-10" v-if="type == 'edit'">
             <div class="flex gap-2">
               <label
                 v-if="dataArr.status == 'Created'"
@@ -250,15 +247,16 @@ const getSessionForSidebar = () => {
                 Edit
               </label>
               <button
-                v-if="dataArr.status == 'Created'"
+                v-if="dataArr.status != 'Delivered'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
+                :title="btnLabelSubmit"
               >
-                Submit</button
+                {{ btnLabelSubmit }}</button
               ><br />
             </div>
           </div>
-          <ModalAdd
+          <ModalAddDelivery
             v-if="visibleModal"
             @close="closeModal"
             :status="statusForm"
@@ -312,9 +310,6 @@ const getSessionForSidebar = () => {
                     >
                       <span class="flex justify-center items-center gap-1">
                         {{ data.title }}
-                        <button>
-                          <img :src="arrowicon" class="w-[9px] h-3" />
-                        </button>
                       </span>
                     </th>
                   </tr>
@@ -343,7 +338,9 @@ const getSessionForSidebar = () => {
                       </a>
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ dataArr.remarks }}
+                      <span style="white-space: pre">
+                        {{ dataArr.remarks }}</span
+                      >
                     </td>
                   </tr>
                 </tbody>
