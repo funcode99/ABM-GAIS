@@ -1674,26 +1674,37 @@ onMounted(() => {
                         </div>
                       </button>
 
-                      <router-link to="#" class="cursor-pointer">
+                      <router-link
+                        to="/approvaldelegation"
+                        class="cursor-pointer"
+                      >
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
                         >
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :class="[
+                              $route.path == '/approvaldelegation'
+                                ? 'hidden'
+                                : 'inline',
+                            ]"
                             :src="submenuLine"
                             alt=""
                           />
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :class="[
+                              $route.path == '/approvaldelegation'
+                                ? 'inline'
+                                : 'hidden',
+                            ]"
                             :src="submenuLineSelected"
                             alt=""
                           />
                           <p
                             class="flex items-center w-full justify-between"
                             :class="[
-                              $route.path == '#'
+                              $route.path == '/approvaldelegation'
                                 ? `anchorImage anchorSubMenu`
                                 : '',
                             ]"
