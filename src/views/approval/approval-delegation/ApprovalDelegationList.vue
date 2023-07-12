@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/approval/approval-delegation/ModalAdd.vue";
+import ModalEdit from "@/components/approval/approval-delegation/ModalEdit.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
@@ -20,35 +21,41 @@ import moment from "moment";
 
 import { ref, onBeforeMount, computed } from "vue";
 
-// import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js";
+import { useFormEditStore } from "@/stores/approval/edit-modal.js";
+
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
-// const formEditState = useFormEditStore();
+const formEditState = useFormEditStore();
 
-// let editglAccountDataId = ref();
+let editAppovalDelegationDataId = ref();
 
-// const editGlAccount = async (data) => {
-//   editglAccountDataId.value = data;
-//   setTimeout(callEditApi, 500);
-// };
+const editApprovalDelegation = async (data) => {
+  editAppovalDelegationDataId.value = data;
+  setTimeout(callEditApi, 500);
+};
 
-// const callEditApi = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   await Api.post(`/gl_account/update_data/${editglAccountDataId.value}`, {
-//     gl_account: formEditState.glAccount.glAccountCode,
-//     gl_name: formEditState.glAccount.glAccountName,
-//   });
-//   Swal.fire({
-//     position: "center",
-//     icon: "success",
-//     title: "Your work has been saved",
-//     showConfirmButton: false,
-//     timer: 1500,
-//   });
-//   fetchGLAccount();
-// };
+const callEditApi = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.post(
+    `/approval_delegation/update_data/${editAppovalDelegationDataId.value}`,
+    {
+      id_employee: formEditState.approvalDelegation.delegatorId,
+      id_employee_to: formEditState.approvalDelegation.delegateId,
+      start_date: formEditState.approvalDelegation.startDate,
+      end_date: formEditState.approvalDelegation.endDate,
+    }
+  );
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: "Your work has been saved",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  fetchApprovalDelegation();
+};
 
 const search = ref("");
 
@@ -270,10 +277,17 @@ const deleteApprovalDelegation = async (id) => {
                 <td>{{ format_date(data.start_date) }}</td>
                 <td>{{ format_date(data.end_date) }}</td>
                 <td class="flex flex-wrap gap-4 justify-center">
-                  <!-- <ModalEdit
-                    @change-gl="editGlAccount(data.id)"
-                    :formContent="[data.gl_account, data.gl_name]"
-                  /> -->
+                  <ModalEdit
+                    @change-Approval="editApprovalDelegation(data.id)"
+                    :formContent="[
+                      data.delegator,
+                      data.delegate_to,
+                      data.start_date,
+                      data.end_date,
+                      data.id_employee_to,
+                      data.id_employee,
+                    ]"
+                  />
                   <button @click="deleteApprovalDelegation(data.id)">
                     <img :src="deleteicon" class="w-6 h-6" />
                   </button>
