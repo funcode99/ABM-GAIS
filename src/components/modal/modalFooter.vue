@@ -1,13 +1,7 @@
 <script setup>
-const emits = defineEmits(["closeEdit"])
+const emits = defineEmits(["closeEdit"]);
 
-const props = defineProps({
-  noSaveBtn: {
-    type: Boolean,
-    default: true,
-  },
-})
-
+const props = defineProps({});
 </script>
 
 <template>
@@ -23,13 +17,11 @@ const props = defineProps({
       </button>
 
       <button
-        v-if="!noSaveBtn"
         type="submit"
         class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
       >
         Save
       </button>
-      
     </div>
   </div>
 </template>
