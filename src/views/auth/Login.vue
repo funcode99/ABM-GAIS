@@ -42,8 +42,7 @@
           let username = data.data.users.employee_name.replaceAll('"', '')
           localStorage.setItem('username', username)
         }
-
-
+        
         // $cookies.set('token', data.data.data.access_token)
         // store.commit('isLoading', false)
 

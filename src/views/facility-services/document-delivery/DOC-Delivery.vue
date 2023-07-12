@@ -11,9 +11,9 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
-import gearicon from "@/assets/system-configuration-not-selected.png";
+import viewicon from "@/assets/eye.png";
 
-import ModalAdd from "@/components/facility-services/document-delivery/ModalAddDelivery.vue";
+import ModalAddDelivery from "@/components/facility-services/document-delivery/ModalAddDelivery.vue";
 
 // import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
 
@@ -30,6 +30,11 @@ const end_date = ref("");
 const search = ref("");
 const searchFilter = ref("");
 let sortedData = ref([]);
+const id_role = JSON.parse(localStorage.getItem("id_role"));
+const id_company = JSON.parse(localStorage.getItem("id_company"));
+
+let username = ref(localStorage.getItem("username"));
+
 const selectedType =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
     ? ref("")
@@ -135,10 +140,11 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "id" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
   { Id: 3, title: "Document No", jsonData: "no_document_delivery" },
-  { Id: 4, title: "Receiver", jsonData: "receiver_name" },
-  { Id: 5, title: "Location", jsonData: "name_site_receiver" },
-  { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
+  { Id: 4, title: "Sender", jsonData: "sender_name" },
+  { Id: 5, title: "Receiver", jsonData: "receiver_name" },
+  { Id: 6, title: "Location", jsonData: "name_site_receiver" },
+  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 8, title: "Actions" },
 ];
 
 //for sort
@@ -187,29 +193,6 @@ const perPage = async () => {
     searchFilter.value,
     pageMultiplier.value
   );
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const fetchGetCompanyID = async (id_company) => {
-  // changeCompany(id_company)
-  const token = JSON.parse(localStorage.getItem("token"));
-  // const id_company = JSON.parse(localStorage.getItem("id_company"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
-  Company.value = res.data.data;
-  // console.log(res.data.data)
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id_company === element.id) {
-      selectedType.value = id_company;
-    }
-  }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const deleteValue = async (id) => {
@@ -262,12 +245,26 @@ const deleteValue = async (id) => {
 
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
-  // changeCompany()
+const fetchCondition = (status, receiver, company_sender) => {
+  if (["Created", "Received"].includes(status)) {
+    let status =
+      (["SUPADM", "RCPTN", "ADM"].includes(id_role) &&
+        id_company == company_sender)
+        ? true
+        : false;
+    return status;
+  } else if (status == "Delivering") {
+    let status =
+      ["SUPADM", "RCPTN", "EMPLY", "ADM"].includes(id_role) ||
+      receiver == username.value
+        ? true
+        : false;
+    return status;
+  } else {
+    return false;
+  }
 };
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchData(
@@ -279,7 +276,6 @@ onBeforeMount(() => {
     searchFilter.value,
     pageMultiplier.value
   );
-  fetchCondition();
   StatusItems.value.push(
     {
       id: 0,
@@ -379,7 +375,12 @@ const closeModal = () => {
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
                 >+ New Delivery</label
               >
-              <ModalAdd @close="closeModal" :status="statusForm" />
+              <ModalAddDelivery
+                v-if="visibleModal"
+                @close="closeModal"
+                :status="statusForm"
+                :id="idItem"
+              />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -617,6 +618,9 @@ const closeModal = () => {
                       {{ data.no_document_delivery }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
+                      {{ data.sender_name }}
+                    </td>
+                    <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.receiver_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
@@ -626,16 +630,38 @@ const closeModal = () => {
                       {{ data.status }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/doc-delivery/${data.id}`">
+                      <router-link
+                        :to="`/doc-delivery/edit/${data.id}`"
+                        v-if="
+                          fetchCondition(
+                            data.status,
+                            data.receiver_name,
+                            data.id_company
+                          ) == true
+                        "
+                      >
                         <img :src="editicon" class="w-6 h-6" />
                       </router-link>
-                      <button
-                        v-if="data.status == 'Created'"
-                        @click="deleteValue(data.id)"
+                      <router-link
+                        :to="`/doc-delivery/view/${data.id}`"
+                        v-if="
+                          fetchCondition(
+                            data.status,
+                            data.receiver_name,
+                            data.id_company
+                          ) == false
+                        "
                       >
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
-                      <button v-else disabled>
+                        <img :src="viewicon" class="w-6 h-6" />
+                      </router-link>
+                      <button
+                        @click="deleteValue(data.id)"
+                        v-if="data.status == 'Created' && fetchCondition(
+                            data.status,
+                            data.receiver_name,
+                            data.id_company
+                          ) == true"
+                      >
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>

@@ -1059,7 +1059,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/doc-delivery/:id",
+      path: "/doc-delivery/:type/:id",
       name: "doc-delivery-id",
       component: DOCDeliveryListID,
       meta: {

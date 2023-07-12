@@ -1,32 +1,32 @@
 <script setup>
-import { onMounted, ref, computed, reactive } from "vue"
+import { onMounted, ref, computed, reactive } from "vue";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import DataTable from "@/components/table/DataTable.vue"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import DataTable from "@/components/table/DataTable.vue";
 
-import PageTitle from "@/components/atomics/PageTitle.vue"
-import FormDialog from "./CarFormDialog.vue"
+import PageTitle from "@/components/atomics/PageTitle.vue";
+import FormDialog from "./CarFormDialog.vue";
 
-import icon_receive from "@/assets/icon-receive.svg"
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import icon_edit from "@/assets/navbar/edit_icon.svg"
-import icon_delete from "@/assets/navbar/delete_icon.svg"
+import icon_receive from "@/assets/icon-receive.svg";
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import icon_edit from "@/assets/navbar/edit_icon.svg";
+import icon_delete from "@/assets/navbar/delete_icon.svg";
 
-import Multiselect from "@vueform/multiselect"
+import Multiselect from "@vueform/multiselect";
 
-import { numberFilter } from "@/utils/filters"
+import { numberFilter } from "@/utils/filters";
 
 import {
   fetchCarMaster,
   getAllSite,
   deleteCarById,
-} from "@/utils/Api/travel-management/poolCar"
+} from "@/utils/Api/travel-management/poolCar";
 
-import fetchCompany from "@/utils/Fetch/Reference/fetchCompany.js"
+import fetchCompany from "@/utils/Fetch/Reference/fetchCompany.js";
 
-import ConfirmDialog from "@/components/molecules/ConfirmDialog.vue"
+import ConfirmDialog from "@/components/molecules/ConfirmDialog.vue";
 
 const headers = ref([
   {
@@ -65,13 +65,13 @@ const headers = ref([
     value: "actions",
     noExport: true,
   },
-])
+]);
 
-const selectedItems = ref([])
-const dataTableRef = ref()
-const formDialogRef = ref()
-const selectedData = ref({})
-const deleteDialog = ref(false)
+const selectedItems = ref([]);
+const dataTableRef = ref();
+const formDialogRef = ref();
+const selectedData = ref({});
+const deleteDialog = ref(false);
 
 const filter = reactive({
   site: {
@@ -83,67 +83,70 @@ const filter = reactive({
     value: null,
   },
   keyword: null,
-})
+});
 
 const computedFilter = computed(() => {
   return {
     id_site: filter.site.value,
     search: filter.keyword,
     id_company: filter.company.value,
-  }
-})
+  };
+});
 
 const fethSiteReference = async () => {
   try {
-    const companyId = localStorage.getItem("id_company")
+    const companyId = localStorage.getItem("id_company");
     // const res = await getSiteByCompany(companyId)
-    const res = await getAllSite(companyId)
+    const res = await getAllSite(companyId);
 
-    filter.site.items = res.data.data
+    filter.site.items = res.data.data;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 
 const setEditedData = (item) => {
-  selectedData.value = { ...item }
-  formDialogRef.value.dialog = true
-}
+  selectedData.value = { ...item };
+  formDialogRef.value.dialog = true;
+};
 
 const setDeleteDialog = (item) => {
-  selectedData.value = { ...item }
-  deleteDialog.value = true
-}
+  selectedData.value = { ...item };
+  deleteDialog.value = true;
+};
 
 const success = () => {
-  dataTableRef.value.getData()
-}
+  dataTableRef.value.getData();
+};
 
 const reset = () => {
-  filter.site.value = null
-  filter.keyword = null
-}
+  filter.site.value = null;
+  filter.keyword = null;
+  filter.company.value = null;
+
+  dataTableRef.value.getData();
+};
 
 const exportToXLS = () => {
-  dataTableRef.value.exportToXls()
-}
+  dataTableRef.value.exportToXls();
+};
 
 const deleteData = async () => {
   try {
-    const carId = selectedData.value.id
+    const carId = selectedData.value.id;
 
-    await deleteCarById(carId)
+    await deleteCarById(carId);
 
-    success()
+    success();
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 
 onMounted(async () => {
-  await fethSiteReference()
-  filter.company.items = await fetchCompany()
-})
+  await fethSiteReference();
+  filter.company.items = await fetchCompany();
+});
 </script>
 
 <template>

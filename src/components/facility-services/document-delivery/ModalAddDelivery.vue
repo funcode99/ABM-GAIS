@@ -16,6 +16,8 @@ const props = defineProps({
 let type = ref(props.status);
 let idItem = ref(props.id);
 let dataForm = ref(props.data);
+let btnLabel = ref("");
+let fieldDisable = ref(false);
 
 let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")));
 let username = ref(localStorage.getItem("username"));
@@ -32,7 +34,12 @@ let id_site_receiver = ref("");
 
 const selectedImage = ref(null);
 let filename = ref(null);
-let addModal = ref(false);
+const onFileSelected = (event) => {
+  const file = event.target.files[0];
+  selectedImage.value = file ? file : null;
+  filename.value = file.name;
+};
+
 let isLoading = ref(false);
 
 const emits = defineEmits(["unlockScrollbar", "close"]);
@@ -81,7 +88,7 @@ const fetchDataById = async () => {
   remarks.value = dataForm.value.remarks;
   selectedImage.value = dataForm.value.attachment;
   receiver.value = dataForm.value.id_employee_receiver;
-
+  username.value = dataForm.value.sender_name;
   isLoading.value = true;
   const api = await Api.get(`employee/get`);
   listEmployee.value = api.data.data;
@@ -166,19 +173,8 @@ const edit = async (payload) => {
     });
 };
 
-const onFileSelected = (event) => {
-  const file = event.target.files[0];
-  selectedImage.value = file ? file : null;
-  filename.value = file.name;
-};
-
 const close = async () => {
-  remarks.value = "";
-  receiver.value = "";
-  receiver_company.value = "";
-  receiver_site.value = "";
-  subject.value = "";
-  id_company_receiver.value = "";
+  reset();
   emits("close");
 };
 const reset = async () => {
@@ -188,10 +184,20 @@ const reset = async () => {
   receiver_site.value = "";
   subject.value = "";
   id_company_receiver.value = "";
+  filename.value = "";
+  selectedImage.value = "";
 };
 onMounted(() => {
   if (type.value == "edit" && dataForm.value) {
     fetchDataById();
+    btnLabel.value = "Update";
+    if (dataForm.sender_name != username) {
+      fieldDisable.value = true;
+    }
+  }
+
+  if (type.value == "add") {
+    btnLabel.value = "Create";
   }
 });
 
@@ -254,6 +260,7 @@ watchEffect((newValue) => {
               class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Subject Document"
               required
+              :disabled="fieldDisable"
             />
           </div>
         </div>
@@ -268,13 +275,14 @@ watchEffect((newValue) => {
               placeholder="Select Employee"
               track-by="employee_name"
               label="employee_name"
-              :close-on-select="false"
+              :close-on-select="true"
               :searchable="true"
               :options="listEmployee"
               :limit="10"
               :loading="isLoading"
               :hide-selected="true"
               @search-change="fetchEmployee"
+              :disabled="fieldDisable"
             ></Multiselect>
           </div>
           <div class="mb-6 w-full">
@@ -315,7 +323,6 @@ watchEffect((newValue) => {
               class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Attachment"
               @change="onFileSelected"
-              v-value="selectedImage"
               required
             />
           </div>
@@ -335,78 +342,6 @@ watchEffect((newValue) => {
             />
           </div>
         </div>
-
-        <!-- <div class="flex justify-center py-2">
-            <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
-              @click="addItem"
-            >
-              Add
-            </button>
-          </div> -->
-
-        <!-- INNER TABLE -->
-        <!-- <div class="inner-table px-6">
-          <table class="table table-compact w-full">
-            <thead class="font-JakartaSans font-bold text-xs">
-              <tr class="bg-blue text-white h-8">
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                >
-                  Warehouse
-                </th>
-                
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                >
-                  Item Name
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                >
-                  Quantity
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                >
-                  Brand
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                >
-                  UOM
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                >
-                  Remarks
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody class="font-JakartaSans font-normal text-xs">
-              <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9] text-center">{{ items.nameWarehouse }}</td>
-                <td class="border border-[#B9B9B9] text-center">{{ items.namItem }}</td>
-                <td class="border border-[#B9B9B9] text-center">{{ items.qty }}</td>
-                <td class="border border-[#B9B9B9] text-center">{{ items.namaBrand }}</td>
-                <td class="border border-[#B9B9B9] text-center">{{ items.namaUOM }}</td>
-                <td class="border border-[#B9B9B9] text-center">{{ items.remarks }}</td>
-                <td class="border border-[#B9B9B9] text-center">
-                  <div class="flex flex-wrap justify-center items-center gap-2">
-                    <button @click="removeItems(i)">
-                      <img :src="deleteicon" class="w-6 h-6" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div> -->
       </main>
 
       <div class="sticky bottom-0 bg-white py-2">
@@ -415,7 +350,7 @@ watchEffect((newValue) => {
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
             @click="saveForm"
           >
-            Create
+            {{ btnLabel }}
           </button>
         </div>
       </div>

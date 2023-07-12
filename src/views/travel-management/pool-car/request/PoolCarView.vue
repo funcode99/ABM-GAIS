@@ -1,23 +1,25 @@
 <script setup>
-import { computed, onMounted, ref } from "vue"
+import Swal from "sweetalert2";
 
-import { useRoute } from "vue-router"
+import { computed, onMounted, ref } from "vue";
 
-import { toFilterDate, numberFilter } from "@/utils/filters"
+import { useRoute } from "vue-router";
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import PageTitle from "@/components/atomics/PageTitle.vue"
-import DriverFormDialog from "./DriverFormDialog.vue"
-import DataTable from "@/components/table/DataTable.vue"
+import { toFilterDate, numberFilter } from "@/utils/filters";
 
-import left_chevron_icon from "@/assets/request-trip-view-arrow.png"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import PageTitle from "@/components/atomics/PageTitle.vue";
+import DriverFormDialog from "./DriverFormDialog.vue";
+import DataTable from "@/components/table/DataTable.vue";
+
+import left_chevron_icon from "@/assets/request-trip-view-arrow.png";
 
 import {
   fetchPoolCarRequestById,
   fetchDriverCarCheckupByRequesId,
   setPoolRequestStatus,
-} from "@/utils/Api/travel-management/poolCar"
+} from "@/utils/Api/travel-management/poolCar";
 
 const headers = [
   {
@@ -56,28 +58,28 @@ const headers = [
     value: "actions",
     sortable: false,
   },
-]
+];
 
-const route = useRoute()
+const route = useRoute();
 
-const tabs = ref(["Details"])
-const tabActive = ref("Details")
-const formDialog = ref(false)
-const checkupList = ref([])
-const dataExisting = ref([])
-const isEditable = ref(true)
+const tabs = ref(["Details"]);
+const tabActive = ref("Details");
+const formDialog = ref(false);
+const checkupList = ref([]);
+const dataExisting = ref([]);
+const isEditable = ref(true);
 
 const isDriver = computed(() => {
-  const userRole = localStorage.getItem("id_role")
+  const userRole = localStorage.getItem("id_role");
 
-  return userRole == `"DRVR"`
-})
+  return userRole == `"DRVR"`;
+});
 
 const dataFormDialog = ref({
   is_usable: 0,
   notes: "",
   odometer: 0,
-})
+});
 
 const items = ref([
   {
@@ -88,35 +90,35 @@ const items = ref([
     toDate: "",
     odometer: 0,
   },
-])
+]);
 
 const fetchPoolRequest = async () => {
-  const requestId = route.params.id
-  const res = await fetchPoolCarRequestById(requestId)
-  items.value = res.data
-  dataFormDialog.value = res.data[0]
-}
+  const requestId = route.params.id;
+  const res = await fetchPoolCarRequestById(requestId);
+  items.value = res.data;
+  dataFormDialog.value = res.data[0];
+};
 
 const doneRequestTrip = async () => {
-  const requestId = route.params.id
-  const res = setPoolRequestStatus(requestId)
+  const requestId = route.params.id;
+  const res = setPoolRequestStatus(requestId);
 
-  if (res.data.success == "success") {
+  if (res.data.success) {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Succeess to Delete Car Data",
+      title: "Succeess to Update Car Request Status",
       showConfirmButton: false,
       timer: 1500,
-    })
+    });
 
-    await fetchPoolRequest()
+    await fetchPoolRequest();
   }
-}
+};
 
 onMounted(async () => {
-  await fetchPoolRequest()
-})
+  await fetchPoolRequest();
+});
 </script>
 
 <template>
@@ -167,12 +169,12 @@ onMounted(async () => {
         <div v-else></div>
 
         <button
-          v-if="isDriver"
+          v-if="isDriver && items[0].status == 'Ready'"
           class="btn bg-primary"
           @click="
             () => {
-              formDialog = true
-              isEditable = false
+              formDialog = true;
+              isEditable = false;
             }
           "
         >
@@ -195,35 +197,66 @@ onMounted(async () => {
         </button>
       </div>
       <!-- Data -->
-      <div class="grid grid-cols-2 gap-y-3 px-10">
-        <div class="flex flex-col gap-2">
-          <span class="font-medium text-sm">Created Date</span>
-          <input
-            :value="items[0].created_at"
-            type="text"
-            disabled
-            class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
-          />
-        </div>
+      <div class="flex gap-y-3 px-10">
+        <div class="basis-10/12 grid grid-cols-2 gap-y-3">
+          <div class="flex flex-col gap-2">
+            <span class="font-medium text-sm">Created Date</span>
+            <input
+              :value="items[0].created_at"
+              type="text"
+              disabled
+              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
+            />
+          </div>
 
-        <div class="flex flex-col gap-2">
-          <span class="font-medium text-sm">Reference</span>
-          <input
-            :value="items[0].no_pool_car"
-            type="text"
-            disabled
-            class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
-          />
-        </div>
+          <div class="flex flex-col gap-2">
+            <span class="font-medium text-sm">Reference</span>
+            <input
+              :value="items[0].no_pool_car"
+              type="text"
+              disabled
+              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
+            />
+          </div>
 
-        <div class="flex flex-col gap-2">
-          <span class="font-medium text-sm">Created By</span>
-          <input
-            :value="items[0].created_by"
-            type="text"
-            disabled
-            class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
-          />
+          <div class="flex flex-col gap-2">
+            <span class="font-medium text-sm">Created By</span>
+            <input
+              :value="items[0].created_by"
+              type="text"
+              disabled
+              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
+            />
+          </div>
+        </div>
+        <div class="mt-7 flex-grow text-end">
+          <button
+            v-if="isDriver && items[0].status != 'Ready'"
+            class="btn bg-primary"
+            @click="
+              () => {
+                formDialog = true;
+                isEditable = false;
+              }
+            "
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184"
+              />
+            </svg>
+
+            p2h
+          </button>
         </div>
       </div>
 
@@ -272,8 +305,8 @@ onMounted(async () => {
                 v-if="items[0].status == 'Driver Check' && isDriver"
                 @click="
                   () => {
-                    formDialog = true
-                    isEditable = true
+                    formDialog = true;
+                    isEditable = true;
                   }
                 "
                 class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"
