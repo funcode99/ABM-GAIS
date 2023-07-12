@@ -1,18 +1,16 @@
 <script setup>
+import { ref, onBeforeMount, computed } from "vue"
+import Api from '@/utils/Api'
+
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalRejectShortcut from "@/components/approval/request-trip/ModalRejectShortcut.vue";
-
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import icon_ceklis from "@/assets/icon_ceklis.svg";
+import iconView from "@/assets/view-details.png";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import requestdata from "@/utils/Api/approval/request-trip/requestdata";
-
-import { ref, onBeforeMount, computed } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
@@ -93,12 +91,22 @@ const sortList = (sortBy) => {
   }
 };
 
+const fetchRequestTrip = async () => {
+  try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        let api = await Api.get('/approval_request_trip/get_data')
+        sortedData.value = api.data.data
+      } catch (error) {
+        console.log(error)
+        sortedData.value = []
+      }
+}
+
 onBeforeMount(() => {
-  getSessionForSidebar();
-  instanceArray = requestdata;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
+  getSessionForSidebar()
+  fetchRequestTrip()
+})
 
 //for searching
 const filteredItems = (search) => {
@@ -300,24 +308,23 @@ const getSessionForSidebar = () => {
                       paginateIndex * pageMultiplierReactive,
                       (paginateIndex + 1) * pageMultiplierReactive
                     )"
-                    :key="data.no"
+                    :key="data.id"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
                     </td>
                     <td>{{ data.no }}</td>
-                    <td>{{ data.created_date }}</td>
-                    <td>{{ data.requestor_no }}</td>
-                    <td>{{ data.requestor }}</td>
-                    <td>{{ data.purpose_of_trip }}</td>
+                    <td>{{ data.created_at }}</td>
+                    <td>{{ data.no_request_trip }}</td>
+                    <td>{{ data.employee_name }}</td>
+                    <td>{{ data.document_name }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link to="/viewapprovalrequesttrip">
-                        <button>
-                          <img :src="icon_ceklis" class="w-6 h-6" />
-                        </button>
-                      </router-link>
-                      <ModalRejectShortcut />
+                      <button
+                        @click="$router.push(`/viewapprovalrequesttrip/${data.id_request_trip}`)"
+                      >
+                        <img :src="iconView" class="w-6 h-6" />
+                      </button>
                     </td>
                   </tr>
                 </tbody>
@@ -344,6 +351,7 @@ const getSessionForSidebar = () => {
               :show-jump-buttons="true"
             />
           </div>
+
         </div>
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />
