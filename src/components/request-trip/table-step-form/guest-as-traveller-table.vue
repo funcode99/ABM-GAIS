@@ -4,7 +4,7 @@
     import deleteicon from "@/assets/navbar/delete_icon.svg"
     import editicon from "@/assets/navbar/edit_icon.svg"
 
-    const props = inject('travellerData')
+    const props = inject('travellerDataView')
     const tableHeadTravellers = [
         {id: 1, title: 'Name'},
         {id: 3, title: 'Gender'},
@@ -14,7 +14,7 @@
         {id: 7, title: 'Type'},
         {id: 8, title: 'Max Hotel Fare'},
         {id: 9, title: 'Flight Class'},
-        {id: 10, title: 'Action'}
+        // {id: 10, title: 'Action'}
     ]
 
     const emits = defineEmits('fetchTravellerGuest')
@@ -38,10 +38,11 @@
 
 <template>
 
-    <div class="overflow-x-auto mt-5">
+    <div class="overflow-x-auto mt-5 flex justify-center">
 
       <table class="table">
 
+      
         <thead>
           <tr>
             <th v-for="data in tableHeadTravellers" :key="data.id">
@@ -76,14 +77,14 @@
             <td>
               {{ data.flight_class }}
             </td>
-            <td class="flex flex-wrap gap-4 justify-center">
+            <!-- <td class="flex flex-wrap gap-4 justify-center">
               <button>
                 <img :src="editicon" class="w-6 h-6" />
               </button>
               <button @click="deleteData(data.id)">
                 <img :src="deleteicon" class="w-6 h-6" />
               </button>
-            </td>
+            </td> -->
           </tr>
         </tbody>
 

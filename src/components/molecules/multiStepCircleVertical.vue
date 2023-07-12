@@ -5,12 +5,13 @@
 
     const props = defineProps({
         number: Number,
+        limit: Number,
         title: String,
         selectedTitle: String,
-        limit: Number,
         image: String,
         stop: Boolean,
-        data: String
+        data: String,
+        any: Array
     })
 
     const emits = defineEmits('changeHeader')
@@ -54,6 +55,8 @@
     
             </div>
 
+
+
             <!-- notification box -->
             <div v-if="props.title == null" class="w-[385px] h-[128px] bg-[#EFF4FF] rounded-2xl my-3 flex items-center">
                 <div class="flex px-6 py-4 gap-x-3">
@@ -62,16 +65,18 @@
                     </div>
                     <div>
                         <h1 class="text-sm">{{ props.data }}</h1>
-                        <h1 class="text-[#8c8c8c] text-xs">Selasa, 12 April 2023</h1>
-                        <h1 class="text-[#8c8c8c] text-xs">08:30:25 AM</h1>
+                        <h1 class="text-[#8c8c8c] text-xs">{{ props.any.date.substr(0,10) }}</h1>
+                        <h1 class="text-[#8c8c8c] text-xs">{{ props.any.date.substr(11,20) }}</h1>
                     </div>
                 </div>
             </div>
 
             <!-- stepline for details -->
-            <div v-if="props.number != props.limit" class="flex justify-center w-11 h-11 z-50">
+            <div v-if="props.number !== props.limit" class="flex justify-center w-11 h-11 z-50">
                     <img :src="stepLine" />
             </div>
+
+
 
         </div>
 

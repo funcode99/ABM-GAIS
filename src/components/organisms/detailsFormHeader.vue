@@ -8,6 +8,8 @@
         title: String
     })
 
+    const emits = defineEmits(['changeView'])
+
 </script>
 
 <template>
@@ -17,10 +19,10 @@
         <img class="h-[60px] w-60" :src="miniABM" />
         
         <div class="mr-3 flex gap-4">   
-            <button>
+            <button @click="emits('changeView', 'document')">
                 <img class="w-[30px] h-[30px]" :src="formView" />
             </button>
-            <button>
+            <button @click="emits('changeView', 'table')">
                 <img class="w-[30px] h-[30px]" :src="tableView" />
             </button>
         </div>

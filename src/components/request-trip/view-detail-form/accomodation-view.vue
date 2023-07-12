@@ -105,6 +105,7 @@
                 placeholder="City"
                 :class="inputStylingClass"
                 required
+                :disabled="!status.isEditing"
               />
 
             </div>
@@ -120,7 +121,7 @@
             <div class="w-full">
                                       
               <label :class="labelStylingClass">
-                                      Hotel Name<span class="text-red-star">*</span>
+                Hotel Name<span class="text-red-star">*</span>
               </label>
 
               <input 
@@ -129,6 +130,7 @@
                 placeholder="Hotel Name"
                 :class="inputStylingClass"
                 required
+                :disabled="!status.isEditing"
               />
 
             </div>
@@ -148,7 +150,8 @@
                 type="text" 
                 placeholder="Type" 
                 :class=inputStylingClass 
-                required 
+                required
+                :disabled="!status.isEditing"
               />
                                   
             </div>
@@ -173,6 +176,7 @@
                 :class="inputStylingClass"
                 placeholder="Date"
                 required
+                :disabled="!status.isEditing"
               />
 
             </div>
@@ -190,8 +194,9 @@
               <input
                 v-model="sharingWith" 
                 type="text" 
-                placeholder="Sharing With" 
+                placeholder="Sharing With"
                 :class=inputStylingClass
+                :disabled="!status.isEditing"
               >
                                   
             </div>
@@ -214,7 +219,8 @@
                 type="date"
                 :class="inputStylingClass"           
                 placeholder="Date"
-                required
+                required 
+                :disabled="!status.isEditing"
               />
 
             </div>
