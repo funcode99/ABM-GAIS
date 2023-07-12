@@ -63,6 +63,7 @@ import ApporvalReimbursementList from "@/views/approval/reimbursement/Reimbursem
 import ApporvalReimbursementView from "@/views/approval/reimbursement/ReimbursementView.vue"
 import ApprovalAtkRequestList from "@/views/approval/atk-request/AtkRequestList.vue"
 import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.vue"
+import ApprovalDelegationList from "@/views/approval/approval-delegation/ApprovalDelegationList.vue"
 
 //facility service system
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
@@ -937,6 +938,23 @@ const router = createRouter({
         return next("/")
       },
     },
+    {
+      path: "/approvaldelegation",
+      name: "approval delegation",
+      component: ApprovalDelegationList,
+      meta: {
+        title: "Approval Delegation",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token")
+
+        if (token) {
+          return next()
+        }
+
+        return next("/")
+      },
+    },
 
     //facility service system
     {
@@ -1195,21 +1213,21 @@ const router = createRouter({
       },
     },
     {
-        path: '/dashboard-meeting-room',
-        name: 'Dashboard Meeting Room',
-        component: DashboardMeetingRoom,
-        meta: {
-            title: 'Dashboard Meeting Room'
-        },
-        beforeEnter: (to, from, next) => {
-            const token = localStorage.getItem('token');
+      path: '/dashboard-meeting-room',
+      name: 'Dashboard Meeting Room',
+      component: DashboardMeetingRoom,
+      meta: {
+        title: 'Dashboard Meeting Room'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
 
-            if (token) {
-            return next()
-            }
-
-            return next('/')
+        if (token) {
+          return next()
         }
+
+        return next('/')
+      }
     },
   ],
 })
