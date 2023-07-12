@@ -3,8 +3,6 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ModalAdd from "@/components/approval/approval-delegation/ModalAdd.vue";
-// import ModalAdd from "@/components/reference/gl-account/ModalAdd.vue";
-// import ModalEdit from "@/components/reference/gl-account/ModalEdit.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
@@ -53,9 +51,6 @@ const sidebar = useSidebarStore();
 // };
 
 const search = ref("");
-const date = ref();
-const dateStart = ref();
-const dateEnd = ref();
 
 let sortedData = ref([]);
 let sortedbyASC = true;
@@ -73,7 +68,7 @@ let totalData = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-  //   fetchSettlementReport(pageOfItem);
+  fetchApprovalDelegation(pageOfItem);
 };
 
 const tableHead = [
@@ -100,22 +95,8 @@ const getSessionForSidebar = () => {
 };
 
 const fetchApprovalDelegation = async (id) => {
-  //   if (date.value != undefined) {
-  //     if (date.value[0] != null) {
-  //       dateStart.value = date.value[0].toISOString().split("T")[0];
-  //     }
-  //     if (date.value[1] != null) {
-  //       dateEnd.value = date.value[1].toISOString().split("T")[0];
-  //     }
-  //     if (date.value[1] == null) {
-  //       dateEnd.value = dateStart.value;
-  //     }
-  //   }
-
   const params = {
     search: search.value,
-    start_date: null,
-    end_date: null,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
@@ -123,7 +104,6 @@ const fetchApprovalDelegation = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/approval_delegation/get_data", { params });
   instanceArray = res.data.data;
-  console.log(instanceArray);
   sortedData.value = instanceArray.data;
   totalPage.value = instanceArray.last_page;
   totalData.value = instanceArray.total;
@@ -140,15 +120,6 @@ const format_date = (value) => {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY");
   }
-};
-
-const resetData = () => {
-  //   selectedCatype.value = "";
-  //   selectedStatus.value = "";
-  //   dateStart.value = "";
-  //   dateEnd.value = "";
-  //   date.value = null;
-  //   fetchSettlementReport();
 };
 
 const deleteApprovalDelegation = async (id) => {
@@ -224,7 +195,7 @@ const deleteApprovalDelegation = async (id) => {
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 v-model="pageMultiplier"
-                @change=""
+                @change="fetchApprovalDelegation"
               >
                 <option>10</option>
                 <option>25</option>

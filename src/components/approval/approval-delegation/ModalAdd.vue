@@ -6,19 +6,24 @@ import { Modal } from "usemodal-vue3";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
-import { ref, watch } from "vue";
+import { ref, watch, onBeforeMount } from "vue";
 
 const emits = defineEmits(["unlockScrollbar", "approvaldelegation-saved"]);
 
-let Delegator = ref("");
+let Delegator = localStorage.getItem("username");
+let selectedDelegateTo = ref("DelegateTo");
 let DelegateTo = ref("");
+const DateStart = ref();
+const DateEnd = ref();
+
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
 const resetInput = () => {
-  Delegator.value = "";
-  DelegateTo.value = "";
+  selectedDelegateTo.value = "";
+  DateStart.value = "";
+  DateEnd.value = "";
 };
 
 const saveApprovalDelegation = async () => {
@@ -27,19 +32,28 @@ const saveApprovalDelegation = async () => {
   setTimeout(callAddApi, 500);
 };
 
+const getDelegatorTo = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  const id_employee = localStorage.getItem("id_employee");
+
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  const res = await Api.get(`/employee/get_delegation/${id_employee}`);
+  DelegateTo.value = res.data.data;
+};
+
 const callAddApi = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
+  const id_employee = localStorage.getItem("id_employee");
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   try {
     await Api.post(`/approval_delegation/store`, {
-      id_employee: Delegator.value,
-      id_employee_to: DelegateTo.value,
-      start_date: null,
-      end_date: null,
+      id_employee: id_employee,
+      id_employee_to: selectedDelegateTo.value,
+      start_date: DateStart.value,
+      end_date: DateEnd.value,
     });
-
-    resetInput();
 
     Swal.fire({
       position: "center",
@@ -54,6 +68,10 @@ const callAddApi = async () => {
     console.log(error);
   }
 };
+
+onBeforeMount(() => {
+  getDelegatorTo();
+});
 
 watch(isVisible, () => {
   if (isAdding.value == true) {
@@ -79,7 +97,10 @@ watch(isVisible, () => {
         title="New Approval Delegation"
       />
 
-      <form class="pt-4" @submit.prevent="saveApprovalDelegation">
+      <form
+        class="pt-4 modal-box-inner"
+        @submit.prevent="saveApprovalDelegation"
+      >
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Delegator<span class="text-red">*</span></label
@@ -90,6 +111,7 @@ watch(isVisible, () => {
             placeholder="Name"
             required
             v-model="Delegator"
+            disabled
           />
         </div>
 
@@ -97,13 +119,44 @@ watch(isVisible, () => {
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Delegate To<span class="text-red">*</span></label
           >
-          <input
-            type="text"
-            class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Name"
+          <select
+            class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             required
-            v-model="DelegateTo"
-          />
+            v-model="selectedDelegateTo"
+          >
+            <option disabled selected>Delegate To</option>
+            <option v-for="data in DelegateTo" :value="data.id">
+              {{ data.employee_name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="flex justify-between px-4 items-center">
+          <div class="mb-6 w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Active From<span class="text-red">*</span></label
+            >
+            <input
+              type="date"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Name"
+              required
+              v-model="DateStart"
+            />
+          </div>
+
+          <div class="mb-6 w-full ml-2 overflow-x-hidden">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Active To<span class="text-red">*</span></label
+            >
+            <input
+              type="date"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Name"
+              required
+              v-model="DateEnd"
+            />
+          </div>
         </div>
 
         <modalFooter @closeEdit="isVisible = false" class="pb-2" />
@@ -114,7 +167,7 @@ watch(isVisible, () => {
 
 <style scoped>
 :deep(.modal-vue3-content) {
-  max-height: 320px !important;
+  max-height: 400px !important;
   max-width: 510px !important;
 }
 </style>
