@@ -321,7 +321,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <button
-                        @click="$router.push(`/viewapprovalrequesttrip/${data.id_request_trip}`)"
+                        @click="$router.push(`/viewapprovalrequesttrip/${data.id_request_trip}/${data.id}`)"
                       >
                         <img :src="iconView" class="w-6 h-6" />
                       </button>

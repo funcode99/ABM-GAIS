@@ -34,6 +34,7 @@
   const route = useRoute()
   const sidebar = useSidebarStore()
   let requestTripId = route.params.id
+  let approvalId = route.params.approvalid
 
   let isEditing = ref(false)
   let isAdding = ref(false)
@@ -244,9 +245,10 @@ watch(purposeOfTripData, () => {
         <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
 
           <!-- HEADER -->
-          <router-link to="/approvalrequesttrip" class="flex items-center gap-2 py-4 mx-4">
-
-            <img :src="arrow" class="w-3 h-3" alt="" />
+          <div class="flex items-center gap-2">
+            <router-link to="/approvalrequesttrip" class="flex items-center gap-2 py-4 mx-4">
+              <img :src="arrow" class="w-3 h-3" alt="" />
+            </router-link>
             
             <h1 class="text-blue text-2xl font-semibold font-JakartaSans">
               Request Trip
@@ -254,13 +256,12 @@ watch(purposeOfTripData, () => {
                 / TRV-ABM/1232/23.04
               </span>
             </h1>
-
-          </router-link>
+          </div>
 
           <!-- APPROVE & REJECT BUTTON -->
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
-            <ModalApprove />
-            <ModalReject />
+            <ModalApprove :approvalId="approvalId" />
+            <ModalReject :approvalId="approvalId" />
           </div>
 
           <!-- FORM READ ONLY-->
@@ -340,8 +341,8 @@ watch(purposeOfTripData, () => {
           <!-- TAB -->
           <div v-if="tab == 'details'" class="flex">
                                           
-                        <!-- step circle -->
-                        <div>
+              <!-- step circle -->
+              <div>
 
                             <div class="py-12 px-4" v-if="purposeOfTripName === 'Field Break'">
                                 <multiStepCircleVertical number="1" title="Traveller" 
@@ -368,10 +369,10 @@ watch(purposeOfTripData, () => {
                                 <multiStepCircleVertical number="6" title="Cash Advance" @change-header="changeSelected('Cash Advance')" limit="6" :selectedTitle="headerTitle" />
                             </div>
 
-                        </div>
+              </div>
 
-                        <!-- details form -->
-                        <form class="flex-1" @submit.prevent="">
+              <!-- details form -->
+              <form class="flex-1" @submit.prevent="">
                             
                           <detailsFormHeader :title="headerTitle" v-if="!isAdding">
 
@@ -449,34 +450,34 @@ watch(purposeOfTripData, () => {
                           <!-- form Step 8 -->
                           <cashAdvanceFormView v-if="headerTitle == 'Cash Advance'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" :currentDetailIndex="detailIndex" />
 
-                        </form>
+              </form>
 
           </div>
                         
           <div v-else-if="tab == 'tlk'">
 
-                            <h1>TLK</h1>
-                            <hr class="border-black border-2">
+              <h1>TLK</h1>
+              <hr class="border-black border-2">
 
-                            <div class="flex flex-col mt-3">
+              <div class="flex flex-col mt-3">
                                 <span>Requestor <span class="text-red-star">*</span></span>
                                 <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="Gavin McFarland" disabled>
-                            </div>
+              </div>
 
-                            <div class="flex flex-col mt-3">
+              <div class="flex flex-col mt-3">
                                 <span>Job Band <span class="text-red-star">*</span></span>
                                 <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="B" disabled>
-                            </div>
+              </div>
 
-                            <div class="flex flex-col mt-3">
+              <div class="flex flex-col mt-3">
                                 <span>TLK <span class="text-red-star">*</span></span>
                                 <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="A" disabled>
-                            </div>
+              </div>
 
-                            <div class="flex flex-col mt-3">
+              <div class="flex flex-col mt-3">
                                 <span>Total TLK <span class="text-red-star">*</span></span>
                                 <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="569.000" disabled>
-                            </div>
+              </div>
 
           </div>
 
