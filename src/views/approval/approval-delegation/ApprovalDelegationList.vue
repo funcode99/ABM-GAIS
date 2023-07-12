@@ -113,7 +113,7 @@ const fetchApprovalDelegation = async (id) => {
   //   }
 
   const params = {
-    search: null,
+    search: search.value,
     start_date: null,
     end_date: null,
     perPage: pageMultiplier.value,
@@ -259,7 +259,7 @@ const deleteApprovalDelegation = async (id) => {
                   type="text"
                   name="search"
                   v-model="search"
-                  @keyup="fetchSettlementReport()"
+                  @keyup="fetchApprovalDelegation()"
                 />
               </label>
             </div>
