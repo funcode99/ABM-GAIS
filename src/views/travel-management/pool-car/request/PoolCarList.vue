@@ -1,26 +1,26 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue"
-import { useSidebarStore } from "@/stores/sidebar.js"
-import { toFilterDate } from "@/utils/filters"
+import { computed, onMounted, ref, watch } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js";
+import { toFilterDate } from "@/utils/filters";
 
-const sidebar = useSidebarStore()
+const sidebar = useSidebarStore();
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import DataTable from "@/components/table/DataTable.vue"
-import Multiselect from "@vueform/multiselect"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import DataTable from "@/components/table/DataTable.vue";
+import Multiselect from "@vueform/multiselect";
 
-import PageTitle from "@/components/atomics/PageTitle.vue"
+import PageTitle from "@/components/atomics/PageTitle.vue";
 
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
-import icon_edit from "@/assets/navbar/edit_icon.svg"
-import icon_delete from "@/assets/navbar/delete_icon.svg"
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
+import icon_edit from "@/assets/navbar/edit_icon.svg";
+import icon_delete from "@/assets/navbar/delete_icon.svg";
 
 import {
   fetchPoolCarRequest,
   fetchPoolCarStatus,
-} from "@/utils/Api/travel-management/poolCar"
+} from "@/utils/Api/travel-management/poolCar";
 
 const headers = [
   {
@@ -60,7 +60,7 @@ const headers = [
     value: "actions",
     sortable: false,
   },
-]
+];
 
 const filter = ref({
   status: {
@@ -69,23 +69,25 @@ const filter = ref({
   },
   date: null,
   search: "",
-})
+});
 
-const selectedItems = ref([])
-const size = ref(0)
-const tableRef = ref()
+const selectedItems = ref([]);
+const size = ref(0);
+const tableRef = ref();
 
 const resetFilter = () => {
-  filter.value.status.value = null
-  filter.value.date = null
-  filter.value.search = ""
-}
+  filter.value.status.value = null;
+  filter.value.date = null;
+  filter.value.search = "";
+
+  tableRef.value.getData();
+};
 
 const setContainerSize = (screenSize) => {
-  const padding = 50
-  const sidebarSize = sidebar.isWide ? 260 : 100
-  size.value = screenSize - sidebarSize - padding
-}
+  const padding = 50;
+  const sidebarSize = sidebar.isWide ? 260 : 100;
+  size.value = screenSize - sidebarSize - padding;
+};
 
 const filterQuery = computed(() => {
   return {
@@ -93,30 +95,30 @@ const filterQuery = computed(() => {
     end_date: (filter.value.date || [])[1] || null,
     search: filter.value.search,
     status: filter.value.status.value,
-  }
-})
+  };
+});
 
 watch(sidebar, () => {
-  setContainerSize(window.innerWidth)
-})
+  setContainerSize(window.innerWidth);
+});
 
 onMounted(() => {
-  setContainerSize(window.innerWidth)
+  setContainerSize(window.innerWidth);
 
   window.addEventListener("resize", () => {
-    setContainerSize(window.innerWidth)
-  })
-})
+    setContainerSize(window.innerWidth);
+  });
+});
 
 onMounted(async () => {
-  filter.value.status.items = await fetchPoolCarStatus()
+  filter.value.status.items = await fetchPoolCarStatus();
 
-  setContainerSize(window.innerWidth)
+  setContainerSize(window.innerWidth);
 
   window.addEventListener("resize", () => {
-    setContainerSize(window.innerWidth)
-  })
-})
+    setContainerSize(window.innerWidth);
+  });
+});
 </script>
 
 <template>
