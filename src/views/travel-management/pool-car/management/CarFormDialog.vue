@@ -1,33 +1,33 @@
 <script setup>
-import { Modal } from "usemodal-vue3"
-import { onMounted, ref, watch } from "vue"
+import { Modal } from "usemodal-vue3";
+import { onMounted, ref, watch } from "vue";
 
-import Swal from "sweetalert2"
+import Swal from "sweetalert2";
 
-import modalHeader from "@/components/modal/modalHeader.vue"
-import modalFooter from "@/components/modal/modalFooter.vue"
-import Multiselect from "@vueform/multiselect"
+import modalHeader from "@/components/modal/modalHeader.vue";
+import modalFooter from "@/components/modal/modalFooter.vue";
+import Multiselect from "@vueform/multiselect";
 
-import FieldTitle from "@/components/atomics/FieldTitle.vue"
+import FieldTitle from "@/components/atomics/FieldTitle.vue";
 
 import {
   fetchCarType,
   fethDrivers,
   saveCarData,
   updateCarData,
-} from "@/utils/Api/travel-management/poolCar.js"
-import fetchCompanyRefs from "@/utils/Fetch/Reference/fetchCompany"
-import fetchSiteRefs from "@/utils/Fetch/Reference/fetchSite"
-import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
+} from "@/utils/Api/travel-management/poolCar.js";
+import fetchCompanyRefs from "@/utils/Fetch/Reference/fetchCompany";
+import fetchSiteRefs from "@/utils/Fetch/Reference/fetchSite";
+import CurrencyInput from "@/components/atomics/CurrencyInput.vue";
 
-const emits = defineEmits(["success", "resetData"])
+const emits = defineEmits(["success", "resetData"]);
 
 const props = defineProps({
   data: {
     type: Object,
     default: () => {},
   },
-})
+});
 
 const references = ref({
   company: [],
@@ -38,10 +38,10 @@ const references = ref({
     { label: "Under Maintenance", value: 0 },
   ],
   driver: [],
-})
+});
 
-const dialog = ref(false)
-const form = ref({})
+const dialog = ref(false);
+const form = ref({});
 
 const setForm = () => {
   form.value = {
@@ -55,31 +55,31 @@ const setForm = () => {
     transmision: null,
     transmisi: null,
     status: null,
-  }
-}
+  };
+};
 
 const saveCar = async () => {
   try {
-    let res
+    let res;
 
-    const body = { ...form.value }
+    const body = { ...form.value };
 
-    var form_data = new FormData()
+    var form_data = new FormData();
 
     for (var key in body) {
-      form_data.append(key, body[key])
+      if (body[key]) form_data.append(key, body[key]);
     }
 
     if (body.id) {
-      res = await updateCarData(form_data)
+      res = await updateCarData(form_data);
     } else {
-      res = await saveCarData(form_data)
+      res = await saveCarData(form_data);
     }
 
     if (res.data.success) {
-      dialog.value = false
+      dialog.value = false;
 
-      emits("success")
+      emits("success");
 
       Swal.fire({
         position: "center",
@@ -87,29 +87,29 @@ const saveCar = async () => {
         title: "Succeess to Save Car Data",
         showConfirmButton: false,
         timer: 1500,
-      })
+      });
     }
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};
 
 watch(dialog, () => {
-  setForm()
+  setForm();
 
   if (props.data.id) {
-    Object.assign(form.value, props.data)
+    Object.assign(form.value, props.data);
   }
-})
+});
 
-defineExpose({ dialog })
+defineExpose({ dialog });
 
 onMounted(async () => {
-  references.value.company = await fetchCompanyRefs()
-  references.value.site = await fetchSiteRefs()
-  references.value.carType = await fetchCarType()
-  references.value.driver = await fethDrivers()
-})
+  references.value.company = await fetchCompanyRefs();
+  references.value.site = await fetchSiteRefs();
+  references.value.carType = await fetchCarType();
+  references.value.driver = await fethDrivers();
+});
 </script>
 
 <template>
