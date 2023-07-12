@@ -2,7 +2,8 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/gl-account/ModalAdd.vue";
+import ModalAdd from "@/components/approval/approval-delegation/ModalAdd.vue";
+// import ModalAdd from "@/components/reference/gl-account/ModalAdd.vue";
 // import ModalEdit from "@/components/reference/gl-account/ModalEdit.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
@@ -10,7 +11,6 @@ import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
 import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
-import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icondanger from "@/assets/Danger.png";
@@ -18,9 +18,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
-// import moment from "moment";
-
-import { Workbook } from "exceljs";
+import moment from "moment";
 
 import { ref, onBeforeMount, computed } from "vue";
 
@@ -138,11 +136,11 @@ onBeforeMount(() => {
   getSessionForSidebar();
 });
 
-// const format_date = (value) => {
-//   if (value) {
-//     return moment(String(value)).format("DD/MM/YYYY");
-//   }
-// };
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
 
 const resetData = () => {
   //   selectedCatype.value = "";
@@ -153,47 +151,47 @@ const resetData = () => {
   //   fetchSettlementReport();
 };
 
-// const deleteGLAccount = async (id) => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+const deleteApprovalDelegation = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-//   Swal.fire({
-//     title:
-//       "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-//     html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-//     iconHtml: `<img src="${icondanger}" />`,
-//     showCloseButton: true,
-//     closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-//     showCancelButton: true,
-//     buttonsStyling: false,
-//     cancelButtonText: "Cancel",
-//     customClass: {
-//       cancelButton: "swal-cancel-button",
-//       confirmButton: "swal-confirm-button",
-//     },
-//     reverseButtons: true,
-//     confirmButtonColor: "#3085d6",
-//     cancelButtonColor: "#d33",
-//     confirmButtonText: "Yes",
-//   }).then((result) => {
-//     if (result.isConfirmed) {
-//       Api.delete(`/gl_account/delete_data/${id}`).then((res) => {
-//         Swal.fire({
-//           title: "Successfully",
-//           text: "GL Account has been deleted.",
-//           icon: "success",
-//           showCancelButton: false,
-//           confirmButtonColor: "#015289",
-//           showConfirmButton: false,
-//           timer: 1500,
-//         });
-//         fetchApprovalDelegation();
-//       });
-//     } else {
-//       return;
-//     }
-//   });
-// };
+  Swal.fire({
+    title:
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+    iconHtml: `<img src="${icondanger}" />`,
+    showCloseButton: true,
+    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+    showCancelButton: true,
+    buttonsStyling: false,
+    cancelButtonText: "Cancel",
+    customClass: {
+      cancelButton: "swal-cancel-button",
+      confirmButton: "swal-confirm-button",
+    },
+    reverseButtons: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Api.delete(`/approval_delegation/delete_data/${id}`).then((res) => {
+        Swal.fire({
+          title: "Successfully",
+          text: "Approval Delegation has been deleted.",
+          icon: "success",
+          showCancelButton: false,
+          confirmButtonColor: "#015289",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        fetchApprovalDelegation();
+      });
+    } else {
+      return;
+    }
+  });
+};
 </script>
 
 <template>
@@ -215,8 +213,7 @@ const resetData = () => {
               Approval Delegation
             </p>
             <div class="flex gap-4">
-              <ModalAdd />
-              <!-- @gl-saved="fetchGLAccount" -->
+              <ModalAdd @approvaldelegation-saved="fetchApprovalDelegation" />
             </div>
           </div>
 
@@ -299,9 +296,17 @@ const resetData = () => {
                 <td>{{ data.no }}</td>
                 <td>{{ data.delegator }}</td>
                 <td>{{ data.delegate_to }}</td>
-                <td>{{ data.start_date }}</td>
-                <td>{{ data.end_date }}</td>
-                <td></td>
+                <td>{{ format_date(data.start_date) }}</td>
+                <td>{{ format_date(data.end_date) }}</td>
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <!-- <ModalEdit
+                    @change-gl="editGlAccount(data.id)"
+                    :formContent="[data.gl_account, data.gl_name]"
+                  /> -->
+                  <button @click="deleteApprovalDelegation(data.id)">
+                    <img :src="deleteicon" class="w-6 h-6" />
+                  </button>
+                </td>
               </tr>
             </tbody>
           </tableData>
