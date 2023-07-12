@@ -27,11 +27,9 @@
         
     </div>
     
-    <div class="flex items-center gap-7 ml-8">
+    <div class="flex items-center ml-8">
         <h1 class="text-2xl font-medium">{{ props.title }}</h1>
-        <div class="flex gap-4">
-            <slot></slot>
-        </div>
+        <slot></slot>
     </div>
 
 </template>

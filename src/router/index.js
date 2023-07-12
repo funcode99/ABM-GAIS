@@ -820,7 +820,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/viewapprovalrequesttrip",
+      path: "/viewapprovalrequesttrip/:id/:approvalid",
       name: "view approval request trip",
       component: RequestTripView,
       meta: {
