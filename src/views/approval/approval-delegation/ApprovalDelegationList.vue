@@ -2,7 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-// import ModalAdd from "@/components/reference/gl-account/ModalAdd.vue";
+import ModalAdd from "@/components/reference/gl-account/ModalAdd.vue";
 // import ModalEdit from "@/components/reference/gl-account/ModalEdit.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
@@ -18,108 +18,73 @@ import iconClose from "@/assets/navbar/icon_close.svg";
 
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
+// import moment from "moment";
 
 import { Workbook } from "exceljs";
 
 import { ref, onBeforeMount, computed } from "vue";
 
-import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js";
+// import { useFormEditStore } from "@/stores/reference/gl-account/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
-const formEditState = useFormEditStore();
+// const formEditState = useFormEditStore();
 
-let glAccountCode = ref();
-let glAccountName = ref();
+// let editglAccountDataId = ref();
 
-let editglAccountDataId = ref();
+// const editGlAccount = async (data) => {
+//   editglAccountDataId.value = data;
+//   setTimeout(callEditApi, 500);
+// };
 
-const editGlAccount = async (data) => {
-  editglAccountDataId.value = data;
-  setTimeout(callEditApi, 500);
-};
-
-const callEditApi = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  await Api.post(`/gl_account/update_data/${editglAccountDataId.value}`, {
-    gl_account: formEditState.glAccount.glAccountCode,
-    gl_name: formEditState.glAccount.glAccountName,
-  });
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: "Your work has been saved",
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  fetchGLAccount();
-};
+// const callEditApi = async () => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   await Api.post(`/gl_account/update_data/${editglAccountDataId.value}`, {
+//     gl_account: formEditState.glAccount.glAccountCode,
+//     gl_name: formEditState.glAccount.glAccountName,
+//   });
+//   Swal.fire({
+//     position: "center",
+//     icon: "success",
+//     title: "Your work has been saved",
+//     showConfirmButton: false,
+//     timer: 1500,
+//   });
+//   fetchGLAccount();
+// };
 
 const search = ref("");
+const date = ref();
+const dateStart = ref();
+const dateEnd = ref();
+
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
-let sortedDataReactive = computed(() => sortedData.value);
-let lengthCounter = 0;
-let sortAscending = true;
-const showFullText = ref({});
-let checkList = false;
 
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-const selectAll = (checkValue) => {
-  const check = document.getElementsByName("checks");
-  const btnDelete = document.getElementById("btnDelete");
-
-  if (checkValue === true) {
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type === "checkbox") {
-        check[i].checked = true;
-      }
-    }
-    btnDelete.style.display = "block";
-  } else {
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type === "checkbox") {
-        check[i].checked = false;
-      }
-    }
-    btnDelete.style.display = "none";
-  }
-};
-
-const deleteDataInCeklis = () => {
-  const check = document.getElementsByName("checks");
-  for (let i = 0; i < check.length; i++) {
-    if (check[i].type === "checkbox" && check[i].checked) {
-      const row = check[i].parentNode.parentNode;
-      row.parentNode.removeChild(row);
-    }
-  }
-
-  const btnDelete = document.getElementById("btnDelete");
-  const checkedCheckboxes = document.querySelectorAll(
-    'input[name="checks"]:checked'
-  );
-  if (checkedCheckboxes.length === 0) {
-    btnDelete.style.display = "none";
-  }
+  //   fetchSettlementReport(pageOfItem);
 };
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "GL Account", jsonData: "gl_account" },
-  { Id: 3, title: "GL Name", jsonData: "gl_name" },
-  { Id: 4, title: "Actions" },
+  { Id: 2, title: "Delegator", jsonData: "delegator" },
+  { Id: 3, title: "Delegate To", jsonData: "delegate_to" },
+  { Id: 4, title: "Active From", jsonData: "start_date" },
+  { Id: 5, title: "Active To", jsonData: "end_date" },
+  { Id: 6, title: "Actions" },
 ];
 
 const sortList = (sortBy) => {
@@ -132,117 +97,103 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchGLAccount();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
-
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.gl_account.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.gl_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.gl_account.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.gl_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
-};
-
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchGLAccount = async () => {
+const fetchApprovalDelegation = async (id) => {
+  //   if (date.value != undefined) {
+  //     if (date.value[0] != null) {
+  //       dateStart.value = date.value[0].toISOString().split("T")[0];
+  //     }
+  //     if (date.value[1] != null) {
+  //       dateEnd.value = date.value[1].toISOString().split("T")[0];
+  //     }
+  //     if (date.value[1] == null) {
+  //       dateEnd.value = dateStart.value;
+  //     }
+  //   }
+
+  const params = {
+    search: null,
+    start_date: null,
+    end_date: null,
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/gl_account/");
+  const res = await Api.get("/approval_delegation/get_data", { params });
   instanceArray = res.data.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
+  console.log(instanceArray);
+  sortedData.value = instanceArray.data;
+  totalPage.value = instanceArray.last_page;
+  totalData.value = instanceArray.total;
+  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+  showingValueTo.value = instanceArray.to;
 };
 
-const deleteGLAccount = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+onBeforeMount(() => {
+  fetchApprovalDelegation();
+  getSessionForSidebar();
+});
 
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Api.delete(`/gl_account/delete_data/${id}`).then((res) => {
-        Swal.fire({
-          title: "Successfully",
-          text: "GL Account has been deleted.",
-          icon: "success",
-          showCancelButton: false,
-          confirmButtonColor: "#015289",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        fetchGLAccount();
-      });
-    } else {
-      return;
-    }
-  });
+// const format_date = (value) => {
+//   if (value) {
+//     return moment(String(value)).format("DD/MM/YYYY");
+//   }
+// };
+
+const resetData = () => {
+  //   selectedCatype.value = "";
+  //   selectedStatus.value = "";
+  //   dateStart.value = "";
+  //   dateEnd.value = "";
+  //   date.value = null;
+  //   fetchSettlementReport();
 };
 
-const exportToExcel = () => {
-  const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("GL Account Data");
+// const deleteGLAccount = async (id) => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-  const tableHead = [
-    { title: "Nomor" },
-    { title: "ID" },
-    { title: "GL Account" },
-    { title: "GL Name" },
-  ];
-
-  tableHead.forEach((column, index) => {
-    worksheet.getCell(1, index + 1).value = column.title;
-  });
-
-  sortedDataReactive.value.forEach((data, rowIndex) => {
-    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-    worksheet.getCell(rowIndex + 2, 2).value = data.id;
-    worksheet.getCell(rowIndex + 2, 3).value = data.gl_account;
-    worksheet.getCell(rowIndex + 2, 4).value = data.gl_name;
-  });
-
-  workbook.xlsx.writeBuffer().then((buffer) => {
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "glaccount_data.xlsx";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-};
+//   Swal.fire({
+//     title:
+//       "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
+//     html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
+//     iconHtml: `<img src="${icondanger}" />`,
+//     showCloseButton: true,
+//     closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
+//     showCancelButton: true,
+//     buttonsStyling: false,
+//     cancelButtonText: "Cancel",
+//     customClass: {
+//       cancelButton: "swal-cancel-button",
+//       confirmButton: "swal-confirm-button",
+//     },
+//     reverseButtons: true,
+//     confirmButtonColor: "#3085d6",
+//     cancelButtonColor: "#d33",
+//     confirmButtonText: "Yes",
+//   }).then((result) => {
+//     if (result.isConfirmed) {
+//       Api.delete(`/gl_account/delete_data/${id}`).then((res) => {
+//         Swal.fire({
+//           title: "Successfully",
+//           text: "GL Account has been deleted.",
+//           icon: "success",
+//           showCancelButton: false,
+//           confirmButtonColor: "#015289",
+//           showConfirmButton: false,
+//           timer: 1500,
+//         });
+//         fetchApprovalDelegation();
+//       });
+//     } else {
+//       return;
+//     }
+//   });
+// };
 </script>
 
 <template>
@@ -264,21 +215,8 @@ const exportToExcel = () => {
               Approval Delegation
             </p>
             <div class="flex gap-4">
-              <button
-                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                id="btnDelete"
-                style="display: none"
-                @click="deleteDataInCeklis()"
-              >
-                Delete
-              </button>
-              <ModalAdd @gl-saved="fetchGLAccount" />
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-                @click="exportToExcel"
-              >
-                <img :src="icon_receive" class="w-6 h-6" />
-              </button>
+              <ModalAdd />
+              <!-- @gl-saved="fetchGLAccount" -->
             </div>
           </div>
 
@@ -289,6 +227,7 @@ const exportToExcel = () => {
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 v-model="pageMultiplier"
+                @change=""
               >
                 <option>10</option>
                 <option>25</option>
@@ -323,7 +262,7 @@ const exportToExcel = () => {
                   type="text"
                   name="search"
                   v-model="search"
-                  @keyup="filteredItems(search)"
+                  @keyup="fetchSettlementReport()"
                 />
               </label>
             </div>
@@ -333,16 +272,6 @@ const exportToExcel = () => {
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
-                <th>
-                  <div class="flex justify-center">
-                    <input
-                      type="checkbox"
-                      name="checked"
-                      @click="selectAll((checkList = !checkList))"
-                    />
-                  </div>
-                </th>
-
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -364,36 +293,15 @@ const exportToExcel = () => {
             <tbody>
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="(data, index) in sortedData.slice(
-                  paginateIndex * pageMultiplierReactive,
-                  (paginateIndex + 1) * pageMultiplierReactive
-                )"
+                v-for="data in sortedData"
                 :key="data.id"
               >
-                <td style="width: 5%">
-                  <input type="checkbox" name="checks" />
-                </td>
-                <td style="width: 5%">{{ data.no }}</td>
-                <td style="width: 15%">{{ data.gl_account }}</td>
-                <td style="width: 60%">
-                  <span
-                    :class="[
-                      'readmore-text',
-                      showFullText[data.id] ? 'show-full' : '',
-                    ]"
-                  >
-                    {{ data.gl_name }}
-                  </span>
-                </td>
-                <td class="flex flex-wrap gap-4 justify-center">
-                  <ModalEdit
-                    @change-gl="editGlAccount(data.id)"
-                    :formContent="[data.gl_account, data.gl_name]"
-                  />
-                  <button @click="deleteGLAccount(data.id)">
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button>
-                </td>
+                <td>{{ data.no }}</td>
+                <td>{{ data.delegator }}</td>
+                <td>{{ data.delegate_to }}</td>
+                <td>{{ data.start_date }}</td>
+                <td>{{ data.end_date }}</td>
+                <td></td>
               </tr>
             </tbody>
           </tableData>
@@ -403,35 +311,25 @@ const exportToExcel = () => {
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
-                <th>
-                  <div class="flex justify-center">
-                    <input
-                      type="checkbox"
-                      name="checked"
-                      @click="selectAll((checkList = !checkList))"
-                    />
-                  </div>
-                </th>
-
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
                   class="overflow-x-hidden cursor-pointer"
                   @click="sortList(`${data.jsonData}`)"
                 >
-                  <div class="flex justify-center items-center">
+                  <span class="flex justify-center items-center gap-1">
                     <p class="font-JakartaSans font-bold text-sm">
                       {{ data.title }}
                     </p>
                     <button v-if="data.jsonData" class="ml-2">
                       <img :src="arrowicon" class="w-[9px] h-3" />
                     </button>
-                  </div>
+                  </span>
                 </th>
               </tr>
             </thead>
 
-            <SkeletonLoadingTable :column="5" :row="5" />
+            <SkeletonLoadingTable :column="6" :row="5" />
           </tableData>
 
           <div v-else>
@@ -440,30 +338,20 @@ const exportToExcel = () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
-                  <th>
-                    <div class="flex justify-center">
-                      <input
-                        type="checkbox"
-                        name="checked"
-                        @click="selectAll((checkList = !checkList))"
-                      />
-                    </div>
-                  </th>
-
                   <th
                     v-for="data in tableHead"
                     :key="data.Id"
                     class="overflow-x-hidden cursor-pointer"
                     @click="sortList(`${data.jsonData}`)"
                   >
-                    <div class="flex justify-center items-center">
+                    <span class="flex justify-center items-center gap-1">
                       <p class="font-JakartaSans font-bold text-sm">
                         {{ data.title }}
                       </p>
                       <button v-if="data.jsonData" class="ml-2">
                         <img :src="arrowicon" class="w-[9px] h-3" />
                       </button>
-                    </div>
+                    </span>
                   </th>
                 </tr>
               </thead>
@@ -471,7 +359,7 @@ const exportToExcel = () => {
               <tbody>
                 <tr>
                   <td
-                    colspan="5"
+                    colspan="6"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Data not Found
@@ -486,12 +374,12 @@ const exportToExcel = () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
@@ -533,19 +421,5 @@ tr th {
 
 .this {
   overflow-x: hidden;
-}
-
-.readmore-text {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-.readmore-text:hover {
-  max-width: 500px;
-  white-space: nowrap;
-  word-break: break-word;
 }
 </style>
