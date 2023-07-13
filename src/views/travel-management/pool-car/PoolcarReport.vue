@@ -58,7 +58,7 @@ const onChangePage = (pageOfItem) => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
-  { Id: 3, title: "Car", jsonData: "plate" },
+  { Id: 3, title: "Plate", jsonData: "plate" },
   { Id: 4, title: "From Date", jsonData: "from_date" },
   { Id: 5, title: "To Date", jsonData: "to_date" },
   { Id: 6, title: "KM Travelled", jsonData: "odometer" },
@@ -175,7 +175,7 @@ const exportToExcel = () => {
   const tableHead = [
     { title: "Nomor" },
     { title: "Created Date" },
-    { title: "Car" },
+    { title: "Plate" },
     { title: "From Date" },
     { title: "To Date" },
     { title: "KM Travelled" },
