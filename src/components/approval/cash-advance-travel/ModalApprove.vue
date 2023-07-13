@@ -68,7 +68,7 @@ const approve = () => {
               required
             >
               <option class="readonly" value="">Select</option>
-              <option v-for="data in dataEmployee" :key="data.id">{{ data.name }}</option>
+              <option v-for="data in dataEmployee" :key="data.id">{{ data.employee_name }}</option>
             </select>
           </div>
 

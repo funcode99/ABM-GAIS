@@ -58,6 +58,7 @@ const fetchDataById = async (id) => {
   dataArr.value = res.data.data[0];
   fetchDataItem(dataArr.value.id_ca);
   fetchHistoryApproval(dataArr.value.id_document);
+  fetchDataEmployee(dataArr.value);
 };
 
 const fetchDataItem = async (id) => {
@@ -67,14 +68,14 @@ const fetchDataItem = async (id) => {
 
 let listEmployee = ref([]);
 
-const fetchDataEmployee = async () => {
+const fetchDataEmployee = async (dt) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   let payload = {
-    id_employee: employee_id,
-    id_company: company_id,
-    id_site: site_id,
-    id_approval_auth: id,
+    id_employee: dt.id_employee,
+    id_company: dt.id_company,
+    id_site: dt.id_site,
+    id_approval_auth: dt.id_approval_auth,
   };
   const res = await Api.get("/employee/approval_behalf", {
     params: payload,
