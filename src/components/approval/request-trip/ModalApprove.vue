@@ -1,30 +1,52 @@
 <script setup>
-import { ref } from 'vue'
+  import { ref, onBeforeMount } from 'vue'
 
-import iconClose from "@/assets/navbar/icon_close.svg"
-import icon_done from "@/assets/icon_done.svg"
-import Api from '@/utils/Api'
-import { useRouter } from 'vue-router'
+  import iconClose from "@/assets/navbar/icon_close.svg"
+  import icon_done from "@/assets/icon_done.svg"
+  import Api from '@/utils/Api'
+  import { useRouter } from 'vue-router'
 
-const router = useRouter()
+  const router = useRouter()
 
-const props = defineProps({
-  approvalId: Number
-})
-
-let notes = ref('')
-
-const approveRequest = async () => {
-  const token = JSON.parse(localStorage.getItem('token'))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  let api = await Api.post(`/approval_request_trip/approve/${props.approvalId}`,{
-      notes: notes.value
+  const props = defineProps({
+    approvalId: Number
   })
-  console.log(api)
-  router.push({
-    path: '/approvalrequesttrip'
+
+  let notes = ref('')
+
+  const approveRequest = async () => {
+      try {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        let api = await Api.post(`/approval_request_trip/approve/${props.approvalId}`,{
+            notes: notes.value
+        })
+        router.push({
+          path: '/approvalrequesttrip'
+        })      
+      } catch (error) {
+        
+      }
+  }
+
+  let approverBehalfList = ref()
+
+  const fetchApproveBehalf = async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      let api = await Api.get(`/employee/approval_behalf?id_employee=${localStorage.getItem("id_employee")}&id_company=${localStorage.getItem("id_company")}&id_site=${localStorage.getItem("id_site")}&id_approval_auth=`)
+      approverBehalfList.value = api.data.data
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  onBeforeMount(() => {
+    fetchApproveBehalf()
   })
-}
+
+  let role = JSON.parse(localStorage.getItem('id_role'))
 
 </script>
 
@@ -62,7 +84,7 @@ const approveRequest = async () => {
 
         <form class="pt-4">
 
-          <div class="flex flex-wrap justify-start gap-2">
+          <div v-if="role === 'SUPADM'" class="flex flex-wrap justify-start gap-2">
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
@@ -80,9 +102,9 @@ const approveRequest = async () => {
               class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               required
             >
-              <option disabled selected>Name</option>
-              <option>Name A</option>
-              <option>Name B</option>
+              <option v-for="data in approverBehalfList" :key="data.id">
+                {{ data.employee_name }}
+              </option>
             </select>
           </div>
 
