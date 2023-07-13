@@ -124,8 +124,9 @@ const fetchCompany = async () => {
 const fetchCar = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/car/get_type");
+  const res = await Api.get("/car/get");
   Car.value = res.data.data;
+  console.log(res.data.data);
 };
 
 const fetchDepartement = async (id_company) => {
@@ -327,7 +328,7 @@ const showClearButton = computed(() => {
                 >
                   <option disabled selected>Type</option>
                   <option v-for="data in Car" :value="data.id">
-                    {{ data.type_car }}
+                    {{ data.car_name }}
                   </option>
                 </select>
               </div>
