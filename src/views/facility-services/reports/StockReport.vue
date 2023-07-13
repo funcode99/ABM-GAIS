@@ -12,11 +12,13 @@ import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import expandArrow from "@/assets/ExpandArrow.png";
+import iconUp from "@/assets/icon-up.png";
 
-import Api from "@/utils/Api";
-import moment from "moment";
+// import Api from "@/utils/Api";
+// import moment from "moment";
 
-import { Workbook } from "exceljs";
+// import { Workbook } from "exceljs";
 import { ref, onBeforeMount, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
@@ -26,26 +28,26 @@ const selectedStatus = ref("");
 const selectedCatype = ref("");
 const search = ref("");
 const date = ref();
-const dateStart = ref();
-const dateEnd = ref();
+// const dateStart = ref();
+// const dateEnd = ref();
 
 let sortedData = ref([]);
-let sortedbyASC = true;
-let instanceArray = [];
+// let sortedbyASC = true;
+// let instanceArray = [];
 
-let showingValue = ref(1);
+// let showingValue = ref(1);
 let showingValueFrom = ref(0);
 let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
-let totalPage = ref(0);
+// let pageMultiplierReactive = computed(() => pageMultiplier.value);
+// let paginateIndex = ref(0);
+// let totalPage = ref(0);
 let totalData = ref(0);
 
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
-  fetchSettlementReport(pageOfItem);
+  // paginateIndex.value = pageOfItem - 1;
+  // showingValue.value = pageOfItem;
+  // fetchSettlementReport(pageOfItem);
 };
 
 const tableHead = [
@@ -58,127 +60,45 @@ const tableHead = [
 ];
 
 const sortList = (sortBy) => {
-  if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
-  } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
-  }
+  // if (sortedbyASC) {
+  //   sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+  //   sortedbyASC = false;
+  // } else {
+  //   sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+  //   sortedbyASC = true;
+  // }
 };
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchSettlementReport = async (id) => {
-  if (date.value != undefined) {
-    if (date.value[0] != null) {
-      dateStart.value = date.value[0].toISOString().split("T")[0];
-    }
-    if (date.value[1] != null) {
-      dateEnd.value = date.value[1].toISOString().split("T")[0];
-    }
-    if (date.value[1] == null) {
-      dateEnd.value = dateStart.value;
-    }
-  }
-
-  const params = {
-    ca_type: selectedCatype.value,
-    start_date: dateStart.value,
-    end_date: dateEnd.value,
-    status: selectedStatus.value,
-    search: search.value,
-    perPage: pageMultiplier.value,
-    page: id ? id : 1,
-  };
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/settlement/report", { params });
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray.data;
-  totalPage.value = instanceArray.last_page;
-  totalData.value = instanceArray.total;
-  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
-  showingValueTo.value = instanceArray.to;
-};
-
 onBeforeMount(() => {
-  fetchSettlementReport();
   getSessionForSidebar();
 });
 
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
-
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
-const resetData = () => {
-  selectedCatype.value = "";
-  selectedStatus.value = "";
-  dateStart.value = "";
-  dateEnd.value = "";
-  date.value = null;
-  fetchSettlementReport();
-};
-
-const exportToExcel = () => {
-  const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("Stock In VS Stock Out Reports");
-
-  const tableHead = [
-    { title: "Nomor" },
-    { title: "Item Name" },
-    { title: "Date" },
-    { title: "Doc No" },
-    { title: "Qty" },
-    { title: "UOM" },
-  ];
-
-  tableHead.forEach((column, index) => {
-    worksheet.getCell(1, index + 1).value = column.title;
-  });
-
-  sortedData.value.forEach((data, rowIndex) => {
-    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
-    worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
-    worksheet.getCell(rowIndex + 2, 3).value = data.no_settlement;
-    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
-    worksheet.getCell(rowIndex + 2, 5).value = data.nomor_ca;
-    worksheet.getCell(rowIndex + 2, 6).value = data.total_real;
-  });
-
-  workbook.xlsx.writeBuffer().then((buffer) => {
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "stock_report_data.xlsx";
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-};
-
-const clearSearch = () => {
-  search.value = "";
-  fetchSettlementReport();
-};
-
 const showClearButton = computed(() => {
-  return search.value !== "";
+  // return search.value !== "";
 });
+
+const showMenu1 = ref(false);
+const showMenu2 = ref(false);
+const icon1 = ref(expandArrow);
+const icon2 = ref(expandArrow);
+
+const toggleMenu = (menu) => {
+  if (menu === "menu1") {
+    showMenu1.value = !showMenu1.value;
+    icon1.value = showMenu1.value ? iconUp : expandArrow;
+  } else if (menu === "menu2") {
+    showMenu2.value = !showMenu2.value;
+    icon2.value = showMenu2.value ? iconUp : expandArrow;
+  }
+};
+
+const getIcon = (menu) => {
+  return menu === "menu1" ? icon1.value : icon2.value;
+};
 </script>
 
 <template>
@@ -336,7 +256,7 @@ const showClearButton = computed(() => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0">
+          <tableData>
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
                 <th
@@ -355,85 +275,35 @@ const showClearButton = computed(() => {
               </tr>
             </thead>
 
-            <tbody>
-              <tr
-                class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData"
-                :key="data.id"
-              >
-                <td>{{ data.no }}</td>
-                <td>{{ format_date(data.created_at) }}</td>
-                <td>{{ data.no_settlement }}</td>
-                <td>{{ data.employee_name }}</td>
-                <td>{{ data.no_ca }}</td>
-                <td>{{ format_price(data.total_real) }}</td>
-                <td>{{ data.status }}</td>
+            <tbody class="font-JakartaSans font-normal text-sm">
+              <tr>
+                <td
+                  class="flex justify-center items-center gap-2"
+                  @click="toggleMenu('menu1')"
+                >
+                  <p>Stock In</p>
+                  <img :src="getIcon('menu1')" class="mt-1 w-[12px] h-[8px]" />
+                </td>
+                <td colspan="5"></td>
+              </tr>
+              <tr v-if="showMenu1">
+                <td colspan="6">Menu 1 content goes here</td>
+              </tr>
+              <tr>
+                <td
+                  class="flex justify-center items-center gap-2"
+                  @click="toggleMenu('menu2')"
+                >
+                  <p>Stock Out</p>
+                  <img :src="getIcon('menu2')" class="mt-1 w-[12px] h-[8px]" />
+                </td>
+                <td colspan="5"></td>
+              </tr>
+              <tr v-if="showMenu2">
+                <td colspan="6">Menu 2 content goes here</td>
               </tr>
             </tbody>
           </tableData>
-
-          <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
-          >
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
-                <th
-                  v-for="data in tableHead"
-                  :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                  @click="sortList(`${data.jsonData}`)"
-                >
-                  <div class="flex justify-center items-center">
-                    <p class="font-JakartaSans font-bold text-sm">
-                      {{ data.title }}
-                    </p>
-                    <button v-if="data.jsonData" class="ml-2">
-                      <img :src="arrowicon" class="w-[9px] h-3" />
-                    </button>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-
-            <SkeletonLoadingTable :column="7" :row="5" />
-          </tableData>
-
-          <div v-else>
-            <tableData>
-              <thead
-                class="text-center font-JakartaSans text-sm font-bold h-10"
-              >
-                <tr>
-                  <th
-                    v-for="data in tableHead"
-                    :key="data.Id"
-                    class="overflow-x-hidden cursor-pointer"
-                    @click="sortList(`${data.jsonData}`)"
-                  >
-                    <div class="flex justify-center items-center">
-                      <p class="font-JakartaSans font-bold text-sm">
-                        {{ data.title }}
-                      </p>
-                      <button v-if="data.jsonData" class="ml-2">
-                        <img :src="arrowicon" class="w-[9px] h-3" />
-                      </button>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr>
-                  <td
-                    colspan="7"
-                    class="text-center font-JakartaSans text-base font-medium"
-                  >
-                    Data not Found
-                  </td>
-                </tr>
-              </tbody>
-            </tableData>
-          </div>
 
           <!-- PAGINATION -->
           <div
@@ -444,7 +314,7 @@ const showClearButton = computed(() => {
               {{ showingValueTo }}
               of {{ totalData }} entries
             </p>
-            <vue-awesome-paginate
+            <!-- <vue-awesome-paginate
               :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
@@ -452,7 +322,7 @@ const showClearButton = computed(() => {
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
               :show-ending-buttons="true"
-            />
+            /> -->
           </div>
         </tableTop>
       </tableContainer>
@@ -487,21 +357,6 @@ tr th {
 
 .this {
   overflow-x: hidden;
-}
-
-.readmore-text {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-
-.readmore-text:hover {
-  max-width: 400px;
-  white-space: nowrap;
-  word-break: break-word;
 }
 
 .my-date {
