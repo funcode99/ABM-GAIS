@@ -25,7 +25,6 @@ import { ref, onBeforeMount, computed, onMounted, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const listStatus = [
-  { id: 0, title: "Draft" },
   { id: 1, title: "Booked" },
   { id: 10, title: "Done" },
   { id: 9, title: "Cancelled" },
@@ -586,9 +585,9 @@ onBeforeMount(() => {
 
                           </button>
                         </router-link>
-                        <button @click="deleteData(data.id)" v-if="data.status == 'Draft'">
+                        <!-- <button @click="deleteData(data.id)" v-if="data.status == 'Draft'">
                           <img :src="deleteicon" class="w-6 h-6" />
-                        </button>
+                        </button> -->
                       </div>
                     </td>
                   </tr>

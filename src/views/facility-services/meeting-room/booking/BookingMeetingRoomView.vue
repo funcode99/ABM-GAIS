@@ -362,7 +362,9 @@ const inputClass =
                       {{ dataArr.capacity }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ dataArr.remarks }}
+                        <span style="white-space: pre">
+                        {{ dataArr.remarks }}</span
+                      >
                     </td>
                   </tr>
                 </tbody>
