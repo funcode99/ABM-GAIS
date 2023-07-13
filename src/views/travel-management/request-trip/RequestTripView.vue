@@ -563,7 +563,7 @@
 
                           <!-- table Step 6 -->
                           <otherTransportationTableView 
-                            v-if="headerTitle === 'Other Transportation' && viewLayout === 'document'" 
+                            v-if="headerTitle === 'Other Transportation' && viewLayout === 'table'" 
                             class="ml-8"
                           />
 
