@@ -2053,6 +2053,97 @@ onMounted(() => {
                           </router-link>
                         </div>
                       </button>
+
+                      <button class="cursor-pointer text-left">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'hidden' : 'inline']"
+                            :src="submenuLine"
+                            alt=""
+                          />
+                          <img
+                            class="h-[2px] w-2"
+                            :class="[$route.path == '#' ? 'inline' : 'hidden']"
+                            :src="submenuLineSelected"
+                            alt=""
+                          />
+                          <a
+                            href="#"
+                            class="flex items-center w-full justify-between"
+                            :class="[
+                              $route.path == '#'
+                                ? `anchorImage anchorSubMenu`
+                                : '',
+                            ]"
+                          >
+                            Reports
+                            <img class="w-5 h-5" :src="groupIcon" alt="" />
+                          </a>
+                        </div>
+
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Document Delivery Reports
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                <p class="mr-[30px]">Stock In Vs Stock Out</p>
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+
+                        <div class="ml-5 mt-[10px]">
+                          <ul
+                            class="flex flex-col gap-[10px] text-base font-normal"
+                          >
+                            <router-link to="#" class="cursor-pointer">
+                              <li
+                                class="flex gap-[10px] items-center justify-between"
+                              >
+                                <img
+                                  :src="submenuInner"
+                                  alt=""
+                                  class="w-2 h-2"
+                                />
+                                Meeting Room Reports
+                                <img class="w-5 h-5" :src="groupIcon" alt="" />
+                              </li>
+                            </router-link>
+                          </ul>
+                        </div>
+                      </button>
                     </ul>
                   </div>
                 </collapse-transition>
