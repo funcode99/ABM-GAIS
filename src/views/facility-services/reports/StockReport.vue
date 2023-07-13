@@ -83,6 +83,8 @@ const showClearButton = computed(() => {
 
 const showMenu1 = ref(false);
 const showMenu2 = ref(false);
+const showMenuItem1 = ref(false);
+const showMenuItem2 = ref(false);
 const icon1 = ref(expandArrow);
 const icon2 = ref(expandArrow);
 
@@ -93,6 +95,12 @@ const toggleMenu = (menu) => {
   } else if (menu === "menu2") {
     showMenu2.value = !showMenu2.value;
     icon2.value = showMenu2.value ? iconUp : expandArrow;
+  } else if (menu === "menuItem1") {
+    showMenuItem1.value = !showMenuItem1.value;
+    icon2.value = showMenuItem1.value ? iconUp : expandArrow;
+  } else if (menu === "menuItem2") {
+    showMenuItem2.value = !showMenuItem2.value;
+    icon2.value = showMenuItem2.value ? iconUp : expandArrow;
   }
 };
 
@@ -286,9 +294,75 @@ const getIcon = (menu) => {
                 </td>
                 <td colspan="5"></td>
               </tr>
+
               <tr v-if="showMenu1">
-                <td colspan="6">Menu 1 content goes here</td>
+                <td>1</td>
+                <td
+                  class="flex justify-center items-center gap-2"
+                  @click="toggleMenu('menuItem1')"
+                >
+                  <p>Pen</p>
+                  <img
+                    :src="getIcon('menuItem1')"
+                    class="mt-1 w-[12px] h-[8px]"
+                  />
+                </td>
+                <td></td>
+                <td></td>
+                <td>100</td>
+                <td>Pc</td>
               </tr>
+              <tr v-if="showMenuItem1">
+                <td>1</td>
+                <td></td>
+                <td>13/04/23</td>
+                <td>IN-ABM/1132/13.04</td>
+                <td>80</td>
+                <td>Pc</td>
+              </tr>
+              <tr v-if="showMenuItem1">
+                <td>2</td>
+                <td></td>
+                <td>30/04/23</td>
+                <td>IN-ABM/1320/30.04</td>
+                <td>20</td>
+                <td>Pc</td>
+              </tr>
+
+              <tr v-if="showMenu1">
+                <td>2</td>
+                <td
+                  class="flex justify-center items-center gap-2"
+                  @click="toggleMenu('menuItem2')"
+                >
+                  <p>Paper Clip</p>
+                  <img
+                    :src="getIcon('menuItem2')"
+                    class="mt-1 w-[12px] h-[8px]"
+                  />
+                </td>
+                <td></td>
+                <td></td>
+                <td>320</td>
+                <td>Box</td>
+              </tr>
+              <tr v-if="showMenuItem2">
+                <td>1</td>
+                <td></td>
+                <td>21/04/23</td>
+                <td>IN-ABM/2322/21.04</td>
+                <td>150</td>
+                <td>Box</td>
+              </tr>
+              <tr v-if="showMenuItem2">
+                <td>2</td>
+                <td></td>
+                <td>08/04/23</td>
+                <td>IN-ABM/1320/08.04</td>
+                <td>170</td>
+                <td>Box</td>
+              </tr>
+
               <tr>
                 <td
                   class="flex justify-center items-center gap-2"
