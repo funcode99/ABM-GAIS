@@ -245,17 +245,18 @@ const deleteValue = async (id) => {
 
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetchCondition = (status, receiver, company_sender) => {
+const fetchCondition = (status, receiver, company_sender, company_receiver) => {
   if (["Created", "Received"].includes(status)) {
     let status =
-      (["SUPADM", "RCPTN", "ADM"].includes(id_role) &&
-        id_company == company_sender)
+      ["SUPADM", "RCPTN", "ADM"].includes(id_role) &&
+      id_company == company_sender
         ? true
         : false;
     return status;
   } else if (status == "Delivering") {
     let status =
-      ["SUPADM", "RCPTN", "EMPLY", "ADM"].includes(id_role) ||
+      (["SUPADM", "RCPTN", "EMPLY", "ADM"].includes(id_role) &&
+        id_company == company_receiver) ||
       receiver == username.value
         ? true
         : false;
@@ -339,6 +340,10 @@ const closeModal = () => {
     searchFilter.value,
     pageMultiplier.value
   );
+};
+
+const colorStatus = (status) => {
+  return "status-" + status.toLowerCase();
 };
 </script>
 
@@ -627,7 +632,9 @@ const closeModal = () => {
                       {{ data.name_site_receiver }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.status }}
+                      <span :class="colorStatus(data.status)">{{
+                        data.status
+                      }}</span>
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link
@@ -636,7 +643,8 @@ const closeModal = () => {
                           fetchCondition(
                             data.status,
                             data.receiver_name,
-                            data.id_company
+                            data.id_company,
+                            data.id_company_receiver
                           ) == true
                         "
                       >
@@ -648,7 +656,8 @@ const closeModal = () => {
                           fetchCondition(
                             data.status,
                             data.receiver_name,
-                            data.id_company
+                            data.id_company,
+                            data.id_company_receiver
                           ) == false
                         "
                       >
@@ -656,11 +665,15 @@ const closeModal = () => {
                       </router-link>
                       <button
                         @click="deleteValue(data.id)"
-                        v-if="data.status == 'Created' && fetchCondition(
+                        v-if="
+                          data.status == 'Created' &&
+                          fetchCondition(
                             data.status,
                             data.receiver_name,
-                            data.id_company
-                          ) == true"
+                            data.id_company,
+                            data.id_company_receiver
+                          ) == true
+                        "
                       >
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
@@ -756,5 +769,25 @@ tr th {
 
 .my-date {
   width: 300px !important;
+}
+
+.status-created {
+  color: #1f2937;
+  font-weight: 800;
+}
+
+.status-received {
+  color: #2970ff;
+  font-weight: 800;
+}
+
+.status-delivering {
+  color: #f29727;
+  font-weight: 800;
+}
+
+.status-delivered {
+  color: #00c851;
+  font-weight: 800;
 }
 </style>

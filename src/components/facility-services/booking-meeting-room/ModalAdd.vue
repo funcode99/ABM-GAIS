@@ -179,18 +179,26 @@ const edit = async (payload) => {
 };
 
 const save = async (payload) => {
-  const api = await Api.post("book_meeting_room/store/", payload);
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  if (api.data.success) {
-    close();
-    router.push({ path: `/booking-meeting-room` });
-  }
+  Api.post("book_meeting_room/store/", payload)
+    .then((res) => {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      close();
+    })
+    .catch((error) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: error.response.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    });
 };
 
 onMounted(() => {

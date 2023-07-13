@@ -4,7 +4,7 @@ import Api from "@/utils/Api"
 import deleteicon from "@/assets/navbar/delete_icon.svg"
 import editicon from "@/assets/navbar/edit_icon.svg"
 
-const props = inject('otherTransportationData')
+const props = inject('otherTransportationDataView')
 const tableHeadOtherTransportation = [
       {id: 1, title: 'Name'},
       {id: 2, title: 'Type'},
