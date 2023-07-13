@@ -17,7 +17,7 @@ let notes = ref('')
 const rejectRequest = async () => {
   const token = JSON.parse(localStorage.getItem('token'))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  let api = await Api.post(`/approval_request_trip/approve/${props.approvalId}`,{
+  let api = await Api.post(`/approval_request_trip/reject/${props.approvalId}`,{
     is_revision: isRevision.value,
     notes: notes.value
   })
