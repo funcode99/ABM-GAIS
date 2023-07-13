@@ -19,6 +19,16 @@
         emits('changeHeader')
     }
 
+    let date = ref('-')
+    let hour = ref('-')
+
+    try {
+        date.value = props.any.date.substr(0,10)
+        hour.value = props.any.date.substr(11,20)
+    } catch (error) {
+    }
+
+
 </script>
 
 <template>
@@ -64,9 +74,10 @@
                         <img :src="profileImage" class="w-3 h-3" />
                     </div>
                     <div>
+                        <!-- {{ props }} -->
                         <h1 class="text-sm">{{ props.data }}</h1>
-                        <h1 class="text-[#8c8c8c] text-xs">{{ props.any.date.substr(0,10) }}</h1>
-                        <h1 class="text-[#8c8c8c] text-xs">{{ props.any.date.substr(11,20) }}</h1>
+                        <h1 class="text-[#8c8c8c] text-xs">{{ date }}</h1>
+                        <h1 class="text-[#8c8c8c] text-xs">{{ hour }}</h1>
                     </div>
                 </div>
             </div>
