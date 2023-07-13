@@ -33,9 +33,6 @@ let tabId = ref(1);
 
 let id = route.params.id;
 const code_role = JSON.parse(localStorage.getItem("id_role"));
-const company_id = JSON.parse(localStorage.getItem("id_company"));
-const site_id = JSON.parse(localStorage.getItem("id_site"));
-const employee_id = JSON.parse(localStorage.getItem("id_site"));
 
 const tableHeadDetailsItem = [
   { id: 1, title: "Item" },
@@ -76,25 +73,28 @@ const fetchDataById = async (id) => {
   dataArr.value = res.data.data[0];
   fetchDataItem(dataArr.value.id_document);
   fetchHistoryApproval(dataArr.value.id_document);
+  fetchDataEmployee(dataArr.value);
 };
 
 const fetchDataItem = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`);
   dataItem.value = res.data.data;
-  console.log(dataItem.value);
 };
 
 let listEmployee = ref([]);
 
-const fetchDataEmployee = async () => {
+const fetchDataEmployee = async (dt) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   let payload = {
-    id_employee: employee_id,
-    id_company: company_id,
-    id_site: site_id,
-    id_approval_auth: id,
+    id_employee: dt.id_employee,
+    id_company: dt.id_company,
+    id_site: dt.id_site,
+    id_approval_auth: dt.id_approval_auth,
   };
+
   const res = await Api.get("/employee/approval_behalf", {
     params: payload,
   });
@@ -185,7 +185,6 @@ const fetchHistoryApproval = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(id);
-  fetchDataEmployee();
 });
 
 const getSessionForSidebar = () => {
@@ -348,7 +347,7 @@ const getSessionForSidebar = () => {
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
                     <th
-                      v-for="data in dataArr.id_ca_type == '1'
+                      v-for="data in dataArr.type_ca == '1'
                         ? tableHeadDetailsItem
                         : tableHeadDetailsItemNon"
                       :key="data.id"
@@ -356,24 +355,21 @@ const getSessionForSidebar = () => {
                     >
                       {{ data.title }}
                     </th>
-                    <th
-                      v-if="visibleHeader"
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
-                      Action
-                    </th>
                   </tr>
                 </thead>
                 <tbody
                   class="font-JakartaSans font-normal text-xs"
-                  v-if="dataItem.length > 0 && dataArr.id_ca_type == '1'"
+                  v-if="dataItem.length > 0 && dataArr.type_ca == '1'"
                 >
-                  <tr v-for="(data, index) in dataItem" :key="data.id">
+                  <tr v-for="data in dataItem" :key="data.id">
                     <td>
-                      {{ data.item_name }}
+                      {{ data.nama_item }}
                     </td>
                     <td>
-                      {{ dataArr.currency_name }}
+                      {{ data.frequency }}
+                    </td>
+                    <td>
+                      {{ data.currency_name }}
                     </td>
                     <td>
                       <input
@@ -403,12 +399,7 @@ const getSessionForSidebar = () => {
                       />
                     </td>
                     <td>
-                      <div
-                        v-if="
-                          !visibleHeader || (visibleHeader && data.id != idEdit)
-                        "
-                        class="py-2 font-JakartaSans font-medium text-sm"
-                      >
+                      <div class="py-2 font-JakartaSans font-medium text-sm">
                         <a
                           :href="data.attachment_path"
                           target="_blank"
@@ -417,24 +408,15 @@ const getSessionForSidebar = () => {
                           {{ data.attachment }}
                         </a>
                       </div>
-                      <input
-                        v-else
-                        type="file"
-                        id="logo_company"
-                        class="px-4 py-1 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-                        accept="image/*"
-                        @change="onFileSelected($event, index, data.nominal)"
-                        :disabled="data.id == idEdit ? false : true"
-                      />
                     </td>
                   </tr>
                 </tbody>
                 <tbody
                   v-else-if="dataItem.length > 0 && dataArr.id_ca_type == '2'"
                 >
-                  <tr v-for="(data, index) in dataItem" :key="data.id">
+                  <tr v-for="(data) in dataItem" :key="data.id">
                     <td>
-                      {{ data.item_name }}
+                      {{ data.nama_item }}
                     </td>
                     <td>
                       {{ data.cost_center_name }}
@@ -464,12 +446,7 @@ const getSessionForSidebar = () => {
                       />
                     </td>
                     <td>
-                      <div
-                        v-if="
-                          !visibleHeader || (visibleHeader && data.id != idEdit)
-                        "
-                        class="py-2 font-JakartaSans font-medium text-sm"
-                      >
+                      <div class="py-2 font-JakartaSans font-medium text-sm">
                         <a
                           :href="data.attachment_path"
                           target="_blank"
@@ -478,15 +455,6 @@ const getSessionForSidebar = () => {
                           {{ data.attachment }}
                         </a>
                       </div>
-                      <input
-                        v-else
-                        type="file"
-                        id="logo_company"
-                        class="px-4 py-1 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
-                        accept="image/*"
-                        @change="onFileSelected($event, index, data.nominal)"
-                        :disabled="data.id == idEdit ? false : true"
-                      />
                     </td>
                   </tr>
                 </tbody>

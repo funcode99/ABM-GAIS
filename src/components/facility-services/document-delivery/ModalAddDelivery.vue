@@ -338,7 +338,7 @@ watchEffect((newValue) => {
 
           <div class="mb-6 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Attachment (Optional)</label
+              >Attachment (Optional) <span class="text-slate-400 text-xs italic">Format file: jpg,jpeg,png,pdf. Max file: 3MB</span> </label
             >
             <input
               type="file"

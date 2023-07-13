@@ -177,13 +177,8 @@ const filterDataByType = async (id) => {
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
-  if (id_role == "EMPLY") {
-    const api = await Api.get("book_meeting_room/get", { params: payload });
-    paginationArray = api.data.data;
-  } else {
-    const api = await Api.get("adm_book_meeting_room/get", { params: payload });
-    paginationArray = api.data.data;
-  }
+  const api = await Api.get("book_meeting_room/get", { params: payload });
+  paginationArray = api.data.data;
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
@@ -580,9 +575,12 @@ onBeforeMount(() => {
                       <div class="flex justify-center items-center gap-2">
                         <router-link :to="`/booking-meeting-room/${data.id}`">
                           <button>
-                            <img :src="viewicon" class="w-6 h-6" v-if="['Done', 'Cancelled'].includes(data.status)"/>
-                            <img :src="editicon" class="w-6 h-6" v-else/>
-
+                            <img
+                              :src="viewicon"
+                              class="w-6 h-6"
+                              v-if="['Done', 'Cancelled'].includes(data.status)"
+                            />
+                            <img :src="editicon" class="w-6 h-6" v-else />
                           </button>
                         </router-link>
                         <!-- <button @click="deleteData(data.id)" v-if="data.status == 'Draft'">

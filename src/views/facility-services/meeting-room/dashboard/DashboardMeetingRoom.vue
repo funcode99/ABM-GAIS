@@ -2,6 +2,8 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
 
 import Api from "@/utils/Api";
 import VueCal from "vue-cal";
@@ -33,7 +35,11 @@ let filter = reactive({
   room: "",
 });
 let selectSite = ref(true);
-let id_site = ref("")
+let id_company = ref("");
+let id_site = ref("");
+let header = ref([]);
+let tempHeader = ref([]);
+const id_role = JSON.parse(localStorage.getItem("id_role"));
 
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -44,14 +50,58 @@ const fetch = async () => {
     let arr = {
       start: dt.start_date + " " + dt.start_time,
       end: dt.end_date + " " + dt.end_time,
-      title: dt.name_meeting_room,
-      content: dt.title,
+      content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
       class: "card-color",
+      split: dt.id_meeting_room,
     };
     datas.value.push(arr);
+    let arrHeader = {
+      id: dt.id_meeting_room,
+      label: dt.name_meeting_room,
+    };
+    tempHeader.value.push(arrHeader);
   });
+  header.value = tempHeader.value.filter(
+    (obj, index) =>
+      tempHeader.value.findIndex(
+        (item) => item.id === obj.id && item.label === obj.label
+      ) === index
+  );
 };
 
+const filterDataByType = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  let payload = {
+    company: id_company,
+    site: id_site,
+  };
+  const api = await Api.get("book_meeting_room/get", { params: payload });
+  dataArr.value = api.data.data.data;
+  dataArr.value.forEach((dt) => {
+    let arr = {
+      start: dt.start_date + " " + dt.start_time,
+      end: dt.end_date + " " + dt.end_time,
+      content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
+      class: "card-color",
+      split: dt.id_meeting_room,
+    };
+    datas.value.push(arr);
+    let arrHeader = {
+      id: dt.id_meeting_room,
+      label: dt.name_meeting_room,
+    };
+    tempHeader.value.push(arrHeader);
+  });
+  header.value = tempHeader.value.filter(
+    (obj, index) =>
+      tempHeader.value.findIndex(
+        (item) => item.id === obj.id && item.label === obj.label
+      ) === index
+  );
+};
+
+// FETCH DATA
 const fetchCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -59,14 +109,25 @@ const fetchCompany = async () => {
   listCompany.value = api.data.data;
 };
 
-const fetchSite = async () => {
+const fetchCompanyID = async (id_comp) => {
+  fetchSite(id_comp);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`site/get_by_company/${filter.id_company}`);
+  const res = await Api.get(`/company/get/${id_comp}`);
+  listCompany.value = res.data.data;
+  id_company.value = id_comp;
+};
+
+const fetchSite = async (id_comp) => {
+  let idComp = id_comp ? id_comp : id_company.value;
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get(`site/get_by_company/${idComp}`);
   listSite.value = api.data.data;
   selectSite.value = false;
   for (let index = 0; index < api.data.data.length; index++) {
     const element = api.data.data[index];
+
     if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
       id_site.value = element.id;
     }
@@ -78,10 +139,15 @@ const fetchSite = async () => {
   }
 };
 
+const fetchCondition = async () => {
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company);
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
-  fetchCompany();
+  fetchCondition();
 });
 </script>
 
@@ -115,23 +181,35 @@ onBeforeMount(() => {
             <div class="col-span-3">
               <vue-cal
                 locale="id"
+                active-view="day"
                 :time-from="8 * 60"
-                :time-to="19 * 60"
                 :time-step="30"
+                :disable-views="['years', 'year', 'month']"
+                editable-events
                 :events="datas"
+                :split-days="header"
+                :min-cell-width="500"
+                :min-split-width="400"
+                sticky-split-labels
+                class="h-[70vh]"
               >
+                <template #split-label="{ split }">
+                  <strong :style="`color: ${split.color}`">{{
+                    split.label
+                  }}</strong>
+                </template>
               </vue-cal>
             </div>
             <div class="px-5 pb-2">
               <p class="mb-3 font-bold capitalize">Filter:</p>
               <select
-                v-model="filter.id_company"
+                v-model="id_company"
                 id="id_company"
                 :class="inputClass"
-                class="mb-4"
+                class="mb-3"
                 @change="fetchSite()"
               >
-                <option selected value="">Company</option>
+                <option disabled selected>Company</option>
                 <option
                   v-for="data in listCompany"
                   :key="data.id"
@@ -146,7 +224,7 @@ onBeforeMount(() => {
                 :class="inputClass"
                 :disabled="selectSite"
               >
-                <option selected value="">Site</option>
+                <option disabled selected>Site</option>
                 <option
                   v-for="data in listSite"
                   :key="data.id"
@@ -155,6 +233,31 @@ onBeforeMount(() => {
                   {{ data.site_code }} - {{ data.site_name }}
                 </option>
               </select>
+              <div class="my-3 grid grid-cols-2">
+                <button
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250] mr-2"
+                  @click="filterDataByType()"
+                >
+                  <span>
+                    <img :src="icon_filter" class="w-5 h-5" />
+                  </span>
+                  Filter
+                </button>
+                <button
+                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                  @click="resetData"
+                >
+                  <span>
+                    <img :src="icon_reset" class="w-5 h-5" />
+                  </span>
+                  Reset
+                </button>
+              </div>
+              <p class="cursor-pointer" v-for="data in header" :key="data.id">
+                <input type="checkbox" checked="checked" class="checkbox checkbox-sm mr-2" :value="data.id"/>
+                <span>{{data.label}}</span>
+
+              </p>
             </div>
           </div>
         </div>
@@ -186,10 +289,10 @@ onBeforeMount(() => {
 .vuecal__title-bar {
   background-color: rgba(1, 82, 137, 0.2) !important;
 }
-.vuecal__cell--today,
+/* .vuecal__cell--today,
 .vuecal__cell--current {
-  background-color: rgba(1, 82, 137, 0.7) !important;
-}
+  background-color: rgba(1, 82, 137, 0.15) !important;
+} */
 .vuecal:not(.vuecal--day-view) .vuecal__cell--selected {
   background-color: rgba(1, 82, 137, 0.1) !important;
 }
