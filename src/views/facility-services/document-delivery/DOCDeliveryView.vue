@@ -305,7 +305,7 @@ const getSessionForSidebar = () => {
             </div>
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
-                >Received By</span
+                >Delivered By</span
               >
               <input
                 type="text"
