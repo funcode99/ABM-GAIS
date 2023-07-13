@@ -590,6 +590,7 @@
                             :currentDetailIndex="detailIndex" 
                           />
 
+                          <!-- table Step 8 -->
                           <cashAdvanceTableView 
                           v-if="headerTitle === 'Cash Advance' && viewLayout === 'table'" 
                             class="ml-8"
