@@ -173,7 +173,7 @@ const filterDataByType = async (id) => {
     code_status_doc: filter.status,
     start_date: filter.date ? filter.date[0] : "",
     end_date: filter.date ? filter.date[1] : "",
-    id_meeting_room: filter.room,
+    id_meeting_room: [filter.room],
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
