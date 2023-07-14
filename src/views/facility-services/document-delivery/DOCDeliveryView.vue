@@ -116,6 +116,7 @@ const submit = async () => {
       color: "#ffffff",
     });
   }
+  fetchDataById(idDetail);
 };
 
 const received = async () => {
@@ -199,6 +200,10 @@ const delivered = async () => {
     });
 };
 
+function isEmptyObject(obj){
+    return JSON.stringify(obj) === '{}'
+}
+
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
@@ -252,7 +257,7 @@ const getSessionForSidebar = () => {
             </div>
           </div>
 
-          <div class="flex justify-between ml-10" v-if="type == 'edit'">
+          <div class="flex justify-between ml-10" v-if="type == 'edit' && dataArr.status != 'Delivered'">
             <div class="flex gap-2">
               <label
                 v-if="visibleBtn"
@@ -303,7 +308,7 @@ const getSessionForSidebar = () => {
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2" v-if="dataArr.status == 'Delivered'">
               <span class="font-JakartaSans font-medium text-sm"
                 >Delivered By</span
               >
@@ -357,6 +362,7 @@ const getSessionForSidebar = () => {
                     </td>
                     <td class="border border-[#B9B9B9]">
                       <a
+                        v-if="isEmptyObject(dataArr.attachment) != true"
                         :href="dataArr.attachment"
                         target="_blank"
                         class="text-blue"

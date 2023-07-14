@@ -83,6 +83,9 @@ import BookingMeetingRoomList from "@/views/facility-services/meeting-room/booki
 import BookingMeetingRoomView from "@/views/facility-services/meeting-room/booking/BookingMeetingRoomView.vue"
 import DashboardMeetingRoom from '@/views/facility-services/meeting-room/dashboard/DashboardMeetingRoom.vue'
 
+import MeetingRoomReports from "@/views/facility-services/reports/MeetingRoomReports.vue"
+import StockReport from "@/views/facility-services/reports/StockReport.vue"
+
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
 import avoidduplicatedropdown from "@/views/experiment/avoidduplicatedropdown.vue"
@@ -1218,6 +1221,40 @@ const router = createRouter({
       component: DashboardMeetingRoom,
       meta: {
         title: 'Dashboard Meeting Room'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/meetingroomreports',
+      name: 'Meeting Room Reports',
+      component: MeetingRoomReports,
+      meta: {
+        title: 'Meeting Room Reports'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/stockreport',
+      name: 'Stock Reports',
+      component: StockReport,
+      meta: {
+        title: 'Stock Reports'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem('token');

@@ -362,7 +362,7 @@ const getSessionForSidebar = () => {
                     <td>{{ data.no_settlement }}</td>
                     <td>{{ data.employee_name }}</td>
                     <td>{{ data.no_ca }}</td>
-                    <td>{{ format_price(data.nominal_real) }}</td>
+                    <td>{{ format_price(data.total_real) }}</td>
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <button
