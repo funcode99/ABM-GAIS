@@ -23,14 +23,15 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
-const selectedStatus = ref("");
-const selectedCatype = ref("");
-const search = ref("");
-const date = ref();
-// const dateStart = ref();
-// const dateEnd = ref();
+const selectedCompany = ref("");
+const selectedSite = ref("");
+const selectedWarehouse = ref("");
 
-let sortedData = ref([]);
+const search = ref("");
+const month = ref();
+const year = ref();
+
+// let sortedData = ref([]);
 // let sortedbyASC = true;
 // let instanceArray = [];
 
@@ -163,15 +164,47 @@ const getIcon = (menu) => {
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
+                  Company
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCompany"
+                >
+                  <option disabled selected>Type</option>
+                  <option value="1">Company A</option>
+                  <option value="2">Company B</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Site
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedSite"
+                >
+                  <option disabled selected>Type</option>
+                  <option value="1">Site A</option>
+                  <option value="2">Site B</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
                   Warehouse
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCatype"
+                  v-model="selectedWarehouse"
                 >
                   <option disabled selected>Type</option>
-                  <option value="1">Travel</option>
-                  <option value="2">Non Travel</option>
+                  <option value="1">Warehouse A</option>
+                  <option value="2">Warehouse B</option>
                 </select>
               </div>
 
@@ -181,12 +214,7 @@ const getIcon = (menu) => {
                 >
                   Month
                 </p>
-                <VueDatePicker
-                  v-model="date"
-                  range
-                  :enable-time-picker="false"
-                  class="my-date"
-                />
+                <VueDatePicker v-model="month" month-picker />
               </div>
 
               <div class="flex flex-col pt-[2px]">
@@ -195,12 +223,7 @@ const getIcon = (menu) => {
                 >
                   Year
                 </p>
-                <VueDatePicker
-                  v-model="date"
-                  range
-                  :enable-time-picker="false"
-                  class="my-date"
-                />
+                <VueDatePicker v-model="year" year-picker />
               </div>
 
               <div class="flex gap-4 items-center pt-7">
@@ -414,10 +437,6 @@ tr th {
 
 .this {
   overflow-x: hidden;
-}
-
-.my-date {
-  width: 240px !important;
 }
 
 input.nosubmit {
