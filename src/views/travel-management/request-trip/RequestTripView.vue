@@ -174,7 +174,7 @@
     const submitRequestTrip = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripId")}`)
+      const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripIdView")}`)
     }
 
     const submitPurposeOfTrip = async () => {
