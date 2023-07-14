@@ -35,9 +35,24 @@ let id_site_receiver = ref("");
 const selectedImage = ref(null);
 let filename = ref(null);
 const onFileSelected = (event) => {
-  const file = event.target.files[0];
-  selectedImage.value = file ? file : null;
-  filename.value = file.name;
+  if (event.target.files[0].size >= 3000000) {
+    Swal.fire({
+      html: "<b>Max File is 3MB</b>",
+      timer: 2000,
+      timerProgressBar: true,
+      position: "top-end",
+      background: "#EA5455",
+      color: "#ffffff",
+      showCancelButton: false,
+      showConfirmButton: false,
+      width: "300px",
+    });
+  } else {
+    const file = event.target.files[0];
+
+    selectedImage.value = file ? file : null;
+    filename.value = file.name;
+  }
 };
 
 let isLoading = ref(false);
@@ -56,27 +71,31 @@ const fetchEmployee = async (query) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   if (query) {
-    const api = await Api.get(`employee/get_by_keyword`, { params: payload });
-    listEmployee.value = api.data.data;
+    await Api.get(`employee/get_by_keyword`, { params: payload }).then(
+      (res) => {
+        listEmployee.value = res.data.data;
+        isLoading.value = false;
+      }
+    );
   } else {
     listEmployee.value = [];
+    isLoading.value = false;
   }
-
-  isLoading.value = false;
 };
 
 const fetchEmployeeById = async (id) => {
   isLoading.value = true;
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`employee/get/${id}`);
-  detailEmployee.value = api.data.data[0];
+  await Api.get(`employee/get/${id}`).then((res) => {
+    detailEmployee.value = res.data.data[0];
+    isLoading.value = false;
+  });
+
   receiver_company.value = detailEmployee.value.company_name;
   receiver_site.value = detailEmployee.value.site_name;
   id_company_receiver.value = detailEmployee.value.id_company;
   id_site_receiver.value = detailEmployee.value.id_site;
-
-  isLoading.value = false;
 };
 
 const fetchDataById = async () => {
@@ -90,9 +109,12 @@ const fetchDataById = async () => {
   receiver.value = dataForm.value.id_employee_receiver;
   username.value = dataForm.value.sender_name;
   isLoading.value = true;
-  const api = await Api.get(`employee/get`);
-  listEmployee.value = api.data.data;
-  isLoading.value = false;
+  await Api.get(`employee/get`).then((res) => {
+    listEmployee.value = res.data.data;
+    if (res.data.success == true) {
+      isLoading.value = false;
+    }
+  });
 };
 // END
 
@@ -316,14 +338,14 @@ watchEffect((newValue) => {
 
           <div class="mb-6 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Attachment (Optional)</label
+              >Attachment (Optional) <span class="text-slate-400 text-xs italic">Format file: jpg,jpeg,png,pdf. Max file: 3MB</span> </label
             >
             <input
               type="file"
               class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               placeholder="Attachment"
+              accept="image/*,.pdf"
               @change="onFileSelected"
-              required
             />
           </div>
         </div>

@@ -25,6 +25,13 @@
     import accomodationFormView from '@/components/request-trip/view-detail-form/accomodation-view.vue'
     import cashAdvanceFormView from '@/components/request-trip/view-detail-form/cash-advance-view.vue'
 
+    import guestAsTravellerTableView from '@/components/request-trip/table-step-form/guest-as-traveller-table.vue'
+    import airlinesTableView from '@/components/request-trip/table-step-form/airlines-table.vue'
+    import taxiVoucherTableView from '@/components/request-trip/table-step-form/taxi-voucher-table.vue'
+    import otherTransportationTableView from '@/components/request-trip/table-step-form/other-transportation-table.vue'
+    import accomodationTableView from '@/components/request-trip/table-step-form/accomodation-table.vue'
+    import cashAdvanceTableView from '@/components/request-trip/table-step-form/cash-advance-table.vue'
+
     import arrow from '@/assets/request-trip-view-arrow.png'
 
     import { useSidebarStore } from "@/stores/sidebar.js"
@@ -249,6 +256,44 @@
       }
     }
 
+    // const downloadFile = () => {
+
+    //   const downloadApi = axios.create({
+    //     headers: {
+    //       accept: 'application/json',
+    //       "Content-Type": "multipart/form-data",
+    //       "Access-Control-Allow-Origin": "*",
+    //       "Access-Control-Allow-Methods": "GET,POST,OPTIONS,DELETE,PUT"
+    //     },
+    //   })
+
+    //   downloadApi.get(`${file.value}`, {
+    //     responseType: 'Blob'
+    //   }).then(res => {
+    //     download(res, 'test.pdf', 'application/pdf')
+    //   })
+
+    // }
+
+    // const download = (data, name, type) => {
+    //   const url = window.URL.createObjectURL(new Blob([data], { type }));
+    //   const link = document.createElement('a');
+    //   link.href = url;
+    //   link.setAttribute('download', name);
+    //   document.body.appendChild(link);
+    //   link.click();
+    //   setTimeout(() => {
+    //     document.body.removeChild(link);
+    //     window.URL.revokeObjectURL(url);
+    //   }, 200);
+    // }
+
+    let viewLayout = ref('document')
+
+    const changeViewLayout = (layout) => {
+      viewLayout.value = layout
+    }
+
 </script>
 
 <template>
@@ -264,7 +309,6 @@
             <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin duration-500 ease-in-out"
             :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
           
-
                 <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
 
                     <div class="flex items-center gap-2">
@@ -285,6 +329,7 @@
                       
                     </div>
 
+                    <!-- SUBMIT & EDIT BUTTON -->
                     <div class="flex gap-4 mt-6 mb-3 ml-5">
                         
                       <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
@@ -300,8 +345,7 @@
 
                     </div>
 
-                    {{ purposeOfTripData }}
-
+                    <!-- FORM READ ONLY -->
                     <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
 
                         <div class="flex flex-col gap-2">
@@ -316,10 +360,19 @@
 
                         <div class="flex flex-col gap-2">
                               <span>File Attachment <span class="text-[#f5333f]">*</span></span>
+
+                                <input
+                                  v-model="file"
+                                  v-if="!isEditing"
+                                  type="text"
+                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] cursor-pointer" 
+                                  :disabled="!isEditing"                                 
+                                />
+
                               <input 
+                                v-if="isEditing"
                                 type="file"
                                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                                :disabled="!isEditing" 
                               />
                         </div>
 
@@ -329,6 +382,7 @@
                                   type="text" 
                                   :value="purposeOfTripData[currentIndex].document_name" 
                                   class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                                  disabled
                                 />
                         </div>
 
@@ -349,6 +403,7 @@
 
                     </div>
 
+                    <!-- TAB BACKGROUND -->
                     <div class="bg-blue rounded-lg pt-2">
                             <button @click="tab = 'details'" class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative">
                                 <div :class="tab == 'details' ? 'block' : 'hidden'" class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"></div>
@@ -364,6 +419,7 @@
                             </button>
                     </div>
 
+                    <!-- TAB -->
                     <div v-if="tab == 'details'" class="flex">
                                           
                         <!-- step circle -->
@@ -399,40 +455,47 @@
                         <!-- details form -->
                         <form class="flex-1" @submit.prevent="">
                             
-                          <detailsFormHeader :title="headerTitle" v-if="!isAdding">
+                          <detailsFormHeader @changeView="changeViewLayout" :title="headerTitle" v-if="!isAdding">
 
-                            <buttonEditFormView v-if="isEditing" @click="changeType('Edit')" />
-                            <buttonAddFormView v-if="isEditing" @click="changeType('Add')" />
+                            <div class="ml-7" v-if="viewLayout === 'document'"></div>
 
-                            <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" v-if="isEditing == 'R'">
-                              Issued Ticket
-                            </button>
+                            <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
 
-                            <button v-if="purposeOfTripData[currentIndex].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
-                              Revise
-                            </button>
-
-
-                            <div class="flex flex-wrap gap-4 justify-center lg:justify-between items-center mx-4 py-2">
-
-                              <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                                Showing {{ showingValue }} 
-                                of {{ currentSelectedData.length }} entries
-                              </p>
-
-                              <vue-awesome-paginate
-                                :total-items="currentSelectedData.length"
-                                :items-per-page="1"
-                                :on-click="onChangePage"
-                                v-model="showingValue"
-                                :max-pages-shown="3"
-                                :show-breakpoint-buttons="false"
-                                :show-jump-buttons="true"
-                              />
+                              <buttonEditFormView v-if="isEditing" @click="changeType('Edit')" />
+                              <buttonAddFormView v-if="isEditing" @click="changeType('Add')" />
+  
+                              <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" v-if="isEditing == 'R'">
+                                Issued Ticket
+                              </button>
+  
+                              <button v-if="purposeOfTripData[currentIndex].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                                Revise
+                              </button>
+  
+                              <div class="flex gap-2 justify-between items-center mx-1 py-2">
+  
+                                <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                                  Showing {{ showingValue }} 
+                                  of {{ currentSelectedData.length }} entries
+                                </p>
+  
+                                <vue-awesome-paginate
+                                  :total-items="currentSelectedData.length"
+                                  :items-per-page="1"
+                                  :on-click="onChangePage"
+                                  v-model="showingValue"
+                                  :max-pages-shown="3"
+                                  :show-breakpoint-buttons="false"
+                                  :show-jump-buttons="true"
+                                />
+  
+                              </div>
 
                             </div>
 
-                            <button v-if="isEditing" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold absolute right-8 flex gap-2" @click="changeType('Delete')">
+                            <div class="flex-1" v-if="viewLayout === 'document'"></div>
+                            
+                            <button v-if="isEditing && viewLayout === 'document'" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3" @click="changeType('Delete')">
                               <img :src="deleteDocumentIcon" class="w-6 h-6" />
                               Delete
                             </button>
@@ -440,34 +503,98 @@
                           </detailsFormHeader>
 
                           <detailsFormHeader :title="headerTitle" v-if="isAdding">
-                            <buttonAddFormView @click="changeType('Submit Add')" />
+                            <buttonAddFormView class="mx-7" @click="changeType('Submit Add')" />
+                            <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold" @click="isAdding = false">
+                              Cancel
+                            </button>
                           </detailsFormHeader>
 
                           <!-- form Step 3 -->
                           <guestAsTravellerFormView
-                            v-if="headerTitle == 'Traveller'"
-                            @fetchGuestTraveller="getTravellerGuest"
-                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
+                            v-if="headerTitle === 'Traveller' && viewLayout === 'document'"
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
                             :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchGuestTraveller="getTravellerGuest"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
+                          />
+
+                          <!-- table Step 3 -->
+                          <guestAsTravellerTableView
+                            v-if="headerTitle === 'Traveller' && viewLayout === 'table'"
+                            class="ml-8"
                           />
 
                           <!-- form Step 4 -->
-                          <airlinesFormView v-if="headerTitle == 'Airlines'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
+                          <airlinesFormView 
+                            v-if="headerTitle === 'Airlines' && viewLayout === 'document'" 
+                            class="ml-8" 
+                            :isEditing="isEditing" 
+                            :currentIndex="dataIndex" 
+                          />
+
+                          <!-- table Step 4 -->
+                          <airlinesTableView 
+                            v-if="headerTitle === 'Airlines' && viewLayout === 'table'"
+                            class="ml-8"
+                          />
 
                           <!-- form Step 5 -->
-                          <taxiVoucherFormView v-if="headerTitle == 'Taxi Voucher'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
+                          <taxiVoucherFormView 
+                            v-if="headerTitle === 'Taxi Voucher' && viewLayout === 'document'" 
+                            class="ml-8" 
+                            :isEditing="isEditing" 
+                            :currentIndex="dataIndex" 
+                          />
+
+                          <!-- table Step 5 -->
+                          <taxiVoucherTableView
+                            v-if="headerTitle === 'Taxi Voucher' && viewLayout === 'table'"
+                            class="ml-8"
+                          />
 
                           <!-- form Step 6 -->
-                          <otherTransportationFormView v-if="headerTitle == 'Other Transportation'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
+                          <otherTransportationFormView 
+                            v-if="headerTitle === 'Other Transportation' && viewLayout === 'document'" 
+                            class="ml-8" 
+                            :isEditing="isEditing" :currentIndex="dataIndex" 
+                          />
+
+                          <!-- table Step 6 -->
+                          <otherTransportationTableView 
+                            v-if="headerTitle === 'Other Transportation' && viewLayout === 'table'" 
+                            class="ml-8"
+                          />
 
                           <!-- form Step 7 -->
-                          <accomodationFormView v-if="headerTitle == 'Accomodation'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" />
+                          <accomodationFormView 
+                            v-if="headerTitle === 'Accomodation' && viewLayout === 'document'" 
+                            class="ml-8" 
+                            :isEditing="isEditing" 
+                            :currentIndex="dataIndex" 
+                          />
+
+                          <!-- table Step 7 -->
+                          <accomodationTableView 
+                            v-if="headerTitle === 'Accomodation' && viewLayout === 'table'" 
+                            class="ml-8"
+                          />
 
                           <!-- form Step 8 -->
-                          <cashAdvanceFormView v-if="headerTitle == 'Cash Advance'" class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" :currentDetailIndex="detailIndex" />
+                          <cashAdvanceFormView 
+                            v-if="headerTitle === 'Cash Advance' && viewLayout === 'document'" 
+                            class="ml-8" 
+                            :isEditing="isEditing" 
+                            :currentIndex="dataIndex" 
+                            :currentDetailIndex="detailIndex" 
+                          />
+
+                          <!-- table Step 8 -->
+                          <cashAdvanceTableView 
+                          v-if="headerTitle === 'Cash Advance' && viewLayout === 'table'" 
+                            class="ml-8"
+                          />
 
                         </form>
 
@@ -513,7 +640,7 @@
 
                         <div class="py-12 px-4">
 
-                          <multiStepCircleVertical :image="userImg" v-for="data in approvalStatusData" :key="data.level" :data="data.text" :stop="data.level === approvalStatusData.length ? true : false" />
+                          <multiStepCircleVertical :image="userImg" v-for="(data, index) in approvalStatusData" :key="index" :data="data.text" :stop="index+1 === approvalStatusData.length ? true : false" :any="data" />
 
                         </div>
 

@@ -22,19 +22,12 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
-const selectedCompany = ref("");
-const selectedDepartement = ref("");
 const selectedStatus = ref("");
-const selectedCartype = ref("");
+const selectedCatype = ref("");
 const search = ref("");
 const date = ref();
 const dateStart = ref();
 const dateEnd = ref();
-
-let Company = ref([]);
-let Car = ref([]);
-let Departement = ref([]);
-let Status = ref([]);
 
 let sortedData = ref([]);
 let sortedbyASC = true;
@@ -52,16 +45,16 @@ let totalData = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-  fetchPoolCarReport(pageOfItem);
+  fetchSettlementReport(pageOfItem);
 };
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
-  { Id: 3, title: "Plate", jsonData: "plate" },
-  { Id: 4, title: "From Date", jsonData: "from_date" },
-  { Id: 5, title: "To Date", jsonData: "to_date" },
-  { Id: 6, title: "KM Travelled", jsonData: "odometer" },
+  { Id: 3, title: "Booking No", jsonData: "no_settlement" },
+  { Id: 4, title: "Requestor", jsonData: "employee_name" },
+  { Id: 5, title: "Duration", jsonData: "nomor_ca" },
+  { Id: 6, title: "Meeting Room", jsonData: "total_real" },
   { Id: 7, title: "Status", jsonData: "status" },
 ];
 
@@ -79,7 +72,7 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchPoolCarReport = async (id) => {
+const fetchSettlementReport = async (id) => {
   if (date.value != undefined) {
     if (date.value[0] != null) {
       dateStart.value = date.value[0].toISOString().split("T")[0];
@@ -93,19 +86,17 @@ const fetchPoolCarReport = async (id) => {
   }
 
   const params = {
+    ca_type: selectedCatype.value,
     start_date: dateStart.value,
     end_date: dateEnd.value,
     status: selectedStatus.value,
     search: search.value,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
-    id_company: selectedCompany.value,
-    id_departement: selectedDepartement.value,
-    type_car: selectedCartype.value,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/pool_car/report", { params });
+  const res = await Api.get("/settlement/report", { params });
   instanceArray = res.data.data;
   sortedData.value = instanceArray.data;
   totalPage.value = instanceArray.last_page;
@@ -114,41 +105,9 @@ const fetchPoolCarReport = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
-const fetchCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-};
-
-const fetchCar = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/car/get");
-  Car.value = res.data.data;
-  console.log(res.data.data);
-};
-
-const fetchDepartement = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get_departement/${id_company}`);
-  Departement.value = res.data.data;
-};
-
-const fetchStatus = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/pool_car/status");
-  Status.value = res.data.data;
-};
-
 onBeforeMount(() => {
+  fetchSettlementReport();
   getSessionForSidebar();
-  fetchPoolCarReport();
-  fetchCompany();
-  fetchCar();
-  fetchStatus();
 });
 
 const format_date = (value) => {
@@ -157,28 +116,34 @@ const format_date = (value) => {
   }
 };
 
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 const resetData = () => {
-  (selectedCompany.value = ""),
-    (selectedDepartement.value = ""),
-    (selectedCartype.value = "");
+  selectedCatype.value = "";
   selectedStatus.value = "";
   dateStart.value = "";
   dateEnd.value = "";
   date.value = null;
-  fetchPoolCarReport();
+  fetchSettlementReport();
 };
 
 const exportToExcel = () => {
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("Pool Car Usage Reports");
+  const worksheet = workbook.addWorksheet("Meeting Room Reports");
 
   const tableHead = [
     { title: "Nomor" },
     { title: "Created Date" },
-    { title: "Plate" },
-    { title: "From Date" },
-    { title: "To Date" },
-    { title: "KM Travelled" },
+    { title: "Booking No" },
+    { title: "Requestor" },
+    { title: "Duration" },
+    { title: "Meeting Room" },
     { title: "Status" },
   ];
 
@@ -189,10 +154,10 @@ const exportToExcel = () => {
   sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
-    worksheet.getCell(rowIndex + 2, 3).value = data.plate;
-    worksheet.getCell(rowIndex + 2, 4).value = data.from_date;
-    worksheet.getCell(rowIndex + 2, 5).value = data.to_date;
-    worksheet.getCell(rowIndex + 2, 6).value = data.odometer;
+    worksheet.getCell(rowIndex + 2, 3).value = data.no_settlement;
+    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.nomor_ca;
+    worksheet.getCell(rowIndex + 2, 6).value = data.total_real;
     worksheet.getCell(rowIndex + 2, 7).value = data.status;
   });
 
@@ -203,7 +168,7 @@ const exportToExcel = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "pool_car_usage_report_data.xlsx";
+    a.download = "meeting_room_report_data.xlsx";
     a.click();
     URL.revokeObjectURL(url);
   });
@@ -211,7 +176,7 @@ const exportToExcel = () => {
 
 const clearSearch = () => {
   search.value = "";
-  fetchPoolCarReport();
+  fetchSettlementReport();
 };
 
 const showClearButton = computed(() => {
@@ -235,7 +200,7 @@ const showClearButton = computed(() => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Pool Car Usage Reports
+              Meeting Room Reports
             </p>
           </div>
 
@@ -271,7 +236,7 @@ const showClearButton = computed(() => {
             </button>
 
             <button
-              @click="fetchPoolCarReport()"
+              @click="fetchSettlementReport()"
               type="submit"
               class="w-36 p-2.5 ml-2 text-sm rounded-lg font-medium text-white font-JakartaSans capitalize border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
@@ -280,56 +245,20 @@ const showClearButton = computed(() => {
           </div>
 
           <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
-            <div class="flex gap-2">
+            <div class="flex gap-6">
               <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
-                  Company
+                  Room
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCompany"
-                  @change="fetchDepartement(selectedCompany)"
-                >
-                  <option disabled selected>Company</option>
-                  <option v-for="data in Company" :value="data.id">
-                    {{ data.company_name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="flex flex-col pt-[2px]">
-                <p
-                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
-                >
-                  Departement
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedDepartement"
-                >
-                  <option disabled selected>Departement</option>
-                  <option v-for="data in Departement" :value="data.id">
-                    {{ data.departement_name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="flex flex-col pt-[2px]">
-                <p
-                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
-                >
-                  Car
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCartype"
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCatype"
                 >
                   <option disabled selected>Type</option>
-                  <option v-for="data in Car" :value="data.id">
-                    {{ data.car_name }}
-                  </option>
+                  <option value="1">Travel</option>
+                  <option value="2">Non Travel</option>
                 </select>
               </div>
 
@@ -347,27 +276,29 @@ const showClearButton = computed(() => {
                 />
               </div>
 
-              <div class="flex flex-col pt-[2px]">
+              <div class="flex flex-col pt-[3px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
                   Status
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedStatus"
                 >
                   <option disabled selected>Status</option>
-                  <option v-for="data in Status" :value="data.code">
-                    {{ data.status }}
-                  </option>
+                  <option value="0">Draft</option>
+                  <option value="1">Waiting Approval</option>
+                  <option value="2">Revision</option>
+                  <option value="9">Rejected</option>
+                  <option value="10">Completed</option>
                 </select>
               </div>
 
-              <div class="flex gap-2 items-center pt-7">
+              <div class="flex gap-4 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="fetchPoolCarReport()"
+                  @click="fetchSettlementReport()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -402,7 +333,7 @@ const showClearButton = computed(() => {
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
-              @change="fetchPoolCarReport()"
+              @change="fetchSettlementReport()"
             >
               <option>10</option>
               <option>25</option>
@@ -440,10 +371,10 @@ const showClearButton = computed(() => {
               >
                 <td>{{ data.no }}</td>
                 <td>{{ format_date(data.created_at) }}</td>
-                <td>{{ data.plate }}</td>
-                <td>{{ format_date(data.from_date) }}</td>
-                <td>{{ format_date(data.to_date) }}</td>
-                <td>{{ data.odometer }}</td>
+                <td>{{ data.no_settlement }}</td>
+                <td>{{ data.employee_name }}</td>
+                <td>{{ data.no_ca }}</td>
+                <td>{{ format_price(data.total_real) }}</td>
                 <td>{{ data.status }}</td>
               </tr>
             </tbody>
@@ -582,7 +513,7 @@ tr th {
 }
 
 .my-date {
-  width: 200px !important;
+  width: 280px !important;
 }
 
 input.nosubmit {

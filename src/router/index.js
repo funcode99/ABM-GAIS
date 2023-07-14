@@ -63,6 +63,7 @@ import ApporvalReimbursementList from "@/views/approval/reimbursement/Reimbursem
 import ApporvalReimbursementView from "@/views/approval/reimbursement/ReimbursementView.vue"
 import ApprovalAtkRequestList from "@/views/approval/atk-request/AtkRequestList.vue"
 import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.vue"
+import ApprovalDelegationList from "@/views/approval/approval-delegation/ApprovalDelegationList.vue"
 
 //facility service system
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue"
@@ -81,6 +82,9 @@ import ManagementMeetingRoomList from "@/views/facility-services/meeting-room/Ma
 import BookingMeetingRoomList from "@/views/facility-services/meeting-room/booking/BookingMeetingRoomList.vue"
 import BookingMeetingRoomView from "@/views/facility-services/meeting-room/booking/BookingMeetingRoomView.vue"
 import DashboardMeetingRoom from '@/views/facility-services/meeting-room/dashboard/DashboardMeetingRoom.vue'
+
+import MeetingRoomReports from "@/views/facility-services/reports/MeetingRoomReports.vue"
+import StockReport from "@/views/facility-services/reports/StockReport.vue"
 
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
@@ -819,7 +823,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/viewapprovalrequesttrip",
+      path: "/viewapprovalrequesttrip/:id/:approvalid",
       name: "view approval request trip",
       component: RequestTripView,
       meta: {
@@ -926,6 +930,23 @@ const router = createRouter({
       component: ApprovalAtkRequestView,
       meta: {
         title: "View Approval ATK Request",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token")
+
+        if (token) {
+          return next()
+        }
+
+        return next("/")
+      },
+    },
+    {
+      path: "/approvaldelegation",
+      name: "approval delegation",
+      component: ApprovalDelegationList,
+      meta: {
+        title: "Approval Delegation",
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem("token")
@@ -1195,21 +1216,55 @@ const router = createRouter({
       },
     },
     {
-        path: '/dashboard-meeting-room',
-        name: 'Dashboard Meeting Room',
-        component: DashboardMeetingRoom,
-        meta: {
-            title: 'Dashboard Meeting Room'
-        },
-        beforeEnter: (to, from, next) => {
-            const token = localStorage.getItem('token');
+      path: '/dashboard-meeting-room',
+      name: 'Dashboard Meeting Room',
+      component: DashboardMeetingRoom,
+      meta: {
+        title: 'Dashboard Meeting Room'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
 
-            if (token) {
-            return next()
-            }
-
-            return next('/')
+        if (token) {
+          return next()
         }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/meetingroomreports',
+      name: 'Meeting Room Reports',
+      component: MeetingRoomReports,
+      meta: {
+        title: 'Meeting Room Reports'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
+    },
+    {
+      path: '/stockreport',
+      name: 'Stock Reports',
+      component: StockReport,
+      meta: {
+        title: 'Stock Reports'
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+          return next()
+        }
+
+        return next('/')
+      }
     },
   ],
 })

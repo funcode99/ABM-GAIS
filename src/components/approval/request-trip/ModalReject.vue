@@ -1,5 +1,32 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
+import { ref } from 'vue'
+
+import iconClose from "@/assets/navbar/icon_close.svg"
+import Api from '@/utils/Api'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const props = defineProps({
+  approvalId: Number
+})
+
+let isRevision = ref(true)
+let notes = ref('')
+
+const rejectRequest = async () => {
+  const token = JSON.parse(localStorage.getItem('token'))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  let api = await Api.post(`/approval_request_trip/reject/${props.approvalId}`,{
+    is_revision: isRevision.value,
+    notes: notes.value
+  })
+  console.log(api)
+  router.push({
+    path: '/approvalrequesttrip'
+  })
+}
+
 </script>
 
 <template>
@@ -34,6 +61,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
+                  @click="isRevision = true"
                   type="radio"
                   name="radio-10"
                   class="radio checked:bg-blue"
@@ -50,10 +78,10 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
+                  @click="isRevision = false"
                   type="radio"
                   name="radio-10"
                   class="radio checked:bg-green"
-                  checked
                 />
                 <span class="font-JakartaSans font-medium text-xs"
                   >Fully Rejected</span
@@ -62,10 +90,12 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             </div>
           </div>
 
-          <p class="font-JakartaSans font-medium text-sm py-2">
+          <p v-if="isRevision" class="font-JakartaSans font-medium text-sm py-2">
             Notes<span class="text-red">*</span>
           </p>
           <input
+            v-if="isRevision"
+            v-model="notes"
             type="text"
             name="notes"
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -83,6 +113,7 @@ import iconClose from "@/assets/navbar/icon_close.svg";
             >Cancel</label
           >
           <button
+            @click="rejectRequest"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
           >
             Confirm

@@ -4,7 +4,8 @@ import Api from "@/utils/Api"
 import deleteicon from "@/assets/navbar/delete_icon.svg"
 import editicon from "@/assets/navbar/edit_icon.svg"
 
-const props = inject('taxiVoucherData')
+const props = inject('taxiVoucherDataView')
+
 const tableHeadTaxiVoucher = [
       {id: 1, title: 'Name'},
       {id: 2, title: 'Date'},
@@ -14,7 +15,7 @@ const tableHeadTaxiVoucher = [
       {id: 6, title: 'Account Name'},
       {id: 7, title: 'Remarks'},
       {id: 8, title: 'Status'},
-      {id: 9, title: 'Action'},
+      // {id: 9, title: 'Action'},
 ]
 
 const emits = defineEmits('fetchTaxiVoucher')
@@ -40,7 +41,7 @@ let employeeName = localStorage.getItem('username')
 
 <template>
 
-    <div class="overflow-x-auto mt-5">
+    <div class="overflow-x-auto mt-5 flex justify-center">
 
         <table class="table">
             
@@ -78,14 +79,14 @@ let employeeName = localStorage.getItem('username')
                             <td>
 
                             </td>
-                            <td class="flex flex-wrap gap-4 justify-center">
+                            <!-- <td class="flex flex-wrap gap-4 justify-center">
                               <button>
                                 <img :src="editicon" class="w-6 h-6" />
                               </button>
                               <button @click="deleteData(data.id)">
                                 <img :src="deleteicon" class="w-6 h-6" />
                               </button>
-                          </td>
+                          </td> -->
                 </tr>
             </tbody>
 

@@ -37,9 +37,10 @@
         }
       
 
-        if(typeof data.data.users.name == 'string') {
-          let username = data.data.users.name.replaceAll('"', '')
-          localStorage.setItem('username', username == '-' ? data.data.users.employee_name : username)
+        if(typeof data.data.users.employee_name == 'string') {
+          console.log(data.data.users.employee_name)
+          let username = data.data.users.employee_name.replaceAll('"', '')
+          localStorage.setItem('username', username)
         }
         
         // $cookies.set('token', data.data.data.access_token)

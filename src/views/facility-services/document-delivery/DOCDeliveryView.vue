@@ -21,10 +21,12 @@ const idDetail = router.currentRoute.value.params.id;
 const type = router.currentRoute.value.params.type;
 
 const id_role = JSON.parse(localStorage.getItem("id_role"));
+const id_company = JSON.parse(localStorage.getItem("id_company"));
 
 // for modal
 let statusForm = ref("add");
 let visibleModal = ref(false);
+let visibleBtn = ref(false);
 let idItem = ref(0);
 const btnLabelSubmit = ref("");
 let dataArr = ref([]);
@@ -50,6 +52,7 @@ const fetchDataById = async (id) => {
   const res = await Api.get(`document_delivery/get/${id}`);
   dataArr.value = res.data.data[0];
   labelSubmit(dataArr.value.status);
+  visibleBtnApproval(dataArr.value.status, dataArr.value.id_company_receiver);
 };
 
 const labelSubmit = (status) => {
@@ -79,6 +82,19 @@ const closeModal = () => {
   fetchDataById(idDetail);
 };
 
+const visibleBtnApproval = (status, id_comp_receiver) => {
+  if (status != "Delivered") {
+    visibleBtn.value = true;
+    if (status == "Delivering") {
+      if (id_comp_receiver == id_company) {
+        visibleBtn.value = true;
+      } else {
+        visibleBtn.value = false;
+      }
+    }
+  }
+};
+
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -100,6 +116,7 @@ const submit = async () => {
       color: "#ffffff",
     });
   }
+  fetchDataById(idDetail);
 };
 
 const received = async () => {
@@ -183,6 +200,10 @@ const delivered = async () => {
     });
 };
 
+function isEmptyObject(obj){
+    return JSON.stringify(obj) === '{}'
+}
+
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
@@ -236,10 +257,10 @@ const getSessionForSidebar = () => {
             </div>
           </div>
 
-          <div class="flex justify-between ml-10" v-if="type == 'edit'">
+          <div class="flex justify-between ml-10" v-if="type == 'edit' && dataArr.status != 'Delivered'">
             <div class="flex gap-2">
               <label
-                v-if="dataArr.status == 'Created'"
+                v-if="visibleBtn"
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
                 @click="openModal('edit', '')"
                 for="my-modal-stock-in"
@@ -247,7 +268,7 @@ const getSessionForSidebar = () => {
                 Edit
               </label>
               <button
-                v-if="dataArr.status != 'Delivered'"
+                v-if="visibleBtn"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
                 :title="btnLabelSubmit"
@@ -284,6 +305,17 @@ const getSessionForSidebar = () => {
                 type="text"
                 disabled
                 v-model="dataArr.sender_name"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+            <div class="flex flex-col gap-2" v-if="dataArr.status == 'Delivered'">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Delivered By</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="dataArr.name_updated"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -330,6 +362,7 @@ const getSessionForSidebar = () => {
                     </td>
                     <td class="border border-[#B9B9B9]">
                       <a
+                        v-if="isEmptyObject(dataArr.attachment) != true"
                         :href="dataArr.attachment"
                         target="_blank"
                         class="text-blue"
