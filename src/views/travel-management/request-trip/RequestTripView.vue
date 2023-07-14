@@ -294,6 +294,10 @@
       viewLayout.value = layout
     }
 
+    const enterNewTab = () => {
+      window.open(file.value, '_blank')
+    }
+
 </script>
 
 <template>
@@ -359,15 +363,20 @@
                         </div>
 
                         <div class="flex flex-col gap-2">
+
                               <span>File Attachment <span class="text-[#f5333f]">*</span></span>
 
-                                <input
-                                  v-model="file"
-                                  v-if="!isEditing"
-                                  type="text"
-                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] cursor-pointer" 
-                                  :disabled="!isEditing"                                 
-                                />
+                                <div @click="enterNewTab">
+
+                                  <input
+                                    v-model="file"
+                                    v-if="!isEditing"
+                                    type="text"
+                                    class="px-4 py-3 border border-[#e0e0e0] rounded-lg min-w-[80%] cursor-pointer" 
+                                    :disabled="!isEditing"                                 
+                                  />
+                                </div>
+                              
 
                               <input 
                                 v-if="isEditing"

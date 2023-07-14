@@ -326,9 +326,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             id_site: localStorage.getItem('id_site')
           })
 
-          console.log(api)
-          console.log('membuat request trip dengan id baru')
-          localStorage.setItem('tripId', api.data.data.id)
+          if(api.data.message !== 'Already Has Draft Data') {
+            console.log('membuat request trip dengan id baru')
+            localStorage.setItem('tripId', api.data.data.id)
+          } else {
+            throw api.data.message
+            // alert(api.data.message)
+          }
 
         }
 
