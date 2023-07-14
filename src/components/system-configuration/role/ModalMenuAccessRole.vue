@@ -219,11 +219,11 @@ watch(isVisible, () => {
 
                           <div class="flex gap-4 basis-2/6 justify-center">
                             <div class="">
-                                  <input type="checkbox" :value="innerinner.id" v-model="writeValue">
+                                <input type="checkbox" :value="innerinner.id" v-model="writeValue">
                             </div>
         
                             <div class="">
-                                  <input type="checkbox" :value="innerinner.id" v-model="readValue">
+                                <input type="checkbox" :value="innerinner.id" v-model="readValue">
                             </div>
                           </div>
                             

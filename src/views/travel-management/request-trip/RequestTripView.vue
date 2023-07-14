@@ -182,11 +182,11 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripId")}`, {
-        id_employee: purposeOfTripData.value[0].id_employee,
-        no_request_trip: purposeOfTripData.value[0].no_request_trip,
-        code_document: purposeOfTripData.value[0].code_document,
+      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, {
         id_site: purposeOfTripData.value[0].id_site,
+        id_employee: purposeOfTripData.value[0].id_employee,
+        code_document: purposeOfTripData.value[0].id_document,
+        no_request_trip: purposeOfTripData.value[0].no_request_trip,
         notes: notes.value,
         file: file.value,
         id_city_from: purposeOfTripData.value[0].id_city_from,
@@ -197,6 +197,7 @@
         tlk_per_day: purposeOfTripData.value[0].tlk_per_day,
         total_tlk: purposeOfTripData.value[0].total_tlk
       })
+      console.log(api)
 
     }
 
@@ -232,10 +233,15 @@
     watch(headerTitle, () => {
       assignSelectedData()
       dataIndex.value = 0
+      showingValue.value = 1
     })
 
     watch(travellerGuestData, () => {
       currentSelectedData.value = travellerGuestData.value
+    })
+
+    watch(isEditing, () => {
+      file.value = purposeOfTripData.value[currentIndex].file
     })
 
     const changeType = (typeOfSubmit) => {
@@ -247,6 +253,8 @@
 
     const resetTypeOfSubmit = () => {
       typeOfSubmitToProps.value = 'none'
+      isAdding.value = false
+      isEditing.value = false
     }
 
     const onChangePage = (pageOfItem) => {
@@ -298,6 +306,10 @@
       window.open(file.value, '_blank')
     }
 
+    const updatePhoto = (event) => {
+      file.value = event.target.files[0]
+    }
+
 </script>
 
 <template>
@@ -323,6 +335,7 @@
 
                       <h1 class="text-blue font-semibold">
                         Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[currentIndex].no_request_trip }}</span>
+
                       </h1>
 
                       <div class="flex-1"></div>
@@ -334,6 +347,7 @@
                     </div>
 
                     <!-- SUBMIT & EDIT BUTTON -->
+                    <!-- v-if="purposeOfTripData[currentIndex].status !== 'Waiting Approval'" -->
                     <div class="flex gap-4 mt-6 mb-3 ml-5">
                         
                       <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
@@ -343,7 +357,8 @@
                         Submit
                       </button>
                         
-                      <button v-if="isEditing" @click="isEditing = false" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                      <button v-if="isEditing" @click="isEditing = false" 
+                      class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                         Cancel
                       </button>
 
@@ -364,9 +379,9 @@
 
                         <div class="flex flex-col gap-2">
 
-                              <span>File Attachment <span class="text-[#f5333f]">*</span></span>
+                          <span>File Attachment <span class="text-[#f5333f]">*</span></span>
 
-                                <div @click="enterNewTab">
+                          <div @click="enterNewTab">
 
                                   <input
                                     v-model="file"
@@ -375,14 +390,15 @@
                                     class="px-4 py-3 border border-[#e0e0e0] rounded-lg min-w-[80%] cursor-pointer" 
                                     :disabled="!isEditing"                                 
                                   />
-                                </div>
+                          </div>
                               
+                          <input 
+                              @change="updatePhoto" 
+                              v-if="isEditing"
+                              type="file"
+                              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                          />
 
-                              <input 
-                                v-if="isEditing"
-                                type="file"
-                                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                              />
                         </div>
 
                         <div class="flex flex-col gap-2">
@@ -396,18 +412,18 @@
                         </div>
 
                         <div class="flex flex-col gap-2">
-                                <span>Requestor <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[currentIndex].employee_name"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                            <span>Requestor <span class="text-[#f5333f]">*</span></span>
+                            <input type="text" disabled :value="purposeOfTripData[currentIndex].employee_name"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
                         </div>
 
                         <div class="flex flex-col gap-2">
-                                <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                                <input 
+                          <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                          <input 
                                   v-model="notes"
                                   type="text" 
                                   :disabled="!isEditing" 
                                   class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                                />
+                          />
                         </div>
 
                     </div>
@@ -513,7 +529,7 @@
 
                           <detailsFormHeader :title="headerTitle" v-if="isAdding">
                             <buttonAddFormView class="mx-7" @click="changeType('Submit Add')" />
-                            <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold" @click="isAdding = false">
+                            <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold" @click="isAdding = false, changeType('none')">
                               Cancel
                             </button>
                           </detailsFormHeader>
@@ -608,7 +624,8 @@
                         </form>
 
                     </div>
-                        
+                    
+
                     <div v-else-if="tab == 'tlk'">
 
                             <h1>TLK</h1>
@@ -635,6 +652,7 @@
                             </div>
 
                     </div>
+
 
                     <div v-else-if="tab == 'approval'">
 
