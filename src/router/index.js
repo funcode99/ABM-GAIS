@@ -81,7 +81,7 @@ import DOCDeliveryListID from "@/views/facility-services/document-delivery/DOCDe
 import ManagementMeetingRoomList from "@/views/facility-services/meeting-room/ManagementMeetingRoomList.vue"
 import BookingMeetingRoomList from "@/views/facility-services/meeting-room/booking/BookingMeetingRoomList.vue"
 import BookingMeetingRoomView from "@/views/facility-services/meeting-room/booking/BookingMeetingRoomView.vue"
-import DashboardMeetingRoom from '@/views/facility-services/meeting-room/dashboard/DashboardMeetingRoom.vue'
+import DashboardMeetingRoom from "@/views/facility-services/meeting-room/dashboard/DashboardMeetingRoom.vue"
 
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
@@ -167,7 +167,7 @@ const router = createRouter({
     {
       path: "/dashboard",
       name: "dashboard",
-      component: Dashboard,
+      component: () => import("@/components/layout/AdminLayout.vue"),
       meta: {
         title: "Dashboard",
       },
@@ -180,6 +180,16 @@ const router = createRouter({
 
         return next("/")
       },
+      children: [
+        {
+          path: "/",
+          name: "DashboardPage",
+          component: () => import("@/views/Dashboard.vue"),
+          meta: {
+            title: "Dashboard Page",
+          },
+        },
+      ],
     },
 
     //reference pages
@@ -286,8 +296,8 @@ const router = createRouter({
       },
     },
     {
-      path: '/classtransportation',
-      name: 'Class Transportation',
+      path: "/classtransportation",
+      name: "Class Transportation",
       component: ListFlight,
       meta: {
         title: "Class Transportation",
@@ -1213,21 +1223,21 @@ const router = createRouter({
       },
     },
     {
-      path: '/dashboard-meeting-room',
-      name: 'Dashboard Meeting Room',
+      path: "/dashboard-meeting-room",
+      name: "Dashboard Meeting Room",
       component: DashboardMeetingRoom,
       meta: {
-        title: 'Dashboard Meeting Room'
+        title: "Dashboard Meeting Room",
       },
       beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token")
 
         if (token) {
           return next()
         }
 
-        return next('/')
-      }
+        return next("/")
+      },
     },
   ],
 })
