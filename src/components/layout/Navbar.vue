@@ -1,6 +1,5 @@
 <script setup>
   import tail from "@/assets/topbar-image.png"
-  import highlight from "@/assets/mvc-logo.png"
   import arrow from '@/assets/arrow-navbar.png'
   import user from "@/assets/navbar/user.svg"
   import ABMIcon from '@/assets/abm.png'
@@ -11,7 +10,6 @@
   let companyLogo = localStorage.getItem('company_logo')
   let userName = localStorage.getItem('username')
 
-  let companyLogoURL = `${import.meta.env.VITE_APP_URL}${companyLogo}`
 
   import Api from '@/utils/Api'
 
@@ -60,7 +58,7 @@
       </div>
   
       <div class="hidden md:flex justify-center items-center">
-        <img :src="companyLogoURL" class="max-w-[120px] max-h-[79px]" />
+        <img :src="companyLogo" class="max-w-[120px] max-h-[79px]" />
         <!-- <img src="http://103.165.130.157:8086/storage/files/company/od2nBcLMjlMCQSbclgvcaZ76TVL502pYVADFR5gK.png" /> -->
       </div>
 

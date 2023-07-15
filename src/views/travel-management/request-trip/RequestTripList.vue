@@ -38,6 +38,10 @@
     let employeeLoginData = ref([])
     let documentCodeData = ref([])
 
+    let search = ref('')
+    let date = ref(['', ''])
+    let sortedbyASC = true
+
     //for paginations
     let showingValue = ref(1)
     let pageMultiplier = ref(10)
@@ -162,9 +166,6 @@
 
     }
 
-    let date = ref(['', ''])
-    let sortedbyASC = true
-
     const sortList = (sortBy) => {
       if(sortedbyASC) {
         sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
@@ -174,8 +175,6 @@
         sortedbyASC = true
       }
     }
-
-    let search = ref('')
 
     watch(search, () => {
       filteredItems()

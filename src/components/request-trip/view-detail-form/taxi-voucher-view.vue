@@ -1,5 +1,6 @@
 <script setup>
     import { ref, inject, watch } from 'vue'
+    import Api from '@/utils/Api'
     
     const status = defineProps({
         isEditing: Boolean,
@@ -57,7 +58,20 @@
             voucherCode.value = props.value[0].code_voucher
             accountName.value = props.value[0].account_name
             remarks.value = props.value[0].remarks
-    } 
+    }
+
+    const addTaxiVoucher = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post(`/taxi_voucher/store`, {
+            id_request_trip: localStorage.getItem('tripIdView'),
+            amount: amount.value,
+            account_name: accountName.value,
+            remarks: remarks.value,
+            id_departure_city: departure.value,
+            id_arrival_city: arrival.value
+        })
+    }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -68,6 +82,7 @@
 </script>
 
 <template>
+    
     <div>
 
         <div :class="rowClass">
@@ -230,4 +245,5 @@
         </div>
 
     </div>
+
 </template>

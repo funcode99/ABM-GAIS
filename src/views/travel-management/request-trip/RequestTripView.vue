@@ -55,6 +55,8 @@
     let approvalStatusData = ref([{}])
 
     let file = ref()
+    let filename = ref()
+    let fileSend = ref(null)
     let notes = ref()
     let dataIndex = ref(0)
     let detailIndex = ref(0)
@@ -78,6 +80,7 @@
         let api = await Api.get(`/request_trip/get/${localStorage.getItem('tripIdView')}`)      
         purposeOfTripData.value = api.data.data
         file.value = purposeOfTripData.value[currentIndex].file
+        filename.value = purposeOfTripData.value[currentIndex].file_name
         purposeOfTripName.value = purposeOfTripData.value[currentIndex].document_name
       } catch (error) {
         console.log(error)
@@ -172,9 +175,17 @@
     }
 
     const submitRequestTrip = async () => {
+      
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripIdView")}`)
+      
+      try {
+        const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripIdView")}`)
+        console.log(api)
+      } catch (error) {
+        console.log(error)
+      }
+
     }
 
     const submitPurposeOfTrip = async () => {
@@ -182,22 +193,31 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, {
+      const payload = {
         id_site: purposeOfTripData.value[0].id_site,
         id_employee: purposeOfTripData.value[0].id_employee,
         code_document: purposeOfTripData.value[0].id_document,
         no_request_trip: purposeOfTripData.value[0].no_request_trip,
         notes: notes.value,
-        file: file.value,
         id_city_from: purposeOfTripData.value[0].id_city_from,
         id_city_to: purposeOfTripData.value[0].id_city_to,
         date_departure: purposeOfTripData.value[0].date_departure,
         date_arrival: purposeOfTripData.value[0].date_arrival,
         id_zona: purposeOfTripData.value[0].id_zona,
         tlk_per_day: purposeOfTripData.value[0].tlk_per_day,
-        total_tlk: purposeOfTripData.value[0].total_tlk
-      })
+        total_tlk: purposeOfTripData.value[0].total_tlk,
+      }
+
+      if(fileSend !== null) {
+        payload.file = fileSend.value
+      }
+
+      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, payload)
       console.log(api)
+
+      delete payload.file
+      fileSend.value = null
+      isEditing.value = false
 
     }
 
@@ -251,10 +271,9 @@
       }
     }
 
-    const resetTypeOfSubmit = () => {
+    const resetTypeOfSubmit = (Type) => {
       typeOfSubmitToProps.value = 'none'
-      isAdding.value = false
-      isEditing.value = false
+      Type === 'Add' ? isAdding.value = false : ''
     }
 
     const onChangePage = (pageOfItem) => {
@@ -263,38 +282,6 @@
         dataIndex.value = pageOfItem-1
       }
     }
-
-    // const downloadFile = () => {
-
-    //   const downloadApi = axios.create({
-    //     headers: {
-    //       accept: 'application/json',
-    //       "Content-Type": "multipart/form-data",
-    //       "Access-Control-Allow-Origin": "*",
-    //       "Access-Control-Allow-Methods": "GET,POST,OPTIONS,DELETE,PUT"
-    //     },
-    //   })
-
-    //   downloadApi.get(`${file.value}`, {
-    //     responseType: 'Blob'
-    //   }).then(res => {
-    //     download(res, 'test.pdf', 'application/pdf')
-    //   })
-
-    // }
-
-    // const download = (data, name, type) => {
-    //   const url = window.URL.createObjectURL(new Blob([data], { type }));
-    //   const link = document.createElement('a');
-    //   link.href = url;
-    //   link.setAttribute('download', name);
-    //   document.body.appendChild(link);
-    //   link.click();
-    //   setTimeout(() => {
-    //     document.body.removeChild(link);
-    //     window.URL.revokeObjectURL(url);
-    //   }, 200);
-    // }
 
     let viewLayout = ref('document')
 
@@ -307,7 +294,7 @@
     }
 
     const updatePhoto = (event) => {
-      file.value = event.target.files[0]
+      fileSend.value = event.target.files[0]
     }
 
 </script>
@@ -384,7 +371,7 @@
                           <div @click="enterNewTab">
 
                                   <input
-                                    v-model="file"
+                                    v-model="filename"
                                     v-if="!isEditing"
                                     type="text"
                                     class="px-4 py-3 border border-[#e0e0e0] rounded-lg min-w-[80%] cursor-pointer" 
@@ -402,7 +389,9 @@
                         </div>
 
                         <div class="flex flex-col gap-2">
-                                <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                                <span>
+                                  Purpose of Trip <span class="text-[#f5333f]">*</span>
+                                </span>
                                 <input
                                   type="text" 
                                   :value="purposeOfTripData[currentIndex].document_name" 
@@ -419,10 +408,10 @@
                         <div class="flex flex-col gap-2">
                           <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
                           <input 
-                                  v-model="notes"
-                                  type="text" 
-                                  :disabled="!isEditing" 
-                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                            v-model="notes"
+                            type="text" 
+                            :disabled="!isEditing" 
+                            class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
                           />
                         </div>
 

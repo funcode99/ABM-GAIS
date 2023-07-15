@@ -22,6 +22,8 @@
     let maxHotelFare = ref()
     let nik = ref()
 
+    let travellerTypeData = ref()
+
     const assignValue = () => {
         name.value = props.value[status.currentIndex].name_guest
         department.value = props.value[status.currentIndex].departement
@@ -66,6 +68,7 @@
     })
 
     watch(props, () => {
+
         if(props.value[0].name_guest !== undefined) {
            name.value = props.value[0].name_guest
            department.value = props.value[0].departement
@@ -73,12 +76,13 @@
            sn.value = props.value[0]
            company.value = props.value[0].company
            gender.value = props.value[0].gender
-           type.value = props.value[0].type_traveller
+           type.value = props.value[0].id_type_traveller
            contactNo.value = props.value[0].contact_no
            maxHotelFare.value = props.value[0].hotel_fare
         } else {
-        assignValue()
+            assignValue()
         }
+
     })
 
     if(props.value[0].name_guest !== undefined) {
@@ -114,7 +118,7 @@
         })
         console.log(api)
         emits('fetchGuestTraveller')
-        emits('resetTypeOfSubmitData')
+        emits('resetTypeOfSubmitData', 'Add')
     }
 
     const updateTravelGuest = async () => {
@@ -136,8 +140,10 @@
             id_company: props.value[status.currentIndex].id_company,
             id_employee: props.value[status.currentIndex].id_employee
         })
+        console.log(api)
         emits('fetchGuestTraveller')
-        emits('resetTypeOfSubmitData')
+        emits('resetTypeOfSubmitData', 'Edit')
+
     }
 
     const deleteTravelGuest = async() => {
@@ -149,17 +155,12 @@
         emits('resetTypeOfSubmitData')
     }
 
-    let travellerTypeData = ref()
-
-    watch(travellerTypeData, () => {
-        assignValue()
-    })
-
+    // buat dropdown type
     const getTravellerType = async () => {
-            const token = JSON.parse(localStorage.getItem('token'))
-            Api.defaults.headers.common.Authorization = `Bearer ${token}`
-            const api = await Api.get('/travel_guest/get_type_traveller')
-            travellerTypeData.value = api.data.data
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/travel_guest/get_type_traveller')
+        travellerTypeData.value = api.data.data
     }
 
     onBeforeMount(() => {
@@ -299,7 +300,7 @@
                         v-model="nik"
                         type="text"
                         :class="inputStylingClass"
-                        placeholder="Company"
+                        placeholder="NIK"
                         required
                         :disabled="!status.isEditing"
                     />
