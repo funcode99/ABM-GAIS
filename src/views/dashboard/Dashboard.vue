@@ -12,6 +12,8 @@ import TopRouteTravel from "./TopRoutesTravel.vue";
 import TripPurpose from "./RequestTripPurpose.vue";
 import CashAdvance from "./TotalCashAdvance.vue";
 import Airlines from "./AirlinesChart.vue";
+import stockInVsOut from "./StockInVsOut.vue";
+import BookingRoom from "./BookingRoomMeeting.vue";
 
 import Multiselect from "@vueform/multiselect";
 
@@ -194,30 +196,30 @@ getData();
           </button>
         </div>
 
-        <div class="w-full flex flex-wrap my-5 align-start">
-          <div class="basis-full 2xl:basis-8/12">
-            <div class="flex flex-wrap">
+        <div class="w-full my-5 align-start gap-5 grid grid-cols-3">
+          <div class="basis-full 2xl:basis-8/12 col-span-3 2xl:col-span-2">
+            <div class="grid grid-cols-2 gap-5">
               <TripStatus
                 v-show="dashboardData.tripStatus.value"
-                class="basis-full"
+                class="basis-full col-span-2"
                 :data="data.status_trip"
               ></TripStatus>
 
               <TopRouteTravel
                 v-show="dashboardData.topTravelRoutes.value"
-                class="h-max-[250px] basis-1/2"
+                class="h-max-[250px] basis-5/12"
                 :data="data.top_route"
               ></TopRouteTravel>
 
               <TotalTrip
                 v-show="dashboardData.totalTrip.value"
-                class="h-max-[250px] basis-1/2"
+                class="h-max-[250px] basis-5/12"
                 :data="data.total_trip"
               ></TotalTrip>
 
               <CashAdvance
                 v-show="dashboardData.totalCashAdvance.value"
-                class="h-max-[250px] basis-1/2"
+                class="h-max-[250px] basis-5/12"
                 :data="data.cash_advance"
               >
               </CashAdvance>
@@ -231,8 +233,8 @@ getData();
             </div>
           </div>
 
-          <div class="2xl:basis-4/12 basis-full">
-            <div class="flex flex-wrap">
+          <div class="2xl:basis-3/12 basis-full col-span-3 2xl:col-span-1">
+            <div class="grid 2xl:grid-rows-2 2xl:grid-cols-1 grid-cols-2 gap-5">
               <TopCostPerVendor
                 v-show="dashboardData.totalCostPerVendor.value"
                 class="2xl:basis-full basis-5/12 grow"
@@ -247,6 +249,21 @@ getData();
               </TripPurpose>
             </div>
           </div>
+        </div>
+
+        <div class="w-full grid grid-cols-4 gap-5">
+          <stockInVsOut
+            v-show="dashboardData.stockInVsOut.value"
+            :data="data.stock_in_out"
+            class="col-span-2 2xl:col-span-1 content-center"
+          ></stockInVsOut>
+
+          <BookingRoom
+            v-show="dashboardData.meetingRoom.value"
+            :data="data.meeting_room"
+            class="col-span-2 2xl:col-span-3"
+          >
+          </BookingRoom>
         </div>
       </div>
     </tableTop>

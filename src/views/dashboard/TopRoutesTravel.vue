@@ -13,7 +13,7 @@ const series = ref();
 const chartConfig = ref({
   chart: {
     type: "bar",
-    height: 300,
+    height: "auto",
   },
   labels: [],
   tooltip: {
@@ -26,6 +26,11 @@ const chartConfig = ref({
           return "";
         },
       },
+    },
+  },
+  xaxis: {
+    labels: {
+      show: false,
     },
   },
   plotOptions: {
@@ -59,7 +64,7 @@ watch(
 </script>
 
 <template>
-  <div class="w-full rounded-lg outline-slate-400 p-5">
+  <div class="w-full rounded-lg outline outline-slate-200 p-5">
     <div class="font-bold mb-5">Top 5 Travel Routes</div>
 
     <div id="chart">

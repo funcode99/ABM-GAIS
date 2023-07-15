@@ -15,7 +15,7 @@ const series = ref([]);
 const chartConfig = ref({
   chart: {
     width: "100%",
-    height: 300,
+    height: "250",
     type: "pie",
     toolbar: {
       show: true,
@@ -41,8 +41,8 @@ watch(
     const newLabel = [];
 
     props.data.forEach((item) => {
-      newSeries.push(item.cost);
-      newLabel.push(item.vendor);
+      newSeries.push(item.total);
+      newLabel.push(item.label.replace("_", " ").toUpperCase());
     });
 
     chartConfig.value.labels = newLabel;
@@ -52,12 +52,13 @@ watch(
 </script>
 
 <template>
-  <div class="w-full rounded-lg outline outline-slate-200 p-5">
-    <div class="font-bold mb-5">Top Cost per Vendor</div>
+  <div class="w-full rounded-lg outline outline-slate-200 p-5 h-full">
+    <div class="font-bold mb-5">Stock In vs Stock Out</div>
 
-    <div id="chart">
+    <div id="chart" class="mt-0.5">
       <VueApexCharts
         type="pie"
+        height="300px"
         width="100%"
         :key="data"
         :options="chartConfig"

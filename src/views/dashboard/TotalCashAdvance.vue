@@ -88,7 +88,7 @@ watch(
 </script>
 
 <template>
-  <div class="w-full rounded-lg outline-slate-400 p-5">
+  <div class="w-full rounded-lg outline outline-slate-200 p-5">
     <div class="font-bold mb-5">Total Cash Advance</div>
 
     <div id="chart">

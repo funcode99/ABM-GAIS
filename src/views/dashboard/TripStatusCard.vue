@@ -44,7 +44,7 @@ watch(
 </script>
 
 <template>
-  <div class="w-full p-5">
+  <div class="w-full">
     <div class="font-bold mb-5">Trip Status</div>
     <div class="grid gap-4 grid-cols-3">
       <div

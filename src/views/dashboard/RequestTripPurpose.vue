@@ -20,6 +20,7 @@ const chartConfig = ref({
   },
   dataLabels: {
     enabled: true,
+    textAnchor: "start",
   },
   colors: APEX_COLORS,
   tooltip: {
@@ -73,7 +74,7 @@ watch(
 </script>
 
 <template>
-  <div class="rounded-lg outline-slate-400 p-5">
+  <div class="rounded-lg outline outline-slate-200 p-5">
     <div class="font-bold mb-5">Request Trip Purpose</div>
 
     <div id="chart">
