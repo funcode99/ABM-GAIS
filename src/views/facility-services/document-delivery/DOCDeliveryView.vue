@@ -30,6 +30,7 @@ let visibleBtn = ref(false);
 let idItem = ref(0);
 const btnLabelSubmit = ref("");
 let dataArr = ref([]);
+let base_url = import.meta.env.VITE_APP_URL
 
 const tableHead = [
   { Id: 1, title: "Sender", jsonData: "sender_name" },
@@ -362,12 +363,12 @@ const getSessionForSidebar = () => {
                     </td>
                     <td class="border border-[#B9B9B9]">
                       <a
-                        v-if="isEmptyObject(dataArr.attachment) != true"
-                        :href="dataArr.attachment"
+                        v-if="isEmptyObject(dataArr.attachment_path) != true"
+                        :href="dataArr.attachment_path"
                         target="_blank"
                         class="text-blue"
                       >
-                        File
+                        {{ dataArr.attachment }}
                       </a>
                     </td>
                     <td class="border border-[#B9B9B9]">

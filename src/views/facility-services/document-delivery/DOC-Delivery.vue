@@ -319,7 +319,7 @@ const getSessionForSidebar = () => {
 };
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD-MM-YYYY");
+    return moment(String(value)).format("DD/MM/YYYY");
   }
 };
 const openModal = (type, id) => {
