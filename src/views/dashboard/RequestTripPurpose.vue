@@ -81,6 +81,7 @@ watch(
       <VueApexCharts
         type="bar"
         width="100%"
+        height="auto"
         :key="data"
         :options="chartConfig"
         :series="series"

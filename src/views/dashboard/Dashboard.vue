@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
@@ -22,6 +22,12 @@ import icon_reset from "@/assets/icon_reset.svg";
 
 import { getDashboardData } from "@/utils/Api/dashboard/dashboard.js";
 
+import fetchCompany from "@/utils/Fetch/Reference/fetchCompany.js";
+import fetchDepartment from "@/utils/Fetch/Reference/fetchDepartment.js";
+import fetchSite from "@/utils/Fetch/Reference/fetchSite.js";
+
+const companyId = localStorage.getItem("id_company");
+
 const filter = reactive({
   company: {
     items: [],
@@ -39,9 +45,8 @@ const filter = reactive({
     items: [],
     value: null,
   },
-  dateRange: {
-    value: null,
-  },
+  month: null,
+  year: null,
 });
 
 const dashboardData = reactive({
@@ -60,14 +65,33 @@ const dashboardData = reactive({
 const data = ref({});
 
 const getData = async () => {
-  const res = await getDashboardData();
+  const params = {
+    company: filter.company.value,
+    site: filter.site.value,
+    cost_center: filter.costCenter.value,
+    department: filter.department.value,
+    month: filter.month,
+    year: filter.year,
+  };
+  const res = await getDashboardData(params);
 
   if (res.success) {
     data.value = res.data;
   }
 };
 
-getData();
+onMounted(async () => {
+  filter.company.items = await fetchCompany();
+  filter.site.items = await fetchSite();
+  filter.department.items = await fetchDepartment();
+
+  filter.company.items = filter.company.items.filter(
+    ({ id }) => id == companyId
+  );
+  filter.company.value = companyId;
+
+  await getData();
+});
 </script>
 
 <template>
@@ -88,11 +112,12 @@ getData();
               v-model="filter.company.value"
               mode="single"
               placeholder="Company"
-              label="status"
-              track-by="status"
-              :options="[]"
-              valueProp="code"
-              class="w-[120px] text-sm"
+              label="company_name"
+              track-by="company_name"
+              :options="filter.company.items"
+              valueProp="id"
+              class="w-[150px] text-sm"
+              disabled
               clear
               searchable
             >
@@ -101,14 +126,14 @@ getData();
 
           <div class="">
             <Multiselect
-              v-model="filter.company.value"
+              v-model="filter.site.value"
               mode="single"
               placeholder="Site"
-              label="status"
-              track-by="status"
-              :options="[]"
-              valueProp="code"
-              class="w-[120px] text-sm"
+              label="site_name"
+              track-by="site_name"
+              :options="filter.site.items"
+              valueProp="id"
+              class="w-[150px] text-sm"
               clear
               searchable
             >
@@ -117,14 +142,14 @@ getData();
 
           <div class="">
             <Multiselect
-              v-model="filter.company.value"
+              v-model="filter.department.value"
               mode="single"
               placeholder="Dept."
-              label="status"
-              track-by="status"
-              :options="[]"
-              valueProp="code"
-              class="w-[120px] text-sm"
+              label="departement_name"
+              track-by="departement_name"
+              :options="filter.department.items"
+              valueProp="id"
+              class="w-[150px] text-sm"
               clear
               searchable
             >
@@ -133,28 +158,28 @@ getData();
 
           <div class="">
             <Multiselect
-              v-model="filter.company.value"
+              v-model="filter.costCenter.value"
               mode="single"
               placeholder="Cost Center"
               label="status"
               track-by="status"
-              :options="[]"
+              :options="filter.costCenter.items"
               valueProp="code"
-              class="w-[120px] text-sm"
+              class="w-[150px] text-sm"
               clear
               searchable
             >
             </Multiselect>
           </div>
 
-          <div class="w-[275px]">
+          <!-- <div class="w-[275px]">
             <VueDatePicker
               range
               v-model="filter.date"
               :enable-time-picker="false"
               format="yyyy-mm-dd"
             />
-          </div>
+          </div> -->
 
           <div class="flex gap-4 flex-wrap">
             <button
@@ -234,7 +259,9 @@ getData();
           </div>
 
           <div class="2xl:basis-3/12 basis-full col-span-3 2xl:col-span-1">
-            <div class="grid 2xl:grid-rows-2 2xl:grid-cols-1 grid-cols-2 gap-5">
+            <div
+              class="grid 2xl:grid-rows-2 2xl:grid-cols-1 grid-cols-2 gap-5 gap-y-20"
+            >
               <TopCostPerVendor
                 v-show="dashboardData.totalCostPerVendor.value"
                 class="2xl:basis-full basis-5/12 grow"

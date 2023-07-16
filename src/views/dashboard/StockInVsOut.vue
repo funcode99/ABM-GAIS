@@ -58,7 +58,7 @@ watch(
     <div id="chart" class="mt-0.5">
       <VueApexCharts
         type="pie"
-        height="300px"
+        height="auto"
         width="100%"
         :key="data"
         :options="chartConfig"
