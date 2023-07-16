@@ -21,6 +21,7 @@ const reject = () => {
     };
   } else {
     payload.value = {
+      notes: notes.value,
       is_revision: false,
     };
   }
