@@ -102,7 +102,6 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post(`/travel_guest/store`, {
-            nik: props.value[status.currentIndex].nik,
             // notes: props.value[status.currentIndex].notes,
             gender: gender.value,
             company: company.value,
@@ -111,6 +110,7 @@
             departement: department.value,
             contact_no: contactNo.value,
             id_type_traveller: type.value,
+            nik: props.value[status.currentIndex].nik,
             id_flight_class: props.value[status.currentIndex].id_flight_class,
             id_request_trip: props.value[status.currentIndex].id_request_trip,
             id_company: props.value[status.currentIndex].id_company,

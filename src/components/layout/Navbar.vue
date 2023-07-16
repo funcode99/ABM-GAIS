@@ -24,7 +24,6 @@
   }
 
   const logout = async () => {
-    console.log('masuk ke logout')
     const token = JSON.parse(localStorage.getItem('token'))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
     let api = await Api.post('/users/logout')

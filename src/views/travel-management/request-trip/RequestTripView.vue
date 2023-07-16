@@ -63,6 +63,8 @@
     let currentSelectedData = ref(travellerGuestData.value)
 
     let showingValue = ref(1)
+    let viewLayout = ref('document')
+    let purposeOfTripName = ref('')
 
     provide('travellerDataView', travellerGuestData)
     provide('airlinesDataView', airlinesData)
@@ -70,8 +72,6 @@
     provide('otherTransportationDataView', otherTransportationData)
     provide('accomodationDataView', accomodationData)
     provide('cashAdvanceDataView', cashAdvanceData)
-
-    let purposeOfTripName = ref('')
 
     const getPurposeOfTrip = async () => {
       try {
@@ -92,7 +92,7 @@
       
       try {
         const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
         let api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
         travellerGuestData.value = api.data.data
       } catch (error) {
@@ -256,12 +256,61 @@
       showingValue.value = 1
     })
 
+    let count = ref(1)
+
+    // watch semua fetch data biar ui nya ke update, asu tenan
+    // bentrok assignment value nya kampret
     watch(travellerGuestData, () => {
       currentSelectedData.value = travellerGuestData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(airlinesData, () => {
+      currentSelectedData.value = airlinesData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(taxiVoucherData, () => {
+      currentSelectedData.value = taxiVoucherData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(otherTransportationData, () => {
+      currentSelectedData.value = otherTransportationData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(accomodationData, () => {
+      currentSelectedData.value = accomodationData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(cashAdvanceData, () => {
+      currentSelectedData.value = cashAdvanceData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(count, () => {
+      if(count.value === 7) {
+        currentSelectedData.value = travellerGuestData.value
+      }
+    })
+
+
+
+    watch(currentSelectedData, () => {
+      // if(showingValue.value >= currentSelectedData.value.length) {
+      //   showingValue.value = currentSelectedData.value.length
+      // }
+      // ada bug saat delete data
     })
 
     watch(isEditing, () => {
       file.value = purposeOfTripData.value[currentIndex].file
+      if(isEditing.value === false) {
+        typeOfSubmitToProps.value = 'none'
+        isAdding.value = false
+      }
     })
 
     const changeType = (typeOfSubmit) => {
@@ -283,14 +332,16 @@
       }
     }
 
-    let viewLayout = ref('document')
-
     const changeViewLayout = (layout) => {
       viewLayout.value = layout
     }
 
     const enterNewTab = () => {
-      window.open(file.value, '_blank')
+      if(JSON.stringify(file.value) === "{}") {
+        return 0
+      } else {
+        window.open(file.value, '_blank')
+      }
     }
 
     const updatePhoto = (event) => {
@@ -377,6 +428,7 @@
                                     class="px-4 py-3 border border-[#e0e0e0] rounded-lg min-w-[80%] cursor-pointer" 
                                     :disabled="!isEditing"                                 
                                   />
+
                           </div>
                               
                           <input 
@@ -468,6 +520,20 @@
 
                         <!-- details form -->
                         <form class="flex-1" @submit.prevent="">
+
+                          <div>
+                            data index{{ dataIndex }}
+                          </div>
+                          <div>
+                            showing value {{ showingValue }}
+                          </div>
+                          <div>
+                            current selected data {{ currentSelectedData.length }}
+                          </div>
+
+                          <div>
+                            {{ currentSelectedData }}
+                          </div>
                             
                           <detailsFormHeader @changeView="changeViewLayout" :title="headerTitle" v-if="!isAdding">
 
@@ -546,6 +612,9 @@
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchAirlines="getAirlines"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 4 -->
@@ -560,6 +629,9 @@
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchTaxiVoucher="getTaxiVoucher"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 5 -->
@@ -572,7 +644,11 @@
                           <otherTransportationFormView 
                             v-if="headerTitle === 'Other Transportation' && viewLayout === 'document'" 
                             class="ml-8" 
-                            :isEditing="isEditing" :currentIndex="dataIndex" 
+                            :isEditing="isEditing"
+                            :currentIndex="dataIndex"
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchOtherTransportation="getOtherTransportation"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 6 -->
@@ -586,7 +662,10 @@
                             v-if="headerTitle === 'Accomodation' && viewLayout === 'document'" 
                             class="ml-8" 
                             :isEditing="isEditing" 
-                            :currentIndex="dataIndex" 
+                            :currentIndex="dataIndex"
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchAccomodation="getAccomodation"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 7 -->
@@ -601,7 +680,10 @@
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
-                            :currentDetailIndex="detailIndex" 
+                            :currentDetailIndex="detailIndex"
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchCashAdvance="getCashAdvance"
+                            @resetTypeOfSubmitData="resetTypeOfSubmit"
                           />
 
                           <!-- table Step 8 -->

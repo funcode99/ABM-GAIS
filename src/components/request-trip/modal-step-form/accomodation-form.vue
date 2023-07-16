@@ -340,8 +340,6 @@
     
                 <h1 class="mt-2 font-bold text-center">Accomodation Availability</h1>
 
-                {{ selectRoomAndPriceData }}
-
                 <hr class="border border-black">
     
                 <div class="overflow-x-auto block">
