@@ -88,7 +88,7 @@ const filterDataByType = async () => {
   };
   const api = await Api.get("book_meeting_room/get", { params: payload });
   dataArr.value = api.data.data.data;
-  datas.value = []
+  datas.value = [];
   api.data.data.data.forEach((dt) => {
     let arr = {
       start: dt.start_date + " " + dt.start_time,
@@ -156,6 +156,14 @@ const fetchCondition = async () => {
   id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company);
 };
 // END
+
+const resetData = () => {
+  id_company.value = "";
+  id_site.value = "";
+  filter.room = [];
+  fetch();
+  fetchCondition()
+};
 
 const openModal = (type, id) => {
   visibleModal.value = true;
@@ -314,7 +322,6 @@ onBeforeMount(() => {
                 </button>
               </div>
             </div>
-            {{ filter.room }}
           </div>
         </div>
       </div>

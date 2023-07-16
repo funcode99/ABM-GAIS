@@ -79,7 +79,7 @@ const reject = () => {
               </label>
             </div>
           </div>
-          <div v-if="is_revision">
+          <div>
             <p class="font-JakartaSans font-medium text-sm py-2 text-left">
               Notes<span class="text-red">*</span>
             </p>
