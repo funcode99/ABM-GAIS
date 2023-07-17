@@ -1,13 +1,26 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
+    import Api from '@/utils/Api'
 
+    import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
+    import fetchTypeOfHotelUtils from "@/utils/Fetch/Reference/fetchTypeOfHotel"
+    
+    const cityData = ref()
+    const typeOfHotelData = ref()
 
     const status = defineProps({
       isEditing: Boolean,
-      currentIndex: Number
+      currentIndex: Number,
+      typeOfSubmitData: String
+    })
+
+    onBeforeMount(() => {
+        fetchCityUtils(cityData)
+        fetchTypeOfHotelUtils(typeOfHotelData)
     })
 
     const props = inject('accomodationDataView')
+    const emits = defineEmits('fetchAccomodation', 'resetTypeOfSubmitData')
 
     let name = ref()
     let city = ref()
@@ -17,7 +30,16 @@
     let sharingWith = ref()
     let checkOut = ref()
 
+    let idCity = ref(0)
+    let idType = ref(0)
+    let vendor = ref(0)
+    let hotelCode = ref(0)
+    let useGL = ref()
+    let remarks = ref()
+    let price = ref()
+
     const assignValue = () => {
+
       name.value = localStorage.getItem('username')
       city.value = props.value[status.currentIndex].city_name
       hotelName.value = props.value[status.currentIndex].hotel_name
@@ -28,33 +50,111 @@
 
     }
 
+    const resetValue = () => {
+      name.value = ''
+      city.value = ''
+      hotelName.value = ''
+      type.value = ''
+      checkIn.value = ''
+      checkOut.value = ''
+      sharingWith.value = ''
+    }
+
+    const defaultValue = () => {
+
+      name.value = localStorage.getItem('username')
+      city.value = props.value[0].city_name
+      hotelName.value = props.value[0].hotel_name
+      type.value = props.value[0].type_accomodation
+      checkIn.value = props.value[0].check_in_date
+      sharingWith.value = props.value[0].sharing_w_name
+      checkOut.value = props.value[0].check_out_date
+
+    }
+
     watch(status, () => {
-      assignValue()
+
+        if (status.typeOfSubmitData === 'Edit') {
+            updateAccomodation()
+        }
+        else if (status.typeOfSubmitData === 'Submit Add') {
+            addAccomodation()
+        }
+        else if (status.typeOfSubmitData === 'Delete') {
+            deleteAccomodation()
+        }
+        else if (status.typeOfSubmitData === 'Add') {
+            resetValue()
+        }
+        else {
+            assignValue()
+        }
+
     })
 
     watch(props, () => {
       if(props.value[0].city_name !== undefined) {
-        name.value = localStorage.getItem('username')
-        city.value = props.value[0].city_name
-        hotelName.value = props.value[0].hotel_name
-        type.value = props.value[0].type_accomodation
-        checkIn.value = props.value[0].check_in_date
-        sharingWith.value = props.value[0].sharing_w_name
-        checkOut.value = props.value[0].check_out_date
+        defaultValue()
       } else {
         assignValue()  
       }
     })
 
     if(props.value[0].city_name !== undefined) {
-        
-        name.value = localStorage.getItem('username')
-        city.value = props.value[0].city_name
-        hotelName.value = props.value[0].hotel_name
-        type.value = props.value[0].type_accomodation
-        checkIn.value = props.value[0].check_in_date
-        sharingWith.value = props.value[0].sharing_w_name
-        checkOut.value = props.value[0].check_out_date
+        defaultValue()
+    }
+
+    const addAccomodation = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.post(`/accomodation_trip/store`, {
+        id_request_trip: localStorage.getItem('tripIdView'),
+        id_type_accomodation: idType.value,
+        id_city: idCity.value,
+        check_in_date: checkIn.value,
+        check_out_date: checkOut.value,
+        id_vendor: vendor.value,
+        use_gl: useGL.value,
+        sharing_w_name: sharingWith.value,
+        remarks: remarks.value,
+        price: price.value,
+        code_hotel: hotelCode.value,
+      })
+      emits('fetchAccomodation')
+      emits('resetTypeOfSubmitData', 'Add')
+
+    }
+
+    const updateAccomodation = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.post(`/accomodation_trip/update_data/${props.value[status.currentIndex].id}`, {
+        id_request_trip: localStorage.getItem('tripIdView'),
+        id_type_accomodation: idType.value,
+        id_city: idCity.value,
+        check_in_date: checkIn.value,
+        check_out_date: checkOut.value,
+        id_vendor: vendor.value,
+        use_gl: useGL.value,
+        sharing_w_name: sharingWith.value,
+        remarks: remarks.value,
+        price: price.value,
+        code_hotel: hotelCode.value,
+      })
+      emits('fetchAccomodation')
+      emits('resetTypeOfSubmitData', 'Edit')
+
+    }
+
+    const deleteAccomodation = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.delete(`/accomodation_trip/delete_data/${props.value[status.currentIndex].id}`)
+      emits('fetchAccomodation')
+      emits('resetTypeOfSubmitData')
 
     }
 
@@ -66,16 +166,18 @@
 </script>
 
 <template>
-    <div>
+
+    <form @submit.prevent="">
                               
         <div :class="rowClass">
   
+          <!-- Name -->
           <div :class="columnClass">
 
             <div class="w-full">
                                       
               <label :class="labelStylingClass">
-                                      Name<span class="text-red-star">*</span>
+                Name<span class="text-red-star">*</span>
               </label>
 
               <input
@@ -90,7 +192,8 @@
             </div>
 
           </div>
-                                
+                     
+          <!-- City -->
           <div :class="columnClass">
 
             <div class="w-full">
@@ -107,6 +210,12 @@
                 required
                 :disabled="!status.isEditing"
               />
+
+              <select v-model="idCity">
+                <option>
+
+                </option>
+              </select>
 
             </div>
 
@@ -146,13 +255,25 @@
               </label>
 
               <input
+                v-if="!status.isEditing"
                 v-model="type" 
                 type="text" 
                 placeholder="Type" 
                 :class=inputStylingClass 
-                required
                 :disabled="!status.isEditing"
               />
+
+              <select 
+                v-if="status.isEditing" 
+                v-model="idType"
+                :class=inputStylingClass 
+              >
+
+                <option>
+
+                </option>
+
+              </select>
                                   
             </div>
 
@@ -228,5 +349,6 @@
   
         </div>
   
-    </div>
+    </form>
+
 </template>
