@@ -70,15 +70,20 @@
             <!-- notification box -->
             <div v-if="props.title == null" class="w-[385px] h-[128px] bg-[#EFF4FF] rounded-2xl my-3 flex items-center">
                 <div class="flex px-6 py-4 gap-x-3">
+                    
                     <div class="bg-[#c3c3c3] rounded-full w-6 h-6 flex items-center justify-center">
                         <img :src="profileImage" class="w-3 h-3" />
                     </div>
+
                     <div>
-                        <!-- {{ props }} -->
+
                         <h1 class="text-sm">{{ props.data }}</h1>
                         <h1 class="text-[#8c8c8c] text-xs">{{ date }}</h1>
                         <h1 class="text-[#8c8c8c] text-xs">{{ hour }}</h1>
+                        <h1 v-if="props.any.notes">Notes: {{ props.any.notes }}</h1>
+
                     </div>
+
                 </div>
             </div>
 

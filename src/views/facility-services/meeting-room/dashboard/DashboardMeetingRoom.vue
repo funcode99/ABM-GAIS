@@ -5,15 +5,15 @@ import Footer from "@/components/layout/Footer.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 
+import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue";
 import Api from "@/utils/Api";
 import VueCal from "vue-cal";
 import "vue-cal/dist/vuecal.css";
+import { Modal } from "usemodal-vue3";
 
 import { ref, onBeforeMount, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
-const rowClass = "flex justify-between px-6 items-center gap-2";
-const colClass = "mb-6 w-full";
 const inputClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
@@ -32,7 +32,7 @@ let filter = reactive({
   id_company: "",
   date: "",
   search: "",
-  room: "",
+  room: [],
 });
 let selectSite = ref(true);
 let id_company = ref("");
@@ -41,6 +41,12 @@ let header = ref([]);
 let tempHeader = ref([]);
 const id_role = JSON.parse(localStorage.getItem("id_role"));
 
+let statusForm = ref("add");
+let visibleModal = ref(false);
+let idItem = ref(0);
+let selectedEvent = ref("");
+
+// FETCH DATA
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -60,6 +66,7 @@ const fetch = async () => {
       label: dt.name_meeting_room,
     };
     tempHeader.value.push(arrHeader);
+    filter.room.push(dt.id_meeting_room);
   });
   header.value = tempHeader.value.filter(
     (obj, index) =>
@@ -67,18 +74,22 @@ const fetch = async () => {
         (item) => item.id === obj.id && item.label === obj.label
       ) === index
   );
+  filter.room = [...new Set(filter.room)];
 };
 
 const filterDataByType = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
   let payload = {
-    company: id_company,
-    site: id_site,
+    id_company: id_company.value,
+    id_site: id_site.value,
+    id_meeting_room: filter.room,
   };
   const api = await Api.get("book_meeting_room/get", { params: payload });
   dataArr.value = api.data.data.data;
-  dataArr.value.forEach((dt) => {
+  datas.value = [];
+  api.data.data.data.forEach((dt) => {
     let arr = {
       start: dt.start_date + " " + dt.start_time,
       end: dt.end_date + " " + dt.end_time,
@@ -92,6 +103,7 @@ const filterDataByType = async () => {
       label: dt.name_meeting_room,
     };
     tempHeader.value.push(arrHeader);
+    filter.room.push(dt.id_meeting_room);
   });
   header.value = tempHeader.value.filter(
     (obj, index) =>
@@ -99,9 +111,9 @@ const filterDataByType = async () => {
         (item) => item.id === obj.id && item.label === obj.label
       ) === index
   );
+  filter.room = [...new Set(filter.room)];
 };
 
-// FETCH DATA
 const fetchCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -143,6 +155,35 @@ const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company);
 };
+// END
+
+const resetData = () => {
+  id_company.value = "";
+  id_site.value = "";
+  filter.room = [];
+  fetch();
+  fetchCondition()
+};
+
+const openModal = (type, id) => {
+  visibleModal.value = true;
+  statusForm.value = type;
+  if (id) {
+    idItem.value = parseInt(id);
+  }
+};
+
+const closeModal = () => {
+  visibleModal.value = false;
+  fetch();
+};
+
+const onEventCreate = (event, deleteEventFunction) => {
+  selectedEvent.value = event;
+  //   openModal("add", 0);
+
+  return event;
+};
 
 onBeforeMount(() => {
   getSessionForSidebar();
@@ -176,6 +217,10 @@ onBeforeMount(() => {
             >
               Dashboard Meeting Room
             </p>
+            <!-- <label
+              class="font-JakartaSans text-base text-[#0A0A0A] font-semibold"
+              >Drag at time to create your events</label
+            > -->
           </div>
           <div class="px-4 pb-2 grid grid-cols-4">
             <div class="col-span-3">
@@ -185,11 +230,13 @@ onBeforeMount(() => {
                 :time-from="8 * 60"
                 :time-step="30"
                 :disable-views="['years', 'year', 'month']"
-                editable-events
+                :editable-events="{ title: true, drag: false, create: false }"
                 :events="datas"
                 :split-days="header"
                 :min-cell-width="500"
                 :min-split-width="400"
+                :on-event-create="onEventCreate"
+                @event-drag-create="visibleModal"
                 sticky-split-labels
                 class="h-[70vh]"
               >
@@ -199,6 +246,12 @@ onBeforeMount(() => {
                   }}</strong>
                 </template>
               </vue-cal>
+              <!-- <ModalAddBookingRoom
+                v-if="visibleModal"
+                @close="closeModal"
+                :status="statusForm"
+                :id="idItem"
+              /> -->
             </div>
             <div class="px-5 pb-2">
               <p class="mb-3 font-bold capitalize">Filter:</p>
@@ -223,6 +276,7 @@ onBeforeMount(() => {
                 id="id_site"
                 :class="inputClass"
                 :disabled="selectSite"
+                class="mb-3"
               >
                 <option disabled selected>Site</option>
                 <option
@@ -233,6 +287,20 @@ onBeforeMount(() => {
                   {{ data.site_code }} - {{ data.site_name }}
                 </option>
               </select>
+              <p
+                class="cursor-pointer mb-2"
+                v-for="data in header"
+                :key="data.id"
+              >
+                <input
+                  type="checkbox"
+                  checked="checked"
+                  class="checkbox checkbox-sm mr-2"
+                  :value="data.id"
+                  v-model="filter.room"
+                />
+                <span>{{ data.label }}</span>
+              </p>
               <div class="my-3 grid grid-cols-2">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250] mr-2"
@@ -253,11 +321,6 @@ onBeforeMount(() => {
                   Reset
                 </button>
               </div>
-              <p class="cursor-pointer" v-for="data in header" :key="data.id">
-                <input type="checkbox" checked="checked" class="checkbox checkbox-sm mr-2" :value="data.id"/>
-                <span>{{data.label}}</span>
-
-              </p>
             </div>
           </div>
         </div>

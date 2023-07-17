@@ -1,15 +1,17 @@
-import Api from '@/utils/Api'
+import Api from "@/utils/Api";
 
 const fetchDepartment = async (instanceArray, addDepartmentData) => {
-    try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get('/department')
-        instanceArray = api.data.data
-        addDepartmentData.value = instanceArray
-    } catch (error) {
-        console.log(error)
-    }
-}
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const api = await Api.get("/department");
+    if (instanceArray) instanceArray = api.data.data;
+    if (addDepartmentData) addDepartmentData.value = instanceArray;
 
-export default fetchDepartment
+    return api.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default fetchDepartment;

@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, onBeforeMount, ref } from "vue";
+import Api from '@/utils/Api'
 
 import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
@@ -30,6 +31,20 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const searchSidebarValue = ref("");
 const id_role = JSON.parse(localStorage.getItem("id_role"));
+
+let menuData = ref()
+
+const fetchSidebarAppearance = async () => {
+  const token = JSON.parse(localStorage.getItem('token'))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  let api = await Api.get(`/role/get_sidebar_menu`)
+  menuData.value = api.data.data
+  console.log(menuData.value)
+} 
+
+onBeforeMount(() => {
+  fetchSidebarAppearance()
+})
 
 // masukkin params ke actions harus pake variable ga boleh pake primitive data langsung
 let system = "systemConfiguration";

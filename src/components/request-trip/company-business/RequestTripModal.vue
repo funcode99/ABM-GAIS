@@ -46,12 +46,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let accomodationTableData = ref([])
     let cashAdvanceTableData = ref([])
 
-    provide('travellerData', travellerGuestTableData)
-    provide('airlinesData', airlinesTableData)
-    provide('taxiVoucherData', taxiVoucherTableData)
-    provide('otherTransportationData', otherTransportationTableData)
-    provide('accomodationData', accomodationTableData)
-    provide('cashAdvanceData', cashAdvanceTableData)
+    provide('travellerDataView', travellerGuestTableData)
+    provide('airlinesDataView', airlinesTableData)
+    provide('taxiVoucherDataView', taxiVoucherTableData)
+    provide('otherTransportationDataView', otherTransportationTableData)
+    provide('accomodationDataView', accomodationTableData)
+    provide('cashAdvanceDataView', cashAdvanceTableData)
 
     let isVisibleGuest = ref(false)
     let isVisibleAirlines = ref(false)

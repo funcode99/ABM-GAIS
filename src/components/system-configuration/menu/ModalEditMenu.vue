@@ -74,10 +74,6 @@
           sequenceCode.value = null
         }
 
-        // console.log(sequence.value)
-        // console.log(sequenceCode.value)
-        // console.log(file.value)
-
         formState.menu.menuName = menuName.value
         formState.menu.sort = sort.value
         formState.menu.sequence = sequenceCode.value

@@ -55,12 +55,16 @@
     let approvalStatusData = ref([{}])
 
     let file = ref()
+    let filename = ref()
+    let fileSend = ref(null)
     let notes = ref()
     let dataIndex = ref(0)
     let detailIndex = ref(0)
     let currentSelectedData = ref(travellerGuestData.value)
 
     let showingValue = ref(1)
+    let viewLayout = ref('document')
+    let purposeOfTripName = ref('')
 
     provide('travellerDataView', travellerGuestData)
     provide('airlinesDataView', airlinesData)
@@ -69,8 +73,6 @@
     provide('accomodationDataView', accomodationData)
     provide('cashAdvanceDataView', cashAdvanceData)
 
-    let purposeOfTripName = ref('')
-
     const getPurposeOfTrip = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -78,6 +80,7 @@
         let api = await Api.get(`/request_trip/get/${localStorage.getItem('tripIdView')}`)      
         purposeOfTripData.value = api.data.data
         file.value = purposeOfTripData.value[currentIndex].file
+        filename.value = purposeOfTripData.value[currentIndex].file_name
         purposeOfTripName.value = purposeOfTripData.value[currentIndex].document_name
       } catch (error) {
         console.log(error)
@@ -89,7 +92,7 @@
       
       try {
         const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
         let api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
         travellerGuestData.value = api.data.data
       } catch (error) {
@@ -172,9 +175,17 @@
     }
 
     const submitRequestTrip = async () => {
+      
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripIdView")}`)
+      
+      try {
+        const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripIdView")}`)
+        console.log(api)
+      } catch (error) {
+        console.log(error)
+      }
+
     }
 
     const submitPurposeOfTrip = async () => {
@@ -182,21 +193,31 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripId")}`, {
-        id_employee: purposeOfTripData.value[0].id_employee,
-        no_request_trip: purposeOfTripData.value[0].no_request_trip,
-        code_document: purposeOfTripData.value[0].code_document,
+      const payload = {
         id_site: purposeOfTripData.value[0].id_site,
+        id_employee: purposeOfTripData.value[0].id_employee,
+        code_document: purposeOfTripData.value[0].id_document,
+        no_request_trip: purposeOfTripData.value[0].no_request_trip,
         notes: notes.value,
-        file: file.value,
         id_city_from: purposeOfTripData.value[0].id_city_from,
         id_city_to: purposeOfTripData.value[0].id_city_to,
         date_departure: purposeOfTripData.value[0].date_departure,
         date_arrival: purposeOfTripData.value[0].date_arrival,
         id_zona: purposeOfTripData.value[0].id_zona,
         tlk_per_day: purposeOfTripData.value[0].tlk_per_day,
-        total_tlk: purposeOfTripData.value[0].total_tlk
-      })
+        total_tlk: purposeOfTripData.value[0].total_tlk,
+      }
+
+      if(fileSend !== null) {
+        payload.file = fileSend.value
+      }
+
+      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, payload)
+      console.log(api)
+
+      delete payload.file
+      fileSend.value = null
+      isEditing.value = false
 
     }
 
@@ -232,10 +253,64 @@
     watch(headerTitle, () => {
       assignSelectedData()
       dataIndex.value = 0
+      showingValue.value = 1
     })
 
+    let count = ref(1)
+
+    // watch semua fetch data biar ui nya ke update, asu tenan
+    // bentrok assignment value nya kampret
     watch(travellerGuestData, () => {
       currentSelectedData.value = travellerGuestData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(airlinesData, () => {
+      currentSelectedData.value = airlinesData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(taxiVoucherData, () => {
+      currentSelectedData.value = taxiVoucherData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(otherTransportationData, () => {
+      currentSelectedData.value = otherTransportationData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(accomodationData, () => {
+      currentSelectedData.value = accomodationData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(cashAdvanceData, () => {
+      currentSelectedData.value = cashAdvanceData.value
+      count.value < 7 ? count.value++ : count.value
+    })
+
+    watch(count, () => {
+      if(count.value === 7) {
+        currentSelectedData.value = travellerGuestData.value
+      }
+    })
+
+
+
+    watch(currentSelectedData, () => {
+      // if(showingValue.value >= currentSelectedData.value.length) {
+      //   showingValue.value = currentSelectedData.value.length
+      // }
+      // ada bug saat delete data
+    })
+
+    watch(isEditing, () => {
+      file.value = purposeOfTripData.value[currentIndex].file
+      if(isEditing.value === false) {
+        typeOfSubmitToProps.value = 'none'
+        isAdding.value = false
+      }
     })
 
     const changeType = (typeOfSubmit) => {
@@ -245,8 +320,9 @@
       }
     }
 
-    const resetTypeOfSubmit = () => {
+    const resetTypeOfSubmit = (Type) => {
       typeOfSubmitToProps.value = 'none'
+      Type === 'Add' ? isAdding.value = false : ''
     }
 
     const onChangePage = (pageOfItem) => {
@@ -256,46 +332,20 @@
       }
     }
 
-    // const downloadFile = () => {
-
-    //   const downloadApi = axios.create({
-    //     headers: {
-    //       accept: 'application/json',
-    //       "Content-Type": "multipart/form-data",
-    //       "Access-Control-Allow-Origin": "*",
-    //       "Access-Control-Allow-Methods": "GET,POST,OPTIONS,DELETE,PUT"
-    //     },
-    //   })
-
-    //   downloadApi.get(`${file.value}`, {
-    //     responseType: 'Blob'
-    //   }).then(res => {
-    //     download(res, 'test.pdf', 'application/pdf')
-    //   })
-
-    // }
-
-    // const download = (data, name, type) => {
-    //   const url = window.URL.createObjectURL(new Blob([data], { type }));
-    //   const link = document.createElement('a');
-    //   link.href = url;
-    //   link.setAttribute('download', name);
-    //   document.body.appendChild(link);
-    //   link.click();
-    //   setTimeout(() => {
-    //     document.body.removeChild(link);
-    //     window.URL.revokeObjectURL(url);
-    //   }, 200);
-    // }
-
-    let viewLayout = ref('document')
-
     const changeViewLayout = (layout) => {
       viewLayout.value = layout
     }
 
     const enterNewTab = () => {
-      window.open(file.value, '_blank')
+      if(JSON.stringify(file.value) === "{}") {
+        return 0
+      } else {
+        window.open(file.value, '_blank')
+      }
+    }
+
+    const updatePhoto = (event) => {
+      fileSend.value = event.target.files[0]
     }
 
 </script>
@@ -323,6 +373,7 @@
 
                       <h1 class="text-blue font-semibold">
                         Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[currentIndex].no_request_trip }}</span>
+
                       </h1>
 
                       <div class="flex-1"></div>
@@ -334,6 +385,7 @@
                     </div>
 
                     <!-- SUBMIT & EDIT BUTTON -->
+                    <!-- v-if="purposeOfTripData[currentIndex].status !== 'Waiting Approval'" -->
                     <div class="flex gap-4 mt-6 mb-3 ml-5">
                         
                       <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
@@ -343,7 +395,8 @@
                         Submit
                       </button>
                         
-                      <button v-if="isEditing" @click="isEditing = false" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                      <button v-if="isEditing" @click="isEditing = false" 
+                      class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
                         Cancel
                       </button>
 
@@ -364,29 +417,33 @@
 
                         <div class="flex flex-col gap-2">
 
-                              <span>File Attachment <span class="text-[#f5333f]">*</span></span>
+                          <span>File Attachment <span class="text-[#f5333f]">*</span></span>
 
-                                <div @click="enterNewTab">
+                          <div @click="enterNewTab">
 
                                   <input
-                                    v-model="file"
+                                    v-model="filename"
                                     v-if="!isEditing"
                                     type="text"
                                     class="px-4 py-3 border border-[#e0e0e0] rounded-lg min-w-[80%] cursor-pointer" 
                                     :disabled="!isEditing"                                 
                                   />
-                                </div>
-                              
 
-                              <input 
-                                v-if="isEditing"
-                                type="file"
-                                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                              />
+                          </div>
+                              
+                          <input 
+                              @change="updatePhoto" 
+                              v-if="isEditing"
+                              type="file"
+                              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                          />
+
                         </div>
 
                         <div class="flex flex-col gap-2">
-                                <span>Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                                <span>
+                                  Purpose of Trip <span class="text-[#f5333f]">*</span>
+                                </span>
                                 <input
                                   type="text" 
                                   :value="purposeOfTripData[currentIndex].document_name" 
@@ -396,18 +453,18 @@
                         </div>
 
                         <div class="flex flex-col gap-2">
-                                <span>Requestor <span class="text-[#f5333f]">*</span></span>
-                                <input type="text" disabled :value="purposeOfTripData[currentIndex].employee_name"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+                            <span>Requestor <span class="text-[#f5333f]">*</span></span>
+                            <input type="text" disabled :value="purposeOfTripData[currentIndex].employee_name"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
                         </div>
 
                         <div class="flex flex-col gap-2">
-                                <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                                <input 
-                                  v-model="notes"
-                                  type="text" 
-                                  :disabled="!isEditing" 
-                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                                />
+                          <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+                          <input 
+                            v-model="notes"
+                            type="text" 
+                            :disabled="!isEditing" 
+                            class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
+                          />
                         </div>
 
                     </div>
@@ -463,6 +520,20 @@
 
                         <!-- details form -->
                         <form class="flex-1" @submit.prevent="">
+
+                          <div>
+                            data index{{ dataIndex }}
+                          </div>
+                          <div>
+                            showing value {{ showingValue }}
+                          </div>
+                          <div>
+                            current selected data {{ currentSelectedData.length }}
+                          </div>
+
+                          <div>
+                            {{ currentSelectedData }}
+                          </div>
                             
                           <detailsFormHeader @changeView="changeViewLayout" :title="headerTitle" v-if="!isAdding">
 
@@ -513,7 +584,7 @@
 
                           <detailsFormHeader :title="headerTitle" v-if="isAdding">
                             <buttonAddFormView class="mx-7" @click="changeType('Submit Add')" />
-                            <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold" @click="isAdding = false">
+                            <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold" @click="isAdding = false, changeType('none')">
                               Cancel
                             </button>
                           </detailsFormHeader>
@@ -541,6 +612,9 @@
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchAirlines="getAirlines"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 4 -->
@@ -555,6 +629,9 @@
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchTaxiVoucher="getTaxiVoucher"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 5 -->
@@ -567,7 +644,11 @@
                           <otherTransportationFormView 
                             v-if="headerTitle === 'Other Transportation' && viewLayout === 'document'" 
                             class="ml-8" 
-                            :isEditing="isEditing" :currentIndex="dataIndex" 
+                            :isEditing="isEditing"
+                            :currentIndex="dataIndex"
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchOtherTransportation="getOtherTransportation"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 6 -->
@@ -581,7 +662,10 @@
                             v-if="headerTitle === 'Accomodation' && viewLayout === 'document'" 
                             class="ml-8" 
                             :isEditing="isEditing" 
-                            :currentIndex="dataIndex" 
+                            :currentIndex="dataIndex"
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchAccomodation="getAccomodation"
+                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
                           />
 
                           <!-- table Step 7 -->
@@ -596,7 +680,10 @@
                             class="ml-8" 
                             :isEditing="isEditing" 
                             :currentIndex="dataIndex" 
-                            :currentDetailIndex="detailIndex" 
+                            :currentDetailIndex="detailIndex"
+                            :typeOfSubmitData="typeOfSubmitToProps"
+                            @fetchCashAdvance="getCashAdvance"
+                            @resetTypeOfSubmitData="resetTypeOfSubmit"
                           />
 
                           <!-- table Step 8 -->
@@ -608,7 +695,8 @@
                         </form>
 
                     </div>
-                        
+                    
+
                     <div v-else-if="tab == 'tlk'">
 
                             <h1>TLK</h1>
@@ -635,6 +723,7 @@
                             </div>
 
                     </div>
+
 
                     <div v-else-if="tab == 'approval'">
 

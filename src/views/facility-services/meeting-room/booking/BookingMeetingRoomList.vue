@@ -173,7 +173,7 @@ const filterDataByType = async (id) => {
     code_status_doc: filter.status,
     start_date: filter.date ? filter.date[0] : "",
     end_date: filter.date ? filter.date[1] : "",
-    id_meeting_room: filter.room,
+    id_meeting_room: [filter.room],
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
@@ -551,7 +551,11 @@ onBeforeMount(() => {
                     <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
                     <td>{{ data.no_booking_meeting }}</td>
                     <td>{{ data.employee_name }}</td>
-                    <td>{{ data.title }}</td>
+                    <td>
+                      <span class="truncate ...">{{
+                        data.title
+                      }}</span>
+                    </td>
                     <td>{{ data.name_meeting_room }}</td>
                     <td>
                       {{ format_date(data.start_date) }} -
@@ -674,5 +678,11 @@ tr th {
 .status-done {
   color: #00c851;
   font-weight: 800;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

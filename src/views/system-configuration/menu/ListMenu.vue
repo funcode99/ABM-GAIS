@@ -139,6 +139,7 @@
         code_sequence: formState.menu.sequenceCode,
         description: 'kosong',
         url: formState.menu.url,
+        url_view: formState.menu.url,
         icon: formState.menu.icon,
         id_company: formState.menu.companyId
       })
@@ -179,6 +180,7 @@
         menu: formEditState.menu.menuName,
         description: 'kosong',
         url: formEditState.menu.url,
+        url_view: formEditState.menu.url,
         icon: formEditState.menu.icon,
         sort: formEditState.menu.sort,
         parent_id: null,
