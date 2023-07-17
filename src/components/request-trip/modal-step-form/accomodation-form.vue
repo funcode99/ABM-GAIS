@@ -98,7 +98,6 @@
     })
 
     let dataLength = ref(0)
-    let selectRoomAndPrice = ref([])
     let selectRoomAndPriceData = ref([])
     let bundleData = ref()
 
@@ -109,17 +108,11 @@
         accomodationData.value = api.data.data
         dataLength.value = accomodationData.value.length
         for(let i=0; i<accomodationData.value.length; i++) {
-            selectRoomAndPrice.value.push({})
             selectRoomAndPriceData.value.push({})
         }
         for(let i=0; i<accomodationData.value.length; i++) {
             selectRoomAndPriceData.value[i] = accomodationData.value[i].room_type[0]
         }
-    }
-
-    const insertToArraySequence = (index, data) => {
-        // gak bisa di push karena dia objek bukan array
-        selectRoomAndPrice.value[index] = data
     }
 
     const assignHotelData = (data, forPrice) => {
@@ -157,7 +150,8 @@
                                 v-model="traveller" 
                                 :class="inputStylingClass" 
                                 type="text" 
-                                disabled 
+                                disabled
+                                required
                             />
                         </div>
                     </div>
@@ -168,7 +162,7 @@
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
                             Gender
                             </label>
-                            <select :class="inputStylingClass" v-model="gender">
+                            <select :class="inputStylingClass" v-model="gender" required>
                                 <option value="L">
                                     Male
                                 </option>
@@ -193,7 +187,8 @@
                                 type="text" 
                                 placeholder="Max Fare" 
                                 :class="inputStylingClass" 
-                                v-model="hotelFare" 
+                                v-model="hotelFare"
+                                required
                             />
                         </div>
                     </div>
@@ -209,7 +204,7 @@
                     <div :class="columnClass">
                         <div class="w-full">
                             <label :class="labelStylingClass">City</label>
-                            <select :class="inputStylingClass" v-model="city">
+                            <select :class="inputStylingClass" v-model="city" required>
                                 <option v-for="data in cityData" :value="data.id">
                                 {{ data.city_name }}
                                 </option>
@@ -237,11 +232,16 @@
                             <label :class="labelStylingClass">
                                 Check In
                             </label>
-                            <input :class="inputStylingClass" type="date" v-model="checkIn" />
+                            <input 
+                                :class="inputStylingClass" 
+                                type="date" 
+                                v-model="checkIn" 
+                                required
+                            />
                         </div>
                     </div>
     
-                    <!-- Sharing with -->
+                    <!-- Sharing with is not required -->
                     <div :class="columnClass">
 
                         <div class="w-full">
@@ -254,7 +254,6 @@
                             <div v-if="showSharingWith">
                                 <input :class="inputStylingClass" type="text" placeholder="Name" v-model="sharingWith" />
                             </div>
-
 
                         </div>
 
@@ -270,7 +269,12 @@
                             <label :class="labelStylingClass">
                                 Check Out
                             </label>
-                            <input :class="inputStylingClass" type="date" v-model="checkOut" />
+                            <input 
+                                :class="inputStylingClass" 
+                                type="date" 
+                                v-model="checkOut"
+                                required
+                            />
                         </div>
                     </div>
     
@@ -279,7 +283,12 @@
                         <div class="flex flex-col gap-2">
                             <span :class="labelStylingClass">Create GL?</span>
                             <div>
-                                <input type="checkbox" class="w-5 h-5 rounded-2xl ml-2 mb-2" v-model="createGL">
+                                <input 
+                                    type="checkbox" 
+                                    class="w-5 h-5 rounded-2xl ml-2 mb-2" 
+                                    v-model="createGL"
+                                    required 
+                                />
                                 <label class="ml-2">Yes</label>
                             </div>
                         </div>
@@ -294,7 +303,10 @@
                         <label :class="labelStylingClass">
                             Accomodation Type
                         </label>
-                        <select :class="inputStylingClass" v-model="accomodationType">
+                        <select 
+                            :class="inputStylingClass" 
+                            v-model="accomodationType" 
+                            required>
                             <option v-for="data in typeOfHotelData" :key="data.id" :value="[data.id, data.type_accomodation]">
                                 {{ data.type_accomodation }}
                             </option>
@@ -354,7 +366,7 @@
                                     {{ data.rating }}
                                 </td>
                                 <td>
-                                    <select @change="insertToArraySequence(index, selectRoomAndPriceData[index])" :id="index" v-model="selectRoomAndPriceData[index]">
+                                    <select :id="index" v-model="selectRoomAndPriceData[index]">
                                         <option v-for="option in data.room_type" :value="option">
                                             {{ option.room }}
                                         </option>
@@ -362,7 +374,6 @@
                                 </td>
                                 <td>
                                     {{ selectRoomAndPriceData[index].price }}
-                                    <!-- {{ selectRoomAndPrice[index].price }} -->
                                 </td>
                                 <td @click="bundleData = data.code_hotel">
                                     <button @click="assignHotelData(data, selectRoomAndPriceData[index])" type="button" :class="bundleData === data.code_hotel ? 'bg-blue' : 'bg-green'" class="text-white rounded-lg px-4 py-3 font-bold">

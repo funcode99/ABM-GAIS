@@ -46,12 +46,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let accomodationTableData = ref([])
     let cashAdvanceTableData = ref([])
 
-    provide('travellerData', travellerGuestTableData)
-    provide('airlinesData', airlinesTableData)
-    provide('taxiVoucherData', taxiVoucherTableData)
-    provide('otherTransportationData', otherTransportationTableData)
-    provide('accomodationData', accomodationTableData)
-    provide('cashAdvanceData', cashAdvanceTableData)
+    provide('travellerDataView', travellerGuestTableData)
+    provide('airlinesDataView', airlinesTableData)
+    provide('taxiVoucherDataView', taxiVoucherTableData)
+    provide('otherTransportationDataView', otherTransportationTableData)
+    provide('accomodationDataView', accomodationTableData)
+    provide('cashAdvanceDataView', cashAdvanceTableData)
 
     let isVisibleGuest = ref(false)
     let isVisibleAirlines = ref(false)
@@ -326,9 +326,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             id_site: localStorage.getItem('id_site')
           })
 
-          console.log(api)
-          console.log('membuat request trip dengan id baru')
-          localStorage.setItem('tripId', api.data.data.id)
+          if(api.data.message !== 'Already Has Draft Data') {
+            console.log('membuat request trip dengan id baru')
+            localStorage.setItem('tripId', api.data.data.id)
+          } else {
+            throw api.data.message
+            // alert(api.data.message)
+          }
 
         }
 

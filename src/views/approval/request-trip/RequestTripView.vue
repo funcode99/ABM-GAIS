@@ -253,7 +253,7 @@ watch(purposeOfTripData, () => {
             <h1 class="text-blue text-2xl font-semibold font-JakartaSans">
               Request Trip
               <span class="text-black text-2xl font-semibold font-JakartaSans">
-                / TRV-ABM/1232/23.04
+                / {{ purposeOfTripData[0].no_request_trip }}
               </span>
             </h1>
           </div>

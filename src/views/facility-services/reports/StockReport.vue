@@ -16,7 +16,6 @@ import expandArrow from "@/assets/ExpandArrow.png";
 import iconUp from "@/assets/icon-up.png";
 
 // import Api from "@/utils/Api";
-// import moment from "moment";
 
 // import { Workbook } from "exceljs";
 import { ref, onBeforeMount, computed } from "vue";
@@ -24,31 +23,17 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
-const selectedStatus = ref("");
-const selectedCatype = ref("");
-const search = ref("");
-const date = ref();
-// const dateStart = ref();
-// const dateEnd = ref();
+const selectedCompany = ref("");
+const selectedSite = ref("");
+const selectedWarehouse = ref("");
 
-let sortedData = ref([]);
+const search = ref("");
+const month = ref();
+const year = ref();
+
+// let sortedData = ref([]);
 // let sortedbyASC = true;
 // let instanceArray = [];
-
-// let showingValue = ref(1);
-let showingValueFrom = ref(0);
-let showingValueTo = ref(0);
-let pageMultiplier = ref(10);
-// let pageMultiplierReactive = computed(() => pageMultiplier.value);
-// let paginateIndex = ref(0);
-// let totalPage = ref(0);
-let totalData = ref(0);
-
-const onChangePage = (pageOfItem) => {
-  // paginateIndex.value = pageOfItem - 1;
-  // showingValue.value = pageOfItem;
-  // fetchSettlementReport(pageOfItem);
-};
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
@@ -85,6 +70,7 @@ const showMenu1 = ref(false);
 const showMenu2 = ref(false);
 const showMenuItem1 = ref(false);
 const showMenuItem2 = ref(false);
+const showMenuItemStockOut = ref(false);
 const icon1 = ref(expandArrow);
 const icon2 = ref(expandArrow);
 
@@ -101,6 +87,9 @@ const toggleMenu = (menu) => {
   } else if (menu === "menuItem2") {
     showMenuItem2.value = !showMenuItem2.value;
     icon2.value = showMenuItem2.value ? iconUp : expandArrow;
+  } else if (menu === "menuItemStockOut") {
+    showMenuItemStockOut.value = !showMenuItemStockOut.value;
+    icon2.value = showMenuItemStockOut.value ? iconUp : expandArrow;
   }
 };
 
@@ -175,15 +164,47 @@ const getIcon = (menu) => {
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
+                  Company
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCompany"
+                >
+                  <option disabled selected>Type</option>
+                  <option value="1">Company A</option>
+                  <option value="2">Company B</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Site
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedSite"
+                >
+                  <option disabled selected>Type</option>
+                  <option value="1">Site A</option>
+                  <option value="2">Site B</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
                   Warehouse
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCatype"
+                  v-model="selectedWarehouse"
                 >
                   <option disabled selected>Type</option>
-                  <option value="1">Travel</option>
-                  <option value="2">Non Travel</option>
+                  <option value="1">Warehouse A</option>
+                  <option value="2">Warehouse B</option>
                 </select>
               </div>
 
@@ -193,12 +214,7 @@ const getIcon = (menu) => {
                 >
                   Month
                 </p>
-                <VueDatePicker
-                  v-model="date"
-                  range
-                  :enable-time-picker="false"
-                  class="my-date"
-                />
+                <VueDatePicker v-model="month" month-picker />
               </div>
 
               <div class="flex flex-col pt-[2px]">
@@ -207,12 +223,7 @@ const getIcon = (menu) => {
                 >
                   Year
                 </p>
-                <VueDatePicker
-                  v-model="date"
-                  range
-                  :enable-time-picker="false"
-                  class="my-date"
-                />
+                <VueDatePicker v-model="year" year-picker />
               </div>
 
               <div class="flex gap-4 items-center pt-7">
@@ -245,22 +256,6 @@ const getIcon = (menu) => {
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
             </div>
-          </div>
-
-          <!-- SHOWING -->
-          <div class="flex items-center gap-1 py-4 px-4 h-4">
-            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
-            <select
-              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              v-model="pageMultiplier"
-              @change="fetchSettlementReport()"
-            >
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>75</option>
-              <option>100</option>
-            </select>
           </div>
 
           <!-- TABLE -->
@@ -373,31 +368,42 @@ const getIcon = (menu) => {
                 </td>
                 <td colspan="5"></td>
               </tr>
+
               <tr v-if="showMenu2">
-                <td colspan="6">Menu 2 content goes here</td>
+                <td>1</td>
+                <td
+                  class="flex justify-center items-center gap-2"
+                  @click="toggleMenu('menuItemStockOut')"
+                >
+                  <p>Pen</p>
+                  <img
+                    :src="getIcon('menuItemStockOut')"
+                    class="mt-1 w-[12px] h-[8px]"
+                  />
+                </td>
+                <td></td>
+                <td></td>
+                <td>62</td>
+                <td>Pc</td>
+              </tr>
+              <tr v-if="showMenuItemStockOut">
+                <td>1</td>
+                <td></td>
+                <td>10/04/23</td>
+                <td>OUT-ABM/1132/10.04</td>
+                <td>32</td>
+                <td>Pc</td>
+              </tr>
+              <tr v-if="showMenuItemStockOut">
+                <td>2</td>
+                <td></td>
+                <td>22/04/23</td>
+                <td>OUT-ABM/1320/22.04</td>
+                <td>30</td>
+                <td>Pc</td>
               </tr>
             </tbody>
           </tableData>
-
-          <!-- PAGINATION -->
-          <div
-            class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
-          >
-            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ showingValueFrom }} to
-              {{ showingValueTo }}
-              of {{ totalData }} entries
-            </p>
-            <!-- <vue-awesome-paginate
-              :total-items="totalData"
-              :items-per-page="parseInt(pageMultiplierReactive)"
-              :on-click="onChangePage"
-              v-model="showingValue"
-              :max-pages-shown="4"
-              :show-breakpoint-buttons="false"
-              :show-ending-buttons="true"
-            /> -->
-          </div>
         </tableTop>
       </tableContainer>
 
@@ -431,10 +437,6 @@ tr th {
 
 .this {
   overflow-x: hidden;
-}
-
-.my-date {
-  width: 240px !important;
 }
 
 input.nosubmit {

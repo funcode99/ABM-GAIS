@@ -183,9 +183,14 @@ watch(isVisible, () => {
                     <!-- untuk parent -->
                       <div class="h-8 items-center bg-blue text-white border-b border-white flex text-left font-black">
 
-                          <div class="basis-4/6 pl-1">{{ data.menu }}</div>
-                          <div class="basis-1/6"></div>
-                          <div class="basis-1/6"></div>
+                          <div class="flex-1 pl-1">
+                            {{ data.menu }}
+                          </div>
+
+                          <div class="flex items-center gap-4 basis-2/6 justify-center">
+                            <input class="p-4" type="checkbox" :value="data.id" v-model="writeValue">
+                            <input class="p-4" type="checkbox" :value="data.id" v-model="readValue">
+                          </div>  
                           
                       </div>
                 
@@ -214,11 +219,11 @@ watch(isVisible, () => {
 
                           <div class="flex gap-4 basis-2/6 justify-center">
                             <div class="">
-                                  <input type="checkbox" :value="innerinner.id" v-model="writeValue">
+                                <input type="checkbox" :value="innerinner.id" v-model="writeValue">
                             </div>
         
                             <div class="">
-                                  <input type="checkbox" :value="innerinner.id" v-model="readValue">
+                                <input type="checkbox" :value="innerinner.id" v-model="readValue">
                             </div>
                           </div>
                             

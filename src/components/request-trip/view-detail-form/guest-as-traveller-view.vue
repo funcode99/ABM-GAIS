@@ -20,6 +20,9 @@
     let type = ref()
     let contactNo = ref()
     let maxHotelFare = ref()
+    let nik = ref()
+
+    let travellerTypeData = ref()
 
     const assignValue = () => {
         name.value = props.value[status.currentIndex].name_guest
@@ -31,6 +34,7 @@
         type.value = props.value[status.currentIndex].id_type_traveller
         contactNo.value = props.value[status.currentIndex].contact_no
         maxHotelFare.value = props.value[status.currentIndex].hotel_fare
+        nik.value = props.value[status.currentIndex].nik
     }
 
     const resetValue = () => {
@@ -42,6 +46,7 @@
         type.value = ''
         contactNo.value = ''
         maxHotelFare.value = ''
+        nik.value = ''
     }
 
     watch(status, () => {
@@ -63,6 +68,7 @@
     })
 
     watch(props, () => {
+
         if(props.value[0].name_guest !== undefined) {
            name.value = props.value[0].name_guest
            department.value = props.value[0].departement
@@ -70,12 +76,13 @@
            sn.value = props.value[0]
            company.value = props.value[0].company
            gender.value = props.value[0].gender
-           type.value = props.value[0].type_traveller
+           type.value = props.value[0].id_type_traveller
            contactNo.value = props.value[0].contact_no
            maxHotelFare.value = props.value[0].hotel_fare
         } else {
-        assignValue()
+            assignValue()
         }
+
     })
 
     if(props.value[0].name_guest !== undefined) {
@@ -88,13 +95,13 @@
            type.value = props.value[0].id_type_traveller
            contactNo.value = props.value[0].contact_no
            maxHotelFare.value = props.value[0].hotel_fare
+           nik.value = props.value[0].nik
     }
 
     const addTravelGuest = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post(`/travel_guest/store`, {
-            // nik: props.value[status.currentIndex].nik,
             // notes: props.value[status.currentIndex].notes,
             gender: gender.value,
             company: company.value,
@@ -103,6 +110,7 @@
             departement: department.value,
             contact_no: contactNo.value,
             id_type_traveller: type.value,
+            nik: props.value[status.currentIndex].nik,
             id_flight_class: props.value[status.currentIndex].id_flight_class,
             id_request_trip: props.value[status.currentIndex].id_request_trip,
             id_company: props.value[status.currentIndex].id_company,
@@ -110,7 +118,7 @@
         })
         console.log(api)
         emits('fetchGuestTraveller')
-        emits('resetTypeOfSubmitData')
+        emits('resetTypeOfSubmitData', 'Add')
     }
 
     const updateTravelGuest = async () => {
@@ -132,8 +140,10 @@
             id_company: props.value[status.currentIndex].id_company,
             id_employee: props.value[status.currentIndex].id_employee
         })
+        console.log(api)
         emits('fetchGuestTraveller')
-        emits('resetTypeOfSubmitData')
+        emits('resetTypeOfSubmitData', 'Edit')
+
     }
 
     const deleteTravelGuest = async() => {
@@ -145,17 +155,12 @@
         emits('resetTypeOfSubmitData')
     }
 
-    let travellerTypeData = ref()
-
-    watch(travellerTypeData, () => {
-        assignValue()
-    })
-
+    // buat dropdown type
     const getTravellerType = async () => {
-            const token = JSON.parse(localStorage.getItem('token'))
-            Api.defaults.headers.common.Authorization = `Bearer ${token}`
-            const api = await Api.get('/travel_guest/get_type_traveller')
-            travellerTypeData.value = api.data.data
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/travel_guest/get_type_traveller')
+        travellerTypeData.value = api.data.data
     }
 
     onBeforeMount(() => {
@@ -243,21 +248,21 @@
 
             <!-- SN -->
             <div :class="columnClass">
-            <div class="w-full">
-                
-                <label :class="labelStylingClass">
-                    SN<span class="text-red-star">*</span>
-                </label>
+                <div class="w-full">
+                    
+                    <label :class="labelStylingClass">
+                        SN<span class="text-red-star">*</span>
+                    </label>
 
-                <input 
-                    type="text"
-                    placeholder="SN"
-                    :class="inputStylingClass"
-                    disabled
-                    />
-                    <!-- required -->
+                    <input 
+                        type="text"
+                        placeholder="SN"
+                        :class="inputStylingClass"
+                        disabled
+                        />
+                        <!-- required -->
 
-            </div>
+                </div>
             </div>
 
             <!-- Company -->
@@ -282,7 +287,27 @@
 
             </div>
 
-            <div :class="columnClass"></div>
+            <!-- NIK -->
+            <div :class="columnClass">
+            
+                <div class="w-full">
+
+                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                        NIK<span class="text-red-star">*</span>
+                    </label>
+
+                    <input
+                        v-model="nik"
+                        type="text"
+                        :class="inputStylingClass"
+                        placeholder="NIK"
+                        required
+                        :disabled="!status.isEditing"
+                    />
+
+                </div>
+
+            </div>
 
         </div>
 
