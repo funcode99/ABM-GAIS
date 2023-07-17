@@ -25,6 +25,7 @@ const getSessionForSidebar = () => {
 };
 
 let dataArr = ref([]);
+let dataRoom = ref([]);
 let datas = ref([]);
 let listCompany = ref([]);
 let listSite = ref([]);
@@ -61,8 +62,30 @@ const fetch = async () => {
       split: dt.id_meeting_room,
     };
     datas.value.push(arr);
+    // let arrHeader = {
+    //   id: dt.id_meeting_room,
+    //   label: dt.name_meeting_room,
+    // };
+    // tempHeader.value.push(arrHeader);
+    // filter.room.push(dt.id_meeting_room);
+  });
+  header.value = tempHeader.value.filter(
+    (obj, index) =>
+      tempHeader.value.findIndex(
+        (item) => item.id === obj.id && item.label === obj.label
+      ) === index
+  );
+  //   filter.room = [...new Set(filter.room)];
+};
+
+const fetchRoom = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("master_meeting_room/get");
+  dataRoom.value = api.data.data;
+  dataRoom.value.forEach((dt) => {
     let arrHeader = {
-      id: dt.id_meeting_room,
+      id: dt.id,
       label: dt.name_meeting_room,
     };
     tempHeader.value.push(arrHeader);
@@ -162,7 +185,7 @@ const resetData = () => {
   id_site.value = "";
   filter.room = [];
   fetch();
-  fetchCondition()
+  fetchCondition();
 };
 
 const openModal = (type, id) => {
@@ -188,6 +211,7 @@ const onEventCreate = (event, deleteEventFunction) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
+  fetchRoom();
   fetchCondition();
 });
 </script>
@@ -234,7 +258,6 @@ onBeforeMount(() => {
                 :events="datas"
                 :split-days="header"
                 :min-cell-width="500"
-                :min-split-width="400"
                 :on-event-create="onEventCreate"
                 @event-drag-create="visibleModal"
                 sticky-split-labels
