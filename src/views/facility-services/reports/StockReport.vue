@@ -6,7 +6,7 @@ import Footer from "@/components/layout/Footer.vue";
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
-import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
+// import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -29,6 +29,8 @@ const selectedWarehouse = ref("");
 
 const search = ref("");
 const month = ref();
+const monthFormat = "MM";
+const monthValueFormat = "MM";
 const year = ref();
 
 // let sortedData = ref([]);
@@ -159,7 +161,7 @@ const getIcon = (menu) => {
           </div>
 
           <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
-            <div class="flex gap-6">
+            <div class="flex gap-2">
               <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
@@ -214,7 +216,13 @@ const getIcon = (menu) => {
                 >
                   Month
                 </p>
-                <VueDatePicker v-model="month" month-picker />
+                <VueDatePicker
+                  v-model="month"
+                  month-picker
+                  class="my-date"
+                  :format="monthFormat"
+                  :value-format="monthValueFormat"
+                />
               </div>
 
               <div class="flex flex-col pt-[2px]">
@@ -223,7 +231,7 @@ const getIcon = (menu) => {
                 >
                   Year
                 </p>
-                <VueDatePicker v-model="year" year-picker />
+                <VueDatePicker v-model="year" year-picker class="my-date" />
               </div>
 
               <div class="flex gap-4 items-center pt-7">
@@ -437,6 +445,10 @@ tr th {
 
 .this {
   overflow-x: hidden;
+}
+
+.my-date {
+  width: 110px !important;
 }
 
 input.nosubmit {

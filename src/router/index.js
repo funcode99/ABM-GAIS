@@ -917,7 +917,7 @@ const router = createRouter({
       },
     },
     {
-      path: "/approvalatkrrequest",
+      path: "/approvalatkrequest",
       name: "approval atk request",
       component: ApprovalAtkRequestList,
       meta: {

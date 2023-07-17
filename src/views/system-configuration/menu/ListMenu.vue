@@ -183,7 +183,7 @@
         url_view: formEditState.menu.url,
         icon: formEditState.menu.icon,
         sort: formEditState.menu.sort,
-        parent_id: null,
+        parent_id: formEditState.menu.parentId,
         use_sequence: formEditState.menu.sequence,
         id_status_menu: formEditState.menu.idStatusMenu,
         id_company: formEditState.menu.companyId
