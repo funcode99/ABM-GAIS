@@ -38,12 +38,14 @@ const fetchSidebarAppearance = async () => {
   const token = JSON.parse(localStorage.getItem('token'))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   let api = await Api.get(`/role/get_sidebar_menu`)
-  menuData.value = api.data.data
-  console.log(menuData.value)
+  sidebar.menuData = api.data.data
 } 
 
 onBeforeMount(() => {
-  fetchSidebarAppearance()
+  if(sidebar.menuData === '') {
+    console.log('menarik data')
+    fetchSidebarAppearance()
+  }
 })
 
 // masukkin params ke actions harus pake variable ga boleh pake primitive data langsung
@@ -131,7 +133,7 @@ onMounted(() => {
               </router-link>
             </li>
 
-            <li v-for="data in menuData">
+            <li v-for="data in sidebar.menuData">
 
               <button @click="sidebar.increment(data.menu)"
               class="w-full rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
