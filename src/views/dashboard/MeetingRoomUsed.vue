@@ -46,7 +46,7 @@ const chartConfig = ref({
   plotOptions: {
     bar: {
       borderRadius: 4,
-      horizontal: true,
+      horizontal: false,
       distributed: true,
       dataLabels: {
         position: "bottom",
@@ -75,13 +75,13 @@ watch(
 
 <template>
   <div class="rounded-lg outline outline-slate-200 p-5">
-    <div class="font-bold mb-5">Request Trip Purpose</div>
+    <div class="font-bold mb-5">Meeting Room Used</div>
 
     <div id="chart">
       <VueApexCharts
         type="bar"
         width="100%"
-        height="350"
+        height="300"
         :key="data"
         :options="chartConfig"
         :series="series"

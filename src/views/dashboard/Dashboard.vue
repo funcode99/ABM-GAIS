@@ -30,11 +30,14 @@ import fetchCompany from "@/utils/Fetch/Reference/fetchCompany.js";
 import fetchDepartment from "@/utils/Fetch/Reference/fetchDepartment.js";
 import fetchSite from "@/utils/Fetch/Reference/fetchSite.js";
 import RedirectLinks from "./RedirectLinks.vue";
+import MeetingRoomUsed from "./MeetingRoomUsed.vue";
+import AtkRequest from "./AtkReuqest.vue";
 
 const companyId = localStorage.getItem("id_company");
 const userRole = JSON.parse(localStorage.getItem("id_role"));
 
 const currentMonth = new Date().getMonth();
+const currentYear = new Date().getFullYear();
 
 const data = ref({});
 
@@ -57,7 +60,10 @@ const filter = reactive({
   },
   month: null,
   year: null,
-  date: currentMonth,
+  date: {
+    month: currentMonth,
+    year: currentYear,
+  },
 });
 
 const dashboardData = reactive({
@@ -98,8 +104,8 @@ const getData = async () => {
     site: filter.site.value,
     cost_center: filter.costCenter.value,
     department: filter.department.value,
-    month: filter.month,
-    year: filter.year,
+    // month: filter.date.month + 1 || currentMonth,
+    // year: filter.date.year || currentYear,
   };
   const res = await getDashboardData(params);
 
@@ -109,11 +115,13 @@ const getData = async () => {
 };
 
 const resetFilter = () => {
-  filter.company.value = null;
+  filter.company.value = companyId;
   filter.site.value = null;
   filter.costCenter.value = null;
   filter.department.value = null;
   filter.date = currentMonth;
+
+  getData();
 };
 
 const siteByCompanyId = computed(() => {
@@ -269,7 +277,10 @@ onMounted(async () => {
           </button>
         </div>
 
-        <div class="w-full my-5 align-start gap-5 grid grid-cols-3">
+        <div
+          v-if="isGARole"
+          class="w-full my-5 align-start gap-5 grid grid-cols-3"
+        >
           <div class="basis-full 2xl:basis-8/12 col-span-3 2xl:col-span-2">
             <div class="grid grid-cols-2 gap-5">
               <TripStatus
@@ -277,11 +288,6 @@ onMounted(async () => {
                 class="basis-full col-span-2"
                 :data="data.status_trip"
               ></TripStatus>
-
-              <RedirectLinks
-                class="col-span-2"
-                v-if="!isGARole"
-              ></RedirectLinks>
 
               <TopRouteTravel
                 v-if="isGARole"
@@ -332,6 +338,44 @@ onMounted(async () => {
                 :data="data.trip_purpose"
               >
               </TripPurpose>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="w-full grid grid-cols-4 gap-5">
+          <div class="col-span-4">
+            <div class="grid gap-5">
+              <TripStatus
+                v-show="dashboardData.tripStatus.value"
+                class="col-span-4"
+                :data="data.status_trip"
+              ></TripStatus>
+
+              <TripPurpose
+                v-show="dashboardData.requestPerTripPurpose.value"
+                class="col-span-4"
+                :data="data.trip_purpose"
+              >
+              </TripPurpose>
+            </div>
+          </div>
+
+          <div class="col-span-4">
+            <div class="grid gap-5 grid-cols-3">
+              <MeetingRoomUsed
+                class="col-span-2"
+                :data="data.book_meeting_used"
+              >
+              </MeetingRoomUsed>
+
+              <AtkRequest class="col-span-1" :data="data.atk_request">
+              </AtkRequest>
+            </div>
+          </div>
+
+          <div class="col-span-4">
+            <div>
+              <RedirectLinks class="col-span-4"></RedirectLinks>
             </div>
           </div>
         </div>

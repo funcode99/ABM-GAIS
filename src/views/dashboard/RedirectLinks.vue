@@ -24,7 +24,7 @@ const routes = [
     <div v-for="route in routes" class="">
       <router-link :to="route.to">
         <div
-          class="outline h-full outline-black p-5 rounded-xl hover:shadow-2xl"
+          class="h-full outline outline-slate-200 p-5 rounded-xl hover:shadow-2xl"
         >
           <div class="font-bold text-center mb-5">{{ route.label }}</div>
           <div class="flex justify-center">
