@@ -566,9 +566,9 @@ onBeforeMount(() => {
                     <td>
                       <span
                         :class="
-                          data.status == 'Done' || data.status == 'Booked'
+                          data.status == 'Done'
                             ? 'status-done'
-                            : data.status == 'Draft'
+                            : data.status == 'Booked'
                             ? 'status-default'
                             : 'status-revision'
                         "

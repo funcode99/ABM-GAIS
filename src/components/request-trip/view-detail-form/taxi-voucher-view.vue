@@ -5,7 +5,6 @@
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
     let cityData = ref()
 
-
     onBeforeMount(() => {
         fetchCityUtils(cityData)
     })
@@ -165,7 +164,7 @@
         <!-- {{ departureId }}
         {{ arrivalId }} -->
         <!-- {{ status.currentIndex }} -->
-        {{ props }}
+        <!-- {{ props }} -->
 
         <div :class="rowClass">
 

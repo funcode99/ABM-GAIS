@@ -521,7 +521,7 @@
                         <!-- details form -->
                         <form class="flex-1" @submit.prevent="">
 
-                          <div>
+                          <!-- <div>
                             data index{{ dataIndex }}
                           </div>
                           <div>
@@ -533,7 +533,7 @@
 
                           <div>
                             {{ currentSelectedData }}
-                          </div>
+                          </div> -->
                             
                           <detailsFormHeader @changeView="changeViewLayout" :title="headerTitle" v-if="!isAdding">
 

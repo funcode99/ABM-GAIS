@@ -251,7 +251,7 @@ onBeforeMount(() => {
               <vue-cal
                 locale="id"
                 active-view="day"
-                :time-from="8 * 60"
+                :time-from="0 * 60"
                 :time-step="30"
                 :disable-views="['years', 'year', 'month']"
                 :editable-events="{ title: true, drag: false, create: false }"
@@ -379,9 +379,9 @@ onBeforeMount(() => {
 .vuecal__cell--current {
   background-color: rgba(1, 82, 137, 0.15) !important;
 } */
-.vuecal:not(.vuecal--day-view) .vuecal__cell--selected {
-  background-color: rgba(1, 82, 137, 0.1) !important;
-}
+/* .vuecal:not(.vuecal--day-view) .vuecal__cell--selected { */
+  /* background-color: rgba(1, 82, 137, 0.1) !important; */
+/* } */
 .vuecal__cell--selected:before {
   background-color: rgba(1, 82, 137, 0.1) !important;
 }
@@ -394,9 +394,11 @@ onBeforeMount(() => {
 .vuecal__view-btn.vuecal__view-btn--highlighted {
   background-color: rgba(1, 82, 137, 0.1) !important;
 }
-
+.vuecal__cell-content {
+    border-right: 1px solid rgba(1, 83, 137, 0.5);
+}
 .card-color {
-  background-color: rgba(1, 82, 137, 0.7);
+  background-color: rgba(1, 83, 137, 0.912);
   color: #fff;
   font-size: small;
 }
