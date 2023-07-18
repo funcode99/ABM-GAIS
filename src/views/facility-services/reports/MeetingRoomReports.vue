@@ -54,7 +54,7 @@ const tableHead = [
   { Id: 2, title: "Created Date", jsonData: "created_at" },
   { Id: 3, title: "Booking No", jsonData: "no_booking_meeting" },
   { Id: 4, title: "Requestor", jsonData: "employee_name" },
-  { Id: 5, title: "Duration", jsonData: "session" },
+  { Id: 5, title: "Duration", jsonData: "duration" },
   { Id: 6, title: "Meeting Room", jsonData: "name_meeting_room" },
   { Id: 7, title: "Status", jsonData: "status" },
 ];
@@ -157,7 +157,7 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
     worksheet.getCell(rowIndex + 2, 3).value = data.no_booking_meeting;
     worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
-    worksheet.getCell(rowIndex + 2, 5).value = data.session;
+    worksheet.getCell(rowIndex + 2, 5).value = data.duration;
     worksheet.getCell(rowIndex + 2, 6).value = data.name_meeting_room;
     worksheet.getCell(rowIndex + 2, 7).value = data.status;
   });
@@ -373,7 +373,7 @@ const showClearButton = computed(() => {
                 <td>{{ format_date(data.created_at) }}</td>
                 <td>{{ data.no_booking_meeting }}</td>
                 <td>{{ data.employee_name }}</td>
-                <td>{{ data.session }}</td>
+                <td>{{ data.duration }}</td>
                 <td>{{ data.name_meeting_room }}</td>
                 <td>{{ data.status }}</td>
               </tr>
