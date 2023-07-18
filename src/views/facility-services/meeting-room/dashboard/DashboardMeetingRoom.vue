@@ -53,17 +53,16 @@ const fetch = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const api = await Api.get("book_meeting_room/get");
   dataArr.value = api.data.data;
-  console.log(dataArr.value)
   dataArr.value.forEach((dt) => {
-    if (dt.status != 'Cancelled') {
-        let arr = {
+    if (dt.status != "Cancelled") {
+      let arr = {
         start: dt.start_date + " " + dt.start_time,
         end: dt.end_date + " " + dt.end_time,
         content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
         class: "card-color",
         split: dt.id_meeting_room,
-        };
-        datas.value.push(arr);
+      };
+      datas.value.push(arr);
     }
     // let arrHeader = {
     //   id: dt.id_meeting_room,
@@ -115,17 +114,17 @@ const filterDataByType = async () => {
   const api = await Api.get("book_meeting_room/get", { params: payload });
   dataArr.value = api.data.data;
   datas.value = [];
-  
+
   api.data.data.forEach((dt) => {
-    if (dt.status != 'Cancelled') {
-        let arr = {
+    if (dt.status != "Cancelled") {
+      let arr = {
         start: dt.start_date + " " + dt.start_time,
         end: dt.end_date + " " + dt.end_time,
         content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
         class: "card-color",
         split: dt.id_meeting_room,
-        };
-        datas.value.push(arr);
+      };
+      datas.value.push(arr);
     }
     let arrHeader = {
       id: dt.id_meeting_room,
@@ -214,6 +213,11 @@ const onEventCreate = (event, deleteEventFunction) => {
   return event;
 };
 
+const scrollToCurrentTime = () => {
+  const calendar = document.querySelector("#vuecal .vuecal__bg");
+  calendar.scrollTo({ top: 14 * 40, behavior: "smooth" });
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
@@ -255,6 +259,7 @@ onBeforeMount(() => {
           <div class="px-4 pb-2 grid grid-cols-4">
             <div class="col-span-3">
               <vue-cal
+                id="vuecal"
                 locale="id"
                 active-view="day"
                 :time-from="0 * 60"
@@ -268,6 +273,8 @@ onBeforeMount(() => {
                 @event-drag-create="visibleModal"
                 sticky-split-labels
                 class="h-[70vh]"
+                :watchRealTime="true"
+                @ready="scrollToCurrentTime"
               >
                 <template #split-label="{ split }">
                   <strong :style="`color: ${split.color}`">{{
@@ -386,7 +393,7 @@ onBeforeMount(() => {
   background-color: rgba(1, 82, 137, 0.15) !important;
 } */
 /* .vuecal:not(.vuecal--day-view) .vuecal__cell--selected { */
-  /* background-color: rgba(1, 82, 137, 0.1) !important; */
+/* background-color: rgba(1, 82, 137, 0.1) !important; */
 /* } */
 .vuecal__cell--selected:before {
   background-color: rgba(1, 82, 137, 0.1) !important;
@@ -401,7 +408,7 @@ onBeforeMount(() => {
   background-color: rgba(1, 82, 137, 0.1) !important;
 }
 .vuecal__cell-content {
-    border-right: 1px solid rgba(1, 83, 137, 0.5);
+  border-right: 1px solid rgba(1, 83, 137, 0.5);
 }
 .card-color {
   background-color: rgba(1, 83, 137, 0.912);
