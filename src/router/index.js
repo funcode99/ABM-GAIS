@@ -84,6 +84,7 @@ import DashboardMeetingRoom from "@/views/facility-services/meeting-room/dashboa
 
 import MeetingRoomReports from "@/views/facility-services/reports/MeetingRoomReports.vue";
 import StockReport from "@/views/facility-services/reports/StockReport.vue";
+import AtkRequestReport from "@/views/facility-services/reports/AtkRequestReport.vue"
 
 //experiment
 // import addinputfield from '@/views/experiment/addinputfield.vue'
@@ -1264,6 +1265,23 @@ const router = createRouter({
       component: StockReport,
       meta: {
         title: "Stock Reports",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/atkrequestreport",
+      name: "ATK Request Reports",
+      component: AtkRequestReport,
+      meta: {
+        title: "ATK Request Reports",
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem("token");
