@@ -13,8 +13,7 @@ import editicon from "@/assets/navbar/edit_icon.svg"
       {id: 5, title: 'City'},
       {id: 6, title: 'Type'},
       {id: 7, title: 'Sharing With'},
-      {id: 8, title: 'Status'},
-      // {id: 9, title: 'Action'}
+      {id: 8, title: 'Status'}
   ]
 
   const emits = defineEmits('fetchAccomodation')
@@ -47,6 +46,9 @@ import editicon from "@/assets/navbar/edit_icon.svg"
                           <th v-for="data in tableHeadAccomodationRequestTrip" :key="data.id">
                             {{ data.title }}
                           </th>
+                          <th v-if="$route.path === '/request'">
+                            Actions
+                          </th>
                         </tr>
             </thead>
 
@@ -77,14 +79,14 @@ import editicon from "@/assets/navbar/edit_icon.svg"
 
                           </td>
 
-                          <!-- <td class="flex flex-wrap gap-4 justify-center">
+                          <td v-if="$route.path === '/request'" class="flex flex-wrap gap-4 justify-center">
                             <button>
                               <img :src="editicon" class="w-6 h-6" />
                             </button>
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>
-                          </td> -->
+                          </td>
 
               </tr>
             </tbody>

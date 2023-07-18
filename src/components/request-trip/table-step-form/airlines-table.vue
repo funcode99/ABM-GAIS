@@ -11,8 +11,7 @@ const tableHeadAirlinesRequestTrip = [
       {id: 3, title: 'Arrival'},
       {id: 4, title: 'Flight Number'},
       {id: 5, title: 'Domestic/International'},
-      {id: 6, title: 'Status'},
-      // {id: 7, title: 'Action'}
+      {id: 6, title: 'Status'}
 ]
 
 const emits = defineEmits('fetchAirlines')
@@ -45,6 +44,9 @@ let employeeName = localStorage.getItem('username')
                           <th v-for="data in tableHeadAirlinesRequestTrip" :key="data.id">
                             {{ data.title }}
                           </th>
+                          <th v-if="$route.path === '/request'">
+                            Actions
+                          </th>
                         </tr>
               </thead>
 
@@ -68,14 +70,14 @@ let employeeName = localStorage.getItem('username')
                           <td>
                             {{ data.status }}
                           </td>
-                          <!-- <td class="flex flex-wrap gap-4 justify-center">
+                          <td v-if="$route.path === '/request'" class="flex flex-wrap gap-4 justify-center">
                             <button>
                               <img :src="editicon" class="w-6 h-6" />
                             </button>
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>
-                          </td> -->
+                          </td>
                 </tr>
               </tbody>
 
