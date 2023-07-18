@@ -13,8 +13,7 @@
         {id: 6, title: 'Company'},
         {id: 7, title: 'Type'},
         {id: 8, title: 'Max Hotel Fare'},
-        {id: 9, title: 'Flight Class'},
-        // {id: 10, title: 'Action'}
+        {id: 9, title: 'Flight Class'}
     ]
 
     const emits = defineEmits('fetchTravellerGuest')
@@ -48,6 +47,9 @@
             <th v-for="data in tableHeadTravellers" :key="data.id">
               {{ data.title }}
             </th>
+            <th>
+              Actions
+            </th>
           </tr>
         </thead>
 
@@ -77,14 +79,14 @@
             <td>
               {{ data.flight_class }}
             </td>
-            <!-- <td class="flex flex-wrap gap-4 justify-center">
+            <td v-if="$route.path === '/request'" class="flex flex-wrap gap-4 justify-center">
               <button>
                 <img :src="editicon" class="w-6 h-6" />
               </button>
               <button @click="deleteData(data.id)">
                 <img :src="deleteicon" class="w-6 h-6" />
               </button>
-            </td> -->
+            </td>
           </tr>
         </tbody>
 

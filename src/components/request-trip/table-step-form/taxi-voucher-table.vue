@@ -14,8 +14,7 @@ const tableHeadTaxiVoucher = [
       {id: 5, title: 'Amount'},
       {id: 6, title: 'Account Name'},
       {id: 7, title: 'Remarks'},
-      {id: 8, title: 'Status'},
-      // {id: 9, title: 'Action'},
+      {id: 8, title: 'Status'}
 ]
 
 const emits = defineEmits('fetchTaxiVoucher')
@@ -50,6 +49,9 @@ let employeeName = localStorage.getItem('username')
                           <th v-for="data in tableHeadTaxiVoucher" :key="data.id">
                             {{ data.title }}
                           </th>
+                          <th v-if="$route.path === '/request'">
+                            Actions
+                          </th>
                         </tr>
             </thead>
                     
@@ -79,14 +81,14 @@ let employeeName = localStorage.getItem('username')
                             <td>
 
                             </td>
-                            <!-- <td class="flex flex-wrap gap-4 justify-center">
-                              <button>
-                                <img :src="editicon" class="w-6 h-6" />
-                              </button>
-                              <button @click="deleteData(data.id)">
-                                <img :src="deleteicon" class="w-6 h-6" />
-                              </button>
-                          </td> -->
+                            <td v-if="$route.path === '/request'" class="flex flex-wrap gap-4 justify-center">
+                                <button>
+                                  <img :src="editicon" class="w-6 h-6" />
+                                </button>
+                                <button @click="deleteData(data.id)">
+                                  <img :src="deleteicon" class="w-6 h-6" />
+                                </button>
+                            </td>
                 </tr>
             </tbody>
 

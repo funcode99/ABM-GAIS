@@ -296,13 +296,9 @@
       }
     })
 
-
-
     watch(currentSelectedData, () => {
-      // if(showingValue.value >= currentSelectedData.value.length) {
-      //   showingValue.value = currentSelectedData.value.length
-      // }
-      // ada bug saat delete data
+      dataIndex.value = 0
+      showingValue.value = 1
     })
 
     watch(isEditing, () => {
@@ -588,6 +584,8 @@
                               Cancel
                             </button>
                           </detailsFormHeader>
+
+                         <!-- showing Value = {{ showingValue }} -->
 
                           <!-- form Step 3 -->
                           <guestAsTravellerFormView

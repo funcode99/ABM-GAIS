@@ -12,8 +12,7 @@ const tableHeadOtherTransportation = [
       {id: 4, title: 'To Date'},
       {id: 5, title: 'Quantity'},
       {id: 6, title: 'City'},
-      {id: 7, title: 'Status'},
-      {id: 8, title: 'Action'},
+      {id: 7, title: 'Status'}
 ]
 
 const emits = defineEmits('fetchOtherTransportation')
@@ -49,6 +48,9 @@ let employeeName = localStorage.getItem('username')
                           <th v-for="data in tableHeadOtherTransportation" :key="data.id">
                             {{ data.title }}
                           </th>
+                          <th v-if="$route.path === '/request'">
+                            Actions
+                          </th>
                         </tr>
             </thead>
 
@@ -75,7 +77,7 @@ let employeeName = localStorage.getItem('username')
                     <td>
                             
                     </td>
-                    <td class="flex flex-wrap gap-4 justify-center">
+                    <td v-if="$route.path === '/request'"  class="flex flex-wrap gap-4 justify-center">
                             <button>
                               <img :src="editicon" class="w-6 h-6" />
                             </button>

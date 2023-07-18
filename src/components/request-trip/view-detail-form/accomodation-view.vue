@@ -7,6 +7,38 @@
     
     const cityData = ref()
     const typeOfHotelData = ref()
+    const accomodationData = ref()
+    const dataLength = ref(0)
+    const selectRoomAndPriceData = ref([])
+    const bundleData = ref()
+
+    const fetchAccomodation = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/get_hotel')
+        accomodationData.value = api.data.data
+        dataLength.value = accomodationData.value.length
+        for(let i=0; i<accomodationData.value.length; i++) {
+            selectRoomAndPriceData.value.push({})
+        }
+        for(let i=0; i<accomodationData.value.length; i++) {
+            selectRoomAndPriceData.value[i] = accomodationData.value[i].room_type[0]
+        }
+    }
+
+    const assignHotelData = (data, forPrice) => {
+        codeHotel.value = data.code_hotel
+        price.value = forPrice.price
+    }
+
+    const tableHeadAccomodation = [
+      {id: 1, title: 'Hotel Name'},
+      {id: 2, title: 'Location'},
+      {id: 3, title: 'Hotel Rating'},
+      {id: 4, title: 'Room Type'},
+      {id: 5, title: 'Price'},
+      {id: 6, title: 'Confirm'}
+    ]
 
     const status = defineProps({
       isEditing: Boolean,
@@ -17,6 +49,7 @@
     onBeforeMount(() => {
         fetchCityUtils(cityData)
         fetchTypeOfHotelUtils(typeOfHotelData)
+        fetchAccomodation()
     })
 
     const props = inject('accomodationDataView')
@@ -33,12 +66,16 @@
     let idCity = ref(0)
     let idType = ref(0)
     let vendor = ref(0)
-    let hotelCode = ref(0)
-    let useGL = ref()
+    let codeHotel = ref(0)
+    let useGL = ref(0)
     let remarks = ref()
     let price = ref()
 
+
+
     const assignValue = () => {
+
+      // console.log(props.value)
 
       name.value = localStorage.getItem('username')
       city.value = props.value[status.currentIndex].city_name
@@ -48,16 +85,23 @@
       sharingWith.value = props.value[status.currentIndex].sharing_w_name
       checkOut.value = props.value[status.currentIndex].check_out_date
 
+      idCity.value = props.value[status.currentIndex].id_city
+      idType.value = props.value[status.currentIndex].id_type_accomodation
+
     }
 
     const resetValue = () => {
-      name.value = ''
+
       city.value = ''
       hotelName.value = ''
       type.value = ''
       checkIn.value = ''
       checkOut.value = ''
       sharingWith.value = ''
+      idCity.value = 0
+      idType.value = 0
+      vendor.value = 0
+
     }
 
     const defaultValue = () => {
@@ -69,10 +113,23 @@
       checkIn.value = props.value[0].check_in_date
       sharingWith.value = props.value[0].sharing_w_name
       checkOut.value = props.value[0].check_out_date
+      idCity.value = props.value[0].id_city
+      idType.value = props.value[0].id_type_accomodation
 
     }
 
+    watch(props, () => {
+      // console.log('perubahan di props')
+
+      if(props.value[0].city_name !== undefined) {
+        defaultValue()
+      } else {
+        assignValue()
+      }
+    })
+
     watch(status, () => {
+        // console.log('perubahan di status')
 
         if (status.typeOfSubmitData === 'Edit') {
             updateAccomodation()
@@ -87,18 +144,12 @@
             resetValue()
         }
         else {
-            assignValue()
+          assignValue()
         }
 
     })
 
-    watch(props, () => {
-      if(props.value[0].city_name !== undefined) {
-        defaultValue()
-      } else {
-        assignValue()  
-      }
-    })
+
 
     if(props.value[0].city_name !== undefined) {
         defaultValue()
@@ -119,8 +170,9 @@
         sharing_w_name: sharingWith.value,
         remarks: remarks.value,
         price: price.value,
-        code_hotel: hotelCode.value,
+        code_hotel: codeHotel.value,
       })
+      // console.log(api)
       emits('fetchAccomodation')
       emits('resetTypeOfSubmitData', 'Add')
 
@@ -141,10 +193,11 @@
         sharing_w_name: sharingWith.value,
         remarks: remarks.value,
         price: price.value,
-        code_hotel: hotelCode.value,
+        code_hotel: codeHotel.value,
       })
+      // console.log(api)
       emits('fetchAccomodation')
-      emits('resetTypeOfSubmitData', 'Edit')
+      emits('resetTypeOfSubmitData')
 
     }
 
@@ -153,10 +206,15 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.delete(`/accomodation_trip/delete_data/${props.value[status.currentIndex].id}`)
+      // console.log(api)
       emits('fetchAccomodation')
       emits('resetTypeOfSubmitData')
 
     }
+
+    watch(useGL, () => {
+      useGL.value === true ? useGL.value = 1 : useGL.value = 0
+    })
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
@@ -168,6 +226,12 @@
 <template>
 
     <form @submit.prevent="">
+
+      <!-- data Index = {{ status.currentIndex }} -->
+
+      <div>
+        <!-- {{ props }} -->
+      </div>
                               
         <div :class="rowClass">
   
@@ -203,17 +267,22 @@
               </label>
 
               <input
+                v-if="!status.isEditing"
                 v-model="city"
                 type="text"
                 placeholder="City"
                 :class="inputStylingClass"
-                required
-                :disabled="!status.isEditing"
+                disabled
               />
 
-              <select v-model="idCity">
-                <option>
-
+              <select 
+                v-if="status.isEditing"
+                v-model="idCity"
+                :class="inputStylingClass"
+                required
+              >
+                <option v-for="data in cityData" :value="data.id">
+                  {{ data.city_name }}
                 </option>
               </select>
 
@@ -225,6 +294,7 @@
   
         <div :class="rowClass">
   
+          <!-- Hotel Name -->
           <div :class="columnClass">
 
             <div class="w-full">
@@ -246,6 +316,7 @@
 
           </div>
     
+          <!-- Hotel Type -->
           <div :class="columnClass">
                                   
             <div class="w-full">
@@ -269,8 +340,8 @@
                 :class=inputStylingClass 
               >
 
-                <option>
-
+                <option v-for="data in typeOfHotelData" :value="data.id">
+                  {{ data.type_accomodation }}
                 </option>
 
               </select>
@@ -278,11 +349,13 @@
             </div>
 
           </div>
+          
   
         </div>
   
         <div :class="rowClass">
   
+          <!-- Check In -->
           <div :class="columnClass">
                                   
             <div class="w-full">
@@ -304,6 +377,7 @@
 
           </div>
   
+          <!-- Sharing With -->
           <div :class="columnClass">
 
             <div class="w-full">
@@ -328,14 +402,16 @@
   
         <div :class="rowClass">
   
+          <!-- Check Out -->
           <div :class="columnClass">
+
             <div class="w-full">
 
               <label :class="labelStylingClass">
                 Check Out<span class="text-red-star">*</span>
               </label>
 
-              <input 
+              <input
                 v-model="checkOut"
                 type="date"
                 :class="inputStylingClass"           
@@ -345,10 +421,120 @@
               />
 
             </div>
+
+          </div>
+
+          <!-- Remarks -->
+          <div v-if="idType === 1" :class="columnClass">
+
+          <div class="w-full">
+                                    
+                <label :class="labelStylingClass">
+                  Remarks
+                </label>
+
+                <input 
+                  v-model="remarks"
+                  type="text"
+                  placeholder="Remarks"
+                  :class="inputStylingClass"
+                  :disabled="!status.isEditing"
+                />
+
+          </div>
+
           </div>
   
         </div>
+
+        <div :class="rowClass" v-if="status.typeOfSubmitData === 'Add'">
+
+          <!-- Create GL -->
+          <div :class="columnClass">
+            <div class="w-full">
+
+              <label :class="labelStylingClass">
+                Create GL
+              </label>
+
+              <div class="flex gap-2">
+                <input
+                  v-model="useGL"
+                  type="checkbox"
+                />
+                <h1>Yes</h1>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Vendor -->
+          <div :class="columnClass">
+
+            <div class="w-full">
+              
+              <label :class="labelStylingClass">
+                Vendor <span class="text-red-star">*</span>
+              </label>
+
+              <select :class="inputStylingClass" v-model="vendor" required>
+                
+                <option value="1">Antavaya</option>
+                <option value="2">Aerowisata</option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+        </div>
   
     </form>
+
+    <div>
+      
+      <table class="table w-full" v-if="status.isEditing">
+        
+        <thead>
+          <tr>
+            <th v-for="data in tableHeadAccomodation" :key=data.id>
+              {{ data.title }}
+            </th>
+          </tr>
+        </thead>
+        
+        <tbody>
+          <tr v-for="(data, index) in accomodationData">
+            <td>
+              {{ data.hotel }}
+            </td>
+            <td>
+              {{ data.location }}
+            </td>
+            <td class="text-center">
+              {{ data.rating }}
+            </td>
+            <td>
+              <select :id="index" v-model="selectRoomAndPriceData[index]">
+                                        <option v-for="option in data.room_type" :value="option">
+                                            {{ option.room }}
+                                        </option>
+              </select>
+            </td>
+            <td>
+              {{ selectRoomAndPriceData[index].price }}
+            </td>
+            <td @click="bundleData = data.code_hotel">
+              <button @click="assignHotelData(data, selectRoomAndPriceData[index])" type="button" :class="bundleData === data.code_hotel ? 'bg-blue' : 'bg-green'" class="text-white rounded-lg px-4 py-3 font-bold">
+                Select
+              </button>
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+
+    </div>
 
 </template>

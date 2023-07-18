@@ -46,7 +46,7 @@ const chartConfig = ref({
   plotOptions: {
     bar: {
       borderRadius: 4,
-      horizontal: true,
+      horizontal: false,
       distributed: true,
       dataLabels: {
         position: "bottom",
@@ -64,7 +64,7 @@ watch(
     props.data.forEach((item) => {
       newSeries.push(item.total);
 
-      newLabel.push(item.type.replace("_", " ").toUpperCase());
+      newLabel.push(item.room_name);
     });
 
     chartConfig.value.xaxis.categories = newLabel;
@@ -75,13 +75,13 @@ watch(
 
 <template>
   <div class="rounded-lg outline outline-slate-200 p-5">
-    <div class="font-bold mb-5">Request Trip Purpose</div>
+    <div class="font-bold mb-5">Meeting Room Used</div>
 
     <div id="chart">
       <VueApexCharts
         type="bar"
         width="100%"
-        height="350"
+        height="auto"
         :key="data"
         :options="chartConfig"
         :series="series"

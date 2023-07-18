@@ -1,5 +1,6 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
+// import moment from "moment";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
@@ -20,13 +21,25 @@ import Multiselect from "@vueform/multiselect";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 
-import { getDashboardData } from "@/utils/Api/dashboard/dashboard.js";
+import {
+  getDashboardData,
+  getCostCenter,
+} from "@/utils/Api/dashboard/dashboard.js";
 
 import fetchCompany from "@/utils/Fetch/Reference/fetchCompany.js";
 import fetchDepartment from "@/utils/Fetch/Reference/fetchDepartment.js";
 import fetchSite from "@/utils/Fetch/Reference/fetchSite.js";
+import RedirectLinks from "./RedirectLinks.vue";
+import MeetingRoomUsed from "./MeetingRoomUsed.vue";
+import AtkRequest from "./AtkReuqest.vue";
 
 const companyId = localStorage.getItem("id_company");
+const userRole = JSON.parse(localStorage.getItem("id_role"));
+
+const currentMonth = new Date().getMonth();
+const currentYear = new Date().getFullYear();
+
+const data = ref({});
 
 const filter = reactive({
   company: {
@@ -47,22 +60,43 @@ const filter = reactive({
   },
   month: null,
   year: null,
+  date: {
+    month: currentMonth,
+    year: currentYear,
+  },
 });
 
 const dashboardData = reactive({
-  tripStatus: { title: "Trip Status", value: true, components: TripStatus },
-  tripRequest: { title: "Trip Request", value: true },
-  totalTrip: { title: "Total Trips", value: true },
-  totalCostPerVendor: { title: "Total Cost per Vendor", value: true },
-  topTravelRoutes: { title: "Top 5 Routes Travel", value: true },
-  totalCashAdvance: { title: "Total Cash Advance", value: true },
-  airlines: { title: "Airlines", value: true },
-  requestPerTripPurpose: { title: "Request per Trip Purpose", value: true },
-  stockInVsOut: { title: "Stock In vs Stock Out", value: true },
-  meetingRoom: { title: "Meeting Room Booking", value: true },
+  tripStatus: {
+    title: "Trip Status",
+    value: true,
+    components: TripStatus,
+    role: ["ADMTR"],
+  },
+  tripRequest: { title: "Trip Request", value: true, role: [] },
+  totalTrip: { title: "Total Trips", value: true, role: [] },
+  totalCostPerVendor: { title: "Total Cost per Vendor", value: true, role: [] },
+  topTravelRoutes: { title: "Top 5 Routes Travel", value: true, role: [] },
+  totalCashAdvance: { title: "Total Cash Advance", value: true, role: [] },
+  airlines: { title: "Airlines", value: true, role: [] },
+  requestPerTripPurpose: {
+    title: "Request per Trip Purpose",
+    value: true,
+    role: ["ADMTR"],
+  },
+  stockInVsOut: { title: "Stock In vs Stock Out", value: true, role: [] },
+  meetingRoom: { title: "Meeting Room Booking", value: true, role: [] },
+  meetinRoomUser: { title: "Meeting Room Used", value: true, role: ["ADMTR"] },
+  atkRequest: {
+    title: "Total Office Supplies Requested",
+    value: true,
+    role: ["ADMTR"],
+  },
 });
 
-const data = ref({});
+const isGARole = computed(() => {
+  return userRole == "SUPADM";
+});
 
 const getData = async () => {
   const params = {
@@ -70,8 +104,8 @@ const getData = async () => {
     site: filter.site.value,
     cost_center: filter.costCenter.value,
     department: filter.department.value,
-    month: filter.month,
-    year: filter.year,
+    month: filter.date.month + 1 || currentMonth,
+    year: filter.date.year || currentYear,
   };
   const res = await getDashboardData(params);
 
@@ -80,10 +114,31 @@ const getData = async () => {
   }
 };
 
+const resetFilter = () => {
+  filter.company.value = companyId;
+  filter.site.value = null;
+  filter.costCenter.value = null;
+  filter.department.value = null;
+  filter.date = currentMonth;
+
+  getData();
+};
+
+const siteByCompanyId = computed(() => {
+  return filter.site.items.filter(({ id_company }) => id_company == companyId);
+});
+
+const departmentByCompanyId = computed(() => {
+  return filter.department.items.filter(
+    ({ id_company }) => id_company == companyId
+  );
+});
+
 onMounted(async () => {
   filter.company.items = await fetchCompany();
   filter.site.items = await fetchSite();
   filter.department.items = await fetchDepartment();
+  filter.costCenter.items = await getCostCenter(companyId);
 
   filter.company.items = filter.company.items.filter(
     ({ id }) => id == companyId
@@ -105,9 +160,9 @@ onMounted(async () => {
         </PageTitle>
 
         <div
-          class="flex flex-row w-full flex-wrap align-middle items-center gap-4 mb-5"
+          class="flex flex-row w-full flex-wrap align-middle items-center gap-3 mb-5"
         >
-          <div class="">
+          <div class="" v-if="isGARole">
             <Multiselect
               v-model="filter.company.value"
               mode="single"
@@ -124,14 +179,14 @@ onMounted(async () => {
             </Multiselect>
           </div>
 
-          <div class="">
+          <div class="" v-if="isGARole">
             <Multiselect
               v-model="filter.site.value"
               mode="single"
               placeholder="Site"
               label="site_name"
               track-by="site_name"
-              :options="filter.site.items"
+              :options="siteByCompanyId"
               valueProp="id"
               class="w-[150px] text-sm"
               clear
@@ -140,14 +195,14 @@ onMounted(async () => {
             </Multiselect>
           </div>
 
-          <div class="">
+          <div class="" v-if="isGARole">
             <Multiselect
               v-model="filter.department.value"
               mode="single"
               placeholder="Dept."
               label="departement_name"
               track-by="departement_name"
-              :options="filter.department.items"
+              :options="departmentByCompanyId"
               valueProp="id"
               class="w-[150px] text-sm"
               clear
@@ -156,15 +211,15 @@ onMounted(async () => {
             </Multiselect>
           </div>
 
-          <div class="">
+          <div class="" v-if="isGARole">
             <Multiselect
               v-model="filter.costCenter.value"
               mode="single"
               placeholder="Cost Center"
-              label="status"
-              track-by="status"
+              label="cost_center_name"
+              track-by="id"
               :options="filter.costCenter.items"
-              valueProp="code"
+              valueProp="id"
               class="w-[150px] text-sm"
               clear
               searchable
@@ -172,18 +227,19 @@ onMounted(async () => {
             </Multiselect>
           </div>
 
-          <!-- <div class="w-[275px]">
+          <div class="w-[125px]">
             <VueDatePicker
-              range
               v-model="filter.date"
               :enable-time-picker="false"
-              format="yyyy-mm-dd"
+              format="MM-yyyy"
+              :clearable="false"
+              month-picker
             />
-          </div> -->
+          </div>
 
-          <div class="flex gap-4 flex-wrap">
+          <div class="basis-auto flex gap-3 flex-wrap">
             <button
-              @click="tableRef.getData()"
+              @click="getData()"
               class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[45px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
               <span>
@@ -193,7 +249,7 @@ onMounted(async () => {
             </button>
 
             <button
-              @click="resetFilter"
+              @click="resetFilter()"
               class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[45px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
             >
               <span>
@@ -204,7 +260,7 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div class="text-capitalize flex flex-wrap gap-2">
+        <div class="text-capitalize flex flex-wrap gap-2" v-if="isGARole">
           <button
             v-for="item in dashboardData"
             :key="item.title"
@@ -221,7 +277,10 @@ onMounted(async () => {
           </button>
         </div>
 
-        <div class="w-full my-5 align-start gap-5 grid grid-cols-3">
+        <div
+          v-if="isGARole"
+          class="w-full my-5 align-start gap-5 grid grid-cols-3"
+        >
           <div class="basis-full 2xl:basis-8/12 col-span-3 2xl:col-span-2">
             <div class="grid grid-cols-2 gap-5">
               <TripStatus
@@ -231,18 +290,21 @@ onMounted(async () => {
               ></TripStatus>
 
               <TopRouteTravel
+                v-if="isGARole"
                 v-show="dashboardData.topTravelRoutes.value"
                 class="h-max-[250px] basis-5/12"
                 :data="data.top_route"
               ></TopRouteTravel>
 
               <TotalTrip
+                v-if="isGARole"
                 v-show="dashboardData.totalTrip.value"
                 class="h-max-[250px] basis-5/12"
                 :data="data.total_trip"
               ></TotalTrip>
 
               <CashAdvance
+                v-if="isGARole"
                 v-show="dashboardData.totalCashAdvance.value"
                 class="h-max-[250px] basis-5/12"
                 :data="data.cash_advance"
@@ -250,6 +312,7 @@ onMounted(async () => {
               </CashAdvance>
 
               <Airlines
+                v-if="isGARole"
                 v-show="dashboardData.airlines.value"
                 class="h-max-[250px] basis-1/2"
                 :data="data.top_airlines"
@@ -263,6 +326,7 @@ onMounted(async () => {
               class="grid 2xl:grid-rows-2 2xl:grid-cols-1 grid-cols-2 gap-5 gap-y-20"
             >
               <TopCostPerVendor
+                v-if="isGARole"
                 v-show="dashboardData.totalCostPerVendor.value"
                 class="2xl:basis-full basis-5/12 grow"
                 :data="data.vendor"
@@ -278,14 +342,54 @@ onMounted(async () => {
           </div>
         </div>
 
+        <div v-else class="w-full grid grid-cols-4 gap-5">
+          <div class="col-span-4">
+            <div class="grid gap-5">
+              <TripStatus
+                v-show="dashboardData.tripStatus.value"
+                class="col-span-4"
+                :data="data.status_trip"
+              ></TripStatus>
+
+              <TripPurpose
+                v-show="dashboardData.requestPerTripPurpose.value"
+                class="col-span-4"
+                :data="data.trip_purpose"
+              >
+              </TripPurpose>
+            </div>
+          </div>
+
+          <div class="col-span-4">
+            <div class="grid gap-5 grid-cols-5">
+              <MeetingRoomUsed
+                class="col-span-3"
+                :data="data.book_meeting_used"
+              >
+              </MeetingRoomUsed>
+
+              <AtkRequest class="col-span-2" :data="data.atk_request">
+              </AtkRequest>
+            </div>
+          </div>
+
+          <div class="col-span-4">
+            <div>
+              <RedirectLinks class="col-span-4"></RedirectLinks>
+            </div>
+          </div>
+        </div>
+
         <div class="w-full grid grid-cols-4 gap-5">
           <stockInVsOut
+            v-if="isGARole"
             v-show="dashboardData.stockInVsOut.value"
             :data="data.stock_in_out"
             class="col-span-2 2xl:col-span-1 content-center"
           ></stockInVsOut>
 
           <BookingRoom
+            v-if="isGARole"
             v-show="dashboardData.meetingRoom.value"
             :data="data.meeting_room"
             class="col-span-2 2xl:col-span-3"

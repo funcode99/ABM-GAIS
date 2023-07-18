@@ -52,16 +52,19 @@ const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const api = await Api.get("book_meeting_room/get");
-  dataArr.value = api.data.data.data;
+  dataArr.value = api.data.data;
+  console.log(dataArr.value)
   dataArr.value.forEach((dt) => {
-    let arr = {
-      start: dt.start_date + " " + dt.start_time,
-      end: dt.end_date + " " + dt.end_time,
-      content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
-      class: "card-color",
-      split: dt.id_meeting_room,
-    };
-    datas.value.push(arr);
+    if (dt.status != 'Cancelled') {
+        let arr = {
+        start: dt.start_date + " " + dt.start_time,
+        end: dt.end_date + " " + dt.end_time,
+        content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
+        class: "card-color",
+        split: dt.id_meeting_room,
+        };
+        datas.value.push(arr);
+    }
     // let arrHeader = {
     //   id: dt.id_meeting_room,
     //   label: dt.name_meeting_room,
@@ -110,17 +113,20 @@ const filterDataByType = async () => {
     id_meeting_room: filter.room,
   };
   const api = await Api.get("book_meeting_room/get", { params: payload });
-  dataArr.value = api.data.data.data;
+  dataArr.value = api.data.data;
   datas.value = [];
-  api.data.data.data.forEach((dt) => {
-    let arr = {
-      start: dt.start_date + " " + dt.start_time,
-      end: dt.end_date + " " + dt.end_time,
-      content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
-      class: "card-color",
-      split: dt.id_meeting_room,
-    };
-    datas.value.push(arr);
+  
+  api.data.data.forEach((dt) => {
+    if (dt.status != 'Cancelled') {
+        let arr = {
+        start: dt.start_date + " " + dt.start_time,
+        end: dt.end_date + " " + dt.end_time,
+        content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
+        class: "card-color",
+        split: dt.id_meeting_room,
+        };
+        datas.value.push(arr);
+    }
     let arrHeader = {
       id: dt.id_meeting_room,
       label: dt.name_meeting_room,

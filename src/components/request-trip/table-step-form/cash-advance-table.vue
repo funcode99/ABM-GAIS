@@ -9,8 +9,7 @@
       {id: 1, title: 'Cash Advance No'},
       {id: 2, title: 'Total'},
       {id: 3, title: 'Notes'},
-      {id: 4, title: 'Status'},
-      // {id: 5, title: 'Action'}
+      {id: 4, title: 'Status'}
     ]
 
     const emits = defineEmits('fetchCashAdvance')
@@ -41,6 +40,9 @@
                           <th v-for="data in tableHeadCashAdvance" :key="data.id">
                             {{ data.title }}
                           </th>
+                          <th v-if="$route.path === '/request'">
+                            Actions
+                          </th>
                         </tr>
             </thead>
 
@@ -58,14 +60,14 @@
                           <td>
                             {{ data.status }}
                           </td>
-                          <!-- <td class="flex flex-wrap gap-4 justify-center">
+                          <td v-if="$route.path === '/request'" class="flex flex-wrap gap-4 justify-center">
                             <button>
                               <img :src="editicon" class="w-6 h-6" />
                             </button>
                             <button @click="deleteData(data.id)">
                               <img :src="deleteicon" class="w-6 h-6" />
                             </button>
-                          </td> -->
+                          </td>
               </tr>
             </tbody>
 
