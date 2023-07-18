@@ -11,7 +11,6 @@ import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -64,16 +63,6 @@ const tableHead = [
   { Id: 6, title: "KM Travelled", jsonData: "odometer" },
   { Id: 7, title: "Status", jsonData: "status" },
 ];
-
-const sortList = (sortBy) => {
-  if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
-  } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
-  }
-};
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
@@ -420,13 +409,9 @@ const showClearButton = computed(() => {
                   v-for="data in tableHead"
                   :key="data.Id"
                   class="overflow-x-hidden cursor-pointer"
-                  @click="sortList(`${data.jsonData}`)"
                 >
                   <span class="flex justify-center items-center gap-1">
                     {{ data.title }}
-                    <button>
-                      <img :src="arrowicon" class="w-[9px] h-3" />
-                    </button>
                   </span>
                 </th>
               </tr>
@@ -458,15 +443,11 @@ const showClearButton = computed(() => {
                   v-for="data in tableHead"
                   :key="data.Id"
                   class="overflow-x-hidden cursor-pointer"
-                  @click="sortList(`${data.jsonData}`)"
                 >
                   <div class="flex justify-center items-center">
                     <p class="font-JakartaSans font-bold text-sm">
                       {{ data.title }}
                     </p>
-                    <button v-if="data.jsonData" class="ml-2">
-                      <img :src="arrowicon" class="w-[9px] h-3" />
-                    </button>
                   </div>
                 </th>
               </tr>
@@ -485,15 +466,11 @@ const showClearButton = computed(() => {
                     v-for="data in tableHead"
                     :key="data.Id"
                     class="overflow-x-hidden cursor-pointer"
-                    @click="sortList(`${data.jsonData}`)"
                   >
                     <div class="flex justify-center items-center">
                       <p class="font-JakartaSans font-bold text-sm">
                         {{ data.title }}
                       </p>
-                      <button v-if="data.jsonData" class="ml-2">
-                        <img :src="arrowicon" class="w-[9px] h-3" />
-                      </button>
                     </div>
                   </th>
                 </tr>
