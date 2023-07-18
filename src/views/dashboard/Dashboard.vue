@@ -361,14 +361,14 @@ onMounted(async () => {
           </div>
 
           <div class="col-span-4">
-            <div class="grid gap-5 grid-cols-3">
+            <div class="grid gap-5 grid-cols-5">
               <MeetingRoomUsed
-                class="col-span-2"
+                class="col-span-3"
                 :data="data.book_meeting_used"
               >
               </MeetingRoomUsed>
 
-              <AtkRequest class="col-span-1" :data="data.atk_request">
+              <AtkRequest class="col-span-2" :data="data.atk_request">
               </AtkRequest>
             </div>
           </div>

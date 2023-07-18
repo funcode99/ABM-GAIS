@@ -64,7 +64,7 @@ watch(
     props.data.forEach((item) => {
       newSeries.push(item.total);
 
-      newLabel.push(item.type.replace("_", " ").toUpperCase());
+      newLabel.push(item.room_name);
     });
 
     chartConfig.value.xaxis.categories = newLabel;
@@ -81,7 +81,7 @@ watch(
       <VueApexCharts
         type="bar"
         width="100%"
-        height="300"
+        height="auto"
         :key="data"
         :options="chartConfig"
         :series="series"
