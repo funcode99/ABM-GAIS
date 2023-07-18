@@ -104,8 +104,8 @@ const getData = async () => {
     site: filter.site.value,
     cost_center: filter.costCenter.value,
     department: filter.department.value,
-    // month: filter.date.month + 1 || currentMonth,
-    // year: filter.date.year || currentYear,
+    month: filter.date.month + 1 || currentMonth,
+    year: filter.date.year || currentYear,
   };
   const res = await getDashboardData(params);
 
