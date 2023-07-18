@@ -55,8 +55,10 @@
     const defaultValue = () => {
         name.value = localStorage.getItem('username')
         departure.value = props.value[0].name_departure_city
+        departureId.value = props.value[0].id_departure_city
         date.value = props.value[0].date
         arrival.value = props.value[0].name_arrival_city
+        arrivalId.value = props.value[0].id_arrival_city
         amount.value = props.value[0].amount
         voucherCode.value = props.value[0].code_voucher
         accountName.value = props.value[0].account_name
