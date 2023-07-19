@@ -171,10 +171,10 @@
       // isi nya undefined
       // console.log(formEditState.menu.icon)
 
-      console.log(formEditState.menu.sequence)
-      console.log(formEditState.menu.sequenceCode)
-      console.log(editDataId.value)
-      console.log(formEditState.menu.companyId)
+      // console.log(formEditState.menu.sequence)
+      // console.log(formEditState.menu.sequenceCode)
+      // console.log(editDataId.value)
+      // console.log(formEditState.menu.companyId)
 
       const api = await Api.post(`/menu/update_data/${editDataId.value}`, {
         menu: formEditState.menu.menuName,
