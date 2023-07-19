@@ -145,7 +145,7 @@ const fetch = async (id) => {
 const fetchListRoom = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  if (id_role == "ADMTR") {
+  if (id_role == "ADMTR" || id_role == "SUPADM") {
     const api = await Api.get(`master_meeting_room/get`);
     listRoom.value = api.data.data;
   } else {

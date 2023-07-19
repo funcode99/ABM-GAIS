@@ -11,6 +11,7 @@ import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -29,6 +30,11 @@ const search = ref("");
 const date = ref();
 const dateStart = ref();
 const dateEnd = ref();
+
+const month = ref();
+const monthFormat = "MM";
+const monthValueFormat = "MM";
+const year = ref();
 
 let Company = ref([]);
 let Car = ref([]);
@@ -57,65 +63,58 @@ const onChangePage = (pageOfItem) => {
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
-  { Id: 3, title: "Plate", jsonData: "plate" },
-  { Id: 4, title: "From Date", jsonData: "from_date" },
-  { Id: 5, title: "To Date", jsonData: "to_date" },
-  { Id: 6, title: "KM Travelled", jsonData: "odometer" },
-  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 3, title: "Doc No", jsonData: "plate" },
+  { Id: 4, title: "Requestor", jsonData: "from_date" },
+  { Id: 5, title: "Item Name", jsonData: "to_date" },
+  { Id: 6, title: "Qty", jsonData: "odometer" },
+  { Id: 7, title: "Uom", jsonData: "odometer" },
+  { Id: 8, title: "Status", jsonData: "status" },
 ];
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchPoolCarReport = async (id) => {
-  if (date.value != undefined) {
-    if (date.value[0] != null) {
-      dateStart.value = date.value[0].toISOString().split("T")[0];
-    }
-    if (date.value[1] != null) {
-      dateEnd.value = date.value[1].toISOString().split("T")[0];
-    }
-    if (date.value[1] == null) {
-      dateEnd.value = dateStart.value;
-    }
-  }
+// const fetchPoolCarReport = async (id) => {
+//   if (date.value != undefined) {
+//     if (date.value[0] != null) {
+//       dateStart.value = date.value[0].toISOString().split("T")[0];
+//     }
+//     if (date.value[1] != null) {
+//       dateEnd.value = date.value[1].toISOString().split("T")[0];
+//     }
+//     if (date.value[1] == null) {
+//       dateEnd.value = dateStart.value;
+//     }
+//   }
 
-  const params = {
-    start_date: dateStart.value,
-    end_date: dateEnd.value,
-    status: selectedStatus.value,
-    search: search.value,
-    perPage: pageMultiplier.value,
-    page: id ? id : 1,
-    id_company: selectedCompany.value,
-    id_departement: selectedDepartement.value,
-    type_car: selectedCartype.value,
-  };
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/pool_car/report", { params });
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray.data;
-  totalPage.value = instanceArray.last_page;
-  totalData.value = instanceArray.total;
-  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
-  showingValueTo.value = instanceArray.to;
-};
+//   const params = {
+//     start_date: dateStart.value,
+//     end_date: dateEnd.value,
+//     status: selectedStatus.value,
+//     search: search.value,
+//     perPage: pageMultiplier.value,
+//     page: id ? id : 1,
+//     id_company: selectedCompany.value,
+//     id_departement: selectedDepartement.value,
+//     type_car: selectedCartype.value,
+//   };
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const res = await Api.get("/pool_car/report", { params });
+//   instanceArray = res.data.data;
+//   sortedData.value = instanceArray.data;
+//   totalPage.value = instanceArray.last_page;
+//   totalData.value = instanceArray.total;
+//   showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+//   showingValueTo.value = instanceArray.to;
+// };
 
 const fetchCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-};
-
-const fetchCar = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/car/get");
-  Car.value = res.data.data;
-  console.log(res.data.data);
 };
 
 const fetchDepartement = async (id_company) => {
@@ -125,19 +124,10 @@ const fetchDepartement = async (id_company) => {
   Departement.value = res.data.data;
 };
 
-const fetchStatus = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/pool_car/status");
-  Status.value = res.data.data;
-};
-
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchPoolCarReport();
+  //   fetchPoolCarReport();
   fetchCompany();
-  fetchCar();
-  fetchStatus();
 });
 
 const format_date = (value) => {
@@ -224,7 +214,7 @@ const showClearButton = computed(() => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Pool Car Usage Reports
+              ATK Request Reports
             </p>
           </div>
 
@@ -274,6 +264,25 @@ const showClearButton = computed(() => {
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
+                  Item
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedStatus"
+                >
+                  <option disabled selected>Item</option>
+                  <!-- <option v-for="data in Status" :value="data.code">
+                    {{ data.status }}
+                  </option> -->
+                  <option>Item A</option>
+                  <option>Item B</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
                   Company
                 </p>
                 <select
@@ -309,30 +318,14 @@ const showClearButton = computed(() => {
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
-                  Car
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCartype"
-                >
-                  <option disabled selected>Type</option>
-                  <option v-for="data in Car" :value="data.id">
-                    {{ data.car_name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="flex flex-col pt-[2px]">
-                <p
-                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
-                >
-                  Date
+                  Month
                 </p>
                 <VueDatePicker
-                  v-model="date"
-                  range
-                  :enable-time-picker="false"
+                  v-model="month"
+                  month-picker
                   class="my-date"
+                  :format="monthFormat"
+                  :value-format="monthValueFormat"
                 />
               </div>
 
@@ -340,17 +333,9 @@ const showClearButton = computed(() => {
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
-                  Status
+                  Year
                 </p>
-                <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedStatus"
-                >
-                  <option disabled selected>Status</option>
-                  <option v-for="data in Status" :value="data.code">
-                    {{ data.status }}
-                  </option>
-                </select>
+                <VueDatePicker v-model="year" year-picker class="my-date" />
               </div>
 
               <div class="flex gap-2 items-center pt-7">
@@ -402,7 +387,7 @@ const showClearButton = computed(() => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0">
+          <tableData>
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
                 <th
@@ -418,23 +403,37 @@ const showClearButton = computed(() => {
             </thead>
 
             <tbody>
-              <tr
-                class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData"
-                :key="data.id"
-              >
-                <td>{{ data.no }}</td>
+              <tr class="font-JakartaSans font-normal text-sm">
+                <!-- <td>{{ data.no }}</td>
                 <td>{{ format_date(data.created_at) }}</td>
                 <td>{{ data.plate }}</td>
                 <td>{{ format_date(data.from_date) }}</td>
                 <td>{{ format_date(data.to_date) }}</td>
                 <td>{{ data.odometer }}</td>
-                <td>{{ data.status }}</td>
+                <td>{{ data.status }}</td> -->
+                <td>1</td>
+                <td>23/04/23</td>
+                <td>OUT-ABM/1232/23.04</td>
+                <td>Kia B</td>
+                <td>Pen</td>
+                <td>12</td>
+                <td>Pc</td>
+                <td>Completed</td>
+              </tr>
+              <tr class="font-JakartaSans font-normal text-sm">
+                <td>2</td>
+                <td>23/04/23</td>
+                <td>OUT-ABM/1232/23.04</td>
+                <td>Jack K</td>
+                <td>Pencil</td>
+                <td>2</td>
+                <td>Pc</td>
+                <td>Completed</td>
               </tr>
             </tbody>
           </tableData>
 
-          <tableData
+          <!-- <tableData
             v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
@@ -454,9 +453,9 @@ const showClearButton = computed(() => {
             </thead>
 
             <SkeletonLoadingTable :column="7" :row="5" />
-          </tableData>
+          </tableData> -->
 
-          <div v-else>
+          <!-- <div v-else>
             <tableData>
               <thead
                 class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -487,7 +486,7 @@ const showClearButton = computed(() => {
                 </tr>
               </tbody>
             </tableData>
-          </div>
+          </div> -->
 
           <!-- PAGINATION -->
           <div
@@ -559,7 +558,7 @@ tr th {
 }
 
 .my-date {
-  width: 200px !important;
+  width: 160px !important;
 }
 
 input.nosubmit {

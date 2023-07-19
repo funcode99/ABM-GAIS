@@ -11,7 +11,6 @@ import tableData from "@/components/table/tableData.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import expandArrow from "@/assets/ExpandArrow.png";
 import iconUp from "@/assets/icon-up.png";
 
@@ -45,16 +44,6 @@ const tableHead = [
   { Id: 5, title: "Qty", jsonData: "nomor_ca" },
   { Id: 6, title: "UOM", jsonData: "total_real" },
 ];
-
-const sortList = (sortBy) => {
-  // if (sortedbyASC) {
-  //   sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-  //   sortedbyASC = false;
-  // } else {
-  //   sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-  //   sortedbyASC = true;
-  // }
-};
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
@@ -274,13 +263,9 @@ const getIcon = (menu) => {
                   v-for="data in tableHead"
                   :key="data.Id"
                   class="overflow-x-hidden cursor-pointer"
-                  @click="sortList(`${data.jsonData}`)"
                 >
                   <span class="flex justify-center items-center gap-1">
                     {{ data.title }}
-                    <button>
-                      <img :src="arrowicon" class="w-[9px] h-3" />
-                    </button>
                   </span>
                 </th>
               </tr>

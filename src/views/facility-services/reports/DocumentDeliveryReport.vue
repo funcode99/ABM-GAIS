@@ -11,6 +11,7 @@ import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
+import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -21,23 +22,17 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
-const selectedCompany = ref("");
-const selectedDepartement = ref("");
 const selectedStatus = ref("");
-const selectedCartype = ref("");
+const selectedRoomtype = ref("");
 const search = ref("");
 const date = ref();
 const dateStart = ref();
 const dateEnd = ref();
 
-let Company = ref([]);
-let Car = ref([]);
-let Departement = ref([]);
-let Status = ref([]);
-
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let roomName = ref([]);
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -51,93 +46,69 @@ let totalData = ref(0);
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-  fetchPoolCarReport(pageOfItem);
+  fetchRoomsReport(pageOfItem);
 };
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
-  { Id: 3, title: "Plate", jsonData: "plate" },
-  { Id: 4, title: "From Date", jsonData: "from_date" },
-  { Id: 5, title: "To Date", jsonData: "to_date" },
-  { Id: 6, title: "KM Travelled", jsonData: "odometer" },
+  { Id: 3, title: "Document No", jsonData: "no_booking_meeting" },
+  { Id: 4, title: "Sender", jsonData: "employee_name" },
+  { Id: 5, title: "Receiver", jsonData: "duration" },
+  { Id: 6, title: "Location", jsonData: "name_meeting_room" },
   { Id: 7, title: "Status", jsonData: "status" },
 ];
+
+const sortList = (sortBy) => {
+  if (sortedbyASC) {
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedbyASC = false;
+  } else {
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedbyASC = true;
+  }
+};
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchPoolCarReport = async (id) => {
-  if (date.value != undefined) {
-    if (date.value[0] != null) {
-      dateStart.value = date.value[0].toISOString().split("T")[0];
-    }
-    if (date.value[1] != null) {
-      dateEnd.value = date.value[1].toISOString().split("T")[0];
-    }
-    if (date.value[1] == null) {
-      dateEnd.value = dateStart.value;
-    }
-  }
+// const fetchRoomsReport = async (id) => {
+//   if (date.value != undefined) {
+//     if (date.value[0] != null) {
+//       dateStart.value = date.value[0].toISOString().split("T")[0];
+//     }
+//     if (date.value[1] != null) {
+//       dateEnd.value = date.value[1].toISOString().split("T")[0];
+//     }
+//     if (date.value[1] == null) {
+//       dateEnd.value = dateStart.value;
+//     }
+//   }
 
-  const params = {
-    start_date: dateStart.value,
-    end_date: dateEnd.value,
-    status: selectedStatus.value,
-    search: search.value,
-    perPage: pageMultiplier.value,
-    page: id ? id : 1,
-    id_company: selectedCompany.value,
-    id_departement: selectedDepartement.value,
-    type_car: selectedCartype.value,
-  };
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/pool_car/report", { params });
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray.data;
-  totalPage.value = instanceArray.last_page;
-  totalData.value = instanceArray.total;
-  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
-  showingValueTo.value = instanceArray.to;
-};
-
-const fetchCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-};
-
-const fetchCar = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/car/get");
-  Car.value = res.data.data;
-  console.log(res.data.data);
-};
-
-const fetchDepartement = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get_departement/${id_company}`);
-  Departement.value = res.data.data;
-};
-
-const fetchStatus = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/pool_car/status");
-  Status.value = res.data.data;
-};
+//   const params = {
+//     id_meeting_room: selectedRoomtype.value,
+//     start_date: dateStart.value,
+//     end_date: dateEnd.value,
+//     code_status_doc: selectedStatus.value,
+//     search: search.value,
+//     perPage: pageMultiplier.value,
+//     page: id ? id : 1,
+//   };
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const res = await Api.get("/book_meeting_room/report/", { params });
+//   instanceArray = res.data.data;
+//   sortedData.value = instanceArray.data;
+//   totalPage.value = instanceArray.last_page;
+//   totalData.value = instanceArray.total;
+//   showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+//   showingValueTo.value = instanceArray.to;
+// };
 
 onBeforeMount(() => {
+  //   fetchRoomsReport();
   getSessionForSidebar();
-  fetchPoolCarReport();
-  fetchCompany();
-  fetchCar();
-  fetchStatus();
 });
 
 const format_date = (value) => {
@@ -147,27 +118,25 @@ const format_date = (value) => {
 };
 
 const resetData = () => {
-  (selectedCompany.value = ""),
-    (selectedDepartement.value = ""),
-    (selectedCartype.value = "");
+  selectedRoomtype.value = "";
   selectedStatus.value = "";
   dateStart.value = "";
   dateEnd.value = "";
   date.value = null;
-  fetchPoolCarReport();
+  fetchRoomsReport();
 };
 
 const exportToExcel = () => {
   const workbook = new Workbook();
-  const worksheet = workbook.addWorksheet("Pool Car Usage Reports");
+  const worksheet = workbook.addWorksheet("Meeting Room Reports");
 
   const tableHead = [
     { title: "Nomor" },
     { title: "Created Date" },
-    { title: "Plate" },
-    { title: "From Date" },
-    { title: "To Date" },
-    { title: "KM Travelled" },
+    { title: "Booking No" },
+    { title: "Requestor" },
+    { title: "Duration" },
+    { title: "Meeting Room" },
     { title: "Status" },
   ];
 
@@ -178,10 +147,10 @@ const exportToExcel = () => {
   sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
-    worksheet.getCell(rowIndex + 2, 3).value = data.plate;
-    worksheet.getCell(rowIndex + 2, 4).value = data.from_date;
-    worksheet.getCell(rowIndex + 2, 5).value = data.to_date;
-    worksheet.getCell(rowIndex + 2, 6).value = data.odometer;
+    worksheet.getCell(rowIndex + 2, 3).value = data.no_booking_meeting;
+    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.duration;
+    worksheet.getCell(rowIndex + 2, 6).value = data.name_meeting_room;
     worksheet.getCell(rowIndex + 2, 7).value = data.status;
   });
 
@@ -192,7 +161,7 @@ const exportToExcel = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "pool_car_usage_report_data.xlsx";
+    a.download = "meeting_room_report_data.xlsx";
     a.click();
     URL.revokeObjectURL(url);
   });
@@ -200,7 +169,7 @@ const exportToExcel = () => {
 
 const clearSearch = () => {
   search.value = "";
-  fetchPoolCarReport();
+  fetchRoomsReport();
 };
 
 const showClearButton = computed(() => {
@@ -224,7 +193,7 @@ const showClearButton = computed(() => {
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
-              Pool Car Usage Reports
+              Document Delivery Reports
             </p>
           </div>
 
@@ -260,7 +229,7 @@ const showClearButton = computed(() => {
             </button>
 
             <button
-              @click="fetchPoolCarReport()"
+              @click="fetchRoomsReport()"
               type="submit"
               class="w-36 p-2.5 ml-2 text-sm rounded-lg font-medium text-white font-JakartaSans capitalize border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
@@ -269,56 +238,20 @@ const showClearButton = computed(() => {
           </div>
 
           <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
-            <div class="flex gap-2">
+            <div class="flex gap-6">
               <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
-                  Company
+                  Location
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCompany"
-                  @change="fetchDepartement(selectedCompany)"
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedRoomtype"
                 >
-                  <option disabled selected>Company</option>
-                  <option v-for="data in Company" :value="data.id">
-                    {{ data.company_name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="flex flex-col pt-[2px]">
-                <p
-                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
-                >
-                  Departement
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedDepartement"
-                >
-                  <option disabled selected>Departement</option>
-                  <option v-for="data in Departement" :value="data.id">
-                    {{ data.departement_name }}
-                  </option>
-                </select>
-              </div>
-
-              <div class="flex flex-col pt-[2px]">
-                <p
-                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
-                >
-                  Car
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedCartype"
-                >
-                  <option disabled selected>Type</option>
-                  <option v-for="data in Car" :value="data.id">
-                    {{ data.car_name }}
-                  </option>
+                  <option disabled selected>Location</option>
+                  <option>Location A</option>
+                  <option>Location B</option>
                 </select>
               </div>
 
@@ -336,27 +269,29 @@ const showClearButton = computed(() => {
                 />
               </div>
 
-              <div class="flex flex-col pt-[2px]">
+              <div class="flex flex-col pt-[3px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
                   Status
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedStatus"
                 >
                   <option disabled selected>Status</option>
-                  <option v-for="data in Status" :value="data.code">
-                    {{ data.status }}
-                  </option>
+                  <option value="0">Created</option>
+                  <option value="1">Received</option>
+                  <option value="2">Delivering</option>
+                  <option value="3">Delivered</option>
+                  <option value="4">Cancelled</option>
                 </select>
               </div>
 
-              <div class="flex gap-2 items-center pt-7">
+              <div class="flex gap-4 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="fetchPoolCarReport()"
+                  @click="fetchRoomsReport()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -391,7 +326,7 @@ const showClearButton = computed(() => {
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
-              @change="fetchPoolCarReport()"
+              @change="fetchRoomsReport()"
             >
               <option>10</option>
               <option>25</option>
@@ -402,7 +337,7 @@ const showClearButton = computed(() => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0">
+          <tableData>
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
                 <th
@@ -418,23 +353,35 @@ const showClearButton = computed(() => {
             </thead>
 
             <tbody>
-              <tr
-                class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData"
-                :key="data.id"
-              >
-                <td>{{ data.no }}</td>
+              <tr class="font-JakartaSans font-normal text-sm">
+                <!-- <td>{{ data.no }}</td>
                 <td>{{ format_date(data.created_at) }}</td>
-                <td>{{ data.plate }}</td>
-                <td>{{ format_date(data.from_date) }}</td>
-                <td>{{ format_date(data.to_date) }}</td>
-                <td>{{ data.odometer }}</td>
-                <td>{{ data.status }}</td>
+                <td>{{ data.no_booking_meeting }}</td>
+                <td>{{ data.employee_name }}</td>
+                <td>{{ data.duration }}</td>
+                <td>{{ data.name_meeting_room }}</td>
+                <td>{{ data.status }}</td> -->
+                <td>1</td>
+                <td>23/04/23</td>
+                <td>DOC-ABM/1232/23.04</td>
+                <td>Jack H</td>
+                <td>Mack N</td>
+                <td>KYB01-Jakarta, Cilandak</td>
+                <td>Created</td>
+              </tr>
+              <tr class="font-JakartaSans font-normal text-sm">
+                <td>2</td>
+                <td>13/04/23</td>
+                <td>DOC-ABM/1132/13.04</td>
+                <td>Jack H</td>
+                <td>Kiki L</td>
+                <td>MRB01-Bungo</td>
+                <td>Received</td>
               </tr>
             </tbody>
           </tableData>
 
-          <tableData
+          <!-- <tableData
             v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
@@ -454,9 +401,9 @@ const showClearButton = computed(() => {
             </thead>
 
             <SkeletonLoadingTable :column="7" :row="5" />
-          </tableData>
+          </tableData> -->
 
-          <div v-else>
+          <!-- <div v-else>
             <tableData>
               <thead
                 class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -487,7 +434,7 @@ const showClearButton = computed(() => {
                 </tr>
               </tbody>
             </tableData>
-          </div>
+          </div> -->
 
           <!-- PAGINATION -->
           <div
@@ -559,7 +506,7 @@ tr th {
 }
 
 .my-date {
-  width: 200px !important;
+  width: 280px !important;
 }
 
 input.nosubmit {
