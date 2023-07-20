@@ -585,8 +585,6 @@
                             </button>
                           </detailsFormHeader>
 
-                         <!-- showing Value = {{ showingValue }} -->
-
                           <!-- form Step 3 -->
                           <guestAsTravellerFormView
                             v-if="headerTitle === 'Traveller' && viewLayout === 'document'"
@@ -676,7 +674,7 @@
                           <cashAdvanceFormView 
                             v-if="headerTitle === 'Cash Advance' && viewLayout === 'document'" 
                             class="ml-8" 
-                            :isEditing="isEditing" 
+                            :isEditing="isEditing"
                             :currentIndex="dataIndex" 
                             :currentDetailIndex="detailIndex"
                             :typeOfSubmitData="typeOfSubmitToProps"

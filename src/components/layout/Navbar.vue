@@ -30,6 +30,7 @@
     localStorage.removeItem('token')
     localStorage.removeItem('company_logo')
     localStorage.removeItem('username')
+    sidebar.menuData = ''
     router.push({path: '/'})
   }
 

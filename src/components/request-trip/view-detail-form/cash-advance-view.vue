@@ -1,12 +1,21 @@
 <script setup>
+
     import { ref, inject, onBeforeMount, watch } from 'vue'
     import Api from '@/utils/Api'
 
-    const props = inject('cashAdvanceDataView')
+    import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
+    import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
+
+    import deleteDocumentIcon from '@/assets/delete_document_icon.png'
+
     const status = defineProps({
       isEditing: Boolean,
-      currentIndex: Number
+      currentIndex: Number,
+      typeOfSubmitData: String
     })
+
+    const props = inject('cashAdvanceDataView')
+    const emits = defineEmits('fetchCashAdvance', 'resetTypeOfSubmitData')
 
     let currentDetailIndex = ref(1)
 
@@ -71,46 +80,65 @@
         remarks.value = caDetailData.value[ItemNumber-1].remarks
     }
 
+    const resetValue = () => {
+      grandTotal.value = props.value[0].grand_total
+      // notes.value = props.value[0]
+    }
+
+    const resetDetailValue = () => {
+      
+      item.value = caDetailData.value[0].nama_item
+      nominal.value = caDetailData.value[0].nominal
+      frequency.value = caDetailData.value[0].frequency
+      total.value = caDetailData.value[0].total
+      currency.value = caDetailData.value[0].currency_name
+      remarks.value = caDetailData.value[0].remarks
+
+    }
+
     watch(status, () => {
-      assignValue()
+        
+        if (status.typeOfSubmitData === 'Edit') {
+            updateCashAdvance()
+        }
+        else if (status.typeOfSubmitData === 'Submit Add') {
+            addCashAdvance()
+        }
+        else if (status.typeOfSubmitData === 'Delete') {
+            deleteCashAdvance()
+        }
+        else if (status.typeOfSubmitData === 'Add') {
+            resetValue()
+        }
+        else {
+            assignValue()
+        }
+
     })
 
     watch(props, () => {
       if(props.value[0].grand_total !== undefined) {
-        grandTotal.value = props.value[0].grand_total
-        // notes.value = props.value[0]
+
+
       } else {
         assignValue()
       }
     })
 
     watch(caDetailData, () => {
+      
       if(caDetailData.value[0].nominal !== undefined) {
-        item.value = caDetailData.value[0].nama_item
-        nominal.value = caDetailData.value[0].nominal
-        frequency.value = caDetailData.value[0].frequency
-        total.value = caDetailData.value[0].total
-        currency.value = caDetailData.value[0].currency_name
-        remarks.value = caDetailData.value[0].remarks
+        resetDetailValue()
       } else {
         assignValue()
       }
+      
     })
 
     if(props.value[0].grand_total !== undefined) {
         grandTotal.value = props.value[0].grand_total
         // notes.value = props.value[0]
     }
-
-    // if(caDetailData.value[0].nominal !== undefined) {
-    //     item.value = caDetailData.value[0].item_name
-    //     nominal.value = caDetailData.value[0].nominal
-    //     frequency.value = caDetailData.value[0].frequency
-    //     total.value = caDetailData.value[0].total
-    //     currency.value = caDetailData.value[0].currency_name
-    //     remarks.value = caDetailData.value[0].remarks
-    //     caId.value = currentAPIfetchData.value.data.data[0].id
-    // }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -172,12 +200,22 @@
   
         </div>
   
-        <div class="mx-4">
+        <div class="mx-4 flex items-center">
+            
+          <h1 class="font-medium mr-10">Details Item</h1>
 
-          <div class="flex items-center gap-10">
-            <h1 class="font-medium">Details Item</h1>
+          <div class="flex gap-2">
 
-            <div class="flex gap-4 ml-8 mb-2">
+            <buttonEditFormView />
+            <buttonAddFormView @click="isAddingDetail = true" />
+
+            <buttonAddFormView v-if="isAddingDetail" @click="submitNewDetail" />
+
+            <button v-if="isAddingDetail" @click="isAddingDetail = false" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+              Cancel
+            </button>
+
+            <div class="flex items-center gap-4 ml-8">
               <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
                 Showing {{ currentDetailIndex }} 
                 of {{ caDetailData.length }} entries
@@ -194,14 +232,17 @@
               />
             </div>
             
-
           </div>
 
-          <!-- <div>
-            {{ caDetailData }}
-          </div> -->
+          <div class="flex-1"></div>
+
+          <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2">
+            <img :src="deleteDocumentIcon" class="w-6 h-6" />
+            Delete
+          </button>
 
           <hr class="border border-black" />
+          
         </div>
   
         <form @submit.prevent="">
