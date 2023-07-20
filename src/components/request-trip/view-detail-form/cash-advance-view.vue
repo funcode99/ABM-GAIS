@@ -209,6 +209,7 @@
       console.log(api)
       emits('fetchCashAdvance')
       emits('resetTypeOfSubmitData')
+      fetchCashAdvanceDetailByRequestTripId()
       fetchCashAdvanceDetailByCashAdvanceId()
 
     }
@@ -265,7 +266,7 @@
         if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
             total.value = nominal.value * frequency.value
         }
-        
+
     })
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
@@ -336,8 +337,8 @@
 
           <div class="flex gap-2">
 
-            <buttonEditFormView @click="editCADetail" v-if="!isAddingDetail" />
-            <buttonAddFormView @click="isAddingDetail = true" v-if="!isAddingDetail" />
+            <buttonEditFormView @click="editCADetail" v-if="!isAddingDetail && status.isEditing" />
+            <buttonAddFormView @click="isAddingDetail = true" v-if="!isAddingDetail && status.isEditing" />
 
             <buttonAddFormView v-if="isAddingDetail" @click="addCADetail" />
 

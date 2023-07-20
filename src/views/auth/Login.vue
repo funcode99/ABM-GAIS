@@ -15,9 +15,10 @@
   const isHide = ref(true)
 
   const submit = async () => {
-      console.log('masuk ke submit')
+      
+    console.log('masuk ke submit')
+    
     try {
-
 
         const data = await Api.post('/login', 
         {
@@ -32,7 +33,7 @@
         localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
 
         if(typeof data.data.users.logo_path == 'string') {
-          let deleteBacktick = data.data.users.logo_path.replaceAll('"', '')
+          let deleteBacktick = data.data.users.group_company_logo_path.replaceAll('"', '')
           localStorage.setItem('company_logo', deleteBacktick)
         }
       
