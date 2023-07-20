@@ -111,10 +111,17 @@ const fetchRoomsName = async () => {
 };
 
 const fetchCompany = async () => {
+  const companyID = localStorage.getItem("id_company");
+  const role = localStorage.getItem("id_role").replace(/"/g, "");
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
+  if (role == "ADMTR") {
+    const res = await Api.get("/company/get");
+    Company.value = res.data.data;
+  } else {
+    const res = await Api.get(`/company/get/${companyID}`);
+    Company.value = res.data.data;
+  }
 };
 
 const fetchSite = async (id_company) => {
