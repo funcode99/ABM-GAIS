@@ -21,6 +21,8 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
+const selectedCompany = ref("");
+const selectedSite = ref("");
 const selectedStatus = ref("");
 const selectedRoomtype = ref("");
 const search = ref("");
@@ -29,9 +31,10 @@ const dateStart = ref();
 const dateEnd = ref();
 
 let sortedData = ref([]);
-let sortedbyASC = true;
 let instanceArray = [];
 let roomName = ref([]);
+let Company = ref([]);
+let Site = ref([]);
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -52,10 +55,13 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
   { Id: 3, title: "Booking No", jsonData: "no_booking_meeting" },
-  { Id: 4, title: "Requestor", jsonData: "employee_name" },
-  { Id: 5, title: "Duration", jsonData: "duration" },
-  { Id: 6, title: "Meeting Room", jsonData: "name_meeting_room" },
-  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 4, title: "Date Book", jsonData: "start_date" },
+  { Id: 5, title: "Time", jsonData: "start_time" },
+  { Id: 6, title: "Site Name", jsonData: "site_name" },
+  { Id: 7, title: "Requestor", jsonData: "employee_name" },
+  { Id: 8, title: "Duration", jsonData: "duration" },
+  { Id: 9, title: "Meeting Room", jsonData: "name_meeting_room" },
+  { Id: 10, title: "Status", jsonData: "status" },
 ];
 
 const getSessionForSidebar = () => {
@@ -77,6 +83,8 @@ const fetchRoomsReport = async (id) => {
 
   const params = {
     id_meeting_room: selectedRoomtype.value,
+    id_company: selectedCompany.value,
+    id_site: selectedSite.values,
     start_date: dateStart.value,
     end_date: dateEnd.value,
     code_status_doc: selectedStatus.value,
@@ -102,9 +110,31 @@ const fetchRoomsName = async () => {
   roomName = res.data.data;
 };
 
+const fetchCompany = async () => {
+  const companyID = localStorage.getItem("id_company");
+  const role = localStorage.getItem("id_role").replace(/"/g, "");
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  if (role == "ADMTR") {
+    const res = await Api.get("/company/get");
+    Company.value = res.data.data;
+  } else {
+    const res = await Api.get(`/company/get/${companyID}`);
+    Company.value = res.data.data;
+  }
+};
+
+const fetchSite = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get_site/${id_company}`);
+  Site.value = res.data.data;
+};
+
 onBeforeMount(() => {
   fetchRoomsReport();
   fetchRoomsName();
+  fetchCompany();
   getSessionForSidebar();
 });
 
@@ -114,8 +144,16 @@ const format_date = (value) => {
   }
 };
 
+const format_time = (value) => {
+  if (value) {
+    return moment().format("HH:mm");
+  }
+};
+
 const resetData = () => {
-  selectedRoomtype.value = "";
+  (selectedCompany.value = ""),
+    (selectedSite.value = ""),
+    (selectedRoomtype.value = "");
   selectedStatus.value = "";
   dateStart.value = "";
   dateEnd.value = "";
@@ -131,6 +169,9 @@ const exportToExcel = () => {
     { title: "Nomor" },
     { title: "Created Date" },
     { title: "Booking No" },
+    { title: "Date Book" },
+    { title: "Time" },
+    { title: "Site Name" },
     { title: "Requestor" },
     { title: "Duration" },
     { title: "Meeting Room" },
@@ -145,10 +186,13 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
     worksheet.getCell(rowIndex + 2, 3).value = data.no_booking_meeting;
-    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
-    worksheet.getCell(rowIndex + 2, 5).value = data.duration;
-    worksheet.getCell(rowIndex + 2, 6).value = data.name_meeting_room;
-    worksheet.getCell(rowIndex + 2, 7).value = data.status;
+    worksheet.getCell(rowIndex + 2, 4).value = data.start_date;
+    worksheet.getCell(rowIndex + 2, 5).value = data.start_time;
+    worksheet.getCell(rowIndex + 2, 6).value = data.site_name;
+    worksheet.getCell(rowIndex + 2, 7).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 8).value = data.duration;
+    worksheet.getCell(rowIndex + 2, 9).value = data.name_meeting_room;
+    worksheet.getCell(rowIndex + 2, 10).value = data.status;
   });
 
   workbook.xlsx.writeBuffer().then((buffer) => {
@@ -181,7 +225,7 @@ const showClearButton = computed(() => {
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
-      <tableContainer>
+      <tableContainer style="overflow: auto">
         <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -235,7 +279,42 @@ const showClearButton = computed(() => {
           </div>
 
           <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
-            <div class="flex gap-6">
+            <div class="flex gap-2">
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Company
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCompany"
+                  @change="fetchSite(selectedCompany)"
+                >
+                  <option disabled selected>Company</option>
+                  <option v-for="data in Company" :value="data.id">
+                    {{ data.company_name }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Site
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedSite"
+                >
+                  <option disabled selected>Site</option>
+                  <option v-for="data in Site" :value="data.id">
+                    {{ data.site_name }}
+                  </option>
+                </select>
+              </div>
+
               <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
@@ -243,7 +322,7 @@ const showClearButton = computed(() => {
                   Room
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedRoomtype"
                 >
                   <option disabled selected>Type</option>
@@ -274,7 +353,7 @@ const showClearButton = computed(() => {
                   Status
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedStatus"
                 >
                   <option disabled selected>Status</option>
@@ -357,10 +436,27 @@ const showClearButton = computed(() => {
                 <td>{{ data.no }}</td>
                 <td>{{ format_date(data.created_at) }}</td>
                 <td>{{ data.no_booking_meeting }}</td>
+                <td>
+                  {{ format_date(data.start_date) }} -
+                  {{ format_date(data.end_date) }}
+                </td>
+                <td>{{ format_time(data.start_time) }}</td>
+                <td>{{ data.site_name }}</td>
                 <td>{{ data.employee_name }}</td>
                 <td>{{ data.duration }}</td>
                 <td>{{ data.name_meeting_room }}</td>
-                <td>{{ data.status }}</td>
+                <td>
+                  <span
+                    :class="
+                      data.status == 'Done'
+                        ? 'status-done'
+                        : data.status == 'Booked'
+                        ? 'status-default'
+                        : 'status-revision'
+                    "
+                    >{{ data.status }}</span
+                  >
+                </td>
               </tr>
             </tbody>
           </tableData>
@@ -384,7 +480,7 @@ const showClearButton = computed(() => {
               </tr>
             </thead>
 
-            <SkeletonLoadingTable :column="7" :row="5" />
+            <SkeletonLoadingTable :column="10" :row="5" />
           </tableData>
 
           <div v-else>
@@ -410,7 +506,7 @@ const showClearButton = computed(() => {
               <tbody>
                 <tr>
                   <td
-                    colspan="7"
+                    colspan="10"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Data not Found
@@ -474,28 +570,28 @@ tr th {
   overflow-x: hidden;
 }
 
-.readmore-text {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-
-.readmore-text:hover {
-  max-width: 400px;
-  white-space: nowrap;
-  word-break: break-word;
-}
-
 .my-date {
-  width: 280px !important;
+  width: 200px !important;
 }
 
 input.nosubmit {
   background: transparent
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
     no-repeat 13px center;
+}
+
+.status-revision {
+  color: #ef3022;
+  font-weight: 800;
+}
+
+.status-default {
+  color: #2970ff;
+  font-weight: 800;
+}
+
+.status-done {
+  color: #00c851;
+  font-weight: 800;
 }
 </style>

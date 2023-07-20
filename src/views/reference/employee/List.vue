@@ -14,6 +14,7 @@ import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import iconSync from "@/assets/icon_sync.png";
 
 import Api from "@/utils/Api";
 
@@ -124,6 +125,13 @@ const fetchEmployee = async () => {
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
 };
+
+const syncData = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/integrate/falcon/employee");
+  console.log(res);
+}
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -271,18 +279,32 @@ const exportToExcel = () => {
           </div>
 
           <!-- SHOWING -->
-          <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
-            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
-            <select
-              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              v-model="pageMultiplier"
-            >
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>75</option>
-              <option>100</option>
-            </select>
+          <div class="flex justify-between">
+            <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+              <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="pageMultiplier"
+              >
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>75</option>
+                <option>100</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
+              <button
+                class="flex flex-wrap items-center gap-1 mx-2"
+                @click="syncData()"
+              >
+                <span>
+                  <img :src="iconSync" class="w-5 h-5" />
+                </span>
+                <p class="font-JakartaSans font-medium text-xs">Sync</p>
+              </button>
+            </div>
           </div>
 
           <!-- TABLE -->
