@@ -29,7 +29,9 @@
     let frequency = ref()
     let total = ref()
     let currency = ref()
+    let currencyId = ref()
     let remarks = ref()
+    let headerRemarks = ref()
 
     let caId = ref()
     let caDetailData = ref([{}])
@@ -37,7 +39,10 @@
 
     onBeforeMount(() => {
       fetchCashAdvanceDetailByRequestTripId()
+      fetchCurrency()
     })
+
+    let listCurrency = ref()
 
     const fetchCurrency = async () => {
 
@@ -73,7 +78,8 @@
     const assignValue = () => {
         // CA Travel Header
         grandTotal.value = props.value[status.currentIndex].grand_total
-        // notes.value = caDetailData.value[status.currentIndex]
+        headerRemarks.value = caDetailData.value[status.currentIndex].remarks
+        headerId.value = props.value[status.currentIndex].id
 
         // CA Detail by CA ID (CA ID nya berubah)
         caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
@@ -99,13 +105,13 @@
         selectedCADetailId.value = caDetailData.value[currentDetailNumber.value].id
         idCA.value = caDetailData.value[currentDetailNumber.value].id_ca
         idItemCA.value = caDetailData.value[currentDetailNumber.value].id_item_ca
-        idCostCenter.value = caDetailData.value[currentDetailNumber.value].id_cost_center
 
     }
 
     const resetValue = () => {
       grandTotal.value = props.value[0].grand_total
-      // notes.value = props.value[0]
+      headerRemarks.value = props.value[0].remarks
+      headerId.value = props.value[0].id
     }
 
     let selectedCADetailId = ref()
@@ -121,20 +127,19 @@
       selectedCADetailId.value = caDetailData.value[0].id
       idItemCA.value = caDetailData.value[0].id_item_ca
       idCA.value = caDetailData.value[0].id_ca
-      // idCostCenter.value = caDetailData.value[0].id_cost_center
 
     }
 
     watch(status, () => {
         
         if (status.typeOfSubmitData === 'Edit') {
-            updateCashAdvance()
+            editCAHeader()
         }
         else if (status.typeOfSubmitData === 'Submit Add') {
-            addCashAdvance()
+            addCAHeader()
         }
         else if (status.typeOfSubmitData === 'Delete') {
-            deleteCashAdvance()
+            deleteCAHeader()
         }
         else if (status.typeOfSubmitData === 'Add') {
             resetValue()
@@ -144,6 +149,23 @@
         }
 
     })
+
+    const editCAHeader = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      const api = await Api.post(`/cash_advance/update_data/${headerId.value}` , {
+        
+        id_employee: localStorage.getItem('id_employee'),
+        id_request_trip: localStorage.getItem('tripIdView'),
+        id_currency: currencyId.value,
+        remarks: headerRemarks.value,
+        grand_total: grandTotal.value
+
+      })
+
+    }
 
     const addCADetail = async () => {
       
@@ -233,9 +255,10 @@
       
     })
 
+    let headerId = ref(0)
+
     if(props.value[0].grand_total !== undefined) {
-        grandTotal.value = props.value[0].grand_total
-        // notes.value = props.value[0]
+       resetValue()
     }
 
     let isAddingDetail = ref(false)
@@ -318,14 +341,32 @@
             </label>
             
             <textarea 
+              v-model="headerRemarks"
               :class="inputStylingClass" 
               placeholder="Notes" 
               :disabled="!status.isEditing"></textarea>
           
           </div>
   
-          <div></div>
-          <div></div>
+          <div :class="columnClass">
+  
+            <label :class="labelStylingClass">
+              Currency<span class="text-red-star">*</span>
+            </label>
+
+            <select v-if="isAddingDetail" :class="inputStylingClass" v-model="currencyId">
+
+              <option v-for="data in listCurrency" :key="data.id" :value="data.id">
+                  {{ data.currency_name }}
+              </option>
+
+            </select>
+
+            <input v-if="!isAddingDetail" :class="inputStylingClass" v-model="currency" type="text" disabled />
+
+          </div>
+
+          <div :class="columnClass"></div>
   
         </div>
 
@@ -352,7 +393,7 @@
               Cancel
             </button>
 
-            <div class="flex items-center gap-4 ml-8">
+            <div v-if="!isAddingDetail" class="flex items-center gap-4 ml-8">
               <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
                 Showing {{ currentDetailIndex }} 
                 of {{ caDetailData.length }} entries
@@ -374,6 +415,7 @@
           <div class="flex-1"></div>
 
           <button 
+            v-if="!isAddingDetail && status.isEditing"
             class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
             @click="deleteCADetail"
           >
@@ -461,21 +503,7 @@
           
           <div :class="rowClassStart">
           
-            <div :class="columnClass">
-  
-              <label :class="labelStylingClass">
-                Currency<span class="text-red-star">*</span>
-              </label>
-  
-              <!-- <select :class="inputStylingClass" :disabled="!status.isEditing" v-model="currency">
-                <option :value="currency">
-                  
-                </option>
-              </select> -->
 
-              <input :class="inputStylingClass" v-model="currency" type="text" disabled />
-            
-            </div>
   
             <div :class="columnClass">
               
