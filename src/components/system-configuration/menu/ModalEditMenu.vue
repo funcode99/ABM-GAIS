@@ -34,15 +34,9 @@
   let url = ref(props.formContent[1])
   let sort = ref(props.formContent[2])
   let filename = ref(props.formContent[3])
-  let sequence = ref(props.formContent[9])
+  let sequence = ref()
   let sequenceCode = ref(props.formContent[7])
   let ParentId = ref(props.formContent[5])
-
-  if(sequence.value == 0) {
-    sequence.value = false
-  } else {
-    sequence.value = true
-  }
 
   let companyIdObject = ref(props.formContent[4])
   let companyIdObjectKeys = ref(Object.values(companyIdObject.value))
@@ -127,7 +121,6 @@
     </button>
   
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
-
 
       <main>
 
