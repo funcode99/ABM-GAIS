@@ -734,7 +734,13 @@
 
                         <div class="py-12 px-4">
 
-                          <multiStepCircleVertical :image="userImg" v-for="(data, index) in approvalStatusData" :key="index" :data="data.text" :stop="index+1 === approvalStatusData.length ? true : false" :any="data" />
+                          <multiStepCircleVertical 
+                            :image="userImg" v-for="(data, index) in approvalStatusData" 
+                            :key="index" 
+                            :data="data.text" 
+                            :stop="index+1 === approvalStatusData.length ? true : false" 
+                            :any="data" 
+                          />
 
                         </div>
 

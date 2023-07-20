@@ -24,6 +24,7 @@
     let notes = ref()
 
     let item = ref()
+    let itemId = ref(1)
     let nominal = ref()
     let frequency = ref()
     let total = ref()
@@ -37,6 +38,15 @@
     onBeforeMount(() => {
       fetchCashAdvanceDetailByRequestTripId()
     })
+
+    const fetchCurrency = async () => {
+
+      const token = JSON.parse(localStorage.getItem("token"))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get("currency")
+      listCurrency.value = api.data.data
+
+    }
 
     const fetchCashAdvanceDetailByRequestTripId = async () => {
       const token = JSON.parse(localStorage.getItem("token"))
@@ -69,21 +79,36 @@
         caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
     }
 
+      let idItemCA = ref()
+      let idCA = ref()
+      let idCostCenter = ref()
+  
+      let currentDetailNumber = ref(0)
+
     const assignDetailValue = (ItemNumber) => {
+
         // ini untuk ganti CA Detail dengan CA ID yang sama
         // console.log(caDetailData.value)
-        item.value = caDetailData.value[ItemNumber-1].nama_item
-        nominal.value = caDetailData.value[ItemNumber-1].nominal
-        frequency.value = caDetailData.value[ItemNumber-1].frequency
-        total.value = caDetailData.value[ItemNumber-1].total
-        currency.value = caDetailData.value[ItemNumber-1].currency_name
-        remarks.value = caDetailData.value[ItemNumber-1].remarks
+        ItemNumber === 0 ? currentDetailNumber.value = ItemNumber : currentDetailNumber.value = ItemNumber-1
+        item.value = caDetailData.value[currentDetailNumber.value].nama_item
+        nominal.value = caDetailData.value[currentDetailNumber.value].nominal
+        frequency.value = caDetailData.value[currentDetailNumber.value].frequency
+        total.value = caDetailData.value[currentDetailNumber.value].total
+        currency.value = caDetailData.value[currentDetailNumber.value].currency_name
+        remarks.value = caDetailData.value[currentDetailNumber.value].remarks
+        selectedCADetailId.value = caDetailData.value[currentDetailNumber.value].id
+        idCA.value = caDetailData.value[currentDetailNumber.value].id_ca
+        idItemCA.value = caDetailData.value[currentDetailNumber.value].id_item_ca
+        idCostCenter.value = caDetailData.value[currentDetailNumber.value].id_cost_center
+
     }
 
     const resetValue = () => {
       grandTotal.value = props.value[0].grand_total
       // notes.value = props.value[0]
     }
+
+    let selectedCADetailId = ref()
 
     const resetDetailValue = () => {
       
@@ -93,6 +118,10 @@
       total.value = caDetailData.value[0].total
       currency.value = caDetailData.value[0].currency_name
       remarks.value = caDetailData.value[0].remarks
+      selectedCADetailId.value = caDetailData.value[0].id
+      idItemCA.value = caDetailData.value[0].id_item_ca
+      idCA.value = caDetailData.value[0].id_ca
+      // idCostCenter.value = caDetailData.value[0].id_cost_center
 
     }
 
@@ -115,6 +144,74 @@
         }
 
     })
+
+    const addCADetail = async () => {
+      
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      
+      const api = await Api.post(`/cash_advance/store_detail`, {
+        
+        id_ca: idCA.value,
+        id_item_ca: idItemCA.value,
+        frequency: frequency.value,
+        nominal: nominal.value,
+        total: total.value,
+        remarks: remarks.value
+
+      })
+
+      console.log(api)
+      emits('fetchCashAdvance')
+      emits('resetTypeOfSubmitData')
+      fetchCashAdvanceDetailByCashAdvanceId()
+
+    }
+
+    const editCADetail = async () => {
+      
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      const api = await Api.post(`/cash_advance/update_data_detail/${selectedCADetailId.value}`, {
+
+        id_ca: idCA.value,
+        id_item_ca: idItemCA.value,
+        frequency: frequency.value,
+        nominal: nominal.value,
+        total: total.value,
+        remarks: remarks.value
+
+      })
+
+      console.log(api)
+      emits('fetchCashAdvance')
+      emits('resetTypeOfSubmitData')
+      fetchCashAdvanceDetailByCashAdvanceId()
+
+    }
+
+    const emptyCADetail = async () => {
+
+      frequency.value = 0
+      nominal.value = 0
+      total.value = 0
+      remarks.value = ''
+
+    }
+
+    const deleteCADetail = async () => {
+      
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.delete(`/cash_advance/delete_data_detail/${selectedCADetailId.value}`)
+
+      console.log(api)
+      emits('fetchCashAdvance')
+      emits('resetTypeOfSubmitData')
+      fetchCashAdvanceDetailByCashAdvanceId()
+
+    }
 
     watch(props, () => {
       if(props.value[0].grand_total !== undefined) {
@@ -139,6 +236,37 @@
         grandTotal.value = props.value[0].grand_total
         // notes.value = props.value[0]
     }
+
+    let isAddingDetail = ref(false)
+    watch(isAddingDetail, () => {
+      isAddingDetail.value === true ? emptyCADetail() : assignDetailValue(currentDetailNumber.value)
+    })
+
+    watch(frequency, () => {
+      
+        // console.log(typeof frequency.value)
+        
+        if(typeof frequency.value === 'string') {
+          frequency.value = frequency.value.replace(/\D/g, "")
+        }
+        
+        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
+            total.value = nominal.value * frequency.value
+        }
+
+    })    
+
+    watch(nominal, () => {
+        
+        if(typeof nominal.value === 'string') {
+          nominal.value = nominal.value.replace(/\D/g, "")
+        }
+
+        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
+            total.value = nominal.value * frequency.value
+        }
+        
+    })
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -170,7 +298,7 @@
               v-model="grandTotal" 
               :class="inputStylingClass" 
               placeholder="Grand Total"
-              :disabled="!status.isEditing"
+              disabled
             />
           </div>
   
@@ -199,6 +327,8 @@
           <div></div>
   
         </div>
+
+        <!-- {{ caDetailData }} -->
   
         <div class="mx-4 flex items-center">
             
@@ -206,12 +336,18 @@
 
           <div class="flex gap-2">
 
-            <buttonEditFormView />
-            <buttonAddFormView @click="isAddingDetail = true" />
+            <buttonEditFormView @click="editCADetail" v-if="!isAddingDetail" />
+            <buttonAddFormView @click="isAddingDetail = true" v-if="!isAddingDetail" />
 
-            <buttonAddFormView v-if="isAddingDetail" @click="submitNewDetail" />
+            <buttonAddFormView v-if="isAddingDetail" @click="addCADetail" />
 
-            <button v-if="isAddingDetail" @click="isAddingDetail = false" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+            <button
+
+              v-if="isAddingDetail" 
+              @click="isAddingDetail = false" 
+              class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+
+            >
               Cancel
             </button>
 
@@ -236,7 +372,10 @@
 
           <div class="flex-1"></div>
 
-          <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2">
+          <button 
+            class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
+            @click="deleteCADetail"
+          >
             <img :src="deleteDocumentIcon" class="w-6 h-6" />
             Delete
           </button>
@@ -250,15 +389,27 @@
           <div :class="rowClass">
             
             <div :class="columnClass">
+              
               <label :class="labelStylingClass">
                 Item <span class="text-red-star">*</span>
               </label>
+              
               <input 
                 :class="inputStylingClass" 
                 placeholder="Item" 
-                :disabled="!status.isEditing"
+                v-if="!status.isEditing"
                 v-model="item"
+                disabled
               />
+
+              <select v-if="status.isEditing" :class="inputStylingClass" v-model="itemId">
+                
+                <option value="1">Meals</option>
+                <option value="2">Transport</option>
+                <option value="3">Others</option>
+
+              </select>
+
             </div>
             
             <div :class="columnClass">
@@ -298,7 +449,7 @@
               <input 
                 :class="inputStylingClass" 
                 placeholder="Total" 
-                :disabled="!status.isEditing"
+                disabled
                 v-model="total"
               />
             </div>

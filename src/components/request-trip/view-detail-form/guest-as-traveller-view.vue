@@ -116,7 +116,6 @@
             id_company: props.value[status.currentIndex].id_company,
             id_employee: props.value[status.currentIndex].id_employee
         })
-        console.log(api)
         emits('fetchGuestTraveller')
         emits('resetTypeOfSubmitData', 'Add')
     }
@@ -140,7 +139,6 @@
             id_company: props.value[status.currentIndex].id_company,
             id_employee: props.value[status.currentIndex].id_employee
         })
-        console.log(api)
         emits('fetchGuestTraveller')
         emits('resetTypeOfSubmitData', 'Edit')
 
@@ -150,7 +148,6 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.delete(`/travel_guest/delete_data/${props.value[status.currentIndex].id}`)
-        console.log(api)
         emits('fetchGuestTraveller')
         emits('resetTypeOfSubmitData')
     }

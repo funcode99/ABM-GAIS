@@ -15,10 +15,12 @@
     })
 
     const fetchCurrency = async () => {
+
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get("currency")
         listCurrency.value = api.data.data
+
     }
 
     // Cash Advance
@@ -69,7 +71,7 @@
         if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
             total.value = nominal.value * frequency.value
         }
-    })  
+    })
 
     onBeforeMount(() => {
         fetchEmployeeByLoginUtils(employeeLoginData)
@@ -82,6 +84,7 @@
     })
 
     const addToArrayDetail = () => {
+        
         arrayDetailForm.value = {
             id_item_ca: item.value,
             frequency: frequency.value,
@@ -90,9 +93,11 @@
             remarks: remarks.value,
             currency: currency.value[1]
         }
+
         grandTotal.value += arrayDetailForm.value.total
         arrayDetail.value.push(arrayDetailForm.value)
         arrayDetailForm.value = {}
+
     }
 
     const tableHeadCashAdvance = [
