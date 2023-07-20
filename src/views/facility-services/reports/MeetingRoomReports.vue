@@ -21,6 +21,8 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
+const selectedCompany = ref("");
+const selectedSite = ref("");
 const selectedStatus = ref("");
 const selectedRoomtype = ref("");
 const search = ref("");
@@ -31,6 +33,8 @@ const dateEnd = ref();
 let sortedData = ref([]);
 let instanceArray = [];
 let roomName = ref([]);
+let Company = ref([]);
+let Site = ref([]);
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -79,6 +83,8 @@ const fetchRoomsReport = async (id) => {
 
   const params = {
     id_meeting_room: selectedRoomtype.value,
+    id_company: selectedCompany.value,
+    id_site: selectedSite.values,
     start_date: dateStart.value,
     end_date: dateEnd.value,
     code_status_doc: selectedStatus.value,
@@ -104,9 +110,24 @@ const fetchRoomsName = async () => {
   roomName = res.data.data;
 };
 
+const fetchCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+};
+
+const fetchSite = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get_site/${id_company}`);
+  Site.value = res.data.data;
+};
+
 onBeforeMount(() => {
   fetchRoomsReport();
   fetchRoomsName();
+  fetchCompany();
   getSessionForSidebar();
 });
 
@@ -123,7 +144,9 @@ const format_time = (value) => {
 };
 
 const resetData = () => {
-  selectedRoomtype.value = "";
+  (selectedCompany.value = ""),
+    (selectedSite.value = ""),
+    (selectedRoomtype.value = "");
   selectedStatus.value = "";
   dateStart.value = "";
   dateEnd.value = "";
@@ -249,7 +272,42 @@ const showClearButton = computed(() => {
           </div>
 
           <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
-            <div class="flex gap-6">
+            <div class="flex gap-2">
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Company
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCompany"
+                  @change="fetchSite(selectedCompany)"
+                >
+                  <option disabled selected>Company</option>
+                  <option v-for="data in Company" :value="data.id">
+                    {{ data.company_name }}
+                  </option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Site
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedSite"
+                >
+                  <option disabled selected>Site</option>
+                  <option v-for="data in Site" :value="data.id">
+                    {{ data.site_name }}
+                  </option>
+                </select>
+              </div>
+
               <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
@@ -257,7 +315,7 @@ const showClearButton = computed(() => {
                   Room
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedRoomtype"
                 >
                   <option disabled selected>Type</option>
@@ -288,7 +346,7 @@ const showClearButton = computed(() => {
                   Status
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedStatus"
                 >
                   <option disabled selected>Status</option>
@@ -506,7 +564,7 @@ tr th {
 }
 
 .my-date {
-  width: 280px !important;
+  width: 200px !important;
 }
 
 input.nosubmit {
