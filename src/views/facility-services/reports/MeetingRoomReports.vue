@@ -29,7 +29,6 @@ const dateStart = ref();
 const dateEnd = ref();
 
 let sortedData = ref([]);
-let sortedbyASC = true;
 let instanceArray = [];
 let roomName = ref([]);
 
@@ -52,10 +51,13 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
   { Id: 3, title: "Booking No", jsonData: "no_booking_meeting" },
-  { Id: 4, title: "Requestor", jsonData: "employee_name" },
-  { Id: 5, title: "Duration", jsonData: "duration" },
-  { Id: 6, title: "Meeting Room", jsonData: "name_meeting_room" },
-  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 4, title: "Date Book", jsonData: "start_date" },
+  { Id: 5, title: "Time", jsonData: "start_time" },
+  { Id: 6, title: "Site Name", jsonData: "site_name" },
+  { Id: 7, title: "Requestor", jsonData: "employee_name" },
+  { Id: 8, title: "Duration", jsonData: "duration" },
+  { Id: 9, title: "Meeting Room", jsonData: "name_meeting_room" },
+  { Id: 10, title: "Status", jsonData: "status" },
 ];
 
 const getSessionForSidebar = () => {
@@ -114,6 +116,12 @@ const format_date = (value) => {
   }
 };
 
+const format_time = (value) => {
+  if (value) {
+    return moment().format("HH:mm");
+  }
+};
+
 const resetData = () => {
   selectedRoomtype.value = "";
   selectedStatus.value = "";
@@ -131,6 +139,9 @@ const exportToExcel = () => {
     { title: "Nomor" },
     { title: "Created Date" },
     { title: "Booking No" },
+    { title: "Date Book" },
+    { title: "Time" },
+    { title: "Site Name" },
     { title: "Requestor" },
     { title: "Duration" },
     { title: "Meeting Room" },
@@ -145,10 +156,13 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
     worksheet.getCell(rowIndex + 2, 3).value = data.no_booking_meeting;
-    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
-    worksheet.getCell(rowIndex + 2, 5).value = data.duration;
-    worksheet.getCell(rowIndex + 2, 6).value = data.name_meeting_room;
-    worksheet.getCell(rowIndex + 2, 7).value = data.status;
+    worksheet.getCell(rowIndex + 2, 4).value = data.start_date;
+    worksheet.getCell(rowIndex + 2, 5).value = data.start_time;
+    worksheet.getCell(rowIndex + 2, 6).value = data.site_name;
+    worksheet.getCell(rowIndex + 2, 7).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 8).value = data.duration;
+    worksheet.getCell(rowIndex + 2, 9).value = data.name_meeting_room;
+    worksheet.getCell(rowIndex + 2, 10).value = data.status;
   });
 
   workbook.xlsx.writeBuffer().then((buffer) => {
@@ -181,7 +195,7 @@ const showClearButton = computed(() => {
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
-      <tableContainer>
+      <tableContainer style="overflow: auto">
         <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -357,6 +371,12 @@ const showClearButton = computed(() => {
                 <td>{{ data.no }}</td>
                 <td>{{ format_date(data.created_at) }}</td>
                 <td>{{ data.no_booking_meeting }}</td>
+                <td>
+                  {{ format_date(data.start_date) }} -
+                  {{ format_date(data.end_date) }}
+                </td>
+                <td>{{ format_time(data.start_time) }}</td>
+                <td>{{ data.site_name }}</td>
                 <td>{{ data.employee_name }}</td>
                 <td>{{ data.duration }}</td>
                 <td>{{ data.name_meeting_room }}</td>
@@ -395,7 +415,7 @@ const showClearButton = computed(() => {
               </tr>
             </thead>
 
-            <SkeletonLoadingTable :column="7" :row="5" />
+            <SkeletonLoadingTable :column="10" :row="5" />
           </tableData>
 
           <div v-else>
@@ -421,7 +441,7 @@ const showClearButton = computed(() => {
               <tbody>
                 <tr>
                   <td
-                    colspan="7"
+                    colspan="10"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Data not Found
@@ -483,21 +503,6 @@ tr th {
 
 .this {
   overflow-x: hidden;
-}
-
-.readmore-text {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-
-.readmore-text:hover {
-  max-width: 400px;
-  white-space: nowrap;
-  word-break: break-word;
 }
 
 .my-date {
