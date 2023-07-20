@@ -24,6 +24,12 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
+const chartStatusColor = {
+  Booked: "bg-primary",
+  Done: "bg-green",
+  Cancelled: "bg-red",
+};
+
 let dataArr = ref([]);
 let dataRoom = ref([]);
 let datas = ref([]);
@@ -47,6 +53,8 @@ let visibleModal = ref(false);
 let idItem = ref(0);
 let selectedEvent = ref("");
 
+const showFilter = ref(true);
+
 // FETCH DATA
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -58,10 +66,11 @@ const fetch = async () => {
       let arr = {
         start: dt.start_date + " " + dt.start_time,
         end: dt.end_date + " " + dt.end_time,
-        content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
-        class: "card-color",
+        content: "<p class='my-2 '>" + dt.title + "</p>" + dt.name_created,
+        class: `${chartStatusColor[dt.status]} text-whtie`,
         split: dt.id_meeting_room,
       };
+
       datas.value.push(arr);
     }
     // let arrHeader = {
@@ -256,8 +265,8 @@ onBeforeMount(() => {
               >Drag at time to create your events</label
             > -->
           </div>
-          <div class="px-4 pb-2 grid grid-cols-4">
-            <div class="col-span-3">
+          <div class="px-4 pb-2 flex">
+            <div class="w-full">
               <vue-cal
                 id="vuecal"
                 locale="id"
@@ -272,7 +281,6 @@ onBeforeMount(() => {
                 :on-event-create="onEventCreate"
                 @event-drag-create="visibleModal"
                 sticky-split-labels
-                class="h-[70vh]"
                 :watchRealTime="true"
                 @ready="scrollToCurrentTime"
               >
@@ -289,73 +297,104 @@ onBeforeMount(() => {
                 :id="idItem"
               /> -->
             </div>
-            <div class="px-5 pb-2">
-              <p class="mb-3 font-bold capitalize">Filter:</p>
-              <select
-                v-model="id_company"
-                id="id_company"
-                :class="inputClass"
-                class="mb-3"
-                @change="fetchSite()"
-              >
-                <option disabled selected>Company</option>
-                <option
-                  v-for="data in listCompany"
-                  :key="data.id"
-                  :value="data.id"
-                >
-                  {{ data.company_code }} - {{ data.company_name }}
-                </option>
-              </select>
-              <select
-                v-model="id_site"
-                id="id_site"
-                :class="inputClass"
-                :disabled="selectSite"
-                class="mb-3"
-              >
-                <option disabled selected>Site</option>
-                <option
-                  v-for="data in listSite"
-                  :key="data.id"
-                  :value="data.id"
-                >
-                  {{ data.site_code }} - {{ data.site_name }}
-                </option>
-              </select>
-              <p
-                class="cursor-pointer mb-2"
-                v-for="data in header"
-                :key="data.id"
-              >
-                <input
-                  type="checkbox"
-                  checked="checked"
-                  class="checkbox checkbox-sm mr-2"
-                  :value="data.id"
-                  v-model="filter.room"
-                />
-                <span>{{ data.label }}</span>
-              </p>
-              <div class="my-3 grid grid-cols-2">
+            <div
+              class="basis-auto ease-in duration-300 bg-white"
+              :class="
+                showFilter
+                  ? '-translate-x-0  w-[350px]'
+                  : '-translate-x-full  w-0'
+              "
+            >
+              <div class="absolute ml-[-50px] mt-[10px] z-auto">
                 <button
-                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250] mr-2"
-                  @click="filterDataByType()"
+                  class="rounded-l-xl btn-sm border bg-white shadow-md"
+                  @click="showFilter = !showFilter"
                 >
-                  <span>
-                    <img :src="icon_filter" class="w-5 h-5" />
-                  </span>
-                  Filter
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="black"
+                    class="w-6 h-6"
+                    :class="{ 'rotate-180': showFilter }"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15.75 19.5L8.25 12l7.5-7.5"
+                    />
+                  </svg>
                 </button>
-                <button
-                  class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                  @click="resetData"
+              </div>
+              <div class="px-5 bg-white" v-if="showFilter">
+                <p class="mb-3 font-bold capitalize">Filter:</p>
+                <select
+                  v-model="id_company"
+                  id="id_company"
+                  :class="inputClass"
+                  class="mb-3"
+                  @change="fetchSite()"
                 >
-                  <span>
-                    <img :src="icon_reset" class="w-5 h-5" />
-                  </span>
-                  Reset
-                </button>
+                  <option disabled selected>Company</option>
+                  <option
+                    v-for="data in listCompany"
+                    :key="data.id"
+                    :value="data.id"
+                  >
+                    {{ data.company_code }} - {{ data.company_name }}
+                  </option>
+                </select>
+                <select
+                  v-model="id_site"
+                  id="id_site"
+                  :class="inputClass"
+                  :disabled="selectSite"
+                  class="mb-3"
+                >
+                  <option disabled selected>Site</option>
+                  <option
+                    v-for="data in listSite"
+                    :key="data.id"
+                    :value="data.id"
+                  >
+                    {{ data.site_code }} - {{ data.site_name }}
+                  </option>
+                </select>
+                <p
+                  class="cursor-pointer mb-2"
+                  v-for="data in header"
+                  :key="data.id"
+                >
+                  <input
+                    type="checkbox"
+                    checked="checked"
+                    class="checkbox checkbox-sm mr-2"
+                    :value="data.id"
+                    v-model="filter.room"
+                  />
+                  <span>{{ data.label }}</span>
+                </p>
+                <div class="my-3 grid grid-cols-2">
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250] mr-2"
+                    @click="filterDataByType()"
+                  >
+                    <span>
+                      <img :src="icon_filter" class="w-5 h-5" />
+                    </span>
+                    Filter
+                  </button>
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                    @click="resetData"
+                  >
+                    <span>
+                      <img :src="icon_reset" class="w-5 h-5" />
+                    </span>
+                    Reset
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -414,6 +453,10 @@ onBeforeMount(() => {
   background-color: rgba(1, 83, 137, 0.912);
   color: #fff;
   font-size: small;
+}
+
+.vuecal__event {
+  color: white;
 }
 
 :disabled {
