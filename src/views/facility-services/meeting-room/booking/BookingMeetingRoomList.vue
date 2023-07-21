@@ -21,7 +21,7 @@ import Api from "@/utils/Api";
 import moment from "moment";
 import Swal from "sweetalert2";
 
-import { ref, onBeforeMount, computed, onMounted, reactive } from "vue";
+import { ref, onBeforeMount, computed, onMounted, reactive, watch } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const listStatus = [
@@ -153,6 +153,25 @@ const fetchListRoom = async () => {
     listRoom.value = api.data.data;
   }
 };
+
+const size = ref(0);
+const setContainerSize = (screenSize) => {
+  const padding = 0;
+  const sidebarSize = sidebar.isWide ? 260 : 100;
+  size.value = screenSize - sidebarSize - padding;
+};
+
+watch(sidebar, () => {
+  setContainerSize(window.innerWidth);
+});
+
+onMounted(() => {
+  setContainerSize(window.innerWidth);
+
+  window.addEventListener("resize", () => {
+    setContainerSize(window.innerWidth);
+  });
+});
 
 const resetData = () => {
   filter.search = "";
@@ -308,19 +327,20 @@ onBeforeMount(() => {
 
 <template>
   <div
-    class="flex flex-col w-full this h-[100vh]"
+    class="flex w-full this h-[100vh] flex-wrap"
     :class="lockScrollbar === true ? 'fixed' : ''"
   >
     <Navbar />
     <div class="flex w-screen content mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="fixed basis-0" />
 
       <div
         class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
         :class="[
           lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
+          sidebar.isWide === true ? 'ml-[260px]  ' : 'ml-[100px]  ',
         ]"
+        :style="{ maxWidth: `${size}px` }"
       >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
@@ -370,7 +390,7 @@ onBeforeMount(() => {
 
           <!-- SORT, DATE & SEARCH -->
           <div
-            class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
+            class="flex flex-wrap auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
             <div class="flex flex-wrap items-center gap-4">
               <div>
@@ -552,9 +572,7 @@ onBeforeMount(() => {
                     <td>{{ data.no_booking_meeting }}</td>
                     <td>{{ data.employee_name }}</td>
                     <td>
-                      <span class="truncate ...">{{
-                        data.title
-                      }}</span>
+                      <span class="truncate ...">{{ data.title }}</span>
                     </td>
                     <td>{{ data.name_meeting_room }}</td>
                     <td>
