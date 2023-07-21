@@ -32,14 +32,17 @@
     let currencyId = ref()
     let remarks = ref()
     let headerRemarks = ref()
+    let headerId = ref(0)
 
     let caId = ref()
     let caDetailData = ref([{}])
     let currentAPIfetchData = ref()
 
     onBeforeMount(() => {
+
       fetchCashAdvanceDetailByRequestTripId()
       fetchCurrency()
+
     })
 
     let listCurrency = ref()
@@ -54,11 +57,18 @@
     }
 
     const fetchCashAdvanceDetailByRequestTripId = async () => {
+      
       const token = JSON.parse(localStorage.getItem("token"))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)
-      currentAPIfetchData.value = api
-      caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
+      
+        try {
+          const api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)
+          currentAPIfetchData.value = api
+          caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
+        } catch (error) {
+          
+        }
+
     }
 
     const fetchCashAdvanceDetailByCashAdvanceId = async () => {
@@ -75,21 +85,22 @@
       fetchCashAdvanceDetailByCashAdvanceId()
     })
 
+    let idCA = ref()
+    let idItemCA = ref()
+    let currentDetailNumber = ref(0)
+
     const assignValue = () => {
+
         // CA Travel Header
-        grandTotal.value = props.value[status.currentIndex].grand_total
-        headerRemarks.value = caDetailData.value[status.currentIndex].remarks
         headerId.value = props.value[status.currentIndex].id
+        grandTotal.value = props.value[status.currentIndex].grand_total
+        headerRemarks.value = props.value[status.currentIndex].remarks
+        currencyId.value = props.value[status.currentIndex].id_currency
 
         // CA Detail by CA ID (CA ID nya berubah)
         caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
-    }
 
-      let idItemCA = ref()
-      let idCA = ref()
-      let idCostCenter = ref()
-  
-      let currentDetailNumber = ref(0)
+    }
 
     const assignDetailValue = (ItemNumber) => {
 
@@ -97,7 +108,7 @@
         // console.log(caDetailData.value)
         ItemNumber === 0 ? currentDetailNumber.value = ItemNumber : currentDetailNumber.value = ItemNumber-1
         item.value = caDetailData.value[currentDetailNumber.value].nama_item
-        nominal.value = caDetailData.value[currentDetailNumber.value].nominal
+        nominal.value = parseInt(caDetailData.value[currentDetailNumber.value].nominal)
         frequency.value = caDetailData.value[currentDetailNumber.value].frequency
         total.value = caDetailData.value[currentDetailNumber.value].total
         currency.value = caDetailData.value[currentDetailNumber.value].currency_name
@@ -109,9 +120,12 @@
     }
 
     const resetValue = () => {
-      grandTotal.value = props.value[0].grand_total
-      headerRemarks.value = props.value[0].remarks
+      
       headerId.value = props.value[0].id
+      headerRemarks.value = props.value[0].remarks
+      grandTotal.value = props.value[0].grand_total
+      currencyId.value = props.value[0].id_currency
+
     }
 
     let selectedCADetailId = ref()
@@ -119,7 +133,7 @@
     const resetDetailValue = () => {
       
       item.value = caDetailData.value[0].nama_item
-      nominal.value = caDetailData.value[0].nominal
+      nominal.value = parseInt(caDetailData.value[0].nominal)
       frequency.value = caDetailData.value[0].frequency
       total.value = caDetailData.value[0].total
       currency.value = caDetailData.value[0].currency_name
@@ -150,10 +164,27 @@
 
     })
 
+
+    const addCAHeader = async () => {
+      
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+    }
+
     const editCAHeader = async () => {
 
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      let value = 0
+
+      caDetailData.value.map((item) => {
+        value += parseInt(item.total)
+      })
+
+      grandTotal.value = value
+
 
       const api = await Api.post(`/cash_advance/update_data/${headerId.value}` , {
         
@@ -164,6 +195,15 @@
         grand_total: grandTotal.value
 
       })
+
+      console.log(api)
+
+    }
+
+    const deleteCAHeader = async () => {
+      
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
     }
 
@@ -210,15 +250,8 @@
       emits('fetchCashAdvance')
       emits('resetTypeOfSubmitData')
       fetchCashAdvanceDetailByCashAdvanceId()
-
-    }
-
-    const emptyCADetail = async () => {
-
-      frequency.value = 0
-      nominal.value = 0
-      total.value = 0
-      remarks.value = ''
+      
+      editCAHeader()
 
     }
 
@@ -234,15 +267,27 @@
       fetchCashAdvanceDetailByRequestTripId()
       fetchCashAdvanceDetailByCashAdvanceId()
 
+      editCAHeader()
+
+    }
+
+    const emptyCADetail = async () => {
+
+      frequency.value = 0
+      nominal.value = 0
+      total.value = 0
+      remarks.value = ''
+
     }
 
     watch(props, () => {
+      
       if(props.value[0].grand_total !== undefined) {
-
-
+        resetValue()
       } else {
         assignValue()
       }
+
     })
 
     watch(caDetailData, () => {
@@ -255,38 +300,27 @@
       
     })
 
-    let headerId = ref(0)
-
     if(props.value[0].grand_total !== undefined) {
        resetValue()
     }
 
     let isAddingDetail = ref(false)
+
     watch(isAddingDetail, () => {
       isAddingDetail.value === true ? emptyCADetail() : assignDetailValue(currentDetailNumber.value)
     })
 
     watch(frequency, () => {
-      
-        // console.log(typeof frequency.value)
         
-        if(typeof frequency.value === 'string') {
-          frequency.value = frequency.value.replace(/\D/g, "")
-        }
-        
-        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
+        if(typeof nominal.value === 'number' && typeof frequency.value === 'number') {
             total.value = nominal.value * frequency.value
         }
 
     })    
 
     watch(nominal, () => {
-        
-        if(typeof nominal.value === 'string') {
-          nominal.value = nominal.value.replace(/\D/g, "")
-        }
 
-        if(typeof nominal.value === 'string' && typeof frequency.value === 'string') {
+        if(typeof nominal.value === 'number' && typeof frequency.value === 'number') {
             total.value = nominal.value * frequency.value
         }
 
@@ -303,6 +337,9 @@
 <template>
 
       <div>
+
+        <!-- {{ props }} -->
+        <!-- {{ currentAPIfetchData.data.data }} -->
   
         <div :class="rowClass">
           
@@ -460,6 +497,7 @@
                 Nominal <span class="text-red-star">*</span>
               </label>
               <input 
+                type="number"
                 :class="inputStylingClass" 
                 placeholder="Nominal"
                 :disabled="!status.isEditing"
@@ -478,6 +516,7 @@
                 Frequency<span class="text-red-star">*</span>
               </label>
               <input 
+                type="number"
                 :class="inputStylingClass" 
                 placeholder="Frequency"
                 :disabled="!status.isEditing"
