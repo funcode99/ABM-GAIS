@@ -32,11 +32,15 @@ const dateEnd = ref();
 
 let sortedData = ref([]);
 let instanceArray = [];
-let roomName = ref([]);
 let Company = ref([]);
 let IDCompany = ref(null);
 let CompanyName = ref();
 let Site = ref([]);
+let IDSite = ref(null);
+let SiteName = ref();
+let Room = ref([]);
+let IDRoom = ref(null);
+let RoomName = ref();
 let role = ref();
 let showSelectADM = ref(false);
 let showSelectAll = ref(false);
@@ -89,7 +93,7 @@ const fetchRoomsReport = async (id) => {
   const params = {
     id_meeting_room: selectedRoomtype.value,
     id_company: IDCompany.value === null ? selectedCompany.value : IDCompany,
-    id_site: selectedSite.value,
+    id_site: IDSite.value === null ? selectedSite.value : IDSite,
     start_date: dateStart.value,
     end_date: dateEnd.value,
     code_status_doc: selectedStatus.value,
@@ -109,14 +113,28 @@ const fetchRoomsReport = async (id) => {
 };
 
 const fetchRoomsName = async () => {
+  const companyID = localStorage.getItem("id_company");
+  const idSite = localStorage.getItem("id_site");
   const token = JSON.parse(localStorage.getItem("token"));
+  role = localStorage.getItem("id_role").replace(/"/g, "");
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/master_meeting_room/get/");
-  roomName = res.data.data;
+  if (role == "ADMTR") {
+    const res = await Api.get("/master_meeting_room/get/");
+    Room = res.data.data;
+  } else {
+    const params = {
+      id_company: companyID,
+      id_site: idSite,
+    };
+    const res = await Api.get(`/master_meeting_room/get/`, { params });
+    Room = res.data.data;
+  }
 };
 
 const fetchCompany = async () => {
   const companyID = localStorage.getItem("id_company");
+  const idSite = localStorage.getItem("id_site");
+
   role = localStorage.getItem("id_role").replace(/"/g, "");
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -132,7 +150,9 @@ const fetchCompany = async () => {
     showSelectAll = true;
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const result = await Api.get(`/company/get_site/${companyID}`);
-    Site.value = result.data.data;
+    Site.value = result.data.data.filter((item) => item.id == idSite);
+    IDSite = Site.value[0].id;
+    SiteName = Site.value[0].site_name;
   }
 };
 
@@ -304,7 +324,7 @@ const showClearButton = computed(() => {
                   v-model="selectedCompany"
                   @change="fetchSite(selectedCompany)"
                 >
-                  <option disabled selected>Comapny</option>
+                  <option disabled selected>Company</option>
                   <option v-for="data in Company" :value="data.id">
                     {{ data.company_name }}
                   </option>
@@ -328,10 +348,19 @@ const showClearButton = computed(() => {
                 <select
                   class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedSite"
+                  v-show="showSelectADM"
                 >
                   <option disabled selected>Site</option>
                   <option v-for="data in Site" :value="data.id">
                     {{ data.site_name }}
+                  </option>
+                </select>
+                <select
+                  v-show="showSelectAll"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                >
+                  <option>
+                    {{ SiteName }}
                   </option>
                 </select>
               </div>
@@ -347,7 +376,7 @@ const showClearButton = computed(() => {
                   v-model="selectedRoomtype"
                 >
                   <option disabled selected>Type</option>
-                  <option v-for="data in roomName" :value="data.id">
+                  <option v-for="data in Room" :value="data.id">
                     {{ data.name_meeting_room }}
                   </option>
                 </select>
