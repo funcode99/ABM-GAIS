@@ -342,12 +342,12 @@ const format_date = (value) => {
                     <div class="flex items-center justify-center">
                       <p>{{ item.item_name }}</p>
                       <img
-                        v-if="!showDetails[item.no_urut]"
+                        v-if="showDetails[item.no_urut]"
                         :src="iconUp"
                         class="mt-1 ml-3 w-[12px] h-[8px]"
                       />
                       <img
-                        v-if="showDetails[item.no_urut]"
+                        v-if="!showDetails[item.no_urut]"
                         :src="expandArrow"
                         class="mt-1 ml-3 w-[12px] h-[8px]"
                       />
@@ -396,12 +396,12 @@ const format_date = (value) => {
                     <div class="flex items-center justify-center">
                       <p>{{ item.item_name }}</p>
                       <img
-                        v-if="!showDetails[item.no_urut]"
+                        v-if="showDetails[item.no_urut]"
                         :src="iconUp"
                         class="mt-1 ml-3 w-[12px] h-[8px]"
                       />
                       <img
-                        v-if="showDetails[item.no_urut]"
+                        v-if="!showDetails[item.no_urut]"
                         :src="expandArrow"
                         class="mt-1 ml-3 w-[12px] h-[8px]"
                       />
