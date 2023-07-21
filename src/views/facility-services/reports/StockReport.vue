@@ -15,6 +15,7 @@ import expandArrow from "@/assets/ExpandArrow.png";
 import iconUp from "@/assets/icon-up.png";
 
 import Api from "@/utils/Api";
+import moment from "moment";
 
 // import { Workbook } from "exceljs";
 import { ref, onBeforeMount, computed } from "vue";
@@ -83,7 +84,6 @@ const fetchStockReport = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/stock_in_out/get/", { params });
-  // console.log(res.data.data);
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
   console.log(sortedData);
@@ -117,15 +117,6 @@ const toggleMenu = (menu) => {
   } else if (menu === "menu2") {
     showMenu2.value = !showMenu2.value;
     icon2.value = showMenu2.value ? iconUp : expandArrow;
-  } else if (menu === "menuItem1") {
-    showMenuItem1.value = !showMenuItem1.value;
-    icon2.value = showMenuItem1.value ? iconUp : expandArrow;
-  } else if (menu === "menuItem2") {
-    showMenuItem2.value = !showMenuItem2.value;
-    icon2.value = showMenuItem2.value ? iconUp : expandArrow;
-  } else if (menu === "menuItemStockOut") {
-    showMenuItemStockOut.value = !showMenuItemStockOut.value;
-    icon2.value = showMenuItemStockOut.value ? iconUp : expandArrow;
   }
 };
 
@@ -136,6 +127,15 @@ const getIcon = (menu) => {
 const showDetails = ref({});
 const toggleDetails = (item) => {
   showDetails.value[item.no_urut] = !showDetails.value[item.no_urut];
+  return showDetails.value[item.no_urut] === showDetails.value[item.no_urut]
+    ? icon1.value
+    : icon2.value;
+};
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
 };
 </script>
 
@@ -342,7 +342,13 @@ const toggleDetails = (item) => {
                     <div class="flex items-center justify-center">
                       <p>{{ item.item_name }}</p>
                       <img
-                        :src="getIcon('menu1')"
+                        v-if="!showDetails[item.no_urut]"
+                        :src="iconUp"
+                        class="mt-1 ml-3 w-[12px] h-[8px]"
+                      />
+                      <img
+                        v-if="showDetails[item.no_urut]"
+                        :src="expandArrow"
                         class="mt-1 ml-3 w-[12px] h-[8px]"
                       />
                     </div>
@@ -352,7 +358,7 @@ const toggleDetails = (item) => {
                   <td>{{ item.total }}</td>
                   <td>{{ item.uom_name }}</td>
                 </tr>
-                <!-- Render the stock_in detail data if shown -->
+
                 <template
                   v-if="showDetails[item.no_urut]"
                   v-for="detailItem in item.detail"
@@ -361,7 +367,7 @@ const toggleDetails = (item) => {
                   <tr>
                     <td>{{ detailItem.no }}</td>
                     <td></td>
-                    <td>{{ detailItem.created_at }}</td>
+                    <td>{{ format_date(detailItem.created_at) }}</td>
                     <td>{{ detailItem.no_dokumen }}</td>
                     <td>{{ detailItem.qty }}</td>
                     <td>{{ detailItem.uom_name }}</td>
@@ -390,7 +396,13 @@ const toggleDetails = (item) => {
                     <div class="flex items-center justify-center">
                       <p>{{ item.item_name }}</p>
                       <img
-                        :src="getIcon('menu1')"
+                        v-if="!showDetails[item.no_urut]"
+                        :src="iconUp"
+                        class="mt-1 ml-3 w-[12px] h-[8px]"
+                      />
+                      <img
+                        v-if="showDetails[item.no_urut]"
+                        :src="expandArrow"
                         class="mt-1 ml-3 w-[12px] h-[8px]"
                       />
                     </div>
@@ -400,7 +412,7 @@ const toggleDetails = (item) => {
                   <td>{{ item.total }}</td>
                   <td>{{ item.uom_name }}</td>
                 </tr>
-                <!-- Render the stock_in detail data if shown -->
+
                 <template
                   v-if="showDetails[item.no_urut]"
                   v-for="detailItem in item.detail"
@@ -409,57 +421,13 @@ const toggleDetails = (item) => {
                   <tr>
                     <td>{{ detailItem.no }}</td>
                     <td></td>
-                    <td>{{ detailItem.created_at }}</td>
+                    <td>{{ format_date(detailItem.created_at) }}</td>
                     <td>{{ detailItem.no_dokumen }}</td>
                     <td>{{ detailItem.qty }}</td>
                     <td>{{ detailItem.uom_name }}</td>
                   </tr>
                 </template>
               </template>
-              <!-- <tr>
-                <td
-                  class="flex justify-center items-center gap-2"
-                  @click="toggleMenu('menu2')"
-                >
-                  <p>Stock Out</p>
-                  <img :src="getIcon('menu2')" class="mt-1 w-[12px] h-[8px]" />
-                </td>
-                <td colspan="5"></td>
-              </tr>
-
-              <tr v-if="showMenu2">
-                <td>1</td>
-                <td
-                  class="flex justify-center items-center gap-2"
-                  @click="toggleMenu('menuItemStockOut')"
-                >
-                  <p>Pen</p>
-                  <img
-                    :src="getIcon('menuItemStockOut')"
-                    class="mt-1 w-[12px] h-[8px]"
-                  />
-                </td>
-                <td></td>
-                <td></td>
-                <td>62</td>
-                <td>Pc</td>
-              </tr>
-              <tr v-if="showMenuItemStockOut">
-                <td>1</td>
-                <td></td>
-                <td>10/04/23</td>
-                <td>OUT-ABM/1132/10.04</td>
-                <td>32</td>
-                <td>Pc</td>
-              </tr>
-              <tr v-if="showMenuItemStockOut">
-                <td>2</td>
-                <td></td>
-                <td>22/04/23</td>
-                <td>OUT-ABM/1320/22.04</td>
-                <td>30</td>
-                <td>Pc</td>
-              </tr> -->
             </tbody>
           </tableData>
         </tableTop>
