@@ -14,7 +14,7 @@ import icon_reset from "@/assets/icon_reset.svg";
 import expandArrow from "@/assets/ExpandArrow.png";
 import iconUp from "@/assets/icon-up.png";
 
-// import Api from "@/utils/Api";
+import Api from "@/utils/Api";
 
 // import { Workbook } from "exceljs";
 import { ref, onBeforeMount, computed } from "vue";
@@ -32,9 +32,17 @@ const monthFormat = "MM";
 const monthValueFormat = "MM";
 const year = ref();
 
-// let sortedData = ref([]);
-// let sortedbyASC = true;
-// let instanceArray = [];
+let sortedData = ref([]);
+let instanceArray = [];
+
+let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
+let pageMultiplier = ref(10);
+let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
@@ -49,8 +57,45 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
+const fetchStockReport = async (id) => {
+  // if (date.value != undefined) {
+  //   if (date.value[0] != null) {
+  //     dateStart.value = date.value[0].toISOString().split("T")[0];
+  //   }
+  //   if (date.value[1] != null) {
+  //     dateEnd.value = date.value[1].toISOString().split("T")[0];
+  //   }
+  //   if (date.value[1] == null) {
+  //     dateEnd.value = dateStart.value;
+  //   }
+  // }
+
+  const params = {
+    id_company: null,
+    id_site: null,
+    start_date: null,
+    end_date: null,
+    code_status_doc: null,
+    search: null,
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/stock_in_out/get/", { params });
+  // console.log(res.data.data);
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  console.log(sortedData);
+  totalPage.value = instanceArray.last_page;
+  totalData.value = instanceArray.total;
+  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+  showingValueTo.value = instanceArray.to;
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
+  fetchStockReport();
 });
 
 const showClearButton = computed(() => {
@@ -86,6 +131,11 @@ const toggleMenu = (menu) => {
 
 const getIcon = (menu) => {
   return menu === "menu1" ? icon1.value : icon2.value;
+};
+
+const showDetails = ref({});
+const toggleDetails = (item) => {
+  showDetails.value[item.no_urut] = !showDetails.value[item.no_urut];
 };
 </script>
 
@@ -270,7 +320,6 @@ const getIcon = (menu) => {
                 </th>
               </tr>
             </thead>
-
             <tbody class="font-JakartaSans font-normal text-sm">
               <tr>
                 <td
@@ -282,76 +331,92 @@ const getIcon = (menu) => {
                 </td>
                 <td colspan="5"></td>
               </tr>
-
-              <tr v-if="showMenu1">
-                <td>1</td>
-                <td
-                  class="flex justify-center items-center gap-2"
-                  @click="toggleMenu('menuItem1')"
+              <template
+                v-if="showMenu1"
+                v-for="item in sortedData.stock_in"
+                :key="item.no_urut"
+              >
+                <tr @click="toggleDetails(item)">
+                  <td>{{ item.no_urut }}</td>
+                  <td>
+                    <div class="flex items-center justify-center">
+                      <p>{{ item.item_name }}</p>
+                      <img
+                        :src="getIcon('menu1')"
+                        class="mt-1 ml-3 w-[12px] h-[8px]"
+                      />
+                    </div>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>{{ item.total }}</td>
+                  <td>{{ item.uom_name }}</td>
+                </tr>
+                <!-- Render the stock_in detail data if shown -->
+                <template
+                  v-if="showDetails[item.no_urut]"
+                  v-for="detailItem in item.detail"
+                  :key="detailItem.no"
                 >
-                  <p>Pen</p>
-                  <img
-                    :src="getIcon('menuItem1')"
-                    class="mt-1 w-[12px] h-[8px]"
-                  />
-                </td>
-                <td></td>
-                <td></td>
-                <td>100</td>
-                <td>Pc</td>
-              </tr>
-              <tr v-if="showMenuItem1">
-                <td>1</td>
-                <td></td>
-                <td>13/04/23</td>
-                <td>IN-ABM/1132/13.04</td>
-                <td>80</td>
-                <td>Pc</td>
-              </tr>
-              <tr v-if="showMenuItem1">
-                <td>2</td>
-                <td></td>
-                <td>30/04/23</td>
-                <td>IN-ABM/1320/30.04</td>
-                <td>20</td>
-                <td>Pc</td>
-              </tr>
-
-              <tr v-if="showMenu1">
-                <td>2</td>
-                <td
-                  class="flex justify-center items-center gap-2"
-                  @click="toggleMenu('menuItem2')"
-                >
-                  <p>Paper Clip</p>
-                  <img
-                    :src="getIcon('menuItem2')"
-                    class="mt-1 w-[12px] h-[8px]"
-                  />
-                </td>
-                <td></td>
-                <td></td>
-                <td>320</td>
-                <td>Box</td>
-              </tr>
-              <tr v-if="showMenuItem2">
-                <td>1</td>
-                <td></td>
-                <td>21/04/23</td>
-                <td>IN-ABM/2322/21.04</td>
-                <td>150</td>
-                <td>Box</td>
-              </tr>
-              <tr v-if="showMenuItem2">
-                <td>2</td>
-                <td></td>
-                <td>08/04/23</td>
-                <td>IN-ABM/1320/08.04</td>
-                <td>170</td>
-                <td>Box</td>
-              </tr>
+                  <tr>
+                    <td>{{ detailItem.no }}</td>
+                    <td></td>
+                    <td>{{ detailItem.created_at }}</td>
+                    <td>{{ detailItem.no_dokumen }}</td>
+                    <td>{{ detailItem.qty }}</td>
+                    <td>{{ detailItem.uom_name }}</td>
+                  </tr>
+                </template>
+              </template>
 
               <tr>
+                <td
+                  class="flex justify-center items-center gap-2"
+                  @click="toggleMenu('menu2')"
+                >
+                  <p>Stock Out</p>
+                  <img :src="getIcon('menu2')" class="mt-1 w-[12px] h-[8px]" />
+                </td>
+                <td colspan="5"></td>
+              </tr>
+              <template
+                v-if="showMenu2"
+                v-for="item in sortedData.stock_out"
+                :key="item.no_dokumen"
+              >
+                <tr @click="toggleDetails(item)">
+                  <td>{{ item.no_urut }}</td>
+                  <td>
+                    <div class="flex items-center justify-center">
+                      <p>{{ item.item_name }}</p>
+                      <img
+                        :src="getIcon('menu1')"
+                        class="mt-1 ml-3 w-[12px] h-[8px]"
+                      />
+                    </div>
+                  </td>
+                  <td></td>
+                  <td></td>
+                  <td>{{ item.total }}</td>
+                  <td>{{ item.uom_name }}</td>
+                </tr>
+                <!-- Render the stock_in detail data if shown -->
+                <template
+                  v-if="showDetails[item.no_urut]"
+                  v-for="detailItem in item.detail"
+                  :key="detailItem.no"
+                >
+                  <tr>
+                    <td>{{ detailItem.no }}</td>
+                    <td></td>
+                    <td>{{ detailItem.created_at }}</td>
+                    <td>{{ detailItem.no_dokumen }}</td>
+                    <td>{{ detailItem.qty }}</td>
+                    <td>{{ detailItem.uom_name }}</td>
+                  </tr>
+                </template>
+              </template>
+              <!-- <tr>
                 <td
                   class="flex justify-center items-center gap-2"
                   @click="toggleMenu('menu2')"
@@ -394,7 +459,7 @@ const getIcon = (menu) => {
                 <td>OUT-ABM/1320/22.04</td>
                 <td>30</td>
                 <td>Pc</td>
-              </tr>
+              </tr> -->
             </tbody>
           </tableData>
         </tableTop>
