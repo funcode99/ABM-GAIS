@@ -84,7 +84,7 @@ const fetchRoomsReport = async (id) => {
   const params = {
     id_meeting_room: selectedRoomtype.value,
     id_company: selectedCompany.value,
-    id_site: selectedSite.values,
+    id_site: selectedSite.value,
     start_date: dateStart.value,
     end_date: dateEnd.value,
     code_status_doc: selectedStatus.value,
