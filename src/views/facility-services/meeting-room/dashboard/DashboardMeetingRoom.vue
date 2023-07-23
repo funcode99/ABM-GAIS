@@ -205,6 +205,7 @@ const resetData = () => {
 const openModal = (type, id) => {
   visibleModal.value = true
   statusForm.value = type
+  document.getElementById("booking_modal").click()
   if (id) {
     idItem.value = parseInt(id)
   }
@@ -212,7 +213,9 @@ const openModal = (type, id) => {
 
 const closeModal = () => {
   visibleModal.value = false
-  fetch()
+  document.getElementById("booking_modal").click()
+
+  // fetch()
 }
 
 const onEventCreate = (event, deleteEventFunction) => {
@@ -273,7 +276,7 @@ onBeforeMount(() => {
               :time-from="0 * 60"
               :time-step="30"
               :disable-views="['years', 'year', 'month']"
-              :editable-events="{ title: true, drag: false, create: false }"
+              :editable-events="{ title: true, drag: true, create: false }"
               :events="datas"
               :split-days="header"
               :min-cell-width="500"
@@ -283,6 +286,9 @@ onBeforeMount(() => {
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
               style="width: 270px; height: 100%"
+              class="basis-9/12"
+              @cell-dblclick="openModal('add', 0)"
+              :on-event-click="openModal('view', 0)"
             >
               <template #split-label="{ split }">
                 <strong :style="`color: ${split.color}`">{{
@@ -290,17 +296,12 @@ onBeforeMount(() => {
                 }}</strong>
               </template>
             </vue-cal>
-            <!-- <ModalAddBookingRoom
-                v-if="visibleModal"
-                @close="closeModal"
-                :status="statusForm"
-                :id="idItem"
-              /> -->
+
             <div
-              class="basis-auto ease-in duration-300 bg-white"
+              class="ease-in duration-300 bg-white"
               :class="
                 showFilter
-                  ? '-translate-x-0  w-[350px]'
+                  ? '-translate-x-0  w-[250px]'
                   : '-translate-x-full  w-0'
               "
             >
@@ -402,6 +403,13 @@ onBeforeMount(() => {
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
   </div>
+
+  <ModalAddBookingRoom
+    v-show="visibleModal"
+    @close="closeModal"
+    :status="statusForm"
+    :id="idItem"
+  />
 </template>
 
 <style>

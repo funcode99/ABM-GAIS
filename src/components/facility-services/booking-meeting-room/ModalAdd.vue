@@ -231,7 +231,7 @@ watchEffect((newValue) => {
 </script>
 
 <template>
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
+  <input type="checkbox" id="booking_modal" class="modal-toggle" />
   <div class="modal min-h-[300px]">
     <div class="modal-box relative">
       <nav class="sticky top-0 z-50 bg-[#015289]">
