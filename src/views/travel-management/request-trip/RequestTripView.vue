@@ -154,16 +154,19 @@
     }
 
     const getCashAdvance = async () => {
+      console.log('masuk ke get cash advance')
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         let api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)    
         cashAdvanceData.value = api.data.data
         headerCAData.value = true
+        console.log(headerCAData.value)
       } catch (error) {
         console.log(error)
         cashAdvanceData.value = [{}]
         headerCAData.value = false
+        console.log(headerCAData.value)
       }
     }
 
@@ -256,9 +259,15 @@
     })
 
     watch(headerTitle, () => {
+      
       assignSelectedData()
       dataIndex.value = 0
       showingValue.value = 1
+
+      if(headerTitle.value === 'Cash Advance') {
+        getCashAdvance()
+      }
+
     })
 
     let count = ref(1)
@@ -771,10 +780,10 @@
                             @resetTypeOfSubmitData="resetTypeOfSubmit"
                             
                             >
-                            <!-- @resetSubmitNewCAHeader="submitNewCA = false" -->
-                            <!-- :submitNewCAStatus="submitNewCA" -->
+
+                            {{headerCAData}}
                           
-                          <!-- Button khusus Cash Advance View, hanya muncul tombol add saat CA Header nya kosong -->
+                          <!-- Button khusus CA, muncul tombol add saja saat CA Header nya kosong -->
                           <detailsFormHeader v-if="headerTitle === 'Cash Advance' & !headerCAData"
                             :title="headerTitle" 
                             @changeView="changeViewLayout"
@@ -789,18 +798,16 @@
 
                               <!-- saat CA Header kosong muncul Create -->
                               <buttonAddFormView
-                                title="Create New Cash Advance Document"
+                                title="Create New CA Document"
                                 v-if="isEditing & !showCreateNewCAHeader"
                                 @click="showCreateNewCAHeader = true" 
                               />
 
                               <!-- saat klik create, maka akan muncul menu submit -->
-                              <!-- submit NEW CA akan mengirim props ke CA View untuk menjalankan API Add -->
                               <buttonAddFormView 
-                                title="Submit New Cash Advance"
+                                title="Add CA from empty header"
                                 v-if="isEditing & showCreateNewCAHeader"
                                 />
-                                <!-- @click="submitNewCA = true" -->
   
                               <!-- button cancel untuk membatalkan create -->
                               <buttonCancelFormView 
@@ -813,86 +820,108 @@
                           </detailsFormHeader>
 
                           <!-- Button khusus CA, muncul saat ada data CA Header -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData">
+                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader">
 
-<!-- muncul saat Cash Advance Header nya ada -->
-<div
-  class="flex gap-2"
-  v-if="!headerCAData"
->
+                            <!-- muncul saat Cash Advance Header nya ada -->
+                            <div
+                              class="flex gap-2"
+                            >
 
-      <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
+                                  <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
 
-        <buttonEditFormView
-          v-if="isEditing " 
-          @click="changeType('Edit')"
-        />
+                                    <buttonEditFormView
+                                      v-if="isEditing " 
+                                      @click="changeType('Edit')"
+                                    />
 
-        <buttonAddFormView
-          title="Add Cash Advance"
-          v-if="isEditing " 
-          @click="changeType('Add')"
-        />
+                                    <!-- @click="changeType('Add')" -->
+                                    <buttonAddFormView
+                                      title="Add Cash Advance"
+                                      v-if="isEditing"
+                                      @click="showCreateNewCAHeader = true"
+                                    />
 
-        <!-- Issued Ticket Button -->
-        <button 
-          class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" 
-          v-if="$route.path === '/approvalrequesttrip'"
-        >
-          Issued Ticket
-        </button>
+                                    <!-- Issued Ticket Button -->
+                                    <button 
+                                      class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" 
+                                      v-if="$route.path === '/approvalrequesttrip'"
+                                    >
+                                      Issued Ticket
+                                    </button>
 
-        <!-- Revise Button -->
-        <button 
-          class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
-          v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'" 
-        >
-          Revise
-        </button>
+                                    <!-- Revise Button -->
+                                    <button 
+                                      class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                                      v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'" 
+                                    >
+                                      Revise
+                                    </button>
 
-        <!-- Showing data quantity -->
-        <div 
-          class="flex gap-2 justify-between items-center mx-1 py-2"
-        >
+                                    <!-- Showing data quantity -->
+                                    <div 
+                                      class="flex gap-2 justify-between items-center mx-1 py-2"
+                                    >
 
-          <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-            Showing {{ showingValue }} 
-            of {{ currentSelectedData.length }} entries
-          </p>
+                                      <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                                        Showing {{ showingValue }} 
+                                        of {{ currentSelectedData.length }} entries
+                                      </p>
 
-          <vue-awesome-paginate
-            :total-items="currentSelectedData.length"
-            :items-per-page="1"
-            :on-click="onChangePage"
-            v-model="showingValue"
-            :max-pages-shown="3"
-            :show-breakpoint-buttons="false"
-            :show-jump-buttons="true"
-          />
+                                      <vue-awesome-paginate
+                                        :total-items="currentSelectedData.length"
+                                        :items-per-page="1"
+                                        :on-click="onChangePage"
+                                        v-model="showingValue"
+                                        :max-pages-shown="3"
+                                        :show-breakpoint-buttons="false"
+                                        :show-jump-buttons="true"
+                                      />
 
-        </div>
+                                    </div>
 
-      </div>
+                                  </div>
 
-      <div class="flex-1" v-if="viewLayout === 'document'"></div>
+                                  <div class="flex-1" v-if="viewLayout === 'document'"></div>
 
-      <!-- DELETE BUTTON -->
-      <button 
-        @click="changeType('Delete')"
-        v-if="isEditing && viewLayout === 'document'" 
-        class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
-      >
+                                  <!-- DELETE BUTTON -->
+                                  <button 
+                                    @click="changeType('Delete')"
+                                    v-if="isEditing && viewLayout === 'document'" 
+                                    class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
+                                  >
 
-        <img :src="deleteDocumentIcon" class="w-6 h-6" />
-        Delete
+                                    <img :src="deleteDocumentIcon" class="w-6 h-6" />
+                                    Delete
 
-      </button>
+                                  </button>
 
 
-</div>
+                            </div>
+
                           </detailsFormHeader>
 
-                        </cashAdvanceFormView>
+                          <!-- Button khusus CA, untuk Add saat data header sudah ada -->
+                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader">
+                            
+                            <div
+                              class="flex gap-2"
+                            >
+                              <buttonAddFormView
+                                title="Add CA from not empty header"
+                                v-if="isEditing"
+                                @click="showCreateNewCAHeader = true"
+                              />
+
+                              <buttonCancelFormView 
+                                v-if="isEditing"
+                                @click="showCreateNewCAHeader = false"               
+                              />
+                            </div>
+
+
+                          </detailsFormHeader>
+
+                          </cashAdvanceFormView>
 
                           <!-- table Step 8 -->
                           <cashAdvanceTableView 

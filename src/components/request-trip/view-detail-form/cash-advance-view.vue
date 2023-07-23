@@ -35,15 +35,15 @@
     let listCurrency = ref()
 
     let name = localStorage.getItem('username')
-    let grandTotal = ref()
+    let grandTotal = ref(0)
 
     let item = ref()
-    let itemId = ref(1)
+    let itemId = ref([1, 'Meals'])
     let nominal = ref()
     let frequency = ref()
     let total = ref()
     let currency = ref()
-    let currencyId = ref()
+    let currencyId = ref([0, ''])
     let remarks = ref()
     let headerRemarks = ref()
     let headerId = ref(0)
@@ -73,13 +73,11 @@
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       
         try {
-          
           const api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)
           currentAPIfetchData.value = api
           caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
-
         } catch (error) {
-          
+          console.log(error)
         }
 
     }
@@ -99,7 +97,7 @@
         headerId.value = props.value[status.currentIndex].id
         grandTotal.value = props.value[status.currentIndex].grand_total
         headerRemarks.value = props.value[status.currentIndex].remarks
-        currencyId.value = props.value[status.currentIndex].id_currency
+        currencyId.value[0] = props.value[status.currentIndex].id_currency
 
         // CA Detail by CA ID (CA ID nya berubah)
         if(currentAPIfetchData.value !== undefined) {
@@ -130,12 +128,17 @@
 
     }
 
+    const assignArrayDetailValue = (ItemNumber) => {
+      // console.log(ItemNumber)
+      currentArrayDetailIndex.value = ItemNumber
+    }
+
     const resetValue = () => {
       
       headerId.value = props.value[0].id
       headerRemarks.value = props.value[0].remarks
       grandTotal.value = props.value[0].grand_total
-      currencyId.value = props.value[0].id_currency
+      currencyId.value[0] = props.value[0].id_currency
 
     }
 
@@ -161,26 +164,21 @@
       
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      
-      try {
-        emits('resetSubmitNewCAHeader') 
-      } catch (error) {
-        emits('resetSubmitNewCAHeader')
-      }
 
       console.log('masuk ke add ca header')
 
-      // const api = await Api.post(`/cash_advance/store`, {
-        // id_employee: ,
-        // type_ca: ,
-        // id_request_trip: ,
-        // remarks: ,
-        // event: ,
-        // date: ,
-        // id_currency: ,
-        // grand_total: ,
-        // array_detail: ,
-      // })
+      const api = await Api.post(`/cash_advance/store`, {
+        type_ca: 1,
+        id_employee: localStorage.getItem('id_employee'),
+        id_request_trip: localStorage.getItem('tripIdView'),
+        id_currency: currencyId.value[0],
+        remarks: headerRemarks.value,
+        grand_total: grandTotal.value,
+        array_detail: arrayDetail.value,
+      })
+
+      console.log(api)
+      emits('fetchCashAdvance')
 
     }
 
@@ -201,7 +199,7 @@
         
         id_employee: localStorage.getItem('id_employee'),
         id_request_trip: localStorage.getItem('tripIdView'),
-        id_currency: currencyId.value,
+        id_currency: currencyId.value[0],
         remarks: headerRemarks.value,
         grand_total: grandTotal.value
 
@@ -247,33 +245,39 @@
 
     }
 
-    const editCADetail = async () => {
+    const checkEditCADetail = async () => {
       
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-      console.log(caDetailData.value.map((item) => {
-        console.log(item.id)
-        return item.id !== idForSubmitCADetail.value
-      }))
-    
-      const api = await Api.post(`/cash_advance/update_data_detail/${selectedCADetailId.value}`, {
+      if(JSON.stringify(props) === '[{}]' ) {
 
-        id_ca: idCA.value,
-        id_item_ca: idItemCA.value,
-        frequency: frequency.value,
-        nominal: nominal.value,
-        total: total.value,
-        remarks: remarks.value
-
-      })
-
-      console.log(api)
-      emits('fetchCashAdvance')
-      emits('resetTypeOfSubmitData')
-      fetchCashAdvanceDetailByCashAdvanceId()
+      } else {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  
+        console.log(caDetailData.value.map((item) => {
+          console.log(item.id)
+          return item.id !== idForSubmitCADetail.value
+        }))
       
-      // editCAHeader()
+        const api = await Api.post(`/cash_advance/update_data_detail/${selectedCADetailId.value}`, {
+  
+          id_ca: idCA.value,
+          id_item_ca: idItemCA.value,
+          frequency: frequency.value,
+          nominal: nominal.value,
+          total: total.value,
+          remarks: remarks.value
+  
+        })
+  
+        console.log(api)
+        emits('fetchCashAdvance')
+        emits('resetTypeOfSubmitData')
+        fetchCashAdvanceDetailByCashAdvanceId()
+        
+        // editCAHeader()
+      }
+
 
     }
 
@@ -293,6 +297,7 @@
 
     }
 
+    // berguna saat ingin menambah ca detail baru
     const emptyCADetail = async () => {
 
       frequency.value = 0
@@ -320,6 +325,10 @@
             assignValue()
         }
 
+        if(status.showCreateCAHeader === false) {
+          arrayDetail.value = []
+        }
+
     })
     
     watch(props, () => {
@@ -334,8 +343,10 @@
     })
 
     watch(caDetailData, () => {
+
+      // console.log(caDetailData.value.length == 0)
       
-      if(caDetailData.value[0].nominal !== undefined) {
+      if(caDetailData.value.length !== 0) {
         resetDetailValue()
       } else {
         assignValue()
@@ -378,39 +389,81 @@
 
       console.log('masuk ke array detail')
 
-      arrayDetailForm.value = {
-            id_item_ca: item.value,
-            frequency: frequency.value,
-            nominal: nominal.value,
-            total: total.value,
-            remarks: remarks.value,
-            currency: currencyId.value
-      }
+      if(currencyId.value[1] === '') {
+        alert('Silahkan pilih currency terlebih dahulu')
+      } else {
+        
+        arrayDetailForm.value = {
+              id_item_ca: itemId.value[0],
+              item_name: itemId.value[1],
+              frequency: frequency.value,
+              nominal: nominal.value,
+              total: total.value,
+              remarks: remarks.value,
+        }
+        
+        if(grandTotal.value === 'NaN') {
+          grandTotal.value = 0
+        }
 
         grandTotal.value += arrayDetailForm.value.total
         arrayDetail.value.push(arrayDetailForm.value)
         arrayDetailForm.value = {}
 
+      }
+
     }
+
+    const editArrayDetail = () => {
+      
+      arrayDetail.value[currentArrayDetailIndex.value-1] = {
+        id_item_ca: itemId.value[0],
+        item_name: itemId.value[1],
+        frequency: frequency.value,
+        nominal: nominal.value,
+        total: total.value,
+        remarks: remarks.value,
+      }
+
+    }
+
+    const deleteArrayDetail = () => {
+      arrayDetail.value.splice(currentArrayDetailIndex.value-1, 1)
+    }
+
+    let currentArrayDetailIndex = ref(1)
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
+
+    const tableHeadCashAdvance = [
+        {id: 1, title: 'Item'},
+        {id: 2, title: 'Frequency'},
+        {id: 3, title: 'Currency'},
+        {id: 4, title: 'Nominal'},
+        {id: 5, title: 'Total'},
+        {id: 6, title: 'Remarks'}
+    ]
     
 </script>
 
 <template>
 
       <div>
-  
+
+        <!-- untuk Add ca header -->
+        <!-- seakan2 mau add terus, padahal input nya masih disabled -->
         <form @submit.prevent="addCAHeader">
 
           <slot></slot>
           
+          <!-- Abaikan, ini seharusnya semua disabled -->
           <div :class="rowClass">
             
+            <!-- Traveller sudah seharusnya disabled -->
             <div :class="columnClass">
               
               <label :class="labelStylingClass">
@@ -425,7 +478,8 @@
               />
   
             </div>
-    
+
+            <!-- Grand Total sudah seharusnya disabled -->
             <div :class="columnClass">
               <label :class="labelStylingClass">Grand Total</label>
               <input 
@@ -437,13 +491,13 @@
             </div>
     
             <div :class="columnClass">
-              
             </div>
     
           </div>
     
           <div :class="rowClass">
             
+            <!-- Notes Remarks Header -->
             <div :class="columnClass">
               
               <label for="notes" :class="labelStylingClass">
@@ -461,6 +515,7 @@
             
             </div>
     
+            <!-- Currency -->
             <div :class="columnClass">
     
               <label for="currency" :class="labelStylingClass">
@@ -476,13 +531,26 @@
                 :disabled="!status.showCreateCAHeader"
               >
   
-                <option v-for="data in listCurrency" :key="data.id" :value="data.id">
+                <option v-for="data in listCurrency" :key="data.id" :value="[data.id, data.currency_name]">
                     {{ data.currency_name }}
                 </option>
   
               </select>
+
+              <select
+              required
+                id="currency"
+                v-if="isAddingDetail || (status.isEditingFromRequestTrip && JSON.stringify(props[0]) !== '{}')" 
+                :class="inputStylingClass" 
+                v-model="currencyId"
+                :disabled="!status.showCreateCAHeader"
+              >
+                <option v-for="data in listCurrency" :key="data.id" :value="[data.id, data.currency_name]">
+                  {{ data.currency_name }}
+                </option>
+              </select>
   
-              <input v-if="!status.isEditingFromRequestTrip || !isAddingDetail && JSON.stringify(props[0]) !== '{}' " :class="inputStylingClass" v-model="currency" type="text" disabled />
+              <input v-if="!status.isEditingFromRequestTrip" :class="inputStylingClass" v-model="currency" type="text" disabled />
   
             </div>
   
@@ -491,7 +559,10 @@
           </div>
 
         </form>
+
+        {{ arrayDetail }}
   
+        <!-- untuk CRUD ca detail -->
         <form @submit.prevent="">
 
           <!-- Tempat Segala Button Ada disini -->
@@ -505,15 +576,16 @@
               <!-- bisa di edit kalo header nya ga kosong, kalo header kosong pasti detail nya juga kosong -->
               <!-- menggunakan '&' dan '&&' hasil nya sama saja -->
               <buttonEditFormView 
-              @click="editCADetail" 
+              @click="editArrayDetail" 
               v-if="!isAddingDetail & status.isEditingFromRequestTrip & status.showCreateCAHeader & arrayDetail.length > 0"
               />
   
               <!-- untuk confirm add -->
               <!-- @click="isAddingDetail = true" -->
               <buttonAddFormView
-                title="Create Cash Advance Detail"
-                v-if="!isAddingDetail & status.isEditingFromRequestTrip & status.showCreateCAHeader" 
+                title="Create CA Detail"
+                v-if="!isAddingDetail & status.isEditingFromRequestTrip & status.showCreateCAHeader"
+                @click=addToArrayDetail
               />
   
               <!-- untuk submit add detail saat header nya ada -->
@@ -526,7 +598,7 @@
               <!-- untuk submit add detail saat header nya kosong -->
               <buttonAddFormView 
                 title="Create Cash Advance Detail"
-                v-if="isAddingDetail && JSON.stringify(props) === '[{}]' & status.isEditingFromRequestTrip " 
+                v-if="isAddingDetail && JSON.stringify(props) === '[{}]' & status.isEditingFromRequestTrip" 
                 @click="addToArrayDetail"
               />
   
@@ -557,6 +629,28 @@
                 />
   
               </div>
+
+              <div 
+                v-if="JSON.stringify(props) === '[{}]' "
+                class="flex items-center gap-4 ml-8"
+              >
+  
+                <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                  Showing {{ arrayDetail.length === 0 ? 0 : currentArrayDetailIndex }} 
+                  of {{ arrayDetail.length }} entries
+                </p>
+    
+                <vue-awesome-paginate
+                  :total-items="arrayDetail.length"
+                  :items-per-page="1"
+                  v-model="currentArrayDetailIndex"
+                  :on-click="assignArrayDetailValue"
+                  :max-pages-shown="3"
+                  :show-breakpoint-buttons="false"
+                  :show-jump-buttons="true"
+                />
+  
+              </div>
               
             </div>
   
@@ -564,9 +658,19 @@
   
             <!-- Delete Button -->
             <button 
-              v-if="!isAddingDetail && status.isEditingFromRequestTrip && JSON.stringify(props) !== '[{}]'"
+              v-if="!status.showCreateCAHeader & JSON.stringify(props) !== '[{}]'"
               class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
               @click="deleteCADetail"
+            >
+              <img :src="deleteDocumentIcon" class="w-6 h-6" />
+              Delete
+            </button>
+
+            <!-- Delete Button for Add -->
+            <button 
+              v-if="status.showCreateCAHeader & arrayDetail.length > 0"
+              class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
+              @click="deleteArrayDetail"
             >
               <img :src="deleteDocumentIcon" class="w-6 h-6" />
               Delete
@@ -574,6 +678,11 @@
   
             <hr class="border border-black" />
             
+          </div>
+
+          <!-- Button untuk urusan Add New CA Header/Detail -->
+          <div>
+
           </div>
   
           <div :class="rowClass">
@@ -601,9 +710,9 @@
                 >
                 <!-- :disabled="JSON.stringify(props) === '[{}]'" -->
                 
-                <option value="1">Meals from Empty CA Detail</option>
-                <option value="2">Transport</option>
-                <option value="3">Others</option>
+                <option :value="[1, 'Meals']">Meals</option>
+                <option :value="[2, 'Transport']">Transport</option>
+                <option :value="[3, 'Others']">Others</option>
 
               </select>
 
@@ -701,11 +810,61 @@
           </div>
   
         </form>
+
+        <table v-if="arrayDetail.length > 0" class="table">
+                          
+          <thead>
+                              <tr>
+                                <th v-for="data in tableHeadCashAdvance" :key="data.id">
+                                  {{ data.title }}
+                                </th>
+                              </tr>
+          </thead>
+  
+          <tbody>
+            <tr v-for="data in arrayDetail" :key="data.id">
+                                <td>
+                                  {{ data.item_name }}
+                                </td>
+                                <td>
+                                  {{ data.frequency }}
+                                </td>
+                                <td>
+                                  <!-- {{ data.currency }} -->
+                                  {{ currencyId[1] }}
+                                </td>
+                                <td>
+                                  {{ data.nominal }}
+                                </td>
+                                <td>
+                                  {{ data.total }}
+                                </td>
+                                <td>
+                                  {{ data.remarks }}
+                                </td>
+            </tr>
+          </tbody>
+  
+        </table>
   
       </div>
 
 </template>
 
 <style scoped>
+      .table :where(th, td) {
+  padding: .5rem !important;
+    }
 
+    .table th {
+    background: #015289 !important;
+    border-color: #b9b9b9 !important;
+    border-width: 2px;
+    color: white;
+    }
+
+    .table td {
+    border-color: #b9b9b9 !important;
+    border-width: 2px;
+    }
 </style>
