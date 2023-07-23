@@ -8,6 +8,9 @@
     import Api from '@/utils/Api'
 
     import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
+    import buttonCancelFormView from '@/components/atomics/buttonCancelFormView.vue'
+    import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
+    import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
     
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
@@ -15,8 +18,6 @@
     import multiStepCircleVertical from '@/components/molecules/multiStepCircleVertical.vue'
     import detailsFormHeader from '@/components/organisms/detailsFormHeader.vue'
 
-    import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
-    import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
 
     import guestAsTravellerFormView from '@/components/request-trip/view-detail-form/guest-as-traveller-view.vue'
     import airlinesFormView from '@/components/request-trip/view-detail-form/airlines-view.vue'
@@ -36,6 +37,8 @@
 
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
+
+    let headerCAData = ref(true)
 
     let isEditing = ref(false)
     let isAdding = ref(false)
@@ -156,9 +159,11 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         let api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)    
         cashAdvanceData.value = api.data.data
+        headerCAData.value = true
       } catch (error) {
         console.log(error)
         cashAdvanceData.value = [{}]
+        headerCAData.value = false
       }
     }
 
@@ -344,6 +349,9 @@
       fileSend.value = event.target.files[0]
     }
 
+    const showCreateNewCAHeader = ref(false)
+    const submitNewCA = ref(false)
+
 </script>
 
 <template>
@@ -380,21 +388,26 @@
                       
                     </div>
 
-                    <!-- SUBMIT & EDIT BUTTON -->
+                    <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
                     <!-- v-if="purposeOfTripData[currentIndex].status !== 'Waiting Approval'" -->
                     <div class="flex gap-4 mt-6 mb-3 ml-5">
                         
                       <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
                       <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
                         
-                      <button @click="submitRequestTrip" v-if="!isEditing" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                      <!-- SUBMIT BUTTON -->
+                      <button 
+                        v-if="!isEditing" 
+                        @click="submitRequestTrip" 
+                        class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                      >
                         Submit
                       </button>
-                        
-                      <button v-if="isEditing" @click="isEditing = false" 
-                      class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
-                        Cancel
-                      </button>
+
+                      <buttonCancelFormView
+                        v-if="isEditing"
+                        @click="isEditing = false; showCreateNewCAHeader = false"
+                      />
 
                     </div>
 
@@ -467,21 +480,47 @@
 
                     <!-- TAB BACKGROUND -->
                     <div class="bg-blue rounded-lg pt-2">
+                            
                             <button @click="tab = 'details'" class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative">
-                                <div :class="tab == 'details' ? 'block' : 'hidden'" class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"></div>
+                                <div
+                                class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg" 
+                                :class="tab == 'details' ? 'block' : 'hidden'" 
+                                ></div>
                                 Details
                             </button>
-                            <button @click="tab = 'tlk'" class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative">
-                                <div :class="tab == 'tlk' ? 'block' : 'hidden'" class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"></div>
+                            
+                            <button 
+                              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative"
+                              @click="tab = 'tlk'" 
+                            >
+
+                                <div 
+                                  class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
+                                  :class="tab == 'tlk' ? 'block' : 'hidden'" 
+                                  ></div>
                                 TLK Info
+
                             </button>
-                            <button @click="tab = 'approval'" class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative">
-                                <div :class="tab == 'approval' ? 'block' : 'hidden'" class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"></div>
+
+                            <button 
+                              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative"
+                              @click="tab = 'approval'" 
+                              >
+
+                                <div 
+                                  class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
+                                  :class="tab == 'approval' ? 'block' : 'hidden'" 
+                                  ></div>
                                 Approval
+
                             </button>
+
                     </div>
 
                     <!-- TAB -->
+
+
+                    <!-- DOCUMENT DETAIL -->
                     <div v-if="tab == 'details'" class="flex">
                                           
                         <!-- step circle -->
@@ -514,41 +553,50 @@
 
                         </div>
 
-                        <!-- details form -->
+                        <!-- UNTUK MELIHAT DOCUMENT DETAIL DARI TIAP STEP REQUEST TRIP -->
                         <form class="flex-1" @submit.prevent="">
-
-                          <!-- <div>
-                            data index{{ dataIndex }}
-                          </div>
-                          <div>
-                            showing value {{ showingValue }}
-                          </div>
-                          <div>
-                            current selected data {{ currentSelectedData.length }}
-                          </div>
-
-                          <div>
-                            {{ currentSelectedData }}
-                          </div> -->
                             
-                          <detailsFormHeader @changeView="changeViewLayout" :title="headerTitle" v-if="!isAdding">
+                          <!-- BUTTON INI MUNCUL UNTUK MENGEDIT DOCUMENT REQUEST TRIP YANG SUDAH ADA (READ, UPDATE, DELETE) -->
+                          <detailsFormHeader 
+                            v-if="!isAdding & headerTitle !== 'Cash Advance' " 
+                            :title="headerTitle" 
+                            @changeView="changeViewLayout"
+                          >
 
                             <div class="ml-7" v-if="viewLayout === 'document'"></div>
 
                             <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
 
-                              <buttonEditFormView v-if="isEditing" @click="changeType('Edit')" />
-                              <buttonAddFormView v-if="isEditing" @click="changeType('Add')" />
+                              <buttonEditFormView
+                              v-if="isEditing & headerTitle !== 'Cash Advance' " 
+                              @click="changeType('Edit')"
+                               />
+
+                               <buttonAddFormView 
+                               v-if="isEditing & headerTitle !== 'Cash Advance' " 
+                               @click="changeType('Add')"
+                              />
   
-                              <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" v-if="isEditing == 'R'">
+                              <!-- Issued Ticket Button -->
+                              <button 
+                                class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" 
+                                v-if="$route.path === '/approvalrequesttrip'"
+                              >
                                 Issued Ticket
                               </button>
   
-                              <button v-if="purposeOfTripData[currentIndex].status === 'Confirmed'" class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+                              <!-- Revise Button -->
+                              <button 
+                                class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                                v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'" 
+                              >
                                 Revise
                               </button>
   
-                              <div class="flex gap-2 justify-between items-center mx-1 py-2">
+                              <!-- Showing data quantity -->
+                              <div 
+                                class="flex gap-2 justify-between items-center mx-1 py-2"
+                              >
   
                                 <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
                                   Showing {{ showingValue }} 
@@ -571,19 +619,54 @@
 
                             <div class="flex-1" v-if="viewLayout === 'document'"></div>
                             
-                            <button v-if="isEditing && viewLayout === 'document'" class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3" @click="changeType('Delete')">
+                            <!-- DELETE BUTTON -->
+                            <button 
+                              @click="changeType('Delete')"
+                              v-if="isEditing && viewLayout === 'document'" 
+                              class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
+                            >
+
                               <img :src="deleteDocumentIcon" class="w-6 h-6" />
                               Delete
+
                             </button>
 
                           </detailsFormHeader>
 
-                          <detailsFormHeader :title="headerTitle" v-if="isAdding">
-                            <buttonAddFormView class="mx-7" @click="changeType('Submit Add')" />
-                            <button class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold" @click="isAdding = false, changeType('none')">
-                              Cancel
-                            </button>
+                          <!-- BUTTON INI MUNCUL UNTUK MENAMBAH DOCUMENT REQUEST TRIP (Add) -->
+                          <detailsFormHeader 
+                            :title="headerTitle"
+                            v-if="isAdding & headerTitle !== 'Cash Advance'"
+                            @changeView="changeViewLayout"
+                          >
+
+                            <buttonAddFormView 
+                              @click="changeType('Submit Add')"
+                              class="mx-7" 
+                            />
+                            
+                            <buttonCancelFormView 
+                              @click="isAdding = false, changeType('none')"  
+                            />
+
                           </detailsFormHeader>
+
+                          <!-- {{ submitNewCA }} -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                           <!-- form Step 3 -->
                           <guestAsTravellerFormView
@@ -672,15 +755,144 @@
 
                           <!-- form Step 8 -->
                           <cashAdvanceFormView 
+                            
                             v-if="headerTitle === 'Cash Advance' && viewLayout === 'document'" 
                             class="ml-8" 
-                            :isEditing="isEditing"
+                            :isAddingFromRequestTrip="isAdding"
+                            :isEditingFromRequestTrip="isEditing"
                             :currentIndex="dataIndex" 
                             :currentDetailIndex="detailIndex"
+                            :isHeaderExist="headerCAData"
                             :typeOfSubmitData="typeOfSubmitToProps"
+                            
+                            :showCreateCAHeader="showCreateNewCAHeader"
+                            
                             @fetchCashAdvance="getCashAdvance"
                             @resetTypeOfSubmitData="resetTypeOfSubmit"
-                          />
+                            
+                            >
+                            <!-- @resetSubmitNewCAHeader="submitNewCA = false" -->
+                            <!-- :submitNewCAStatus="submitNewCA" -->
+                          
+                          <!-- Button khusus Cash Advance View, hanya muncul tombol add saat CA Header nya kosong -->
+                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & !headerCAData"
+                            :title="headerTitle" 
+                            @changeView="changeViewLayout"
+                            >
+
+                            <!-- muncul saat Cash Advance Header nya kosong -->
+                            <div 
+                              class="flex gap-2"
+                              >
+
+                              <div class="ml-7"></div>
+
+                              <!-- saat CA Header kosong muncul Create -->
+                              <buttonAddFormView
+                                title="Create New Cash Advance Document"
+                                v-if="isEditing & !showCreateNewCAHeader"
+                                @click="showCreateNewCAHeader = true" 
+                              />
+
+                              <!-- saat klik create, maka akan muncul menu submit -->
+                              <!-- submit NEW CA akan mengirim props ke CA View untuk menjalankan API Add -->
+                              <buttonAddFormView 
+                                title="Submit New Cash Advance"
+                                v-if="isEditing & showCreateNewCAHeader"
+                                />
+                                <!-- @click="submitNewCA = true" -->
+  
+                              <!-- button cancel untuk membatalkan create -->
+                              <buttonCancelFormView 
+                                v-if="isEditing & showCreateNewCAHeader"
+                                @click="showCreateNewCAHeader = false"               
+                              />
+
+                            </div>
+
+                          </detailsFormHeader>
+
+                          <!-- Button khusus CA, muncul saat ada data CA Header -->
+                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData">
+
+<!-- muncul saat Cash Advance Header nya ada -->
+<div
+  class="flex gap-2"
+  v-if="!headerCAData"
+>
+
+      <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
+
+        <buttonEditFormView
+          v-if="isEditing " 
+          @click="changeType('Edit')"
+        />
+
+        <buttonAddFormView
+          title="Add Cash Advance"
+          v-if="isEditing " 
+          @click="changeType('Add')"
+        />
+
+        <!-- Issued Ticket Button -->
+        <button 
+          class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" 
+          v-if="$route.path === '/approvalrequesttrip'"
+        >
+          Issued Ticket
+        </button>
+
+        <!-- Revise Button -->
+        <button 
+          class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+          v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'" 
+        >
+          Revise
+        </button>
+
+        <!-- Showing data quantity -->
+        <div 
+          class="flex gap-2 justify-between items-center mx-1 py-2"
+        >
+
+          <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+            Showing {{ showingValue }} 
+            of {{ currentSelectedData.length }} entries
+          </p>
+
+          <vue-awesome-paginate
+            :total-items="currentSelectedData.length"
+            :items-per-page="1"
+            :on-click="onChangePage"
+            v-model="showingValue"
+            :max-pages-shown="3"
+            :show-breakpoint-buttons="false"
+            :show-jump-buttons="true"
+          />
+
+        </div>
+
+      </div>
+
+      <div class="flex-1" v-if="viewLayout === 'document'"></div>
+
+      <!-- DELETE BUTTON -->
+      <button 
+        @click="changeType('Delete')"
+        v-if="isEditing && viewLayout === 'document'" 
+        class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
+      >
+
+        <img :src="deleteDocumentIcon" class="w-6 h-6" />
+        Delete
+
+      </button>
+
+
+</div>
+                          </detailsFormHeader>
+
+                        </cashAdvanceFormView>
 
                           <!-- table Step 8 -->
                           <cashAdvanceTableView 

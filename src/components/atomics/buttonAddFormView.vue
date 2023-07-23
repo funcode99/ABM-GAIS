@@ -1,6 +1,11 @@
+<script setup>
+    const props = defineProps({
+        title: String
+    })
+</script>
+
 <template>
-    <!-- ada deh -->
     <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
-       Add
+       {{ props.title }}
    </button>
 </template>

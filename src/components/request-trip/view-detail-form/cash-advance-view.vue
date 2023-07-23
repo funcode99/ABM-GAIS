@@ -5,23 +5,37 @@
 
     import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
     import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
+    import buttonCancelFormView from '@/components/atomics/buttonCancelFormView.vue'
 
     import deleteDocumentIcon from '@/assets/delete_document_icon.png'
 
+    // submitNewCAStatus: Boolean,
     const status = defineProps({
-      isEditing: Boolean,
+      showCreateCAHeader: Boolean,
+      isHeaderExist: Boolean,
+      isAddingFromRequestTrip: Boolean,
+      isEditingFromRequestTrip: Boolean,
       currentIndex: Number,
       typeOfSubmitData: String
     })
 
     const props = inject('cashAdvanceDataView')
-    const emits = defineEmits('fetchCashAdvance', 'resetTypeOfSubmitData')
+    const emits = defineEmits(['fetchCashAdvance', 'resetTypeOfSubmitData'])
 
     let currentDetailIndex = ref(1)
+    let caId = ref()
+    let caDetailData = ref([{}])
+    let currentAPIfetchData = ref()
+    let idForSubmitCADetail = ref()
+    let selectedCADetailId = ref()
+    let isAddingDetail = ref(false)
+    let idCA = ref()
+    let idItemCA = ref()
+    let currentDetailNumber = ref(0)
+    let listCurrency = ref()
 
     let name = localStorage.getItem('username')
     let grandTotal = ref()
-    let notes = ref()
 
     let item = ref()
     let itemId = ref(1)
@@ -34,9 +48,8 @@
     let headerRemarks = ref()
     let headerId = ref(0)
 
-    let caId = ref()
-    let caDetailData = ref([{}])
-    let currentAPIfetchData = ref()
+    let arrayDetail = ref([])
+    let arrayDetailForm = ref([])
 
     onBeforeMount(() => {
 
@@ -44,8 +57,6 @@
       fetchCurrency()
 
     })
-
-    let listCurrency = ref()
 
     const fetchCurrency = async () => {
 
@@ -62,9 +73,11 @@
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       
         try {
+          
           const api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)
           currentAPIfetchData.value = api
           caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
+
         } catch (error) {
           
         }
@@ -80,15 +93,6 @@
 
     }
 
-    // jangan pakai caId.value coeg
-    watch(caId, () => {
-      fetchCashAdvanceDetailByCashAdvanceId()
-    })
-
-    let idCA = ref()
-    let idItemCA = ref()
-    let currentDetailNumber = ref(0)
-
     const assignValue = () => {
 
         // CA Travel Header
@@ -98,7 +102,13 @@
         currencyId.value = props.value[status.currentIndex].id_currency
 
         // CA Detail by CA ID (CA ID nya berubah)
-        caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
+        if(currentAPIfetchData.value !== undefined) {
+          caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
+        } else {
+          console.log('masuk ke assign value')
+          // console.log('isi nya undefined')
+          // console.log(props.value)
+        }
 
     }
 
@@ -116,6 +126,7 @@
         selectedCADetailId.value = caDetailData.value[currentDetailNumber.value].id
         idCA.value = caDetailData.value[currentDetailNumber.value].id_ca
         idItemCA.value = caDetailData.value[currentDetailNumber.value].id_item_ca
+        idForSubmitCADetail.value = caDetailData.value[currentDetailNumber.value].id
 
     }
 
@@ -127,8 +138,6 @@
       currencyId.value = props.value[0].id_currency
 
     }
-
-    let selectedCADetailId = ref()
 
     const resetDetailValue = () => {
       
@@ -144,31 +153,34 @@
 
     }
 
-    watch(status, () => {
-        
-        if (status.typeOfSubmitData === 'Edit') {
-            editCAHeader()
-        }
-        else if (status.typeOfSubmitData === 'Submit Add') {
-            addCAHeader()
-        }
-        else if (status.typeOfSubmitData === 'Delete') {
-            deleteCAHeader()
-        }
-        else if (status.typeOfSubmitData === 'Add') {
-            resetValue()
-        }
-        else {
-            assignValue()
-        }
-
-    })
-
-
     const addCAHeader = async () => {
+
+      if(arrayDetail.value.length === 0) {
+        alert('Tolong isi detail item Cash Advance di bawah ini')
+      }
       
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      
+      try {
+        emits('resetSubmitNewCAHeader') 
+      } catch (error) {
+        emits('resetSubmitNewCAHeader')
+      }
+
+      console.log('masuk ke add ca header')
+
+      // const api = await Api.post(`/cash_advance/store`, {
+        // id_employee: ,
+        // type_ca: ,
+        // id_request_trip: ,
+        // remarks: ,
+        // event: ,
+        // date: ,
+        // id_currency: ,
+        // grand_total: ,
+        // array_detail: ,
+      // })
 
     }
 
@@ -177,14 +189,13 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-      let value = 0
+      // let value = 0
 
-      caDetailData.value.map((item) => {
-        value += parseInt(item.total)
-      })
+      // caDetailData.value.map((item) => {
+      //   value += parseInt(item.total)
+      // })
 
-      grandTotal.value = value
-
+      // grandTotal.value = value
 
       const api = await Api.post(`/cash_advance/update_data/${headerId.value}` , {
         
@@ -204,6 +215,12 @@
       
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.delete(`/cash_advance/delete_data/${headerId.value}`)
+
+      emits('fetchCashAdvance')
+      emits('resetTypeOfSubmitData')
+      fetchCashAdvanceDetailByRequestTripId()
+      fetchCashAdvanceDetailByCashAdvanceId()
 
     }
 
@@ -235,6 +252,11 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
+      console.log(caDetailData.value.map((item) => {
+        console.log(item.id)
+        return item.id !== idForSubmitCADetail.value
+      }))
+    
       const api = await Api.post(`/cash_advance/update_data_detail/${selectedCADetailId.value}`, {
 
         id_ca: idCA.value,
@@ -251,7 +273,7 @@
       emits('resetTypeOfSubmitData')
       fetchCashAdvanceDetailByCashAdvanceId()
       
-      editCAHeader()
+      // editCAHeader()
 
     }
 
@@ -266,7 +288,7 @@
       emits('resetTypeOfSubmitData')
       fetchCashAdvanceDetailByRequestTripId()
       fetchCashAdvanceDetailByCashAdvanceId()
-
+      
       editCAHeader()
 
     }
@@ -277,16 +299,37 @@
       nominal.value = 0
       total.value = 0
       remarks.value = ''
-
+      
     }
 
+    watch(status, () => {
+        
+        if (status.typeOfSubmitData === 'Edit') {
+            editCAHeader()
+        }
+        else if (status.typeOfSubmitData === 'Submit Add') {
+            addCAHeader()
+        }
+        else if (status.typeOfSubmitData === 'Delete') {
+            deleteCAHeader()
+        }
+        else if (status.typeOfSubmitData === 'Add') {
+            resetValue()
+        }
+        else {
+            assignValue()
+        }
+
+    })
+    
     watch(props, () => {
       
       if(props.value[0].grand_total !== undefined) {
         resetValue()
-      } else {
-        assignValue()
       }
+      else {
+        assignValue()
+      } 
 
     })
 
@@ -300,16 +343,11 @@
       
     })
 
-    if(props.value[0].grand_total !== undefined) {
-       resetValue()
-    }
-
-    let isAddingDetail = ref(false)
-
     watch(isAddingDetail, () => {
       isAddingDetail.value === true ? emptyCADetail() : assignDetailValue(currentDetailNumber.value)
     })
 
+    // untuk menghitung total dari frequency & nominal
     watch(frequency, () => {
         
         if(typeof nominal.value === 'number' && typeof frequency.value === 'number') {
@@ -318,6 +356,7 @@
 
     })    
 
+    // untuk menghitung total dari frequency & nominal
     watch(nominal, () => {
 
         if(typeof nominal.value === 'number' && typeof frequency.value === 'number') {
@@ -325,6 +364,34 @@
         }
 
     })
+
+    // jangan pakai caId.value coeg
+    watch(caId, () => {
+      fetchCashAdvanceDetailByCashAdvanceId()
+    })
+
+    if(props.value[0].grand_total !== undefined) {
+       resetValue()
+    }
+
+    const addToArrayDetail = () => {
+
+      console.log('masuk ke array detail')
+
+      arrayDetailForm.value = {
+            id_item_ca: item.value,
+            frequency: frequency.value,
+            nominal: nominal.value,
+            total: total.value,
+            remarks: remarks.value,
+            currency: currencyId.value
+      }
+
+        grandTotal.value += arrayDetailForm.value.total
+        arrayDetail.value.push(arrayDetailForm.value)
+        arrayDetailForm.value = {}
+
+    }
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
     const rowClassStart = 'flex justify-between mx-4 items-start gap-2 my-6'
@@ -337,172 +404,236 @@
 <template>
 
       <div>
-
-        <!-- {{ props }} -->
-        <!-- {{ currentAPIfetchData.data.data }} -->
   
-        <div :class="rowClass">
+        <form @submit.prevent="addCAHeader">
+
+          <slot></slot>
           
-          <div :class="columnClass">
-            <label>Traveller</label>
-            <input 
-              v-model="name" 
-              :class="inputStylingClass" 
-              placeholder="Name" 
-              :disabled="!status.isEditing"
-              />
-          </div>
-  
-          <div :class="columnClass">
-            <label>Grand Total</label>
-            <input 
-              v-model="grandTotal" 
-              :class="inputStylingClass" 
-              placeholder="Grand Total"
-              disabled
-            />
-          </div>
-  
-          <div :class="columnClass">
-            
-          </div>
-  
-        </div>
-  
-        <div :class="rowClass">
-          
-          <div :class="columnClass">
-            
-            <label :class="labelStylingClass">
-              Notes  
-            </label>
-            
-            <textarea 
-              v-model="headerRemarks"
-              :class="inputStylingClass" 
-              placeholder="Notes" 
-              :disabled="!status.isEditing"></textarea>
-          
-          </div>
-  
-          <div :class="columnClass">
-  
-            <label :class="labelStylingClass">
-              Currency<span class="text-red-star">*</span>
-            </label>
-
-            <select v-if="isAddingDetail" :class="inputStylingClass" v-model="currencyId">
-
-              <option v-for="data in listCurrency" :key="data.id" :value="data.id">
-                  {{ data.currency_name }}
-              </option>
-
-            </select>
-
-            <input v-if="!isAddingDetail" :class="inputStylingClass" v-model="currency" type="text" disabled />
-
-          </div>
-
-          <div :class="columnClass"></div>
-  
-        </div>
-
-        <!-- {{ caDetailData }} -->
-  
-        <div class="mx-4 flex items-center">
-            
-          <h1 class="font-medium mr-10">Details Item</h1>
-
-          <div class="flex gap-2">
-
-            <buttonEditFormView @click="editCADetail" v-if="!isAddingDetail && status.isEditing" />
-            <buttonAddFormView @click="isAddingDetail = true" v-if="!isAddingDetail && status.isEditing" />
-
-            <buttonAddFormView v-if="isAddingDetail" @click="addCADetail" />
-
-            <button
-
-              v-if="isAddingDetail" 
-              @click="isAddingDetail = false" 
-              class="bg-red-star text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
-
-            >
-              Cancel
-            </button>
-
-            <div v-if="!isAddingDetail" class="flex items-center gap-4 ml-8">
-              <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                Showing {{ currentDetailIndex }} 
-                of {{ caDetailData.length }} entries
-              </p>
-  
-              <vue-awesome-paginate
-                :total-items="caDetailData.length"
-                :items-per-page="1"
-                :on-click="assignDetailValue"
-                v-model="currentDetailIndex"
-                :max-pages-shown="3"
-                :show-breakpoint-buttons="false"
-                :show-jump-buttons="true"
-              />
-            </div>
-            
-          </div>
-
-          <div class="flex-1"></div>
-
-          <button 
-            v-if="!isAddingDetail && status.isEditing"
-            class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
-            @click="deleteCADetail"
-          >
-            <img :src="deleteDocumentIcon" class="w-6 h-6" />
-            Delete
-          </button>
-
-          <hr class="border border-black" />
-          
-        </div>
-  
-        <form @submit.prevent="">
-  
           <div :class="rowClass">
             
             <div :class="columnClass">
               
               <label :class="labelStylingClass">
+                Traveller
+              </label>
+  
+              <input 
+                v-model="name" 
+                :class="inputStylingClass" 
+                placeholder="Name" 
+                disabled
+              />
+  
+            </div>
+    
+            <div :class="columnClass">
+              <label :class="labelStylingClass">Grand Total</label>
+              <input 
+                v-model="grandTotal" 
+                :class="inputStylingClass" 
+                placeholder="Grand Total"
+                disabled
+              />
+            </div>
+    
+            <div :class="columnClass">
+              
+            </div>
+    
+          </div>
+    
+          <div :class="rowClass">
+            
+            <div :class="columnClass">
+              
+              <label for="notes" :class="labelStylingClass">
+                Notes  
+              </label>
+              
+              <textarea
+                id="notes"
+                v-model="headerRemarks"
+                :class="inputStylingClass" 
+                placeholder="Notes"
+                :disabled="!status.showCreateCAHeader" 
+                ></textarea>
+                <!-- :disabled="!status.isEditingFromRequestTrip" -->
+            
+            </div>
+    
+            <div :class="columnClass">
+    
+              <label for="currency" :class="labelStylingClass">
+                Currency<span class="text-red-star">*</span>
+              </label>
+  
+              <select
+                required
+                id="currency"
+                v-if="isAddingDetail || (status.isEditingFromRequestTrip && JSON.stringify(props[0]) === '{}')" 
+                :class="inputStylingClass" 
+                v-model="currencyId"
+                :disabled="!status.showCreateCAHeader"
+              >
+  
+                <option v-for="data in listCurrency" :key="data.id" :value="data.id">
+                    {{ data.currency_name }}
+                </option>
+  
+              </select>
+  
+              <input v-if="!status.isEditingFromRequestTrip || !isAddingDetail && JSON.stringify(props[0]) !== '{}' " :class="inputStylingClass" v-model="currency" type="text" disabled />
+  
+            </div>
+  
+            <div :class="columnClass"></div>
+    
+          </div>
+
+        </form>
+  
+        <form @submit.prevent="">
+
+          <!-- Tempat Segala Button Ada disini -->
+          <div class="mx-4 flex items-center">
+            
+            <h1 class="font-medium mr-10">Details Item</h1>
+  
+            <!-- tempat button CRUD detail -->
+            <div class="flex gap-2">
+  
+              <!-- bisa di edit kalo header nya ga kosong, kalo header kosong pasti detail nya juga kosong -->
+              <!-- menggunakan '&' dan '&&' hasil nya sama saja -->
+              <buttonEditFormView 
+              @click="editCADetail" 
+              v-if="!isAddingDetail & status.isEditingFromRequestTrip & status.showCreateCAHeader & arrayDetail.length > 0"
+              />
+  
+              <!-- untuk confirm add -->
+              <!-- @click="isAddingDetail = true" -->
+              <buttonAddFormView
+                title="Create Cash Advance Detail"
+                v-if="!isAddingDetail & status.isEditingFromRequestTrip & status.showCreateCAHeader" 
+              />
+  
+              <!-- untuk submit add detail saat header nya ada -->
+              <buttonAddFormView 
+              title="Add Cash Advance Detail"
+              v-if="isAddingDetail && JSON.stringify(props) !== '[{}]' & status.isEditingFromRequestTrip" 
+              @click="addCADetail"
+              />
+  
+              <!-- untuk submit add detail saat header nya kosong -->
+              <buttonAddFormView 
+                title="Create Cash Advance Detail"
+                v-if="isAddingDetail && JSON.stringify(props) === '[{}]' & status.isEditingFromRequestTrip " 
+                @click="addToArrayDetail"
+              />
+  
+              <buttonCancelFormView 
+                v-if="isAddingDetail & status.isEditingFromRequestTrip" 
+                @click="isAddingDetail = false"
+              />
+  
+              <!-- v-if="!isAddingDetail && JSON.stringify(props) !== '[{}]' "  -->
+              <div 
+                v-if="JSON.stringify(props) !== '[{}]' "
+                class="flex items-center gap-4 ml-8"
+              >
+  
+                <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                  Showing {{ currentDetailIndex }} 
+                  of {{ caDetailData.length }} entries
+                </p>
+    
+                <vue-awesome-paginate
+                  :total-items="caDetailData.length"
+                  :items-per-page="1"
+                  :on-click="assignDetailValue"
+                  v-model="currentDetailIndex"
+                  :max-pages-shown="3"
+                  :show-breakpoint-buttons="false"
+                  :show-jump-buttons="true"
+                />
+  
+              </div>
+              
+            </div>
+  
+            <div class="flex-1"></div>
+  
+            <!-- Delete Button -->
+            <button 
+              v-if="!isAddingDetail && status.isEditingFromRequestTrip && JSON.stringify(props) !== '[{}]'"
+              class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
+              @click="deleteCADetail"
+            >
+              <img :src="deleteDocumentIcon" class="w-6 h-6" />
+              Delete
+            </button>
+  
+            <hr class="border border-black" />
+            
+          </div>
+  
+          <div :class="rowClass">
+            
+            <div :class="columnClass">
+              
+              <label for="item" :class="labelStylingClass">
                 Item <span class="text-red-star">*</span>
               </label>
               
               <input 
                 :class="inputStylingClass" 
                 placeholder="Item" 
-                v-if="!status.isEditing"
+                v-if="!status.isEditingFromRequestTrip"
                 v-model="item"
                 disabled
               />
 
-              <select v-if="status.isEditing" :class="inputStylingClass" v-model="itemId">
+              <select 
+                v-if="(status.isEditingFromRequestTrip & !isAddingDetail)" 
+                id="item"
+                :class="inputStylingClass" 
+                :disabled="!status.showCreateCAHeader"
+                v-model="itemId" 
+                >
+                <!-- :disabled="JSON.stringify(props) === '[{}]'" -->
                 
-                <option value="1">Meals</option>
+                <option value="1">Meals from Empty CA Detail</option>
                 <option value="2">Transport</option>
                 <option value="3">Others</option>
 
               </select>
 
+              <!-- dia cuma bisa add kalo detail nya kosong, apalagi kalo header nya kosong -->
+              <!-- <select v-if="status.isEditingFromRequestTrip & isAddingDetail" :class="inputStylingClass" v-model="itemId">
+                <option value="1">Meals from isAddingDetail</option>
+                <option value="2">Transport</option>
+                <option value="3">Others</option>
+              </select> -->
+
             </div>
             
             <div :class="columnClass">
-              <label :class="labelStylingClass">
+
+              <label for="nominal" :class="labelStylingClass">
                 Nominal <span class="text-red-star">*</span>
               </label>
+              
               <input 
+                required
+                id="nominal"
                 type="number"
                 :class="inputStylingClass" 
                 placeholder="Nominal"
-                :disabled="!status.isEditing"
                 v-model="nominal"
-              />
+                :disabled="!status.showCreateCAHeader"
+                />
+              
+                <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
+            
             </div>
   
             <div :class="columnClass"></div>
@@ -512,28 +643,34 @@
           <div :class="rowClass">
           
             <div :class="columnClass">
-              <label :class="labelStylingClass">
+              <label for="frequency" :class="labelStylingClass">
                 Frequency<span class="text-red-star">*</span>
               </label>
-              <input 
+              <input
+                required
+                id="frequency"
                 type="number"
-                :class="inputStylingClass" 
                 placeholder="Frequency"
-                :disabled="!status.isEditing"
                 v-model="frequency"
-              />
+                :class="inputStylingClass" 
+                :disabled="!status.showCreateCAHeader"
+                />
+                <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
             </div>
             
             <div :class="columnClass">
+
               <label :class="labelStylingClass">
                 Total
               </label>
+
               <input 
                 :class="inputStylingClass" 
                 placeholder="Total" 
                 disabled
                 v-model="total"
               />
+
             </div>
   
             <div :class="columnClass"></div>
@@ -542,20 +679,20 @@
           
           <div :class="rowClassStart">
           
-
-  
             <div :class="columnClass">
               
-              <label :class="labelStylingClass">
-                Remarks<span class="text-red-star">*</span>
+              <label for="remarks" :class="labelStylingClass">
+                Remarks
               </label>
   
-              <textarea 
+              <textarea
+                id="remarks"
                 :class="inputStylingClass" 
                 placeholder="Remarks" 
-                :disabled="!status.isEditing"
                 v-model="remarks"
+                :disabled="!status.showCreateCAHeader"
                 ></textarea>
+                <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
   
             </div>
   
