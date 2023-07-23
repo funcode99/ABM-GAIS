@@ -1,66 +1,72 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import icon_filter from "@/assets/icon_filter.svg"
-import icon_reset from "@/assets/icon_reset.svg"
+import moment from "moment";
 
-import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue"
-import Api from "@/utils/Api"
-import VueCal from "vue-cal"
-import "vue-cal/dist/vuecal.css"
-import { Modal } from "usemodal-vue3"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
 
-import { ref, onBeforeMount, reactive } from "vue"
-import { useSidebarStore } from "@/stores/sidebar.js"
-const sidebar = useSidebarStore()
+import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue";
+import Api from "@/utils/Api";
+import VueCal from "vue-cal";
+import "vue-cal/dist/vuecal.css";
+import { Modal } from "usemodal-vue3";
+
+import { ref, onBeforeMount, reactive } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js";
+const sidebar = useSidebarStore();
 const inputClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
-let lengthCounter = 0
-let lockScrollbar = ref(false)
+let lengthCounter = 0;
+let lockScrollbar = ref(false);
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
-}
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
 
 const chartStatusColor = {
   Booked: "bg-primary",
   Done: "bg-green",
   Cancelled: "bg-red",
-}
+};
 
-let dataArr = ref([])
-let dataRoom = ref([])
-let datas = ref([])
-let listCompany = ref([])
-let listSite = ref([])
+let dataArr = ref([]);
+let dataRoom = ref([]);
+let datas = ref([]);
+let listCompany = ref([]);
+let listSite = ref([]);
 let filter = reactive({
   id_company: "",
   date: "",
   search: "",
   room: [],
-})
-let selectSite = ref(true)
-let id_company = ref("")
-let id_site = ref("")
-let header = ref([])
-let tempHeader = ref([])
-const id_role = JSON.parse(localStorage.getItem("id_role"))
+});
+let selectSite = ref(true);
+let id_company = ref("");
+let id_site = ref("");
+let header = ref([]);
+let tempHeader = ref([]);
+const id_role = JSON.parse(localStorage.getItem("id_role"));
 
-let statusForm = ref("add")
-let visibleModal = ref(false)
-let idItem = ref(0)
-let selectedEvent = ref("")
+let statusForm = ref("add");
+let visibleModal = ref(false);
+let idItem = ref(0);
+let selectedEvent = ref("");
 
-const showFilter = ref(true)
+const showFilter = ref(true);
+const formData = ref(null);
+const dialogKey = ref(0);
+const date = ref(null);
 
 // FETCH DATA
 const fetch = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const api = await Api.get("book_meeting_room/get")
-  dataArr.value = api.data.data
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("book_meeting_room/get");
+  dataArr.value = api.data.data;
+  datas.value = [];
   dataArr.value.forEach((dt) => {
     if (dt.status != "Cancelled") {
       let arr = {
@@ -69,60 +75,55 @@ const fetch = async () => {
         content: "<p class='my-2 '>" + dt.title + "</p>" + dt.name_created,
         class: `${chartStatusColor[dt.status]} text-whtie`,
         split: dt.id_meeting_room,
-      }
+        data: { ...dt },
+      };
 
-      datas.value.push(arr)
+      datas.value.push(arr);
     }
-    // let arrHeader = {
-    //   id: dt.id_meeting_room,
-    //   label: dt.name_meeting_room,
-    // };
-    // tempHeader.value.push(arrHeader);
-    // filter.room.push(dt.id_meeting_room);
-  })
+  });
   header.value = tempHeader.value.filter(
     (obj, index) =>
       tempHeader.value.findIndex(
         (item) => item.id === obj.id && item.label === obj.label
       ) === index
-  )
+  );
   //   filter.room = [...new Set(filter.room)];
-}
+};
 
 const fetchRoom = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const api = await Api.get("master_meeting_room/get")
-  dataRoom.value = api.data.data
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("master_meeting_room/get");
+  dataRoom.value = api.data.data;
   dataRoom.value.forEach((dt) => {
     let arrHeader = {
       id: dt.id,
       label: dt.name_meeting_room,
-    }
-    tempHeader.value.push(arrHeader)
-    filter.room.push(dt.id_meeting_room)
-  })
+    };
+    tempHeader.value.push(arrHeader);
+    filter.room.push(dt.id_meeting_room);
+  });
   header.value = tempHeader.value.filter(
     (obj, index) =>
       tempHeader.value.findIndex(
         (item) => item.id === obj.id && item.label === obj.label
       ) === index
-  )
-  filter.room = [...new Set(filter.room)]
-}
+  );
+  filter.room = [...new Set(filter.room)];
+};
 
 const filterDataByType = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   let payload = {
     id_company: id_company.value,
     id_site: id_site.value,
     id_meeting_room: filter.room,
-  }
-  const api = await Api.get("book_meeting_room/get", { params: payload })
-  dataArr.value = api.data.data
-  datas.value = []
+  };
+  const api = await Api.get("book_meeting_room/get", { params: payload });
+  dataArr.value = api.data.data;
+  datas.value = [];
 
   api.data.data.forEach((dt) => {
     if (dt.status != "Cancelled") {
@@ -132,110 +133,139 @@ const filterDataByType = async () => {
         content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
         class: "card-color",
         split: dt.id_meeting_room,
-      }
-      datas.value.push(arr)
+      };
+      datas.value.push(arr);
     }
     let arrHeader = {
       id: dt.id_meeting_room,
       label: dt.name_meeting_room,
-    }
-    tempHeader.value.push(arrHeader)
-    filter.room.push(dt.id_meeting_room)
-  })
+    };
+    tempHeader.value.push(arrHeader);
+    filter.room.push(dt.id_meeting_room);
+  });
   header.value = tempHeader.value.filter(
     (obj, index) =>
       tempHeader.value.findIndex(
         (item) => item.id === obj.id && item.label === obj.label
       ) === index
-  )
-  filter.room = [...new Set(filter.room)]
-}
+  );
+  filter.room = [...new Set(filter.room)];
+};
 
 const fetchCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const api = await Api.get("company/get")
-  listCompany.value = api.data.data
-}
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("company/get");
+  listCompany.value = api.data.data;
+};
 
 const fetchCompanyID = async (id_comp) => {
-  fetchSite(id_comp)
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get(`/company/get/${id_comp}`)
-  listCompany.value = res.data.data
-  id_company.value = id_comp
-}
+  fetchSite(id_comp);
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_comp}`);
+  listCompany.value = res.data.data;
+  id_company.value = id_comp;
+};
 
 const fetchSite = async (id_comp) => {
-  let idComp = id_comp ? id_comp : id_company.value
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const api = await Api.get(`site/get_by_company/${idComp}`)
-  listSite.value = api.data.data
-  selectSite.value = false
+  let idComp = id_comp ? id_comp : id_company.value;
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get(`site/get_by_company/${idComp}`);
+  listSite.value = api.data.data;
+  selectSite.value = false;
   for (let index = 0; index < api.data.data.length; index++) {
-    const element = api.data.data[index]
+    const element = api.data.data[index];
 
     if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
-      id_site.value = element.id
+      id_site.value = element.id;
     }
   }
   if (id_role == "ADM") {
     listSite.value = listSite.value.filter(
       (e) => e.id == localStorage.getItem("id_site")
-    )
+    );
   }
-}
+};
 
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"))
-  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company)
-}
+  const id_company = JSON.parse(localStorage.getItem("id_company"));
+  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company);
+};
 // END
 
 const resetData = () => {
-  id_company.value = ""
-  id_site.value = ""
-  filter.room = []
-  fetch()
-  fetchCondition()
-}
+  id_company.value = "";
+  id_site.value = "";
+  filter.room = [];
+  fetch();
+  fetchCondition();
+};
 
-const openModal = (type, id) => {
-  visibleModal.value = true
-  statusForm.value = type
-  document.getElementById("booking_modal").click()
-  if (id) {
-    idItem.value = parseInt(id)
+const openModal = async (event, e) => {
+  visibleModal.value = true;
+
+  if (event.data?.id) {
+    statusForm.value = "view";
+    idItem.value = parseInt(event.data.id);
+
+    formData.value = event.data;
+  } else {
+    statusForm.value = "add";
+    idItem.value = parseInt(0);
+
+    const start = event.start;
+    const end = event.end;
+
+    const newForm = {
+      start_date: moment(start).format("YYYY-MM-DD"),
+      start_time: moment(start).format("hh:mm:ss"),
+      end_date: moment(end).format("YYYY-MM-DD"),
+      end_time: moment(end).format("hh:mm:ss"),
+      id_meeting_room: event.split,
+    };
+
+    console.log(event);
+    formData.value = newForm;
   }
-}
+
+  setTimeout(() => {
+    document.getElementById("booking_modal").click();
+  }, 500);
+};
 
 const closeModal = () => {
-  visibleModal.value = false
-  document.getElementById("booking_modal").click()
+  document.getElementById("booking_modal").click();
 
-  // fetch()
-}
+  visibleModal.value = false;
+  formData.value = null;
+  selectedEvent.value = {};
 
-const onEventCreate = (event, deleteEventFunction) => {
-  selectedEvent.value = event
-  //   openModal("add", 0);
+  fetch();
 
-  return event
-}
+  if (selectedEvent.value) deleteEventFunction.value();
+};
+
+const deleteEventFunction = ref();
+const onEventCreate = (event, deleteFunction) => {
+  selectedEvent.value = event;
+  deleteEventFunction.value = deleteFunction;
+
+  return event;
+};
 
 const scrollToCurrentTime = () => {
-  const calendar = document.querySelector("#vuecal .vuecal__bg")
-  calendar.scrollTo({ top: 14 * 40, behavior: "smooth" })
-}
+  const calendar = document.querySelector("#vuecal .vuecal__bg");
+  calendar.scrollTo({ top: 14 * 40, behavior: "smooth" });
+};
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetch()
-  fetchRoom()
-  fetchCondition()
-})
+  getSessionForSidebar();
+  fetch();
+  fetchRoom();
+  fetchCondition();
+});
 </script>
 
 <template>
@@ -276,19 +306,18 @@ onBeforeMount(() => {
               :time-from="0 * 60"
               :time-step="30"
               :disable-views="['years', 'year', 'month']"
-              :editable-events="{ title: true, drag: true, create: false }"
+              :editable-events="{ title: true, drag: false, create: true }"
               :events="datas"
               :split-days="header"
               :min-cell-width="500"
               :on-event-create="onEventCreate"
-              @event-drag-create="visibleModal"
+              @event-drag-create="openModal"
               sticky-split-labels
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
               style="width: 270px; height: 100%"
               class="basis-9/12"
-              @cell-dblclick="openModal('add', 0)"
-              :on-event-click="openModal('view', 0)"
+              :on-event-click="openModal"
             >
               <template #split-label="{ split }">
                 <strong :style="`color: ${split.color}`">{{
@@ -296,6 +325,15 @@ onBeforeMount(() => {
                 }}</strong>
               </template>
             </vue-cal>
+            <ModalAddBookingRoom
+              v-if="visibleModal"
+              @close="closeModal"
+              :status="statusForm"
+              :id="idItem"
+              :key="dialogKey"
+              :data="formData"
+              :readOnly="statusForm == 'view'"
+            />
 
             <div
               class="ease-in duration-300 bg-white"
@@ -403,13 +441,6 @@ onBeforeMount(() => {
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
   </div>
-
-  <ModalAddBookingRoom
-    v-show="visibleModal"
-    @close="closeModal"
-    :status="statusForm"
-    :id="idItem"
-  />
 </template>
 
 <style>
@@ -464,6 +495,7 @@ onBeforeMount(() => {
 
 .vuecal__event {
   color: white;
+  background-color: rgba(76, 172, 175, 0.35);
 }
 
 :disabled {
