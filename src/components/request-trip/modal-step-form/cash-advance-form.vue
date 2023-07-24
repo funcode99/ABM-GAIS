@@ -11,7 +11,7 @@
     let employeeLoginData = ref([])
     let emits = defineEmits(['fetchCashAdvance', 'changeVisibility'])
     const props = defineProps({
-        isOpen: Boolean        
+        isOpen: Boolean
     })
 
     const fetchCurrency = async () => {
