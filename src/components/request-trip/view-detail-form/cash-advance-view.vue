@@ -11,6 +11,7 @@
 
     // submitNewCAStatus: Boolean,
     const status = defineProps({
+      currentlyEditCAHeader: Boolean,
       showCreateCAHeader: Boolean,
       isHeaderExist: Boolean,
       isAddingFromRequestTrip: Boolean,
@@ -20,7 +21,7 @@
     })
 
     const props = inject('cashAdvanceDataView')
-    const emits = defineEmits(['fetchCashAdvance', 'resetTypeOfSubmitData'])
+    const emits = defineEmits(['fetchCashAdvance', 'resetTypeOfSubmitData', 'resetEditCAHeaderState'])
 
     let currentDetailIndex = ref(1)
     let caId = ref()
@@ -217,6 +218,9 @@
       })
 
       console.log(api)
+      emits('fetchCashAdvance')
+      emits('resetTypeOfSubmitData')
+      emits('resetEditCAHeaderState')
 
     }
 
@@ -289,6 +293,10 @@
         emits('fetchCashAdvance')
         emits('resetTypeOfSubmitData')
         fetchCashAdvanceDetailByCashAdvanceId()
+
+        if(currentlyEditCADetail.value === true) {
+        currentlyEditCADetail.value = false
+      }
         
         // editCAHeader()
       }
@@ -500,6 +508,15 @@
         emptyCADetail()
       }
     })
+
+    watch(currentlyEditCADetail, () => {
+      if(currentlyEditCADetail.value === false) {
+        // resetDetailValue()
+        currentDetailIndex.value = 1
+      } else {
+        // emptyCADetail()
+      }
+    })
     
 </script>
 
@@ -536,7 +553,7 @@
 
             <!-- Grand Total sudah seharusnya disabled -->
             <div :class="columnClass">
-              <label :class="labelStylingClass">Grand Total {{ grandTotal }}</label>
+              <label :class="labelStylingClass">Grand Total</label>
               <input 
                 v-model="grandTotal" 
                 :class="inputStylingClass" 
@@ -564,7 +581,7 @@
                 v-model="headerRemarks"
                 :class="inputStylingClass" 
                 placeholder="Notes"
-                :disabled="!status.showCreateCAHeader" 
+                :disabled="!status.showCreateCAHeader & !status.currentlyEditCAHeader" 
                 ></textarea>
                 <!-- :disabled="!status.isEditingFromRequestTrip" -->
             
@@ -574,7 +591,7 @@
             <div :class="columnClass">
     
               <label for="currency" :class="labelStylingClass">
-                Currency<span class="text-red-star">*</span> {{ currencyId }}
+                Currency<span class="text-red-star">*</span>  
               </label>
   
               <select
@@ -598,7 +615,7 @@
                 v-if="isAddingDetail || (status.isEditingFromRequestTrip && JSON.stringify(props[0]) !== '{}')" 
                 :class="inputStylingClass" 
                 v-model="currencyId"
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !status.currentlyEditCAHeader"
               >
                 <option v-for="data in listCurrency" :key="data.id" :value="[data.id, data.currency_name]">
                   {{ data.currency_name }}

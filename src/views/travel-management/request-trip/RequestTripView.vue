@@ -362,6 +362,8 @@
     const showCreateNewCAHeader = ref(false)
     const submitNewCA = ref(false)
 
+    let currentlyEditCAHeader = ref(false)
+
 </script>
 
 <template>
@@ -784,6 +786,9 @@
                             
                             @fetchCashAdvance="getCashAdvance"
                             @resetTypeOfSubmitData="resetTypeOfSubmit"
+
+                            :currentlyEditCAHeader="currentlyEditCAHeader"
+                            @resetEditCAHeaderState="currentlyEditCAHeader = !currentlyEditCAHeader"
                             
                             >
 
@@ -858,10 +863,22 @@
 
                                   <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
 
+                                    <buttonEditFormView 
+                                      v-if="isEditing & !currentlyEditCAHeader"
+                                      @click="currentlyEditCAHeader = !currentlyEditCAHeader"
+                                    />
+
                                     <buttonEditFormView
-                                      v-if="isEditing " 
+                                      v-if="currentlyEditCAHeader" 
                                       @click="changeType('Edit')"
                                     />
+
+                                    <buttonCancelFormView 
+                                      v-if="currentlyEditCAHeader"
+                                      @click="currentlyEditCAHeader = !currentlyEditCAHeader"
+                                    />
+
+                          
 
                                     <buttonAddFormView
                                       title="Add Cash Advance"
