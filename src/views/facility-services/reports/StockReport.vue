@@ -35,6 +35,18 @@ const year = ref();
 
 let sortedData = ref([]);
 let instanceArray = [];
+let Company = ref([]);
+let IDCompany = ref(null);
+let CompanyName = ref();
+let Site = ref([]);
+let IDSite = ref(null);
+let SiteName = ref();
+let Warehouse = ref([]);
+let IDWarehouse = ref(null);
+let WarehouseName = ref();
+let role = ref();
+let showSelectADM = ref(false);
+let showSelectAll = ref(false);
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -72,12 +84,12 @@ const fetchStockReport = async (id) => {
   // }
 
   const params = {
-    id_company: null,
-    id_site: null,
+    id_company: IDCompany.value === null ? selectedCompany.value : IDCompany,
+    id_site: IDSite.value === null ? selectedSite.value : IDSite,
+    id_warehouse: selectedWarehouse.value,
     start_date: null,
     end_date: null,
-    code_status_doc: null,
-    search: null,
+    search: search.value,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
@@ -93,13 +105,66 @@ const fetchStockReport = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
+const fetchCompany = async () => {
+  const companyID = localStorage.getItem("id_company");
+  const idSite = localStorage.getItem("id_site");
+
+  role = localStorage.getItem("id_role").replace(/"/g, "");
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  if (role == "ADMTR") {
+    const res = await Api.get("/company/get");
+    Company.value = res.data.data;
+    showSelectADM = true;
+  } else {
+    const res = await Api.get(`/company/get/${companyID}`);
+    Company.value = res.data.data;
+    IDCompany = Company.value[0].id;
+    CompanyName = Company.value[0].company_name;
+    showSelectAll = true;
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const result = await Api.get(`/company/get_site/${companyID}`);
+    Site.value = result.data.data.filter((item) => item.id == idSite);
+    IDSite = Site.value[0].id;
+    SiteName = Site.value[0].site_name;
+  }
+};
+
+const fetchSite = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get_site/${id_company}`);
+  Site.value = res.data.data;
+};
+
+const fetchWarehouseName = async () => {
+  const companyID = localStorage.getItem("id_company");
+  const idSite = localStorage.getItem("id_site");
+  const token = JSON.parse(localStorage.getItem("token"));
+  role = localStorage.getItem("id_role").replace(/"/g, "");
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  if (role == "ADMTR") {
+    const res = await Api.get("/warehouse/");
+    Warehouse = res.data.data;
+  } else {
+    const params = {
+      id_company: companyID,
+      id_site: idSite,
+    };
+    const res = await Api.get(`/warehouse/`, { params });
+    Warehouse = res.data.data;
+  }
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchStockReport();
+  fetchCompany();
+  fetchWarehouseName();
 });
 
 const showClearButton = computed(() => {
-  // return search.value !== "";
+  return search.value !== "";
 });
 
 const showMenu1 = ref(false);
@@ -136,6 +201,18 @@ const format_date = (value) => {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY");
   }
+};
+
+const resetData = () => {
+  (selectedCompany.value = ""),
+    (selectedSite.value = ""),
+    (selectedWarehouse.value = "");
+  fetchStockReport();
+};
+
+const clearSearch = () => {
+  search.value = "";
+  fetchStockReport();
 };
 </script>
 
@@ -191,7 +268,7 @@ const format_date = (value) => {
             </button>
 
             <button
-              @click="fetchSettlementReport()"
+              @click="fetchStockReport()"
               type="submit"
               class="w-36 p-2.5 ml-2 text-sm rounded-lg font-medium text-white font-JakartaSans capitalize border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
@@ -210,10 +287,13 @@ const format_date = (value) => {
                 <select
                   class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCompany"
+                  v-show="showSelectADM"
+                  @change="fetchSite(selectedCompany)"
                 >
-                  <option disabled selected>Type</option>
-                  <option value="1">Company A</option>
-                  <option value="2">Company B</option>
+                  <option disabled selected>Company</option>
+                  <option v-for="data in Company" :value="data.id">
+                    {{ data.company_name }}
+                  </option>
                 </select>
               </div>
 
@@ -226,10 +306,12 @@ const format_date = (value) => {
                 <select
                   class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedSite"
+                  v-show="showSelectADM"
                 >
-                  <option disabled selected>Type</option>
-                  <option value="1">Site A</option>
-                  <option value="2">Site B</option>
+                  <option disabled selected>Site</option>
+                  <option v-for="data in Site" :value="data.id">
+                    {{ data.site_name }}
+                  </option>
                 </select>
               </div>
 
@@ -244,8 +326,9 @@ const format_date = (value) => {
                   v-model="selectedWarehouse"
                 >
                   <option disabled selected>Type</option>
-                  <option value="1">Warehouse A</option>
-                  <option value="2">Warehouse B</option>
+                  <option v-for="data in Warehouse" :value="data.id">
+                    {{ data.warehouse_name }}
+                  </option>
                 </select>
               </div>
 
@@ -276,7 +359,7 @@ const format_date = (value) => {
               <div class="flex gap-4 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="fetchSettlementReport()"
+                  @click="fetchStockReport()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
