@@ -2,8 +2,6 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-// import ModalAdd from "@/components/reference/departement/ModalAdd.vue";
-// import ModalEdit from "@/components/reference/departement/ModalEdit.vue";
 import ModalView from "@/components/reference/departement/ModalView.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
@@ -14,48 +12,39 @@ import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
 
-import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany.js";
-import fetchAllEmployeeUtils from "@/utils/Fetch/Reference/fetchAllEmployee.js";
-import fetchGLAccountUtils from "@/utils/Fetch/Reference/fetchGLAccount";
-
-import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
-import { ref, onBeforeMount, computed, watch } from "vue";
-
+import { ref, onBeforeMount, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
-import { useFormEditStore } from "@/stores/reference/departement/edit-modal.js";
-import { useReferenceFetchResult } from "@/stores/fetch/reference";
 
 const sidebar = useSidebarStore();
-let formEditState = useFormEditStore();
-const referenceFetch = useReferenceFetchResult();
-
-let Company = ref("");
-let sortedData = ref([]);
-let addEmployeeData = ref([]);
-let addGLAccountData = ref([]);
 
 const search = ref("");
-const selectedCompany = ref("Company");
-let sortedbyASC = true;
-let responseStatus = null;
-let instanceArray = [];
+const selectedCompany = ref("");
 const showFullText = ref({});
-let checkList = false;
+
+let sortedData = ref([]);
+let sortedbyASC = true;
+let instanceArray = [];
+let Company = ref("");
 
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
-let editDepartementDataid = ref();
+const onChangePage = (pageOfItem) => {
+  paginateIndex.value = pageOfItem - 1;
+  showingValue.value = pageOfItem;
+  fetchDepartement(pageOfItem);
+};
 
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
@@ -64,97 +53,6 @@ const tableHead = [
   { Id: 4, title: "Departement Head", jsonData: "departement_head" },
   { Id: 5, title: "Actions" },
 ];
-
-const editDepartement = async (data) => {
-  editDepartementDataid.value = data;
-  setTimeout(callEditApi, 500);
-};
-
-const callEditApi = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-  await Api.post(`department/update_data/${editDepartementDataid.value}`, {
-    id_company: formEditState.departement.departementIdCompany,
-    departement_code: formEditState.departement.departementCode,
-    departement_name: formEditState.departement.departementName,
-    profit_center: formEditState.departement.departementProfitCenter,
-    id_gl_account: formEditState.departement.departementGlAccount,
-    is_active: formEditState.departement.departementStatus,
-    id_division: formEditState.departement.departementDivision,
-    departement_head: formEditState.departement.departementHead,
-  });
-
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: "Your work has been saved",
-    showConfirmButton: false,
-    timer: 1500,
-  });
-
-  fetchDepartement();
-};
-
-const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
-};
-
-const filterDataByCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`/department?filter=${selectedCompany.value}`);
-  instanceArray = api.data.data;
-  sortedData.value = instanceArray;
-  responseStatus = api.status;
-  onChangePage(1);
-};
-
-const resetData = () => {
-  fetchDepartement();
-  selectedCompany.value = "Company";
-};
-
-const selectAll = (checkValue) => {
-  const check = document.getElementsByName("checks");
-  const btnDelete = document.getElementById("btnDelete");
-
-  if (checkValue === true) {
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type === "checkbox") {
-        check[i].checked = true;
-      }
-    }
-    btnDelete.style.display = "block";
-  } else {
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type === "checkbox") {
-        check[i].checked = false;
-      }
-    }
-    btnDelete.style.display = "none";
-  }
-};
-
-const deleteDataInCeklis = () => {
-  const check = document.getElementsByName("checks");
-  for (let i = 0; i < check.length; i++) {
-    if (check[i].type === "checkbox" && check[i].checked) {
-      const row = check[i].parentNode.parentNode;
-      row.parentNode.removeChild(row);
-    }
-  }
-
-  const btnDelete = document.getElementById("btnDelete");
-  const checkedCheckboxes = document.querySelectorAll(
-    'input[name="checks"]:checked'
-  );
-  if (checkedCheckboxes.length === 0) {
-    btnDelete.style.display = "none";
-  }
-};
 
 const sortList = (sortBy) => {
   if (sortedbyASC) {
@@ -166,67 +64,44 @@ const sortList = (sortBy) => {
   }
 };
 
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    const departementName = item.departement_name.toLowerCase();
-    const departementHead =
-      typeof item.departement_head === "string"
-        ? item.departement_head.toLowerCase()
-        : "";
-    return (
-      departementName.indexOf(search.toLowerCase()) > -1 ||
-      departementHead.indexOf(search.toLowerCase()) > -1
-    );
-  });
-  sortedData.value = filteredR;
-  onChangePage(1);
-};
-
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const deleteDepartement = async (id) => {
+const fetchDepartement = async (id) => {
+  const params = {
+    filter: selectedCompany.value,
+    search: search.value,
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/department/", { params });
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray.data;
+  totalPage.value = instanceArray.last_page;
+  totalData.value = instanceArray.total;
+  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+  showingValueTo.value = instanceArray.to;
+};
 
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Api.delete(`/department/delete_data/${id}`).then((res) => {
-        Swal.fire({
-          title: "Successfully",
-          text: "Departement has been deleted.",
-          icon: "success",
-          showCancelButton: false,
-          confirmButtonColor: "#015289",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        fetchDepartement();
-      });
-    } else {
-      return;
-    }
-  });
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+};
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchDepartement();
+  fetchGetCompany();
+});
+
+const resetData = () => {
+  selectedCompany.value = "";
+  fetchDepartement();
 };
 
 const exportToExcel = () => {
@@ -264,39 +139,6 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 };
-
-const fetchDepartement = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const api = await Api.get("/department/");
-    instanceArray = api.data.data;
-    sortedData.value = instanceArray;
-    responseStatus = api.status;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchCompanyUtils(instanceArray, Company);
-  fetchAllEmployeeUtils(instanceArray, addEmployeeData);
-  fetchGLAccountUtils(addGLAccountData);
-  fetchDepartement();
-});
-
-watch(Company, () => {
-  referenceFetch.fetchCompanyResult = Company.value;
-});
-
-watch(addEmployeeData, () => {
-  referenceFetch.fetchEmployeeResult = addEmployeeData.value;
-});
-
-watch(addGLAccountData, () => {
-  referenceFetch.fetchGLAccountResult = addGLAccountData.value;
-});
 </script>
 
 <template>
@@ -318,15 +160,6 @@ watch(addGLAccountData, () => {
               Departement
             </p>
             <div class="flex gap-4">
-              <button
-                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                id="btnDelete"
-                style="display: none"
-                @click="deleteDataInCeklis()"
-              >
-                Delete
-              </button>
-              <!-- <ModalAdd @departement-saved="fetchDepartement" /> -->
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
@@ -362,7 +195,7 @@ watch(addGLAccountData, () => {
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByCompany"
+                  @click="fetchDepartement()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -406,7 +239,7 @@ watch(addGLAccountData, () => {
                   type="text"
                   name="search"
                   v-model="search"
-                  @keyup="filteredItems(search)"
+                  @keyup.enter="fetchDepartement()"
                 />
               </label>
             </div>
@@ -418,6 +251,7 @@ watch(addGLAccountData, () => {
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
+              @change="fetchDepartement()"
             >
               <option>10</option>
               <option>25</option>
@@ -431,16 +265,6 @@ watch(addGLAccountData, () => {
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
-                <th>
-                  <div class="flex justify-center">
-                    <input
-                      type="checkbox"
-                      name="checked"
-                      @click="selectAll((checkList = !checkList))"
-                    />
-                  </div>
-                </th>
-
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -462,15 +286,9 @@ watch(addGLAccountData, () => {
             <tbody>
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="(data, index) in sortedData.slice(
-                  paginateIndex * pageMultiplierReactive,
-                  (paginateIndex + 1) * pageMultiplierReactive
-                )"
+                v-for="data in sortedData"
                 :key="data.id"
               >
-                <td style="width: 5%">
-                  <input type="checkbox" name="checks" />
-                </td>
                 <td style="width: 5%">{{ data.no }}</td>
                 <td style="width: 42%">
                   <span
@@ -496,46 +314,16 @@ watch(addGLAccountData, () => {
                       data.departement_head,
                     ]"
                   />
-                  <!-- <ModalEdit
-                    @change-departement="editDepartement(data.id)"
-                    :formContent="[
-                      data.id_company,
-                      data.departement_code,
-                      data.departement_name,
-                      data.profit_center,
-                      data.id_gl_account,
-                      data.is_active,
-                      data.id_division,
-                      data.departement_head,
-                    ]"
-                  />
-                  <button @click="deleteDepartement(data.id)">
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button> -->
                 </td>
               </tr>
             </tbody>
           </tableData>
 
           <tableData
-            v-else-if="
-              sortedData.length == 0 &&
-              instanceArray.length == 0 &&
-              responseStatus == null
-            "
+            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
-                <th>
-                  <div class="flex justify-center">
-                    <input
-                      type="checkbox"
-                      name="checked"
-                      @click="selectAll((checkList = !checkList))"
-                    />
-                  </div>
-                </th>
-
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -563,16 +351,6 @@ watch(addGLAccountData, () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
-                  <th>
-                    <div class="flex justify-center">
-                      <input
-                        type="checkbox"
-                        name="checked"
-                        @click="selectAll((checkList = !checkList))"
-                      />
-                    </div>
-                  </th>
-
                   <th
                     v-for="data in tableHead"
                     :key="data.Id"
@@ -609,12 +387,12 @@ watch(addGLAccountData, () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"

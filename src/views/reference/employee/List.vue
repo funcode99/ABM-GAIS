@@ -133,7 +133,7 @@ const exportToExcel = () => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.sn_employee;
