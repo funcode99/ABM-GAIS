@@ -254,6 +254,10 @@
       emits('resetTypeOfSubmitData')
       fetchCashAdvanceDetailByCashAdvanceId()
 
+      if(currentlyAddCADetail.value === true) {
+        currentlyAddCADetail.value = false
+      }
+
     }
 
     const editCADetail = async () => {
@@ -484,6 +488,18 @@
         {id: 5, title: 'Total'},
         {id: 6, title: 'Remarks'}
     ]
+
+    let currentlyEditCADetail = ref(false)
+    let currentlyAddCADetail = ref(false)
+
+    watch(currentlyAddCADetail, () => {
+      if(currentlyAddCADetail.value === false) {
+        resetDetailValue()
+        currentDetailIndex.value = 1
+      } else {
+        emptyCADetail()
+      }
+    })
     
 </script>
 
@@ -618,31 +634,46 @@
               />
 
               <buttonEditFormView  
+                @click="currentlyEditCADetail = !currentlyEditCADetail"
+                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyEditCADetail"
+              />
+
+              <buttonEditFormView  
                 @click="editCADetail"
-                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader"
+                v-if="currentlyEditCADetail"
+              />
+
+              <buttonCancelFormView 
+                @click="currentlyEditCADetail = !currentlyEditCADetail"
+                v-if="currentlyEditCADetail"
               />
 
   
-              <!-- untuk confirm add -->
+              <!-- untuk confirm add saat header ada isi nya -->
               <buttonAddFormView
                 title="Create CA Detail"
                 v-if="status.showCreateCAHeader"
                 @click=addToArrayDetail
               />
-  
-              <!-- untuk submit add detail saat header nya ada -->
+
               <buttonAddFormView 
-              title="Add CA Detail"
-              v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader" 
-              @click="addCADetail"
+                title="Add CA Detail"
+                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyAddCADetail" 
+                @click="currentlyAddCADetail = !currentlyAddCADetail"
               />
   
-              <!-- untuk submit add detail saat header nya kosong -->
+              <!-- untuk submit add detail saat header nya ada isi -->
               <buttonAddFormView 
-                title="Create Cash Advance Detail"
-                v-if="isAddingDetail && JSON.stringify(props) === '[{}]' & status.isEditingFromRequestTrip" 
-                @click="addToArrayDetail"
+                title="Submit CA Detail"
+                v-if="currentlyAddCADetail"
+                @click="addCADetail"
               />
+
+              <buttonCancelFormView 
+                v-if="currentlyAddCADetail"
+                @click="currentlyAddCADetail = !currentlyAddCADetail"
+              />
+
   
               <buttonCancelFormView 
                 v-if="isAddingDetail & status.isEditingFromRequestTrip" 
@@ -747,7 +778,7 @@
                 v-if="(status.isEditingFromRequestTrip & !isAddingDetail)" 
                 id="item"
                 :class="inputStylingClass" 
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 v-model="itemId" 
                 >
                 <!-- :disabled="JSON.stringify(props) === '[{}]'" -->
@@ -780,7 +811,7 @@
                 :class="inputStylingClass" 
                 placeholder="Nominal"
                 v-model="nominal"
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 />
               
                 <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
@@ -804,7 +835,7 @@
                 placeholder="Frequency"
                 v-model="frequency"
                 :class="inputStylingClass" 
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 />
                 <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
             </div>
@@ -841,7 +872,7 @@
                 :class="inputStylingClass" 
                 placeholder="Remarks" 
                 v-model="remarks"
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 ></textarea>
                 <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
   

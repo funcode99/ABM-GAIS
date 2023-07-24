@@ -340,14 +340,6 @@
       typeOfSubmitToProps.value = 'none'
       assignSelectedData()
       dataIndex.value = pageOfItem-1
-      
-      // console.log(dataIndex.value)
-      // console.log(pageOfItem-1)
-
-      // if(dataIndex.value-1 !== currentSelectedData.value.length) {
-      //   console.log('memenuhi kondisi')
-      //   console.log(currentSelectedData.value.length)
-      // }
 
     }
 
