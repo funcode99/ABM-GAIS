@@ -1,4 +1,6 @@
 <script setup>
+import moment from "moment";
+
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
@@ -54,13 +56,17 @@ let idItem = ref(0);
 let selectedEvent = ref("");
 
 const showFilter = ref(true);
+const formData = ref(null);
+const dialogKey = ref(0);
+const date = ref(null);
 
 // FETCH DATA
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("book_meeting_room/get");
+  const api = await Api.get("book_meeting_room/dashboard");
   dataArr.value = api.data.data;
+  datas.value = [];
   dataArr.value.forEach((dt) => {
     if (dt.status != "Cancelled") {
       let arr = {
@@ -69,16 +75,11 @@ const fetch = async () => {
         content: "<p class='my-2 '>" + dt.title + "</p>" + dt.name_created,
         class: `${chartStatusColor[dt.status]} text-whtie`,
         split: dt.id_meeting_room,
+        data: { ...dt },
       };
 
       datas.value.push(arr);
     }
-    // let arrHeader = {
-    //   id: dt.id_meeting_room,
-    //   label: dt.name_meeting_room,
-    // };
-    // tempHeader.value.push(arrHeader);
-    // filter.room.push(dt.id_meeting_room);
   });
   header.value = tempHeader.value.filter(
     (obj, index) =>
@@ -120,7 +121,7 @@ const filterDataByType = async () => {
     id_site: id_site.value,
     id_meeting_room: filter.room,
   };
-  const api = await Api.get("book_meeting_room/get", { params: payload });
+  const api = await Api.get("book_meeting_room/dashboard", { params: payload });
   dataArr.value = api.data.data;
   datas.value = [];
 
@@ -202,29 +203,62 @@ const resetData = () => {
   fetchCondition();
 };
 
-const openModal = (type, id) => {
+const openModal = async (event, e) => {
   visibleModal.value = true;
-  statusForm.value = type;
-  if (id) {
-    idItem.value = parseInt(id);
+
+  if (event.data?.id) {
+    statusForm.value = "view";
+    idItem.value = parseInt(event.data.id);
+
+    formData.value = event.data;
+  } else {
+    statusForm.value = "add";
+    idItem.value = parseInt(0);
+
+    const start = event.start;
+    const end = event.end;
+
+    const newForm = {
+      start_date: moment(start).format("YYYY-MM-DD"),
+      start_time: moment(start).format("hh:mm:ss"),
+      end_date: moment(end).format("YYYY-MM-DD"),
+      end_time: moment(end).format("hh:mm:ss"),
+      id_meeting_room: event.split,
+    };
+
+    console.log(event);
+    formData.value = newForm;
   }
+
+  setTimeout(() => {
+    document.getElementById("booking_modal").click();
+  }, 500);
 };
 
 const closeModal = () => {
+  document.getElementById("booking_modal").click();
+
   visibleModal.value = false;
+  formData.value = null;
+  selectedEvent.value = {};
+
   fetch();
+
+  if (selectedEvent.value) deleteEventFunction.value();
 };
 
-const onEventCreate = (event, deleteEventFunction) => {
+const deleteEventFunction = ref();
+const onEventCreate = (event, deleteFunction) => {
   selectedEvent.value = event;
-  //   openModal("add", 0);
+  deleteEventFunction.value = deleteFunction;
 
   return event;
 };
 
 const scrollToCurrentTime = () => {
   const calendar = document.querySelector("#vuecal .vuecal__bg");
-  calendar.scrollTo({ top: 14 * 40, behavior: "smooth" });
+  const hours = 7;
+  calendar.scrollTo({ top: hours * 100, behavior: "smooth" });
 };
 
 onBeforeMount(() => {
@@ -266,42 +300,48 @@ onBeforeMount(() => {
             > -->
           </div>
           <div class="px-4 pb-2 flex">
-            <div class="w-full">
-              <vue-cal
-                id="vuecal"
-                locale="id"
-                active-view="day"
-                :time-from="0 * 60"
-                :time-step="30"
-                :disable-views="['years', 'year', 'month']"
-                :editable-events="{ title: true, drag: false, create: false }"
-                :events="datas"
-                :split-days="header"
-                :min-cell-width="500"
-                :on-event-create="onEventCreate"
-                @event-drag-create="visibleModal"
-                sticky-split-labels
-                :watchRealTime="true"
-                @ready="scrollToCurrentTime"
-              >
-                <template #split-label="{ split }">
-                  <strong :style="`color: ${split.color}`">{{
-                    split.label
-                  }}</strong>
-                </template>
-              </vue-cal>
-              <!-- <ModalAddBookingRoom
-                v-if="visibleModal"
-                @close="closeModal"
-                :status="statusForm"
-                :id="idItem"
-              /> -->
-            </div>
+            <vue-cal
+              id="vuecal"
+              locale="id"
+              active-view="day"
+              :time-from="0 * 60"
+              :time-step="30"
+              :time-cell-height="50"
+              :disable-views="['years', 'year', 'month']"
+              :editable-events="{ title: true, drag: false, create: true }"
+              :events="datas"
+              :split-days="header"
+              :min-cell-width="500"
+              :on-event-create="onEventCreate"
+              @event-drag-create="openModal"
+              sticky-split-labels
+              :watchRealTime="true"
+              @ready="scrollToCurrentTime"
+              style="width: 270px; height: 80vh"
+              class="basis-9/12"
+              :on-event-click="openModal"
+            >
+              <template #split-label="{ split }">
+                <strong :style="`color: ${split.color}`">{{
+                  split.label
+                }}</strong>
+              </template>
+            </vue-cal>
+            <ModalAddBookingRoom
+              v-if="visibleModal"
+              @close="closeModal"
+              :status="statusForm"
+              :id="idItem"
+              :key="dialogKey"
+              :data="formData"
+              :readOnly="statusForm == 'view'"
+            />
+
             <div
-              class="basis-auto ease-in duration-300 bg-white"
+              class="ease-in duration-300 bg-white"
               :class="
                 showFilter
-                  ? '-translate-x-0  w-[350px]'
+                  ? '-translate-x-0  w-[250px]'
                   : '-translate-x-full  w-0'
               "
             >
@@ -457,6 +497,7 @@ onBeforeMount(() => {
 
 .vuecal__event {
   color: white;
+  background-color: rgba(76, 172, 175, 0.35);
 }
 
 :disabled {

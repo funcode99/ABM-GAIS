@@ -35,6 +35,7 @@ const itemsTable2 = ref([])
 let disableCompany = ref(false)
 let disableSite = ref(false)
 let addModal = ref(false)
+const company_code = JSON.parse(localStorage.getItem("company_code"));
 
 const emits = defineEmits(["unlockScrollbar", "close"]);
 const menuAccess = useMenuAccessStore()
@@ -339,14 +340,14 @@ onMounted(() => {
             <div class="mb-6 w-full">
               <label
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Warehouse<span class="text-red">*</span></label
+                >ATK Warehouse<span class="text-red">*</span></label
               >
               <select
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                 required
                 v-model="selectedWarehouse"
               >
-                <option disabled selected>Warehouse</option>
+                <option disabled selected>ATK Warehouse</option>
                 <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
                   {{ warehouse.warehouse_name }}
                 </option>
@@ -398,9 +399,8 @@ onMounted(() => {
               />
             </div>
           </div>
-
           <div class="flex justify-between px-6 items-center gap-2">
-            <div class="mb-6 w-full">
+            <div class="mb-6 w-full" v-if="company_code != '8000'">
               <label
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Brand<span class="text-red">*</span></label
@@ -419,13 +419,13 @@ onMounted(() => {
             <div class="mb-6 w-full">
               <label
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Remarks</label
+                >Description</label
               >
               <input
                 type="text"
                 v-model="remark"
                 class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Remarks"
+                placeholder="Description"
                 required
               />
             </div>
@@ -463,7 +463,7 @@ onMounted(() => {
                 <th
                   class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
-                  Warehouse
+                  ATK Warehouse
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
@@ -560,4 +560,5 @@ onMounted(() => {
 .inner-table {
   overflow-x: auto;
 }
+
 </style>

@@ -13,7 +13,15 @@ import { useRouter } from "vue-router";
 const props = defineProps({
   status: String,
   id: Number,
-  data: Array,
+  data: [Array, Object],
+  showCreatedBy: {
+    type: Boolean,
+    default: false,
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emits = defineEmits(["close"]);
@@ -92,7 +100,7 @@ const getDetailRoom = async () => {
 };
 
 const fetchDataById = async () => {
-  remarks.value = dataForm.value.remarks;
+  remarks.value = dataForm.value?.remarks ?? "";
   id_meeting_room.value = dataForm.value.id_meeting_room;
   floor.value = dataForm.value.floor;
   link.value = dataForm.value.link;
@@ -149,7 +157,7 @@ const saveForm = async () => {
 
   if (type.value == "add") {
     save(payload);
-  } else if (type.value == "edit") {
+  } else if (type.value == "edit" || type.value == "view") {
     edit(payload);
   }
 };
@@ -203,8 +211,10 @@ const save = async (payload) => {
 
 onMounted(() => {
   fetchMeetingRoom();
-  if (type.value == "edit" && dataForm.value) {
+  if (dataForm.value) {
     fetchDataById();
+
+    getDetailRoom();
   }
   //   fetchEmployee();
 });
@@ -228,12 +238,24 @@ watchEffect((newValue) => {
     item.value = parseInt(item.id);
   });
 });
+
+watch(
+  () => props.data,
+  fetchDataById,
+  () => {
+    Object.assign(dataForm.value, ...props.data);
+    fetchDataById();
+  },
+  {
+    deep: true,
+  }
+);
 </script>
 
 <template>
-  <input type="checkbox" id="my-modal-3" class="modal-toggle" />
-  <div class="modal min-h-[300px]">
-    <div class="modal-box relative">
+  <input type="checkbox" id="booking_modal" class="modal-toggle" />
+  <div class="modal min-h-[350px]">
+    <div class="modal-box relative h-[85vh]">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="close"
@@ -247,7 +269,7 @@ watchEffect((newValue) => {
           Booking Meeting Room
         </p>
       </nav>
-      <main class="modal-box-inner pb-4 lg:pb-16">
+      <main class="modal-box-inner pb-5 h-full">
         <div :class="rowClass">
           <div :class="colClass">
             <input type="hidden" name="idItem" v-model="itemsId" />
@@ -260,6 +282,7 @@ watchEffect((newValue) => {
               name="item"
               :class="inputClass"
               placeholder="Item"
+              :disabled="props.readOnly"
               required
             />
           </div>
@@ -271,6 +294,7 @@ watchEffect((newValue) => {
               v-model="id_meeting_room"
               :class="inputClass"
               @change="getDetailRoom()"
+              :disabled="props.readOnly"
             >
               <option disabled selected>List Meeting Room</option>
               <option v-for="data in listRoom" :key="data.id" :value="data.id">
@@ -320,6 +344,7 @@ watchEffect((newValue) => {
               range
               :enable-time-picker="false"
               placeholder="Select Date"
+              :disabled="props.readOnly"
               :min-date="new Date()"
             />
           </div>
@@ -333,6 +358,7 @@ watchEffect((newValue) => {
               time-picker
               disable-time-range-validation
               range
+              :disabled="props.readOnly"
               placeholder="Select Time"
             />
           </div>
@@ -354,6 +380,7 @@ watchEffect((newValue) => {
               :limit="10"
               :loading="isLoading"
               :hide-selected="true"
+              :disabled="props.readOnly"
               @search-change="fetchEmployee"
             >
               <template v-slot:tag="{ option, handleTagRemove, disabled }">
@@ -385,6 +412,7 @@ watchEffect((newValue) => {
               name="link"
               :class="inputClass"
               placeholder="Link"
+              :disabled="props.readOnly"
               required
             />
           </div>
@@ -395,16 +423,38 @@ watchEffect((newValue) => {
               >Remarks</label
             >
             <textarea
-              class="textarea textarea-bordered w-max-[50%]"
+              class="textarea textarea-bordered w-max-[50%] h-[200px] resize-none"
               placeholder="Remarks"
               v-model="remarks"
+              :disabled="props.readOnly"
               :class="inputClass"
             ></textarea>
           </div>
         </div>
+
+        <div :class="rowClass" v-if="type == 'view'">
+          <div :class="colClass">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Created by</label
+            >
+            <Multiselect
+              v-model="dataForm.created_by"
+              mode="single"
+              placeholder="Created By"
+              track-by="id"
+              label="employee_name"
+              :close-on-select="false"
+              :searchable="true"
+              :options="listEmployee"
+              :hide-selected="true"
+              disabled
+            >
+            </Multiselect>
+          </div>
+        </div>
       </main>
 
-      <div class="sticky bottom-0 bg-white py-2">
+      <div class="sticky bottom-0 bg-white" v-if="!props.readOnly">
         <div class="flex justify-end gap-4 mr-6">
           <label
             @click="close"

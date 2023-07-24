@@ -1,81 +1,81 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import DataNotFound from "@/components/element/dataNotFound.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import DataNotFound from "@/components/element/dataNotFound.vue"
 
-import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue";
-import selectAllCheckbox from "@/utils/selectAllCheckbox";
+import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue"
+import selectAllCheckbox from "@/utils/selectAllCheckbox"
 
-import icon_receive from "@/assets/icon-receive.svg";
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
-import viewicon from "@/assets/eye.png";
+import icon_receive from "@/assets/icon-receive.svg"
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
+import viewicon from "@/assets/eye.png"
 
-import Api from "@/utils/Api";
-import moment from "moment";
-import Swal from "sweetalert2";
+import Api from "@/utils/Api"
+import moment from "moment"
+import Swal from "sweetalert2"
 
-import { ref, onBeforeMount, computed, onMounted, reactive, watch } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
-const sidebar = useSidebarStore();
+import { ref, onBeforeMount, computed, onMounted, reactive, watch } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+const sidebar = useSidebarStore()
 const listStatus = [
   { id: 1, title: "Booked" },
   { id: 10, title: "Done" },
   { id: 9, title: "Cancelled" },
-];
-let statusForm = ref("add");
-let visibleModal = ref(false);
-let idItem = ref(0);
+]
+let statusForm = ref("add")
+let visibleModal = ref(false)
+let idItem = ref(0)
 //for sort & search
-let sortedData = ref([]);
-let deleteArray = ref([]);
-let listRoom = ref([]);
+let sortedData = ref([])
+let deleteArray = ref([])
+let listRoom = ref([])
 
-let sortedbyASC = true;
-let instanceArray = [];
-let paginationArray = [];
-let lengthCounter = 0;
-let lockScrollbar = ref(false);
-let sortedDataReactive = computed(() => sortedData.value);
-let sortAscending = true;
-const showFullText = ref({});
-let checkList = false;
+let sortedbyASC = true
+let instanceArray = []
+let paginationArray = []
+let lengthCounter = 0
+let lockScrollbar = ref(false)
+let sortedDataReactive = computed(() => sortedData.value)
+let sortAscending = true
+const showFullText = ref({})
+let checkList = false
 let filter = reactive({
   status: "",
   date: "",
   search: "",
   room: "",
-});
-const id_site = JSON.parse(localStorage.getItem("id_site"));
-const id_role = JSON.parse(localStorage.getItem("id_role"));
-const roles = ["ADMTR"];
+})
+const id_site = JSON.parse(localStorage.getItem("id_site"))
+const id_role = JSON.parse(localStorage.getItem("id_role"))
+const roles = ["ADMTR"]
 //for paginations
-let showingValue = ref(1);
-let showingValueFrom = ref(0);
-let showingValueTo = ref(0);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
-let totalPage = ref(0);
-let totalData = ref(0);
+let showingValue = ref(1)
+let showingValueFrom = ref(0)
+let showingValueTo = ref(0)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
+let totalPage = ref(0)
+let totalData = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
-  fetch(pageOfItem);
-};
+  paginateIndex.value = pageOfItem - 1
+  showingValue.value = pageOfItem
+  fetch(pageOfItem)
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  selectAllCheckbox(checkValue, deleteArray, sortedData);
-};
+  selectAllCheckbox(checkValue, deleteArray, sortedData)
+}
 
 //for tablehead
 const tableHead = [
@@ -88,103 +88,103 @@ const tableHead = [
   { Id: 7, title: "Time", jsonData: "status" },
   { Id: 8, title: "Site", jsonData: "site_name" },
   { Id: 9, title: "Status", jsonData: "status" },
-];
+]
 
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
+    return moment(String(value)).format("DD/MM/YYYY")
   }
-};
+}
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
   }
-};
+}
 
 //for searching
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
+  sortedData.value = instanceArray
   const filteredR = sortedData.value.filter((item) => {
-    (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    ;(item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
     return (
       (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
-};
+    )
+  })
+  sortedData.value = filteredR
+  lengthCounter = sortedData.value.length
+  onChangePage(1)
+}
 
 // get data
 const fetch = async (id) => {
   let payload = {
     perPage: pageMultiplier.value,
     page: id ? id : 1,
-  };
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("book_meeting_room/get", { params: payload });
-  paginationArray = api.data.data;
-  instanceArray = paginationArray.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  totalPage.value = paginationArray.last_page;
-  totalData.value = paginationArray.total;
-  showingValueFrom.value = paginationArray.from ? paginationArray.from : 0;
-  showingValueTo.value = paginationArray.to;
-};
+  }
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("book_meeting_room/get", { params: payload })
+  paginationArray = api.data.data
+  instanceArray = paginationArray.data
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  totalPage.value = paginationArray.last_page
+  totalData.value = paginationArray.total
+  showingValueFrom.value = paginationArray.from ? paginationArray.from : 0
+  showingValueTo.value = paginationArray.to
+}
 
 const fetchListRoom = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   if (id_role == "ADMTR" || id_role == "SUPADM") {
-    const api = await Api.get(`master_meeting_room/get`);
-    listRoom.value = api.data.data;
+    const api = await Api.get(`master_meeting_room/get`)
+    listRoom.value = api.data.data
   } else {
-    const api = await Api.get(`master_meeting_room/get_by_site/${id_site}`);
-    listRoom.value = api.data.data;
+    const api = await Api.get(`master_meeting_room/get_by_site/${id_site}`)
+    listRoom.value = api.data.data
   }
-};
+}
 
-const size = ref(0);
+const size = ref(0)
 const setContainerSize = (screenSize) => {
-  const padding = 0;
-  const sidebarSize = sidebar.isWide ? 260 : 100;
-  size.value = screenSize - sidebarSize - padding;
-};
+  const padding = 0
+  const sidebarSize = sidebar.isWide ? 260 : 100
+  size.value = screenSize - sidebarSize - padding
+}
 
 watch(sidebar, () => {
-  setContainerSize(window.innerWidth);
-});
+  setContainerSize(window.innerWidth)
+})
 
 onMounted(() => {
-  setContainerSize(window.innerWidth);
+  setContainerSize(window.innerWidth)
 
   window.addEventListener("resize", () => {
-    setContainerSize(window.innerWidth);
-  });
-});
+    setContainerSize(window.innerWidth)
+  })
+})
 
 const resetData = () => {
-  filter.search = "";
-  filter.status = "";
-  filter.date = "";
-  filter.room = "";
-  deleteArray.value = [];
-  fetch();
-};
+  filter.search = ""
+  filter.status = ""
+  filter.date = ""
+  filter.room = ""
+  deleteArray.value = []
+  fetch()
+}
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
 const filterDataByType = async (id) => {
   let payload = {
@@ -195,20 +195,20 @@ const filterDataByType = async (id) => {
     id_meeting_room: [filter.room],
     perPage: pageMultiplier.value,
     page: id ? id : 1,
-  };
-  const api = await Api.get("book_meeting_room/get", { params: payload });
-  paginationArray = api.data.data;
-  instanceArray = paginationArray.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  totalPage.value = paginationArray.last_page;
-  totalData.value = paginationArray.total;
-  showingValueFrom.value = paginationArray.from;
-  showingValueTo.value = paginationArray.to;
-  showingValue.value = paginationArray.current_page;
-};
+  }
+  const api = await Api.get("book_meeting_room/get", { params: payload })
+  paginationArray = api.data.data
+  instanceArray = paginationArray.data
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  totalPage.value = paginationArray.last_page
+  totalData.value = paginationArray.total
+  showingValueFrom.value = paginationArray.from
+  showingValueTo.value = paginationArray.to
+  showingValue.value = paginationArray.current_page
+}
 
 // delete data
 const deleteData = async (event) => {
@@ -241,19 +241,19 @@ const deleteData = async (event) => {
           confirmButtonColor: "#015289",
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
 
         if (sortedData.value.length == 1) {
-          router.go();
+          router.go()
         } else {
-          fetch();
+          fetch()
         }
-      });
+      })
     } else {
-      return;
+      return
     }
-  });
-};
+  })
+}
 const deleteCheckedArray = () => {
   Swal.fire({
     title:
@@ -277,7 +277,7 @@ const deleteCheckedArray = () => {
     if (result.isConfirmed) {
       let payload = {
         id: deleteArray.value,
-      };
+      }
       Api.delete(`/book_meeting_room/delete_data/`, {
         params: payload,
       }).then((res) => {
@@ -287,42 +287,42 @@ const deleteCheckedArray = () => {
           title: res.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
 
         if (sortedData.value.length == 1) {
-          router.go();
+          router.go()
         } else {
-          fetch();
+          fetch()
         }
-      });
+      })
     } else {
-      return;
+      return
     }
-  });
-};
+  })
+}
 // end
 
 const openModal = (type, id) => {
-  visibleModal.value = true;
-  statusForm.value = type;
+  visibleModal.value = true
+  statusForm.value = type
   if (id) {
-    idItem.value = parseInt(id);
+    idItem.value = parseInt(id)
   }
-};
+}
 
 const closeModal = () => {
-  visibleModal.value = false;
-  fetch();
-};
+  visibleModal.value = false
+  fetch()
+}
 
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetch();
-  fetchListRoom();
-});
+  getSessionForSidebar()
+  fetch()
+  fetchListRoom()
+})
 </script>
 
 <template>
@@ -369,7 +369,7 @@ onBeforeMount(() => {
               <label
                 v-if="id_role != 'ADMTR'"
                 @click="openModal('add', 0)"
-                for="my-modal-3"
+                for="booking_modal"
                 class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
               >
                 + Add New

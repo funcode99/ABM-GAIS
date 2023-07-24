@@ -233,7 +233,7 @@ const inputClass =
             <label
               v-if="dataArr.status == 'Draft'"
               @click="openModal('edit', '')"
-              for="my-modal-3"
+              for="booking_modal"
               class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
             >
               Edit
