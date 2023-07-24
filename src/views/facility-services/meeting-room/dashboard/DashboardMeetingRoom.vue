@@ -257,7 +257,8 @@ const onEventCreate = (event, deleteFunction) => {
 
 const scrollToCurrentTime = () => {
   const calendar = document.querySelector("#vuecal .vuecal__bg");
-  calendar.scrollTo({ top: 14 * 40, behavior: "smooth" });
+  const hours = 7;
+  calendar.scrollTo({ top: hours * 100, behavior: "smooth" });
 };
 
 onBeforeMount(() => {
@@ -305,6 +306,7 @@ onBeforeMount(() => {
               active-view="day"
               :time-from="0 * 60"
               :time-step="30"
+              :time-cell-height="50"
               :disable-views="['years', 'year', 'month']"
               :editable-events="{ title: true, drag: false, create: true }"
               :events="datas"
@@ -315,7 +317,7 @@ onBeforeMount(() => {
               sticky-split-labels
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
-              style="width: 270px; height: 100%"
+              style="width: 270px; height: 80vh"
               class="basis-9/12"
               :on-event-click="openModal"
             >
