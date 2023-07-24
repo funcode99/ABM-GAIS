@@ -357,7 +357,7 @@ onMounted(() => {
               <label
                 for="warehouse"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Warehouse<span class="text-red">*</span></label
+                >ATK Warehouse<span class="text-red">*</span></label
               >
               <select
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -365,7 +365,7 @@ onMounted(() => {
                 v-model="selectedWarehouse"
                 @change="fetItems(selectedWarehouse)"
               >
-                <option disabled selected>Warehouse</option>
+                <option disabled selected>ATK Warehouse</option>
                 <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
                   {{ warehouse.warehouse_name }}
                 </option>
@@ -488,7 +488,7 @@ onMounted(() => {
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
-                  Warehouse
+                ATK Warehouse
                 </th>
                 
                 <th

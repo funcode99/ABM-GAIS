@@ -128,7 +128,7 @@ const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
-  Adjusment.value.push({name:'addition'},{ name:'substraction'})
+  Adjusment.value.push({name:'increase'},{ name:'decrease'})
 };
 
 const addItem = async () => {
@@ -397,7 +397,7 @@ onMounted(() => {
               <label
                 for="warehouse"
                 class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Warehouse<span class="text-red">*</span></label
+                >ATK Warehouse<span class="text-red">*</span></label
               >
               <select
                 class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -405,7 +405,7 @@ onMounted(() => {
                 v-model="selectedWarehouse"
                 @change="fetItems(selectedWarehouse)"
               >
-                <option disabled selected>Warehouse</option>
+                <option disabled selected>ATK Warehouse</option>
                 <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
                   {{ warehouse.warehouse_name }}
                 </option>
@@ -502,7 +502,7 @@ onMounted(() => {
                 >Adjusment Type<span class="text-red">*</span></label
               >
               <select
-                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm capitalize"
                 required
                 v-model="selectedAdjusment"
               >
