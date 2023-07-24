@@ -115,6 +115,15 @@ const resetData = () => {
   fetchEmployee();
 };
 
+const clearSearch = () => {
+  search.value = "";
+  fetchEmployee();
+};
+
+const showClearButton = computed(() => {
+  return search.value !== "";
+});
+
 const exportToExcel = () => {
   const workbook = new Workbook();
   const worksheet = workbook.addWorksheet("Employee Data");
@@ -230,33 +239,35 @@ const exportToExcel = () => {
             </div>
 
             <div class="pt-6 flex md:mx-0">
-              <label class="relative block">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </span>
-                <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
-                  type="text"
-                  name="search"
-                  v-model="search"
-                  @keyup.enter="fetchEmployee()"
-                />
-              </label>
+              <input
+                class="nosubmit placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                type="text"
+                placeholder="Search..."
+                v-model="search"
+                @keyup.enter="fetchEmployee()"
+              />
+
+              <button
+                v-if="showClearButton"
+                @click="clearSearch"
+                type="button"
+                class="cursor-pointer absolute right-8 mt-3"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  class="h-4 w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -490,5 +501,11 @@ tr th {
   max-width: 400px;
   white-space: nowrap;
   word-break: break-word;
+}
+
+input.nosubmit {
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat 13px center;
 }
 </style>
