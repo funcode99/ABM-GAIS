@@ -64,7 +64,7 @@ const date = ref(null);
 const fetch = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("book_meeting_room/get");
+  const api = await Api.get("book_meeting_room/dashboard");
   dataArr.value = api.data.data;
   datas.value = [];
   dataArr.value.forEach((dt) => {
@@ -121,7 +121,7 @@ const filterDataByType = async () => {
     id_site: id_site.value,
     id_meeting_room: filter.room,
   };
-  const api = await Api.get("book_meeting_room/get", { params: payload });
+  const api = await Api.get("book_meeting_room/dashboard", { params: payload });
   dataArr.value = api.data.data;
   datas.value = [];
 
