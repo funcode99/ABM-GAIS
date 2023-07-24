@@ -19,48 +19,33 @@ import iconSync from "@/assets/icon_sync.png";
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
-
 import { ref, onBeforeMount, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
 const search = ref("");
+const selectedCompany = ref("");
+const showFullText = ref({});
+
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 let Company = ref("");
-let lengthCounter = 0;
-let sortAscending = true;
-let sortedDataReactive = computed(() => sortedData.value);
-const showFullText = ref({});
-let checkList = false;
 
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.id_company === selectedCompany.value
-    );
-  }
-  onChangePage(1);
-};
-
-const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedCompany.value = "Company";
+  fetchEmployee(pageOfItem);
 };
 
 const tableHead = [
@@ -83,31 +68,26 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchEmployee();
-  fetchGetCompany();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
-
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.sn_employee.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.employee_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.sn_employee.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.employee_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
-};
-
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+const fetchEmployee = async (id) => {
+  const params = {
+    filterCompany: selectedCompany.value,
+    search: search.value,
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/employee/get/", { params });
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray.data;
+  totalPage.value = instanceArray.last_page;
+  totalData.value = instanceArray.total;
+  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+  showingValueTo.value = instanceArray.to;
 };
 
 const fetchGetCompany = async () => {
@@ -117,21 +97,23 @@ const fetchGetCompany = async () => {
   Company.value = res.data.data;
 };
 
-const fetchEmployee = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/employee/get/");
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
-
 const syncData = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/integrate/falcon/employee");
-  console.log(res);
-}
+  await Api.get("/integrate/falcon/employee");
+  fetchEmployee();
+};
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchEmployee();
+  fetchGetCompany();
+});
+
+const resetData = () => {
+  selectedCompany.value = "";
+  fetchEmployee();
+};
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -228,7 +210,7 @@ const exportToExcel = () => {
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByCompany"
+                  @click="fetchEmployee()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -272,7 +254,7 @@ const exportToExcel = () => {
                   type="text"
                   name="search"
                   v-model="search"
-                  @keyup="filteredItems(search)"
+                  @keyup.enter="fetchEmployee()"
                 />
               </label>
             </div>
@@ -285,6 +267,7 @@ const exportToExcel = () => {
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 v-model="pageMultiplier"
+                @change="fetchEmployee()"
               >
                 <option>10</option>
                 <option>25</option>
@@ -332,10 +315,7 @@ const exportToExcel = () => {
             <tbody>
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData.slice(
-                  paginateIndex * pageMultiplierReactive,
-                  (paginateIndex + 1) * pageMultiplierReactive
-                )"
+                v-for="data in sortedData"
                 :key="data.id"
               >
                 <td style="width: 5%">{{ data.no }}</td>
@@ -448,12 +428,12 @@ const exportToExcel = () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
