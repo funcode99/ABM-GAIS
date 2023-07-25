@@ -5,28 +5,31 @@ import Footer from "@/components/layout/Footer.vue";
 
 import ModalApproveAtk from "@/components/approval/atk-request/ModalApproveAtk.vue";
 import ModalRejectAtk from "@/components/approval/atk-request/ModalRejectAtk.vue";
+import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 import icon_receive from "@/assets/icon-receive.svg";
 
 import { onBeforeMount, ref } from "vue";
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
-import moment from 'moment';
+import moment from "moment";
 
 const sidebar = useSidebarStore();
-const router = useRouter()
+const router = useRouter();
 let lengthCounter = 0;
-let stockName = ref("")
-let createdDate = ref("")
-let createdBy = ref("")
-let siteName = ref("")
-let companyName = ref("")
-let status = ref("")
-let ItemTable = ref([])
-const idR = ref(router.currentRoute.value.params.id)
+let stockName = ref("");
+let createdDate = ref("");
+let createdBy = ref("");
+let siteName = ref("");
+let companyName = ref("");
+let status = ref("");
+let ItemTable = ref([]);
+const idR = ref(router.currentRoute.value.params.id);
+let dataApproval = ref([]);
+let tabId = ref(1);
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -35,14 +38,14 @@ const fetchDataById = async (id) => {
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    companyName.value = element.company_name
-    stockName.value = element.no_atk_request
-    createdDate.value = format_date(element.created_at)
-    createdBy.value = element.employee_name
-    siteName.value = element.site_name
-    status.value = element.status
+    companyName.value = element.company_name;
+    stockName.value = element.no_atk_request;
+    createdDate.value = format_date(element.created_at);
+    createdBy.value = element.employee_name;
+    siteName.value = element.site_name;
+    status.value = element.status;
   }
-  
+
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchDetailById = async (id) => {
@@ -53,23 +56,33 @@ const fetchDetailById = async (id) => {
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
     ItemTable.value.push({
-      Warehouse : element.warehouse_name,
+      Warehouse: element.warehouse_name,
       itemNames: element.item_name,
       idItems: element.code_item,
       alertQuantity: element.qty,
       brandName: element.brand_name,
       UOMName: element.uom_name,
       remark: element.remarks,
-    })
+      qty_send: element.qty_send,
+      qty_unsend: element.qty_unsend,
+    });
   }
-  
+
   // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+
+const fetchHistoryApproval = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get_history/${id}`);
+  dataApproval.value = res.data.data;
 };
 
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchDataById(router.currentRoute.value.params.id)
-  fetchDetailById(router.currentRoute.value.params.id)
+  fetchHistoryApproval(router.currentRoute.value.params.id);
+  fetchDataById(router.currentRoute.value.params.id);
+  fetchDetailById(router.currentRoute.value.params.id);
 });
 
 const getSessionForSidebar = () => {
@@ -77,8 +90,8 @@ const getSessionForSidebar = () => {
 };
 const format_date = (value) => {
   if (value) {
-           return moment(String(value)).format('DD-MM-YYYY')
-          }
+    return moment(String(value)).format("DD-MM-YYYY");
+  }
 };
 </script>
 
@@ -99,11 +112,11 @@ const format_date = (value) => {
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
           <router-link
-            to="/approvalatkrrequest"
+            to="/approvalatkrequest"
             class="flex items-center gap-2 py-4 mx-4"
           >
             <img :src="arrow" class="w-3 h-3" alt="" />
-            <h1 class="text-black text-4xl font-semibold font-JakartaSans">
+            <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
               {{ stockName }}
             </h1>
           </router-link>
@@ -132,7 +145,9 @@ const format_date = (value) => {
               />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm">Requestor</span>
+              <span class="font-JakartaSans font-medium text-sm"
+                >Requestor</span
+              >
               <input
                 type="text"
                 disabled
@@ -144,9 +159,7 @@ const format_date = (value) => {
 
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Company</span
-              >
+              <span class="font-JakartaSans font-medium text-sm">Company</span>
               <input
                 type="text"
                 disabled
@@ -155,9 +168,7 @@ const format_date = (value) => {
               />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm"
-                >Site</span
-              >
+              <span class="font-JakartaSans font-medium text-sm">Site</span>
               <input
                 type="text"
                 disabled
@@ -169,19 +180,55 @@ const format_date = (value) => {
 
           <!-- TAB & TABLE-->
           <div
-            class="bbg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
+            class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
           >
-            <div
-              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
-            >
+            <div class="flex items-center">
               <div
-                class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
-              ></div>
-              <p class="font-JakartaSans font-normal text-sm mx-8">Details</p>
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 1"
+              >
+                <div
+                  :class="
+                    tabId == 1
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 1
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Details
+                </p>
+              </div>
+              <div
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 2"
+              >
+                <div
+                  :class="
+                    tabId == 2
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 2
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Approval
+                </p>
+              </div>
             </div>
 
-            <div class="overflow-x-auto">
-              <table class="table table-compact w-full">
+            <div class="overflow-x-auto bg-white">
+              <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
                     <th
@@ -212,6 +259,16 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
+                      Quantity Approved
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Quantity Rejected
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Uom
                     </th>
                     <th
@@ -221,19 +278,40 @@ const format_date = (value) => {
                     </th>
                   </tr>
                 </thead>
-                <tbody class="font-JakartaSans font-normal text-xs" v-for="(value, ind) in ItemTable" :key="ind">
+                <tbody
+                  class="font-JakartaSans font-normal text-xs"
+                  v-for="(value, ind) in ItemTable"
+                  :key="ind"
+                >
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">{{ value.Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.Warehouse }}
+                    </td>
                     <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
-                    <td class="border border-[#B9B9B9]">{{ value.itemNames }}</td>
-                    
-                    <td class="border border-[#B9B9B9]">{{ value.brandName }}</td>
-                    <td class="border border-[#B9B9B9]">{{ value.alertQuantity }}</td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.itemNames }}
+                    </td>
+
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.brandName }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.alertQuantity }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.qty_send }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.qty_unsend }}
+                    </td>
                     <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                   </tr>
                 </tbody>
               </table>
+              <div v-if="tabId == 2">
+                <HistoryApproval :data-approval="dataApproval" type="ATK"/>
+              </div>
             </div>
           </div>
         </div>
