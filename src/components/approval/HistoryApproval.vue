@@ -65,20 +65,20 @@ let classWaiting =
       </div>
       <div class="bg-blue bg-opacity-10 p-4 rounded-lg mb-5">
         <div v-if="typeApproval == 'ATK'">
-          <p class="mb-2">
-            Approved By: <span>{{ data.employee_name }}</span>
+          <p class="mb-2" >
+            <span v-if="data.code_status_doc == 10">Approved By: </span> <span v-else>Rejected By:</span> <span class="font-normal">{{ data.updated_by }}</span>
           </p>
           <p class="mb-2">
-            Approved At:
-            <span v-if="data.updated_at">
+            <span v-if="data.code_status_doc == 10">Approved At: </span> <span v-else>Rejected At:</span>
+            <span v-if="data.updated_at" class="font-normal">
               {{ format_date(data.updated_at.split(" ")[0]) }}
             </span>
-            <span v-if="data.updated_at" class="ml-1">
+            <span v-if="data.updated_at" class="ml-1 font-normal">
               {{ data.updated_at.split(" ")[1] }}
             </span>
           </p>
-          <p class="text-gray-700 mt-1">
-            Notes: {{ data.notes }}
+          <p class="text-gray-700 mt-1 ">
+            Notes: <span class="font-normal">{{ data.notes }}</span>
           </p>
         </div>
         <div v-else>

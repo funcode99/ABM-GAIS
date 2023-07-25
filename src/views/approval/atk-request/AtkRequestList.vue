@@ -18,7 +18,7 @@ import { ref, onBeforeMount, computed } from "vue";
 import Api from "@/utils/Api";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import Swal from "sweetalert2";
-import moment from 'moment';
+import moment from "moment";
 const sidebar = useSidebarStore();
 
 //for sort & search
@@ -27,9 +27,12 @@ const end_date = ref("");
 const search = ref("");
 const searchFilter = ref("");
 let sortedData = ref([]);
-const selectedType = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
+const selectedType =
+  JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
+    ? ref("")
+    : ref(JSON.parse(localStorage.getItem("id_company")));
 let sortedbyASC = true;
-let itemdata = ref("")
+let itemdata = ref("");
 let instanceArray = [];
 let lengthCounter = 0;
 let Company = ref("");
@@ -39,32 +42,67 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
-let lenghtPagination = ref(0)
+let lenghtPagination = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  fetchData(pageOfItem, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+  fetchData(
+    pageOfItem,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
+    pageMultiplier.value
+  );
 };
 
 //for filter & reset button
 const filterDataByType = () => {
-  const start = moment(String(start_date.value[0])).format('YYYY-MM-DD')
-    const end = moment(String(start_date.value[1])).format('YYYY-MM-DD')
-    // console.log(test)
-    if (start_date.value[0] == undefined) {
-      fetchData(1, selectedType.value, status.value, "", "",searchFilter.value,pageMultiplier.value)
-    }  else {
-      fetchData(1, selectedType.value, status.value, start, end,searchFilter.value,pageMultiplier.value)
-    }
+  const start = moment(String(start_date.value[0])).format("YYYY-MM-DD");
+  const end = moment(String(start_date.value[1])).format("YYYY-MM-DD");
+  // console.log(test)
+  if (start_date.value[0] == undefined) {
+    fetchData(
+      1,
+      selectedType.value,
+      status.value,
+      "",
+      "",
+      searchFilter.value,
+      pageMultiplier.value
+    );
+  } else {
+    fetchData(
+      1,
+      selectedType.value,
+      status.value,
+      start,
+      end,
+      searchFilter.value,
+      pageMultiplier.value
+    );
+  }
 };
 
 //for filter & reset button
 const resetData = () => {
-  selectedType.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"));
-    status.value = ''
-    start_date.value = ''
-    end_date.value = ''
-    fetchData(showingValue.value, selectedType.value, "", "", "",searchFilter.value,pageMultiplier.value) 
+  selectedType.value =
+    JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
+      ? ""
+      : JSON.parse(localStorage.getItem("id_company"));
+  status.value = "";
+  start_date.value = "";
+  end_date.value = "";
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    "",
+    "",
+    "",
+    searchFilter.value,
+    pageMultiplier.value
+  );
 };
 
 //for check & uncheck all
@@ -105,43 +143,79 @@ const sortList = (sortBy) => {
   }
 };
 const perPage = async () => {
-    // console.log(pageMultiplier.value)
-    fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-const fetchData = async (page, selectedType, status, start_date, end_date,search,perpage) => {
+  // console.log(pageMultiplier.value)
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
+    pageMultiplier.value
+  );
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchData = async (
+  page,
+  selectedType,
+  status,
+  start_date,
+  end_date,
+  search,
+  perpage
+) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  Api.get(`/approval_request_atk/get_data?page=${page}&id_company=${selectedType}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`).then((res) => {
-  // console.log(res.data.data)
-  itemdata.value = res.data.data.data;
-  instanceArray = itemdata.value;
-  // console.log(instanceArray)
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  lenghtPagination = res.data.data.total
-    paginateIndex.value = res.data.data.current_page - 1
-    showingValue.value = res.data.data.current_page
-  }).catch((error) =>{
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: error.response.data.message,
-      showConfirmButton: false,
-      timer: 1500,
+  Api.get(
+    `/approval_request_atk/get_data?page=${page}&id_company=${selectedType}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`
+  )
+    .then((res) => {
+      // console.log(res.data.data)
+      itemdata.value = res.data.data.data;
+      instanceArray = itemdata.value;
+      // console.log(instanceArray)
+      sortedData.value = instanceArray;
+      lengthCounter = sortedData.value.length;
+      lenghtPagination = res.data.data.total;
+      paginateIndex.value = res.data.data.current_page - 1;
+      showingValue.value = res.data.data.current_page;
+    })
+    .catch((error) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: error.response.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      // console.log(error.response.data.message)
     });
-    // console.log(error.response.data.message)
-  })
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
+    pageMultiplier.value
+  );
 });
 
 //for searching
 const filteredItems = (search) => {
-  fetchData(1, selectedType.value, status.value, start_date.value, end_date.value,search,pageMultiplier.value)
+  fetchData(
+    1,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    search,
+    pageMultiplier.value
+  );
 };
 
 const getSessionForSidebar = () => {
@@ -149,8 +223,8 @@ const getSessionForSidebar = () => {
 };
 const format_date = (value) => {
   if (value) {
-           return moment(String(value)).format('DD-MM-YYYY')
-          }
+    return moment(String(value)).format("DD-MM-YYYY");
+  }
 };
 </script>
 
@@ -333,8 +407,7 @@ const format_date = (value) => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData
-                    "
+                    v-for="(data, index) in sortedData"
                     :key="data.id"
                   >
                     <td class="p-0">
@@ -356,10 +429,23 @@ const format_date = (value) => {
                       {{ data.item_count }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.status }}
+                      <span
+                        :class="
+                          data.status == 'Waiting Approval'
+                            ? 'status-default'
+                            : data.status == 'Cancelled'
+                            ? 'status-revision'
+                            : data.status == 'Completed'
+                            ? 'status-done'
+                            : data.status == 'Partial'
+                            ? 'status-partial'
+                            : 'font-bold'
+                        "
+                        >{{ data.status }}</span
+                      >
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link  :to="`/viewapprovalatkrrequest/${data.id}`">
+                      <router-link :to="`/viewapprovalatkrrequest/${data.id}`">
                         <button>
                           <img :src="icon_ceklis" class="w-8 h-8" />
                         </button>
@@ -396,7 +482,6 @@ const format_date = (value) => {
               :show-jump-buttons="true"
             />
           </div>
-          
         </div>
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />
@@ -438,5 +523,25 @@ tr th {
 
 .my-date {
   width: 300px !important;
+}
+
+.status-partial {
+  color: #ef9d22;
+  font-weight: 800;
+}
+
+.status-default {
+  color: #2970ff;
+  font-weight: 800;
+}
+
+.status-done {
+  color: #00c851;
+  font-weight: 800;
+}
+
+.status-revision {
+  color: #ef3022;
+  font-weight: 800;
 }
 </style>

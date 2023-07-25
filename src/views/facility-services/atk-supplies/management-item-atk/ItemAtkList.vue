@@ -120,7 +120,7 @@ const tableHead = [
   { Id: 1, title: "No", jsonData: "id" },
   { Id: 2, title: "ID Item", jsonData: "code_item" },
   { Id: 3, title: "Item Name", jsonData: "item_name" },
-  { Id: 4, title: "Warehouse", jsonData: "warehouse_name" },
+  { Id: 4, title: "ATK Warehouse", jsonData: "warehouse_name" },
   { Id: 5, title: "Stock Available", jsonData: "current_stock" },
   { Id: 6, title: "Alert Quantity", jsonData: "alert_qty" },
   { Id: 7, title: "UOM", jsonData: "uom_name" },

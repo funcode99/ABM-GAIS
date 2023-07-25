@@ -413,7 +413,7 @@
                         <td class="border border-[#B9B9B9] text-center">{{ value.idItems }}</td>
                         <td class="border border-[#B9B9B9] text-center">{{ value.itemNames }}</td>
                         <td class="border border-[#B9B9B9] text-center">{{ value.QuantityAdjusment }}</td>
-                        <td class="border border-[#B9B9B9] text-center">{{ value.adjusmentType }}</td>
+                        <td class="border border-[#B9B9B9] text-center">{{ value.adjusmentType == 'addition' ? 'Increase' : 'Decrease' }}</td>
                         <td class="border border-[#B9B9B9] text-center">{{ value.brandName }}</td>
                         <td class="border border-[#B9B9B9] text-center">{{ value.UOMName }}</td>
                         <td class="border border-[#B9B9B9] text-center">{{ value.remark }}</td>
@@ -526,7 +526,7 @@
                     <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.itemNames }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.QuantityAdjusment }}</td>
-                    <td class="border border-[#B9B9B9]">{{ value.adjusmentType }}</td>
+                    <td class="border border-[#B9B9B9]">{{ value.adjusmentType == 'addition' ? 'Increase' : 'Decrease' }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.brandName }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.remark }}</td>

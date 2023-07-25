@@ -19,7 +19,7 @@ const itemPayload = ref([]);
 const payload = ref([]);
 
 const idItem = ref("");
-
+const isApprove = ref(false);
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -72,9 +72,10 @@ const submit = async () => {
         notes: notesName.value,
         array_detail: itemPayload.value,
       };
+      isApprove.value = true;
     }
   }
-  if (payload.value) {
+  if (isApprove.value) {
     const token = JSON.parse(localStorage.getItem("token"));
 
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -193,6 +194,16 @@ onBeforeMount(() => {
                   type="number"
                   v-model="value.qtyApproved"
                   class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  @input="
+                    () => {
+                      if (
+                        value.qtyApproved > value.qty ||
+                        value.qtyApproved < 0
+                      ) {
+                        value.qtyApproved = value.qty;
+                      }
+                    }
+                  "
                 />
               </div>
             </div>
