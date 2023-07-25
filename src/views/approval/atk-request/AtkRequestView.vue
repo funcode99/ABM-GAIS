@@ -234,7 +234,7 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Warehouse
+                      ATK Warehouse
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"

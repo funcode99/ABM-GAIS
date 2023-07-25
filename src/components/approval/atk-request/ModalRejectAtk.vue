@@ -41,7 +41,7 @@
       });
       // reset()
       router.push({
-        path: '/approvalatkrrequest'
+        path: '/approvalatkrequest'
       })
       // console.log(res.data.data)
 
