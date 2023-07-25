@@ -21,11 +21,11 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-let FlightClass = ref();
+// let FlightClass = ref();
 let jobBandName = ref(props.formContent[0]);
 let hotelFare = ref(props.formContent[1]);
 let mealsRate = ref(props.formContent[2]);
-let selectedFlightClass = ref(props.formContent[4]);
+// let selectedFlightClass = ref(props.formContent[4]);
 
 let addZona = ref([]);
 let tlkRatevalue = ref([]);
@@ -44,6 +44,11 @@ let companyIdArray = ref([]);
 let companyIdObject = ref(`[${props.formContent[3]}]`);
 companyIdArray.value = JSON.parse(companyIdObject.value);
 
+let FlightClass = ref(null);
+let FlightClassIdArray = ref([]);
+let FlightClassIdObject = ref(`[${props.formContent[4]}]`);
+FlightClassIdArray.value = JSON.parse(FlightClassIdObject.value);
+
 const props = defineProps({
   formContent: Array,
 });
@@ -59,7 +64,7 @@ const submitEdit = () => {
   formEditState.jobBand.jobBandName = jobBandName.value;
   formEditState.jobBand.jobBandHotelFare = hotelFare.value;
   formEditState.jobBand.jobBandMealrate = mealsRate.value;
-  formEditState.jobBand.jobBandIdFlight = selectedFlightClass.value;
+  formEditState.jobBand.jobBandIdFlight = FlightClassIdArray.value;
 
   const length = addZona.length;
   tlkRatevalue.value = tlkRatevalue.value.slice(0, length);
@@ -88,7 +93,8 @@ const resetInput = () => {
   mealsRate.value = props.formContent[2];
   let companyIdObject = ref(`[${props.formContent[3]}]`);
   companyIdArray.value = JSON.parse(companyIdObject.value);
-  selectedFlightClass.value = props.formContent[4];
+  let FlightClassIdObject = ref(`[${props.formContent[4]}]`);
+  FlightClassIdArray.value = JSON.parse(FlightClassIdObject.value);
 };
 
 watch(isVisible, (newValue) => {
@@ -98,6 +104,10 @@ watch(isVisible, (newValue) => {
 
   addZona.value = referenceFetch.fetchZonaIdResult;
   FlightClass.value = referenceFetch.fetchFlightClassResult;
+  FlightClass.value.map((item) => {
+    item.value = item.id;
+  });
+
   companyData.value = referenceFetch.fetchCompanyResult;
   companyData.value.map((item) => {
     item.value = item.id;
@@ -292,18 +302,40 @@ const formatCurrency = () => {
 
         <div class="mb-6 w-full px-4 text-start">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Flight<span class="text-red">*</span></label
+            >Class Transportation<span class="text-red">*</span></label
           >
-          <select
-            class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            required
-            v-model="selectedFlightClass"
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            v-model="FlightClassIdArray"
+            mode="tags"
+            placeholder="Select Class Transportation"
+            track-by="flight_class"
+            label="flight_class"
+            :close-on-select="false"
+            :searchable="true"
+            :options="FlightClass"
           >
-            <option disabled selected>Flight</option>
-            <option v-for="flight in FlightClass" :value="flight.id">
-              {{ flight.flight_class }}
-            </option>
-          </select>
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
+              >
+                {{ option.flight_class }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
         </div>
 
         <!-- INNER TABLE -->
