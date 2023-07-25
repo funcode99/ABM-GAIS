@@ -147,12 +147,6 @@
 
     }
 
-    const emptyCAHeader = () => {
-      headerRemarks.value = ''
-      grandTotal.value = 0
-      currencyId.value = [0, '']
-    }
-
     const resetDetailValue = () => {
       
       item.value = caDetailData.value[0].nama_item
@@ -220,7 +214,7 @@
       console.log(api)
       emits('fetchCashAdvance')
       emits('resetTypeOfSubmitData')
-      emits('resetEditCAHeaderState')
+      emits('resetEditCAHeaderState') 
 
     }
 
@@ -235,6 +229,12 @@
       fetchCashAdvanceDetailByRequestTripId()
       fetchCashAdvanceDetailByCashAdvanceId()
 
+    }
+
+    const emptyCAHeader = () => {
+      headerRemarks.value = ''
+      grandTotal.value = 0
+      currencyId.value = [0, '']
     }
 
     const addCADetail = async () => {
@@ -652,7 +652,7 @@
 
               <buttonEditFormView  
                 @click="currentlyEditCADetail = !currentlyEditCADetail"
-                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyEditCADetail"
+                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyAddCADetail & !currentlyEditCADetail"
               />
 
               <buttonEditFormView  
@@ -675,7 +675,7 @@
 
               <buttonAddFormView 
                 title="Add CA Detail"
-                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyAddCADetail" 
+                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyAddCADetail & !currentlyEditCADetail" 
                 @click="currentlyAddCADetail = !currentlyAddCADetail"
               />
   
@@ -699,7 +699,7 @@
   
               <!-- v-if="!isAddingDetail && JSON.stringify(props) !== '[{}]' "  -->
               <div 
-                v-if="JSON.stringify(props) !== '[{}]' "
+                v-if="JSON.stringify(props) !== '[{}]' & !currentlyAddCADetail & !currentlyEditCADetail"
                 class="flex items-center gap-4 ml-8"
               >
   
@@ -720,8 +720,9 @@
   
               </div>
 
+              <!-- muncul saat header ca nya kosong -->
               <div 
-                v-if="JSON.stringify(props) === '[{}]' "
+                v-if="JSON.stringify(props) === '[{}]'"
                 class="flex items-center gap-4 ml-8"
               >
   
@@ -748,7 +749,7 @@
   
             <!-- Delete Button -->
             <button 
-              v-if="status.isEditingFromRequestTrip & !status.showCreateCAHeader & JSON.stringify(props) !== '[{}]'"
+              v-if="status.isEditingFromRequestTrip & !status.showCreateCAHeader & JSON.stringify(props) !== '[{}]' & !currentlyAddCADetail & !currentlyEditCADetail"
               class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
               @click="deleteCADetail"
             >
