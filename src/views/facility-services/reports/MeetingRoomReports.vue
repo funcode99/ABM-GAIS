@@ -178,7 +178,12 @@ const format_date = (value) => {
 
 const format_time = (value) => {
   if (value) {
-    return moment().format("HH:mm");
+    const duration = moment.duration(value);
+    const formattedTime = `${duration.hours()}:${duration
+      .minutes()
+      .toString()
+      .padStart(2, "0")}`;
+    return formattedTime;
   }
 };
 
@@ -490,7 +495,10 @@ const showClearButton = computed(() => {
                   {{ format_date(data.start_date) }} -
                   {{ format_date(data.end_date) }}
                 </td>
-                <td>{{ format_time(data.start_time) }}</td>
+                <td>
+                  {{ format_time(data.start_time) }} -
+                  {{ format_time(data.end_time) }}
+                </td>
                 <td>{{ data.site_name }}</td>
                 <td>{{ data.employee_name }}</td>
                 <td>{{ data.duration }}</td>
