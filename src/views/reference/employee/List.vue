@@ -19,48 +19,33 @@ import iconSync from "@/assets/icon_sync.png";
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
-
 import { ref, onBeforeMount, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 
 const search = ref("");
+const selectedCompany = ref("");
+const showFullText = ref({});
+
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 let Company = ref("");
-let lengthCounter = 0;
-let sortAscending = true;
-let sortedDataReactive = computed(() => sortedData.value);
-const showFullText = ref({});
-let checkList = false;
 
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.id_company === selectedCompany.value
-    );
-  }
-  onChangePage(1);
-};
-
-const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedCompany.value = "Company";
+  fetchEmployee(pageOfItem);
 };
 
 const tableHead = [
@@ -83,31 +68,26 @@ const sortList = (sortBy) => {
   }
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchEmployee();
-  fetchGetCompany();
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-});
-
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.sn_employee.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.employee_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.sn_employee.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.employee_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
-};
-
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+const fetchEmployee = async (id) => {
+  const params = {
+    filterCompany: selectedCompany.value,
+    search: search.value,
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/employee/get/", { params });
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray.data;
+  totalPage.value = instanceArray.last_page;
+  totalData.value = instanceArray.total;
+  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+  showingValueTo.value = instanceArray.to;
 };
 
 const fetchGetCompany = async () => {
@@ -117,21 +97,32 @@ const fetchGetCompany = async () => {
   Company.value = res.data.data;
 };
 
-const fetchEmployee = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/employee/get/");
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-};
-
 const syncData = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/integrate/falcon/employee");
-  console.log(res);
-}
+  await Api.get("/integrate/falcon/employee");
+  fetchEmployee();
+};
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchEmployee();
+  fetchGetCompany();
+});
+
+const resetData = () => {
+  selectedCompany.value = "";
+  fetchEmployee();
+};
+
+const clearSearch = () => {
+  search.value = "";
+  fetchEmployee();
+};
+
+const showClearButton = computed(() => {
+  return search.value !== "";
+});
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -151,7 +142,7 @@ const exportToExcel = () => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.sn_employee;
@@ -228,7 +219,7 @@ const exportToExcel = () => {
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByCompany"
+                  @click="fetchEmployee()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -248,33 +239,35 @@ const exportToExcel = () => {
             </div>
 
             <div class="pt-6 flex md:mx-0">
-              <label class="relative block">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </span>
-                <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
-                  type="text"
-                  name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
-                />
-              </label>
+              <input
+                class="nosubmit placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                type="text"
+                placeholder="Search..."
+                v-model="search"
+                @keyup.enter="fetchEmployee()"
+              />
+
+              <button
+                v-if="showClearButton"
+                @click="clearSearch"
+                type="button"
+                class="cursor-pointer absolute right-8 mt-3"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  class="h-4 w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -285,6 +278,7 @@ const exportToExcel = () => {
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 v-model="pageMultiplier"
+                @change="fetchEmployee()"
               >
                 <option>10</option>
                 <option>25</option>
@@ -332,10 +326,7 @@ const exportToExcel = () => {
             <tbody>
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData.slice(
-                  paginateIndex * pageMultiplierReactive,
-                  (paginateIndex + 1) * pageMultiplierReactive
-                )"
+                v-for="data in sortedData"
                 :key="data.id"
               >
                 <td style="width: 5%">{{ data.no }}</td>
@@ -448,12 +439,12 @@ const exportToExcel = () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
@@ -510,5 +501,11 @@ tr th {
   max-width: 400px;
   white-space: nowrap;
   word-break: break-word;
+}
+
+input.nosubmit {
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat 13px center;
 }
 </style>
