@@ -29,6 +29,8 @@ import Api from "@/utils/Api";
 const sidebar = useSidebarStore();
 
 const id_role = JSON.parse(localStorage.getItem("id_role"));
+  const widthType = id_role == 'EMPLY' ? 'w-[50%]' : 'w-full'
+
 //for sort & search
 let selectedCompany = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 let selectedWarehouse = ref("")
@@ -311,7 +313,7 @@ const editValue = async (id, type) => {
   remark.value = res.data.data[0].remarks
   idItems.value = res.data.data[0].code_item
   lockScrollbarEdit.value = true
-  disabledField.value = true  
+  disabledField.value = type == 'view' ? true : false
 };
 const save = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -564,14 +566,14 @@ const getSessionForSidebar = () => {
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
-                  Warehouse
+                  ATK Warehouse
                 </p>
                 <select
                   class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                   required
                   v-model="selectedWarehouse2"
                 >
-                  <option disabled selected>Warehouse</option>
+                  <option disabled selected>ATK Warehouse</option>
                   <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
                     {{ warehouse.warehouse_name }}
                   </option>
@@ -827,7 +829,7 @@ const getSessionForSidebar = () => {
                                 <label
                                   for="warehouse"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                  >Warehouse<span class="text-red">*</span></label
+                                  >ATK Warehouse<span class="text-red">*</span></label
                                 >
                                 <select
                                   class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
@@ -835,7 +837,7 @@ const getSessionForSidebar = () => {
                                   v-model="selectedWarehouse"
                                   :disabled="disabledField"
                                 >
-                                  <option disabled selected>Warehouse</option>
+                                  <option disabled selected>ATK Warehouse</option>
                                   <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
                                     {{ warehouse.warehouse_name }}
                                   </option>
@@ -895,7 +897,7 @@ const getSessionForSidebar = () => {
                             </div>
 
                             <div class="flex justify-between px-6 items-center gap-2">
-                              <div class="mb-6 w-full">
+                              <div class="mb-6 w-full" v-if="id_role != 'EMPLY'">
                                 <label
                                   for="uom"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
