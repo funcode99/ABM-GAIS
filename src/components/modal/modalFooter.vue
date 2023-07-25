@@ -1,7 +1,7 @@
 <script setup>
-const emits = defineEmits(["closeEdit"]);
+const emits = defineEmits(["closeEdit"])
 
-const props = defineProps({});
+const props = defineProps({})
 </script>
 
 <template>
@@ -23,5 +23,7 @@ const props = defineProps({});
         Save
       </button>
     </div>
+
+    <slot> </slot>
   </div>
 </template>
