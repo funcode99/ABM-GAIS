@@ -489,7 +489,20 @@ const format_date = (value) => {
                       {{ data.item_count }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.status }}
+                        <span
+                        :class="
+                          data.status == 'Waiting Approval'
+                            ? 'status-default'
+                            : data.status == 'Cancelled'
+                            ? 'status-revision'
+                            : data.status == 'Completed'
+                            ? 'status-done'
+                            : data.status == 'Partial'
+                            ? 'status-partial'
+                            : 'font-bold'
+                        "
+                        >{{ data.status }}</span
+                      >
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link :to="`/atkRequest/${data.id}`">
@@ -589,5 +602,25 @@ tr th {
 
 .my-date {
   width: 300px !important;
+}
+
+.status-revision {
+  color: #ef3022;
+  font-weight: 800;
+}
+
+.status-default {
+  color: #2970ff;
+  font-weight: 800;
+}
+
+.status-done {
+  color: #00c851;
+  font-weight: 800;
+}
+
+.status-partial {
+  color: #ef9d22;
+  font-weight: 800;
 }
 </style>

@@ -882,7 +882,7 @@
 
                                     <buttonAddFormView
                                       title="Add Cash Advance"
-                                      v-if="isEditing"
+                                      v-if="isEditing & !currentlyEditCAHeader"
                                       @click="showCreateNewCAHeader = true; changeType('Empty')"
                                     />
 
@@ -904,6 +904,7 @@
 
                                     <!-- Showing data quantity -->
                                     <div 
+                                      v-if="!currentlyEditCAHeader"
                                       class="flex gap-2 justify-between items-center mx-1 py-2"
                                     >
 
@@ -933,7 +934,7 @@
                                 <!-- DELETE BUTTON, IT WORKS -->
                                 <button 
                                   @click="changeType('Delete')"
-                                  v-if="isEditing && viewLayout === 'document'" 
+                                  v-if="isEditing & viewLayout === 'document' & !currentlyEditCAHeader" 
                                   class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
                                 >
 
