@@ -10,6 +10,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import icondanger from "@/assets/Danger.png";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
+import viewicon from "@/assets/eye.png";
 import icondanger2 from "@/assets/icon-danger-circle.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
@@ -27,6 +28,7 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 import Api from "@/utils/Api";
 const sidebar = useSidebarStore();
 
+const id_role = JSON.parse(localStorage.getItem("id_role"));
 //for sort & search
 let selectedCompany = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
 let selectedWarehouse = ref("")
@@ -66,6 +68,8 @@ let editData = ref("")
 let idS = ref("")
 let checkedAlert = ref(false)
 let valueChecked = ref(0)
+let disabledField = ref(false)
+
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
@@ -292,7 +296,7 @@ const changeWarehouseCompany = async (id_company) => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
-const editValue = async (id) => {
+const editValue = async (id, type) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get/${id}`);
@@ -307,6 +311,7 @@ const editValue = async (id) => {
   remark.value = res.data.data[0].remarks
   idItems.value = res.data.data[0].code_item
   lockScrollbarEdit.value = true
+  disabledField.value = true  
 };
 const save = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -484,7 +489,7 @@ const getSessionForSidebar = () => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAdd @close="fetchData(showingValue,selectedType,selectedCompany,selectedWarehouse,valueChecked,searchFilter,pageMultiplier,selectedSite)" />
+              <ModalAdd @close="fetchData(showingValue,selectedType,selectedCompany,selectedWarehouse,valueChecked,searchFilter,pageMultiplier,selectedSite)" v-if="id_role != 'EMPLY'"/>
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -728,10 +733,17 @@ const getSessionForSidebar = () => {
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       /> -->
                       <label
-                      @click="editValue(data.id)"
+                      v-if="id_role != 'EMPLY'"
+                      @click="editValue(data.id, 'edit')"
                       for="my-modal-item-edit-atk"
                       class="cursor-pointer"
                       ><img :src="editicon" class="w-6 h-6"
+                    /></label>
+                    <label
+                      @click="editValue(data.id, 'view')"
+                      for="my-modal-item-edit-atk"
+                      class="cursor-pointer"
+                      ><img :src="viewicon" class="w-6 h-6"
                     /></label>
 
                     <input type="checkbox"  id="my-modal-item-edit-atk" class="modal-toggle" />
@@ -746,7 +758,9 @@ const getSessionForSidebar = () => {
                             <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
                           </label>
                           <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start">
-                            Edit Item
+                            <span v-if="id_role != 'EMPLY'">Edit Item</span>
+                            <span v-else>View Item</span>
+
                           </p>
                         </nav>
 
@@ -770,6 +784,7 @@ const getSessionForSidebar = () => {
                                   required
                                   v-model="selectedCompany"
                                   @change="changeCompany(selectedCompany)"
+                                  :disabled="disabledField"
                                 >
                                   <option disabled selected>Company</option>
                                   <option v-for="(company,i) in Company" :key="i" :value="company.id">
@@ -788,6 +803,7 @@ const getSessionForSidebar = () => {
                                   required
                                   v-model="selectedSite"
                                   @change="changeSite(selectedSite)"
+                                  :disabled="disabledField"
                                 >
                                   <option disabled selected>Site</option>
                                   <option v-for="(site,i) in Site" :key="i" :value="site.id">
@@ -817,6 +833,7 @@ const getSessionForSidebar = () => {
                                   class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
                                   required
                                   v-model="selectedWarehouse"
+                                  :disabled="disabledField"
                                 >
                                   <option disabled selected>Warehouse</option>
                                   <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
@@ -834,6 +851,7 @@ const getSessionForSidebar = () => {
                                   class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
                                   required
                                   v-model="selectedUOM"
+                                  :disabled="disabledField"
                                 >
                                   <option disabled selected>UOM</option>
                                   <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
@@ -855,6 +873,7 @@ const getSessionForSidebar = () => {
                                   class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
                                   placeholder="Item Name"
                                   required
+                                  :disabled="disabledField"
                                 />
                               </div>
                               
@@ -870,6 +889,7 @@ const getSessionForSidebar = () => {
                                   class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
                                   placeholder="Alert Quantity"
                                   required
+                                  :disabled="disabledField"
                                 />
                               </div>
                             </div>
@@ -885,6 +905,7 @@ const getSessionForSidebar = () => {
                                   class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
                                   required
                                   v-model="selectedBrand"
+                                  :disabled="disabledField"
                                 >
                                   <option disabled selected>Brand</option>
                                   <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
@@ -904,6 +925,7 @@ const getSessionForSidebar = () => {
                                   class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
                                   placeholder="Remarks"
                                   required
+                                  :disabled="disabledField"
                                 />
                                 <!-- <textarea
                                   type="text"
@@ -930,6 +952,7 @@ const getSessionForSidebar = () => {
                             <div class="sticky bottom-0 bg-white pb-2">
                           <div class="flex justify-center gap-4 mr-6">
                             <button
+                                v-if="id_role != 'EMPLY'"
                               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                               @click="save"
                             >
@@ -951,7 +974,7 @@ const getSessionForSidebar = () => {
                         </div> -->
                       </div>
                     </div>
-                      <button @click="deleteValue(data.id)">
+                      <button @click="deleteValue(data.id)" v-if="id_role != 'EMPLY'">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
@@ -1042,5 +1065,10 @@ tr th {
 
 .my-date {
   width: 260px !important;
+}
+
+:disabled {
+  background: #eeeeee !important;
+  border-color: #eeeeee !important;
 }
 </style>

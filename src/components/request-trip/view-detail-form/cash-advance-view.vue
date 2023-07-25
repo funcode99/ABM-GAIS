@@ -11,6 +11,7 @@
 
     // submitNewCAStatus: Boolean,
     const status = defineProps({
+      currentlyEditCAHeader: Boolean,
       showCreateCAHeader: Boolean,
       isHeaderExist: Boolean,
       isAddingFromRequestTrip: Boolean,
@@ -20,7 +21,7 @@
     })
 
     const props = inject('cashAdvanceDataView')
-    const emits = defineEmits(['fetchCashAdvance', 'resetTypeOfSubmitData'])
+    const emits = defineEmits(['fetchCashAdvance', 'resetTypeOfSubmitData', 'resetEditCAHeaderState'])
 
     let currentDetailIndex = ref(1)
     let caId = ref()
@@ -93,11 +94,14 @@
 
     const assignValue = () => {
 
+        console.log('masuk ke assign value')
+
         // CA Travel Header
         headerId.value = props.value[status.currentIndex].id
         grandTotal.value = props.value[status.currentIndex].grand_total
         headerRemarks.value = props.value[status.currentIndex].remarks
         currencyId.value[0] = props.value[status.currentIndex].id_currency
+        currencyId.value[1] = props.value[status.currentIndex].currency_name
 
         // CA Detail by CA ID (CA ID nya berubah)
         if(currentAPIfetchData.value !== undefined) {
@@ -139,7 +143,14 @@
       headerRemarks.value = props.value[0].remarks
       grandTotal.value = props.value[0].grand_total
       currencyId.value[0] = props.value[0].id_currency
+      currencyId.value[1] = props.value[0].currency_name
 
+    }
+
+    const emptyCAHeader = () => {
+      headerRemarks.value = ''
+      grandTotal.value = 0
+      currencyId.value = [0, '']
     }
 
     const resetDetailValue = () => {
@@ -179,6 +190,7 @@
 
       console.log(api)
       emits('fetchCashAdvance')
+      emits('resetTypeOfSubmitData')
 
     }
 
@@ -206,6 +218,9 @@
       })
 
       console.log(api)
+      emits('fetchCashAdvance')
+      emits('resetTypeOfSubmitData')
+      emits('resetEditCAHeaderState')
 
     }
 
@@ -243,9 +258,13 @@
       emits('resetTypeOfSubmitData')
       fetchCashAdvanceDetailByCashAdvanceId()
 
+      if(currentlyAddCADetail.value === true) {
+        currentlyAddCADetail.value = false
+      }
+
     }
 
-    const checkEditCADetail = async () => {
+    const editCADetail = async () => {
       
 
       if(JSON.stringify(props) === '[{}]' ) {
@@ -274,6 +293,10 @@
         emits('fetchCashAdvance')
         emits('resetTypeOfSubmitData')
         fetchCashAdvanceDetailByCashAdvanceId()
+
+        if(currentlyEditCADetail.value === true) {
+        currentlyEditCADetail.value = false
+      }
         
         // editCAHeader()
       }
@@ -298,7 +321,7 @@
     }
 
     // berguna saat ingin menambah ca detail baru
-    const emptyCADetail = async () => {
+    const emptyCADetail = () => {
 
       frequency.value = 0
       nominal.value = 0
@@ -308,18 +331,27 @@
     }
 
     watch(status, () => {
+
+        console.log('perubahan di status')
         
         if (status.typeOfSubmitData === 'Edit') {
             editCAHeader()
         }
-        else if (status.typeOfSubmitData === 'Submit Add') {
+        else if (status.typeOfSubmitData === 'Add') {
             addCAHeader()
         }
         else if (status.typeOfSubmitData === 'Delete') {
             deleteCAHeader()
         }
-        else if (status.typeOfSubmitData === 'Add') {
+        else if (status.typeOfSubmitData === 'Empty') {
+          console.log('masuk ke status empty')
+            emptyCAHeader()
+            emptyCADetail()
+        }
+        else if (status.typeOfSubmitData === 'Reset') {
+            console.log('masuk ke status reset')
             resetValue()
+            resetDetailValue()
         }
         else {
             assignValue()
@@ -332,6 +364,8 @@
     })
     
     watch(props, () => {
+
+      console.log('perubahan di props')
       
       if(props.value[0].grand_total !== undefined) {
         resetValue()
@@ -345,6 +379,7 @@
     watch(caDetailData, () => {
 
       // console.log(caDetailData.value.length == 0)
+      console.log('perubahan di caDetailData')
       
       if(caDetailData.value.length !== 0) {
         resetDetailValue()
@@ -355,11 +390,16 @@
     })
 
     watch(isAddingDetail, () => {
+
+      console.log('perubahan di isAddingDetail')
+
       isAddingDetail.value === true ? emptyCADetail() : assignDetailValue(currentDetailNumber.value)
     })
 
     // untuk menghitung total dari frequency & nominal
     watch(frequency, () => {
+
+      console.log('perubahan di frequency')
         
         if(typeof nominal.value === 'number' && typeof frequency.value === 'number') {
             total.value = nominal.value * frequency.value
@@ -370,6 +410,8 @@
     // untuk menghitung total dari frequency & nominal
     watch(nominal, () => {
 
+      console.log('perubahan di nominal')
+
         if(typeof nominal.value === 'number' && typeof frequency.value === 'number') {
             total.value = nominal.value * frequency.value
         }
@@ -378,6 +420,9 @@
 
     // jangan pakai caId.value coeg
     watch(caId, () => {
+
+      console.log('perubahan di caId')
+
       fetchCashAdvanceDetailByCashAdvanceId()
     })
 
@@ -401,8 +446,12 @@
               total: total.value,
               remarks: remarks.value,
         }
+
+        console.log(typeof grandTotal.value)
         
         if(grandTotal.value === 'NaN') {
+          grandTotal.value = 0
+        } else if (typeof grandTotal.value !== 'number') {
           grandTotal.value = 0
         }
 
@@ -447,6 +496,27 @@
         {id: 5, title: 'Total'},
         {id: 6, title: 'Remarks'}
     ]
+
+    let currentlyEditCADetail = ref(false)
+    let currentlyAddCADetail = ref(false)
+
+    watch(currentlyAddCADetail, () => {
+      if(currentlyAddCADetail.value === false) {
+        resetDetailValue()
+        currentDetailIndex.value = 1
+      } else {
+        emptyCADetail()
+      }
+    })
+
+    watch(currentlyEditCADetail, () => {
+      if(currentlyEditCADetail.value === false) {
+        // resetDetailValue()
+        currentDetailIndex.value = 1
+      } else {
+        // emptyCADetail()
+      }
+    })
     
 </script>
 
@@ -454,9 +524,11 @@
 
       <div>
 
+        <!-- {{ arrayDetail }} -->
+        <!-- {{ grandTotal }} -->
+
         <!-- untuk Add ca header -->
-        <!-- seakan2 mau add terus, padahal input nya masih disabled -->
-        <form @submit.prevent="addCAHeader">
+        <form @submit.prevent="">
 
           <slot></slot>
           
@@ -509,7 +581,7 @@
                 v-model="headerRemarks"
                 :class="inputStylingClass" 
                 placeholder="Notes"
-                :disabled="!status.showCreateCAHeader" 
+                :disabled="!status.showCreateCAHeader & !status.currentlyEditCAHeader" 
                 ></textarea>
                 <!-- :disabled="!status.isEditingFromRequestTrip" -->
             
@@ -519,7 +591,7 @@
             <div :class="columnClass">
     
               <label for="currency" :class="labelStylingClass">
-                Currency<span class="text-red-star">*</span>
+                Currency<span class="text-red-star">*</span>  
               </label>
   
               <select
@@ -543,7 +615,7 @@
                 v-if="isAddingDetail || (status.isEditingFromRequestTrip && JSON.stringify(props[0]) !== '{}')" 
                 :class="inputStylingClass" 
                 v-model="currencyId"
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !status.currentlyEditCAHeader"
               >
                 <option v-for="data in listCurrency" :key="data.id" :value="[data.id, data.currency_name]">
                   {{ data.currency_name }}
@@ -559,8 +631,6 @@
           </div>
 
         </form>
-
-        {{ arrayDetail }}
   
         <!-- untuk CRUD ca detail -->
         <form @submit.prevent="">
@@ -577,30 +647,50 @@
               <!-- menggunakan '&' dan '&&' hasil nya sama saja -->
               <buttonEditFormView 
               @click="editArrayDetail" 
-              v-if="!isAddingDetail & status.isEditingFromRequestTrip & status.showCreateCAHeader & arrayDetail.length > 0"
+              v-if="status.showCreateCAHeader & arrayDetail.length > 0"
               />
+
+              <buttonEditFormView  
+                @click="currentlyEditCADetail = !currentlyEditCADetail"
+                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyEditCADetail"
+              />
+
+              <buttonEditFormView  
+                @click="editCADetail"
+                v-if="currentlyEditCADetail"
+              />
+
+              <buttonCancelFormView 
+                @click="currentlyEditCADetail = !currentlyEditCADetail"
+                v-if="currentlyEditCADetail"
+              />
+
   
-              <!-- untuk confirm add -->
-              <!-- @click="isAddingDetail = true" -->
+              <!-- untuk confirm add saat header ada isi nya -->
               <buttonAddFormView
                 title="Create CA Detail"
-                v-if="!isAddingDetail & status.isEditingFromRequestTrip & status.showCreateCAHeader"
+                v-if="status.showCreateCAHeader"
                 @click=addToArrayDetail
               />
-  
-              <!-- untuk submit add detail saat header nya ada -->
+
               <buttonAddFormView 
-              title="Add Cash Advance Detail"
-              v-if="isAddingDetail && JSON.stringify(props) !== '[{}]' & status.isEditingFromRequestTrip" 
-              @click="addCADetail"
+                title="Add CA Detail"
+                v-if="JSON.stringify(props) !== '[{}]' & !status.showCreateCAHeader & status.isEditingFromRequestTrip & !currentlyAddCADetail" 
+                @click="currentlyAddCADetail = !currentlyAddCADetail"
               />
   
-              <!-- untuk submit add detail saat header nya kosong -->
+              <!-- untuk submit add detail saat header nya ada isi -->
               <buttonAddFormView 
-                title="Create Cash Advance Detail"
-                v-if="isAddingDetail && JSON.stringify(props) === '[{}]' & status.isEditingFromRequestTrip" 
-                @click="addToArrayDetail"
+                title="Submit CA Detail"
+                v-if="currentlyAddCADetail"
+                @click="addCADetail"
               />
+
+              <buttonCancelFormView 
+                v-if="currentlyAddCADetail"
+                @click="currentlyAddCADetail = !currentlyAddCADetail"
+              />
+
   
               <buttonCancelFormView 
                 v-if="isAddingDetail & status.isEditingFromRequestTrip" 
@@ -658,7 +748,7 @@
   
             <!-- Delete Button -->
             <button 
-              v-if="!status.showCreateCAHeader & JSON.stringify(props) !== '[{}]'"
+              v-if="status.isEditingFromRequestTrip & !status.showCreateCAHeader & JSON.stringify(props) !== '[{}]'"
               class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2"
               @click="deleteCADetail"
             >
@@ -705,7 +795,7 @@
                 v-if="(status.isEditingFromRequestTrip & !isAddingDetail)" 
                 id="item"
                 :class="inputStylingClass" 
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 v-model="itemId" 
                 >
                 <!-- :disabled="JSON.stringify(props) === '[{}]'" -->
@@ -738,7 +828,7 @@
                 :class="inputStylingClass" 
                 placeholder="Nominal"
                 v-model="nominal"
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 />
               
                 <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
@@ -762,7 +852,7 @@
                 placeholder="Frequency"
                 v-model="frequency"
                 :class="inputStylingClass" 
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 />
                 <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
             </div>
@@ -799,7 +889,7 @@
                 :class="inputStylingClass" 
                 placeholder="Remarks" 
                 v-model="remarks"
-                :disabled="!status.showCreateCAHeader"
+                :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 ></textarea>
                 <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
   

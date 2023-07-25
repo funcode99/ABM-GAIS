@@ -25,9 +25,10 @@
             username: username.value,
             password: password.value
         })
- 
+
         localStorage.setItem('id_role', JSON.stringify(data.data.users.code_role))
         localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
+        localStorage.setItem('company_code', JSON.stringify(data.data.users?.company_code))
         localStorage.setItem('id_site', JSON.stringify(data.data.users.id_site))
         localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
         localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))

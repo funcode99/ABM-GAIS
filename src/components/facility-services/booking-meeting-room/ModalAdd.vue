@@ -14,6 +14,10 @@ const props = defineProps({
   status: String,
   id: Number,
   data: [Array, Object],
+  showCreatedBy: {
+    type: Boolean,
+    default: false,
+  },
   readOnly: {
     type: Boolean,
     default: false,
@@ -250,8 +254,8 @@ watch(
 
 <template>
   <input type="checkbox" id="booking_modal" class="modal-toggle" />
-  <div class="modal min-h-[300px]">
-    <div class="modal-box relative">
+  <div class="modal min-h-[350px]">
+    <div class="modal-box relative h-[85vh]">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="close"
@@ -265,7 +269,7 @@ watch(
           Booking Meeting Room
         </p>
       </nav>
-      <main class="modal-box-inner pb-4 lg:pb-16">
+      <main class="modal-box-inner pb-5 h-full">
         <div :class="rowClass">
           <div :class="colClass">
             <input type="hidden" name="idItem" v-model="itemsId" />
@@ -419,7 +423,7 @@ watch(
               >Remarks</label
             >
             <textarea
-              class="textarea textarea-bordered w-max-[50%]"
+              class="textarea textarea-bordered w-max-[50%] h-[200px] resize-none"
               placeholder="Remarks"
               v-model="remarks"
               :disabled="props.readOnly"
@@ -427,9 +431,30 @@ watch(
             ></textarea>
           </div>
         </div>
+
+        <div :class="rowClass" v-if="type == 'view'">
+          <div :class="colClass">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Created by</label
+            >
+            <Multiselect
+              v-model="dataForm.created_by"
+              mode="single"
+              placeholder="Created By"
+              track-by="id"
+              label="employee_name"
+              :close-on-select="false"
+              :searchable="true"
+              :options="listEmployee"
+              :hide-selected="true"
+              disabled
+            >
+            </Multiselect>
+          </div>
+        </div>
       </main>
 
-      <div class="sticky bottom-0 bg-white py-2">
+      <div class="sticky bottom-0 bg-white" v-if="!props.readOnly">
         <div class="flex justify-end gap-4 mr-6">
           <label
             @click="close"
@@ -437,7 +462,6 @@ watch(
             >Cancel</label
           >
           <button
-            v-if="!props.readOnly"
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
             @click="saveForm"
           >

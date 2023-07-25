@@ -336,10 +336,11 @@
     }
 
     const onChangePage = (pageOfItem) => {
+
+      typeOfSubmitToProps.value = 'none'
       assignSelectedData()
-      if(dataIndex.value-1 !== currentSelectedData.value.length) {
-        dataIndex.value = pageOfItem-1
-      }
+      dataIndex.value = pageOfItem-1
+
     }
 
     const changeViewLayout = (layout) => {
@@ -360,6 +361,8 @@
 
     const showCreateNewCAHeader = ref(false)
     const submitNewCA = ref(false)
+
+    let currentlyEditCAHeader = ref(false)
 
 </script>
 
@@ -562,9 +565,15 @@
 
                         </div>
 
+
+
                         <!-- UNTUK MELIHAT DOCUMENT DETAIL DARI TIAP STEP REQUEST TRIP -->
                         <form class="flex-1" @submit.prevent="">
-                            
+
+                          <!-- {{ currentSelectedData }} -->
+
+                          <!-- DISINI UNTUK NON CASH ADVANCE -->
+                          
                           <!-- BUTTON INI MUNCUL UNTUK MENGEDIT DOCUMENT REQUEST TRIP YANG SUDAH ADA (READ, UPDATE, DELETE) -->
                           <detailsFormHeader 
                             v-if="!isAdding & headerTitle !== 'Cash Advance' " 
@@ -660,8 +669,7 @@
 
                           </detailsFormHeader>
 
-                          <!-- {{ submitNewCA }} -->
-
+                          <!-- {{ typeOfSubmitToProps }} -->
 
 
 
@@ -778,10 +786,15 @@
                             
                             @fetchCashAdvance="getCashAdvance"
                             @resetTypeOfSubmitData="resetTypeOfSubmit"
+
+                            :currentlyEditCAHeader="currentlyEditCAHeader"
+                            @resetEditCAHeaderState="currentlyEditCAHeader = !currentlyEditCAHeader"
                             
                             >
 
-                            {{headerCAData}}
+                            <!-- {{headerCAData}} -->
+
+                            <!-- UNTUK CASH ADVANCE -->
                           
                           <!-- Button khusus CA, muncul tombol add saja saat CA Header nya kosong -->
                           <detailsFormHeader v-if="headerTitle === 'Cash Advance' & !headerCAData"
@@ -807,6 +820,7 @@
                               <buttonAddFormView 
                                 title="Add CA from empty header"
                                 v-if="isEditing & showCreateNewCAHeader"
+                                @click="changeType('Add')"
                                 />
   
                               <!-- button cancel untuk membatalkan create -->
@@ -819,7 +833,27 @@
 
                           </detailsFormHeader>
 
-                          <!-- Button khusus CA, muncul saat ada data CA Header -->
+                          <!-- Button khusus CA, untuk Add saat data CA header sudah ada -->
+                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader">
+                            
+                            <div
+                              class="flex gap-2"
+                            >
+                              <buttonAddFormView
+                                title="Add CA from not empty header"
+                                v-if="isEditing"
+                                @click="changeType('Add')"
+                              />
+
+                              <buttonCancelFormView 
+                                v-if="isEditing"
+                                @click="showCreateNewCAHeader = false; changeType('Reset')"               
+                              />
+                            </div>
+
+                          </detailsFormHeader>
+
+                          <!-- Button khusus CA, untuk RUD muncul saat ada data CA Header -->
                           <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader">
 
                             <!-- muncul saat Cash Advance Header nya ada -->
@@ -829,16 +863,27 @@
 
                                   <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
 
+                                    <buttonEditFormView 
+                                      v-if="isEditing & !currentlyEditCAHeader"
+                                      @click="currentlyEditCAHeader = !currentlyEditCAHeader"
+                                    />
+
                                     <buttonEditFormView
-                                      v-if="isEditing " 
+                                      v-if="currentlyEditCAHeader" 
                                       @click="changeType('Edit')"
                                     />
 
-                                    <!-- @click="changeType('Add')" -->
+                                    <buttonCancelFormView 
+                                      v-if="currentlyEditCAHeader"
+                                      @click="currentlyEditCAHeader = !currentlyEditCAHeader"
+                                    />
+
+                          
+
                                     <buttonAddFormView
                                       title="Add Cash Advance"
                                       v-if="isEditing"
-                                      @click="showCreateNewCAHeader = true"
+                                      @click="showCreateNewCAHeader = true; changeType('Empty')"
                                     />
 
                                     <!-- Issued Ticket Button -->
@@ -880,44 +925,22 @@
                                     </div>
 
                                   </div>
+                                  
+                                </div>
+                                
+                                <div class="flex-1" v-if="viewLayout === 'document'"></div>
 
-                                  <div class="flex-1" v-if="viewLayout === 'document'"></div>
+                                <!-- DELETE BUTTON, IT WORKS -->
+                                <button 
+                                  @click="changeType('Delete')"
+                                  v-if="isEditing && viewLayout === 'document'" 
+                                  class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
+                                >
 
-                                  <!-- DELETE BUTTON -->
-                                  <button 
-                                    @click="changeType('Delete')"
-                                    v-if="isEditing && viewLayout === 'document'" 
-                                    class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
-                                  >
+                                  <img :src="deleteDocumentIcon" class="w-6 h-6" />
+                                  Delete
 
-                                    <img :src="deleteDocumentIcon" class="w-6 h-6" />
-                                    Delete
-
-                                  </button>
-
-
-                            </div>
-
-                          </detailsFormHeader>
-
-                          <!-- Button khusus CA, untuk Add saat data header sudah ada -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader">
-                            
-                            <div
-                              class="flex gap-2"
-                            >
-                              <buttonAddFormView
-                                title="Add CA from not empty header"
-                                v-if="isEditing"
-                                @click="showCreateNewCAHeader = true"
-                              />
-
-                              <buttonCancelFormView 
-                                v-if="isEditing"
-                                @click="showCreateNewCAHeader = false"               
-                              />
-                            </div>
-
+                                </button>
 
                           </detailsFormHeader>
 
