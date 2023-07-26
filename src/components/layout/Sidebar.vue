@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onBeforeMount, ref } from "vue";
-import Api from '@/utils/Api'
+import Api from "@/utils/Api";
 
 import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
@@ -18,6 +18,8 @@ import submenuLineSelected from "@/assets/submenu-line-selected.png";
 import submenuInner from "@/assets/inner-sub-menu.png";
 import facilityIcon from "@/assets/facilityIcon.png";
 import facilityIconSelected from "@/assets/facilityIconSelected.png";
+import notifIcon from "@/assets/notifIcon.png";
+import notifIconSelected from "@/assets/notifIconSelected.png";
 
 import searchIcon from "@/assets/Icons.png";
 import expandArrow from "@/assets/ExpandArrow.png";
@@ -32,21 +34,21 @@ const sidebar = useSidebarStore();
 const searchSidebarValue = ref("");
 const id_role = JSON.parse(localStorage.getItem("id_role"));
 
-let menuData = ref()
+let menuData = ref();
 
 const fetchSidebarAppearance = async () => {
-  const token = JSON.parse(localStorage.getItem('token'))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  let api = await Api.get(`/role/get_sidebar_menu`)
-  sidebar.menuData = api.data.data
-} 
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  let api = await Api.get(`/role/get_sidebar_menu`);
+  sidebar.menuData = api.data.data;
+};
 
 onBeforeMount(() => {
-  if(sidebar.menuData === '') {
-    console.log('menarik data')
-    fetchSidebarAppearance()
+  if (sidebar.menuData === "") {
+    console.log("menarik data");
+    fetchSidebarAppearance();
   }
-})
+});
 
 // masukkin params ke actions harus pake variable ga boleh pake primitive data langsung
 let system = "systemConfiguration";
@@ -62,6 +64,12 @@ onMounted(() => {
   //   sidebar.scrollValue = Math.round(scroller.scrollTop)
   // })
 });
+
+const isNotifSelected = ref(false);
+
+const handleNotifClick = () => {
+  isNotifSelected.value = !isNotifSelected.value;
+};
 </script>
 
 <template>
@@ -103,13 +111,9 @@ onMounted(() => {
 
     <!-- menu -->
     <div class="sidebar-wrapper mt-3">
-
       <div class="sidebar scroller">
-
         <div class="px-4 flex flex-col items-center">
-
           <ul id="myMenu" class="pb-20">
-            
             <li>
               <div
                 class="flex justify-center items-center cursor-pointer py-4"
@@ -133,11 +137,23 @@ onMounted(() => {
               </router-link>
             </li>
 
-            <li v-for="data in sidebar.menuData">
+            <!-- Notification -->
+            <li>
+              <router-link
+                to="#"
+                class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
+                @click="handleNotifClick"
+              >
+              <img :src="isNotifSelected ? notifIconSelected : notifIcon" class="w-6 h-6" alt="" />
+              <a :class="sidebar.isWide === true ? '' : 'hidden'">Notification</a>
+              </router-link>
+            </li>
 
-              <button @click="sidebar.increment(data.menu)"
-              class="w-full rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
-              :class="
+            <li v-for="data in sidebar.menuData">
+              <button
+                @click="sidebar.increment(data.menu)"
+                class="w-full rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
+                :class="
                   sidebar.sidebarMenu === data.menu
                     ? 'text-white bg-[#015289]'
                     : ''
@@ -151,7 +167,7 @@ onMounted(() => {
                       class="text-left"
                       :class="sidebar.isWide === true ? '' : 'hidden'"
                     >
-                      {{data.menu}}
+                      {{ data.menu }}
                     </h3>
                   </div>
                   <div class="relative">
@@ -187,60 +203,57 @@ onMounted(() => {
               </button>
 
               <div v-if="sidebar.isWide">
-
                 <collapse-transition dimension="height" :duration="500">
-                  
-                  <div v-if="sidebar.sidebarMenu === data.menu" class="pl-4 pb-4 sm:flex sm:flex-col hidden">
-
+                  <div
+                    v-if="sidebar.sidebarMenu === data.menu"
+                    class="pl-4 pb-4 sm:flex sm:flex-col hidden"
+                  >
                     <ul class="flex flex-col gap-4 pt-4 px-2">
-
                       <!-- children menu -->
                       <div v-for="child in data.child">
-
                         <router-link :to="`${child.url}`">
-  
-                          <div class="flex gap-[10px] items-center cursor-pointer">
-
+                          <div
+                            class="flex gap-[10px] items-center cursor-pointer"
+                          >
                             <img
-                            class="h-[2px] w-2"
-                            :class="[
-                              $route.path === data.menu ? 'hidden' : 'inline',
-                            ]"
-                            :src="submenuLine"
-                            alt=""
-                          />
-                          <img
-                            class="h-[2px] w-2"
-                            :class="[
-                              $route.path === data.menu ? 'inline' : 'hidden',
-                            ]"
-                            :src="submenuLineSelected"
-                            alt=""
-                          />
-                            
-                            <p class="flex items-center w-full justify-between"
+                              class="h-[2px] w-2"
+                              :class="[
+                                $route.path === data.menu ? 'hidden' : 'inline',
+                              ]"
+                              :src="submenuLine"
+                              alt=""
+                            />
+                            <img
+                              class="h-[2px] w-2"
+                              :class="[
+                                $route.path === data.menu ? 'inline' : 'hidden',
+                              ]"
+                              :src="submenuLineSelected"
+                              alt=""
+                            />
+
+                            <p
+                              class="flex items-center w-full justify-between"
                               :class="[
                                 $route.path === child.url
                                   ? `anchorImage anchorSubMenu`
                                   : '',
-                              ]">
+                              ]"
+                            >
                               {{ child.menu }}
                             </p>
-  
                           </div>
-                          
                         </router-link>
 
-                        <router-link :to="grandchild.url" v-for="grandchild in child.child">
+                        <router-link
+                          :to="grandchild.url"
+                          v-for="grandchild in child.child"
+                        >
+                          <div
+                            class="flex gap-[10px] items-center cursor-pointer pl-8 py-2"
+                          >
+                            <img :src="submenuInner" alt="" class="w-2 h-2" />
 
-                          <div class="flex gap-[10px] items-center cursor-pointer pl-8 py-2" >
-                            
-                            <img
-                              :src="submenuInner"
-                              alt=""
-                              class="w-2 h-2"
-                            />
-                            
                             <span>
                               {{ grandchild.menu }}
                             </span>
@@ -248,28 +261,17 @@ onMounted(() => {
                             <div class="flex-1"></div>
 
                             <img class="w-5 h-5" :src="groupIcon" alt="" />
-                          
                           </div>
-
                         </router-link>
-
                       </div>
-
-
-
                     </ul>
-
                   </div>
-
                 </collapse-transition>
-
               </div>
-
             </li>
 
             <!-- travel management -->
             <li v-if="menuData == 0">
-
               <button
                 @click="sidebar.increment(travel)"
                 class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
@@ -342,15 +344,13 @@ onMounted(() => {
               </button>
 
               <div v-if="sidebar.isWide">
-
                 <collapse-transition dimension="height" :duration="500">
-
-                  <div v-if="sidebar.sidebarMenu.travelManagementSystem === true"
-                    class="pl-4 pb-4 sm:flex sm:flex-col hidden">
-
+                  <div
+                    v-if="sidebar.sidebarMenu.travelManagementSystem === true"
+                    class="pl-4 pb-4 sm:flex sm:flex-col hidden"
+                  >
                     <!-- list of children menu -->
                     <ul class="flex flex-col gap-4 pt-4 px-2">
-                      
                       <router-link to="/request" class="cursor-pointer">
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
@@ -500,8 +500,7 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            
-                          <router-link
+                            <router-link
                               to="/cashadvancetravel"
                               class="cursor-pointer"
                             >
@@ -516,10 +515,9 @@ onMounted(() => {
                                 <p class="mr-[70px]">Travel</p>
                                 <img class="w-5 h-5" :src="groupIcon" alt="" />
                               </li>
-                          </router-link>
+                            </router-link>
 
-                            
-                          <router-link
+                            <router-link
                               to="/cashadvancenontravel"
                               class="cursor-pointer"
                             >
@@ -534,8 +532,7 @@ onMounted(() => {
                                 <p class="mr-10">Non Travel</p>
                                 <img class="w-5 h-5" :src="groupIcon" alt="" />
                               </li>
-                          </router-link>
-
+                            </router-link>
                           </ul>
                         </div>
                       </button>
@@ -675,20 +672,14 @@ onMounted(() => {
                           </ul>
                         </div>
                       </button>
-
                     </ul>
-
                   </div>
-
                 </collapse-transition>
-
               </div>
-
             </li>
 
             <!-- system configuration -->
             <li v-if="menuData == 0">
-
               <button
                 @click="sidebar.increment(system)"
                 class="rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
@@ -760,15 +751,15 @@ onMounted(() => {
 
               <div :class="sidebar.isWide === true ? '' : 'hidden'">
                 <collapse-transition dimension="height" :duration="500">
-
-                  <div v-if="sidebar.sidebarMenu.systemConfiguration == true"
-                    class="pl-4 pb-4 sm:flex sm:flex-col hidden">
-
+                  <div
+                    v-if="sidebar.sidebarMenu.systemConfiguration == true"
+                    class="pl-4 pb-4 sm:flex sm:flex-col hidden"
+                  >
                     <ul class="flex flex-col gap-4 pt-4 px-2">
-                      
                       <router-link to="/user" class="cursor-pointer">
-                        
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -796,9 +787,8 @@ onMounted(() => {
                             User <img class="w-5 h-5" :src="groupIcon" />
                           </p>
                         </div>
-
                       </router-link>
-                      
+
                       <router-link to="/role" class="cursor-pointer">
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
@@ -864,7 +854,7 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-                      
+
                       <router-link to="/approval" class="cursor-pointer">
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
@@ -898,7 +888,7 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-                      
+
                       <router-link to="/sequence" class="cursor-pointer">
                         <div
                           class="flex gap-[10px] items-center cursor-pointer"
@@ -932,14 +922,10 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-
                     </ul>
-
                   </div>
-                  
                 </collapse-transition>
               </div>
-
             </li>
 
             <!-- reference menu -->
@@ -1022,7 +1008,9 @@ onMounted(() => {
                   >
                     <ul class="flex flex-col gap-4 pt-4 px-2">
                       <router-link to="/employee" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1052,9 +1040,11 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-  
+
                       <router-link to="/company" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1084,13 +1074,17 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-  
+
                       <router-link to="/departement" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/departement' ? 'hidden' : 'inline',
+                              $route.path == '/departement'
+                                ? 'hidden'
+                                : 'inline',
                             ]"
                             :src="submenuLine"
                             alt=""
@@ -1098,7 +1092,9 @@ onMounted(() => {
                           <img
                             class="h-[2px] w-2"
                             :class="[
-                              $route.path == '/departement' ? 'inline' : 'hidden',
+                              $route.path == '/departement'
+                                ? 'inline'
+                                : 'hidden',
                             ]"
                             :src="submenuLineSelected"
                             alt=""
@@ -1116,12 +1112,14 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-  
+
                       <router-link
                         to="/classtransportation"
                         class="cursor-pointer"
                       >
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1158,9 +1156,11 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-  
+
                       <router-link to="/currency" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1190,9 +1190,11 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-  
+
                       <router-link to="/city" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1221,9 +1223,11 @@ onMounted(() => {
                           </p>
                         </div>
                       </router-link>
-  
+
                       <router-link to="/reimbursement" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1261,7 +1265,9 @@ onMounted(() => {
                         </div>
                       </router-link>
                       <router-link to="/zona" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1291,16 +1297,22 @@ onMounted(() => {
                         </div>
                       </router-link>
                       <router-link to="/job" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '/job' ? 'hidden' : 'inline']"
+                            :class="[
+                              $route.path == '/job' ? 'hidden' : 'inline',
+                            ]"
                             :src="submenuLine"
                             alt=""
                           />
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '/job' ? 'inline' : 'hidden']"
+                            :class="[
+                              $route.path == '/job' ? 'inline' : 'hidden',
+                            ]"
                             :src="submenuLineSelected"
                             alt=""
                           />
@@ -1321,7 +1333,9 @@ onMounted(() => {
                         </div>
                       </router-link>
                       <router-link to="/site" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1351,7 +1365,9 @@ onMounted(() => {
                         </div>
                       </router-link>
                       <router-link to="/brand" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1376,21 +1392,28 @@ onMounted(() => {
                                 : '',
                             ]"
                           >
-                            Brand <img class="w-5 h-5" :src="groupIcon" alt="" />
+                            Brand
+                            <img class="w-5 h-5" :src="groupIcon" alt="" />
                           </p>
                         </div>
                       </router-link>
                       <router-link to="/uom" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '/uom' ? 'hidden' : 'inline']"
+                            :class="[
+                              $route.path == '/uom' ? 'hidden' : 'inline',
+                            ]"
                             :src="submenuLine"
                             alt=""
                           />
                           <img
                             class="h-[2px] w-2"
-                            :class="[$route.path == '/uom' ? 'inline' : 'hidden']"
+                            :class="[
+                              $route.path == '/uom' ? 'inline' : 'hidden',
+                            ]"
                             :src="submenuLineSelected"
                             alt=""
                           />
@@ -1407,7 +1430,9 @@ onMounted(() => {
                         </div>
                       </router-link>
                       <router-link to="/warehouse" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1438,7 +1463,9 @@ onMounted(() => {
                         </div>
                       </router-link>
                       <router-link to="/glaccount" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -1469,7 +1496,9 @@ onMounted(() => {
                         </div>
                       </router-link>
                       <router-link to="/hotel" class="cursor-pointer">
-                        <div class="flex gap-[10px] items-center cursor-pointer">
+                        <div
+                          class="flex gap-[10px] items-center cursor-pointer"
+                        >
                           <img
                             class="h-[2px] w-2"
                             :class="[
@@ -2285,7 +2314,10 @@ onMounted(() => {
                           <ul
                             class="flex flex-col gap-[10px] text-base font-normal"
                           >
-                            <router-link to="/stockreport" class="cursor-pointer">
+                            <router-link
+                              to="/stockreport"
+                              class="cursor-pointer"
+                            >
                               <li
                                 class="flex gap-[10px] items-center justify-between"
                               >
@@ -2329,13 +2361,9 @@ onMounted(() => {
                 </collapse-transition>
               </div>
             </li>
-
           </ul>
-
         </div>
-
       </div>
-
     </div>
   </div>
 </template>
