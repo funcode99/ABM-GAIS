@@ -11,6 +11,7 @@ import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 import iconGoto from "@/assets/icon_Goto.png";
 
 import Api from "@/utils/Api";
+import moment from "moment";
 
 import { ref, onBeforeMount, computed } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -70,10 +71,27 @@ const fetchNotifNonApproval = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
+const fetchNotifApproval = async (id) => {
+  const params = {
+    perPage: pageMultiplier.value,
+  };
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/notification/get_approval", { params });
+  console.log(res);
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchNotifNonApproval();
+  fetchNotifApproval();
 });
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY, h:mm:ss");
+  }
+};
 </script>
 
 <template>
@@ -83,39 +101,61 @@ onBeforeMount(() => {
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
       <tableContainer>
-        <tableTop v-if="activeTab === 0">
-          <tableData v-if="sortedData.length > 0">
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
-                <th
-                  v-for="data in tableHead"
-                  :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                >
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }}
-                  </span>
-                </th>
-              </tr>
-            </thead>
+        <tableTop>
+          <div class="tabs">
+            <a
+              v-for="(tab, index) in tabs"
+              :key="index"
+              :class="[
+                'tab',
+                'tab-bordered',
+                'tab-lifted',
+                'font-JakartaSans font-normal text-md',
+                { 'tab-active': activeTab === index },
+              ]"
+              @click="changeTab(index)"
+            >
+              {{ tab }}
+            </a>
+          </div>
 
-            <tbody>
-              <tr
-                class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData"
-                :key="data.id"
+          <main v-if="activeTab === 0">
+            <tableData v-if="sortedData.length > 0">
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
               >
-                <td>{{ data.date }}</td>
-                <td>{{ data.name }}</td>
-                <td>{{ data.text }}</td>
-                <!-- <td class="flex flex-wrap gap-2 justify-center">
+                <tr>
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                  >
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
 
-                </td> -->
-              </tr>
-            </tbody>
-          </tableData>
+              <tbody>
+                <tr
+                  class="font-JakartaSans font-normal text-sm"
+                  v-for="data in sortedData"
+                  :key="data.id"
+                >
+                  <td>{{ format_date(data.date) }}</td>
+                  <td>{{ data.name }}</td>
+                  <td>{{ data.text }}</td>
+                  <td class="flex flex-wrap gap-2 justify-center">
+                    <button>
+                      <img :src="iconGoto" class="w-6 h-6" />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </tableData>
 
-          <tableData
+            <!-- <tableData
             v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
@@ -134,11 +174,45 @@ onBeforeMount(() => {
               </tr>
             </thead>
 
-            <SkeletonLoadingTable :column="10" :row="5" />
-          </tableData>
+            <SkeletonLoadingTable :column="4" :row="5" />
+          </tableData> -->
 
-          <div v-else>
-            <tableData>
+            <div v-else>
+              <tableData>
+                <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
+                  <tr>
+                    <th
+                      v-for="data in tableHead"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                    >
+                      <div class="flex justify-center items-center">
+                        <p class="font-JakartaSans font-bold text-sm">
+                          {{ data.title }}
+                        </p>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="10"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >
+                      Data not Found
+                    </td>
+                  </tr>
+                </tbody>
+              </tableData>
+            </div>
+          </main>
+
+          <main v-else>
+            <tableData v-if="sortedData.length > 0">
               <thead
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
@@ -148,36 +222,88 @@ onBeforeMount(() => {
                     :key="data.Id"
                     class="overflow-x-hidden cursor-pointer"
                   >
-                    <div class="flex justify-center items-center">
-                      <p class="font-JakartaSans font-bold text-sm">
-                        {{ data.title }}
-                      </p>
-                    </div>
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                    </span>
                   </th>
                 </tr>
               </thead>
 
               <tbody>
-                <tr>
-                  <td
-                    colspan="10"
-                    class="text-center font-JakartaSans text-base font-medium"
-                  >
-                    Data not Found
-                  </td>
+                <tr
+                  class="font-JakartaSans font-normal text-sm"
+                  v-for="data in sortedData"
+                  :key="data.id"
+                >
+                  <!-- <td>{{ data.date }}</td>
+                  <td>{{ data.name }}</td>
+                  <td>{{ data.text }}</td> -->
+                  <!-- <td class="flex flex-wrap gap-2 justify-center">
+
+                </td> -->
                 </tr>
               </tbody>
             </tableData>
-          </div>
+
+            <!-- <tableData
+            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+          >
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                >
+                  <div class="flex justify-center items-center">
+                    <p class="font-JakartaSans font-bold text-sm">
+                      {{ data.title }}
+                    </p>
+                  </div>
+                </th>
+              </tr>
+            </thead>
+
+            <SkeletonLoadingTable :column="4" :row="5" />
+          </tableData> -->
+
+            <div v-else>
+              <tableData>
+                <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
+                  <tr>
+                    <th
+                      v-for="data in tableHead"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                    >
+                      <div class="flex justify-center items-center">
+                        <p class="font-JakartaSans font-bold text-sm">
+                          {{ data.title }}
+                        </p>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="10"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >
+                      Data not Found
+                    </td>
+                  </tr>
+                </tbody>
+              </tableData>
+            </div>
+          </main>
 
           <div
-            class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+            class="flex flex-wrap justify-center lg:justify-center items-center mx-4 py-2"
           >
-            <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ showingValueFrom }} to
-              {{ showingValueTo }}
-              of {{ totalData }} entries
-            </p>
             <vue-awesome-paginate
               :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
@@ -190,8 +316,32 @@ onBeforeMount(() => {
           </div>
         </tableTop>
       </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+th {
+  padding: 2px;
+  text-align: left;
+  position: relative;
+}
+
+tr td {
+  text-align: center;
+  white-space: nowrap;
+}
+
+tr th {
+  background-color: #015289;
+  text-transform: capitalize;
+  color: white;
+}
+
+.table-zebra tbody tr:hover td {
+  background-color: rgb(193, 192, 192);
+  cursor: pointer;
+}
+</style>

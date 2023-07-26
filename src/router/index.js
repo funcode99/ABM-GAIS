@@ -205,7 +205,7 @@ const router = createRouter({
       name: "notification",
       component: ListNotifications,
       meta: {
-        title: "notification",
+        title: "Notification",
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem("token");
