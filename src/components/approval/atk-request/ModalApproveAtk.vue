@@ -34,6 +34,7 @@ const fetchDetailById = async (id) => {
       qty: element.qty,
       id: element.id_item,
       qtyApproved: element.qty,
+      idItem: element.id
     });
   }
 
@@ -66,7 +67,7 @@ const submit = async () => {
     } else {
       itemPayload.value.push({
         qty: element.qtyApproved,
-        id: element.id,
+        id: element.idItem,
       });
       payload.value = {
         notes: notesName.value,
