@@ -19,10 +19,12 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 const tabs = ref(["Notification", "Approval"]);
 const activeTab = ref(0);
-
+const role = localStorage.getItem("id_role").replace(/"/g, "");
 let sortedData = ref([]);
 let instanceArray = [];
-let role = ref();
+let sortedDataApproval = ref([]);
+let instanceArrayApproval = [];
+
 let showSelectADM = ref(false);
 let showSelectAll = ref(false);
 
@@ -42,6 +44,7 @@ const changeTab = (index) => {
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+  fetchNotifNonApproval(pageOfItem);
 };
 
 const tableHead = [
@@ -58,10 +61,11 @@ const getSessionForSidebar = () => {
 const fetchNotifNonApproval = async (id) => {
   const params = {
     perPage: pageMultiplier.value,
+    page: id ? id : 1,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/notification/get_notif", { params });
+  const res = await Api.get("/notification/get_notif");
   console.log(res);
   instanceArray = res.data.data;
   sortedData.value = instanceArray.data;
@@ -78,7 +82,8 @@ const fetchNotifApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/notification/get_approval", { params });
-  console.log(res);
+  instanceArrayApproval = res.data.data;
+  sortedDataApproval.value = instanceArray.data;
 };
 
 onBeforeMount(() => {
@@ -100,7 +105,7 @@ const format_date = (value) => {
 
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
-      <tableContainer>
+      <tableContainer style="overflow: auto">
         <tableTop>
           <div class="tabs">
             <a
@@ -114,6 +119,14 @@ const format_date = (value) => {
                 { 'tab-active': activeTab === index },
               ]"
               @click="changeTab(index)"
+              v-show="
+                tab == 'Approval' &&
+                (role == 'ADMTR' || role == 'ADM' || role == 'SUPADM')
+                  ? true
+                  : tab == 'Notification'
+                  ? true
+                  : false
+              "
             >
               {{ tab }}
             </a>
@@ -209,10 +222,31 @@ const format_date = (value) => {
                 </tbody>
               </tableData>
             </div>
+
+            <div
+              class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+            >
+              <p
+                class="font-JakartaSans text-xs font-normal text-[#888888] py-2"
+              >
+                Showing {{ showingValueFrom }} to
+                {{ showingValueTo }}
+                of {{ totalData }} entries
+              </p>
+              <vue-awesome-paginate
+                :total-items="totalData"
+                :items-per-page="parseInt(pageMultiplierReactive)"
+                :on-click="onChangePage"
+                v-model="showingValue"
+                :max-pages-shown="4"
+                :show-breakpoint-buttons="false"
+                :show-ending-buttons="true"
+              />
+            </div>
           </main>
 
           <main v-else>
-            <tableData v-if="sortedData.length > 0">
+            <tableData v-if="sortedDataApproval.length > 0">
               <thead
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
@@ -232,40 +266,44 @@ const format_date = (value) => {
               <tbody>
                 <tr
                   class="font-JakartaSans font-normal text-sm"
-                  v-for="data in sortedData"
+                  v-for="data in sortedDataApproval"
                   :key="data.id"
                 >
-                  <!-- <td>{{ data.date }}</td>
+                  <td>{{ data.date }}</td>
                   <td>{{ data.name }}</td>
-                  <td>{{ data.text }}</td> -->
-                  <!-- <td class="flex flex-wrap gap-2 justify-center">
-
-                </td> -->
+                  <td>{{ data.text }}</td>
+                  <td class="flex flex-wrap gap-2 justify-center">
+                    <button>
+                      <img :src="iconGoto" class="w-6 h-6" />
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             </tableData>
 
             <!-- <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
-          >
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
-                <th
-                  v-for="data in tableHead"
-                  :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                >
-                  <div class="flex justify-center items-center">
-                    <p class="font-JakartaSans font-bold text-sm">
-                      {{ data.title }}
-                    </p>
-                  </div>
-                </th>
-              </tr>
-            </thead>
+              v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+            >
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
 
-            <SkeletonLoadingTable :column="4" :row="5" />
-          </tableData> -->
+              <SkeletonLoadingTable :column="4" :row="5" />
+            </tableData> -->
 
             <div v-else>
               <tableData>
@@ -300,20 +338,6 @@ const format_date = (value) => {
               </tableData>
             </div>
           </main>
-
-          <div
-            class="flex flex-wrap justify-center lg:justify-center items-center mx-4 py-2"
-          >
-            <vue-awesome-paginate
-              :total-items="totalData"
-              :items-per-page="parseInt(pageMultiplierReactive)"
-              :on-click="onChangePage"
-              v-model="showingValue"
-              :max-pages-shown="4"
-              :show-breakpoint-buttons="false"
-              :show-ending-buttons="true"
-            />
-          </div>
         </tableTop>
       </tableContainer>
 
