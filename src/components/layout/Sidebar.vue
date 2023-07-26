@@ -140,12 +140,18 @@ const handleNotifClick = () => {
             <!-- Notification -->
             <li>
               <router-link
-                to="#"
+                to="/notification"
                 class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
                 @click="handleNotifClick"
               >
-              <img :src="isNotifSelected ? notifIconSelected : notifIcon" class="w-6 h-6" alt="" />
-              <a :class="sidebar.isWide === true ? '' : 'hidden'">Notification</a>
+                <img
+                  :src="isNotifSelected ? notifIconSelected : notifIcon"
+                  class="w-6 h-6"
+                  alt=""
+                />
+                <a :class="sidebar.isWide === true ? '' : 'hidden'"
+                  >Notification</a
+                >
               </router-link>
             </li>
 

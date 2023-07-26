@@ -8,6 +8,9 @@ import Profile from "@/views/auth/Profile.vue";
 //dashboard
 import NotFound from "@/views/NotFoundPage.vue";
 
+//notificarion
+import ListNotifications from "@/views/notifications/ListNotifications.vue"
+
 //reference
 import ListBrand from "@/views/reference/brand/ListBrand.vue";
 import ListGl from "@/views/reference/gl-account/ListGl.vue";
@@ -194,6 +197,25 @@ const router = createRouter({
           },
         },
       ],
+    },
+
+    //notification page
+    {
+      path: "/notification",
+      name: "notification",
+      component: ListNotifications,
+      meta: {
+        title: "notification",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
     },
 
     //reference pages
