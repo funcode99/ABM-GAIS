@@ -21,11 +21,9 @@ let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
 
-// let FlightClass = ref();
 let jobBandName = ref(props.formContent[0]);
 let hotelFare = ref(props.formContent[1]);
 let mealsRate = ref(props.formContent[2]);
-// let selectedFlightClass = ref(props.formContent[4]);
 
 let addZona = ref([]);
 let tlkRatevalue = ref([]);
@@ -236,6 +234,7 @@ const formatCurrency = () => {
             :close-on-select="false"
             :searchable="true"
             :options="companyData"
+            required
           >
             <template v-slot:tag="{ option, handleTagRemove, disabled }">
               <div
@@ -317,6 +316,7 @@ const formatCurrency = () => {
             :close-on-select="false"
             :searchable="true"
             :options="FlightClass"
+            required
           >
             <template v-slot:tag="{ option, handleTagRemove, disabled }">
               <div

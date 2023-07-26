@@ -176,6 +176,7 @@ onMounted(() => {
             :close-on-select="false"
             :searchable="true"
             :options="companyData"
+            required
           >
             <template v-slot:tag="{ option, handleTagRemove, disabled }">
               <div
@@ -255,6 +256,7 @@ onMounted(() => {
             :close-on-select="false"
             :searchable="true"
             :options="FlightClass"
+            required
           >
             <template v-slot:tag="{ option, handleTagRemove, disabled }">
               <div
