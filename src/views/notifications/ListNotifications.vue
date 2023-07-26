@@ -65,7 +65,7 @@ const fetchNotifNonApproval = async (id) => {
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/notification/get_notif");
+  const res = await Api.get("/notification/get_notif", { params });
   console.log(res);
   instanceArray = res.data.data;
   sortedData.value = instanceArray.data;
