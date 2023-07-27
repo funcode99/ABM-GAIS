@@ -1,10 +1,12 @@
 <script setup>
+import Multiselect from "@vueform/multiselect";
+
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
 import icondanger from "@/assets/icon-danger-circle.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watchEffect, watch } from "vue";
 import Api from "@/utils/Api";
 import { useMenuAccessStore } from "@/stores/savemenuaccess";
 import { resetTracking } from "@vue/reactivity";
@@ -14,14 +16,15 @@ const router = useRouter();
 
 let selectedCompany = ref("Company");
 let selectedSite = ref("Site");
-let selectedWarehouse = ref("Warehouse");
+let selectedWarehouse = ref([]);
 let selectedUOM = ref("UOM");
-let selectedBrand = ref("Brand");
+let selectedBrand = ref("");
 let brandName = ref("");
-let warehouseName = ref("");
+let warehouseName = ref([]);
+let warehouseId = ref([]);
 let Company = ref("");
 let Site = ref("");
-let Warehouse = ref("");
+let Warehouse = ref(null);
 let UOM = ref("");
 let uomName = ref("");
 let idItems = ref("");
@@ -35,10 +38,18 @@ let disableCompany = ref(false);
 let disableSite = ref(false);
 let addModal = ref(false);
 const company_code = JSON.parse(localStorage.getItem("company_code"));
+let isDoneLoading = ref(false);
+
+// multiselect
+let isLoading = ref(false);
 
 const emits = defineEmits(["unlockScrollbar", "close"]);
 const menuAccess = useMenuAccessStore();
 
+const props = defineProps({
+  status: String,
+  id: Number,
+});
 // const props = defineProps({
 //   roleId: Number,
 //   roleAccess: Array,
@@ -77,7 +88,7 @@ const changeCompany = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
-  // console.log(res)
+
   Site.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -98,11 +109,13 @@ const fetchBrandCompany = async (id_site) => {
 };
 const changeSite = async (id_site) => {
   fetchBrandCompany(id_site);
+
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
   // console.log(res)
   Warehouse.value = res.data.data;
+  isDoneLoading.value = true;
 };
 //get kondisi local storage
 const fetchCondition = async () => {
@@ -114,15 +127,15 @@ const fetchCondition = async () => {
 const generateNumber = async () => {
   idItems.value = Math.floor(100000000 + Math.random() * 900000000);
 };
+
 const addItem = async () => {
   if (
     selectedCompany.value == "" ||
     selectedSite.value == "" ||
-    selectedWarehouse.value == "" ||
+    selectedWarehouse.value == [] ||
     selectedUOM.value == "" ||
     itemNames.value == "" ||
     alertQuantity.value == "" ||
-    selectedBrand.value == "" ||
     idItems.value == ""
   ) {
     Swal.fire({
@@ -134,11 +147,14 @@ const addItem = async () => {
     });
     return false;
   } else {
+    warehouseName.value = [];
+    warehouseId.value = [];
     const wh = Warehouse.value;
     for (let index = 0; index < wh.length; index++) {
       const element = wh[index];
-      if (element.id == selectedWarehouse.value) {
-        warehouseName.value = element.warehouse_name;
+      if (selectedWarehouse.value.includes(element.id)) {
+        warehouseName.value.push(element.warehouse_name);
+        warehouseId.value.push(element.id);
       }
     }
     const br = Brand.value;
@@ -155,23 +171,25 @@ const addItem = async () => {
         uomName.value = element.uom_name;
       }
     }
-    // console.log(warehouseName.value)
-    itemsTable.value.push({
-      code_item: idItems.value,
-      item_name: itemNames.value,
-      id_brand: selectedBrand.value,
-      id_uom: selectedUOM.value,
-      alert_qty: alertQuantity.value,
-      id_company: selectedCompany.value,
-      id_site: selectedSite.value,
-      id_warehouse: selectedWarehouse.value,
-      current_stock: "",
-      remarks: remark.value,
-      nameWarehouse: warehouseName.value,
-      namaBrand: brandName.value,
-      namaUOM: uomName.value,
-    });
 
+    for (let index = 0; index < warehouseId.value.length; index++) {
+      itemsTable.value.push({
+        code_item: idItems.value,
+        item_name: itemNames.value,
+        id_brand: selectedBrand.value,
+        id_uom: selectedUOM.value,
+        alert_qty: alertQuantity.value,
+        id_company: selectedCompany.value,
+        id_site: selectedSite.value,
+        id_warehouse: warehouseId.value[index],
+        current_stock: "",
+        remarks: remark.value,
+        nameWarehouse: warehouseName.value[index],
+        namaBrand: brandName.value,
+        namaUOM: uomName.value,
+      });
+    }
+    console.log(itemsTable.value);
     resetButCompanyDisable();
     return itemsTable;
   }
@@ -186,7 +204,7 @@ const removeItems = async (id) => {
   }
   // return itemsTable
 };
-// console.log(emits('close'))
+
 const save = async () => {
   if (selectedCompany.value == "") {
     Swal.fire({
@@ -240,7 +258,7 @@ const reset = async () => {
   disableCompany.value = false;
   selectedCompany.value = "";
   selectedSite.value = "";
-  selectedWarehouse.value = "";
+  selectedWarehouse.value = [];
   selectedUOM.value = "";
   idItems.value = "";
   alertQuantity.value = "";
@@ -252,7 +270,7 @@ const reset = async () => {
 const resetButCompanyDisable = async () => {
   disableSite.value = true;
   disableCompany.value = true;
-  selectedWarehouse.value = "";
+  selectedWarehouse.value = [];
   selectedUOM.value = "";
   idItems.value = "";
   alertQuantity.value = "";
@@ -264,23 +282,19 @@ onMounted(() => {
   fetchCondition();
   fetchUOM();
 });
+
+watchEffect(() => {
+  if (isDoneLoading.value) {
+    Warehouse.value.map((item) => {
+      item.value = parseInt(item.id);
+    });
+  }
+});
 </script>
 
 <template>
-  <label
-    @click="coba"
-    for="my-modal-item-atk"
-    class="btn btn-success bg-green border-green hover:bg-none text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add Item</label
-  >
-
-  <input
-    type="checkbox"
-    v-if="addModal == true"
-    id="my-modal-item-atk"
-    class="modal-toggle"
-  />
-  <div class="modal" v-if="addModal == true">
+  <input type="checkbox" id="my-modal-item-atk" class="modal-toggle" />
+  <div class="modal">
     <div class="modal-dialog bg-white w-3/5 rounded-2xl">
       <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl">
         <label
@@ -352,9 +366,9 @@ onMounted(() => {
         <div class="flex justify-between px-6 items-center gap-2">
           <div class="mb-6 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >ATK Warehouse<span class="text-red">*</span></label
+              >Warehouse<span class="text-red">*</span></label
             >
-            <select
+            <!-- <select
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               v-model="selectedWarehouse"
@@ -367,7 +381,36 @@ onMounted(() => {
               >
                 {{ warehouse.warehouse_name }}
               </option>
-            </select>
+            </select> -->
+            <Multiselect
+              v-model="selectedWarehouse"
+              mode="tags"
+              placeholder="Select Warehouse"
+              track-by="warehouse_name"
+              label="warehouse_name"
+              :close-on-select="false"
+              :searchable="true"
+              :options="Warehouse"
+              :loading="isLoading"
+            >
+              <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                <div
+                  class="multiselect-tag is-user"
+                  :class="{
+                    'is-disabled': disabled,
+                  }"
+                >
+                  {{ option.warehouse_name }}
+                  <span
+                    v-if="!disabled"
+                    class="multiselect-tag-remove"
+                    @click="handleTagRemove(option, $event)"
+                  >
+                    <span class="multiselect-tag-remove-icon"></span>
+                  </span>
+                </div>
+              </template>
+            </Multiselect>
           </div>
           <div class="mb-6 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -378,7 +421,7 @@ onMounted(() => {
               required
               v-model="selectedUOM"
             >
-              <option disabled selected>UOM</option>
+              <option disabled selected value="">UOM</option>
               <option v-for="(uom, i) in UOM" :key="i" :value="uom.id">
                 {{ uom.uom_name }}
               </option>
@@ -413,7 +456,7 @@ onMounted(() => {
           </div>
         </div>
         <!-- <div class="flex justify-between px-6 items-center gap-2"> -->
-        <div class="flex justify-between px-6 items-center">
+        <div class="grid grid-cols-2 px-6 items-center gap-2">
           <div class="mb-6 w-full" v-if="company_code != '8000'">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Brand<span class="text-red">*</span></label
@@ -423,7 +466,7 @@ onMounted(() => {
               required
               v-model="selectedBrand"
             >
-              <option disabled selected>Brand</option>
+              <option disabled value="">Brand</option>
               <option v-for="(brand, i) in Brand" :key="i" :value="brand.id">
                 {{ brand.brand_name }}
               </option>
@@ -443,27 +486,27 @@ onMounted(() => {
           </div>
           <div class="mb-6 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm mx-2"
-            >ID Items<span class="text-red">*</span></label
-          >
-          <div
-            class="flex items-center border-b border-teal-500 py-2 mb-6 w-full mx-2"
-          >
-            <input
-              class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-              v-model="idItems"
-              maxlength="9"
-              type="number"
-              placeholder="ID Item"
-              aria-label="Full name"
-            />
-            <button
-              class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded"
-              type="button"
-              @click="generateNumber"
+              >ID Items<span class="text-red">*</span></label
             >
-              <img :src="iconPlus" class="w-[10px] h-[10px]" />
-            </button>
-          </div>
+            <div
+              class="flex items-center border-b border-teal-500 py-2 mb-6 w-full mx-2"
+            >
+              <input
+                class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                v-model="idItems"
+                maxlength="9"
+                type="number"
+                placeholder="ID Item"
+                aria-label="Full name"
+              />
+              <button
+                class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded"
+                type="button"
+                @click="generateNumber"
+              >
+                <img :src="iconPlus" class="w-[10px] h-[10px]" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -484,7 +527,7 @@ onMounted(() => {
                 <th
                   class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
-                  ATK Warehouse
+                  Warehouse
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
@@ -535,7 +578,10 @@ onMounted(() => {
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.item_name }}
                 </td>
-                <td class="border border-[#B9B9B9] text-center" v-if="company_code != '8000'">
+                <td
+                  class="border border-[#B9B9B9] text-center"
+                  v-if="company_code != '8000'"
+                >
                   {{ items.namaBrand }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
