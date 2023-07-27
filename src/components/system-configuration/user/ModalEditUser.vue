@@ -12,8 +12,6 @@
     import modalHeader from "@/components/modal/modalHeader.vue"
     import modalFooter from "@/components/modal/modalFooter.vue"
 
-    import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
-
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
     import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
@@ -70,25 +68,17 @@
   }
 
   const fetchIndividualLocation = async (input, index) => {
-    
     try {
-        
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/company/get_site/${input.company[0]}`)
       secondaryList.value[index].responseSiteByCompanyIdArray = api.data.data
-
     } catch (error) {
-
       console.log(error)
-
     }
-
   }
 
-
-
-    const submitEdit = () => {
+  const submitEdit = () => {
 
       formEditState.user.username = username.value
       formEditState.user.email = email.value
@@ -102,9 +92,9 @@
       emits('changeUser')
       isVisible.value = false
 
-    }
+  }
 
-    const resetInput = () => {
+  const resetInput = () => {
       password.value = ''
       usernameEmployee.value = props.formContent[8]
       username.value = props.formContent[0]
@@ -113,7 +103,7 @@
       role.value = props.formContent[3]
       isEmployee.value = props.formContent[6] == 1 ? true : false 
       fullname.value = props.formContent[0]
-    }
+  }
 
     watch(isVisible, () => {
 

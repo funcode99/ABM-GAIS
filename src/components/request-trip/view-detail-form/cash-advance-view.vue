@@ -39,7 +39,7 @@
     let grandTotal = ref(0)
 
     let item = ref()
-    let itemId = ref([1, 'Meals'])
+    let itemId = ref([0, ''])
     let nominal = ref()
     let frequency = ref()
     let total = ref()
@@ -51,12 +51,19 @@
 
     let arrayDetail = ref([])
     let arrayDetailForm = ref([])
+    let CAItemData = ref([])
+
+    const fetchGetItemCA = async () => {
+        const token = JSON.parse(localStorage.getItem("token"))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/cash_advance/get_type_item_ca')
+        CAItemData.value = api.data.data
+    }
 
     onBeforeMount(() => {
-
       fetchCashAdvanceDetailByRequestTripId()
       fetchCurrency()
-
+      fetchGetItemCA()
     })
 
     const fetchCurrency = async () => {
@@ -437,27 +444,30 @@
       if(currencyId.value[1] === '') {
         alert('Silahkan pilih currency terlebih dahulu')
       } else {
-        
-        arrayDetailForm.value = {
-              id_item_ca: itemId.value[0],
-              item_name: itemId.value[1],
-              frequency: frequency.value,
-              nominal: nominal.value,
-              total: total.value,
-              remarks: remarks.value,
-        }
 
-        console.log(typeof grandTotal.value)
-        
-        if(grandTotal.value === 'NaN') {
-          grandTotal.value = 0
-        } else if (typeof grandTotal.value !== 'number') {
-          grandTotal.value = 0
-        }
+        if( itemId.value[1] !== '' & total.value > 0) {
 
-        grandTotal.value += arrayDetailForm.value.total
-        arrayDetail.value.push(arrayDetailForm.value)
-        arrayDetailForm.value = {}
+            arrayDetailForm.value = {
+                  id_item_ca: itemId.value[0],
+                  item_name: itemId.value[1],
+                  frequency: frequency.value,
+                  nominal: nominal.value,
+                  total: total.value,
+                  remarks: remarks.value,
+            }
+            
+            if(grandTotal.value === 'NaN') {
+              grandTotal.value = 0
+            } else if (typeof grandTotal.value !== 'number') {
+              grandTotal.value = 0
+            }
+    
+            grandTotal.value += arrayDetailForm.value.total
+            arrayDetail.value.push(arrayDetailForm.value)
+            arrayDetailForm.value = {}
+
+        }
+        
 
       }
 
@@ -799,20 +809,15 @@
                 :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 v-model="itemId" 
                 >
-                <!-- :disabled="JSON.stringify(props) === '[{}]'" -->
-                
-                <option :value="[1, 'Meals']">Meals</option>
-                <option :value="[2, 'Transport']">Transport</option>
-                <option :value="[3, 'Others']">Others</option>
+
+                <option
+                  v-for="data in CAItemData"
+                  :value="[data.id, data.item_name]"
+                >
+                  {{data.item_name}}
+                </option>
 
               </select>
-
-              <!-- dia cuma bisa add kalo detail nya kosong, apalagi kalo header nya kosong -->
-              <!-- <select v-if="status.isEditingFromRequestTrip & isAddingDetail" :class="inputStylingClass" v-model="itemId">
-                <option value="1">Meals from isAddingDetail</option>
-                <option value="2">Transport</option>
-                <option value="3">Others</option>
-              </select> -->
 
             </div>
             
@@ -831,8 +836,6 @@
                 v-model="nominal"
                 :disabled="!status.showCreateCAHeader & !currentlyEditCADetail & !currentlyAddCADetail"
                 />
-              
-                <!-- :disabled="!status.isEditingFromRequestTrip || (!isAddingDetail & JSON.stringify(props) === '[{}]') " -->
             
             </div>
   
