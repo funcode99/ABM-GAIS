@@ -2,8 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/sites/ModalAdd.vue";
-import ModalEdit from "@/components/reference/sites/ModalEdit.vue";
+
 import ModalView from "@/components/reference/sites/ModalView.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
@@ -16,145 +15,41 @@ import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
 
-import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
 import { ref, onBeforeMount, computed, watch } from "vue";
 
 import { useReferenceFetchResult } from "@/stores/fetch/reference";
-import { useFormEditStore } from "@/stores/reference/sites/edit-modal.js";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
-const referenceFetch = useReferenceFetchResult();
 const sidebar = useSidebarStore();
-const formEditState = useFormEditStore();
-
-let siteName = ref("");
-let siteIdCompany = ref("");
-let siteCode = ref();
-
-let editSiteDataId = ref();
-let viewSiteDataId = ref();
-
-const viewSite = async (data) => {
-  viewSiteDataId.value = data;
-  setTimeout(callViewApi, 500);
-  console.log("ini data id:" + data);
-};
-
-const callViewApi = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  await Api.post(`/site/${editSiteDataId.value}`, {
-    site_name: formEditState.site.siteName,
-    id_company: formEditState.site.siteIdCompany,
-    site_code: formEditState.site.siteCode,
-  });
-  fetchSite();
-};
-
-const editSite = async (data) => {
-  editSiteDataId.value = data;
-  setTimeout(callEditApi, 500);
-};
-
-const callEditApi = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  await Api.post(`/site/update_data/${editSiteDataId.value}`, {
-    site_name: formEditState.site.siteName,
-    id_company: formEditState.site.siteIdCompany,
-    site_code: formEditState.site.siteCode,
-  });
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: "Your work has been saved",
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  fetchSite();
-};
-
+const referenceFetch = useReferenceFetchResult();
 const search = ref("");
+const selectedCompany = ref("");
+const showFullText = ref({});
+const addCompanyData = ref([]);
+
 let sortedData = ref([]);
-const selectedCompany = ref("Company");
 let sortedbyASC = true;
 let instanceArray = [];
 let Company = ref("");
-let sortedDataReactive = computed(() => sortedData.value);
-const showFullText = ref({});
-let checkList = false;
 
 let showingValue = ref(1);
+let showingValueFrom = ref(0);
+let showingValueTo = ref(0);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+let totalPage = ref(0);
+let totalData = ref(0);
 
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-};
-
-const filterDataByCompany = () => {
-  if (selectedCompany.value === "Company") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.id_company === selectedCompany.value
-    );
-  }
-  onChangePage(1);
-};
-
-const resetData = () => {
-  fetchSite();
-  selectedCompany.value = "Company";
-};
-
-const selectAll = (checkValue) => {
-  const check = document.getElementsByName("checks");
-  const btnDelete = document.getElementById("btnDelete");
-
-  if (checkValue === true) {
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type === "checkbox") {
-        check[i].checked = true;
-      }
-    }
-    btnDelete.style.display = "block";
-  } else {
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type === "checkbox") {
-        check[i].checked = false;
-      }
-    }
-    btnDelete.style.display = "none";
-  }
-};
-
-const deleteDataInCeklis = () => {
-  const check = document.getElementsByName("checks");
-  for (let i = 0; i < check.length; i++) {
-    if (check[i].type === "checkbox" && check[i].checked) {
-      const row = check[i].parentNode.parentNode;
-      row.parentNode.removeChild(row);
-    }
-  }
-
-  const btnDelete = document.getElementById("btnDelete");
-  const checkedCheckboxes = document.querySelectorAll(
-    'input[name="checks"]:checked'
-  );
-  if (checkedCheckboxes.length === 0) {
-    btnDelete.style.display = "none";
-  }
+  fetchSite(pageOfItem);
 };
 
 const tableHead = [
@@ -175,76 +70,52 @@ const sortList = (sortBy) => {
   }
 };
 
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    const companyName = item.company_name
-      ? item.company_name.toLowerCase()
-      : "";
-    const siteName = item.site_name ? item.site_name.toLowerCase() : "";
-    return (
-      companyName.indexOf(search.toLowerCase()) > -1 ||
-      siteName.indexOf(search.toLowerCase()) > -1
-    );
-  });
-
-  sortedData.value = filteredR;
-  onChangePage(1);
-};
-
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchSite = async () => {
+const fetchSite = async (id) => {
+  const params = {
+    filter: selectedCompany.value,
+    search: search.value,
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/site/get_data");
+  const res = await Api.get("/site/get_data", { params });
   instanceArray = res.data.data;
-  sortedData.value = instanceArray;
+  sortedData.value = instanceArray.data;
+  totalPage.value = instanceArray.last_page;
+  totalData.value = instanceArray.total;
+  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
+  showingValueTo.value = instanceArray.to;
 };
 
-const deleteSite = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchSite();
+  fetchCompanyUtils([], addCompanyData);
+});
 
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Api.delete(`/site/delete_data/${id}`).then((res) => {
-        Swal.fire({
-          title: "Successfully",
-          text: "Site has been deleted.",
-          icon: "success",
-          showCancelButton: false,
-          confirmButtonColor: "#015289",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        fetchSite();
-      });
-    } else {
-      return;
-    }
-  });
+const resetData = () => {
+  selectedCompany.value = "";
+  fetchSite();
 };
+
+const clearSearch = () => {
+  search.value = "";
+  fetchSite();
+};
+
+const showClearButton = computed(() => {
+  return search.value !== "";
+});
+
+watch(addCompanyData, () => {
+  referenceFetch.fetchCompanyResult = addCompanyData.value;
+  Company.value = addCompanyData.value;
+});
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -262,7 +133,7 @@ const exportToExcel = () => {
     worksheet.getCell(1, index + 1).value = column.title;
   });
 
-  sortedDataReactive.value.forEach((data, rowIndex) => {
+  sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.site_code;
@@ -282,19 +153,6 @@ const exportToExcel = () => {
     URL.revokeObjectURL(url);
   });
 };
-
-const addCompanyData = ref([]);
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchSite();
-  fetchCompanyUtils([], addCompanyData);
-});
-
-watch(addCompanyData, () => {
-  referenceFetch.fetchCompanyResult = addCompanyData.value;
-  Company.value = addCompanyData.value;
-});
 </script>
 
 <template>
@@ -318,15 +176,6 @@ watch(addCompanyData, () => {
 
             <div class="flex gap-4">
               <button
-                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
-                id="btnDelete"
-                style="display: none"
-                @click="deleteDataInCeklis()"
-              >
-                Delete
-              </button>
-              <!-- <ModalAdd @site-saved="fetchSite" /> -->
-              <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                 @click="exportToExcel"
               >
@@ -346,7 +195,6 @@ watch(addCompanyData, () => {
                 >
                   Company
                 </p>
-
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCompany"
@@ -361,7 +209,7 @@ watch(addCompanyData, () => {
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByCompany"
+                  @click="fetchSite()"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -381,33 +229,35 @@ watch(addCompanyData, () => {
             </div>
 
             <div class="pt-6 flex md:mx-0">
-              <label class="relative block">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </span>
-                <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
-                  type="text"
-                  name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
-                />
-              </label>
+              <input
+                class="nosubmit placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                type="text"
+                placeholder="Search..."
+                v-model="search"
+                @keyup.enter="fetchSite()"
+              />
+
+              <button
+                v-if="showClearButton"
+                @click="clearSearch"
+                type="button"
+                class="cursor-pointer absolute right-8 mt-3"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  class="h-4 w-4"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
 
@@ -417,6 +267,7 @@ watch(addCompanyData, () => {
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
+              @change="fetchSite()"
             >
               <option>10</option>
               <option>25</option>
@@ -430,16 +281,6 @@ watch(addCompanyData, () => {
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
-                <th>
-                  <div class="flex justify-center">
-                    <input
-                      type="checkbox"
-                      name="checked"
-                      @click="selectAll((checkList = !checkList))"
-                    />
-                  </div>
-                </th>
-
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -461,15 +302,9 @@ watch(addCompanyData, () => {
             <tbody>
               <tr
                 class="font-JakartaSans font-normal text-sm"
-                v-for="(data, index) in sortedData.slice(
-                  paginateIndex * pageMultiplierReactive,
-                  (paginateIndex + 1) * pageMultiplierReactive
-                )"
+                v-for="data in sortedData"
                 :key="data.id"
               >
-                <td style="width: 5%">
-                  <input type="checkbox" name="checks" />
-                </td>
                 <td style="width: 5%">{{ data.no }}</td>
                 <td style="width: 10%">{{ data.site_code }}</td>
                 <td style="width: 45%">
@@ -485,7 +320,6 @@ watch(addCompanyData, () => {
                 <td style="width: 20%">{{ data.company_name }}</td>
                 <td class="flex flex-wrap gap-2 justify-center">
                   <ModalView
-                    @view-site="viewSite(data.id)"
                     :formContent="[
                       data.site_name,
                       data.id_company,
@@ -493,17 +327,6 @@ watch(addCompanyData, () => {
                       data.detail,
                     ]"
                   />
-                  <!-- <ModalEdit
-                    @change-site="editSite(data.id)"
-                    :formContent="[
-                      data.site_name,
-                      data.id_company,
-                      data.site_code,
-                    ]"
-                  />
-                  <button @click="deleteSite(data.id)">
-                    <img :src="deleteicon" class="w-6 h-6" />
-                  </button> -->
                 </td>
               </tr>
             </tbody>
@@ -514,16 +337,6 @@ watch(addCompanyData, () => {
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
-                <th>
-                  <div class="flex justify-center">
-                    <input
-                      type="checkbox"
-                      name="checked"
-                      @click="selectAll((checkList = !checkList))"
-                    />
-                  </div>
-                </th>
-
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -551,16 +364,6 @@ watch(addCompanyData, () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
-                  <th>
-                    <div class="flex justify-center">
-                      <input
-                        type="checkbox"
-                        name="checked"
-                        @click="selectAll((checkList = !checkList))"
-                      />
-                    </div>
-                  </th>
-
                   <th
                     v-for="data in tableHead"
                     :key="data.Id"
@@ -597,12 +400,12 @@ watch(addCompanyData, () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ showingValueFrom }} to
+              {{ showingValueTo }}
+              of {{ totalData }} entries
             </p>
             <vue-awesome-paginate
-              :total-items="sortedData.length"
+              :total-items="totalData"
               :items-per-page="parseInt(pageMultiplierReactive)"
               :on-click="onChangePage"
               v-model="showingValue"
@@ -659,5 +462,11 @@ tr th {
   max-width: 400px;
   white-space: nowrap;
   word-break: break-word;
+}
+
+input.nosubmit {
+  background: transparent
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
+    no-repeat 13px center;
 }
 </style>

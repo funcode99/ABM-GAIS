@@ -2,6 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+
 import ModalAdd from "@/components/reference/city/ModalAdd.vue";
 import ModalEdit from "@/components/reference/city/ModalEdit.vue";
 
@@ -68,12 +69,13 @@ const callEditApi = async () => {
     timer: 1500,
   });
   fetchCity();
+  onChangePage(1);
 };
 
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
-  fetchCity();
+  fetchCity(pageOfItem);
 };
 
 const selectAll = (checkValue) => {
@@ -193,6 +195,7 @@ const deleteCity = async (id) => {
           timer: 1500,
         });
         fetchCity();
+        onChangePage(1);
       });
     } else {
       return;

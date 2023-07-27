@@ -2,12 +2,17 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+
 import ModalView from "@/components/reference/departement/ModalView.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 import tableData from "@/components/table/tableData.vue";
 import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
+
+import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany.js";
+import fetchAllEmployeeUtils from "@/utils/Fetch/Reference/fetchAllEmployee.js";
+import fetchGLAccountUtils from "@/utils/Fetch/Reference/fetchGLAccount";
 
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
@@ -17,11 +22,13 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import Api from "@/utils/Api";
 
 import { Workbook } from "exceljs";
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount, computed, watch } from "vue";
+
+import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
-
+const referenceFetch = useReferenceFetchResult();
 const search = ref("");
 const selectedCompany = ref("");
 const showFullText = ref({});
@@ -30,6 +37,8 @@ let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let Company = ref("");
+let addEmployeeData = ref([]);
+let addGLAccountData = ref([]);
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -86,17 +95,12 @@ const fetchDepartement = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
-const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-};
-
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDepartement();
-  fetchGetCompany();
+  fetchCompanyUtils(instanceArray, Company);
+  fetchAllEmployeeUtils(instanceArray, addEmployeeData);
+  fetchGLAccountUtils(addGLAccountData);
 });
 
 const resetData = () => {
@@ -111,6 +115,18 @@ const clearSearch = () => {
 
 const showClearButton = computed(() => {
   return search.value !== "";
+});
+
+watch(Company, () => {
+  referenceFetch.fetchCompanyResult = Company.value;
+});
+
+watch(addEmployeeData, () => {
+  referenceFetch.fetchEmployeeResult = addEmployeeData.value;
+});
+
+watch(addGLAccountData, () => {
+  referenceFetch.fetchGLAccountResult = addGLAccountData.value;
 });
 
 const exportToExcel = () => {
@@ -133,7 +149,8 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
     worksheet.getCell(rowIndex + 2, 2).value = data.id;
     worksheet.getCell(rowIndex + 2, 3).value = data.departement_name;
-    worksheet.getCell(rowIndex + 2, 4).value = data.departement_head_name;
+    worksheet.getCell(rowIndex + 2, 4).value = data.status_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.departement_head_name;
   });
 
   workbook.xlsx.writeBuffer().then((buffer) => {

@@ -128,7 +128,7 @@ const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
-  Adjusment.value.push({name:'increase'},{ name:'decrease'})
+  Adjusment.value.push({value: "addition", name:'increase'},{ value:"substraction", name:'decrease'})
 };
 
 const addItem = async () => {
@@ -507,7 +507,7 @@ onMounted(() => {
                 v-model="selectedAdjusment"
               >
                 <option disabled selected>Adjusment Type</option>
-                <option v-for="(adjust,i) in Adjusment" :key="i" :value="adjust.name">
+                <option v-for="(adjust,i) in Adjusment" :key="i" :value="adjust.value">
                   {{ adjust.name }}
                 </option>
               </select>
@@ -563,7 +563,7 @@ onMounted(() => {
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
-                  Warehouse
+                  ATK Warehouse
                 </th>
                 
                 <th

@@ -18,7 +18,6 @@ let selectedFlightClass = ref("Flight Class");
 let jobBandName = ref("");
 let hotelFare = ref("");
 let mealsRate = ref("");
-let FlightClass = ref("");
 let isVisible = ref(false);
 let modalPaddingHeight = "25vh";
 let isAdding = ref(false);
@@ -29,6 +28,9 @@ const initialInputValues = ref([]);
 
 let companyData = ref(null);
 let companyIdArray = ref(null);
+
+let FlightClass = ref(null);
+let FlightClassIdArray = ref(null);
 
 let addZona = ref([]);
 const arrayDetail = ref([]);
@@ -53,7 +55,7 @@ const callAddApi = async () => {
       hotel_fare: hotelFare.value.replace(/\./g, ""),
       meals_rate: mealsRate.value.replace(/\./g, ""),
       id_company: companyIdArray.value,
-      id_flight_class: selectedFlightClass.value,
+      id_flight_class: FlightClassIdArray.value,
       array_detail: arrayDetail.value,
     });
     Swal.fire({
@@ -79,7 +81,7 @@ const resetInput = () => {
   hotelFare.value = "";
   mealsRate.value = "";
   companyIdArray.value = [];
-  selectedFlightClass.value = "Flight";
+  FlightClassIdArray.value = [];
 };
 
 watch(isVisible, () => {
@@ -91,6 +93,10 @@ watch(isVisible, () => {
   }
 
   FlightClass.value = referenceFetch.fetchFlightClassResult;
+  FlightClass.value.map((item) => {
+    item.value = item.id;
+  });
+
   companyData.value = referenceFetch.fetchCompanyResult;
   companyData.value.map((item) => {
     item.value = item.id;
@@ -170,6 +176,7 @@ onMounted(() => {
             :close-on-select="false"
             :searchable="true"
             :options="companyData"
+            required
           >
             <template v-slot:tag="{ option, handleTagRemove, disabled }">
               <div
@@ -234,18 +241,41 @@ onMounted(() => {
 
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
-            >Flight<span class="text-red">*</span></label
+            >Class Transportation<span class="text-red">*</span></label
           >
-          <select
-            class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+          <div
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md text-sm font-medium sm:text-sm"
+          ></div>
+
+          <Multiselect
+            v-model="FlightClassIdArray"
+            mode="tags"
+            placeholder="Select Class Transportation"
+            track-by="flight_class"
+            label="flight_class"
+            :close-on-select="false"
+            :searchable="true"
+            :options="FlightClass"
             required
-            v-model="selectedFlightClass"
           >
-            <option disabled selected>Flight</option>
-            <option v-for="flight in FlightClass" :value="flight.id">
-              {{ flight.flight_class }}
-            </option>
-          </select>
+            <template v-slot:tag="{ option, handleTagRemove, disabled }">
+              <div
+                class="multiselect-tag is-user"
+                :class="{
+                  'is-disabled': disabled,
+                }"
+              >
+                {{ option.flight_class }}
+                <span
+                  v-if="!disabled"
+                  class="multiselect-tag-remove"
+                  @click="handleTagRemove(option, $event)"
+                >
+                  <span class="multiselect-tag-remove-icon"></span>
+                </span>
+              </div>
+            </template>
+          </Multiselect>
         </div>
 
         <!-- INNER TABLE -->

@@ -495,7 +495,7 @@ watch(addFlightClassData, () => {
                       data.hotel_fare,
                       data.meals_rate,
                       data.id_company,
-                      data.id_flight_class,
+                      data.id_flight,
                       data.detail,
                     ]"
                   />
