@@ -9,7 +9,6 @@
 
     import deleteDocumentIcon from '@/assets/delete_document_icon.png'
 
-    // submitNewCAStatus: Boolean,
     const status = defineProps({
       currentlyEditCAHeader: Boolean,
       showCreateCAHeader: Boolean,

@@ -19,6 +19,7 @@ export const useFormEditStore = defineStore('add-form', {
                 fullname: '',
                 email: '',
                 password: '',
+                secondaryCompany: [],
                 isEmployee: 0,
                 roleId: 0,
                 approvalAuthId: 0,

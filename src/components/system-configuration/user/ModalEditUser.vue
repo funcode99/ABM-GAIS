@@ -36,8 +36,8 @@
     let email = ref(props.formContent[1])
     let selected = ref(props.formContent[2])
     let role = ref(props.formContent[3])
-    let company = ref()
-    let location = ref()
+    let company = ref(props.formContent[4])
+    let location = ref(props.formContent[5])
     let isEmployee = ref(props.formContent[6] == 1 ? true : false)
     let fullname = ref(props.formContent[0])
     let usernameEmployee = ref(props.formContent[8])
@@ -56,8 +56,6 @@
   const addField = (arrayList) => {
 
     arrayList.push({
-      company: 0,
-      location: 0,
       responseSiteByCompanyIdArray: []
     })
 
@@ -71,7 +69,7 @@
     try {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get(`/company/get_site/${input.company[0]}`)
+      const api = await Api.get(`/company/get_site/${input.id_company}`)
       secondaryList.value[index].responseSiteByCompanyIdArray = api.data.data
     } catch (error) {
       console.log(error)
@@ -79,6 +77,8 @@
   }
 
   const submitEdit = () => {
+
+    console.log(secondaryList.value)
 
       formEditState.user.username = username.value
       formEditState.user.email = email.value
@@ -89,6 +89,7 @@
       formEditState.user.siteId = location.value
       formEditState.user.fullname = fullname.value
       formEditState.user.idStatusMenu = idStatusMenu.value
+      formEditState.user.secondaryCompany = secondaryList.value
       emits('changeUser')
       isVisible.value = false
 
@@ -111,6 +112,7 @@
         company.value = props.formContent[4]
         location.value = props.formContent[5]
       } else {
+        // company.value = referenceFetch.fetchIndividualEmployeeResult.id_company
         company.value = 0
         location.value = 0
       }
@@ -127,8 +129,6 @@
 
       responseCompanyArray.value = referenceFetch.fetchCompanyResult
       responseEmployeeArray.value = referenceFetch.fetchEmployeeResult
-
-      company.value = referenceFetch.fetchIndividualEmployeeResult.id_company
 
     })
 
@@ -241,8 +241,9 @@
             <label
               for="password"
               class="block mb-2 font-JakartaSans font-medium text-sm">
-              Passwords<span class="text-red">*</span>
+              Passwords
             </label>
+            <!-- <span class="text-red">*</span> -->
 
             <input
               id="password"
@@ -250,8 +251,8 @@
               type="password"
               placeholder="Passwords"
               :class="inputStylingClass"
-              required
-            />
+              />
+              <!-- required -->
 
           </div>
   
@@ -329,8 +330,9 @@
               
             <label for="company" class="text-sm">
               Company<span class="text-red-star">*</span> 
-              <!-- {{ company }} -->
             </label>
+
+            <!-- {{ company }} -->
               
             <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
                 <option 
@@ -351,6 +353,8 @@
               <label for="location" class="text-sm">
                 Location <span class="text-red-star">*</span> 
               </label>
+
+              <!-- {{ location }} -->
 
               <select :disabled="isLoading || isEmployee" id="location" v-model="location" :class="inputStylingClass">
                 
@@ -414,14 +418,14 @@
                       
                       <select 
                         :class="inputStylingClass"
-                        v-model="input.company"
+                        v-model="input.id_company"
                         @change="fetchIndividualLocation(input, index)"
                       >
 
                         <option 
                           v-for="data in responseCompanyArray"
                           :key="data.id"
-                          :value="[data.id, data.company_name]"                        
+                          :value="data.id"                        
                         >
                             {{ data.company_name }}
                         </option>
@@ -434,6 +438,7 @@
                       
                       <select     
                         :class="inputStylingClass"
+                        v-model="input.id_site"
                       >
 
                         <option 
