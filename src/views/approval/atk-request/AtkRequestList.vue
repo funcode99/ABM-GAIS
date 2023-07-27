@@ -11,6 +11,7 @@ import icon_ceklis from "@/assets/icon_ceklis.svg";
 import iconClose from "@/assets/navbar/icon_close.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icon_receive from "@/assets/icon-receive.svg";
+import viewicon from "@/assets/eye.png";
 
 // import atkrequestdata from "../../../utils/Api/approval/atk-request/atkrequestdata.js";
 
@@ -437,7 +438,7 @@ const format_date = (value) => {
                             ? 'status-revision'
                             : data.status == 'Completed'
                             ? 'status-done'
-                            : data.status == 'Partial'
+                            : data.status == 'Partial Completed'
                             ? 'status-partial'
                             : 'font-bold'
                         "
@@ -445,9 +446,10 @@ const format_date = (value) => {
                       >
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/viewapprovalatkrrequest/${data.id}`">
+                      <router-link :to="`/viewapprovalatkrrequest/${data.id}`" >
                         <button>
-                          <img :src="icon_ceklis" class="w-8 h-8" />
+                          <img :src="icon_ceklis" class="w-6 h-6" v-if="data.status == 'Waiting Approval'"/>
+                          <img :src="viewicon" class="w-6 h-6" v-else/>
                         </button>
                       </router-link>
                       <!-- <router-link  to="/viewapprovalatkrrequest">
