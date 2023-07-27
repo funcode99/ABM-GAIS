@@ -30,6 +30,7 @@ let ItemTable = ref([]);
 const idR = ref(router.currentRoute.value.params.id);
 let dataApproval = ref([]);
 let tabId = ref(1);
+const company_code = JSON.parse(localStorage.getItem("company_code"));
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -248,6 +249,7 @@ const format_date = (value) => {
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      v-if="company_code != '8000'"
                     >
                       Brand
                     </th>
@@ -292,7 +294,7 @@ const format_date = (value) => {
                       {{ value.itemNames }}
                     </td>
 
-                    <td class="border border-[#B9B9B9]">
+                    <td class="border border-[#B9B9B9]" v-if="company_code != '8000'">
                       {{ value.brandName }}
                     </td>
                     <td class="border border-[#B9B9B9]">

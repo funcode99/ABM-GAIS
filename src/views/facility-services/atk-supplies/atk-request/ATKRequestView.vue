@@ -890,7 +890,7 @@ const format_date = (value) => {
             <div class="flex flex-col gap-2"></div>
           </div>
           <!-- TAB & TABLE-->
-          <div class="bg-blue rounded-lg pt-2 mx-[70px]">
+          <div class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]">
             <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
@@ -1026,7 +1026,7 @@ const format_date = (value) => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval" />
+                <HistoryApproval :data-approval="dataApproval" type="ATK"/>
               </div>
             </div>
           </div>
