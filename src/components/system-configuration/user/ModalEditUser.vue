@@ -2,10 +2,17 @@
     import { ref, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
 
+    import Api from '@/utils/Api'
+
+    import iconPlus from "@/assets/navbar/icon_plus.svg"
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+
     import editIcon from "@/assets/navbar/edit_icon.svg"
 
     import modalHeader from "@/components/modal/modalHeader.vue"
     import modalFooter from "@/components/modal/modalFooter.vue"
+
+    import fetchSiteByCompanyIdUtils from '@/utils/Fetch/Reference/fetchSiteByCompanyId'
 
     import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
     import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
@@ -45,6 +52,41 @@
     let responseSiteByCompanyIdArray = ref([])
     let responseAuthoritiesArray = ref([])
     let statusMenu = ref(null)
+
+    let secondaryList = ref([])
+
+  const addField = (arrayList) => {
+
+    arrayList.push({
+      company: 0,
+      location: 0,
+      responseSiteByCompanyIdArray: []
+    })
+
+  }
+
+  const removeField = (arrayList, index) => {
+    arrayList.splice(index, 1)
+  }
+
+  const fetchIndividualLocation = async (input, index) => {
+    
+    try {
+        
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/company/get_site/${input.company[0]}`)
+      secondaryList.value[index].responseSiteByCompanyIdArray = api.data.data
+
+    } catch (error) {
+
+      console.log(error)
+
+    }
+
+  }
+
+
 
     const submitEdit = () => {
 
@@ -100,13 +142,14 @@
 
     })
 
-    watch(isEmployee, () => {
-
-    })
-
     watch(usernameEmployee, () => {
       emits('fetchEmployeeIndividualInfo', usernameEmployee.value)
     })
+
+    watch(secondaryList, () => {
+      console.log(secondaryList.value)
+    })
+
 
     watch(company, () => {
       isLoading.value = true
@@ -171,7 +214,6 @@
                   <!-- {{ usernameEmployee }} -->
               </label>
 
-              <!-- v-if="!isEmployee" -->
               <input
                   id="username"
                   v-model="username"
@@ -239,14 +281,17 @@
           </div>
 
           <div class="mb-6 flex flex-col text-left">
+
             <label class="block mb-2 font-JakartaSans font-medium text-sm" for="status_menu">
               Status <span class="text-red">*</span>
             </label>
+
             <select id="status_menu" :class="inputStylingClass" v-model="idStatusMenu">
               <option v-for="data in statusMenu" :key="data.id" :value="data.code">
                 {{ data.status }}
               </option>
             </select>
+
           </div>
   
           <div v-if="role[1] == 'Driver' " class="mb-6 flex flex-col text-left justify-start">
@@ -289,6 +334,7 @@
             
           </div>
   
+          <!-- Company -->
           <div class="mb-6 flex flex-col gap-2">
               
             <label for="company" class="text-sm">
@@ -296,19 +342,24 @@
               <!-- {{ company }} -->
             </label>
               
-              <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
-                <option v-for="data in responseCompanyArray" :key="data.id" :value="data.id" :selected="data.id == props.formContent[4] ? true : false">
+            <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
+                <option 
+                  :selected="data.id == props.formContent[4] ? true : false"
+                  v-for="data in responseCompanyArray" 
+                  :key="data.id" 
+                  :value="data.id" 
+                >
                   {{ data.company_name }}
                 </option>
-              </select>
+            </select>
 
           </div>
 
-            <div v-if="!isLoading" class="mb-6 flex flex-col gap-2">
+          <!-- Location -->
+          <div v-if="!isLoading" class="mb-6 flex flex-col gap-2">
 
               <label for="location" class="text-sm">
                 Location <span class="text-red-star">*</span> 
-                <!-- {{ location }} -->
               </label>
 
               <select :disabled="isLoading || isEmployee" id="location" v-model="location" :class="inputStylingClass">
@@ -319,9 +370,9 @@
 
               </select>
 
-            </div>
+          </div>
 
-            <div v-else class="flex flex-col gap-2">
+          <div v-else class="flex flex-col gap-2">
 
               <label for="location" class="text-sm">
                 Location <span class="text-red-star">*</span> 
@@ -333,14 +384,114 @@
                 </option>
               </select>
 
-            </div>
+          </div>
+
+          <!-- Secondary Company Location -->
+          <div>
+
+            <span class="text-sm">
+              Secondary company location<span class="text-red-star">*</span> 
+            </span>
+
+            <table class="table table-zebra table-compact border w-full rounded-lg">
+                
+                <thead>
+                  <tr class="text-center">
+                    <th>
+                      <span>No</span>
+                    </th>
+                    <th>
+                      <span>Company</span>
+                    </th>
+                    <th>
+                      <span>Location</span>
+                    </th>
+                    <th>
+                      <span>Action</span>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody class="bg-[#F5F5F5]">
+                  
+                  <tr class="text-center" v-for="(input, index) in secondaryList" :key="`${index}`">
+
+                    <td>
+                      {{ index+1 }}
+                    </td>
+
+                    <td>
+                      
+                      <select 
+                        :class="inputStylingClass"
+                        v-model="input.company"
+                        @change="fetchIndividualLocation(input, index)"
+                      >
+
+                        <option 
+                          v-for="data in responseCompanyArray"
+                          :key="data.id"
+                          :value="[data.id, data.company_name]"                        
+                        >
+                            {{ data.company_name }}
+                        </option>
+
+                      </select>
+
+                    </td>
+
+                    <td>
+                      
+                      <select     
+                        :class="inputStylingClass"
+                      >
+
+                        <option 
+                          v-for="data in input.responseSiteByCompanyIdArray"
+                          :key="data.id"
+                          :value="data.id"
+                        >
+                            {{ data.site_name }}
+                        </option>
+
+                      </select>
+
+                    </td>
+
+                    <td class="flex flex-wrap gap-4 justify-center">
+                      
+                      <button type="button" @click="removeField(secondaryList, index)">
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                  <tr>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="flex justify-center">
+                        <img @click="addField(secondaryList)" class="cursor-pointer" :src="iconPlus" alt="">
+                    </td>
+
+                  </tr>
+
+                </tbody>
+
+            </table>
+
+          </div>
   
           <modalFooter
             class="mt-6 pt-5"
             @closeEdit="isVisible = false"
           />
-  
+
         </form>
+
 
       </main>
 
