@@ -5,7 +5,7 @@ import modalHeader from "@/components/modal/modalHeader.vue"
 import modalFooter from "@/components/modal/modalFooter.vue"
 import SequencePreview from "./SequencePreview.vue"
 
-import { ref, watch } from "vue"
+import { ref, watch, computed } from "vue"
 import { Modal } from "usemodal-vue3"
 import editIcon from "@/assets/navbar/edit_icon.svg"
 
@@ -71,6 +71,13 @@ watch(isVisible, () => {
 
   addCompanyData.value = referenceFetch.fetchCompanyResult
   addMenuData.value = sysconfigFetch.fetchMenuResult
+})
+
+const sequenceCode = computed(() => {
+  const sequence_code =
+    addMenuData.value.find(({ id }) => id == menu.value).code_sequence ?? ""
+
+  return sequence_code
 })
 
 const rowClass = "flex justify-between mx-4 items-center gap-3 my-3"

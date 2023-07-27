@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, watch, onMounted } from "vue"
 import { getPReviewSequenceCode } from "@/utils/Api/system-configuration/sequence.service"
 
 const inputStylingClass =
@@ -23,6 +23,17 @@ const getSequenceCode = async () => {
       sequence_size: props.formData.sequenceSize,
       sequence_code: props.formData.sequenceCode,
     }
+
+    console.log(params)
+    if (
+      !params.prefix ||
+      !params.sufix ||
+      !params.code_company ||
+      !params.sequence_size ||
+      !params.sequence_code
+    ) {
+      return
+    }
     const res = await getPReviewSequenceCode({ params })
 
     code.value = res
@@ -31,7 +42,9 @@ const getSequenceCode = async () => {
   }
 }
 
-getSequenceCode()
+onMounted(() => {
+  getSequenceCode()
+})
 </script>
 
 <template>
