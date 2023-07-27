@@ -61,8 +61,17 @@
 
   }
 
-  const removeField = (arrayList, index) => {
-    arrayList.splice(index, 1)
+  const removeField = async (arrayList, index, id) => {
+
+    if(id === undefined) {
+      arrayList.splice(index, 1)
+    } else {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.delete(`/site/delete_user_site/${id}`)
+      arrayList.splice(index, 1)
+    }
+
   }
 
   const fetchIndividualLocation = async (input, index) => {
@@ -106,13 +115,26 @@
       fullname.value = props.formContent[0]
   }
 
+
+
+  const fetchSecondaryTable = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/site/get_user_site/${props.formContent[10]}`)
+      secondaryList.value = api.data.data
+      secondaryList.value.map((item, index) => {
+        fetchIndividualLocation(item, index)
+      })
+  }
+
     watch(isVisible, () => {
+
+      fetchSecondaryTable()
 
       if(isVisible.value === true) {
         company.value = props.formContent[4]
         location.value = props.formContent[5]
       } else {
-        // company.value = referenceFetch.fetchIndividualEmployeeResult.id_company
         company.value = 0
         location.value = 0
       }
@@ -455,7 +477,7 @@
 
                     <td class="flex flex-wrap gap-4 justify-center">
                       
-                      <button type="button" @click="removeField(secondaryList, index)">
+                      <button type="button" @click="removeField(secondaryList, index, input.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
 

@@ -453,7 +453,8 @@
                           data.is_employee, 
                           data.name,
                           data.id_employee,
-                          data.is_active
+                          data.is_active,
+                          data.id
                           ]" />
                         <button @click="deleteData(data.id)">
                           <img :src="deleteicon" class="w-6 h-6" />
