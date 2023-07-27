@@ -128,7 +128,7 @@ const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
-  Adjusment.value.push({value: "addition", name:'increase'},{ value:"decrease", name:'substraction'})
+  Adjusment.value.push({value: "addition", name:'increase'},{ value:"substraction", name:'decrease'})
 };
 
 const addItem = async () => {
