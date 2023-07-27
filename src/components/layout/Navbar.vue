@@ -3,7 +3,7 @@ import tail from "@/assets/topbar-image.png";
 import arrow from "@/assets/arrow-navbar.png";
 import user from "@/assets/navbar/user.svg";
 import ABMIcon from "@/assets/abm.png";
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import { useRouter } from "vue-router";
 
@@ -17,6 +17,9 @@ const router = useRouter();
 const sidebar = useSidebarStore();
 let isOpen = ref(false);
 let isNotificationOpen = ref(false);
+
+let sortedData = ref([]);
+let instanceArray = [];
 
 const changeViewStatus = () => {
   isOpen.value = false;
@@ -32,6 +35,28 @@ const logout = async () => {
   sidebar.menuData = "";
   router.push({ path: "/" });
 };
+
+const getNotif = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/notification/get_data");
+  instanceArray = res.data.data;
+  sortedData.value = instanceArray;
+  console.log(sortedData.value.length);
+};
+
+const getNotifClick = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/notification/get_data");
+  // instanceArray = res.data.data;
+  // sortedData.value = instanceArray;
+  // console.log(sortedData.value.length);
+};
+
+onBeforeMount(() => {
+  getNotif();
+});
 </script>
 
 <template>
@@ -73,7 +98,10 @@ const logout = async () => {
           <!-- tabindex nya dihapus tapi dropdown nya masih muncul -->
           <div class="relative">
             <button
-              @click="isNotificationOpen = !isNotificationOpen"
+              @click="
+                isNotificationOpen = !isNotificationOpen;
+                getNotifClick();
+              "
               class="mx-10 hover:scale-125"
             >
               <div class="indicator hover:bg-slate-300 hover:rounded-full p-1">
@@ -92,31 +120,38 @@ const logout = async () => {
                   />
                 </svg>
                 <span
+                  v-if="sortedData.length > 0"
                   class="badge badge-sm bg-[#F04438] border-none indicator-item"
-                  >8</span
+                  >{{ sortedData.length }}</span
+                >
+                <span
+                  v-else
+                  class="badge badge-sm bg-[#F04438] border-none indicator-item"
+                  >0</span
                 >
               </div>
             </button>
             <Transition name="slide">
               <ul
                 v-if="isNotificationOpen"
-                class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content menu p-2 shadow bg-base-100 rounded-box w-96 top-[50px]"
+                class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-96 top-[50px] overflow-y-scroll overflow-x-hidden h-52"
               >
-                <li>
-                  <a class=""
-                    ><img
-                      :src="user"
-                      class="background rounded-full w-[42px] h-[42px]"
-                    />
-                    <div>
-                      <span class="font-JakartaSans font-bold text-base"
-                        >Jack L </span
-                      >requested your approval for document
-                      <span class="font-JakartaSans font-bold text-base"
-                        >TRV-ABM/1212/12.03</span
-                      >
-                    </div>
-                  </a>
+                <li
+                  v-for="data in sortedData"
+                  :key="data.id"
+                  class="border-2 py-2 rounded-box mb-2"
+                >
+                  <button>
+                    <a class="flex justify-start gap-2 items-center mx-1"
+                      ><img
+                        :src="user"
+                        class="background rounded-full w-[42px] h-[42px]"
+                      />
+                      <span class="text-start">
+                        {{ data.text }}
+                      </span>
+                    </a>
+                  </button>
                 </li>
               </ul>
             </Transition>
