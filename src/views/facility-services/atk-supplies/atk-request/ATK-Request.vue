@@ -21,7 +21,7 @@ import { ref, onBeforeMount, computed } from "vue";
 import Api from "@/utils/Api";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import Swal from "sweetalert2";
-import moment from 'moment';
+import moment from "moment";
 const sidebar = useSidebarStore();
 
 //for sort & search
@@ -30,11 +30,14 @@ const end_date = ref("");
 const search = ref("");
 const searchFilter = ref("");
 let sortedData = ref([]);
-const selectedType = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
+const selectedType =
+  JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
+    ? ref("")
+    : ref(JSON.parse(localStorage.getItem("id_company")));
 const selectedTypeWarehouse = ref("");
 const status = ref("");
-let StatusItems = ref([])
-let itemdata = ref("")
+let StatusItems = ref([]);
+let itemdata = ref("");
 let Company = ref("");
 let sortedbyASC = true;
 let instanceArray = [];
@@ -46,32 +49,71 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
-let lenghtPagination = ref(0)
+let lenghtPagination = ref(0);
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  fetchData(pageOfItem, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+  fetchData(
+    pageOfItem,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
+    pageMultiplier.value
+  );
 };
+// for modal
+let statusForm = ref("add");
+let visibleModal = ref(false);
+let idItem = ref(0);
 
 //for filter & reset button
 const filterDataByType = () => {
-  const start = moment(String(start_date.value[0])).format('YYYY-MM-DD')
-    const end = moment(String(start_date.value[1])).format('YYYY-MM-DD')
-    // console.log(test)
-    if (start_date.value[0] == undefined) {
-      fetchData(1, selectedType.value, status.value, "", "",searchFilter.value,pageMultiplier.value)
-    }  else {
-      fetchData(1, selectedType.value, status.value, start, end,searchFilter.value,pageMultiplier.value)
-    }
+  const start = moment(String(start_date.value[0])).format("YYYY-MM-DD");
+  const end = moment(String(start_date.value[1])).format("YYYY-MM-DD");
+  // console.log(test)
+  if (start_date.value[0] == undefined) {
+    fetchData(
+      1,
+      selectedType.value,
+      status.value,
+      "",
+      "",
+      searchFilter.value,
+      pageMultiplier.value
+    );
+  } else {
+    fetchData(
+      1,
+      selectedType.value,
+      status.value,
+      start,
+      end,
+      searchFilter.value,
+      pageMultiplier.value
+    );
+  }
 };
 
 //for filter & reset button
 const resetData = () => {
-  selectedType.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"));
-    status.value = ''
-    start_date.value = ''
-    end_date.value = ''
-    fetchData(showingValue.value, selectedType.value, "", "", "",searchFilter.value,pageMultiplier.value)
+  selectedType.value =
+    JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
+      ? ""
+      : JSON.parse(localStorage.getItem("id_company"));
+  status.value = "";
+  start_date.value = "";
+  end_date.value = "";
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    "",
+    "",
+    "",
+    searchFilter.value,
+    pageMultiplier.value
+  );
 };
 
 //for check & uncheck all
@@ -111,34 +153,52 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
-const fetchData = async (page, selectedType, status, start_date, end_date,search,perpage) => {
+const fetchData = async (
+  page,
+  selectedType,
+  status,
+  start_date,
+  end_date,
+  search,
+  perpage
+) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get?page=${page}&id_company=${selectedType}&code_status_doc=${status}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`);
+  const res = await Api.get(
+    `/request_atk/get?page=${page}&id_company=${selectedType}&code_status_doc=${status}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`
+  );
   // console.log(res.data.data)
   itemdata.value = res.data.data.data;
   instanceArray = itemdata.value;
   // console.log(instanceArray)
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
-  lenghtPagination = res.data.data.total
-    paginateIndex.value = res.data.data.current_page - 1
-    showingValue.value = res.data.data.current_page
+  lenghtPagination = res.data.data.total;
+  paginateIndex.value = res.data.data.current_page - 1;
+  showingValue.value = res.data.data.current_page;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const perPage = async () => {
-    // console.log(pageMultiplier.value)
-    fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const fetchGetCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    Company.value = res.data.data;
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const fetchGetCompanyID = async (id_company) => {
+  // console.log(pageMultiplier.value)
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
+    pageMultiplier.value
+  );
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchGetCompanyID = async (id_company) => {
   // changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
@@ -148,8 +208,8 @@ const perPage = async () => {
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id_company === element.id){
-      selectedType.value = id_company
+    if (id_company === element.id) {
+      selectedType.value = id_company;
     }
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -187,38 +247,82 @@ const deleteValue = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
+        fetchData(
+          showingValue.value,
+          selectedType.value,
+          status.value,
+          start_date.value,
+          end_date.value,
+          searchFilter.value,
+          pageMultiplier.value
+        );
       });
     } else {
       return;
     }
   });
-    
+
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
   // changeCompany()
 };
+
+const openModal = (type, id) => {
+  visibleModal.value = true;
+  statusForm.value = type;
+  if (id) {
+    idItem.value = parseInt(id);
+  }
+};
+
+const closeModal = () => {
+  visibleModal.value = false;
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    valueChecked.value,
+    searchFilter.value,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchData(showingValue.value, selectedType.value, status.value, start_date.value, end_date.value,searchFilter.value,pageMultiplier.value)
-  fetchCondition()
-    StatusItems.value.push({
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
+    pageMultiplier.value
+  );
+  fetchCondition();
+  StatusItems.value.push(
+    {
       id: 10,
-      name: 'Completed'
-    }, {
+      name: "Completed",
+    },
+    {
       id: 9,
-      name: 'Cancelled'
-    },{
+      name: "Cancelled",
+    },
+    {
       id: 1,
-      name: 'Waiting Approval'
-    },{
+      name: "Waiting Approval",
+    },
+    {
       id: 0,
-      name: 'Draft'
-    })
+      name: "Draft",
+    }
+  );
   // console.log(stockindata)
   // instanceArray = stockindata;
   // sortedData.value = instanceArray;
@@ -227,7 +331,15 @@ onBeforeMount(() => {
 
 //for searching
 const filteredItems = (search) => {
-  fetchData(1, selectedType.value, status.value, start_date.value, end_date.value,search,pageMultiplier.value)
+  fetchData(
+    1,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    search,
+    pageMultiplier.value
+  );
 };
 
 const getSessionForSidebar = () => {
@@ -235,8 +347,8 @@ const getSessionForSidebar = () => {
 };
 const format_date = (value) => {
   if (value) {
-           return moment(String(value)).format('DD-MM-YYYY')
-          }
+    return moment(String(value)).format("DD-MM-YYYY");
+  }
 };
 </script>
 
@@ -260,7 +372,9 @@ const format_date = (value) => {
         <div class="bg-white rounded-t-xl custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
-            <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
+            <p
+              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+            >
               ATK Request
             </p>
 
@@ -271,7 +385,13 @@ const format_date = (value) => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAdd @close="fetchData(showingValue, selectedType, status, start_date, end_date,searchFilter,pageMultiplier)" />
+              <label
+                @click="openModal('add', 0)"
+                for="my-modal-stock-in"
+                class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+                >+ Add Request</label
+              >
+              <ModalAdd @close="closeModal" :status="statusForm" :id="idItem" v-if="visibleModal"/>
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -287,7 +407,6 @@ const format_date = (value) => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-              
               <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
@@ -296,9 +415,14 @@ const format_date = (value) => {
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedType">
+                  v-model="selectedType"
+                >
                   <option disabled selected>Company</option>
-                  <option v-for="(company,i) in Company" :key="i" :value="company.id">
+                  <option
+                    v-for="(company, i) in Company"
+                    :key="i"
+                    :value="company.id"
+                  >
                     {{ company.company_name }}
                   </option>
                 </select>
@@ -312,9 +436,14 @@ const format_date = (value) => {
                 </p>
                 <select
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="status">
+                  v-model="status"
+                >
                   <option disabled selected>Status</option>
-                  <option v-for="data in StatusItems" :key="data.id" :value="data.id">
+                  <option
+                    v-for="data in StatusItems"
+                    :key="data.id"
+                    :value="data.id"
+                  >
                     {{ data.name }}
                   </option>
                 </select>
@@ -322,12 +451,19 @@ const format_date = (value) => {
 
               <div>
                 <div>
-                  <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
+                  <p
+                    class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                  >
                     Date
                   </p>
 
-                  <VueDatePicker v-model="start_date" range :enable-time-picker="false" class="my-date lg:w-10"
-                  format="dd-MM-yyyy" />
+                  <VueDatePicker
+                    v-model="start_date"
+                    range
+                    :enable-time-picker="false"
+                    class="my-date lg:w-10"
+                    format="dd-MM-yyyy"
+                  />
                 </div>
               </div>
 
@@ -401,7 +537,8 @@ const format_date = (value) => {
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 v-model="pageMultiplier"
-                @change="perPage">
+                @change="perPage"
+              >
                 <option>10</option>
                 <option>25</option>
                 <option>50</option>
@@ -412,19 +549,33 @@ const format_date = (value) => {
             <div class="flex justify-between gap-4 items-center">
               <label class="relative block">
                 <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                  <svg
+                    aria-hidden="true"
+                    class="w-5 h-5 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
                   </svg>
                 </span>
                 <input
                   class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..." type="text" name="search" v-model="search" @keyup="filteredItems(search)" />
+                  placeholder="Search..."
+                  type="text"
+                  name="search"
+                  v-model="search"
+                  @keyup="filteredItems(search)"
+                />
               </label>
             </div>
           </div>
-
 
           <!-- TABLE -->
           <div
@@ -489,7 +640,7 @@ const format_date = (value) => {
                       {{ data.item_count }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                        <span
+                      <span
                         :class="
                           data.status == 'Waiting Approval'
                             ? 'status-default'
@@ -497,7 +648,7 @@ const format_date = (value) => {
                             ? 'status-revision'
                             : data.status == 'Completed'
                             ? 'status-done'
-                            : data.status == 'Partial'
+                            : data.status == 'Partial Completed'
                             ? 'status-partial'
                             : 'font-bold'
                         "
@@ -506,9 +657,12 @@ const format_date = (value) => {
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link :to="`/atkRequest/${data.id}`">
-                          <img :src="editicon" class="w-6 h-6" />
+                        <img :src="editicon" class="w-6 h-6" />
                       </router-link>
-                      <button v-if="data.status == 'Draft'" @click="deleteValue(data.id)">
+                      <button
+                        v-if="data.status == 'Draft'"
+                        @click="deleteValue(data.id)"
+                      >
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                       <button v-else disabled>
@@ -530,15 +684,19 @@ const format_date = (value) => {
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
-            <p v-if="sortedData.length > 0" class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+            <p
+              v-if="sortedData.length > 0"
+              class="font-JakartaSans text-xs font-normal text-[#888888] py-2"
+            >
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
               {{ Math.min(showingValue * pageMultiplier, lenghtPagination) }}
               of {{ lenghtPagination }} entries
             </p>
-            <p v-else class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing 0 to
-              0
-              of 0 entries
+            <p
+              v-else
+              class="font-JakartaSans text-xs font-normal text-[#888888] py-2"
+            >
+              Showing 0 to 0 of 0 entries
             </p>
             <vue-awesome-paginate
               v-if="sortedData.length > 0"
