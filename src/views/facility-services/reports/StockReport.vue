@@ -295,6 +295,14 @@ const clearSearch = () => {
                     {{ data.company_name }}
                   </option>
                 </select>
+                <select
+                  v-show="showSelectAll"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                >
+                  <option>
+                    {{ CompanyName }}
+                  </option>
+                </select>
               </div>
 
               <div class="flex flex-col pt-[2px]">
@@ -311,6 +319,14 @@ const clearSearch = () => {
                   <option disabled selected>Site</option>
                   <option v-for="data in Site" :value="data.id">
                     {{ data.site_name }}
+                  </option>
+                </select>
+                <select
+                  v-show="showSelectAll"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                >
+                  <option>
+                    {{ SiteName }}
                   </option>
                 </select>
               </div>
