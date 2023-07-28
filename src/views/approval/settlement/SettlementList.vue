@@ -351,7 +351,7 @@ const getSessionForSidebar = () => {
                 <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data) in sortedData"
+                    v-for="data in sortedData"
                     :key="data.id"
                   >
                     <td>

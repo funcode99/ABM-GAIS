@@ -25,13 +25,15 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 
 const search = ref("");
+const selectedGrupCompany = ref("");
 const selectedCompany = ref("");
 const showFullText = ref({});
 
-let sortedData = ref([]);
-let sortedbyASC = true;
 let instanceArray = [];
-let Company = ref("");
+let sortedData = ref([]);
+let GrupCompany = ref([]);
+let ParentCompany = ref([]);
+let sortedbyASC = true;
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -90,11 +92,18 @@ const fetchEmployee = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
-const fetchGetCompany = async () => {
+const fetchGrupCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
+  const res = await Api.get("/group_company/get");
+  GrupCompany.value = res.data.data;
+};
+
+const fetchParentCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get_parent/${id_company}`);
+  ParentCompany.value = res.data.data;
 };
 
 const syncData = async () => {
@@ -107,11 +116,12 @@ const syncData = async () => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchEmployee();
-  fetchGetCompany();
+  fetchGrupCompany();
 });
 
 const resetData = () => {
   selectedCompany.value = "";
+  selectedGrupCompany.value = "";
   fetchEmployee();
 };
 
@@ -203,6 +213,24 @@ const exportToExcel = () => {
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
+                  Group Company
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedGrupCompany"
+                  @change="fetchParentCompany(selectedGrupCompany)"
+                >
+                  <option disabled selected>Group Company</option>
+                  <option v-for="data in GrupCompany" :value="data.id">
+                    {{ data.group_company_name }}
+                  </option>
+                </select>
+              </div>
+
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
                   Company
                 </p>
                 <select
@@ -210,8 +238,8 @@ const exportToExcel = () => {
                   v-model="selectedCompany"
                 >
                   <option disabled selected>Company</option>
-                  <option v-for="company in Company" :value="company.id">
-                    {{ company.company_name }}
+                  <option v-for="data in ParentCompany" :value="data.id">
+                    {{ data.company_name }}
                   </option>
                 </select>
               </div>

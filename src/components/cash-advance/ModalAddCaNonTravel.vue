@@ -101,8 +101,7 @@ const addItem = async () => {
 
 const resetItems = async () => {
   itemsItem.value = ""
-  itemsNominal.value = ""
-  itemsCostCentre.value = ""
+  itemsNominal.value = null
   itemsRemarks.value = ""
 }
 
@@ -120,25 +119,37 @@ const saveForm = async () => {
     id_currency: currency.value,
     grand_total: total,
     array_detail: tempItem.value,
+    cost_center_code: parsedCostCenter[0],
+    cost_center_name: parsedCostCenter[1],
   }
   const api = await Api.post("cash_advance/store", payload)
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  })
-  if (api.data.success) {
-    router.push({ path: `/viewcashadvancenontravel/${api.data.data.id}` })
-  }
+  if (api.data.message == "Already Has Draft Data") {
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: api.data.message,
+      showConfirmButton: true,
+    })
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: api.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    if (api.data.success) {
+      router.push({ path: `/viewcashadvancenontravel/${api.data.data.id}` })
+    }
 
-  visible.value = false
+    visible.value = false
+  }
 }
 
 const close = () => {
   console.log(itemsCostCentre.value)
   resetItems()
+  itemsCostCentre.value = ""
   event.value = ""
   total = 0
   date.value = ""
@@ -150,6 +161,27 @@ const close = () => {
 const open = () => {
   visible.value == true
 }
+
+const parsedCostCenter = computed(() => {
+  const costCenter = itemsCostCentre.value
+
+  return costCenter.split("+") ?? []
+})
+
+watch(
+  () => parsedCostCenter,
+  () => {
+    console.log(parsedCostCenter.value)
+    tempItem.value.forEach((item) => {
+      const newCostCenter = {
+        id_cost_center: parsedCostCenter.value[0],
+        cost_center_name: parsedCostCenter.value[1],
+      }
+      Object.assign(item, newCostCenter)
+    })
+  },
+  { deep: true }
+)
 
 onMounted(async () => {
   await fetchCostCentre()

@@ -313,7 +313,7 @@ const getSessionForSidebar = () => {
                 <p
                   :class="
                     tabId == 1
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -334,7 +334,7 @@ const getSessionForSidebar = () => {
                 <p
                   :class="
                     tabId == 2
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
