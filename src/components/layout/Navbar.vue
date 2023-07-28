@@ -3,6 +3,7 @@ import tail from "@/assets/topbar-image.png";
 import arrow from "@/assets/arrow-navbar.png";
 import user from "@/assets/navbar/user.svg";
 import ABMIcon from "@/assets/abm.png";
+
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import { useRouter } from "vue-router";
@@ -15,9 +16,9 @@ import Api from "@/utils/Api";
 const router = useRouter();
 
 const sidebar = useSidebarStore();
+
 let isOpen = ref(false);
 let isNotificationOpen = ref(false);
-
 let sortedData = ref([]);
 let instanceArray = [];
 
@@ -42,16 +43,12 @@ const getNotif = async () => {
   const res = await Api.get("/notification/get_data");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-  console.log(sortedData.value.length);
 };
 
 const getNotifClick = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/notification/get_data");
-  // instanceArray = res.data.data;
-  // sortedData.value = instanceArray;
-  // console.log(sortedData.value.length);
 };
 
 onBeforeMount(() => {
@@ -86,7 +83,6 @@ onBeforeMount(() => {
 
       <div class="hidden md:flex justify-center items-center">
         <img :src="companyLogo" class="max-w-[120px] max-h-[79px]" />
-        <!-- <img src="http://103.165.130.157:8086/storage/files/company/od2nBcLMjlMCQSbclgvcaZ76TVL502pYVADFR5gK.png" /> -->
       </div>
 
       <div class="md:hidden"></div>
@@ -94,8 +90,6 @@ onBeforeMount(() => {
       <div class="pr-4">
         <div class="flex justify-center items-center">
           <!-- notification -->
-          <!-- harus pake v-if kalo mau transition -->
-          <!-- tabindex nya dihapus tapi dropdown nya masih muncul -->
           <div class="relative">
             <button
               @click="
@@ -131,12 +125,14 @@ onBeforeMount(() => {
                 >
               </div>
             </button>
+
             <Transition name="slide">
               <ul
                 v-if="isNotificationOpen"
-                class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-96 top-[50px] overflow-y-scroll overflow-x-hidden h-52"
+                class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-96 top-[50px] overflow-y-scroll overflow-x-hidden max-h-52 min-h-12"
               >
                 <li
+                  v-if="sortedData.length > 0"
                   v-for="data in sortedData"
                   :key="data.id"
                   class="border-2 py-2 rounded-box mb-2"
@@ -150,6 +146,17 @@ onBeforeMount(() => {
                       <span class="text-start">
                         {{ data.text }}
                       </span>
+                    </a>
+                  </button>
+                </li>
+                <li v-else class="border-2 py-2 rounded-box mb-2">
+                  <button>
+                    <a class="flex justify-start gap-2 items-center mx-1"
+                      ><img
+                        :src="user"
+                        class="background rounded-full w-[42px] h-[42px]"
+                      />
+                      <span class="text-start"> No Notification </span>
                     </a>
                   </button>
                 </li>
