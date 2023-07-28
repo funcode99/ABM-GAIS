@@ -1,15 +1,16 @@
 <script setup>
-import { useCurrencyInput } from "vue-currency-input";
+import { watch } from "vue"
+import { useCurrencyInput } from "vue-currency-input"
 
 const props = defineProps({
   modelValue: Number, // Vue 2: value
   options: {
     type: Object,
     default: () => {
-      return {};
+      return {}
     },
   },
-});
+})
 
 const defaultOptions = {
   currency: undefined,
@@ -23,9 +24,19 @@ const defaultOptions = {
   hideNegligibleDecimalDigitsOnFocus: true,
   currencyDisplay: "hidden",
   hideGroupingSeparatorOnFocus: false,
-};
+}
 
-const { inputRef } = useCurrencyInput({ ...props.options, ...defaultOptions });
+const { inputRef, setValue } = useCurrencyInput({
+  ...props.options,
+  ...defaultOptions,
+})
+
+watch(
+  () => props.modelValue, // Vue 2: props.value
+  (value) => {
+    setValue(value)
+  }
+)
 </script>
 
 <template>
