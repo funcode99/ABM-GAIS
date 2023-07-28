@@ -42,7 +42,8 @@ const getNotif = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/notification/get_data");
   instanceArray = res.data.data;
-  sortedData.value = instanceArray;
+  sortedData.value =
+    res.data.message == "Success Get Data" ? instanceArray : [];
 };
 
 const getNotifClick = async () => {
@@ -114,7 +115,7 @@ onBeforeMount(() => {
                   />
                 </svg>
                 <span
-                  v-if="sortedData.length > 0"
+                  v-if="sortedData.value != undefined || sortedData.length > 0"
                   class="badge badge-sm bg-[#F04438] border-none indicator-item"
                   >{{ sortedData.length }}</span
                 >
@@ -132,7 +133,7 @@ onBeforeMount(() => {
                 class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-96 top-[50px] overflow-y-scroll overflow-x-hidden max-h-52 min-h-12"
               >
                 <li
-                  v-if="sortedData.length > 0"
+                  v-if="sortedData.value != undefined || sortedData.length > 0"
                   v-for="data in sortedData"
                   :key="data.id"
                   class="border-2 py-2 rounded-box mb-2"
