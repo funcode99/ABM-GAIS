@@ -203,12 +203,16 @@
     }
 
     const callEditApi = async () => {
+
+      console.log(formEditState.user)
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
         const api = await Api.post(`/users/update_data/${editDataUserId.value}`, 
         {
+          
           username: formEditState.user.username,
-          nama: formEditState.user.fullname,
+          name: formEditState.user.fullname,
           email: formEditState.user.email,
           password: formEditState.user.password,
           is_employee: formEditState.user.isEmployee,
@@ -217,8 +221,10 @@
           id_company: formEditState.user.companyId,
           id_site: formEditState.user.siteId,
           is_active: formEditState.user.idStatusMenu,
+          array_detail: formEditState.user.secondaryCompany
          
         })
+        console.log(api)
         Swal.fire({
           position: "center",
           icon: "success",
@@ -447,7 +453,8 @@
                           data.is_employee, 
                           data.name,
                           data.id_employee,
-                          data.is_active
+                          data.is_active,
+                          data.id
                           ]" />
                         <button @click="deleteData(data.id)">
                           <img :src="deleteicon" class="w-6 h-6" />

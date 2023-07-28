@@ -206,26 +206,26 @@ const rejectData = async (payload, id) => {
       width: "300px",
     });
   } else {
-      const res = await Api.post(`/approval_cash_advance/reject/${id}`, payload);
-      if (res.data.success) {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: res.data.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        closeModalReject();
-        router.push({ path: `/approvalcatravel` });
-      } else {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: res.response.data.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
+    const res = await Api.post(`/approval_cash_advance/reject/${id}`, payload);
+    if (res.data.success) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      closeModalReject();
+      router.push({ path: `/approvalcatravel` });
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: res.response.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
   }
 };
 </script>
@@ -267,6 +267,8 @@ const rejectData = async (payload, id) => {
             class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
             <div class="flex flex-wrap items-center gap-4">
+              
+
               <div>
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
@@ -399,7 +401,7 @@ const rejectData = async (payload, id) => {
                 <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data) in sortedData"
+                    v-for="data in sortedData"
                     :key="data.id"
                   >
                     <td>

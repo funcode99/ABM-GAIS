@@ -150,27 +150,27 @@
 
               <div :class="columnClass">
                                     
-                                <div class="w-full">
+                  <div class="w-full">
                                         
-                                  <label :class="labelStylingClass">
+                      <label :class="labelStylingClass">
                                             Name<span class="text-red-star">*</span>
-                                  </label>
+                      </label>
 
-                                  <input 
+                      <input 
                                             v-model="name"
                                             :class="inputStylingClass"
                                             placeholder="Name"
                                             required
                                             :disabled="!statusEdit.isEditing"
-                                  />
+                      />
 
-                                </div>
+                  </div>
 
               </div>
 
               <div :class="columnClass">
 
-                                <div class="w-full">
+                <div class="w-full">
                                         
                                     <label :class="labelStylingClass">
                                       Domestic/International<span class="text-red-star">*</span>
@@ -184,7 +184,7 @@
                                       :disabled="!statusEdit.isEditing"
                                     />
 
-                                </div>
+                </div>
 
               </div>
 
@@ -243,7 +243,7 @@
 
             <div :class="columnClass">
                                   
-                                  <div class="w-full">
+              <div class="w-full">
 
                                     <label class="block mb-2 font-JakartaSans font-medium text-sm">
                                         Arrival<span class="text-red-star">*</span>
@@ -257,7 +257,7 @@
                                       :disabled="!statusEdit.isEditing"
                                     />
 
-                                  </div>
+              </div>
 
             </div>
 
@@ -265,18 +265,18 @@
                                   
               <div class="w-full">
 
-                                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
                                         Status<span class="text-red-star">*</span>
-                                    </label>
+                </label>
 
-                                    <input
+                <input
                                       v-model="status"
                                       type="text"
                                       placeholder="Status"
                                       :class="inputStylingClass"
                                       required
                                       :disabled="!statusEdit.isEditing"
-                                    />
+                />
 
               </div>
 
@@ -290,7 +290,7 @@
 
             <div :class="columnClass">
                                   
-                                  <div class="w-full">
+              <div class="w-full">
                                       
                                     <label :class="labelStylingClass">
                                       Flight Number<span class="text-red-star">*</span>
@@ -305,7 +305,7 @@
                                       :disabled="!statusEdit.isEditing"
                                     />
 
-                                  </div>
+              </div>
 
             </div>
 

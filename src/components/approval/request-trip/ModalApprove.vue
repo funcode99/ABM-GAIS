@@ -1,59 +1,66 @@
 <script setup>
-  import { ref, onBeforeMount } from 'vue'
+import { ref, onBeforeMount } from "vue";
 
-  import iconClose from "@/assets/navbar/icon_close.svg"
-  import icon_done from "@/assets/icon_done.svg"
-  import Api from '@/utils/Api'
-  import { useRouter } from 'vue-router'
+import iconClose from "@/assets/navbar/icon_close.svg";
+import icon_done from "@/assets/icon_done.svg";
+import Api from "@/utils/Api";
+import { useRouter } from "vue-router";
 
-  const router = useRouter()
+const router = useRouter();
 
-  const props = defineProps({
-    approvalId: Number
-  })
+const props = defineProps({
+  approvalId: Number,
+});
 
-  let notes = ref('')
+let notes = ref("");
 
-  const approveRequest = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        let api = await Api.post(`/approval_request_trip/approve/${props.approvalId}`,{
-            notes: notes.value
-        })
-        router.push({
-          path: '/approvalrequesttrip'
-        })      
-      } catch (error) {
-        
+const approveRequest = async () => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    let api = await Api.post(
+      `/approval_request_trip/approve/${props.approvalId}`,
+      {
+        notes: notes.value,
       }
+    );
+    router.push({
+      path: "/approvalrequesttrip",
+    });
+  } catch (error) {}
+};
+
+let approverBehalfList = ref();
+
+const fetchApproveBehalf = async () => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    let api = await Api.get(
+      `/employee/approval_behalf?id_employee=${localStorage.getItem(
+        "id_employee"
+      )}&id_company=${localStorage.getItem(
+        "id_company"
+      )}&id_site=${localStorage.getItem("id_site")}&id_approval_auth=`
+    );
+    approverBehalfList.value = api.data.data;
+  } catch (error) {
+    console.log(error);
   }
+};
 
-  let approverBehalfList = ref()
+onBeforeMount(() => {
+  fetchApproveBehalf();
+});
 
-  const fetchApproveBehalf = async () => {
-    try {
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      let api = await Api.get(`/employee/approval_behalf?id_employee=${localStorage.getItem("id_employee")}&id_company=${localStorage.getItem("id_company")}&id_site=${localStorage.getItem("id_site")}&id_approval_auth=`)
-      approverBehalfList.value = api.data.data
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  onBeforeMount(() => {
-    fetchApproveBehalf()
-  })
-
-  let role = JSON.parse(localStorage.getItem('id_role'))
-
+let role = JSON.parse(localStorage.getItem("id_role"));
 </script>
 
 <template>
-
-  <label for="my-modal-approve-request"
-    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]">
+  <label
+    for="my-modal-approve-request"
+    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+  >
     <span>
       <img :src="icon_done" class="w-5 h-5" />
     </span>
@@ -77,14 +84,15 @@
       </nav>
 
       <main class="modal-box-inner-approval-request">
-        
         <p class="font-JakartaSans font-medium text-sm py-2">
           Are you sure want to approve this document?
         </p>
 
         <form class="pt-4">
-
-          <div v-if="role === 'SUPADM'" class="flex flex-wrap justify-start gap-2">
+          <div
+            v-if="role === 'SUPADM'"
+            class="flex flex-wrap justify-start gap-2"
+          >
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
@@ -124,10 +132,17 @@
             </div>
           </div>
 
-          <p class="font-JakartaSans font-medium text-sm py-2">
-            Notes
-          </p>
-          
+          <p class="font-JakartaSans font-medium text-sm py-2">Attachment</p>
+
+          <input
+            type="file"
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Notes"
+            required
+          />
+
+          <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
+
           <input
             v-model="notes"
             type="text"
@@ -138,31 +153,27 @@
           />
 
           <div class="sticky bottom-0 right-0 bg-white pt-4 pb-2">
-
             <div class="flex justify-end gap-4">
-              
-              <label for="my-modal-approve-request"
-                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">
+              <label
+                for="my-modal-approve-request"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+              >
                 Cancel
               </label>
 
-              <button type="button" class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              <button
+                type="button"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="approveRequest"
               >
                 Approve
               </button>
-
             </div>
-
           </div>
-
         </form>
-
       </main>
-
     </div>
   </div>
-
 </template>
 
 <style scoped>

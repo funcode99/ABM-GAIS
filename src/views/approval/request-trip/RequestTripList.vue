@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onBeforeMount, computed } from "vue"
-import Api from '@/utils/Api'
+import { ref, onBeforeMount, computed } from "vue";
+import Api from "@/utils/Api";
 
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
@@ -10,7 +10,6 @@ import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import iconView from "@/assets/view-details.png";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
-
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
@@ -93,20 +92,20 @@ const sortList = (sortBy) => {
 
 const fetchRequestTrip = async () => {
   try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        let api = await Api.get('/approval_request_trip/get_data')
-        sortedData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        sortedData.value = []
-      }
-}
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    let api = await Api.get("/approval_request_trip/get_data");
+    sortedData.value = api.data.data;
+  } catch (error) {
+    console.log(error);
+    sortedData.value = [];
+  }
+};
 
 onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchRequestTrip()
-})
+  getSessionForSidebar();
+  fetchRequestTrip();
+});
 
 //for searching
 const filteredItems = (search) => {
@@ -195,7 +194,7 @@ const getSessionForSidebar = () => {
                 </div>
               </div>
 
-              <div class="flex flex-wrap gap-4 items-center pt-6">
+              <div class="flex flex-wrap gap-1 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
                   @click="filterDataByType"
@@ -321,7 +320,11 @@ const getSessionForSidebar = () => {
                     <td>{{ data.status }}</td>
                     <td class="flex flex-wrap gap-4 justify-center">
                       <button
-                        @click="$router.push(`/viewapprovalrequesttrip/${data.id_request_trip}/${data.id}`)"
+                        @click="
+                          $router.push(
+                            `/viewapprovalrequesttrip/${data.id_request_trip}/${data.id}`
+                          )
+                        "
                       >
                         <img :src="iconView" class="w-6 h-6" />
                       </button>
@@ -351,7 +354,6 @@ const getSessionForSidebar = () => {
               :show-jump-buttons="true"
             />
           </div>
-
         </div>
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />

@@ -9,6 +9,7 @@ import tableData from "@/components/table/tableData.vue";
 import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import iconGoto from "@/assets/icon_Goto.png";
+import iconCircle from "@/assets/circle_icon.png";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -20,10 +21,10 @@ const sidebar = useSidebarStore();
 const tabs = ref(["Notification", "Approval"]);
 const activeTab = ref(0);
 const role = localStorage.getItem("id_role").replace(/"/g, "");
+const showFullText = ref({});
+
 let sortedData = ref([]);
 let instanceArray = [];
-let sortedDataApproval = ref([]);
-let instanceArrayApproval = [];
 
 let showSelectADM = ref(false);
 let showSelectAll = ref(false);
@@ -37,6 +38,18 @@ let paginateIndex = ref(0);
 let totalPage = ref(0);
 let totalData = ref(0);
 
+let sortedDataApproval = ref([]);
+let instanceArrayApproval = [];
+
+let showingValueApproval = ref(1);
+let showingValueFromApproval = ref(0);
+let showingValueToApproval = ref(0);
+let pageMultiplierApproval = ref(10);
+let pageMultiplierReactiveApproval = computed(() => pageMultiplier.value);
+let paginateIndexApproval = ref(0);
+let totalPageApproval = ref(0);
+let totalDataApproval = ref(0);
+
 const changeTab = (index) => {
   activeTab.value = index;
 };
@@ -45,6 +58,12 @@ const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
   fetchNotifNonApproval(pageOfItem);
+};
+
+const onChangePageApproval = (pageOfItem) => {
+  paginateIndexApproval.value = pageOfItem - 1;
+  showingValueApproval.value = pageOfItem;
+  fetchNotifApproval(pageOfItem);
 };
 
 const tableHead = [
@@ -78,12 +97,20 @@ const fetchNotifNonApproval = async (id) => {
 const fetchNotifApproval = async (id) => {
   const params = {
     perPage: pageMultiplier.value,
+    page: id ? id : 1,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/notification/get_approval", { params });
   instanceArrayApproval = res.data.data;
-  sortedDataApproval.value = instanceArray.data;
+  sortedDataApproval.value = instanceArrayApproval.data;
+  console.log(instanceArray.data);
+  totalPageApproval.value = instanceArrayApproval.last_page;
+  totalDataApproval.value = instanceArrayApproval.total;
+  showingValueFromApproval.value = instanceArrayApproval.from
+    ? instanceArrayApproval.from
+    : 0;
+  showingValueToApproval.value = instanceArrayApproval.to;
 };
 
 onBeforeMount(() => {
@@ -156,13 +183,31 @@ const format_date = (value) => {
                   v-for="data in sortedData"
                   :key="data.id"
                 >
-                  <td>{{ format_date(data.date) }}</td>
-                  <td>{{ data.name }}</td>
-                  <td>{{ data.text }}</td>
+                  <td style="width: 20%">
+                    <span
+                      class="flex flex-wrap justify-start items-center gap-4"
+                    >
+                      <img :src="iconCircle" class="w-2 h-2" />
+                      {{ format_date(data.date) }}
+                    </span>
+                  </td>
+                  <td style="width: 20%">{{ data.name }}</td>
+                  <td style="width: 45%">
+                    <span
+                      :class="[
+                        'readmore-text',
+                        showFullText[data.id] ? 'show-full' : '',
+                      ]"
+                    >
+                      {{ data.text }}
+                    </span>
+                  </td>
                   <td class="flex flex-wrap gap-2 justify-center">
-                    <button>
-                      <img :src="iconGoto" class="w-6 h-6" />
-                    </button>
+                    <router-link :to="`/cashadvancenontravel/${data.id}`">
+                      <button>
+                        <img :src="iconGoto" class="w-6 h-6" />
+                      </button>
+                    </router-link>
                   </td>
                 </tr>
               </tbody>
@@ -269,13 +314,31 @@ const format_date = (value) => {
                   v-for="data in sortedDataApproval"
                   :key="data.id"
                 >
-                  <td>{{ data.date }}</td>
-                  <td>{{ data.name }}</td>
-                  <td>{{ data.text }}</td>
+                  <td style="width: 20%">
+                    <span
+                      class="flex flex-wrap justify-start items-center gap-4"
+                    >
+                      <img :src="iconCircle" class="w-2 h-2" />
+                      {{ format_date(data.date) }}
+                    </span>
+                  </td>
+                  <td style="width: 20%">{{ data.name }}</td>
+                  <td style="width: 45%">
+                    <span
+                      :class="[
+                        'readmore-text',
+                        showFullText[data.id] ? 'show-full' : '',
+                      ]"
+                    >
+                      {{ data.text }}
+                    </span>
+                  </td>
                   <td class="flex flex-wrap gap-2 justify-center">
-                    <button>
-                      <img :src="iconGoto" class="w-6 h-6" />
-                    </button>
+                    <router-link :to="`/viewapprovalcanontravel/${data.id}`">
+                      <button>
+                        <img :src="iconGoto" class="w-6 h-6" />
+                      </button>
+                    </router-link>
                   </td>
                 </tr>
               </tbody>
@@ -337,6 +400,27 @@ const format_date = (value) => {
                 </tbody>
               </tableData>
             </div>
+
+            <div
+              class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
+            >
+              <p
+                class="font-JakartaSans text-xs font-normal text-[#888888] py-2"
+              >
+                Showing {{ showingValueFromApproval }} to
+                {{ showingValueToApproval }}
+                of {{ totalDataApproval }} entries
+              </p>
+              <vue-awesome-paginate
+                :total-items="totalDataApproval"
+                :items-per-page="parseInt(pageMultiplierReactiveApproval)"
+                :on-click="onChangePageApproval"
+                v-model="showingValueApproval"
+                :max-pages-shown="4"
+                :show-breakpoint-buttons="false"
+                :show-ending-buttons="true"
+              />
+            </div>
           </main>
         </tableTop>
       </tableContainer>
@@ -367,5 +451,20 @@ tr th {
 .table-zebra tbody tr:hover td {
   background-color: rgb(193, 192, 192);
   cursor: pointer;
+}
+
+.readmore-text {
+  display: inline-block;
+  max-width: 350px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 400px;
+  white-space: nowrap;
+  word-break: break-word;
 }
 </style>
