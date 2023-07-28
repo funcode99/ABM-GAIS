@@ -96,7 +96,7 @@
 
       try {
         const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get('/approval/get_approval')
         instanceArray = api.data.data
         sortedData.value = instanceArray
@@ -158,12 +158,11 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         await Api.post(`/approval/store_approval`, {
           approval_name:  formState.approval.matrixName,
-          id_company: formState.approval.companyId,
-          id_menu: formState.approval.menuId,
           id_code_document: formState.approval.codeDocumentId,
+          id_company: formState.approval.companyId,
+          id_job_band: formState.approval.jobBandId,
+          id_menu: formState.approval.menuId,
           array_detail: formState.approval.arrayDetail,
-          min_ammount: formState.approval.minCA,
-          max_ammount: formState.approval.maxCA
         })
         Swal.fire({
           position: "center",

@@ -5,10 +5,13 @@
   import { ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
 
+  import Multiselect from '@vueform/multiselect'
+
   import modalHeader from "@/components/modal/modalHeader.vue"
   import modalFooter from "@/components/modal/modalFooter.vue"
 
   import fetchApproverAuthoritiesNameUtils from '@/utils/Fetch/System-Configuration/fetchApproverAuthoritiesName'
+  import Api from '@/utils/Api'
 
   import { useFormAddStore } from '@/stores/sysconfig/add-modal.js'
   import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
@@ -56,7 +59,11 @@
     fieldType.push({
       level : 1,
       id_approval_auth : authorities.value,
-      approverName: ''
+      approverName: '',
+      show_min_ammount: 0,
+      show_max_ammount: 0,
+      min_ammount: 0,
+      max_ammount: 0
     })
 
   }
@@ -65,30 +72,19 @@
     fieldType.splice(index, 1)
     dropdownRemoveList.value.splice(index-1, 1)
     dropdownRemoveList.value.splice(index+1, 1)
+    currentAuthoritiesId.value = 0
   }
 
   const saveField = () => {
 
           isVisible.value = false
 
-          let minCAPost = minCA.value
-          let maxCAPost = maxCA.value
-
-          if(typeof minCA.value == 'number') {
-            minCAPost = minCA.value.toString()
-          }
-
-          if(typeof maxCA.value == 'number') {
-            maxCAPost = maxCA.value.toString()
-          }
-
           formState.approval.matrixName = matrixName.value
           formState.approval.companyId = company.value
           formState.approval.menuId = menu.value
           formState.approval.codeDocumentId = document.value
           formState.approval.arrayDetail = approverLines.value
-          formState.approval.minCA = minCAPost.replaceAll(".", "")
-          formState.approval.maxCA = maxCAPost.replaceAll(".", "")
+          formState.approval.jobBandId = jobBandArray.value
 
           currentAuthoritiesId.value = ''
 
@@ -103,11 +99,25 @@
     document.value = ''
     approverLines.value = []
     dropdownRemoveList.value = []
-    minCA.value = 0
-    maxCA.value = 0
+    jobBandArray.value = []
+  }
+
+  let jobBandData = ref([])
+  let jobBandArray = ref([])
+
+  const fetchJobBand = async () => {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.get(`/company/get_band_job/${localStorage.getItem('id_company')}`)
+    jobBandData.value = api.data.data
+    jobBandData.value.map((item) => {
+      item.value = item.id
+    })
   }
 
   watch(isVisible, () => {
+
+    fetchJobBand()
 
     addCompanyData.value = referenceFetch.fetchCompanyResult
     addMenuData.value = sysconfigFetch.fetchMenuResult
@@ -120,6 +130,8 @@
       resetInput()
     }
 
+ 
+
   })
 
   watch(company, () => {
@@ -130,31 +142,35 @@
     company.value != '' && typeof currentAuthoritiesId.value == 'number' ? fetchApproverAuthoritiesNameUtils(company.value, currentAuthoritiesId.value, addAuthoritiesNameData) : company
   }
 
-  const formatCurrency = (argument) => {
+  const formatCurrency = (argument, input) => {
 
     if(argument === 'a') {
       
-      minCA.value = minCA.value.replace(/\D/g, "")
+      input.show_min_ammount = input.show_min_ammount.replace(/\D/g, "")
 
-      if (minCA.value === "" || minCA.value === "0") {
-      minCA.value = ""
+      if (input.show_min_ammount === "" || input.show_min_ammount === "0") {
+      input.show_min_ammount = ""
       } else {
-        const formattedMinCA = parseFloat(minCA.value.replace(/\./g, ""));
-        minCA.value = formattedMinCA.toLocaleString("id-ID");
+        const formattedMinCA = parseFloat(input.show_min_ammount.replace(/\./g, ""));
+        input.show_min_ammount = formattedMinCA.toLocaleString("id-ID");
         }
+
+      input.min_ammount = input.show_min_ammount.replaceAll(".", "")
 
     }
 
     if(argument === 'b') {
-      
-      maxCA.value = maxCA.value.replace(/\D/g, "")
 
-      if (maxCA.value === "" || maxCA.value === "0") {
-      maxCA.value = ""
+      input.show_max_ammount = input.show_max_ammount.replace(/\D/g, "")
+
+      if (input.show_max_ammount === "" || input.show_max_ammount === "0") {
+      input.show_max_ammount = ""
       } else {
-      const formattedMaxCA = parseFloat(maxCA.value.replace(/\./g, ""));
-      maxCA.value = formattedMaxCA.toLocaleString("id-ID");
+      const formattedMaxCA = parseFloat(input.show_max_ammount.replace(/\./g, ""));
+      input.show_max_ammount = formattedMaxCA.toLocaleString("id-ID");
         }
+
+      input.max_ammount = input.show_max_ammount.replaceAll(".", "")
 
     }
 
@@ -228,34 +244,6 @@
                   </select>
                 </div>
               </div>
-
-              <div :class="rowClass">
-                  <div :class="columnClass">
-                    <label for="minCA">
-                      Minimum Amount (CA) 
-                    </label>
-                    <input
-                      @input="formatCurrency('a')"
-                      id="minCA"
-                      v-model="minCA"
-                      placeholder="Amount"
-                      :class="inputStylingClass"
-                    />
-                  </div>
-                  <div :class="columnClass">
-                    <label for="maxCA">
-                      Maximum Amount (CA) 
-                      <!-- {{ maxCA }}  -->
-                    </label>
-                    <input 
-                      @input="formatCurrency('b')"
-                      id="maxCA"
-                      v-model="maxCA"
-                      placeholder="Amount"
-                      :class="inputStylingClass"
-                    />
-                  </div>
-              </div>
       
               <!-- Company -->
               <div class="mb-3 flex items-center">
@@ -276,11 +264,60 @@
 
               </div>
 
-              <!-- bagian bawah -->
+              <div> 
+                  
+                <label for="jobband" class="block mb-2 font-JakartaSans font-medium text-sm">
+                    Job Band<span class="text-red">*</span>
+                </label>
 
-              <h1 class="font-medium">
+                <!-- {{ jobBandData }} -->
+                <!-- {{ jobBandArray }} -->
+ 
+                <Multiselect
+                    id="jobband"
+                    v-model="jobBandArray"
+                    mode="tags"
+                    placeholder="Select companies"
+                    track-by="band_job_name"
+                    label="band_job_name"
+                    :close-on-select="false"
+                    :searchable="true"
+                    :options="jobBandData"
+                    required
+                  >
+                      
+                      <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                        
+                        <div
+                          class="multiselect-tag is-user"
+                          :class="{
+                            'is-disabled': disabled
+                          }"
+                        >
+                          {{ option.band_job_name }}
+                          <span
+                            v-if="!disabled"
+                            class="multiselect-tag-remove"
+                            @click="handleTagRemove(option, $event)"
+                          >
+                            <span class="multiselect-tag-remove-icon"></span>
+                          </span>
+                        </div>
+
+                      </template>
+
+                  
+                
+                </Multiselect>
+
+              </div>
+
+              <!-- bagian bawah -->
+          <!-- {{ dropdownRemoveList }}
+          {{ currentAuthoritiesId }} -->
+
+              <h1 class="font-medium mt-3">
                 Approver Lines <span class="text-red-star">*</span>
-                <!-- {{ currentAuthoritiesId }} -->
               </h1>
               <hr class="border border-black">
       
@@ -292,25 +329,24 @@
                   <thead class="text-center font-Montserrat text-sm font-bold">
                     <tr class="">
 
-                      <th class="relative">
+                      <th>
                         <span class="flex justify-center">Level</span>
-                        <button class="absolute right-0 top-0 bottom-0">
-                          <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                        </button>
                       </th>
 
-                      <th class="relative">
+                      <th>
                         <span class="flex justify-center">Authorities</span>
-                        <button class="absolute right-0 top-0 bottom-0">
-                          <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                        </button>
                       </th>
 
-                      <th class="relative">
+                      <th>
                         <span class="flex justify-center">Approver Name</span>
-                        <button class="absolute right-1 top-0 bottom-0">
-                          <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                        </button>
+                      </th>
+
+                      <th>
+                        <span class="flex justify-center">Min Amount</span>
+                      </th>
+
+                      <th>
+                        <span class="flex justify-center">Max Amount</span>
                       </th>
                       
                       <th class="flex justify-center">
@@ -343,7 +379,7 @@
                         
                         <select 
                           @change="fetchApproverName"
-                          class="border border-black rounded-lg"
+                          class="border border-black rounded-lg approver"
                           v-model="input.id_approval_auth" 
                           :id="index" 
                           :disabled="approverLines.length-1 > index ? true : false"
@@ -362,8 +398,7 @@
 
                       <td>
                         
-                        <!-- <input type="text" class="px-2" v-model="input.approverName" /> -->
-                        <select class="w-full border border-black rounded-lg" v-model="input.approverName">
+                        <select class="w-full border border-black rounded-lg approver" v-model="input.approverName">
                           <option
                             v-for="name in addAuthoritiesNameData"
                             :key="name.sn_employee"
@@ -374,12 +409,32 @@
 
                       </td>
 
+                      <td>
+                        <input 
+                          class="border border-black rounded-lg limited p-1" 
+                          @input="formatCurrency('a', input)"
+                          id="minCA"
+                          v-model="input.show_min_ammount"
+                          placeholder="Amount"  
+                        />
+                      </td>
+
+                      <td>
+                        <input
+                          class="border border-black rounded-lg limited p-1"
+                          @input="formatCurrency('b', input)"
+                          id="maxCA"
+                          v-model="input.show_max_ammount"
+                          placeholder="Amount"
+                         />
+                      </td>
+
                       <!-- absolut true -->
                       <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full">
                       </td>
         
-                      <td class="flex flex-wrap gap-4 justify-center">
-                        <button @click="removeField(index, approverLines)">
+                      <td v-if="index+1 === approverLines.length" class="flex flex-wrap gap-4 justify-center">
+                        <button type="button" @click="removeField(index, approverLines)">
                           <img :src="deleteicon" class="w-6 h-6" />
                         </button>
                       </td>
@@ -388,6 +443,8 @@
         
                     <tr class='text-center'>
 
+                      <td></td>
+                      <td></td>
                       <td></td>
                       <td></td>
                       <td></td>
@@ -438,6 +495,16 @@ th span {
 
 :deep(.modal-vue3-content) {
   max-height: 550px !important;
+  width: fit-content !important;
+}
+
+.approver {
+  width: 100px !important;
+  padding: 4px;
+}
+
+.limited {
+  width: 100px !important;
 }
 
 </style>

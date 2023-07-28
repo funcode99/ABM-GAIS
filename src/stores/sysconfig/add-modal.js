@@ -37,7 +37,8 @@ export const useFormAddStore = defineStore('add-form', {
                 codeDocumentId: 1,
                 arrayDetail: null,
                 minCA: 0,
-                maxCA: 0
+                maxCA: 0,
+                jobBandId: []
             },
             sequence: {
                 sequenceName: '',
