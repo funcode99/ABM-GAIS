@@ -20,6 +20,7 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 const sidebar = useSidebarStore();
 let visibleModalReject = ref(false);
 const router = useRouter();
+const selectedStatus = ref("");
 
 // format date & price
 const format_date = (value) => {
@@ -223,6 +224,24 @@ const getSessionForSidebar = () => {
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                 >
+                  Status
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedStatus"
+                >
+                  <option disabled selected>Status</option>
+                  <option value="1">Waiting Approval</option>
+                  <option value="2">Revision</option>
+                  <option value="9">Rejected</option>
+                  <option value="10">Completed</option>
+                </select>
+              </div>
+
+              <div>
+                <p
+                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                >
                   Date
                 </p>
 
@@ -351,7 +370,7 @@ const getSessionForSidebar = () => {
                 <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data) in sortedData"
+                    v-for="data in sortedData"
                     :key="data.id"
                   >
                     <td>
