@@ -126,7 +126,7 @@ const saveForm = async () => {
   if (api.data.message == "Already Has Draft Data") {
     Swal.fire({
       position: "center",
-      icon: "false",
+      icon: "warning",
       title: api.data.message,
       showConfirmButton: true,
     })
