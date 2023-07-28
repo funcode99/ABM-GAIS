@@ -85,7 +85,6 @@ const fetchNotifNonApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/notification/get_notif", { params });
-  console.log(res);
   instanceArray = res.data.data;
   sortedData.value = instanceArray.data;
   totalPage.value = instanceArray.last_page;
@@ -96,7 +95,7 @@ const fetchNotifNonApproval = async (id) => {
 
 const fetchNotifApproval = async (id) => {
   const params = {
-    perPage: pageMultiplier.value,
+    perPage: pageMultiplierApproval.value,
     page: id ? id : 1,
   };
   const token = JSON.parse(localStorage.getItem("token"));
@@ -104,7 +103,6 @@ const fetchNotifApproval = async (id) => {
   const res = await Api.get("/notification/get_approval", { params });
   instanceArrayApproval = res.data.data;
   sortedDataApproval.value = instanceArrayApproval.data;
-  console.log(instanceArray.data);
   totalPageApproval.value = instanceArrayApproval.last_page;
   totalDataApproval.value = instanceArrayApproval.total;
   showingValueFromApproval.value = instanceArrayApproval.from
@@ -159,6 +157,7 @@ const format_date = (value) => {
             </a>
           </div>
 
+          <!-- tab notifcation -->
           <main v-if="activeTab === 0">
             <tableData v-if="sortedData.length > 0">
               <thead
@@ -202,8 +201,11 @@ const format_date = (value) => {
                       {{ data.text }}
                     </span>
                   </td>
+
                   <td class="flex flex-wrap gap-2 justify-center">
-                    <router-link :to="`/cashadvancenontravel/${data.id}`">
+                    <router-link
+                      :to="`/viewcashadvancenontravel/${data.id_document}`"
+                    >
                       <button>
                         <img :src="iconGoto" class="w-6 h-6" />
                       </button>
@@ -213,27 +215,29 @@ const format_date = (value) => {
               </tbody>
             </tableData>
 
-            <!-- <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
-          >
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
-                <th
-                  v-for="data in tableHead"
-                  :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                >
-                  <div class="flex justify-center items-center">
-                    <p class="font-JakartaSans font-bold text-sm">
-                      {{ data.title }}
-                    </p>
-                  </div>
-                </th>
-              </tr>
-            </thead>
+            <tableData
+              v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+            >
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
 
-            <SkeletonLoadingTable :column="4" :row="5" />
-          </tableData> -->
+              <SkeletonLoadingTable :column="4" :row="5" />
+            </tableData>
 
             <div v-else>
               <tableData>
@@ -290,6 +294,7 @@ const format_date = (value) => {
             </div>
           </main>
 
+          <!-- tab approval -->
           <main v-else>
             <tableData v-if="sortedDataApproval.length > 0">
               <thead
@@ -334,7 +339,9 @@ const format_date = (value) => {
                     </span>
                   </td>
                   <td class="flex flex-wrap gap-2 justify-center">
-                    <router-link :to="`/viewapprovalcanontravel/${data.id}`">
+                    <router-link
+                      :to="`/viewapprovalcanontravel/${data.id_document}`"
+                    >
                       <button>
                         <img :src="iconGoto" class="w-6 h-6" />
                       </button>
@@ -343,30 +350,6 @@ const format_date = (value) => {
                 </tr>
               </tbody>
             </tableData>
-
-            <!-- <tableData
-              v-else-if="sortedData.length == 0 && instanceArray.length == 0"
-            >
-              <thead
-                class="text-center font-JakartaSans text-sm font-bold h-10"
-              >
-                <tr>
-                  <th
-                    v-for="data in tableHead"
-                    :key="data.Id"
-                    class="overflow-x-hidden cursor-pointer"
-                  >
-                    <div class="flex justify-center items-center">
-                      <p class="font-JakartaSans font-bold text-sm">
-                        {{ data.title }}
-                      </p>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-
-              <SkeletonLoadingTable :column="4" :row="5" />
-            </tableData> -->
 
             <div v-else>
               <tableData>
