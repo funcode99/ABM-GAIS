@@ -9,18 +9,18 @@ const props = defineProps({
 
 let dataEmployee = ref(props.listEmployee);
 let code_role = ref(props.roleCode);
-let notes = ref(null)
-let id_employee = ref(null)
+let notes = ref(null);
+let id_employee = ref(null);
 
 const emits = defineEmits(["close", "approve"]);
 
 const approve = () => {
-    let data = {
-        id_employee: id_employee.value,
-        notes: notes.value
-    }
-    emits('approve', data)
-}
+  let data = {
+    id_employee: id_employee.value,
+    notes: notes.value,
+  };
+  emits("approve", data);
+};
 </script>
 
 <template>
@@ -68,7 +68,9 @@ const approve = () => {
               required
             >
               <option class="readonly" value="">Select</option>
-              <option v-for="data in dataEmployee" :key="data.id">{{ data.employee_name }}</option>
+              <option v-for="data in dataEmployee" :key="data.id">
+                {{ data.employee_name }}
+              </option>
             </select>
           </div>
 
@@ -87,6 +89,15 @@ const approve = () => {
               </label>
             </div>
           </div>
+
+          <p class="font-JakartaSans font-medium text-sm py-2">Attachment</p>
+
+          <input
+            type="file"
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Notes"
+            required
+          />
 
           <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
           <input
