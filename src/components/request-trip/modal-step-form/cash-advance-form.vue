@@ -35,6 +35,8 @@
     let currency = ref([0, ''])
     let grandTotal = ref(0)
 
+    const CAItemData = ref([])
+
     const submitCashAdvance = async () => {
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -73,9 +75,18 @@
         }
     })
 
+    const fetchGetItemCA = async () => {
+        const token = JSON.parse(localStorage.getItem("token"))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/cash_advance/get_type_item_ca')
+        console.log(api)
+        CAItemData.value = api.data.data
+    }
+
     onBeforeMount(() => {
         fetchEmployeeByLoginUtils(employeeLoginData)
         fetchCurrency()
+        fetchGetItemCA()
     })
 
     watch(employeeLoginData, () => {
@@ -124,16 +135,17 @@
     })
 
     const modalPaddingHeight = '15vh'
+    const columnClass = 'flex flex-col flex-1'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const rowClassNotes = 'flex justify-between mx-4 items-start gap-3 my-3'
-    const columnClass = 'flex flex-col flex-1'
+    const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm'
     const inputBlackStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm bg-[#4e4e4e] text-[#b8b8b8]'
-    const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 
 </script>
 
 <template>
+
     <Modal v-model:visible="props.isOpen" v-model:offsetTop="modalPaddingHeight">
 
         <main>
@@ -214,15 +226,23 @@
                         <!-- Item -->
                         <div :class="columnClass">
                             <div class="w-full">
+
                                 <label :class="labelStylingClass">
                                     Item <span class="text-red-star">*</span>
                                 </label>
-                                <!-- <input :class="inputStylingClass" v-model="item" placeholder="Item" /> -->
-                                <select :class="inputStylingClass" v-model="item">
-                                    <option value="1">Meals</option>
-                                    <option value="2">Transport</option>
-                                    <option value="3">Others</option>
+
+                                <select
+                                    :class="inputStylingClass"
+                                    v-model="item"
+                                >
+                                    <option
+                                        v-for="data in CAItemData"
+                                        :value="data.id"
+                                    >   
+                                    {{ data.item_name }}
+                                    </option>
                                 </select>
+
                             </div>
                         </div>
     
@@ -265,10 +285,10 @@
                     <div :class="rowClass">
                         <div :class="columnClass">
                             <div class="w-full">  
-                            <label :class=labelStylingClass>
-                                Remarks
-                            </label>
-                            <textarea placeholder="Remarks" :class="inputStylingClass" v-model="remarks"></textarea>
+                                <label :class=labelStylingClass>
+                                    Remarks
+                                </label>
+                                <textarea placeholder="Remarks" :class="inputStylingClass" v-model="remarks"></textarea>
                             </div>
                         </div>
                     </div>
@@ -333,6 +353,7 @@
         </main>
 
     </Modal>
+
 </template>
 
 <style scoped>

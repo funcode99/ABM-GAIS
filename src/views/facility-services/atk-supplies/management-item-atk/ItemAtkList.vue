@@ -29,29 +29,45 @@ import Api from "@/utils/Api";
 const sidebar = useSidebarStore();
 
 const id_role = JSON.parse(localStorage.getItem("id_role"));
-  const widthType = id_role == 'EMPLY' ? 'w-[50%]' : 'w-full'
+const widthType = id_role == "EMPLY" ? "w-[50%]" : "w-full";
 
 //for sort & search
-let selectedCompany = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
-let selectedWarehouse = ref("")
-let selectedSite = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' || JSON.parse(localStorage.getItem("id_role")) === 'SUPADM' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
+let selectedCompany =
+  JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
+    ? ref("")
+    : ref(JSON.parse(localStorage.getItem("id_company")));
+let selectedWarehouse = ref("");
+let selectedSite =
+  JSON.parse(localStorage.getItem("id_role")) === "ADMTR" ||
+  JSON.parse(localStorage.getItem("id_role")) === "SUPADM"
+    ? ref("")
+    : ref(JSON.parse(localStorage.getItem("id_site")));
 
-let selectedCompany2 = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? ref("") : ref(JSON.parse(localStorage.getItem("id_company")));
-let selectedWarehouse2 = ref("")
-let selectedSite2 = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' || JSON.parse(localStorage.getItem("id_role")) === 'SUPADM' ? ref("") : ref(JSON.parse(localStorage.getItem("id_site")));
+let selectedCompany2 =
+  JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
+    ? ref("")
+    : ref(JSON.parse(localStorage.getItem("id_company")));
+let selectedWarehouse2 = ref("");
+let selectedSite2 =
+  JSON.parse(localStorage.getItem("id_role")) === "ADMTR" ||
+  JSON.parse(localStorage.getItem("id_role")) === "SUPADM"
+    ? ref("")
+    : ref(JSON.parse(localStorage.getItem("id_site")));
 // let selectedWarehouse = ref("Warehouse")
-let selectedUOM = ref("UOM")
-let selectedBrand = ref("Brand")
-let brandName = ref("");
+let selectedUOM = ref("UOM");
+let selectedBrand = ref("Brand");
+let statusForm = ref("add");
+let visibleModal = ref(false);
+let idItem = ref(0);
 // let Company = ref("");
 let Site = ref("");
 // let Warehouse = ref("");
-let UOM = ref("")
-let idItems = ref("")
-let alertQuantity = ref("")
-let Brand = ref("")
-let itemNames = ref("")
-let remark = ref("")
+let UOM = ref("");
+let idItems = ref("");
+let alertQuantity = ref("");
+let Brand = ref("");
+let itemNames = ref("");
+let remark = ref("");
 const date = ref();
 const search = ref("");
 let sortedData = ref([]);
@@ -65,38 +81,72 @@ let lockScrollbar = ref(false);
 let lockScrollbarEdit = ref(false);
 let Company = ref("");
 let Warehouse = ref("");
-let itemdata = ref("")
-let editData = ref("")
-let idS = ref("")
-let checkedAlert = ref(false)
-let valueChecked = ref(0)
-let disabledField = ref(false)
+let itemdata = ref("");
+let editData = ref("");
+let idS = ref("");
+let checkedAlert = ref(false);
+let valueChecked = ref(0);
+let disabledField = ref(false);
 
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
-let lenghtPagination = ref(0)
+let lenghtPagination = ref(0);
 const searchFilter = ref("");
 //for paginations
 const onChangePage = (pageOfItem) => {
-  fetchData(pageOfItem,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+  fetchData(
+    pageOfItem,
+    selectedType.value,
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    valueChecked.value,
+    searchFilter.value,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
   // console.log(paginateIndex.value)
 };
 
 //for filter & reset button
 const filterDataByType = () => {
-  fetchData(1,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+  fetchData(
+    1,
+    selectedType.value,
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    valueChecked.value,
+    searchFilter.value,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
 };
 
 //for filter & reset button
 const resetData = () => {
-  selectedType.value = ''
-  selectedCompany2.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' ? '' : JSON.parse(localStorage.getItem("id_company"))
-  selectedWarehouse2.value = ''
-  selectedSite2.value = JSON.parse(localStorage.getItem("id_role")) === 'ADMTR' || JSON.parse(localStorage.getItem("id_role")) === 'SUPADM' ? '' : JSON.parse(localStorage.getItem("id_site"))
-  fetchData(showingValue.value,"",selectedCompany2.value,selectedWarehouse2.value,0,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+  selectedType.value = "";
+  selectedCompany2.value =
+    JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
+      ? ""
+      : JSON.parse(localStorage.getItem("id_company"));
+  selectedWarehouse2.value = "";
+  selectedSite2.value =
+    JSON.parse(localStorage.getItem("id_role")) === "ADMTR" ||
+    JSON.parse(localStorage.getItem("id_role")) === "SUPADM"
+      ? ""
+      : JSON.parse(localStorage.getItem("id_site"));
+  fetchData(
+    showingValue.value,
+    "",
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    0,
+    searchFilter.value,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
 };
 
 //for check & uncheck all
@@ -148,8 +198,7 @@ const fetchGetCompany = async () => {
 };
 
 const fetchGetCompanyID = async (id_company) => {
-  // console.log('id')
-  fetchSite(selectedSite2.value,id_company)
+  fetchSite(selectedSite2.value, id_company);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
@@ -157,9 +206,9 @@ const fetchGetCompanyID = async (id_company) => {
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id_company === element.id){
-      selectedCompany.value = id_company
-      selectedCompany2.value = id_company
+    if (id_company === element.id) {
+      selectedCompany.value = id_company;
+      selectedCompany2.value = id_company;
     }
   }
 };
@@ -172,23 +221,25 @@ const fetchGetCompanyID2 = async (id_company) => {
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id_company === element.id){
-      selectedCompany.value = id_company
+    if (id_company === element.id) {
+      selectedCompany.value = id_company;
       // selectedCompany2.value = id_company
     }
   }
 };
 const fetchSite = async (id, id_company) => {
-  changeSite(id)
+  if (id) {
+    changeSite(id);
+  }
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
   Site.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id === element.id){
-      selectedSite.value = id
-      selectedSite2.value = id
+    if (id === element.id) {
+      selectedSite.value = id;
+      selectedSite2.value = id;
     }
   }
 };
@@ -200,8 +251,8 @@ const fetchSite2 = async (id, id_company) => {
   Site.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id === element.id){
-      selectedSite.value = id
+    if (id === element.id) {
+      selectedSite.value = id;
       // selectedSite2.value = id
     }
   }
@@ -213,8 +264,8 @@ const fetchWarehouse = async (id, id_site) => {
   Warehouse.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id === element.id){
-      selectedWarehouse.value = id
+    if (id === element.id) {
+      selectedWarehouse.value = id;
     }
   }
 };
@@ -226,8 +277,8 @@ const fetchBrand = async (id, id_site) => {
   Brand.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id === element.id){
-      selectedBrand.value = id
+    if (id === element.id) {
+      selectedBrand.value = id;
     }
   }
 };
@@ -244,8 +295,8 @@ const fetchUOM = async (id) => {
   UOM.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if(id === element.id){
-      selectedUOM.value = id
+    if (id === element.id) {
+      selectedUOM.value = id;
     }
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
@@ -253,21 +304,32 @@ const fetchUOM = async (id) => {
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === 'ADMTR' ? fetchGetCompany() : fetchGetCompanyID(id_company)
+  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
   // changeCompany()
 };
-const fetchData = async (page,selectedType,selectedCompany,selectedWarehouse,alert_qty,searchFilter,pageMultiplier,selectedSite) => {
+const fetchData = async (
+  page,
+  selectedType,
+  selectedCompany,
+  selectedWarehouse,
+  alert_qty,
+  searchFilter,
+  pageMultiplier,
+  selectedSite
+) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}&alert_qty=${alert_qty}&search=${searchFilter}&perPage=${pageMultiplier}&id_site=${selectedSite}`);
+  const res = await Api.get(
+    `/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}&alert_qty=${alert_qty}&search=${searchFilter}&perPage=${pageMultiplier}&id_site=${selectedSite}`
+  );
   itemdata.value = res.data.data.data;
   instanceArray = itemdata.value;
   // console.log(instanceArray)
   sortedData.value = instanceArray;
   lengthCounter = sortedData.value.length;
-  lenghtPagination = res.data.data.total
-  paginateIndex.value = res.data.data.current_page - 1
-  showingValue.value = res.data.data.current_page
+  lenghtPagination = res.data.data.total;
+  paginateIndex.value = res.data.data.current_page - 1;
+  showingValue.value = res.data.data.current_page;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
@@ -280,11 +342,10 @@ const changeCompany = async (id_company) => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
-  fetchBrandCompany(id_site)
+  //   fetchBrandCompany(id_site);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  // console.log(res)
   Warehouse.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
@@ -302,54 +363,74 @@ const editValue = async (id, type) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get/${id}`);
-  idS.value = id
-  selectedCompany.value = fetchGetCompanyID2(res.data.data[0].id_company)
-  selectedSite.value = fetchSite2(res.data.data[0].id_site, res.data.data[0].id_company)
-  selectedWarehouse.value = fetchWarehouse(res.data.data[0].id_warehouse, res.data.data[0].id_site)
-  selectedUOM.value = fetchUOM(res.data.data[0].id_uom)
-  itemNames.value = res.data.data[0].item_name
-  alertQuantity.value = res.data.data[0].alert_qty
-  selectedBrand.value = fetchBrand(res.data.data[0].id_brand, res.data.data[0].id_site)
-  remark.value = res.data.data[0].remarks
-  idItems.value = res.data.data[0].code_item
-  lockScrollbarEdit.value = true
-  disabledField.value = type == 'view' ? true : false
+  idS.value = id;
+  selectedCompany.value = fetchGetCompanyID2(res.data.data[0].id_company);
+  selectedSite.value = fetchSite2(
+    res.data.data[0].id_site,
+    res.data.data[0].id_company
+  );
+  selectedWarehouse.value = fetchWarehouse(
+    res.data.data[0].id_warehouse,
+    res.data.data[0].id_site
+  );
+  selectedUOM.value = fetchUOM(res.data.data[0].id_uom);
+  itemNames.value = res.data.data[0].item_name;
+  alertQuantity.value = res.data.data[0].alert_qty;
+  selectedBrand.value = fetchBrand(
+    res.data.data[0].id_brand,
+    res.data.data[0].id_site
+  );
+  remark.value = res.data.data[0].remarks;
+  idItems.value = res.data.data[0].code_item;
+  lockScrollbarEdit.value = true;
+  disabledField.value = type == "view" ? true : false;
 };
 const save = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
-    code_item : idItems.value,
-    item_name : itemNames.value,
-    id_brand : selectedBrand.value,
-    id_uom : selectedUOM.value,
+    code_item: idItems.value,
+    item_name: itemNames.value,
+    id_brand: selectedBrand.value,
+    id_uom: selectedUOM.value,
     alert_qty: alertQuantity.value,
     id_company: selectedCompany.value,
     id_site: selectedSite.value,
     id_warehouse: selectedWarehouse.value,
-    remarks: remark.value
-  }
-  
-  Api.post(`/management_atk/update_data/${idS.value}`,payload).then((res) => {
-  Swal.fire({
-      position: "center",
-      icon: "success",
-      title: res.data.message,
-      showConfirmButton: false,
-      timer: 1500,
+    remarks: remark.value,
+  };
+
+  Api.post(`/management_atk/update_data/${idS.value}`, payload)
+    .then((res) => {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      fetchData(
+        showingValue.value,
+        selectedType.value,
+        selectedCompany2.value,
+        selectedWarehouse2.value,
+        valueChecked.value,
+        searchFilter.value,
+        pageMultiplier.value,
+        selectedSite2.value
+      );
+      lockScrollbarEdit.value = false;
+    })
+    .catch((error) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: error.response.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      // console.log(error.response.data.message)
     });
-    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
-    lockScrollbarEdit.value = false
-  }).catch((error) =>{
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: error.response.data.message,
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    // console.log(error.response.data.message)
-  })
   // const res = await Api.post(`/management_atk/update_data/${idS.value}`,payload);
   // Swal.fire({
   //     position: "center",
@@ -395,23 +476,59 @@ const deleteValue = async (id) => {
           showConfirmButton: false,
           timer: 1500,
         });
-        fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+        fetchData(
+          showingValue.value,
+          selectedType.value,
+          selectedCompany2.value,
+          selectedWarehouse2.value,
+          valueChecked.value,
+          searchFilter.value,
+          pageMultiplier.value,
+          selectedSite2.value
+        );
       });
     } else {
       return;
     }
   });
-    
+
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+
+const openModal = (type, id) => {
+  visibleModal.value = true;
+  statusForm.value = type;
+  if (id) {
+    idItem.value = parseInt(id);
+  }
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
-  fetchCondition()
-  fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+  fetchCondition();
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    valueChecked.value,
+    searchFilter.value,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
 });
 //for searching
 const filteredItems = (search) => {
-  fetchData(1,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,search,pageMultiplier.value,selectedSite2.value)
+  fetchData(
+    1,
+    selectedType.value,
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    valueChecked.value,
+    search,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
   // sortedData.value = instanceArray;
   // const filteredR = sortedData.value.filter((item) => {
   //   // console.log(item)
@@ -427,16 +544,34 @@ const filteredItems = (search) => {
   // onChangePage(1);
 };
 const perPage = async () => {
-    // console.log(pageMultiplier.value)
-    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
+  // console.log(pageMultiplier.value)
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    valueChecked.value,
+    searchFilter.value,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
 const selectAlert = (checked) => {
   // sortedData.value = instanceArray;
   // console.log(checked)
-  if(checked === false){
-    valueChecked.value = 1
-    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+  if (checked === false) {
+    valueChecked.value = 1;
+    fetchData(
+      showingValue.value,
+      selectedType.value,
+      selectedCompany2.value,
+      selectedWarehouse2.value,
+      valueChecked.value,
+      searchFilter.value,
+      pageMultiplier.value,
+      selectedSite2.value
+    );
     // const filteredR = sortedData.value.filter((item) => {
     // if(item.current_stock <= item.alert_qty){
     //   return((item.alert_qty))
@@ -445,14 +580,36 @@ const selectAlert = (checked) => {
     // sortedData.value = filteredR;
     // lengthCounter = sortedData.value.length;
     // onChangePage(1);
-  }else{
-    valueChecked.value = 0
-    fetchData(showingValue.value,selectedType.value,selectedCompany2.value,selectedWarehouse2.value,valueChecked.value,searchFilter.value,pageMultiplier.value,selectedSite2.value)
+  } else {
+    valueChecked.value = 0;
+    fetchData(
+      showingValue.value,
+      selectedType.value,
+      selectedCompany2.value,
+      selectedWarehouse2.value,
+      valueChecked.value,
+      searchFilter.value,
+      pageMultiplier.value,
+      selectedSite2.value
+    );
     // sortedData.value = instanceArray;
     // lengthCounter = sortedData.value.length;
     // onChangePage(1);
   }
-  
+};
+
+const closeModal = () => {
+  visibleModal.value = false;
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    selectedCompany2.value,
+    selectedWarehouse2.value,
+    valueChecked.value,
+    searchFilter.value,
+    pageMultiplier.value,
+    selectedSite2.value
+  );
 };
 
 const getSessionForSidebar = () => {
@@ -480,7 +637,9 @@ const getSessionForSidebar = () => {
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
-            <p class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold">
+            <p
+              class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
+            >
               Management Item ATK
             </p>
 
@@ -491,7 +650,18 @@ const getSessionForSidebar = () => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
-              <ModalAdd @close="fetchData(showingValue,selectedType,selectedCompany,selectedWarehouse,valueChecked,searchFilter,pageMultiplier,selectedSite)" v-if="id_role != 'EMPLY'"/>
+              <label
+                @click="openModal('add', 0)"
+                for="my-modal-item-atk"
+                class="btn btn-success bg-green border-green hover:bg-none text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+                >+ Add Item</label
+              >
+              <ModalAdd
+                @close="closeModal"
+                :status="statusForm"
+                :id="idItem"
+                v-if="id_role != 'EMPLY' && visibleModal"
+              />
 
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -531,16 +701,20 @@ const getSessionForSidebar = () => {
                   Company
                 </p>
                 <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                required
-                v-model="selectedCompany2"
-                @change="changeCompany(selectedCompany2)"
-              >
-                <option disabled selected>Company</option>
-                <option v-for="(company,i) in Company" :key="i" :value="company.id">
-                  {{ company.company_name }}
-                </option>
-              </select>
+                  class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  required
+                  v-model="selectedCompany2"
+                  @change="changeCompany(selectedCompany2)"
+                >
+                  <option disabled selected>Company</option>
+                  <option
+                    v-for="(company, i) in Company"
+                    :key="i"
+                    :value="company.id"
+                  >
+                    {{ company.company_name }}
+                  </option>
+                </select>
               </div>
 
               <div>
@@ -550,16 +724,16 @@ const getSessionForSidebar = () => {
                   Site
                 </p>
                 <select
-                class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                required
-                v-model="selectedSite2"
-                @change="changeSite(selectedSite2)"
-              >
-                <option disabled selected>Site</option>
-                <option v-for="(site,i) in Site" :key="i" :value="site.id">
-                  {{ site.site_name }}
-                </option>
-              </select>
+                  class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                  required
+                  v-model="selectedSite2"
+                  @change="changeSite(selectedSite2)"
+                >
+                  <option disabled selected>Site</option>
+                  <option v-for="(site, i) in Site" :key="i" :value="site.id">
+                    {{ site.site_name }}
+                  </option>
+                </select>
               </div>
 
               <div>
@@ -574,10 +748,14 @@ const getSessionForSidebar = () => {
                   v-model="selectedWarehouse2"
                 >
                   <option disabled selected>ATK Warehouse</option>
-                  <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
+                  <option
+                    v-for="(warehouse, i) in Warehouse"
+                    :key="i"
+                    :value="warehouse.id"
+                  >
                     {{ warehouse.warehouse_name }}
                   </option>
-              </select>
+                </select>
               </div>
 
               <div class="flex flex-wrap gap-4 items-center pt-6">
@@ -631,34 +809,33 @@ const getSessionForSidebar = () => {
                 />
               </label>
             </div>
-            
           </div>
 
           <!-- SHOWING -->
 
           <div class="flex flex-wrap items-center justify-between mx-4 py-2">
             <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
-            <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
-            <select
-              class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-              v-model="pageMultiplier"
-              @change="perPage"
-            >
-              <option>10</option>
-              <option>25</option>
-              <option>50</option>
-              <option>75</option>
-              <option>100</option>
-            </select>
-          </div>
+              <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
+              <select
+                class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                v-model="pageMultiplier"
+                @change="perPage"
+              >
+                <option>10</option>
+                <option>25</option>
+                <option>50</option>
+                <option>75</option>
+                <option>100</option>
+              </select>
+            </div>
 
             <div class="flex justify-between gap-4 items-center">
               <input
-                          type="checkbox"
-                          v-model="checkedAlert"
-                          @click="selectAlert(checkedAlert)"
-                        />
-                        Show Items that have been alert
+                type="checkbox"
+                v-model="checkedAlert"
+                @click="selectAlert(checkedAlert)"
+              />
+              Show Items that have been alert
             </div>
           </div>
           <!-- TABLE -->
@@ -701,7 +878,11 @@ const getSessionForSidebar = () => {
 
                 <tbody v-if="sortedData.length > 0">
                   <tr
-                    :class="data.current_stock <= data.alert_qty ? 'font-JakartaSans font-normal text-sm text-red' : 'font-JakartaSans font-normal text-sm'"
+                    :class="
+                      data.current_stock <= data.alert_qty
+                        ? 'font-JakartaSans font-normal text-sm text-red'
+                        : 'font-JakartaSans font-normal text-sm'
+                    "
                     v-for="(data, index) in sortedData"
                     :key="data.id"
                   >
@@ -712,22 +893,26 @@ const getSessionForSidebar = () => {
                       {{ (showingValue - 1) * pageMultiplier + 1 + index }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.code_item === null ? '-' : data.code_item }}
+                      {{ data.code_item === null ? "-" : data.code_item }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.item_name === null ? '-' : data.item_name  }}
+                      {{ data.item_name === null ? "-" : data.item_name }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.warehouse_name === null ? '-' : data.warehouse_name }}
+                      {{
+                        data.warehouse_name === null ? "-" : data.warehouse_name
+                      }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.current_stock === null ? '-' :  data.current_stock}}
+                      {{
+                        data.current_stock === null ? "-" : data.current_stock
+                      }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.alert_qty === null ? '-' : data.alert_qty }}
+                      {{ data.alert_qty === null ? "-" : data.alert_qty }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{ data.uom_name === null ? '-' : data.uom_name }}
+                      {{ data.uom_name === null ? "-" : data.uom_name }}
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <!-- <ModalEdit
@@ -735,46 +920,58 @@ const getSessionForSidebar = () => {
                         @unlock-scrollbar="lockScrollbar = !lockScrollbar"
                       /> -->
                       <label
-                      v-if="id_role != 'EMPLY'"
-                      @click="editValue(data.id, 'edit')"
-                      for="my-modal-item-edit-atk"
-                      class="cursor-pointer"
-                      ><img :src="editicon" class="w-6 h-6"
-                    /></label>
-                    <label
-                      @click="editValue(data.id, 'view')"
-                      for="my-modal-item-edit-atk"
-                      class="cursor-pointer"
-                      ><img :src="viewicon" class="w-6 h-6"
-                    /></label>
+                        v-if="id_role != 'EMPLY'"
+                        @click="editValue(data.id, 'edit')"
+                        for="my-modal-item-edit-atk"
+                        class="cursor-pointer"
+                        ><img :src="editicon" class="w-6 h-6"
+                      /></label>
+                      <label
+                        @click="editValue(data.id, 'view')"
+                        for="my-modal-item-edit-atk"
+                        class="cursor-pointer"
+                        ><img :src="viewicon" class="w-6 h-6"
+                      /></label>
 
-                    <input type="checkbox"  id="my-modal-item-edit-atk" class="modal-toggle" />
-                    <div v-if="lockScrollbarEdit == true" class="modal">
-                      <div class="modal-dialog bg-white w-3/5">
-                        <nav class="sticky top-0 z-50 bg-[#015289]">
-                          <label
-                            @click="lockScrollbar"
-                            for="my-modal-item-edit-atk"
-                            class="cursor-pointer absolute right-3 top-3"
+                      <input
+                        type="checkbox"
+                        id="my-modal-item-edit-atk"
+                        class="modal-toggle"
+                      />
+                      <div v-if="lockScrollbarEdit == true" class="modal">
+                        <div class="modal-dialog bg-white w-3/5">
+                          <nav class="sticky top-0 z-50 bg-[#015289]">
+                            <label
+                              @click="lockScrollbar"
+                              for="my-modal-item-edit-atk"
+                              class="cursor-pointer absolute right-3 top-3"
+                            >
+                              <img
+                                :src="iconClose"
+                                class="w-[34px] h-[34px] hover:scale-75"
+                              />
+                            </label>
+                            <p
+                              class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
+                            >
+                              <span v-if="id_role != 'EMPLY' && !disabledField">Edit Item</span>
+                              <span v-else>View Item</span>
+                            </p>
+                          </nav>
+
+                          <div
+                            class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4 mb-6"
                           >
-                            <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
-                          </label>
-                          <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start">
-                            <span v-if="id_role != 'EMPLY'">Edit Item</span>
-                            <span v-else>View Item</span>
+                            <img :src="icondanger2" class="w-5 h-5" />
+                            <p class="font-JakartaSans font-semibold">
+                              Item Info
+                            </p>
+                          </div>
 
-                          </p>
-                        </nav>
-
-                        <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4 mb-6">
-                          <img :src="icondanger2" class="w-5 h-5" />
-                          <p class="font-JakartaSans font-semibold">
-                            Item Info
-                          </p>
-                        </div>
-
-                        <main class="modal-box-inner-brand pb-14">
-                            <div class="flex justify-between px-6 items-center gap-2">
+                          <main class="modal-box-inner-brand pb-14">
+                            <div
+                              class="flex justify-between px-6 items-center gap-2"
+                            >
                               <div class="mb-6 w-full">
                                 <label
                                   for="company"
@@ -789,7 +986,11 @@ const getSessionForSidebar = () => {
                                   :disabled="disabledField"
                                 >
                                   <option disabled selected>Company</option>
-                                  <option v-for="(company,i) in Company" :key="i" :value="company.id">
+                                  <option
+                                    v-for="(company, i) in Company"
+                                    :key="i"
+                                    :value="company.id"
+                                  >
                                     {{ company.company_name }}
                                   </option>
                                 </select>
@@ -808,28 +1009,38 @@ const getSessionForSidebar = () => {
                                   :disabled="disabledField"
                                 >
                                   <option disabled selected>Site</option>
-                                  <option v-for="(site,i) in Site" :key="i" :value="site.id">
+                                  <option
+                                    v-for="(site, i) in Site"
+                                    :key="i"
+                                    :value="site.id"
+                                  >
                                     {{ site.site_name }}
                                   </option>
                                 </select>
                               </div>
                             </div>
-                            <div class="flex justify-between px-6 items-center gap-2">
+                            <div
+                              class="flex justify-between px-6 items-center gap-2"
+                            >
                               <div class="mb-6 w-full">
                                 <label
                                   for="detail"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
                                   >Details</label
                                 >
-                              <hr />
+                                <hr />
                               </div>
                             </div>
-                            <div class="flex justify-between px-6 items-center gap-2">
+                            <div
+                              class="flex justify-between px-6 items-center gap-2"
+                            >
                               <div class="mb-6 w-full">
                                 <label
                                   for="warehouse"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                  >ATK Warehouse<span class="text-red">*</span></label
+                                  >ATK Warehouse<span class="text-red"
+                                    >*</span
+                                  ></label
                                 >
                                 <select
                                   class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
@@ -837,8 +1048,14 @@ const getSessionForSidebar = () => {
                                   v-model="selectedWarehouse"
                                   :disabled="disabledField"
                                 >
-                                  <option disabled selected>ATK Warehouse</option>
-                                  <option v-for="(warehouse,i) in Warehouse" :key="i" :value="warehouse.id">
+                                  <option disabled selected>
+                                    ATK Warehouse
+                                  </option>
+                                  <option
+                                    v-for="(warehouse, i) in Warehouse"
+                                    :key="i"
+                                    :value="warehouse.id"
+                                  >
                                     {{ warehouse.warehouse_name }}
                                   </option>
                                 </select>
@@ -856,18 +1073,26 @@ const getSessionForSidebar = () => {
                                   :disabled="disabledField"
                                 >
                                   <option disabled selected>UOM</option>
-                                  <option v-for="(uom,i) in UOM" :key="i" :value="uom.id">
+                                  <option
+                                    v-for="(uom, i) in UOM"
+                                    :key="i"
+                                    :value="uom.id"
+                                  >
                                     {{ uom.uom_name }}
                                   </option>
                                 </select>
                               </div>
                             </div>
-                            <div class="flex justify-between px-6 items-center gap-2">
+                            <div
+                              class="flex justify-between px-6 items-center gap-2"
+                            >
                               <div class="mb-6 w-full">
                                 <label
                                   for="item_name"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                  >Item Name<span class="text-red">*</span></label
+                                  >Item Name<span class="text-red"
+                                    >*</span
+                                  ></label
                                 >
                                 <input
                                   type="text"
@@ -878,12 +1103,14 @@ const getSessionForSidebar = () => {
                                   :disabled="disabledField"
                                 />
                               </div>
-                              
+
                               <div class="mb-6 w-full">
                                 <label
                                   for="alert"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                  >Alert Quantity<span class="text-red">*</span></label
+                                  >Alert Quantity<span class="text-red"
+                                    >*</span
+                                  ></label
                                 >
                                 <input
                                   type="number"
@@ -896,8 +1123,13 @@ const getSessionForSidebar = () => {
                               </div>
                             </div>
 
-                            <div class="flex justify-between px-6 items-center gap-2">
-                              <div class="mb-6 w-full" v-if="id_role != 'EMPLY'">
+                            <div
+                              class="grid grid-cols-2 px-6 items-center gap-2"
+                            >
+                              <div
+                                class="mb-6 w-full"
+                                v-if="id_role != 'EMPLY'"
+                              >
                                 <label
                                   for="uom"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
@@ -910,7 +1142,11 @@ const getSessionForSidebar = () => {
                                   :disabled="disabledField"
                                 >
                                   <option disabled selected>Brand</option>
-                                  <option v-for="(brand,i) in Brand" :key="i" :value="brand.id">
+                                  <option
+                                    v-for="(brand, i) in Brand"
+                                    :key="i"
+                                    :value="brand.id"
+                                  >
                                     {{ brand.brand_name }}
                                   </option>
                                 </select>
@@ -937,34 +1173,56 @@ const getSessionForSidebar = () => {
                                   required
                                 /> -->
                               </div>
-                            </div>
-                            <div class="flex justify-start px-6 items-center gap-2">
-                              <label
+                              <div class="mb-6 w-full">
+                                <label
                                   for="warehouse"
                                   class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                  >ID Items<span class="text-red">*</span></label
+                                  >ID Items<span class="text-red"
+                                    >*</span
+                                  ></label
                                 >
-                            </div>
-                            <div class="flex justify-start px-6 items-center gap-2">
-                              <div class="flex items-center border-b border-teal-500 py-2 mb-6 w-full">
-                                <input class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none" v-model="idItems" maxlength="9" type="number" placeholder="ID Item" aria-label="Full name" disabled="true">
+                                <div
+                                  class="flex justify-start px-6 items-center gap-2"
+                                >
+                                  <div
+                                    class="flex items-center border-b border-teal-500 py-2 mb-6 w-full"
+                                  >
+                                    <input
+                                      class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                                      v-model="idItems"
+                                      maxlength="9"
+                                      type="number"
+                                      placeholder="ID Item"
+                                      aria-label="Full name"
+                                      disabled="true"
+                                    />
+                                  </div>
+                                  <div class="mb-6 w-full"></div>
+                                </div>
+                                <!-- <textarea
+                                  type="text"
+                                  v-model="remark"
+                                  class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                  placeholder="Remarks"
+                                  required
+                                /> -->
                               </div>
-                              <div class="mb-6 w-full"></div>
                             </div>
-                            <div class="sticky bottom-0 bg-white pb-2">
-                          <div class="flex justify-center gap-4 mr-6">
-                            <button
-                                v-if="id_role != 'EMPLY'"
-                              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                              @click="save"
-                            >
-                              Save
-                            </button>
-                          </div>
-                        </div>
-                        </main>
 
-                        <!-- <div class="sticky bottom-0 bg-white pb-2">
+                            <div class="sticky bottom-0 bg-white pb-2">
+                              <div class="flex justify-center gap-4 mr-6">
+                                <button
+                                  v-if="id_role != 'EMPLY' && !disabledField"
+                                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                                  @click="save"
+                                >
+                                  Save
+                                </button>
+                              </div>
+                            </div>
+                          </main>
+
+                          <!-- <div class="sticky bottom-0 bg-white pb-2">
                           <div class="flex justify-center gap-4 mr-6">
                             <button
                               class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -974,9 +1232,12 @@ const getSessionForSidebar = () => {
                             </button>
                           </div>
                         </div> -->
+                        </div>
                       </div>
-                    </div>
-                      <button @click="deleteValue(data.id)" v-if="id_role != 'EMPLY'">
+                      <button
+                        @click="deleteValue(data.id)"
+                        v-if="id_role != 'EMPLY'"
+                      >
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
@@ -995,15 +1256,19 @@ const getSessionForSidebar = () => {
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
-            <p v-if="sortedData.length > 0" class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+            <p
+              v-if="sortedData.length > 0"
+              class="font-JakartaSans text-xs font-normal text-[#888888] py-2"
+            >
               Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
               {{ Math.min(showingValue * pageMultiplier, lenghtPagination) }}
               of {{ lenghtPagination }} entries
             </p>
-            <p v-else class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing 0 to
-              0
-              of 0 entries
+            <p
+              v-else
+              class="font-JakartaSans text-xs font-normal text-[#888888] py-2"
+            >
+              Showing 0 to 0 of 0 entries
             </p>
             <vue-awesome-paginate
               v-if="sortedData.length > 0"

@@ -1,25 +1,25 @@
 <script setup>
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"
 
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue"
 
-import { useRoute } from "vue-router";
+import { useRoute } from "vue-router"
 
-import { toFilterDate, numberFilter } from "@/utils/filters";
+import { toFilterDate, numberFilter } from "@/utils/filters"
 
-import tableContainer from "@/components/table/tableContainer.vue";
-import tableTop from "@/components/table/tableTop.vue";
-import PageTitle from "@/components/atomics/PageTitle.vue";
-import DriverFormDialog from "./DriverFormDialog.vue";
-import DataTable from "@/components/table/DataTable.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
+import tableTop from "@/components/table/tableTop.vue"
+import PageTitle from "@/components/atomics/PageTitle.vue"
+import DriverFormDialog from "./DriverFormDialog.vue"
+import DataTable from "@/components/table/DataTable.vue"
 
-import left_chevron_icon from "@/assets/request-trip-view-arrow.png";
+import left_chevron_icon from "@/assets/request-trip-view-arrow.png"
 
 import {
   fetchPoolCarRequestById,
   fetchDriverCarCheckupByRequesId,
   setPoolRequestStatus,
-} from "@/utils/Api/travel-management/poolCar";
+} from "@/utils/Api/travel-management/poolCar"
 
 const headers = [
   {
@@ -58,28 +58,28 @@ const headers = [
     value: "actions",
     sortable: false,
   },
-];
+]
 
-const route = useRoute();
+const route = useRoute()
 
-const tabs = ref(["Details"]);
-const tabActive = ref("Details");
-const formDialog = ref(false);
-const checkupList = ref([]);
-const dataExisting = ref([]);
-const isEditable = ref(true);
+const tabs = ref(["Details"])
+const tabActive = ref("Details")
+const formDialog = ref(false)
+const checkupList = ref([])
+const dataExisting = ref([])
+const isEditable = ref(true)
 
 const isDriver = computed(() => {
-  const userRole = localStorage.getItem("id_role");
+  const userRole = localStorage.getItem("id_role")
 
-  return userRole == `"DRVR"`;
-});
+  return userRole == `"DRVR"`
+})
 
 const dataFormDialog = ref({
   is_usable: 0,
   notes: "",
   odometer: 0,
-});
+})
 
 const items = ref([
   {
@@ -90,18 +90,18 @@ const items = ref([
     toDate: "",
     odometer: 0,
   },
-]);
+])
 
 const fetchPoolRequest = async () => {
-  const requestId = route.params.id;
-  const res = await fetchPoolCarRequestById(requestId);
-  items.value = res.data;
-  dataFormDialog.value = res.data[0];
-};
+  const requestId = route.params.id
+  const res = await fetchPoolCarRequestById(requestId)
+  items.value = res.data
+  dataFormDialog.value = res.data[0]
+}
 
 const doneRequestTrip = async () => {
-  const requestId = route.params.id;
-  const res = setPoolRequestStatus(requestId);
+  const requestId = route.params.id
+  const res = setPoolRequestStatus(requestId)
 
   if (res.data.success) {
     Swal.fire({
@@ -110,15 +110,15 @@ const doneRequestTrip = async () => {
       title: "Succeess to Update Car Request Status",
       showConfirmButton: false,
       timer: 1500,
-    });
+    })
 
-    await fetchPoolRequest();
+    await fetchPoolRequest()
   }
-};
+}
 
 onMounted(async () => {
-  await fetchPoolRequest();
-});
+  await fetchPoolRequest()
+})
 </script>
 
 <template>
@@ -173,8 +173,8 @@ onMounted(async () => {
           class="btn bg-primary"
           @click="
             () => {
-              formDialog = true;
-              isEditable = false;
+              formDialog = true
+              isEditable = false
             }
           "
         >
@@ -231,12 +231,17 @@ onMounted(async () => {
         </div>
         <div class="mt-7 flex-grow text-end">
           <button
-            v-if="isDriver && items[0].status != 'Ready'"
+            v-if="
+              (isDriver && items[0].status != 'Ready') ||
+              (!isDriver &&
+                items[0].status != 'Driver Check' &&
+                items[0].status != 'Waiting Car & Driver')
+            "
             class="btn bg-primary"
             @click="
               () => {
-                formDialog = true;
-                isEditable = false;
+                formDialog = true
+                isEditable = false
               }
             "
           >
@@ -305,8 +310,8 @@ onMounted(async () => {
                 v-if="items[0].status == 'Driver Check' && isDriver"
                 @click="
                   () => {
-                    formDialog = true;
-                    isEditable = true;
+                    formDialog = true
+                    isEditable = true
                   }
                 "
                 class="text-lg text-center border border-primary text-primary rounded-lg align-center inline-flex items-center"

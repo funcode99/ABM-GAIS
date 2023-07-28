@@ -160,6 +160,8 @@ const fetchDetailById = async (id) => {
       brandName: element.brand_name,
       UOMName: element.uom_name,
       remark: element.remarks,
+      qty_send: element.qty_send,
+      qty_unsend: element.qty_unsend,
     });
     itemsTable.value.push({
       Warehouse: element.warehouse_name,
@@ -169,6 +171,8 @@ const fetchDetailById = async (id) => {
       brandName: element.brand_name,
       UOMName: element.uom_name,
       remark: element.remarks,
+      qty_send: element.qty_send,
+      qty_unsend: element.qty_unsend,
     });
   }
   // return itemsTable
@@ -736,6 +740,16 @@ const format_date = (value) => {
                           Quantity
                         </th>
                         <th
+                          class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                        >
+                          Quantity Approved
+                        </th>
+                        <th
+                          class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                        >
+                          Quantity Rejected
+                        </th>
+                        <th
                           v-if="id_role != 'EMPLY'"
                           class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                         >
@@ -772,6 +786,12 @@ const format_date = (value) => {
                         </td>
                         <td class="border border-[#B9B9B9] text-center">
                           {{ value.alertQuantity }}
+                        </td>
+                        <td class="border border-[#B9B9B9]">
+                          {{ value.qty_send }}
+                        </td>
+                        <td class="border border-[#B9B9B9]">
+                          {{ value.qty_unsend }}
                         </td>
                         <td
                           class="border border-[#B9B9B9] text-center"
@@ -870,7 +890,7 @@ const format_date = (value) => {
             <div class="flex flex-col gap-2"></div>
           </div>
           <!-- TAB & TABLE-->
-          <div class="bg-blue rounded-lg pt-2 mx-[70px]">
+          <div class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]">
             <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
@@ -941,6 +961,16 @@ const format_date = (value) => {
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Quantity Approved
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Quantity Rejected
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                       v-if="id_role != 'EMPLY'"
                     >
                       Brand
@@ -978,6 +1008,12 @@ const format_date = (value) => {
                     <td class="border border-[#B9B9B9]">
                       {{ value.alertQuantity }}
                     </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.qty_send }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.qty_unsend }}
+                    </td>
                     <td
                       class="border border-[#B9B9B9]"
                       v-if="id_role != 'EMPLY'"
@@ -990,7 +1026,7 @@ const format_date = (value) => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval"/>
+                <HistoryApproval :data-approval="dataApproval" type="ATK"/>
               </div>
             </div>
           </div>

@@ -56,7 +56,6 @@
 
     watch(employeeLoginData, () => {
         traveller.value = employeeLoginData.value[0].employee_name
-        flightIdAirlines.value = employeeLoginData.value[0].id_flight_class
         flightClassAirlines.value = employeeLoginData.value[0].flight_class
     })
 
@@ -120,16 +119,26 @@
                         <div :class="columnClass">
         
                             <div class="w-full">
-                                <label :class="labelStylingClass">
+                                <label 
+                                    :class="labelStylingClass"
+                                    for="flight-class"
+                                >
                                     Flight Class<span class="text-red-star">*</span>
                                 </label>
-                                <input 
-                                    :class="inputStylingClass" 
-                                    v-model="flightClassAirlines" 
-                                    type="text" 
-                                    disabled 
-                                    required 
-                                />
+
+                                <select
+                                    :class="inputStylingClass"
+                                    id="flight-class"
+                                    required
+                                    v-model="flightIdAirlines"
+                                >
+                                    <option 
+                                        v-for="data in flightClassAirlines"
+                                        :value="data.id_flight_class"
+                                    >
+                                        {{ data.flight_class }}
+                                    </option>
+                                </select>
                             </div>
 
                         </div>

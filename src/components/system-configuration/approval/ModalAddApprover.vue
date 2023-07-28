@@ -45,7 +45,6 @@
   let approverAuthoritiesName = ref('')
 
   let dropdownRemoveList = ref([])
-
   let currentAuthoritiesId = ref('')
 
   const addField = (fieldType, isi) => {
@@ -159,13 +158,6 @@
 
     }
 
-
-
-
-
-
-
-
   }
 
   const rowClass = 'flex justify-between items-center gap-3 my-3'
@@ -267,16 +259,21 @@
       
               <!-- Company -->
               <div class="mb-3 flex items-center">
+
                 <div class="flex flex-col w-full">
+                  
                   <label for="company" class="block mb-2 font-JakartaSans font-medium text-sm">
                     Company<span class="text-red">*</span>
                   </label>
+                  
                   <select id="company" v-model="company" :class="inputStylingClass" required>
                     <option v-for="data in addCompanyData" :key="data.id" :value="data.id">
                       {{ data.company_name }}
                     </option>
                   </select>
+
                 </div>
+
               </div>
 
               <!-- bagian bawah -->
@@ -294,37 +291,42 @@
         
                   <thead class="text-center font-Montserrat text-sm font-bold">
                     <tr class="">
+
                       <th class="relative">
                         <span class="flex justify-center">Level</span>
                         <button class="absolute right-0 top-0 bottom-0">
                           <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                         </button>
                       </th>
+
                       <th class="relative">
                         <span class="flex justify-center">Authorities</span>
                         <button class="absolute right-0 top-0 bottom-0">
                           <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                         </button>
                       </th>
+
                       <th class="relative">
                         <span class="flex justify-center">Approver Name</span>
                         <button class="absolute right-1 top-0 bottom-0">
                           <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
                         </button>
                       </th>
+                      
                       <th class="flex justify-center">
                         Actions
                       </th>
+
                     </tr>
                   </thead>
         
                   <tbody class="bg-[#F5F5F5]">
         
-                    <tr class="text-center" v-for="(input, index) in approverLines" :key="`phoneInput-${index}`">
+                    <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
                       
                       <!-- nilai awalnya PM -->
 
-                      {{ input.approverName }}
+                      <!-- {{ input.approverName }} -->
                       
                       <td v-if="input.id_approval_auth == ''">
                         0
@@ -338,6 +340,7 @@
                       </td>
         
                       <td>
+                        
                         <select 
                           @change="fetchApproverName"
                           class="border border-black rounded-lg"
@@ -354,9 +357,11 @@
                             {{ data.auth_name }}
                           </option>
                         </select>
+
                       </td>
 
                       <td>
+                        
                         <!-- <input type="text" class="px-2" v-model="input.approverName" /> -->
                         <select class="w-full border border-black rounded-lg" v-model="input.approverName">
                           <option
@@ -366,12 +371,12 @@
                             {{ name.employee_name }}
                           </option>
                         </select>
+
                       </td>
 
                       <!-- absolut true -->
                       <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full">
                       </td>
-        
         
                       <td class="flex flex-wrap gap-4 justify-center">
                         <button @click="removeField(index, approverLines)">
@@ -382,12 +387,14 @@
                     </tr>
         
                     <tr class='text-center'>
+
                       <td></td>
                       <td></td>
                       <td></td>
                       <td class="flex justify-center">
                         <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
                       </td>
+
                     </tr>
         
                   </tbody>
