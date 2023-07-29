@@ -114,8 +114,6 @@
           caId.value = currentAPIfetchData.value.data.data[status.currentIndex].id
         } else {
           console.log('masuk ke assign value')
-          // console.log('isi nya undefined')
-          // console.log(props.value)
         }
 
     }
@@ -123,9 +121,10 @@
     const assignDetailValue = (ItemNumber) => {
 
         // ini untuk ganti CA Detail dengan CA ID yang sama
-        // console.log(caDetailData.value)
+
         ItemNumber === 0 ? currentDetailNumber.value = ItemNumber : currentDetailNumber.value = ItemNumber-1
         item.value = caDetailData.value[currentDetailNumber.value].nama_item
+        itemId.value = [caDetailData.value[currentDetailNumber.value].id_item_ca,caDetailData.value[currentDetailNumber.value].nama_item]
         nominal.value = parseInt(caDetailData.value[currentDetailNumber.value].nominal)
         frequency.value = caDetailData.value[currentDetailNumber.value].frequency
         total.value = caDetailData.value[currentDetailNumber.value].total
@@ -156,6 +155,7 @@
     const resetDetailValue = () => {
       
       item.value = caDetailData.value[0].nama_item
+      itemId.value = [caDetailData.value[currentDetailNumber.value].id_item_ca,caDetailData.value[currentDetailNumber.value].nama_item]
       nominal.value = parseInt(caDetailData.value[0].nominal)
       frequency.value = caDetailData.value[0].frequency
       total.value = caDetailData.value[0].total
@@ -198,14 +198,6 @@
 
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-
-      // let value = 0
-
-      // caDetailData.value.map((item) => {
-      //   value += parseInt(item.total)
-      // })
-
-      // grandTotal.value = value
 
       const api = await Api.post(`/cash_advance/update_data/${headerId.value}` , {
         
@@ -384,8 +376,21 @@
 
     watch(caDetailData, () => {
 
-      // console.log(caDetailData.value.length == 0)
       console.log('perubahan di caDetailData')
+
+      let value = 0
+
+      caDetailData.value.map((item) => {
+        value += parseInt(item.total)
+      })
+
+      if(parseInt(grandTotal.value) !== value) {
+        console.log('nilai tidak sama')
+          grandTotal.value = value
+          editCAHeader()
+      } else { 
+        console.log('nilai sudah sama')
+      }
       
       if(caDetailData.value.length !== 0) {
         resetDetailValue()
@@ -648,6 +653,8 @@
           <div class="mx-4 flex items-center">
             
             <h1 class="font-medium mr-10">Details Item</h1>
+
+            <!-- {{ caDetailData }} -->
   
             <!-- tempat button CRUD detail -->
             <div class="flex gap-2">

@@ -788,7 +788,7 @@
                             @resetTypeOfSubmitData="resetTypeOfSubmit"
 
                             :currentlyEditCAHeader="currentlyEditCAHeader"
-                            @resetEditCAHeaderState="currentlyEditCAHeader = !currentlyEditCAHeader"
+                            @resetEditCAHeaderState="currentlyEditCAHeader = false"
                             
                             >
 
@@ -834,7 +834,7 @@
                           </detailsFormHeader>
 
                           <!-- Button khusus CA, untuk Add saat data CA header sudah ada -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader">
+                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader" :title=headerTitle>
                             
                             <div
                               class="flex gap-2"
@@ -854,7 +854,7 @@
                           </detailsFormHeader>
 
                           <!-- Button khusus CA, untuk RUD muncul saat ada data CA Header -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader">
+                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader" :title=headerTitle>
 
                             <!-- muncul saat Cash Advance Header nya ada -->
                             <div

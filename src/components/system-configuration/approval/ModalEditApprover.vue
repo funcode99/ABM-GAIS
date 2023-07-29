@@ -7,6 +7,8 @@
   import checkIcon from '@/assets/checkmark.png'
   import closeIcon from '@/assets/close-window.png'
 
+  import Multiselect from '@vueform/multiselect'
+
   import Api from '@/utils/Api'
 
   import modalHeader from "@/components/modal/modalHeader.vue"
@@ -61,7 +63,6 @@
 
   let levelValue = ref()
   let currentAuthoritiesId = ref()  
-  let instanceArray = []
 
   const rowClass = 'flex justify-between items-center gap-3 my-3'
   const columnClass = 'flex flex-col flex-1'
@@ -244,11 +245,31 @@
     }
 
     watch(isVisible, () => {
+
+      fetchJobBand()
+
       addCompanyData.value = referenceFetch.fetchCompanyResult
       addMenuData.value = sysconfigFetch.fetchMenuResult
       addAuthoritiesData.value = sysconfigFetch.fetchApproverAuthoritiesResult
       addDocumentData.value = tmsFetch.fetchDocumentCodeResult
     })
+
+    let jobBandData = ref([])
+    let jobBandArray = ref(props.formContent)
+
+    const fetchJobBand = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/company/get_band_job/${localStorage.getItem('id_company')}`)
+      jobBandData.value = api.data.data
+      jobBandData.value.map((item) => {
+        item.value = item.id
+      })
+
+    }
+
+
 
 
 </script>
@@ -350,17 +371,76 @@
           </div>
   
           <div class="mb-3 flex items-center text-left">
+
             <div class="flex flex-col w-full">
+              
               <label for="company" class="block mb-2 font-JakartaSans font-medium text-sm">
                 Company<span class="text-red">*</span>
               </label>
+
               <select id="company" v-model="company" :class="inputStylingClass" required>
                 <option v-for="data in addCompanyData" :key="data.id" :value="data.id">
                   {{ data.company_name }}
                 </option>
               </select>
+
             </div>
+
+
+
           </div>
+
+          <div class="mb-3 flex items-center text-left">
+
+            <div class="flex flex-col w-full">
+
+              <label for="jobband" class="block mb-2 font-JakartaSans font-medium text-sm">
+                Job Band<span class="text-red">*</span>
+              </label>
+
+              {{ jobBandArray }}
+
+              <Multiselect
+                    id="jobband"
+                    v-model="jobBandArray"
+                    mode="tags"
+                    placeholder="Select companies"
+                    track-by="band_job_name"
+                    label="band_job_name"
+                    :close-on-select="false"
+                    :searchable="true"
+                    :options="jobBandData"
+                    required
+                  >
+                      
+                      <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                        
+                        <div
+                          class="multiselect-tag is-user"
+                          :class="{
+                            'is-disabled': disabled
+                          }"
+                        >
+                          {{ option.band_job_name }}
+                          <span
+                            v-if="!disabled"
+                            class="multiselect-tag-remove"
+                            @click="handleTagRemove(option, $event)"
+                          >
+                            <span class="multiselect-tag-remove-icon"></span>
+                          </span>
+                        </div>
+
+                      </template>
+
+                  
+                
+              </Multiselect>
+
+            </div>
+
+          </div>
+
           
         </div>
 
