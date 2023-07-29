@@ -18,6 +18,7 @@ const router = useRouter()
 
 let search = ref("")
 let companyId = ref('company')
+let groupCompanyId = ref('group company')
 let roleId = ref('role')
 let pageMultiplier = ref(10)
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
@@ -28,20 +29,28 @@ const props = defineProps({
   numberSelected: Number
 });
 
-let companyData = ref([]);
-let roleData = ref([]);
+let groupCompanyData = ref([])
+let companyData = ref([])
+let roleData = ref([])
+
+const fetchGroupCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`  
+    const res = await Api.get("/group_company/get")
+    groupCompanyData.value = res.data.data
+}
 
 const fetchCompany = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/company/get");
-    companyData.value = res.data.data;
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const res = await Api.get("/company/get")
+    companyData.value = res.data.data
 }
 
 const fetchRole = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("/role/get");
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("/role/get")
   roleData.value = api.data.data
 }
 
@@ -49,6 +58,7 @@ onBeforeMount(() => {
 
   if(router.currentRoute.value.path == '/user') {
     fetchRole()
+    fetchGroupCompany()
   }
 
   if(router.currentRoute.value.path != '/role') {
@@ -60,10 +70,19 @@ onBeforeMount(() => {
 const emits = defineEmits(['resetTable'])
 
 const resetCompanyAndRole = () => {
+  groupCompanyId.value = 'group company'
   companyId.value = 'company'
   roleId.value = 'role'
+  fetchCompany()
   emits('resetTable')
 }
+
+const fetchParentCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get_parent/${id_company}`);
+  companyData.value = res.data.data;
+};
 
 </script>
 
@@ -131,12 +150,36 @@ const resetCompanyAndRole = () => {
       <!-- sort company, filter, reset -->
       <div class="flex items-end flex-wrap gap-4">
 
+        <!-- sort group company filter -->
+        <div class="flex flex-col gap-1">
+
+          <p class="capitalize font-Fira text-xs text-black font-medium">
+            Group Company
+          </p>
+
+          <select 
+            v-model="groupCompanyId"
+            class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+            @change="fetchParentCompany(groupCompanyId)"
+          >
+            
+            <option hidden disabled value="group company">
+              Group Company
+            </option>
+
+            <option v-for="data in groupCompanyData" :value="data.id">
+              {{ data.group_company_name }}
+            </option>
+
+          </select>
+
+        </div>
+
         <!-- sort company filter -->
         <div class="flex flex-col gap-1">
 
           <p class="capitalize font-Fira text-xs text-black font-medium">
             Company 
-            <!-- {{ companyId }} -->
           </p>
 
           <select
