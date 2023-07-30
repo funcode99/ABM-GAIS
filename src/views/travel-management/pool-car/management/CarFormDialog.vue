@@ -222,7 +222,7 @@ onMounted(async () => {
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 placeholder="Input Start Date"
-                model-type="dd-MM-yyyy"
+                model-type="yyyy-MM-dd"
                 required
               />
             </div>
@@ -235,10 +235,10 @@ onMounted(async () => {
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 :min-date="
-                  moment(form.start_date, 'DD-MM-yyyy').format('MM/DD/yyyy')
+                  moment(form.start_date, 'yyyy-MM-DD').format('MM/DD/yyyy')
                 "
                 placeholder="Input End Date"
-                model-type="dd-MM-yyyy"
+                model-type="yyyy-MM-dd"
                 required
               />
             </div>
@@ -403,6 +403,7 @@ onMounted(async () => {
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 placeholder="Registration Date"
+                model-type="yyyy-MM-dd"
                 required
               />
             </div>
@@ -416,7 +417,7 @@ onMounted(async () => {
                 format="dd/MM/yyyy"
                 placeholder="Plate Expiration Date"
                 required
-                model-type="dd-MM-yyyy"
+                model-type="yyyy-MM-dd"
               />
             </div>
           </div>
@@ -430,7 +431,7 @@ onMounted(async () => {
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 placeholder="KIR Registration Date"
-                model-type="dd-MM-yyyy"
+                model-type="yyyy-MM-dd"
               />
             </div>
 
@@ -442,7 +443,7 @@ onMounted(async () => {
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 placeholder="Stickers Expiration Date"
-                model-type="dd-MM-yyyy"
+                model-type="yyyy-MM-dd"
               />
             </div>
           </div>
