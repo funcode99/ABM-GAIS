@@ -1,4 +1,5 @@
 <script setup>
+import moment from "moment"
 import { vMaska } from "maska"
 import { Modal } from "usemodal-vue3"
 import { computed, onMounted, ref, watch } from "vue"
@@ -55,14 +56,18 @@ const setForm = () => {
     id_site: null,
     type: null,
     plate: null,
-    hull_no: null,
     type_name: null,
     id_car_type: null,
     id_driver: null,
+    hull_no: null,
     odometer: null,
     transmision: null,
     transmisi: null,
     status: null,
+    registration_date: null,
+    plate_date: null,
+    kir_date: null,
+    stickers_date: null,
   }
 }
 
@@ -217,6 +222,7 @@ onMounted(async () => {
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 placeholder="Input Start Date"
+                model-type="dd-MM-yyyy"
                 required
               />
             </div>
@@ -228,8 +234,11 @@ onMounted(async () => {
                 v-model="form.end_date"
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
-                :min-date="form.start_date"
+                :min-date="
+                  moment(form.start_date, 'DD-MM-yyyy').format('MM/DD/yyyy')
+                "
                 placeholder="Input End Date"
+                model-type="dd-MM-yyyy"
                 required
               />
             </div>
@@ -390,7 +399,7 @@ onMounted(async () => {
               <FieldTitle label="Vehicle Registration Date" mandatory />
 
               <VueDatePicker
-                v-model="form.start_date"
+                v-model="form.registration_date"
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 placeholder="Registration Date"
@@ -402,12 +411,12 @@ onMounted(async () => {
               <FieldTitle label="Plate Registration Expired Date" mandatory />
 
               <VueDatePicker
-                v-model="form.end_date"
+                v-model="form.plate_date"
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
-                :min-date="form.start_date"
                 placeholder="Plate Expiration Date"
                 required
+                model-type="dd-MM-yyyy"
               />
             </div>
           </div>
@@ -417,22 +426,23 @@ onMounted(async () => {
               <FieldTitle label="KIR Registration" />
 
               <VueDatePicker
-                v-model="form.start_date"
+                v-model="form.kir_date"
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
                 placeholder="KIR Registration Date"
+                model-type="dd-MM-yyyy"
               />
             </div>
 
             <div class="basis-1/2">
-              <FieldTitle label="Stickers Expired Date" mandatory />
+              <FieldTitle label="Stickers Expired Date" />
 
               <VueDatePicker
-                v-model="form.end_date"
+                v-model="form.stickers_date"
                 :enable-time-picker="false"
                 format="dd/MM/yyyy"
-                :min-date="form.start_date"
                 placeholder="Stickers Expiration Date"
+                model-type="dd-MM-yyyy"
               />
             </div>
           </div>
