@@ -301,7 +301,7 @@
                     <!-- Accomodation Type -->
                     <div :class="columnClass">
                         <label :class="labelStylingClass">
-                            Accomodation Type
+                            Mess
                         </label>
                         <select 
                             :class="inputStylingClass" 

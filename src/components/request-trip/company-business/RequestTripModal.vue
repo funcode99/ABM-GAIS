@@ -201,10 +201,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             total_tlk: totalTLK,
             id_site: siteVisitLocation.value,
             file: siteVisitAttachmentFile.value,
-            no_request_trip: '',
           })
 
           console.log(api)
+          console.log(api.data.data)
+          localStorage.setItem('dateArrival', api.data.data.date_arrival)
+          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip site visit dengan id yang sudah ada')
 
         } 
@@ -223,11 +225,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
             file: siteVisitAttachmentFile.value,
-            no_request_trip: '',
             id_site: localStorage.getItem('id_site')
           })
 
           console.log(api)
+          console.log(api.data.data)
+          localStorage.setItem('dateArrival', api.data.data.date_arrival)
+          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip field break dengan id yang sudah ada')
 
         }
@@ -245,11 +249,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             date_arrival: returnDate.value,
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
-            no_request_trip: '',
             id_site: localStorage.getItem('id_site')
           })
 
           console.log(api)
+          console.log(api.data.data)
+          localStorage.setItem('dateArrival', api.data.data.date_arrival)
+          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip dengan id yang sudah ada')
 
         }
@@ -276,10 +282,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             total_tlk: totalTLK,
             id_site: siteVisitLocation.value,
             file: siteVisitAttachmentFile.value,
-            no_request_trip: '',
           })
 
           console.log(api)
+          console.log(api.data.data)
+          localStorage.setItem('dateArrival', api.data.data.date_arrival)
+          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip site visit dengan id baru')
           localStorage.setItem('tripId', api.data.data.id)
 
@@ -299,11 +307,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
             file: siteVisitAttachmentFile.value,
-            no_request_trip: '',
             id_site: localStorage.getItem('id_site')
           })
 
           console.log(api)
+          console.log(api.data.data)
+          localStorage.setItem('dateArrival', api.data.data.date_arrival)
+          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip field break dengan id baru')
           localStorage.setItem('tripId', api.data.data.id)
 
@@ -322,9 +332,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             date_arrival: returnDate.value,
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
-            no_request_trip: '',
             id_site: localStorage.getItem('id_site')
           })
+
+          console.log(api)
+          localStorage.setItem('dateArrival', api.data.data.date_arrival)
+          localStorage.setItem('dateDeparture', api.data.data.date_departure)
+          console.log(api.data.data)
 
           if(api.data.message !== 'Already Has Draft Data') {
             console.log('membuat request trip dengan id baru')
@@ -557,6 +571,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       {id: 3, title: 'Taxi Voucher'}
     ]
 
+    const crewingStepList = [
+      {id: 2, title: 'Traveller'},
+      {id: 3, title: 'Airlines'},
+      {id: 4, title: 'Accomodation'}
+    ]
+
     const fetchTLKByJobBand = async () => {
       let jobBandId = referenceFetch.fetchEmployeeByLoginResult[0].id_job_band
       const token = JSON.parse(localStorage.getItem('token'))
@@ -587,6 +607,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       // resetInput()
       formStep.value = 0
       localStorage.removeItem('tripId')
+      localStorage.removeItem('dateArrival')
+      localStorage.removeItem('dateDeparture')
     })
 
     const updateFile = (event) => {
@@ -619,12 +641,14 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5">
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 0 ? 'block' : 'hidden'">
           </div>
+
           <!-- step 2 circle -->
           <div class="overflow-hidden" :class="[formStep > 1 ? 'bg-[#fff]' : formStep === 1 ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
               <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > 1 ? 'block' : 'hidden'">
               <!-- absolute top-[14px] bottom-0 right-[-19px]  -->
               <h1 class="mt-11 w-11 font-medium text-[10px] text-black fixed">Purpose of Trip</h1>
           </div>
+
           <img :src="arrow" class="h-5 w-5 mt-[14px] mr-[-19px] ml-[-19px]">
 
           <div v-if="requestType[1] == 'Company Business'" v-for="data in companyBusinessStepList" :class="[formStep > data.id ? 'bg-[#fff]' : formStep === data.id ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
@@ -648,6 +672,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
           <div v-if="requestType[1] == 'Taxi Voucher'" v-for="data in taxiVoucherStepList" :class="[formStep > data.id ? 'bg-[#fff]' : formStep === data.id ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
             <h1 class="mt-11 w-11 font-medium text-[10px]">{{ data.title }}</h1>
             <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" :class="data.id == 3 ? 'hidden' : 'block'">
+            <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > data.id ? 'block' : 'hidden'">
+          </div>
+
+          <div v-if="requestType[1] == 'Crewing'" v-for="data in crewingStepList" :class="[formStep > data.id ? 'bg-[#fff]' : formStep === data.id ? 'bg-[#d9d9d9]' : 'bg-white', circleStepBasicStylingClass]">
+            <h1 class="mt-11 w-11 font-medium text-[10px]">{{ data.title }}</h1>
+            <img :src=arrow class="absolute top-[14px] bottom-0 right-[-19px] h-5 w-5" :class="data.id == 4 ? 'hidden' : 'block'">
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > data.id ? 'block' : 'hidden'">
           </div>
   
@@ -769,23 +799,30 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                 <div :class="columnClass + ' mx-4 my-3'">
 
                   <label for="notesToTrip">
-                    Notes to Purpose of Trip
+                    Notes to Purpose of Trip<span class="text-[#f5333f]">*</span>
                   </label>
 
-                  <input id="notesToTrip" type="text" class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" placeholder="Notes" v-model="notesToPurposeOfTrip" />
+                  <input 
+                    id="notesToTrip" 
+                    type="text" 
+                    class="border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2 px-4 py-2" 
+                    placeholder="Notes" 
+                    v-model="notesToPurposeOfTrip"
+                    required
+                  />
 
                 </div>
 
-                <div v-if="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break' " :class="columnClass + ' mx-4 my-3'">
+                <div :class="columnClass + ' mx-4 my-3'">
                   
-                  <label for="attachment">File Attachment<span class="text-[#f5333f]">*</span></label>
+                  <label for="attachment">File Attachment<span v-if="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break' || requestType[1] === 'Company Business'" class="text-[#f5333f]">*</span></label>
                   
                   <input 
                     type="file" 
                     id="attachment" 
                     @change="updateFile" 
                     :class="inputStylingWithoutWidthClass" 
-                    required 
+                    :required="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break' || requestType[1] === 'Company Business'" 
                   />
 
                 </div>
@@ -795,43 +832,14 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                 <div :class="rowClass">
 
                   <!-- From -->
-                  <div class="w-full">
-                    <div :class="columnClass">
+                  <div :class="columnClass">
                       <span>From<span class="text-red-star">*</span></span>
                       <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" v-model="fromCity" required>
                         <option v-for="data in optionDataCity" :value="data.id">
                         {{ data.city_name }}
                         </option>
                       </select>
-                    </div>
                   </div>
-
-                  <!-- Zona -->
-                  <div class="w-full">
-
-                    <div :class="columnClass">
-                      
-                      <span>
-                        Zona<span class="text-red-star">*</span>
-                      </span>
-                      
-                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
-                      @change="fetchTLKByJobBand"
-                      placeholder="Zona" 
-                      v-model="zonaName" 
-                      required>
-                        <option v-for="data in optionDataZona" :value="data.zona_name">
-                          {{ data.zona_name }}
-                        </option>
-                      </select>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div :class="rowClass">
 
                   <!-- To -->
                   <div :class="columnClass">
@@ -842,17 +850,11 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       </option>
                     </select>
                   </div>
-                  
-                  <!-- TLK/Day -->
-                  <div :class="columnClass">
-                    <span>TLK/Day<span class="text-red-star">*</span></span>
-                    <input type="text" :class="inputStylingClass" placeholder="TLK/Day" v-model="TLKperDay" required disabled />
-                  </div>
 
                 </div>
 
                 <div :class="rowClass">
-                  
+
                   <!-- Date Departure -->
                   <div :class="columnClass">
                     <span>
@@ -860,18 +862,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                     </span>
                     <input v-model="departureDate" type="date" :class="inputStylingClass" :min="minDate" :max="returnDate" required>
                   </div>
-
-                  <!-- Total TLK -->
-                  <div :class="columnClass">
-                    <span>
-                      Total TLK<span class="text-red-star">*</span>
-                    </span>
-                    <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
-                  </div>
-
-                </div>
-
-                <div :class="rowClass">
 
                   <!-- Return Date -->
                   <div :class="columnClass">
@@ -881,7 +871,52 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       <input v-model="returnDate" :min="departureDate == '' ? minDate : departureDate" type="date" :class="inputStylingClass" placeholder="Date" required>
                   </div>
 
-                  <div :class="columnClass">
+                  <!-- <div :class="columnClass">
+                  </div> -->
+
+                </div>
+
+                <div :class="rowClass" class="hidden">
+
+                  <!-- Zona -->
+                  <div class="w-full invisible">
+
+<div :class="columnClass">
+  
+  <span>
+    Zona<span class="text-red-star">*</span>
+  </span>
+  
+  <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
+  @change="fetchTLKByJobBand"
+  placeholder="Zona" 
+  v-model="zonaName" 
+  required>
+    <option v-for="data in optionDataZona" :value="data.zona_name">
+      {{ data.zona_name }}
+    </option>
+  </select>
+
+</div>
+
+                  </div>
+                  
+                  <!-- TLK/Day -->
+                  <div :class="columnClass" class='invisible'>
+                    <span>TLK/Day<span class="text-red-star">*</span></span>
+                    <input type="text" :class="inputStylingClass" placeholder="TLK/Day" v-model="TLKperDay" required disabled />
+                  </div>
+
+                </div>
+
+                <div :class="rowClass" class="hidden">
+
+                  <!-- Total TLK -->
+                  <div :class="columnClass" class="invisible">
+                    <span>
+                      Total TLK<span class="text-red-star">*</span>
+                    </span>
+                    <input type="text" disabled v-model="totalTLK" :class="inputStylingClass" placeholder="Total" required>
                   </div>
 
                 </div>
@@ -1047,6 +1082,43 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                     
                   </div>
   
+              </div>
+
+              <div :class="formStep === 1 ? '' : 'pb-[80px]'" v-if="requestType[1] == 'Crewing'">
+                    
+                  <!-- step 3 form Traveller -->
+                  <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
+  
+  <button @click="isVisibleGuest = !isVisibleGuest" :class="addButtonStylingClass">
+    + Add Guest
+  </button>
+
+  <guestAsTravellerTable />
+
+                  </div>
+
+                  <!-- step 4 form Airlines -->
+                  <div class="px-2" :class="formStep == 3 ? 'block' : 'hidden'">
+  
+                      <button @click="isVisibleAirlines = !isVisibleAirlines" :class="addButtonStylingClass">
+                        + Add Airlines
+                      </button>
+
+                      <airlinesTable />
+
+                  </div>
+
+                  <!-- step 7 form Accomodation -->
+                  <div class="px-2" :class="formStep == 4 ? 'block' : 'hidden'">
+
+                    <button @click="isVisibleAccomodation = !isVisibleAccomodation" :class="addButtonStylingClass">
+                      + Add Accomodation
+                    </button>
+  
+                    <accomodationTable />
+
+                  </div>
+
               </div>
   
           </div>
