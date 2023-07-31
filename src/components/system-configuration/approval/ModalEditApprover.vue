@@ -255,7 +255,7 @@
     })
 
     let jobBandData = ref([])
-    let jobBandArray = ref(props.formContent)
+    let jobBandArray = ref(props.formContent[8])
 
     const fetchJobBand = async () => {
 
@@ -340,7 +340,7 @@
             
           </div>
 
-          <div :class="rowClass">
+          <!-- <div :class="rowClass">
 
               <div :class="columnClass">
                 <label for="minCA">
@@ -368,7 +368,7 @@
                 />
               </div>
 
-          </div>
+          </div> -->
   
           <div class="mb-3 flex items-center text-left">
 
@@ -398,7 +398,7 @@
                 Job Band<span class="text-red">*</span>
               </label>
 
-              {{ jobBandArray }}
+              <!-- {{ jobBandArray }} -->
 
               <Multiselect
                     id="jobband"
@@ -452,29 +452,39 @@
   
           <div class="overflow-x-auto block">
 
-            <table
-              class="table table-zebra table-compact border w-full rounded-lg"
+            <table class="table table-zebra table-compact border w-full rounded-lg"
             >
     
               <thead class="text-center font-Montserrat text-sm font-bold">
-                <tr>
-                  <th class="relative">
-                    <span class="flex justify-center">Level</span>
-                  </th>
-                  <th class="relative">
-                    <span class="flex justify-center">Authorities</span>
-                    <button class="absolute right-0 top-0 bottom-0">
-                      <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                    </button>
-                  </th>
-                  <th class="relative">
-                    <span class="flex justify-center">Approver Name</span>
-                    <button class="absolute right-1 top-0 bottom-0">
-                      <!-- <img :src="arrowicon" class="w-[9px] h-3" /> -->
-                    </button>
-                  </th>
-                  <th class="flex justify-center">Actions</th>
+
+                <tr class="">
+
+                    <th>
+                      <span class="flex justify-center">Level</span>
+                    </th>
+
+                    <th>
+                      <span class="flex justify-center">Authorities</span>
+                    </th>
+
+                    <th>
+                      <span class="flex justify-center">Approver Name</span>
+                    </th>
+
+                    <th>
+                      <span class="flex justify-center">Min Amount</span>
+                    </th>
+
+                    <th>
+                      <span class="flex justify-center">Max Amount</span>
+                    </th>
+
+                    <th class="flex justify-center">
+                      Actions
+                    </th>
+
                 </tr>
+
               </thead>
     
               <tbody class="bg-[#F5F5F5]">
@@ -494,7 +504,12 @@
                   </td>
 
                   <td>
-                    <select v-model="input.id_approval_auth" :id="index" :disabled="input.isEdit == false ? true : false" >
+                    <select 
+                      v-model="input.id_approval_auth" 
+                      class="border border-black rounded-lg approver"
+                      :id="index" 
+                      :disabled="input.isEdit == false ? true : false"
+                    >
                       <option v-for="data in addAuthoritiesData" :key="data.id" :value="data.id" :hidden="dropdownRemoveList.includes(data.id) ? true : false">
                           {{ data.auth_name }}
                       </option>
@@ -505,8 +520,40 @@
                   </td>
     
                   <td>
-                    <input type="text" class="px-2 border border-black" v-model="input.approverName" />
+                    <!-- <input type="text" class="px-2 border border-black approver" v-model="input.approverName" /> -->
+
+                    <select class="w-full border border-black rounded-lg approver" v-model="input.approverName">
+                      
+                      <option
+                        v-for="name in addAuthoritiesNameData"
+                        :key="name.sn_employee"
+                      >
+                            {{ name.employee_name }}
+                      </option>
+
+                    </select>
+                    
                   </td>
+
+                  <td>
+                        <input 
+                          class="border border-black rounded-lg limited p-1" 
+                          @input="formatCurrency('a', input)"
+                          id="minCA"
+                          v-model="input.show_min_ammount"
+                          placeholder="Amount"  
+                        />
+                      </td>
+
+                      <td>
+                        <input
+                          class="border border-black rounded-lg limited p-1"
+                          @input="formatCurrency('b', input)"
+                          id="maxCA"
+                          v-model="input.show_max_ammount"
+                          placeholder="Amount"
+                         />
+                      </td>
 
                   <td class="flex flex-wrap gap-4 justify-center" >
 
@@ -559,6 +606,8 @@
                   <td></td>
                   <td></td>
                   <td></td>
+                  <td></td>
+                  <td></td>
                   <td class="flex justify-center">
                     <img @click="addField(approverLines, currentAuthoritiesId)" class="cursor-pointer" :src="iconPlus" alt="">
                   </td>
@@ -606,7 +655,16 @@ th span {
 :deep(.modal-vue3-content) {
   max-height: 550px !important;
   width: fit-content !important;
-  max-width: 600px !important; 
+  /* max-width: 600px !important;  */
+}
+
+.approver {
+  width: 100px !important;
+  padding: 4px;
+}
+
+.limited {
+  width: 100px !important;
 }
 
 </style>
