@@ -9,7 +9,6 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import { ref, onMounted, watchEffect, watch } from "vue";
 import Api from "@/utils/Api";
 import { useMenuAccessStore } from "@/stores/savemenuaccess";
-import { resetTracking } from "@vue/reactivity";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -33,7 +32,7 @@ let Brand = ref("");
 let itemNames = ref("");
 let remark = ref("");
 const itemsTable = ref([]);
-const itemsTable2 = ref([]);
+const payload = ref([]);
 let disableCompany = ref(false);
 let disableSite = ref(false);
 let addModal = ref(false);
@@ -55,7 +54,6 @@ const props = defineProps({
 //   roleAccess: Array,
 //   unlockScrollbar:Boolean
 // })
-// console.log(props.unlockScrollbar)
 //for get company in select
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -103,9 +101,7 @@ const fetchBrandCompany = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/brand/get_by_site_id/${id_site}`);
-  // console.log(res)
   Brand.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
   fetchBrandCompany(id_site);
@@ -113,7 +109,6 @@ const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  // console.log(res)
   Warehouse.value = res.data.data;
   isDoneLoading.value = true;
 };
@@ -187,15 +182,25 @@ const addItem = async () => {
         nameWarehouse: warehouseName.value[index],
         namaBrand: brandName.value,
         namaUOM: uomName.value,
+        array_warehouse: selectedWarehouse.value,
       });
     }
-    console.log(itemsTable.value);
+    payload.value.push({
+      code_item: idItems.value,
+      item_name: itemNames.value,
+      id_brand: selectedBrand.value,
+      id_uom: selectedUOM.value,
+      alert_qty: alertQuantity.value,
+      id_company: selectedCompany.value,
+      id_site: selectedSite.value,
+      remarks: remark.value,
+      array_warehouse: selectedWarehouse.value,
+    });
     resetButCompanyDisable();
     return itemsTable;
   }
 };
 const removeItems = async (id) => {
-  // console.log(id)
   itemsTable.value.splice(id, 1);
   if (id == 0) {
     disableSite.value = false;
@@ -216,10 +221,7 @@ const save = async () => {
     });
     return false;
   } else {
-    const payload = {
-      array_multi: itemsTable.value,
-    };
-    Api.post("management_atk/store_multi/", payload)
+    Api.post("management_atk/store/", { array_atk: payload.value })
       .then((res) => {
         Swal.fire({
           position: "center",
@@ -240,12 +242,8 @@ const save = async () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        // console.log(error.response.data.message)
       });
   }
-  // console.log(router.go({path : '/managementitem'}))
-  // router.go({path : '/managementitem'})
-  // defineEmits(["unlockScrollbar"])
 };
 const coba = async () => {
   addModal.value = true;
@@ -363,25 +361,103 @@ watchEffect(() => {
             <hr />
           </div>
         </div>
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full">
+        <div class="grid grid-cols-2 px-6 items-center gap-2">
+          <div class="mb-4 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Warehouse<span class="text-red">*</span></label
+              >Item Name<span class="text-red">*</span></label
             >
-            <!-- <select
+            <input
+              type="text"
+              v-model="itemNames"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Item Name"
+              required
+            />
+          </div>
+
+          <div class="mb-4 w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm mx-2"
+              >ID Items<span class="text-red">*</span></label
+            >
+            <div
+              class="flex items-center border-b border-teal-500 py-2 mb-4 w-full mx-2"
+            >
+              <input
+                class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                v-model="idItems"
+                maxlength="9"
+                type="number"
+                placeholder="ID Item"
+                aria-label="Full name"
+              />
+              <button
+                class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded"
+                type="button"
+                @click="generateNumber"
+              >
+                <img :src="iconPlus" class="w-[10px] h-[10px]" />
+              </button>
+            </div>
+          </div>
+          <div class="mb-4 w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >UOM<span class="text-red">*</span></label
+            >
+            <select
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
-              v-model="selectedWarehouse"
+              v-model="selectedUOM"
             >
-              <option disabled selected>ATK Warehouse</option>
-              <option
-                v-for="(warehouse, i) in Warehouse"
-                :key="i"
-                :value="warehouse.id"
-              >
-                {{ warehouse.warehouse_name }}
+              <option disabled selected value="">UOM</option>
+              <option v-for="(uom, i) in UOM" :key="i" :value="uom.id">
+                {{ uom.uom_name }}
               </option>
-            </select> -->
+            </select>
+          </div>
+
+          <div class="mb-4 w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Alert Quantity<span class="text-red">*</span></label
+            >
+            <input
+              type="number"
+              v-model="alertQuantity"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Alert Quantity"
+              required
+            />
+          </div>
+          <div class="mb-4 w-full" v-if="company_code != '8000'">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Brand<span class="text-red">*</span></label
+            >
+            <select
+              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              required
+              v-model="selectedBrand"
+            >
+              <option disabled value="">Brand</option>
+              <option v-for="(brand, i) in Brand" :key="i" :value="brand.id">
+                {{ brand.brand_name }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4 w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Description</label
+            >
+            <input
+              type="text"
+              v-model="remark"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Description"
+              required
+            />
+          </div>
+          <div class="mb-4 w-full">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >ATK Warehouse<span class="text-red">*</span></label
+            >
             <Multiselect
               v-model="selectedWarehouse"
               mode="tags"
@@ -412,102 +488,6 @@ watchEffect(() => {
               </template>
             </Multiselect>
           </div>
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >UOM<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedUOM"
-            >
-              <option disabled selected value="">UOM</option>
-              <option v-for="(uom, i) in UOM" :key="i" :value="uom.id">
-                {{ uom.uom_name }}
-              </option>
-            </select>
-          </div>
-        </div>
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Item Name<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              v-model="itemNames"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Item Name"
-              required
-            />
-          </div>
-
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Alert Quantity<span class="text-red">*</span></label
-            >
-            <input
-              type="number"
-              v-model="alertQuantity"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Alert Quantity"
-              required
-            />
-          </div>
-        </div>
-        <!-- <div class="flex justify-between px-6 items-center gap-2"> -->
-        <div class="grid grid-cols-2 px-6 items-center gap-2">
-          <div class="mb-6 w-full" v-if="company_code != '8000'">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Brand<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedBrand"
-            >
-              <option disabled value="">Brand</option>
-              <option v-for="(brand, i) in Brand" :key="i" :value="brand.id">
-                {{ brand.brand_name }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Description</label
-            >
-            <input
-              type="text"
-              v-model="remark"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Description"
-              required
-            />
-          </div>
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm mx-2"
-              >ID Items<span class="text-red">*</span></label
-            >
-            <div
-              class="flex items-center border-b border-teal-500 py-2 mb-6 w-full mx-2"
-            >
-              <input
-                class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                v-model="idItems"
-                maxlength="9"
-                type="number"
-                placeholder="ID Item"
-                aria-label="Full name"
-              />
-              <button
-                class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded"
-                type="button"
-                @click="generateNumber"
-              >
-                <img :src="iconPlus" class="w-[10px] h-[10px]" />
-              </button>
-            </div>
-          </div>
         </div>
 
         <div class="flex justify-center py-2">
@@ -527,7 +507,7 @@ watchEffect(() => {
                 <th
                   class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
-                  Warehouse
+                  ATK Warehouse
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
