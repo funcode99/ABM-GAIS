@@ -124,23 +124,26 @@ watch(dialog, () => {
   if (props.data.id) {
     Object.assign(form.value, {
       ...props.data,
-      registration_date:
-        moment(props.data.registration_date, "yyyy-MM-DD").format(
-          "yyyy-MM-DD"
-        ) || null,
-      plate_date:
-        moment(props.data.plate_date, "yyyy-MM-DD").format("yyyy-MM-DD") ||
-        null,
-      kir_date:
-        moment(props.data.kir_date, "yyyy-MM-DD").format("yyyy-MM-DD") || null,
-      stickers_date:
-        moment(props.data.stickers_date, "yyyy-MM-DD").format("yyyy-MM-DD") ||
-        null,
-      start_date:
-        moment(props.data.start_date, "yyyy-MM-DD").format("yyyy-MM-DD") ||
-        null,
-      end_date:
-        moment(props.data.end_date, "yyyy-MM-DD").format("yyyy-MM-DD") || null,
+      registration_date: props.data.registration_date
+        ? moment(props.data.registration_date, "yyyy-MM-DD").format(
+            "yyyy-MM-DD"
+          )
+        : null,
+      plate_date: props.data.plate_date
+        ? moment(props.data.plate_date, "yyyy-MM-DD").format("yyyy-MM-DD")
+        : null,
+      kir_date: props.data.kir_date
+        ? moment(props.data.kir_date, "yyyy-MM-DD").format("yyyy-MM-DD")
+        : null,
+      stickers_date: props.data.stickers_date
+        ? moment(props.data.stickers_date, "yyyy-MM-DD").format("yyyy-MM-DD")
+        : null,
+      start_date: props.data.start_date
+        ? moment(props.data.start_date, "yyyy-MM-DD").format("yyyy-MM-DD")
+        : null,
+      end_date: props.data.end_date
+        ? moment(props.data.end_date, "yyyy-MM-DD").format("yyyy-MM-DD")
+        : null,
     })
   }
 })
