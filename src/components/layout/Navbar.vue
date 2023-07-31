@@ -10,6 +10,8 @@ import { useRouter } from "vue-router";
 
 let companyLogo = localStorage.getItem("company_logo");
 let userName = localStorage.getItem("username");
+let role = localStorage.getItem("id_role").replace(/"/g, "");
+let adminRole = role == "ADMTR" || role == "ADM" || role == "SUPADM";
 
 import Api from "@/utils/Api";
 
@@ -44,6 +46,7 @@ const getNotif = async () => {
   instanceArray = res.data.data;
   sortedData.value =
     res.data.message == "Success Get Data" ? instanceArray : [];
+  // console.log(instanceArray);
 };
 
 const getNotifClick = async () => {
@@ -52,9 +55,21 @@ const getNotifClick = async () => {
   const res = await Api.get("/notification/get_data");
 };
 
+const readNotif = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.post(`/notification/is_viewed/${id}`);
+  console.log(res);
+  // router.push({ path: "/" });
+};
+
 onBeforeMount(() => {
   getNotif();
 });
+
+function isAdminLink(data) {
+  return adminRole;
+}
 </script>
 
 <template>
@@ -138,18 +153,29 @@ onBeforeMount(() => {
                   :key="data.id"
                   class="border-2 py-2 rounded-box mb-2"
                 >
-                  <button>
-                    <a class="flex justify-start gap-2 items-center mx-1"
-                      ><img
-                        :src="user"
-                        class="background rounded-full w-[42px] h-[42px]"
-                      />
-                      <span class="text-start">
-                        {{ data.text }}
-                      </span>
-                    </a>
-                  </button>
+                  <!-- for notification user and approval & notification admin -->
+                  <router-link
+                    :to="
+                      isAdminLink(data)
+                        ? `/viewapprovalcanontravel/${data.id_document}`
+                        : `/viewcashadvancenontravel/${data.id_document}`
+                    "
+                    v-if="adminRole || role"
+                  >
+                    <button>
+                      <a class="flex justify-start gap-2 items-center mx-1">
+                        <img
+                          :src="user"
+                          class="background rounded-full w-[42px] h-[42px]"
+                        />
+                        <span class="text-start">
+                          {{ data.text }}
+                        </span>
+                      </a>
+                    </button>
+                  </router-link>
                 </li>
+
                 <li v-else class="border-2 py-2 rounded-box mb-2">
                   <button>
                     <a class="flex justify-start gap-2 items-center mx-1"

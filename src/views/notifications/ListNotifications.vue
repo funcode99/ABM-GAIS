@@ -21,7 +21,6 @@ const sidebar = useSidebarStore();
 const tabs = ref(["Notification", "Approval"]);
 const activeTab = ref(0);
 const role = localStorage.getItem("id_role").replace(/"/g, "");
-const showFullText = ref({});
 
 let sortedData = ref([]);
 let instanceArray = [];
@@ -191,18 +190,11 @@ const format_date = (value) => {
                     </span>
                   </td>
                   <td style="width: 20%">{{ data.name }}</td>
-                  <td style="width: 45%">
-                    <span
-                      :class="[
-                        'readmore-text',
-                        showFullText[data.id] ? 'show-full' : '',
-                      ]"
-                    >
-                      {{ data.text }}
-                    </span>
+                  <td style="width: 45%; white-space: pre-wrap">
+                    {{ data.text }}
                   </td>
 
-                  <td class="flex flex-wrap gap-2 justify-center">
+                  <td style="width: 10%">
                     <router-link
                       :to="`/viewcashadvancenontravel/${data.id_document}`"
                     >
@@ -328,17 +320,10 @@ const format_date = (value) => {
                     </span>
                   </td>
                   <td style="width: 20%">{{ data.name }}</td>
-                  <td style="width: 45%">
-                    <span
-                      :class="[
-                        'readmore-text',
-                        showFullText[data.id] ? 'show-full' : '',
-                      ]"
-                    >
-                      {{ data.text }}
-                    </span>
+                  <td style="width: 55%; white-space: pre-wrap">
+                    {{ data.text }}
                   </td>
-                  <td class="flex flex-wrap gap-2 justify-center">
+                  <td style="width: 10%">
                     <router-link
                       :to="`/viewapprovalcanontravel/${data.id_document}`"
                     >
@@ -434,20 +419,5 @@ tr th {
 .table-zebra tbody tr:hover td {
   background-color: rgb(193, 192, 192);
   cursor: pointer;
-}
-
-.readmore-text {
-  display: inline-block;
-  max-width: 350px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-
-.readmore-text:hover {
-  max-width: 400px;
-  white-space: nowrap;
-  word-break: break-word;
 }
 </style>
