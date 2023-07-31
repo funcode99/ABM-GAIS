@@ -122,7 +122,26 @@ watch(dialog, () => {
   setForm()
 
   if (props.data.id) {
-    Object.assign(form.value, props.data)
+    Object.assign(form.value, {
+      ...props.data,
+      registration_date:
+        moment(props.data.registration_date, "yyyy-MM-DD").format(
+          "yyyy-MM-DD"
+        ) || null,
+      plate_date:
+        moment(props.data.plate_date, "yyyy-MM-DD").format("yyyy-MM-DD") ||
+        null,
+      kir_date:
+        moment(props.data.kir_date, "yyyy-MM-DD").format("yyyy-MM-DD") || null,
+      stickers_date:
+        moment(props.data.stickers_date, "yyyy-MM-DD").format("yyyy-MM-DD") ||
+        null,
+      start_date:
+        moment(props.data.start_date, "yyyy-MM-DD").format("yyyy-MM-DD") ||
+        null,
+      end_date:
+        moment(props.data.end_date, "yyyy-MM-DD").format("yyyy-MM-DD") || null,
+    })
   }
 })
 
@@ -306,7 +325,6 @@ onMounted(async () => {
                 v-model="form.hull_no"
                 type="text"
                 placeholder="Hull No"
-                required
               />
             </div>
 
