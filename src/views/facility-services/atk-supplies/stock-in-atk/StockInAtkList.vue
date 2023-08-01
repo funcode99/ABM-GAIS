@@ -45,6 +45,10 @@ let instanceArray = [];
 let lengthCounter = 0;
 let lockScrollbar = ref(false);
 
+let statusForm = ref("add");
+let visibleModal = ref(false);
+let idItem = ref(0);
+
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
@@ -305,7 +309,6 @@ const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
-  // changeCompany()
 };
 onBeforeMount(() => {
   getSessionForSidebar();
@@ -329,10 +332,6 @@ onBeforeMount(() => {
       name: "Submitted",
     }
   );
-  // console.log(stockindata)
-  // instanceArray = stockindata;
-  // sortedData.value = instanceArray;
-  // lengthCounter = sortedData.value.length;
 });
 
 //for searching
@@ -346,18 +345,6 @@ const filteredItems = (search) => {
     search,
     pageMultiplier.value
   );
-  // sortedData.value = instanceArray;
-  // const filteredR = sortedData.value.filter((item) => {
-  //   (item.no_stock_in.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-  //   (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1);
-  //   return (
-  //     (item.no_stock_in.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-  //     (item.status.toLowerCase().indexOf(search.toLowerCase()) > -1)
-  //   );
-  // });
-  // sortedData.value = filteredR;
-  // lengthCounter = sortedData.value.length;
-  // onChangePage(1);
 };
 
 const getSessionForSidebar = () => {
@@ -367,6 +354,27 @@ const format_date = (value) => {
   if (value) {
     return moment(String(value)).format("DD-MM-YYYY");
   }
+};
+
+const openModal = (type, id) => {
+  visibleModal.value = true;
+  statusForm.value = type;
+  if (id) {
+    idItem.value = parseInt(id);
+  }
+};
+
+const closeModal = () => {
+  visibleModal.value = false;
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
+    pageMultiplier.value
+  );
 };
 </script>
 
@@ -403,18 +411,17 @@ const format_date = (value) => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
+              <label
+                @click="openModal('add', 0)"
+                for="my-modal-stock-in"
+                class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+                >+ Add Stock</label
+              >
               <ModalAdd
-                @close="
-                  fetchData(
-                    showingValue,
-                    selectedType,
-                    status,
-                    start_date,
-                    end_date,
-                    searchFilter,
-                    pageMultiplier
-                  )
-                "
+                @close="closeModal"
+                :status="statusForm"
+                :id="idItem"
+                v-if="visibleModal"
               />
 
               <button

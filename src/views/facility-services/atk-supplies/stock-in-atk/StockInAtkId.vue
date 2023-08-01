@@ -1,322 +1,308 @@
 <script setup>
-  import Navbar from "@/components/layout/Navbar.vue";
-  import Sidebar from "@/components/layout/Sidebar.vue";
-  import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
 
-  import arrow from "@/assets/request-trip-view-arrow.png";
-  import editicon from "@/assets/navbar/edit_icon.svg";
-  import deleteicon from "@/assets/navbar/delete_icon.svg";
-  import icondanger2 from "@/assets/icon-danger-circle.png";
-  import iconClose from "@/assets/navbar/icon_close.svg";
+import arrow from "@/assets/request-trip-view-arrow.png";
+import editicon from "@/assets/navbar/edit_icon.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import icondanger2 from "@/assets/icon-danger-circle.png";
+import iconClose from "@/assets/navbar/icon_close.svg";
+import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue";
 
-  import {
-    onBeforeMount,
-    ref
-  } from "vue";
-  import {
-    useRouter
-  } from 'vue-router'
-  import {
-    useSidebarStore
-  } from "@/stores/sidebar.js";
-  import Api from "@/utils/Api";
-  import Swal from "sweetalert2";
-  import moment from 'moment';
+import { onBeforeMount, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useSidebarStore } from "@/stores/sidebar.js";
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+import moment from "moment";
 
+const sidebar = useSidebarStore();
+const router = useRouter();
+let lengthCounter = 0;
+const idData = router.currentRoute.value.params.id;
+const idDetail = ref("");
+let stockName = ref("");
+let createdDate = ref("");
+let createdBy = ref("");
+let brandName = ref("");
+let warehouseName = ref("");
+let namaItem = ref("");
+let uomName = ref("");
+let Company = ref("");
+let Site = ref("");
+let Warehouse = ref("");
+let Item = ref("");
+let UOM = ref("");
+let UOMName = ref("");
+let idItems = ref("");
+let ItemsName = ref("");
+let alertQuantity = ref("");
+let Brand = ref("");
+let itemNames = ref("");
+let itemNamesSelect = ref("");
+let remark = ref("");
+let siteName = ref("");
+let companyName = ref("");
+let status = ref("");
+let statusValue = ref(false);
+let ItemTable = ref([]);
+let lockScrollbarEdit = ref(false);
+const selectedCompany = ref("");
+const selectedSite = ref("");
+const selectedWarehouse = ref("");
+const selectedBrand = ref("");
+const selectedUOM = ref("");
+let itemsTable = ref([]);
+const company_code = JSON.parse(localStorage.getItem("company_code"));
+let arrData = ref([]);
+let arrItem = ref([]);
 
-  const sidebar = useSidebarStore();
-  const router = useRouter()
-  let lengthCounter = 0;
-  const idDetail = ref("")
-  let stockName = ref("")
-  let createdDate = ref("")
-  let createdBy = ref("")
-  let brandName = ref("");
-  let warehouseName = ref("");
-  let namaItem = ref("")
-  let uomName = ref("")
-  let Company = ref("");
-  let Site = ref("");
-  let Warehouse = ref("");
-  let Item = ref("")
-  let UOM = ref("")
-  let UOMName = ref("")
-  let idItems = ref("")
-  let ItemsName = ref("")
-  let alertQuantity = ref("")
-  let Brand = ref("")
-  let itemNames = ref("")
-  let itemNamesSelect = ref("")
-  let remark = ref("")
-  let siteName = ref("")
-  let companyName = ref("")
-  let status = ref("")
-  let statusValue = ref(false)
-  let ItemTable = ref([])
-  let lockScrollbarEdit = ref(false);
-  const selectedCompany = ref("")
-  const selectedSite = ref("")
-  const selectedWarehouse = ref("")
-  const selectedBrand = ref("")
-  const selectedUOM = ref("")
-  let itemsTable = ref([])
-  const company_code = JSON.parse(localStorage.getItem("company_code"));
+let statusForm = ref("edit");
+let visibleModal = ref(false);
+let idItem = ref(0);
 
-  const fetchGetCompanyID = async (id_company) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/company/get/${id_company}`);
-    Company.value = res.data.data;
-    selectedCompany.value = id_company
-  };
+const fetchGetCompanyID = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  Company.value = res.data.data;
+  selectedCompany.value = id_company;
+};
 
-  const fetchSite2 = async (id, id_company) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/site/get_by_company/${id_company}`);
-    Site.value = res.data.data;
-    for (let index = 0; index < res.data.data.length; index++) {
-      const element = res.data.data[index];
-      if (id === element.id) {
-        selectedSite.value = id
-        changeSite(element.id)
-        // selectedSite2.value = id
-      }
+const fetchSite2 = async (id, id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if (id === element.id) {
+      selectedSite.value = id;
+      changeSite(element.id);
+      // selectedSite2.value = id
     }
-  };
-  const changeCompany = async (id_company) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/site/get_by_company/${id_company}`);
-    // console.log(res)
-    Site.value = res.data.data;
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const changeSite = async (id) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/warehouse/get_by_site_id/${id}`);
-    Warehouse.value = res.data.data;
-  };
-  const fetItems = async (id_warehouse) => {
-    // changeUomBrand(id, id_warehouse)
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/management_atk/get_by_warehouse_id/${id_warehouse}`);
-    // console.log(res.data.data)
-    Item.value = res.data.data;
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const changeUomBrand = async (id_item) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/management_atk/get_by_warehouse_id/${selectedWarehouse.value}`);
-    // console.log(res.data.data)
-    // Warehouse.value = res.data.data;
-    for (let index = 0; index < res.data.data.length; index++) {
-      const element = res.data.data[index];
-      if (id_item === element.id) {
-        selectedBrand.value = element.id_brand
-        selectedUOM.value = element.id_uom
-      }
-    }
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const fetchUOM = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get("/uom");
-    UOM.value = res.data.data;
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const fetchBrand = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get('/brand/');
-    // console.log(res)
-    Brand.value = res.data.data;
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const fetchDataById = async (id) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/stock_in/get/${id}`);
-    // console.log(res.data.data)
-    for (let index = 0; index < res.data.data.length; index++) {
-      const element = res.data.data[index];
-      fetchGetCompanyID(element.id_company)
-      fetchSite2(element.id_site, element.id_company)
-      companyName.value = element.company_name
-      stockName.value = element.no_stock_in
-      createdDate.value = format_date(element.created_at)
-      createdBy.value = element.name_created
-      siteName.value = element.site_name
-      status.value = element.status
-      // element.status == 'Submitted' ? !statusValue : statusValue
-    }
-
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const fetchDetailById = async (id) => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(`/stock_in/get_by_stock_in_id/${id}`);
-    // console.log(res.data.data)
-    for (let index = 0; index < res.data.data.length; index++) {
-      const element = res.data.data[index];
-      // fetchWarehouse(element.id_warehouse)
-      // fetItems(element.id_item, element.id_warehouse)
-      // alertQuantity.value = element.qty
-      // remark.value = element.remarks
-
-
-      ItemTable.value.push({
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-      })
-      itemsTable.value.push({
-        id_warehouse: element.id_warehouse,
-        remarks : element.remark,
-        id_item: element.id_item,
-        id_brand:element.id_brand,
-        id_uom: element.id_uom,
-        qty : element.qty,
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-      })
-    }
-
-  };
-  const addItem = async () => {
-    if (selectedCompany.value == '' || selectedSite.value == '' || selectedWarehouse.value == '' || itemNamesSelect
-      .value == '' || alertQuantity.value == '') {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: 'Data required Tidak Boleh Kosong',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      return false
-    } else {
-      const wh = Warehouse.value
-      for (let index = 0; index < wh.length; index++) {
-        const element = wh[index];
-        if (element.id == selectedWarehouse.value) {
-          warehouseName.value = element.warehouse_name
-        }
-      }
-      const br = Brand.value
-      for (let index = 0; index < br.length; index++) {
-        const element = br[index];
-        if (element.id == selectedBrand.value) {
-          brandName.value = element.brand_name
-        }
-      }
-      const uom = UOM.value
-      for (let index = 0; index < uom.length; index++) {
-        const element = uom[index];
-        if (element.id == selectedUOM.value) {
-          uomName.value = element.uom_name
-        }
-      }
-      const it = Item.value
-      for (let index = 0; index < it.length; index++) {
-        const element = it[index];
-        if (element.id == itemNamesSelect.value) {
-          namaItem.value = element.item_name
-        }
-      }
-      itemsTable.value.push({
-        id_company: selectedCompany.value,
-        // id_departement: '',
-        id_site: selectedSite.value,
-        id_warehouse: selectedWarehouse.value,
-        // id_employee : selectedEmployee.value,
-        remark: remark.value,
-        id_item: itemNamesSelect.value,
-        id_brand: selectedBrand.value,
-        id_uom: selectedUOM.value,
-        qty: alertQuantity.value,
-        alertQuantity: alertQuantity.value,
-        Warehouse: warehouseName.value,
-        brandName: brandName.value,
-        UOMName: uomName.value,
-        itemNames: namaItem.value
-      })
-
-      // resetButCompanyDisable()
-      return itemsTable
-    }
-  };
-  const resetButCompanyDisable = async () => {
-    disableSite.value = true
-    disableCompany.value = true
-    selectedWarehouse.value = ''
-    selectedUOM.value = ''
-    idItems.value = ''
-    alertQuantity.value = ''
-    itemNamesSelect.value = ''
-    remark.value = ''
-    selectedBrand.value = ''
-  };
-  const removeItems = async (id) => {
-
-    itemsTable.value.splice(id, 1)
-    if (id == 0) {
-      disableSite.value = false
-      disableCompany.value = false
-      reset()
-    }
-    // return itemsTable
   }
-  const save = async () => {
-    if (selectedCompany.value == '') {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: 'Data Di Table Tidak Boleh Kosong',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      return false
-    } else {
-      const token = JSON.parse(localStorage.getItem("token"));
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-      const payload = {
-        id_company: selectedCompany.value,
-        // id_departement : 1,
-        id_site: selectedSite.value,
-        // id_warehouse : selectedWarehouse.value,
-        // id_employee:selectedEmployee.value,
-        remarks: "",
-        // no_atk_request : stockName.value,
-        // array_detail: itemsTable.value
+};
+const changeCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  // console.log(res)
+  Site.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeSite = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id}`);
+  Warehouse.value = res.data.data;
+};
+const fetItems = async (id_warehouse) => {
+  // changeUomBrand(id, id_warehouse)
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(
+    `/management_atk/get_by_warehouse_id/${id_warehouse}`
+  );
+  // console.log(res.data.data)
+  Item.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const changeUomBrand = async (id_item) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(
+    `/management_atk/get_by_warehouse_id/${selectedWarehouse.value}`
+  );
+  // console.log(res.data.data)
+  // Warehouse.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if (id_item === element.id) {
+      selectedBrand.value = element.id_brand;
+      selectedUOM.value = element.id_uom;
+    }
+  }
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchUOM = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/uom");
+  UOM.value = res.data.data;
+  // console.log("ini data parent" + JSON.stringify(res.data.data));
+};
+const fetchBrand = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/brand/");
+  Brand.value = res.data.data;
+};
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/stock_in/get/${id}`);
+  arrData.value = res.data.data[0];
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    companyName.value = element.company_name;
+    stockName.value = element.no_stock_in;
+    createdDate.value = format_date(element.created_at);
+    createdBy.value = element.name_created;
+    siteName.value = element.site_name;
+    status.value = element.status;
+  }
+};
+const fetchDetailById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/stock_in/get_by_stock_in_id/${id}`);
+  arrItem.value = res.data.data;
+  
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    // fetchWarehouse(element.id_warehouse)
+    // fetItems(element.id_item, element.id_warehouse)
+    // alertQuantity.value = element.qty
+    // remark.value = element.remarks
+
+    ItemTable.value.push({
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+    });
+    itemsTable.value.push({
+      id_warehouse: element.id_warehouse,
+      remarks: element.remark,
+      id_item: element.id_item,
+      id_brand: element.id_brand,
+      id_uom: element.id_uom,
+      qty: element.qty,
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+    });
+  }
+};
+const addItem = async () => {
+  if (
+    selectedCompany.value == "" ||
+    selectedSite.value == "" ||
+    selectedWarehouse.value == "" ||
+    itemNamesSelect.value == "" ||
+    alertQuantity.value == ""
+  ) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Data required Tidak Boleh Kosong",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false;
+  } else {
+    const wh = Warehouse.value;
+    for (let index = 0; index < wh.length; index++) {
+      const element = wh[index];
+      if (element.id == selectedWarehouse.value) {
+        warehouseName.value = element.warehouse_name;
       }
-      Api.post(`stock_in/update_data/${idDetail.value}`, payload).then((res) => {
-        // Swal.fire({
-        //   position: "center",
-        //   icon: "success",
-        //   title: res.data.message,
-        //   showConfirmButton: false,
-        //   timer: 1500,
-        // });
-        // reset()
-        // lockScrollbarEdit.value = false
-        // fetchDataById(router.currentRoute.value.params.id)
-        // fetchDetailById(router.currentRoute.value.params.id)
-        save2(router.currentRoute.value.params.id)
-      }).catch((error) => {
+    }
+    const br = Brand.value;
+    for (let index = 0; index < br.length; index++) {
+      const element = br[index];
+      if (element.id == selectedBrand.value) {
+        brandName.value = element.brand_name;
+      }
+    }
+    const uom = UOM.value;
+    for (let index = 0; index < uom.length; index++) {
+      const element = uom[index];
+      if (element.id == selectedUOM.value) {
+        uomName.value = element.uom_name;
+      }
+    }
+    const it = Item.value;
+    for (let index = 0; index < it.length; index++) {
+      const element = it[index];
+      if (element.id == itemNamesSelect.value) {
+        namaItem.value = element.item_name;
+      }
+    }
+    itemsTable.value.push({
+      id_company: selectedCompany.value,
+      // id_departement: '',
+      id_site: selectedSite.value,
+      id_warehouse: selectedWarehouse.value,
+      // id_employee : selectedEmployee.value,
+      remark: remark.value,
+      id_item: itemNamesSelect.value,
+      id_brand: selectedBrand.value,
+      id_uom: selectedUOM.value,
+      qty: alertQuantity.value,
+      alertQuantity: alertQuantity.value,
+      Warehouse: warehouseName.value,
+      brandName: brandName.value,
+      UOMName: uomName.value,
+      itemNames: namaItem.value,
+    });
+
+    // resetButCompanyDisable()
+    return itemsTable;
+  }
+};
+const resetButCompanyDisable = async () => {
+  disableSite.value = true;
+  disableCompany.value = true;
+  selectedWarehouse.value = "";
+  selectedUOM.value = "";
+  idItems.value = "";
+  alertQuantity.value = "";
+  itemNamesSelect.value = "";
+  remark.value = "";
+  selectedBrand.value = "";
+};
+const removeItems = async (id) => {
+  itemsTable.value.splice(id, 1);
+  if (id == 0) {
+    disableSite.value = false;
+    disableCompany.value = false;
+    reset();
+  }
+  // return itemsTable
+};
+const save = async () => {
+  if (selectedCompany.value == "") {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Data Di Table Tidak Boleh Kosong",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    return false;
+  } else {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const payload = {
+      id_company: selectedCompany.value,
+      id_site: selectedSite.value,
+      remarks: "",
+    };
+    Api.post(`stock_in/update_data/${idDetail.value}`, payload)
+      .then((res) => {
+        save2(router.currentRoute.value.params.id);
+      })
+      .catch((error) => {
         Swal.fire({
           position: "center",
           icon: "error",
@@ -324,19 +310,20 @@
           showConfirmButton: false,
           timer: 1500,
         });
-      })
-    }
+      });
+  }
+};
+const save2 = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const payload = {
+    id_stock_in: idDetail.value,
+    array_detail: itemsTable.value,
+    // qty: alertQuantity.value,
+    // remarks: remark.value,
   };
-  const save2 = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const payload = {
-      id_stock_in: idDetail.value,
-      array_detail: itemsTable.value,
-      // qty: alertQuantity.value,
-      // remarks: remark.value,
-    }
-    Api.post(`stock_in/update_data_detail/${idDetail.value}`, payload).then((res) => {
+  Api.post(`stock_in/update_data_detail/${idDetail.value}`, payload)
+    .then((res) => {
       Swal.fire({
         position: "center",
         icon: "success",
@@ -345,13 +332,14 @@
         timer: 1500,
       });
       // reset()
-      lockScrollbarEdit.value = false
-      fetchDataById(router.currentRoute.value.params.id)
-      fetchDetailById(router.currentRoute.value.params.id)
-      ItemTable.value = []
-      itemsTable.value = []
+      lockScrollbarEdit.value = false;
+      fetchDataById(router.currentRoute.value.params.id);
+      fetchDetailById(router.currentRoute.value.params.id);
+      ItemTable.value = [];
+      itemsTable.value = [];
       // save2(router.currentRoute.value.params.id)
-    }).catch((error) => {
+    })
+    .catch((error) => {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -359,78 +347,94 @@
         showConfirmButton: false,
         timer: 1500,
       });
-    })
-
-  };
-  const reset = async () => {
-    selectedCompany.value = ''
-    selectedSite.value = ''
-    selectedWarehouse.value = ''
-    selectedUOM.value = ''
-    alertQuantity.value = ''
-    itemNamesSelect.value = ''
-    remark.value = ''
-    selectedBrand.value = ''
-  };
-  const editValue = async (id) => {
-    lockScrollbarEdit.value = true
-  };
-  const submit = async () => {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.post(`/stock_in/submit/${router.currentRoute.value.params.id}`);
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: res.data.message,
-      showConfirmButton: false,
-      timer: 1500,
     });
-    // reset()
-    router.push({
-      path: '/stockinatk'
-    })
-    // console.log(res.data.data)
+};
+const reset = async () => {
+  selectedCompany.value = "";
+  selectedSite.value = "";
+  selectedWarehouse.value = "";
+  selectedUOM.value = "";
+  alertQuantity.value = "";
+  itemNamesSelect.value = "";
+  remark.value = "";
+  selectedBrand.value = "";
+};
 
-
-    // console.log("ini data parent" + JSON.stringify(res.data.data));
-  };
-  const coba2 = async () => {
-    lockScrollbarEdit.value = false
-  }
-  onBeforeMount(() => {
-    getSessionForSidebar();
-    fetchDataById(router.currentRoute.value.params.id)
-    fetchDetailById(router.currentRoute.value.params.id)
-    idDetail.value = router.currentRoute.value.params.id
-    fetchUOM()
-    fetchBrand()
-    // console.log(router.currentRoute.value.params.id)
+const submit = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.post(
+    `/stock_in/submit/${router.currentRoute.value.params.id}`
+  );
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: res.data.message,
+    showConfirmButton: false,
+    timer: 1500,
   });
+  // reset()
+  router.push({
+    path: "/stockinatk",
+  });
+};
 
-  const getSessionForSidebar = () => {
-    sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-  };
-  const format_date = (value) => {
-    if (value) {
-      return moment(String(value)).format('DD-MM-YYYY')
-    }
-  };
+const openModal = (type, id) => {
+  visibleModal.value = true;
+  statusForm.value = type;
+  if (id) {
+    idItem.value = parseInt(id);
+  }
+};
+
+const closeModal = () => {
+  visibleModal.value = false;
+};
+
+const coba2 = async () => {
+  lockScrollbarEdit.value = false;
+};
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchDataById(router.currentRoute.value.params.id);
+  fetchDetailById(router.currentRoute.value.params.id);
+  idDetail.value = router.currentRoute.value.params.id;
+//   fetchUOM();
+//   fetchBrand();
+  // console.log(router.currentRoute.value.params.id)
+});
+
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD-MM-YYYY");
+  }
+};
 </script>
 
 <template>
-  <div class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden">
+  <div
+    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
+  >
     <Navbar />
     <div class="flex w-screen mt-[115px]">
       <Sidebar class="flex-none fixed" />
-      <div class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500" :class="[
+      <div
+        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+        :class="[
           lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
           sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]">
+        ]"
+      >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
           <div class="flex justify-between">
-            <router-link to="/stockinatk" class="flex items-center gap-2 py-4 mx-4">
+            <router-link
+              to="/stockinatk"
+              class="flex items-center gap-2 py-4 mx-4"
+            >
               <img :src="arrow" class="w-3 h-3" alt="" />
               <h3 class="text-blue font-semibold font-JakartaSans text-2xl">
                 {{ stockName }}
@@ -443,8 +447,9 @@
                 Draft
               </button> -->
               <span
-                class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[100px] h-[30px] border-blue bg-white">
-                {{status}}
+                class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[100px] h-[30px] border-blue bg-white"
+              >
+                {{ status }}
               </span>
               <!-- <button
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -459,18 +464,30 @@
             <div class="flex gap-2">
               <label
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
-                v-if="status == 'Draft'" @click="editValue(idDetail)" for="my-modal-stock-edit-atk">
+                v-if="status == 'Draft'"
+                @click="openModal('edit', idData)"
+                for="my-modal-stock-in"
+              >
                 Edit
               </label>
-              <button v-if="status == 'Draft'"
+              <button
+                v-if="status == 'Draft'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                @click="submit">
-                Submit
-              </button><br>
+                @click="submit"
+              >
+                Submit</button
+              ><br />
             </div>
           </div>
-
-          <input type="checkbox" v-if="lockScrollbarEdit == true" id="my-modal-stock-edit-atk" class="modal-toggle" />
+          <ModalAdd
+            @close="closeModal"
+            :status="statusForm"
+            :id="idItem"
+            v-if="visibleModal"
+            :dataArr="arrData"
+            :dataItem="arrItem"
+          />
+          <!-- <input type="checkbox" v-if="lockScrollbarEdit == true" id="my-modal-stock-edit-atk" class="modal-toggle" />
           <div v-if="lockScrollbarEdit == true" class="modal">
             <div class="modal-dialog bg-white w-3/5 rounded-2xl">
               <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl">
@@ -668,7 +685,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <!-- <div class="flex justify-between ml-10 mt-8">
             <div class="flex gap-2">
@@ -678,61 +695,97 @@
           <!-- FORM READ ONLY-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-3 pt-7">
             <div class="flex flex-col gap-2">
-
-              <span class="font-JakartaSans font-medium text-sm">Created Date</span>
-              <input type="text" disabled v-model="createdDate"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base" />
+              <span class="font-JakartaSans font-medium text-sm"
+                >Created Date</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="createdDate"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
             </div>
             <div class="flex flex-col gap-2">
-              <span class="font-JakartaSans font-medium text-sm">Created By</span>
-              <input type="text" disabled v-model="createdBy"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base" />
+              <span class="font-JakartaSans font-medium text-sm"
+                >Created By</span
+              >
+              <input
+                type="text"
+                disabled
+                v-model="createdBy"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
             </div>
           </div>
 
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
             <div class="flex flex-col gap-2">
-
               <span class="font-JakartaSans font-medium text-sm">Company</span>
-              <input type="text" disabled v-model="companyName"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base" />
+              <input
+                type="text"
+                disabled
+                v-model="companyName"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
             </div>
             <div class="flex flex-col gap-2">
-
               <span class="font-JakartaSans font-medium text-sm">Site</span>
-              <input type="text" disabled v-model="siteName"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base" />
+              <input
+                type="text"
+                disabled
+                v-model="siteName"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
             </div>
           </div>
           <!-- TAB & TABLE-->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]">
-            <div class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer">
-              <div class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"></div>
+            <div
+              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+            >
+              <div
+                class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
+              ></div>
               <p class="font-JakartaSans font-normal text-sm mx-8">Details</p>
             </div>
             <div class="overflow-x-auto">
               <table class="table table-compact w-full">
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
-                    <th class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       ATK Warehouse
                     </th>
-                    <th class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       ID Item
                     </th>
-                    <th class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Item Name
                     </th>
-                    <th class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Quantity
                     </th>
-                    <th class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs" v-if="company_code != '8000'">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      v-if="company_code != '8000'"
+                    >
                       Brand
                     </th>
-                    <th class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       UOM
                     </th>
-                    <th class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs">
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Remark
                     </th>
                     <!-- <th
@@ -742,13 +795,28 @@
                     </th> -->
                   </tr>
                 </thead>
-                <tbody class="font-JakartaSans font-normal text-xs" v-for="(value, ind) in ItemTable" :key="ind">
+                <tbody
+                  class="font-JakartaSans font-normal text-xs"
+                  v-for="(value, ind) in ItemTable"
+                  :key="ind"
+                >
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">{{ value.Warehouse }}</td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.Warehouse }}
+                    </td>
                     <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
-                    <td class="border border-[#B9B9B9]">{{ value.itemNames }}</td>
-                    <td class="border border-[#B9B9B9]">{{ value.alertQuantity }}</td>
-                    <td class="border border-[#B9B9B9]" v-if="company_code != '8000'">{{ value.brandName }}</td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.itemNames }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.alertQuantity }}
+                    </td>
+                    <td
+                      class="border border-[#B9B9B9]"
+                      v-if="company_code != '8000'"
+                    >
+                      {{ value.brandName }}
+                    </td>
                     <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                   </tr>
@@ -764,28 +832,30 @@
 </template>
 
 <style scoped>
-  .custom-card {
-    box-shadow: 0px -4px #015289;
-    border-radius: 4px;
-  }
+.custom-card {
+  box-shadow: 0px -4px #015289;
+  border-radius: 4px;
+}
 
-  .modal-box {
-    padding: 0;
-    overflow-y: hidden;
-    overscroll-behavior: contain;
-  }
+.modal-box {
+  padding: 0;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+}
 
-  .modal-box-inner-brand {
-    height: 450px;
-    --tw-scale-x: 1;
-    --tw-scale-y: 0.9;
-    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-    overflow-y: auto;
-    overflow-x: hidden;
-    overscroll-behavior-y: contain;
-  }
+.modal-box-inner-brand {
+  height: 450px;
+  --tw-scale-x: 1;
+  --tw-scale-y: 0.9;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+}
 
-  .inner-table {
-    overflow-x: auto;
-  }
+.inner-table {
+  overflow-x: auto;
+}
 </style>
