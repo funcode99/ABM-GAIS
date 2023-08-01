@@ -360,7 +360,7 @@ const editValue = async (id, type, detail_warehouse) => {
   );
   selectedUOM.value = fetchUOM(res.data.data[0].id_uom);
   itemNames.value = res.data.data[0].item_name;
-  alertQuantity.value = type == "view" ? res.data.data[0].alert_qty : "";
+  alertQuantity.value = res.data.data[0].alert_qty;
   selectedBrand.value = fetchBrand(
     res.data.data[0].id_brand,
     res.data.data[0].id_site
@@ -368,21 +368,32 @@ const editValue = async (id, type, detail_warehouse) => {
   remarks.value = res.data.data[0].remarks;
   idItems.value = res.data.data[0].code_item;
   selectedWarehouse.value = [];
-  if (type == "view") {
-    detail_warehouse.forEach((element) => {
-      selectedWarehouse.value.push(element.id_warehouse);
-    });
-  }
+  detail_warehouse.forEach((element) => {
+    selectedWarehouse.value.push(element.id_warehouse);
+  });
   lockScrollbarEdit.value = true;
+  let dataEdit = {
+    code_item: idItems.value,
+    item_name: itemNames.value,
+    id_brand: arrData.value.id_brand,
+    id_uom: arrData.value.id_uom,
+    alert_qty: alertQuantity.value,
+    id_company: arrData.value.id_company,
+    id_site: arrData.value.id_site,
+    remarks: remarks.value,
+    array_warehouse: selectedWarehouse.value,
+  };
+  payload.value = dataEdit;
   disabledField.value = type == "view" ? true : false;
 };
+
 const save = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-  Api.post(`/management_atk/update_data/${idS.value}`, {
-    array_atk: payload.value,
-  })
+  payload.value.array_warehouse = selectedWarehouse.value
+
+  Api.post(`/management_atk/update/${idS.value}`, payload.value)
     .then((res) => {
       Swal.fire({
         position: "center",
@@ -476,9 +487,6 @@ const openModal = (type, id) => {
 const resetButCompanyDisable = async () => {
   disableSite.value = true;
   disableCompany.value = true;
-  selectedWarehouse.value = [];
-  alertQuantity.value = "";
-  remarks.value = "";
 };
 
 onBeforeMount(() => {
@@ -507,19 +515,6 @@ const filteredItems = (search) => {
     pageMultiplier.value,
     selectedSite2.value
   );
-  // sortedData.value = instanceArray;
-  // const filteredR = sortedData.value.filter((item) => {
-  //   // console.log(item)
-  //   (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
-  //     (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-  //   return (
-  //     (item.code_item.toLowerCase().indexOf(search.toLowerCase()) > -1) ||
-  //     (item.item_name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-  //   );
-  // });
-  // sortedData.value = filteredR;
-  // lengthCounter = sortedData.value.length;
-  // onChangePage(1);
 };
 const perPage = async () => {
   // console.log(pageMultiplier.value)
@@ -536,8 +531,6 @@ const perPage = async () => {
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const selectAlert = (checked) => {
-  // sortedData.value = instanceArray;
-  // console.log(checked)
   if (checked === false) {
     valueChecked.value = 1;
     fetchData(
@@ -550,14 +543,6 @@ const selectAlert = (checked) => {
       pageMultiplier.value,
       selectedSite2.value
     );
-    // const filteredR = sortedData.value.filter((item) => {
-    // if(item.current_stock <= item.alert_qty){
-    //   return((item.alert_qty))
-    //   }
-    // });
-    // sortedData.value = filteredR;
-    // lengthCounter = sortedData.value.length;
-    // onChangePage(1);
   } else {
     valueChecked.value = 0;
     fetchData(
@@ -570,9 +555,6 @@ const selectAlert = (checked) => {
       pageMultiplier.value,
       selectedSite2.value
     );
-    // sortedData.value = instanceArray;
-    // lengthCounter = sortedData.value.length;
-    // onChangePage(1);
   }
 };
 
@@ -618,6 +600,7 @@ const addItem = async () => {
     arrData.value.remarks = remarks.value;
     warehouseName.value = [];
     warehouseId.value = [];
+    arrItem.value = [];
     const wh = Warehouse.value;
     for (let index = 0; index < wh.length; index++) {
       const element = wh[index];
@@ -984,17 +967,17 @@ const getSessionForSidebar = () => {
                       class="font-JakartaSans font-normal text-sm p-0"
                       v-if="id_role != 'EMPLY'"
                     >
-                      {{ data.real_stock == null ? "-" : data.real_stock }}
+                      {{ data.total_stock == null ? "-" : data.total_stock }}
                     </td>
                     <td
                       class="font-JakartaSans font-normal text-sm p-0"
                       v-if="id_role != 'EMPLY'"
                     >
-                      {{ data.booked_stock == null ? "-" : data.booked_stock }}
+                      {{ data.stock_booked == null ? "-" : data.stock_booked }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{
-                        data.current_stock == null ? "-" : data.current_stock
+                        data.stock_to_booked == null ? "-" : data.stock_to_booked
                       }}
                     </td>
                     <td
@@ -1002,7 +985,7 @@ const getSessionForSidebar = () => {
                       v-if="id_role != 'EMPLY'"
                     >
                       {{
-                        data.approve_stock == null ? "-" : data.approve_stock
+                        data.stock_to_approve == null ? "-" : data.stock_to_approve
                       }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
