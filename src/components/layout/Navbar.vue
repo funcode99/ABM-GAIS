@@ -46,7 +46,6 @@ const getNotif = async () => {
   instanceArray = res.data.data;
   sortedData.value =
     res.data.message == "Success Get Data" ? instanceArray : [];
-  // console.log(instanceArray);
 };
 
 const getNotifClick = async () => {
@@ -55,21 +54,31 @@ const getNotifClick = async () => {
   const res = await Api.get("/notification/get_data");
 };
 
-const readNotif = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.post(`/notification/is_viewed/${id}`);
-  console.log(res);
-  // router.push({ path: "/" });
+const readNotif = async (id, id_document) => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.post(`/notification/is_viewed/${id}`);
+  } catch (error) {
+    console.error("Error while updating is_viewed:", error);
+  }
+  router.push({ path: `/viewcashadvancenontravel/${id_document}` });
+};
+
+const readNotifApproval = async (id, id_document) => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.post(`/notification/is_viewed/${id}`);
+  } catch (error) {
+    console.error("Error while updating is_viewed:", error);
+  }
+  router.push({ path: `/viewapprovalcanontravel/${id_document}` });
 };
 
 onBeforeMount(() => {
   getNotif();
 });
-
-function isAdminLink(data) {
-  return adminRole;
-}
 </script>
 
 <template>
@@ -130,14 +139,10 @@ function isAdminLink(data) {
                   />
                 </svg>
                 <span
-                  v-if="sortedData.value != undefined || sortedData.length > 0"
                   class="badge badge-sm bg-[#F04438] border-none indicator-item"
-                  >{{ sortedData.length }}</span
-                >
-                <span
-                  v-else
-                  class="badge badge-sm bg-[#F04438] border-none indicator-item"
-                  >0</span
+                  >{{
+                    sortedData.filter((data) => data.is_viewed === 1).length
+                  }}</span
                 >
               </div>
             </button>
@@ -152,28 +157,30 @@ function isAdminLink(data) {
                   v-for="data in sortedData"
                   :key="data.id"
                   class="border-2 py-2 rounded-box mb-2"
+                  :style="{
+                    'background-color': data.is_viewed
+                      ? 'rgba(0, 0, 255, 0.1)'
+                      : 'transparent',
+                  }"
                 >
-                  <!-- for notification user and approval & notification admin -->
-                  <router-link
-                    :to="
-                      isAdminLink(data)
-                        ? `/viewapprovalcanontravel/${data.id_document}`
-                        : `/viewcashadvancenontravel/${data.id_document}`
+                  <button
+                    @click="
+                      data.text.includes(`requested your approval`)
+                        ? readNotifApproval(data.id, data.id_document)
+                        : readNotif(data.id, data.id_document)
                     "
                     v-if="adminRole || role"
                   >
-                    <button>
-                      <a class="flex justify-start gap-2 items-center mx-1">
-                        <img
-                          :src="user"
-                          class="background rounded-full w-[42px] h-[42px]"
-                        />
-                        <span class="text-start">
-                          {{ data.text }}
-                        </span>
-                      </a>
-                    </button>
-                  </router-link>
+                    <a class="flex justify-start gap-2 items-center mx-1">
+                      <img
+                        :src="user"
+                        class="background rounded-full w-[42px] h-[42px]"
+                      />
+                      <span class="text-start">
+                        {{ data.text }}
+                      </span>
+                    </a>
+                  </button>
                 </li>
 
                 <li v-else class="border-2 py-2 rounded-box mb-2">

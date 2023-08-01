@@ -15,8 +15,10 @@ import Api from "@/utils/Api";
 import moment from "moment";
 
 import { ref, onBeforeMount, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useSidebarStore } from "@/stores/sidebar.js";
 
+const router = useRouter();
 const sidebar = useSidebarStore();
 const tabs = ref(["Notification", "Approval"]);
 const activeTab = ref(0);
@@ -24,9 +26,6 @@ const role = localStorage.getItem("id_role").replace(/"/g, "");
 
 let sortedData = ref([]);
 let instanceArray = [];
-
-let showSelectADM = ref(false);
-let showSelectAll = ref(false);
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -110,6 +109,28 @@ const fetchNotifApproval = async (id) => {
   showingValueToApproval.value = instanceArrayApproval.to;
 };
 
+const readNotif = async (id, id_document) => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.post(`/notification/is_viewed/${id}`);
+  } catch (error) {
+    console.error("Error while updating is_viewed:", error);
+  }
+  router.push({ path: `/viewcashadvancenontravel/${id_document}` });
+};
+
+const readNotifApproval = async (id, id_document) => {
+  try {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.post(`/notification/is_viewed/${id}`);
+  } catch (error) {
+    console.error("Error while updating is_viewed:", error);
+  }
+  router.push({ path: `/viewapprovalcanontravel/${id_document}` });
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchNotifNonApproval();
@@ -185,7 +206,13 @@ const format_date = (value) => {
                     <span
                       class="flex flex-wrap justify-start items-center gap-4"
                     >
-                      <img :src="iconCircle" class="w-2 h-2" />
+                      <img
+                        v-if="data.is_viewed"
+                        :src="iconCircle"
+                        class="w-2 h-2"
+                      />
+                      <img v-if="!data.is_viewed" />
+
                       {{ format_date(data.date) }}
                     </span>
                   </td>
@@ -195,13 +222,9 @@ const format_date = (value) => {
                   </td>
 
                   <td style="width: 10%">
-                    <router-link
-                      :to="`/viewcashadvancenontravel/${data.id_document}`"
-                    >
-                      <button>
-                        <img :src="iconGoto" class="w-6 h-6" />
-                      </button>
-                    </router-link>
+                    <button @click="readNotif(data.id, data.id_document)">
+                      <img :src="iconGoto" class="w-6 h-6" />
+                    </button>
                   </td>
                 </tr>
               </tbody>
@@ -315,7 +338,12 @@ const format_date = (value) => {
                     <span
                       class="flex flex-wrap justify-start items-center gap-4"
                     >
-                      <img :src="iconCircle" class="w-2 h-2" />
+                      <img
+                        v-if="data.is_viewed"
+                        :src="iconCircle"
+                        class="w-2 h-2"
+                      />
+                      <img v-if="!data.is_viewed" />
                       {{ format_date(data.date) }}
                     </span>
                   </td>
@@ -324,13 +352,11 @@ const format_date = (value) => {
                     {{ data.text }}
                   </td>
                   <td style="width: 10%">
-                    <router-link
-                      :to="`/viewapprovalcanontravel/${data.id_document}`"
+                    <button
+                      @click="readNotifApproval(data.id, data.id_document)"
                     >
-                      <button>
-                        <img :src="iconGoto" class="w-6 h-6" />
-                      </button>
-                    </router-link>
+                      <img :src="iconGoto" class="w-6 h-6" />
+                    </button>
                   </td>
                 </tr>
               </tbody>
