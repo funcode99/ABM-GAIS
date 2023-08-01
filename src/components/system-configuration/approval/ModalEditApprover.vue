@@ -526,7 +526,10 @@
                     <!-- <input type="text" class="px-2 border border-black approver" v-model="input.approverName" /> -->
 
 
-                    <select class="w-full border border-black rounded-lg approver" v-model="input.approverName">
+                    <select 
+                      class="w-full border border-black rounded-lg approver" 
+                      v-model="input.approverName"  
+                    >
                       
                       <option
                         disabled
@@ -547,13 +550,13 @@
                       {{ approverLines[index].is_flight_fetch }} -->
 
                     <input 
+                    :disabled="input.isEdit == false ? true : false"
                       v-model="approverLines[index].another"
                       class="h-6 w-6" 
                       type="checkbox"
                       @click="approverLines[index].is_flight_fetch === 1 ? approverLines[index].is_flight_fetch = 0 : approverLines[index].is_flight_fetch = 1"
                       @change="approverLines[index].another === true ? approverLines[index].is_flight_fetch = 1 : approverLines[index].is_flight_fetch = 0"
-                      />
-
+                    />
 
                     <div v-if="approverLines[index].is_flight_fetch === 1 ? approverLines[index].another = true : approverLines[index].another = false"></div>
 
@@ -565,7 +568,8 @@
                           @input="formatCurrency('a', input)"
                           id="minCA"
                           v-model="approverLines[index].min_ammount"
-                          placeholder="Amount"  
+                          placeholder="Amount"
+                          :disabled="input.isEdit == false ? true : false"
                         />
                       </td>
 
@@ -576,6 +580,7 @@
                           id="maxCA"
                           v-model="approverLines[index].max_ammount"
                           placeholder="Amount"
+                          :disabled="input.isEdit == false ? true : false"
                          />
                       </td>
 
