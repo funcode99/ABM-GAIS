@@ -47,9 +47,9 @@
   let addCompanyData = ref([])
   let addDocumentData = ref([])
   let addAuthoritiesData = ref([])
+  let addAuthoritiesNameData = ref([props.formContent[4]])
   let addMenuData = ref([])
 
-  
   
   const formattedMinCA = parseFloat(minCA.value)
   minCA.value = formattedMinCA.toLocaleString("id-ID")
@@ -386,8 +386,6 @@
 
             </div>
 
-
-
           </div>
 
           <div class="mb-3 flex items-center text-left">
@@ -432,8 +430,6 @@
                         </div>
 
                       </template>
-
-                  
                 
               </Multiselect>
 
@@ -525,10 +521,11 @@
                     <select class="w-full border border-black rounded-lg approver" v-model="input.approverName">
                       
                       <option
-                        v-for="name in addAuthoritiesNameData"
-                        :key="name.sn_employee"
+                        disabled
+                        :class="inputStylingClass"
+                        v-for="name in approverLines[index].employee"
                       >
-                            {{ name.employee_name }}
+                            {{ name }}
                       </option>
 
                     </select>
@@ -540,7 +537,7 @@
                           class="border border-black rounded-lg limited p-1" 
                           @input="formatCurrency('a', input)"
                           id="minCA"
-                          v-model="input.show_min_ammount"
+                          v-model="approverLines[index].min_ammount"
                           placeholder="Amount"  
                         />
                       </td>
@@ -550,7 +547,7 @@
                           class="border border-black rounded-lg limited p-1"
                           @input="formatCurrency('b', input)"
                           id="maxCA"
-                          v-model="input.show_max_ammount"
+                          v-model="approverLines[index].max_ammount"
                           placeholder="Amount"
                          />
                       </td>
