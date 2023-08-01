@@ -63,7 +63,9 @@
       show_min_ammount: 0,
       show_max_ammount: 0,
       min_ammount: 0,
-      max_ammount: 0
+      max_ammount: 0,
+      is_flight: 0,
+      is_flight_checkbox: false,
     })
 
   }
@@ -327,6 +329,7 @@
                 <table class="table table-zebra table-compact border w-full rounded-lg">
         
                   <thead class="text-center font-Montserrat text-sm font-bold">
+
                     <tr class="">
 
                       <th>
@@ -342,6 +345,10 @@
                       </th>
 
                       <th>
+                        <span class="flex justify-center">Flight</span>
+                      </th>
+
+                      <th>
                         <span class="flex justify-center">Min Amount</span>
                       </th>
 
@@ -354,6 +361,7 @@
                       </th>
 
                     </tr>
+
                   </thead>
         
                   <tbody class="bg-[#F5F5F5]">
@@ -410,6 +418,10 @@
                       </td>
 
                       <td>
+                        <input class="h-6 w-6" type="checkbox" v-model="input.is_flight_checkbox" :value="input.is_flight_checkbox === false ? input.is_flight = 0 : input.is_flight = 1" />
+                      </td>
+
+                      <td>
                         <input 
                           class="border border-black rounded-lg limited p-1" 
                           @input="formatCurrency('a', input)"
@@ -443,6 +455,7 @@
         
                     <tr class='text-center'>
 
+                      <td></td>
                       <td></td>
                       <td></td>
                       <td></td>

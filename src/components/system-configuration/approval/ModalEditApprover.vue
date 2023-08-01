@@ -47,7 +47,6 @@
   let addCompanyData = ref([])
   let addDocumentData = ref([])
   let addAuthoritiesData = ref([])
-  let addAuthoritiesNameData = ref([props.formContent[4]])
   let addMenuData = ref([])
 
   
@@ -59,7 +58,8 @@
   
   let dropdownRemoveList = ref([])
   let authorities = ref('')
-  let approverLines = ref(props.formContent[4] || [])
+  let processedData = ref(props.formContent[4] || [])
+  let approverLines = ref(processedData.value)
 
   let levelValue = ref()
   let currentAuthoritiesId = ref()  
@@ -128,6 +128,7 @@
         } 
         else {
           approverLines.value.map((item, index) => {
+
             item.isEdit = false
             item.fromFetch = true
               if(index == idMatrix.length-1) {
@@ -207,9 +208,9 @@
         console.log('approval berhasil dihapus')
         emits('fetchApproval')
         
+      } else {
+        console.log('tidak masuk ke api')
       }
-
-      console.log('setelah masuk ke api')
 
       fieldType.splice(index, 1)
       dropdownRemoveList.value.splice(index-1, 1)
@@ -248,10 +249,15 @@
 
       fetchJobBand()
 
+      approverLines.value.map((item) => {
+        item.is_flight_fetch = item.is_flight
+      })
+
       addCompanyData.value = referenceFetch.fetchCompanyResult
       addMenuData.value = sysconfigFetch.fetchMenuResult
       addAuthoritiesData.value = sysconfigFetch.fetchApproverAuthoritiesResult
       addDocumentData.value = tmsFetch.fetchDocumentCodeResult
+    
     })
 
     let jobBandData = ref([])
@@ -268,9 +274,6 @@
       })
 
     }
-
-
-
 
 </script>
 
@@ -468,6 +471,10 @@
                     </th>
 
                     <th>
+                      <span class="flex justify-center">Flight</span>
+                    </th>
+
+                    <th>
                       <span class="flex justify-center">Min Amount</span>
                     </th>
 
@@ -518,6 +525,7 @@
                   <td>
                     <!-- <input type="text" class="px-2 border border-black approver" v-model="input.approverName" /> -->
 
+
                     <select class="w-full border border-black rounded-lg approver" v-model="input.approverName">
                       
                       <option
@@ -530,6 +538,25 @@
 
                     </select>
                     
+                  </td>
+
+                  <td>
+
+                      <!-- {{ approverLines[index].another }}
+                      {{ approverLines[index].is_flight }}
+                      {{ approverLines[index].is_flight_fetch }} -->
+
+                    <input 
+                      v-model="approverLines[index].another"
+                      class="h-6 w-6" 
+                      type="checkbox"
+                      @click="approverLines[index].is_flight_fetch === 1 ? approverLines[index].is_flight_fetch = 0 : approverLines[index].is_flight_fetch = 1"
+                      @change="approverLines[index].another === true ? approverLines[index].is_flight_fetch = 1 : approverLines[index].is_flight_fetch = 0"
+                      />
+
+
+                    <div v-if="approverLines[index].is_flight_fetch === 1 ? approverLines[index].another = true : approverLines[index].another = false"></div>
+
                   </td>
 
                   <td>
@@ -576,18 +603,30 @@
                       <img :src="closeIcon" class="w-5 h-5" />
                     </button>
 
-                    <button v-if="input.forAdd == false" type="button" 
-                      @click="input.forAdd = true">
-                      <img :src="editIcon" class="w-6 h-6" />
-                    </button>
+                    <!-- @click="input.forAdd = true" -->
+                    <button 
+                      v-if="input.forAdd == false" 
+                      type="button"
+                      @click="saveApproverLines(approverLines, index, idMatrixActual)"
+                    >
+                      <img :src="checkIcon" class="w-5 h-5" />
+                  </button>
+                  <!-- <img :src="editIcon" class="w-6 h-6" /> for Add false -->
 
-                    <button v-if="input.forAdd == false" type="button" @click="removeField(index, approverLines)">
+                    <button 
+                      v-if="input.forAdd == false" 
+                      type="button"
+                      @click="removeField(index, approverLines)"
+                    >
                       <img :src="deleteicon" class="w-6 h-6" />
                     </button>
 
                     <!-- <h1 v-if="input.forAdd == true"> confirm for add api</h1> -->
-                    <button v-if="input.forAdd == true" type='button' @click="saveApproverLines(approverLines, index, idMatrixActual)">
-                      <img :src="checkIcon" class="w-5 h-5" />
+                    <button 
+                      v-if="input.forAdd == true" 
+                      type='button'
+                    >
+                       for Add true
                     </button>
 
                     <button v-if="input.forAdd == true" type='button' 
@@ -600,6 +639,7 @@
                 </tr>
     
                 <tr class='text-center'>
+                  <td></td>
                   <td></td>
                   <td></td>
                   <td></td>
