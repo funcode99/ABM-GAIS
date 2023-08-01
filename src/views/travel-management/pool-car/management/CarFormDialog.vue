@@ -288,7 +288,7 @@ onMounted(async () => {
               class="v-text-field"
               v-model="form.type_name"
               type="text"
-              placeholder="Input Car Name"
+              placeholder="Input Vendor Name"
               required
             />
           </div>
