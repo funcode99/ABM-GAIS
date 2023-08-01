@@ -1,13 +1,12 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icondanger from "@/assets/icon-danger-circle.png";
-import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import { ref, onMounted, watch } from "vue";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
-const router = useRouter();
+
 let selectedCompany = ref("");
 let selectedSite = ref("");
 let selectedWarehouse = ref("");
@@ -15,7 +14,8 @@ let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")));
 let selectedUOM = ref("UOM");
 let selectedBrand = ref("");
 let brandName = ref("");
-let warehouseName = ref("");
+let warehouseName = ref([]);
+let warehouseId = ref([]);
 let namaItem = ref("");
 let uomName = ref("");
 let Company = ref("");
@@ -27,12 +27,18 @@ let idItems = ref("");
 let alertQuantity = ref("");
 let Brand = ref("");
 let itemNames = ref("");
+let codeItem = ref("");
 let remark = ref("");
 const itemsTable = ref([]);
 let disableCompany = ref(false);
 let disableSite = ref(false);
 let addModal = ref(false);
+let listWarehouse = ref([]);
+let qtyWarehouse = ref([]);
+let qtyInput = ref([]);
+
 const company_code = JSON.parse(localStorage.getItem("company_code"));
+const id_company = JSON.parse(localStorage.getItem("id_company"));
 
 const emits = defineEmits(["unlockScrollbar", "close"]);
 const fetchGetCompany = async () => {
@@ -40,18 +46,15 @@ const fetchGetCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const fetchGetCompanyID = async (id_company) => {
   changeCompany(id_company);
   const token = JSON.parse(localStorage.getItem("token"));
-  // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
   selectedCompany.value = id_company;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const fetchUOM = async () => {
@@ -59,16 +62,13 @@ const fetchUOM = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/uom");
   UOM.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const changeCompany = async (id_company) => {
-  // changeUomBrand(id_company)
-  // fetItems(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
-  // console.log(res)
+
   Site.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -77,7 +77,6 @@ const changeCompany = async (id_company) => {
       changeSite(element.id);
     }
   }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchBrand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -87,44 +86,41 @@ const fetchBrand = async () => {
   Brand.value = res.data.data;
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetItems = async (id_warehouse) => {
+const fetItems = async (id_company, id_site) => {
+  let payload = {
+    id_company: id_company,
+    id_site: id_site,
+  };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${id_warehouse}`
-  );
-  // console.log(res.data.data)
+  const res = await Api.get(`/management_atk/get/`, { params: payload });
   Item.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeUomBrand = async (id_item) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_company/${selectedCompany.value}`
-  );
-  // console.log(id_item)
-  // Warehouse.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id_item === element.id) {
-      selectedBrand.value = element.id_brand;
-      selectedUOM.value = element.id_uom;
-    }
-  }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  const res = await Api.get(`/management_atk/get/${id_item}`);
+  selectedBrand.value = res.data.data[0].id_brand;
+  selectedUOM.value = res.data.data[0].id_uom;
+  getWarehouseByIdItem(id_item);
 };
+
+const getWarehouseByIdItem = async (id_item) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/management_atk/get_by_atk_item_id/${id_item}`);
+  listWarehouse.value = res.data.data;
+};
+
 const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  // console.log(res)
   Warehouse.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  fetItems(id_company, id_site);
 };
 //get kondisi local storage
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
 };
@@ -133,11 +129,8 @@ const addItem = async () => {
   if (
     selectedCompany.value == "" ||
     selectedSite.value == "" ||
-    selectedWarehouse.value == "" ||
     selectedUOM.value == "" ||
-    itemNames.value == "" ||
-    alertQuantity.value == "" ||
-    selectedBrand.value == ""
+    itemNames.value == ""
   ) {
     Swal.fire({
       position: "center",
@@ -148,11 +141,16 @@ const addItem = async () => {
     });
     return false;
   } else {
-    const wh = Warehouse.value;
+    const wh = listWarehouse.value;
     for (let index = 0; index < wh.length; index++) {
       const element = wh[index];
-      if (element.id == selectedWarehouse.value) {
-        warehouseName.value = element.warehouse_name;
+      if (
+        Object.keys(qtyWarehouse.value).includes(
+          element.id_warehouse.toString()
+        )
+      ) {
+        warehouseName.value.push(element.warehouse_name + '-' + element.id_warehouse);
+        qtyInput.value.push(qtyWarehouse.value[element.id_warehouse]);
       }
     }
     const br = Brand.value;
@@ -174,24 +172,32 @@ const addItem = async () => {
       const element = it[index];
       if (element.id == itemNames.value) {
         namaItem.value = element.item_name;
+        codeItem.value = element.code_item;
       }
     }
-    itemsTable.value.push({
-      id_company: selectedCompany.value,
-      id_departement: "",
-      id_site: selectedSite.value,
-      id_warehouse: selectedWarehouse.value,
-      id_employee: selectedEmployee.value,
-      remarks: remark.value,
-      id_item: itemNames.value,
-      id_brand: selectedBrand.value,
-      id_uom: selectedUOM.value,
-      qty: alertQuantity.value,
-      nameWarehouse: warehouseName.value,
-      namaBrand: brandName.value,
-      namaUOM: uomName.value,
-      namItem: namaItem.value,
-    });
+
+    for (let index = 0; index < warehouseName.value.length; index++) {
+      if (qtyInput.value[index]) {
+        itemsTable.value.push({
+          id_company: selectedCompany.value,
+          id_departement: "",
+          id_site: selectedSite.value,
+          id_warehouse: parseInt(warehouseName.value[index].split("-")[1]),
+          id_employee: selectedEmployee.value,
+          remarks: remark.value,
+          id_item: itemNames.value,
+          id_brand: selectedBrand.value,
+          id_uom: selectedUOM.value,
+          qty: qtyInput.value[index],
+          nameWarehouse: warehouseName.value[index].split("-")[0],
+          namaBrand: brandName.value,
+          namaUOM: uomName.value,
+          namItem: namaItem.value,
+          codeItem: codeItem.value,
+        });
+      }
+    }
+
     resetButCompanyDisable();
     return itemsTable;
   }
@@ -206,6 +212,11 @@ const resetButCompanyDisable = async () => {
   itemNames.value = "";
   remark.value = "";
   selectedBrand.value = "";
+
+  warehouseName.value = [];
+  qtyInput.value = [];
+  listWarehouse.value = [];
+  qtyWarehouse.value = [];
 };
 const removeItems = async (id) => {
   itemsTable.value.splice(id, 1);
@@ -233,32 +244,32 @@ const save = async () => {
       id_company: selectedCompany.value,
       id_site: selectedSite.value,
       id_employee: selectedEmployee.value,
-      remarks: "",
       array_detail: itemsTable.value,
     };
-    Api.post("stock_in/store/", payload)
-      .then((res) => {
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: res.data.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        reset();
-        addModal.value = false;
-        emits("close");
-      })
-      .catch((error) => {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: error.response.data.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        // console.log(error.response.data.message)
-      });
+    console.log(payload)
+    // Api.post("stock_in/store/", payload)
+    //   .then((res) => {
+    //     Swal.fire({
+    //       position: "center",
+    //       icon: "success",
+    //       title: res.data.message,
+    //       showConfirmButton: false,
+    //       timer: 1500,
+    //     });
+    //     reset();
+    //     addModal.value = false;
+    //     emits("close");
+    //   })
+    //   .catch((error) => {
+    //     Swal.fire({
+    //       position: "center",
+    //       icon: "error",
+    //       title: error.response.data.message,
+    //       showConfirmButton: false,
+    //       timer: 1500,
+    //     });
+    //     // console.log(error.response.data.message)
+    //   });
   }
   // router.go({path : '/stockinatk'})
   // router.push({path: '/stockinatk'})
@@ -376,42 +387,13 @@ onMounted(() => {
             <hr />
           </div>
         </div>
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full">
-            <label
-              for="warehouse"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >ATK Warehouse<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedWarehouse"
-              @change="fetItems(selectedWarehouse)"
-            >
-              <option disabled selected>ATK Warehouse</option>
-              <option
-                v-for="(warehouse, i) in Warehouse"
-                :key="i"
-                :value="warehouse.id"
-              >
-                {{ warehouse.warehouse_name }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-6 w-full">
+        <div class="grid grid-cols-2 px-6 items-center gap-2">
+          <div class="mb-4 w-full">
             <label
               for="item_name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Item Name<span class="text-red">*</span></label
             >
-            <!-- <input
-                type="text"
-                v-model="itemNames"
-                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Item Name"
-                required
-              /> -->
             <select
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
@@ -424,9 +406,7 @@ onMounted(() => {
               </option>
             </select>
           </div>
-        </div>
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full">
+          <div class="mb-4 w-full">
             <label
               for="uom"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -445,25 +425,7 @@ onMounted(() => {
               </option>
             </select>
           </div>
-
-          <div class="mb-6 w-full">
-            <label
-              for="alert"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Quantity<span class="text-red">*</span></label
-            >
-            <input
-              type="number"
-              v-model="alertQuantity"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Quantity"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full" v-if="company_code != '8000'">
+          <div class="mb-4 w-full" v-if="company_code != '8000'">
             <label
               for="uom"
               class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -483,7 +445,7 @@ onMounted(() => {
             </select>
           </div>
           <div
-            class="mb-6"
+            class="mb-4"
             :class="company_code != '8000' ? 'w-full' : 'w-[50%]'"
           >
             <label
@@ -500,7 +462,31 @@ onMounted(() => {
             />
           </div>
         </div>
-
+        <div class="flex justify-between px-6 items-center gap-2">
+          <div class="mb-6 w-full">
+            <label
+              for="site"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Quantity ATK Warehouse<span class="text-red">*</span></label
+            >
+            <hr />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 px-6 items-center gap-2">
+          <div class="mb-4" v-for="data in listWarehouse" :key="data.id">
+            <label
+              for="id_item"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >{{ data.warehouse_name }}</label
+            >
+            <input
+              type="number"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              v-model="qtyWarehouse[data.id_warehouse]"
+              required
+            />
+          </div>
+        </div>
         <div class="flex justify-center py-2">
           <button
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
@@ -518,9 +504,13 @@ onMounted(() => {
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
-                  Warehouse
+                  ATK Warehouse
                 </th>
-
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
+                >
+                  ID Item
+                </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
@@ -560,12 +550,18 @@ onMounted(() => {
                   {{ items.nameWarehouse }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
+                  {{ items.codeItem }}
+                </td>
+                <td class="border border-[#B9B9B9] text-center">
                   {{ items.namItem }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.qty }}
                 </td>
-                <td class="border border-[#B9B9B9] text-center" v-if="company_code != '8000'">
+                <td
+                  class="border border-[#B9B9B9] text-center"
+                  v-if="company_code != '8000'"
+                >
                   {{ items.namaBrand }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
