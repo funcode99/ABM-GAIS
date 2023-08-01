@@ -6,6 +6,14 @@ import { ref, onMounted, watch } from "vue";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
+import { elements } from "chart.js";
+
+const props = defineProps({
+  status: String,
+  id: Number,
+  dataArr: [Array, Object],
+  dataItem: [Array, Object],
+});
 
 let selectedCompany = ref("");
 let selectedSite = ref("");
@@ -41,6 +49,8 @@ const company_code = JSON.parse(localStorage.getItem("company_code"));
 const id_company = JSON.parse(localStorage.getItem("id_company"));
 
 const emits = defineEmits(["unlockScrollbar", "close"]);
+
+// FETCH DATA
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -82,10 +92,9 @@ const fetchBrand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/brand/");
-  // console.log(res)
   Brand.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+
 const fetItems = async (id_company, id_site) => {
   let payload = {
     id_company: id_company,
@@ -125,6 +134,40 @@ const fetchCondition = async () => {
   id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
 };
 
+const fetchDataEdit = async () => {
+  itemsTable.value = [];
+
+  itemNames.value = props.dataItem[0].id_item;
+  changeUomBrand(itemNames.value);
+  remark.value = props.dataItem[0].remarks;
+  var obj = {};
+
+  props.dataItem.map((elements) => {
+    itemsTable.value.push({
+      id_company: selectedCompany.value,
+      id_departement: "",
+      id_site: selectedSite.value,
+      id_warehouse: elements.id_warehouse,
+      id_employee: selectedEmployee.value,
+      remarks: elements.remarks,
+      id_item: elements.id_item,
+      id_brand: elements.id_brand,
+      id_uom: elements.id_uom,
+      qty: elements.qty,
+      nameWarehouse: elements.warehouse_name,
+      namaBrand: elements.brand_name,
+      namaUOM: elements.uom_name,
+      namItem: elements.item_name,
+      codeItem: elements.code_item,
+      id:elements.id
+    });
+    obj[parseInt(elements.id_warehouse)] = elements.qty;
+  });
+  qtyWarehouse.value.push(obj);
+  qtyWarehouse.value = qtyWarehouse.value[0];
+};
+// END FETCH DATA
+
 const addItem = async () => {
   if (
     selectedCompany.value == "" ||
@@ -149,7 +192,9 @@ const addItem = async () => {
           element.id_warehouse.toString()
         )
       ) {
-        warehouseName.value.push(element.warehouse_name + '-' + element.id_warehouse);
+        warehouseName.value.push(
+          element.warehouse_name + "-" + element.id_warehouse
+        );
         qtyInput.value.push(qtyWarehouse.value[element.id_warehouse]);
       }
     }
@@ -220,13 +265,8 @@ const resetButCompanyDisable = async () => {
 };
 const removeItems = async (id) => {
   itemsTable.value.splice(id, 1);
-  if (id == 0) {
-    disableSite.value = false;
-    disableCompany.value = false;
-    reset();
-  }
-  // return itemsTable
 };
+
 const save = async () => {
   if (selectedCompany.value == "") {
     Swal.fire({
@@ -245,34 +285,38 @@ const save = async () => {
       id_site: selectedSite.value,
       id_employee: selectedEmployee.value,
       array_detail: itemsTable.value,
+      remarks: remark.value,
+      id_department: "",
+      id_cost_center: ""
     };
-    console.log(payload)
-    // Api.post("stock_in/store/", payload)
-    //   .then((res) => {
-    //     Swal.fire({
-    //       position: "center",
-    //       icon: "success",
-    //       title: res.data.message,
-    //       showConfirmButton: false,
-    //       timer: 1500,
-    //     });
-    //     reset();
-    //     addModal.value = false;
-    //     emits("close");
-    //   })
-    //   .catch((error) => {
-    //     Swal.fire({
-    //       position: "center",
-    //       icon: "error",
-    //       title: error.response.data.message,
-    //       showConfirmButton: false,
-    //       timer: 1500,
-    //     });
-    //     // console.log(error.response.data.message)
-    //   });
+
+    let api =
+      props.status === "add"
+        ? "stock_in/store/"
+        : `stock_in/update/${props.id}`;
+    Api.post(api, payload)
+      .then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        reset();
+        addModal.value = false;
+        emits("close");
+      })
+      .catch((error) => {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      });
   }
-  // router.go({path : '/stockinatk'})
-  // router.push({path: '/stockinatk'})
 };
 const coba = async () => {
   addModal.value = true;
@@ -295,24 +339,15 @@ onMounted(() => {
   fetchCondition();
   fetchUOM();
   fetchBrand();
+  if (props.status === "edit") {
+    fetchDataEdit();
+  }
 });
 </script>
 
 <template>
-  <label
-    @click="coba"
-    for="my-modal-stock-in"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add Stock</label
-  >
-
-  <input
-    type="checkbox"
-    v-if="addModal == true"
-    id="my-modal-stock-in"
-    class="modal-toggle"
-  />
-  <div class="modal" v-if="addModal == true">
+  <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
+  <div class="modal">
     <div class="modal-dialog bg-white w-3/5 rounded-2xl">
       <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl">
         <label
@@ -323,7 +358,8 @@ onMounted(() => {
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          Stock In
+          <span v-if="props.status === 'add'">Stock In</span>
+          <span v-else>Edit Stock In</span>
         </p>
       </nav>
 
@@ -446,11 +482,9 @@ onMounted(() => {
           </div>
           <div
             class="mb-4"
-            :class="company_code != '8000' ? 'w-full' : 'w-[50%]'"
+            :class="company_code != '8000'"
           >
-            <label
-              for="id_item"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Remarks</label
             >
             <input
