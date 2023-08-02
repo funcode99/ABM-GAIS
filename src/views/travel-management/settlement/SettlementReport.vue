@@ -54,7 +54,9 @@ const tableHead = [
   { Id: 4, title: "Requestor", jsonData: "employee_name" },
   { Id: 5, title: "CA No", jsonData: "nomor_ca" },
   { Id: 6, title: "Nominal Real", jsonData: "total_real" },
-  { Id: 7, title: "Status", jsonData: "status" },
+  { Id: 7, title: "Settlement Type", jsonData: "settlement_type" },
+  { Id: 8, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 9, title: "Status", jsonData: "status" },
 ];
 
 const getSessionForSidebar = () => {
@@ -133,6 +135,8 @@ const exportToExcel = () => {
     { title: "Requestor" },
     { title: "CA No" },
     { title: "Nominal Real" },
+    { title: "Settlement Type" },
+    { title: "Cost Center" },
     { title: "Status" },
   ];
 
@@ -147,7 +151,9 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
     worksheet.getCell(rowIndex + 2, 5).value = data.nomor_ca;
     worksheet.getCell(rowIndex + 2, 6).value = data.total_real;
-    worksheet.getCell(rowIndex + 2, 7).value = data.status;
+    worksheet.getCell(rowIndex + 2, 7).value = data.settlement_type;
+    worksheet.getCell(rowIndex + 2, 8).value = data.cost_center;
+    worksheet.getCell(rowIndex + 2, 9).value = data.status;
   });
 
   workbook.xlsx.writeBuffer().then((buffer) => {
@@ -180,7 +186,7 @@ const showClearButton = computed(() => {
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
-      <tableContainer>
+      <tableContainer style="overflow: auto">
         <tableTop>
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <div
@@ -234,7 +240,41 @@ const showClearButton = computed(() => {
           </div>
 
           <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
-            <div class="flex gap-6">
+            <div class="flex gap-2">
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Settlement Type
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedSettlement"
+                >
+                  <option disabled selected>Type</option>
+                  <option value="1">Claim</option>
+                  <option value="2">Refund</option>
+                  <option value="3">Equal</option>
+                </select>
+              </div>
+
+              <div class="flex flex-col pt-[2px]">
+                <p
+                  class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                >
+                  Cost Center
+                </p>
+                <select
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  v-model="selectedCostCenter"
+                >
+                  <option disabled selected>Type</option>
+                  <option value="1">Claim</option>
+                  <option value="2">Refund</option>
+                  <option value="3">Equal</option>
+                </select>
+              </div>
+
               <div class="flex flex-col pt-[2px]">
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
@@ -242,7 +282,7 @@ const showClearButton = computed(() => {
                   CA Type
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedCatype"
                 >
                   <option disabled selected>Type</option>
@@ -272,7 +312,7 @@ const showClearButton = computed(() => {
                   Status
                 </p>
                 <select
-                  class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="font-JakartaSans bg-white w-28 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="selectedStatus"
                 >
                   <option disabled selected>Status</option>
@@ -360,6 +400,8 @@ const showClearButton = computed(() => {
                 <td>{{ data.employee_name }}</td>
                 <td>{{ data.no_ca }}</td>
                 <td>{{ format_price(data.total_real) }}</td>
+                <td></td>
+                <td></td>
                 <td>{{ data.status }}</td>
               </tr>
             </tbody>
@@ -490,7 +532,7 @@ tr th {
 }
 
 .my-date {
-  width: 280px !important;
+  width: 200px !important;
 }
 
 input.nosubmit {
