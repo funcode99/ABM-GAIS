@@ -263,23 +263,6 @@ const format_date = (value) => {
             class="grid grid-flow-col auto-cols-max justify-between items-center mx-4 py-2"
           >
             <div class="flex flex-wrap items-center gap-4">
-              <!-- <div>
-                <p
-                  class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-                >
-                  Item
-                </p>
-                <select
-                  class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  v-model="selectedType"
-                >
-                  <option disabled selected>Item</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.name_item }}
-                  </option>
-                </select>
-              </div> -->
-
               <div class="flex flex-wrap gap-4 items-center">
                 <div>
                   <p
@@ -452,12 +435,6 @@ const format_date = (value) => {
                           <img :src="viewicon" class="w-6 h-6" v-else/>
                         </button>
                       </router-link>
-                      <!-- <router-link  to="/viewapprovalatkrrequest">
-                        <button>
-                          <img :src="iconClose" class="w-6 h-6" />
-                        </button>
-                      </router-link> -->
-                      <!-- <ModalRejectShortcutAtk /> -->
                     </td>
                   </tr>
                 </tbody>
