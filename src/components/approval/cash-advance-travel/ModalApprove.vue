@@ -90,14 +90,14 @@ const approve = () => {
             </div>
           </div>
 
-          <p class="font-JakartaSans font-medium text-sm py-2">Attachment</p>
+          <!-- <p class="font-JakartaSans font-medium text-sm py-2">Attachment</p>
 
           <input
             type="file"
             class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             placeholder="Notes"
             required
-          />
+          /> -->
 
           <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
           <input
