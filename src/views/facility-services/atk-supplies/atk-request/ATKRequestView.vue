@@ -8,6 +8,7 @@ import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import iconClose from "@/assets/navbar/icon_close.svg";
+import ModalAdd from "@/components/facility-services/atk-supplies/atk-request/ModalAddRequest.vue";
 
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -18,6 +19,10 @@ import moment from "moment";
 
 let dataApproval = ref([]);
 let tabId = ref(1);
+
+// for modal
+let statusForm = ref("edit");
+let visibleModal = ref(false);
 
 const sidebar = useSidebarStore();
 const router = useRouter();
@@ -59,6 +64,10 @@ let disableCompany = ref(false);
 let disableSite = ref(false);
 let itemsTable = ref([]);
 const id_role = JSON.parse(localStorage.getItem("id_role"));
+const company_code = JSON.parse(localStorage.getItem("company_code"));
+let dataArr = ref([]);
+let dataItem = ref([]);
+
 const widthType = id_role == "EMPLY" ? "w-[50%]" : "w-full";
 const fetchGetCompanyID = async (id_company) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -92,66 +101,31 @@ const changeSite = async (id) => {
   const res = await Api.get(`/warehouse/get_by_site_id/${id}`);
   Warehouse.value = res.data.data;
 };
-const fetItems = async (id_warehouse) => {
-  // changeUomBrand(id, id_warehouse)
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${id_warehouse}`
-  );
-  // console.log(res.data.data)
-  Item.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const changeUomBrand = async (id_item) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${selectedWarehouse.value}`
-  );
-  // console.log(res.data.data)
-  // Warehouse.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id_item === element.id) {
-      selectedBrand.value = element.id_brand;
-      selectedUOM.value = element.id_uom;
-    }
-  }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/request_atk/get/${id}`);
-  // console.log(res.data.data)
+  dataArr.value = res.data.data[0];
+
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    fetchGetCompanyID(element.id_company);
-    fetchSite2(element.id_site, element.id_company);
     companyName.value = element.company_name;
     stockName.value = element.no_atk_request;
     createdDate.value = format_date(element.created_at);
     createdBy.value = element.employee_name;
     siteName.value = element.site_name;
     status.value = element.status;
-    notes.value = element.notes;
+    notes.value = element.remarks;
   }
-
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
-  // console.log(res.data.data)
+
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    // fetchWarehouse(element.id_warehouse)
-    // fetItems(element.id_item, element.id_warehouse)
-    // alertQuantity.value = element.qty
-    // remark.value = element.remarks
     ItemTable.value.push({
       Warehouse: element.warehouse_name,
       itemNames: element.item_name,
@@ -162,6 +136,10 @@ const fetchDetailById = async (id) => {
       remark: element.remarks,
       qty_send: element.qty_send,
       qty_unsend: element.qty_unsend,
+      id_item: element.id_item,
+      id_brand: element.id_brand,
+      id_uom: element.id_uom,
+      qty: element.qty
     });
     itemsTable.value.push({
       Warehouse: element.warehouse_name,
@@ -173,10 +151,13 @@ const fetchDetailById = async (id) => {
       remark: element.remarks,
       qty_send: element.qty_send,
       qty_unsend: element.qty_unsend,
+      id_item: element.id_item,
+      id_brand: element.id_brand,
+      id_uom: element.id_uom,
+      qty: element.qty
     });
   }
-  // return itemsTable
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  dataItem.value = itemsTable.value;
 };
 const addItem = async () => {
   if (
@@ -255,15 +236,6 @@ const resetButCompanyDisable = async () => {
   remark.value = "";
   selectedBrand.value = "";
 };
-const removeItems = async (id) => {
-  itemsTable.value.splice(id, 1);
-  if (id == 0) {
-    disableSite.value = false;
-    disableCompany.value = false;
-    reset();
-  }
-  // return itemsTable
-};
 const save = async () => {
   if (selectedCompany.value == "") {
     Swal.fire({
@@ -296,10 +268,6 @@ const save = async () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        // reset()
-        // lockScrollbarEdit.value = false
-        // fetchDataById(router.currentRoute.value.params.id)
-        // fetchDetailById(router.currentRoute.value.params.id)
         save2(router.currentRoute.value.params.id);
       })
       .catch((error) => {
@@ -318,13 +286,9 @@ const save2 = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const payload = {
     id_atk_request: idDetail.value,
-    // id_departement : 1,
     id_item: itemNamesSelect.value,
     qty: alertQuantity.value,
-    // id_employee:selectedEmployee.value,
     remarks: remark.value,
-    // no_atk_request : stockName.value,
-    // array_detail: itemsTable.value
   };
   Api.post(`request_atk/update_data_detail/${idDetail.value}`, payload)
     .then((res) => {
@@ -339,7 +303,6 @@ const save2 = async () => {
       lockScrollbarEdit.value = false;
       fetchDataById(router.currentRoute.value.params.id);
       fetchDetailById(router.currentRoute.value.params.id);
-      // save2(router.currentRoute.value.params.id)
     })
     .catch((error) => {
       Swal.fire({
@@ -361,9 +324,7 @@ const reset = async () => {
   remark.value = "";
   selectedBrand.value = "";
 };
-const editValue = async (id) => {
-  lockScrollbarEdit.value = true;
-};
+
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -377,31 +338,9 @@ const submit = async () => {
     showConfirmButton: false,
     timer: 1500,
   });
-  // reset()
   router.push({
     path: "/atk-request",
   });
-  // console.log(res.data.data)
-
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const coba2 = async () => {
-  lockScrollbarEdit.value = false;
-};
-const fetchUOM = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/uom");
-  UOM.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const fetchBrand = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/brand/");
-  // console.log(res)
-  Brand.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const fetchHistoryApproval = async (id) => {
@@ -411,15 +350,27 @@ const fetchHistoryApproval = async (id) => {
   dataApproval.value = res.data.data;
 };
 
+const openModal = (type, id) => {
+  visibleModal.value = true;
+  statusForm.value = type;
+  if (id) {
+    idDetail.value = parseInt(id);
+  }
+};
+
+const closeModal = () => {
+  visibleModal.value = false;
+  fetchHistoryApproval(router.currentRoute.value.params.id);
+  fetchDataById(router.currentRoute.value.params.id);
+  fetchDetailById(router.currentRoute.value.params.id);
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchHistoryApproval(router.currentRoute.value.params.id);
   fetchDataById(router.currentRoute.value.params.id);
   fetchDetailById(router.currentRoute.value.params.id);
-  idDetail.value = router.currentRoute.value.params.id;
-  fetchUOM();
-  fetchBrand();
-  // console.log(router.currentRoute.value.params.id)
+  idDetail.value = parseInt(router.currentRoute.value.params.id);
 });
 
 const getSessionForSidebar = () => {
@@ -459,22 +410,11 @@ const format_date = (value) => {
               </h3>
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
-              <!-- <button
-                class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
-              >
-                Draft
-              </button> -->
               <span
                 class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[120px] h-[50px] border-blue bg-white text-center"
               >
                 {{ status }}
               </span>
-              <!-- <button
-                class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                @click="submit"
-              >
-                Submit
-              </button> -->
             </div>
           </div>
 
@@ -483,11 +423,20 @@ const format_date = (value) => {
               <label
                 v-if="status == 'Draft'"
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
-                @click="editValue(idDetail)"
-                for="my-modal-request-edit-atk"
+                @click="openModal('edit', 0)"
+                for="my-modal-stock-in"
               >
                 Edit
               </label>
+              <ModalAdd
+                @close="closeModal"
+                :status="statusForm"
+                :id="idDetail"
+                :data-arr="dataArr"
+                :data-item="dataItem"
+                v-if="visibleModal"
+              />
+
               <button
                 v-if="status == 'Draft'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -504,7 +453,7 @@ const format_date = (value) => {
             id="my-modal-request-edit-atk"
             class="modal-toggle"
           />
-          <div v-if="lockScrollbarEdit == true" class="modal">
+          <!-- <div v-if="lockScrollbarEdit == true" class="modal">
             <div class="modal-dialog bg-white w-3/5 rounded-2xl">
               <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl">
                 <label
@@ -673,7 +622,7 @@ const format_date = (value) => {
                 </div>
 
                 <div class="flex justify-between px-6 items-center gap-2">
-                  <div class="mb-6 w-full" v-if="id_role != 'EMPLY'">
+                  <div class="mb-6 w-full" v-if="company_code != '8000'">
                     <label
                       for="uom"
                       class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -750,7 +699,7 @@ const format_date = (value) => {
                           Quantity Rejected
                         </th>
                         <th
-                          v-if="id_role != 'EMPLY'"
+                          v-if="company_code != '8000'"
                           class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                         >
                           Brand
@@ -795,7 +744,7 @@ const format_date = (value) => {
                         </td>
                         <td
                           class="border border-[#B9B9B9] text-center"
-                          v-if="id_role != 'EMPLY'"
+                          v-if="company_code != '8000'"
                         >
                           {{ value.brandName }}
                         </td>
@@ -830,7 +779,7 @@ const format_date = (value) => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
           <!-- FORM READ ONLY-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-3 pt-7">
             <div class="flex flex-col gap-2">
@@ -890,7 +839,9 @@ const format_date = (value) => {
             <div class="flex flex-col gap-2"></div>
           </div>
           <!-- TAB & TABLE-->
-          <div class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]">
+          <div
+            class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
+          >
             <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
@@ -942,11 +893,6 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Warehouse
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
                       ID Item
                     </th>
                     <th
@@ -971,7 +917,7 @@ const format_date = (value) => {
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                      v-if="id_role != 'EMPLY'"
+                      v-if="company_code != '8000'"
                     >
                       Brand
                     </th>
@@ -998,9 +944,6 @@ const format_date = (value) => {
                   :key="ind"
                 >
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">
-                      {{ value.Warehouse }}
-                    </td>
                     <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.itemNames }}
@@ -1016,7 +959,7 @@ const format_date = (value) => {
                     </td>
                     <td
                       class="border border-[#B9B9B9]"
-                      v-if="id_role != 'EMPLY'"
+                      v-if="company_code != '8000'"
                     >
                       {{ value.brandName }}
                     </td>
@@ -1026,7 +969,7 @@ const format_date = (value) => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval" type="ATK"/>
+                <HistoryApproval :data-approval="dataApproval" type="ATK" />
               </div>
             </div>
           </div>

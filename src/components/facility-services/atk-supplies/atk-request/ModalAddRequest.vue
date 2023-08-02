@@ -7,7 +7,16 @@ import { ref, onMounted, watch } from "vue";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
+
+const props = defineProps({
+  status: String,
+  id: Number,
+  dataItem: [Object, Array],
+  dataArr: [Object, Array],
+});
+
 const router = useRouter();
+
 let selectedCompany = ref("");
 let selectedSite = ref("");
 let selectedWarehouse = ref("");
@@ -27,6 +36,7 @@ let idItems = ref("");
 let alertQuantity = ref("");
 let Brand = ref("");
 let itemNames = ref("");
+let codeItem = ref("");
 let remark = ref("");
 const itemsTable = ref([]);
 let disableCompany = ref(false);
@@ -40,18 +50,15 @@ const fetchGetCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const fetchGetCompanyID = async (id_company) => {
   changeCompany(id_company);
   const token = JSON.parse(localStorage.getItem("token"));
-  // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
   selectedCompany.value = id_company;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const fetchUOM = async () => {
@@ -59,12 +66,9 @@ const fetchUOM = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/uom");
   UOM.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const changeCompany = async (id_company) => {
-  // changeUomBrand(id_company)
-  // fetItems(id_company)
   disableCompany.value =
     JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false;
   disableSite.value =
@@ -81,50 +85,36 @@ const changeCompany = async (id_company) => {
       changeSite(element.id);
     }
   }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchBrand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/brand/");
-  // console.log(res)
   Brand.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetItems = async (id_warehouse) => {
+
+const fetItems = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${id_warehouse}`
-  );
-  // console.log(res.data.data)
+  const res = await Api.get(`/management_atk/get_by_site/${id_site}`);
   Item.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+
 const changeUomBrand = async (id_item) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${selectedWarehouse.value}`
-  );
-  // console.log(id_item)
-  // Warehouse.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id_item === element.id) {
-      selectedBrand.value = element.id_brand;
-      selectedUOM.value = element.id_uom;
-    }
-  }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  const res = await Api.get(`/management_atk/get/${id_item}`);
+
+  selectedBrand.value = res.data.data[0].id_brand;
+  selectedUOM.value = res.data.data[0].id_uom;
 };
+
 const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  // console.log(res)
   Warehouse.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+  fetItems(id_site);
 };
 //get kondisi local storage
 const fetchCondition = async () => {
@@ -133,11 +123,45 @@ const fetchCondition = async () => {
   id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
 };
 
+const fetchDataEdit = async () => {
+  itemsTable.value = [];
+
+  itemNames.value = props.dataItem[0].id_item;
+  changeUomBrand(itemNames.value);
+  remark.value = props.dataItem[0].remark;
+  alertQuantity.value = props.dataItem[0].qty
+
+  props.dataItem.map((elements) => {
+    itemsTable.value.push({
+      id_company: selectedCompany.value,
+      id_site: selectedSite.value,
+      id_warehouse: elements.id_warehouse,
+      id_employee: selectedEmployee.value,
+      remarks: elements.remarks,
+      id_item: elements.id_item,
+      id_brand: elements.id_brand ? elements.id_brand : "",
+      id_uom: elements.id_uom,
+      qty: elements.qty,
+      namaBrand: elements.brandName,
+      namaUOM: elements.UOMName,
+      namItem: elements.itemNames,
+      codeItem: elements.idItems,
+      id: elements.id,
+      remarks: elements.remark,
+    });
+  });
+};
+
+function checkExists(item) {
+  return itemsTable.value.some(function (el) {
+    return el.id_item === item;
+  });
+}
+
 const addItem = async () => {
   if (
     selectedCompany.value == "" ||
     selectedSite.value == "" ||
-    selectedWarehouse.value == "" ||
     selectedUOM.value == "" ||
     itemNames.value == "" ||
     alertQuantity.value == ""
@@ -177,24 +201,31 @@ const addItem = async () => {
       const element = it[index];
       if (element.id == itemNames.value) {
         namaItem.value = element.item_name;
+        codeItem.value = element.code_item;
       }
     }
-    itemsTable.value.push({
-      id_company: selectedCompany.value,
-      // id_departement: '',
-      id_site: selectedSite.value,
-      id_warehouse: selectedWarehouse.value,
-      // id_employee : selectedEmployee.value,
-      remarks: remark.value,
-      id_item: itemNames.value,
-      id_brand: selectedBrand.value,
-      id_uom: selectedUOM.value,
-      qty: alertQuantity.value,
-      nameWarehouse: warehouseName.value,
-      namaBrand: brandName.value,
-      namaUOM: uomName.value,
-      namItem: namaItem.value,
-    });
+    let checkData = checkExists(itemNames.value);
+    if (!checkData) {
+      itemsTable.value.push({
+        id_company: selectedCompany.value,
+        id_site: selectedSite.value,
+        id_warehouse: selectedWarehouse.value,
+        remarks: remark.value,
+        id_item: itemNames.value,
+        id_brand: selectedBrand.value,
+        id_uom: selectedUOM.value,
+        qty: alertQuantity.value,
+        nameWarehouse: warehouseName.value,
+        namaBrand: brandName.value,
+        namaUOM: uomName.value,
+        namItem: namaItem.value,
+        codeItem: codeItem.value,
+      });
+    } else {
+      itemsTable.value.map((element) => {
+        element.qty = alertQuantity.value;
+      });
+    }
     resetButCompanyDisable();
     return itemsTable;
   }
@@ -212,11 +243,6 @@ const resetButCompanyDisable = async () => {
 };
 const removeItems = async (id) => {
   itemsTable.value.splice(id, 1);
-  if (id == 0) {
-    disableSite.value = false;
-    disableCompany.value = false;
-    reset();
-  }
   // return itemsTable
 };
 const save = async () => {
@@ -234,14 +260,15 @@ const save = async () => {
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const payload = {
       id_company: selectedCompany.value,
-      // id_departement : 1,
       id_site: selectedSite.value,
-      // id_warehouse : selectedWarehouse.value,
-      // id_employee:selectedEmployee.value,
       remarks: "",
       array_detail: itemsTable.value,
     };
-    Api.post("request_atk/store", payload)
+    let api =
+      props.status === "add"
+        ? "request_atk/store"
+        : `request_atk/update_data/${props.id}`;
+    Api.post(api, payload)
       .then((res) => {
         Swal.fire({
           position: "center",
@@ -251,7 +278,6 @@ const save = async () => {
           timer: 1500,
         });
         reset();
-        addModal.value = false;
         emits("close");
       })
       .catch((error) => {
@@ -281,10 +307,15 @@ const reset = async () => {
   remark.value = "";
   selectedBrand.value = "";
 };
+
 onMounted(() => {
   fetchCondition();
   fetchUOM();
   fetchBrand();
+
+  if (props.status == "edit") {
+    fetchDataEdit();
+  }
 });
 </script>
 
@@ -365,42 +396,13 @@ onMounted(() => {
             <hr />
           </div>
         </div>
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full">
-            <label
-              for="warehouse"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >ATK Warehouse<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedWarehouse"
-              @change="fetItems(selectedWarehouse)"
-            >
-              <option disabled selected>ATK Warehouse</option>
-              <option
-                v-for="(warehouse, i) in Warehouse"
-                :key="i"
-                :value="warehouse.id"
-              >
-                {{ warehouse.warehouse_name }}
-              </option>
-            </select>
-          </div>
+        <div class="grid grid-cols-2 px-6 items-center gap-2">
           <div class="mb-6 w-full">
             <label
               for="item_name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
               >Item Name<span class="text-red">*</span></label
             >
-            <!-- <input
-                type="text"
-                v-model="itemNames"
-                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Item Name"
-                required
-              /> -->
             <select
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
@@ -413,8 +415,20 @@ onMounted(() => {
               </option>
             </select>
           </div>
-        </div>
-        <div class="flex justify-between px-6 items-center gap-2">
+          <div class="mb-6 w-full">
+            <label
+              for="alert"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Quantity<span class="text-red">*</span></label
+            >
+            <input
+              type="number"
+              v-model="alertQuantity"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Quantity"
+              required
+            />
+          </div>
           <div class="mb-6 w-full">
             <label
               for="uom"
@@ -435,23 +449,6 @@ onMounted(() => {
             </select>
           </div>
 
-          <div class="mb-6 w-full">
-            <label
-              for="alert"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Quantity<span class="text-red">*</span></label
-            >
-            <input
-              type="number"
-              v-model="alertQuantity"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Quantity"
-              required
-            />
-          </div>
-        </div>
-
-        <div class="flex justify-between px-6 items-center gap-2">
           <div class="mb-6 w-full" v-if="company_code != '8000'">
             <label
               for="uom"
@@ -507,7 +504,7 @@ onMounted(() => {
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
-                  ATK Warehouse
+                  ID Item
                 </th>
 
                 <th
@@ -546,7 +543,7 @@ onMounted(() => {
             <tbody class="font-JakartaSans font-normal text-xs">
               <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
                 <td class="border border-[#B9B9B9] text-center">
-                  {{ items.nameWarehouse }}
+                  {{ items.codeItem }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.namItem }}

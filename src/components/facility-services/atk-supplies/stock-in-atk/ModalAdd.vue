@@ -230,7 +230,6 @@ const addItem = async () => {
     for (let index = 0; index < warehouseName.value.length; index++) {
       if (qtyInput.value[index]) {
         let id_wh = parseInt(warehouseName.value[index].split("-")[1]);
-        console.log(checkExists(id_wh, itemNames.value));
         let checkData = checkExists(id_wh, itemNames.value);
         if (!checkData) {
           itemsTable.value.push({
