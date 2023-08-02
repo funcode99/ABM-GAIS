@@ -375,23 +375,24 @@ const editValue = async (id, type, detail_warehouse) => {
   let dataEdit = {
     code_item: idItems.value,
     item_name: itemNames.value,
-    id_brand: arrData.value.id_brand,
+    id_brand: arrData.value.id_brand ? arrData.value.id_brand : "",
     id_uom: arrData.value.id_uom,
     alert_qty: alertQuantity.value,
     id_company: arrData.value.id_company,
     id_site: arrData.value.id_site,
-    remarks: remarks.value,
+    remarks: remarks.value ? remarks.value : "",
     array_warehouse: selectedWarehouse.value,
   };
   payload.value = dataEdit;
+  console.log(payload.value)
   disabledField.value = type == "view" ? true : false;
 };
 
 const save = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
-Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-  payload.value.array_warehouse = selectedWarehouse.value
+  payload.value.array_warehouse = selectedWarehouse.value;
 
   Api.post(`/management_atk/update/${idS.value}`, payload.value)
     .then((res) => {
@@ -977,7 +978,9 @@ const getSessionForSidebar = () => {
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{
-                        data.stock_to_booked == null ? "-" : data.stock_to_booked
+                        data.stock_to_booked == null
+                          ? "-"
+                          : data.stock_to_booked
                       }}
                     </td>
                     <td
@@ -985,7 +988,9 @@ const getSessionForSidebar = () => {
                       v-if="id_role != 'EMPLY'"
                     >
                       {{
-                        data.stock_to_approve == null ? "-" : data.stock_to_approve
+                        data.stock_to_approve == null
+                          ? "-"
+                          : data.stock_to_approve
                       }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
@@ -1207,7 +1212,7 @@ const getSessionForSidebar = () => {
                                 </div>
                                 <div
                                   class="mb-4 w-full"
-                                  v-if="id_role != 'EMPLY'"
+                                  v-if="company_code != '8000'"
                                 >
                                   <label
                                     for="uom"
