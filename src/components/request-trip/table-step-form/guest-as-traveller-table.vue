@@ -61,6 +61,10 @@
 
 }
 
+      if(props.value.length === 0) {
+        submitGuestTraveller()
+      }
+
     watch(props, () => {
       if(props.value.length === 0) {
         submitGuestTraveller()

@@ -9,7 +9,8 @@
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
     const props = defineProps({
-        isOpen: Boolean        
+        isOpen: Boolean,
+        purposeType: String  
     })
 
     const emits = defineEmits(['fetchOtherTransportation', 'changeVisibility'])
@@ -116,11 +117,17 @@
     
                         <div :class="columnClass">
                             <div class="w-full">
+                                
                                 <label :class="labelStylingClass">
                                     Type of Transportation<span class="text-red-star">*</span>
                                 </label>
                                 <select :class="inputStylingClass" v-model="typeOfTransportation" required>
-                                    <option v-for="data in typeOfTransportData" :key="data.id" :value="data.id">
+                                    <option 
+                                        :class="props.purposeType === 'Company Business' & data.type_transportation === 'Rent Car' ? 'hidden' : ''"
+                                        v-for="data in typeOfTransportData" 
+                                        :key="data.id" 
+                                        :value="data.id"
+                                    >
                                     {{ data.type_transportation }}
                                     </option>
                                 </select>
