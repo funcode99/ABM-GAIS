@@ -30,12 +30,10 @@ const fetchPoolCarRequestById = async (requestId) => {
   }
 }
 
-const saveCarInspection = async (body) => {
+const saveCarInspection = async (body, progressEvent) => {
   try {
     const res = await Api.post(`${ENDPOINT}/store_check`, body, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      onUploadProgress: progressEvent,
     })
 
     return res

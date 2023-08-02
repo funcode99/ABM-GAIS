@@ -87,25 +87,58 @@ const getFormData = async () => {
 }
 
 const saveForm = async () => {
+  let progress = 0
   const body = {
     id_pool_car: route.params.id,
     odometer: form.value.odometer,
     is_usable: form.value.is_usable,
     notes: form.value.notes,
-    data: Object.entries(form.value.data).map((item) => {
-      return { id_detail_check: item[0], value: item[1], file: form.value.files[item[0]]  }
-    }),
-
-    // {
-    //     id_detail_check: 1,
-    //     value: 1,
-    //   },
   }
 
+  const data = Object.entries(form.value.data).map((item) => {
+    return {
+      id_detail_check: item[0],
+      value: item[1],
+      ...(form.value?.files[item[0]] && { file: form.value?.files[item[0]] }),
+    }
+  })
+
+  var form_data = new FormData()
+
+  for (var key in body) {
+    if (body[key]) form_data.append(key, body[key])
+  }
+
+  data.forEach((item, index) => {
+    for (var key in item) {
+      form_data.append(`data[${index}][${key}]`, item[key])
+    }
+  })
+
+  console.log(form_data)
+
+  Swal.fire({
+    title: "Saving Data",
+    html: "Progress <b></b> %",
+    allowEscapeKey: false,
+    allowOutsideClick: false,
+    showConfirmButton: false,
+    timerProgressBar: true,
+    didOpen: () => {
+      const b = Swal.getHtmlContainer().querySelector("b")
+      b.textContent = progress
+    },
+  })
 
   console.log(body)
 
-  // const res = await saveCarInspection(body)
+  const onUploadProgress = (progressEvent) => {
+    const { loaded, total } = progressEvent
+    progress = Math.floor((loaded * 100) / total)
+  }
+
+  // const res = await saveCarData(form_data, onUploadProgress)
+  const res = await saveCarInspection(form_data, onUploadProgress)
 
   if (res.data.success) {
     Swal.fire({
@@ -120,6 +153,10 @@ const saveForm = async () => {
 
     emits("success")
   }
+}
+
+const openImgUrl = (url) => {
+  window.open(url)
 }
 
 const triggerInputById = (elementId) => {
@@ -251,7 +288,12 @@ onMounted(async () => {
                       v-if="form.files[matrix.id_detail]"
                       class="rounded-full bg-error hover:bg-red"
                       type="button"
-                      @click="form.files[matrix.id_detail] = null"
+                      @click="
+                        () => {
+                          form.files[matrix.id_detail] = null
+                          delete form.files[matrix.id_detail]
+                        }
+                      "
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -270,6 +312,7 @@ onMounted(async () => {
                     </button>
                   </span>
                   <button
+                    v-if="isEditable"
                     type="button"
                     class="p-2 relative rounded-lg w-[150px] flex justify-around bg-white border border-primary text-primary"
                     @click="triggerInputById(`inputForm${index}`)"
@@ -298,6 +341,18 @@ onMounted(async () => {
                           d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15"
                         />
                       </svg>
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    class="p-2 relative rounded-lg w-[150px] flex justify-around bg-white border border-primary text-primary"
+                    @click="openImgUrl(matrix.path)"
+                  >
+                    <span
+                      class="w-[100px] truncate overflow-hidden text-xs text-slate-600"
+                    >
+                      {{ matrix.file }}
                     </span>
                   </button>
                 </div>

@@ -126,7 +126,7 @@ onMounted(async () => {
     <tableTop>
       <!-- Top -->
       <div
-        class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between align-middle mx-4 py-2"
+        class="flex w-[500px] flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between align-middle mx-4 py-2"
       >
         <PageTitle class="flex align-middle items-center gap-2 py-4 mx-4">
           <router-link
@@ -135,13 +135,13 @@ onMounted(async () => {
           >
             <img :src="left_chevron_icon" class="w-3 h-4 mr-3 self-center" />
 
-            <h1 class="text-blue font-semibold text-2xl">
+            <h1 class="text-blue font-semibold text-xl">
               {{ route.meta.title }}
             </h1>
           </router-link>
 
           <h1>
-            <span class="text-[#0a0a0a] font-semibold text-2xl">
+            <span class="text-[#0a0a0a] font-semibold text-xl">
               / {{ route.params.requestNumber }}
             </span>
           </h1>
