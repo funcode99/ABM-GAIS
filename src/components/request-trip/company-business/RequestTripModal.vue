@@ -23,6 +23,8 @@ import otherTransportationForm from '@/components/request-trip/modal-step-form/o
 import accomodationForm from '@/components/request-trip/modal-step-form/accomodation-form.vue'
 import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-advance-form.vue'
 
+    const emits = defineEmits('updateRequestTripTable')
+
     let employeeLoginData = ref([])
     let costCenterId = ref()
 
@@ -369,6 +371,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
       }
 
+      emits('updateRequestTripTable')
+
     }
 
     const submitRequestTrip = async () => {
@@ -704,7 +708,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             <img :src="check" class="absolute top-[12px] bottom-0 h-5 w-5" :class="formStep > data.id ? 'block' : 'hidden'">
           </div>
   
-  
         </div>
 
       <!-- add button for company business & site visit -->
@@ -734,7 +737,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
       <!-- Step 1 & 2 FORM & Step x TABLE -->
       <div class="modal-box-inner-inner mt-4">
-
           <div :class="formStep == 0 ? 'h-[250px]' : 'max-h-[500px]' ">
 
               <!-- Step 1 Requestor Info FORM -->
@@ -1167,7 +1169,6 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
               </div>
   
           </div>
-          
       </div>
 
       <!-- change step button -->
@@ -1206,7 +1207,11 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     </Modal>
 
     <!-- Step 3 Modal Add Guest as Traveller -->  
-    <guestAsTravellerForm :isOpen="isVisibleGuest" @changeVisibility="isVisibleGuest = false" @fetchTravellerGuest="fetchTravellerGuest" />
+    <guestAsTravellerForm 
+      :isOpen="isVisibleGuest" 
+      @changeVisibility="isVisibleGuest = false" 
+      @fetchTravellerGuest="fetchTravellerGuest" 
+    />
 
     <!-- Step 4 Modal Add Airlines -->
     <airlinesForm :isOpen="isVisibleAirlines" @changeVisibility="isVisibleAirlines = false" @fetchAirlines="fetchAirlines" />

@@ -225,7 +225,7 @@
 
               <div class="flex items-center gap-4">
 
-                <RequestTripModal />
+                <RequestTripModal @updateRequestTripTable="fetch" />
 
                 <button class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green">
                   <img :src="icon_receive" class="w-6 h-6" />
