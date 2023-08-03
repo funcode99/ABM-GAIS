@@ -31,7 +31,6 @@ const dateStart = ref();
 const dateEnd = ref();
 
 let sortedData = ref([]);
-let sortedbyASC = true;
 let instanceArray = [];
 let costCenter = ref([]);
 
@@ -58,7 +57,7 @@ const tableHead = [
   { Id: 5, title: "CA No", jsonData: "nomor_ca" },
   { Id: 6, title: "Nominal Real", jsonData: "total_real" },
   { Id: 7, title: "Settlement Type", jsonData: "settlement_type" },
-  { Id: 8, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 8, title: "Cost Center", jsonData: "cost_center_name" },
   { Id: 9, title: "Status", jsonData: "status" },
 ];
 
@@ -102,16 +101,7 @@ const fetchSettlementReport = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
-// const fetchCostCenter = async (companyID) => {
-//   companyID = localStorage.getItem("id_company");
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get(`/company/get_cost_center/${companyID}`);
-//   costCenter.value = res.data.data;
-// };
-
 const fetchCostCenter = async () => {
-  // companyID = localStorage.getItem("id_company");
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get_cost_center");
@@ -142,6 +132,7 @@ const resetData = () => {
   selectedCatype.value = "";
   selectedStatus.value = "";
   selectedCostCenter.value = "";
+  selectedSettlement.value = "";
   dateStart.value = "";
   dateEnd.value = "";
   date.value = null;
@@ -176,7 +167,7 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 5).value = data.nomor_ca;
     worksheet.getCell(rowIndex + 2, 6).value = data.total_real;
     worksheet.getCell(rowIndex + 2, 7).value = data.settlement_type;
-    worksheet.getCell(rowIndex + 2, 8).value = data.cost_center;
+    worksheet.getCell(rowIndex + 2, 8).value = data.cost_center_name;
     worksheet.getCell(rowIndex + 2, 9).value = data.status;
   });
 
@@ -424,8 +415,8 @@ const showClearButton = computed(() => {
                 <td>{{ data.employee_name }}</td>
                 <td>{{ data.no_ca }}</td>
                 <td>{{ format_price(data.total_real) }}</td>
-                <td></td>
-                <td></td>
+                <td>{{ data.settlement_type }}</td>
+                <td>{{ data.cost_center_name }}</td>
                 <td>{{ data.status }}</td>
               </tr>
             </tbody>
@@ -450,7 +441,7 @@ const showClearButton = computed(() => {
               </tr>
             </thead>
 
-            <SkeletonLoadingTable :column="7" :row="5" />
+            <SkeletonLoadingTable :column="9" :row="5" />
           </tableData>
 
           <div v-else>
@@ -476,7 +467,7 @@ const showClearButton = computed(() => {
               <tbody>
                 <tr>
                   <td
-                    colspan="7"
+                    colspan="9"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Data not Found
