@@ -7,6 +7,14 @@ import { ref, onMounted, watch } from "vue";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import { useRouter } from "vue-router";
+
+const props = defineProps({
+  status: String,
+  id: Number,
+  dataArr: [Array, Object],
+  dataItem: [Array, Object],
+});
+
 const router = useRouter();
 let selectedCompany = ref("");
 let selectedSite = ref("");
@@ -44,18 +52,15 @@ const fetchGetCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const fetchGetCompanyID = async (id_company) => {
   changeCompany(id_company);
   const token = JSON.parse(localStorage.getItem("token"));
-  // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
   selectedCompany.value = id_company;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const fetchUOM = async () => {
@@ -63,17 +68,12 @@ const fetchUOM = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/uom");
   UOM.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 const changeCompany = async (id_company) => {
-  //  fetchBrandCompany(id_company)
-  // changeUomBrand(id_company)
-  // fetItems(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
-  // console.log(res)
   Site.value = res.data.data;
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -82,15 +82,12 @@ const changeCompany = async (id_company) => {
       changeSite(element.id);
     }
   }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchBrand = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/brand/");
-  // console.log(res)
   Brand.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetItems = async (id_warehouse) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -98,36 +95,29 @@ const fetItems = async (id_warehouse) => {
   const res = await Api.get(
     `/management_atk/get_by_warehouse_id/${id_warehouse}`
   );
-  // console.log(res.data.data)
   Item.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeUomBrand = async (id_item) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_company/${selectedCompany.value}`
-  );
-  // console.log(res.data.data)
-  // Warehouse.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id_item === element.id) {
-      selectedBrand.value = element.id_brand;
-      selectedUOM.value = element.id_uom;
-      alertQuantity.value = element.current_stock;
+  const res = await Api.get(`/management_atk/get/${id_item}`);
+  selectedBrand.value = res.data.data[0].id_brand;
+  selectedUOM.value = res.data.data[0].id_uom;
+
+    for (let index = 0; index < res.data.data[0].array_warehouse.length; index++) {
+      const element = res.data.data[0].array_warehouse[index];
+      if (selectedWarehouse.value === element.id_warehouse) {
+        alertQuantity.value = element.current_stock;
+      }
     }
-  }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  // console.log(res)
   Warehouse.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
+
 //get kondisi local storage
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
@@ -137,6 +127,33 @@ const fetchCondition = async () => {
     { value: "addition", name: "increase" },
     { value: "substraction", name: "decrease" }
   );
+};
+
+const fetchDataEdit = async () => {
+  itemsTable.value = [];
+  itemNames.value = props.dataItem[0].id_item;
+  remark.value = props.dataItem[0].remarks;
+
+  props.dataItem.map((elements) => {
+    itemsTable.value.push({
+      id_company: selectedCompany.value,
+      id_departement: "",
+      id_site: selectedSite.value,
+      id_warehouse: elements.id_warehouse,
+      id_employee: selectedEmployee.value,
+      remarks: elements.remark ? elements.remark : "",
+      id_item: elements.id_item,
+      id_brand: elements.id_brand ? elements.id_brand : "",
+      id_uom: elements.id_uom,
+      qtyOpname: elements.QuantityAdjusment,
+      nameWarehouse: elements.Warehouse,
+      namaBrand: elements.brandName,
+      namaUOM: elements.UOMName,
+      namItem: elements.itemNames,
+      codeItem: elements.idItems,
+      id: elements.id,
+    });
+  });
 };
 
 const addItem = async () => {
@@ -159,8 +176,6 @@ const addItem = async () => {
     });
     return false;
   } else {
-    // console.log(selectedAdjusment.value)
-    // console.log(quantityOpname.value - alertQuantity.value)
     if (selectedAdjusment.value == "substraction") {
       if (alertQuantity.value - quantityOpname.value < 0) {
         Swal.fire({
@@ -209,7 +224,7 @@ const addItem = async () => {
       id_employee: selectedEmployee.value,
       remarks: remark.value,
       id_item: itemNames.value,
-      id_brand: selectedBrand.value,
+      id_brand: selectedBrand.value ? selectedBrand.value : "",
       id_uom: selectedUOM.value,
       qty: alertQuantity.value,
       qtyOpname: quantityOpname.value,
@@ -223,7 +238,7 @@ const addItem = async () => {
     itemsTable2.value.push({
       id_item: itemNames.value,
       id_warehouse: selectedWarehouse.value,
-      id_brand: selectedBrand.value,
+      id_brand: selectedBrand.value ? selectedBrand.value : "",
       id_uom: selectedUOM.value,
       adjustment_type: selectedAdjusment.value,
       qty_adjustment: quantityOpname.value,
@@ -299,10 +314,8 @@ const save = async () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        // console.log(error.response.data.message)
       });
   }
-  // router.push({path: '/stock-opname-atk'})
 };
 const coba = async () => {
   addModal.value = true;
@@ -327,28 +340,19 @@ onMounted(() => {
   fetchCondition();
   fetchUOM();
   fetchBrand();
+  if (props.status === "edit") {
+    fetchDataEdit();
+  }
 });
 </script>
 
 <template>
-  <label
-    @click="coba"
-    for="my-modal-stock-in"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-    >+ Add Stock Opname</label
-  >
-
-  <input
-    type="checkbox"
-    v-if="addModal == true"
-    id="my-modal-stock-in"
-    class="modal-toggle"
-  />
-  <div class="modal" v-if="addModal == true">
+  <input type="checkbox" id="my-modal-stock-in" class="modal-toggle" />
+  <div class="modal">
     <div class="modal-dialog bg-white w-3/5 rounded-2xl">
       <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl">
         <label
-          @click="coba2"
+          @click="emits('close')"
           for="my-modal-stock-in"
           class="cursor-pointer absolute right-3 top-3"
         >

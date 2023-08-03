@@ -62,83 +62,7 @@ let statusForm = ref("edit");
 let visibleModal = ref(false);
 let idItem = ref(0);
 
-const fetchGetCompanyID = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
-  Company.value = res.data.data;
-  selectedCompany.value = id_company;
-};
 
-const fetchSite2 = async (id, id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
-  Site.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id === element.id) {
-      selectedSite.value = id;
-      changeSite(element.id);
-      // selectedSite2.value = id
-    }
-  }
-};
-const changeCompany = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
-  // console.log(res)
-  Site.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const changeSite = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_site_id/${id}`);
-  Warehouse.value = res.data.data;
-};
-const fetItems = async (id_warehouse) => {
-  // changeUomBrand(id, id_warehouse)
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${id_warehouse}`
-  );
-  // console.log(res.data.data)
-  Item.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const changeUomBrand = async (id_item) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${selectedWarehouse.value}`
-  );
-  // console.log(res.data.data)
-  // Warehouse.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id_item === element.id) {
-      selectedBrand.value = element.id_brand;
-      selectedUOM.value = element.id_uom;
-    }
-  }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const fetchUOM = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/uom");
-  UOM.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
-const fetchBrand = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/brand/");
-  Brand.value = res.data.data;
-};
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -162,10 +86,6 @@ const fetchDetailById = async (id) => {
   
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    // fetchWarehouse(element.id_warehouse)
-    // fetItems(element.id_item, element.id_warehouse)
-    // alertQuantity.value = element.qty
-    // remark.value = element.remarks
 
     ItemTable.value.push({
       Warehouse: element.warehouse_name,
@@ -192,172 +112,6 @@ const fetchDetailById = async (id) => {
       remark: element.remarks,
     });
   }
-};
-const addItem = async () => {
-  if (
-    selectedCompany.value == "" ||
-    selectedSite.value == "" ||
-    selectedWarehouse.value == "" ||
-    itemNamesSelect.value == "" ||
-    alertQuantity.value == ""
-  ) {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Data required Tidak Boleh Kosong",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    return false;
-  } else {
-    const wh = Warehouse.value;
-    for (let index = 0; index < wh.length; index++) {
-      const element = wh[index];
-      if (element.id == selectedWarehouse.value) {
-        warehouseName.value = element.warehouse_name;
-      }
-    }
-    const br = Brand.value;
-    for (let index = 0; index < br.length; index++) {
-      const element = br[index];
-      if (element.id == selectedBrand.value) {
-        brandName.value = element.brand_name;
-      }
-    }
-    const uom = UOM.value;
-    for (let index = 0; index < uom.length; index++) {
-      const element = uom[index];
-      if (element.id == selectedUOM.value) {
-        uomName.value = element.uom_name;
-      }
-    }
-    const it = Item.value;
-    for (let index = 0; index < it.length; index++) {
-      const element = it[index];
-      if (element.id == itemNamesSelect.value) {
-        namaItem.value = element.item_name;
-      }
-    }
-    itemsTable.value.push({
-      id_company: selectedCompany.value,
-      // id_departement: '',
-      id_site: selectedSite.value,
-      id_warehouse: selectedWarehouse.value,
-      // id_employee : selectedEmployee.value,
-      remark: remark.value,
-      id_item: itemNamesSelect.value,
-      id_brand: selectedBrand.value,
-      id_uom: selectedUOM.value,
-      qty: alertQuantity.value,
-      alertQuantity: alertQuantity.value,
-      Warehouse: warehouseName.value,
-      brandName: brandName.value,
-      UOMName: uomName.value,
-      itemNames: namaItem.value,
-    });
-
-    // resetButCompanyDisable()
-    return itemsTable;
-  }
-};
-const resetButCompanyDisable = async () => {
-  disableSite.value = true;
-  disableCompany.value = true;
-  selectedWarehouse.value = "";
-  selectedUOM.value = "";
-  idItems.value = "";
-  alertQuantity.value = "";
-  itemNamesSelect.value = "";
-  remark.value = "";
-  selectedBrand.value = "";
-};
-const removeItems = async (id) => {
-  itemsTable.value.splice(id, 1);
-  if (id == 0) {
-    disableSite.value = false;
-    disableCompany.value = false;
-    reset();
-  }
-  // return itemsTable
-};
-const save = async () => {
-  if (selectedCompany.value == "") {
-    Swal.fire({
-      position: "center",
-      icon: "error",
-      title: "Data Di Table Tidak Boleh Kosong",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    return false;
-  } else {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const payload = {
-      id_company: selectedCompany.value,
-      id_site: selectedSite.value,
-      remarks: "",
-    };
-    Api.post(`stock_in/update_data/${idDetail.value}`, payload)
-      .then((res) => {
-        save2(router.currentRoute.value.params.id);
-      })
-      .catch((error) => {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: error.response.data.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      });
-  }
-};
-const save2 = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const payload = {
-    id_stock_in: idDetail.value,
-    array_detail: itemsTable.value,
-    // qty: alertQuantity.value,
-    // remarks: remark.value,
-  };
-  Api.post(`stock_in/update_data_detail/${idDetail.value}`, payload)
-    .then((res) => {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: res.data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      // reset()
-      lockScrollbarEdit.value = false;
-      fetchDataById(router.currentRoute.value.params.id);
-      fetchDetailById(router.currentRoute.value.params.id);
-      ItemTable.value = [];
-      itemsTable.value = [];
-      // save2(router.currentRoute.value.params.id)
-    })
-    .catch((error) => {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: error.response.data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    });
-};
-const reset = async () => {
-  selectedCompany.value = "";
-  selectedSite.value = "";
-  selectedWarehouse.value = "";
-  selectedUOM.value = "";
-  alertQuantity.value = "";
-  itemNamesSelect.value = "";
-  remark.value = "";
-  selectedBrand.value = "";
 };
 
 const submit = async () => {
@@ -391,17 +145,11 @@ const closeModal = () => {
   visibleModal.value = false;
 };
 
-const coba2 = async () => {
-  lockScrollbarEdit.value = false;
-};
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(router.currentRoute.value.params.id);
   fetchDetailById(router.currentRoute.value.params.id);
   idDetail.value = router.currentRoute.value.params.id;
-//   fetchUOM();
-//   fetchBrand();
-  // console.log(router.currentRoute.value.params.id)
 });
 
 const getSessionForSidebar = () => {
