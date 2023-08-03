@@ -1,5 +1,5 @@
 <script setup>
-    import { inject } from 'vue'
+    import { inject, ref, watch } from 'vue'
     import Api from '@/utils/Api'
     import deleteicon from "@/assets/navbar/delete_icon.svg"
     import editicon from "@/assets/navbar/edit_icon.svg"
@@ -32,12 +32,53 @@
 
     }
 
+    let employeeLoginData = ref([])
+
+    const submitGuestTraveller = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      const api = await Api.get('/employee/get_by_login')
+      employeeLoginData.value = api.data.data
+
+      const api2 = await Api.post('/travel_guest/store', {
+          nik: employeeLoginData.value[0].nik,
+          notes: '',
+          gender: employeeLoginData.value[0].jenkel,
+          company: employeeLoginData.value[0].company_name,
+          name_guest: employeeLoginData.value[0].employee_name,
+          hotel_fare: employeeLoginData.value[0].hotel_fare,
+          departement: employeeLoginData.value[0].departement_name || '-',
+          contact_no: employeeLoginData.value[0].phone_number,
+          id_type_traveller: 0,
+          id_flight_class: employeeLoginData.value[0].flight_class[0].id_flight_class,
+          id_request_trip: localStorage.getItem('tripId')
+      })
+
+      emits('fetchTravellerGuest')
+      emits('changeVisibility')
+
+}
+
+      if(props.value.length === 0) {
+        submitGuestTraveller()
+      }
+
+    watch(props, () => {
+      if(props.value.length === 0) {
+        submitGuestTraveller()
+      }
+    })
+
 
 </script>
 
 <template>
 
     <div class="overflow-x-auto mt-5 flex justify-center">
+
+      {{ props.length }}
 
       <table class="table">
 

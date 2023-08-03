@@ -343,7 +343,10 @@
 
                 <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                  <tr v-for="(data, index) in sortedData" :key="data.id">
+                  <tr v-for="(data, index) in sortedData.slice(
+                            paginateIndex * pageMultiplierReactive,
+                            (paginateIndex + 1) * pageMultiplierReactive
+                          )" :key="data.id">
 
                     <td style="width: 5%;">
                       <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">

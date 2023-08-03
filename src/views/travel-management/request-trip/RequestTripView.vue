@@ -364,6 +364,9 @@
 
     let currentlyEditCAHeader = ref(false)
 
+    // manggil localstorage harus banget pake kutip dua
+    let roleName = ref(JSON.parse(localStorage.getItem("id_role")))
+
 </script>
 
 <template>
@@ -401,8 +404,7 @@
                     </div>
 
                     <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
-                    <!-- v-if="purposeOfTripData[currentIndex].status !== 'Waiting Approval'" -->
-                    <div class="flex gap-4 mt-6 mb-3 ml-5">
+                    <div class="flex gap-4 mt-6 mb-3 ml-5" v-if="purposeOfTripData[currentIndex].status === 'Waiting Approval'">
                         
                       <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
                       <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
@@ -500,8 +502,10 @@
                                 ></div>
                                 Details
                             </button>
-                            
+                    
+
                             <button 
+                              v-if="roleName !== 'EMPLY'"
                               class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative"
                               @click="tab = 'tlk'" 
                             >
@@ -539,12 +543,24 @@
                         <div>
 
                             <div class="py-12 px-4" v-if="purposeOfTripName === 'Field Break'">
-                                <multiStepCircleVertical number="1" title="Traveller" 
-                                @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="2" title="Airlines" 
-                                @change-header="changeSelected('Airlines')" :selectedTitle="headerTitle" />
+                                
+                                <multiStepCircleVertical 
+                                  number="1" 
+                                  title="Traveller"                                
+                                  @change-header="changeSelected('Traveller')" 
+                                  :selectedTitle="headerTitle" 
+                                />
+
+                                <multiStepCircleVertical 
+                                  number="2" 
+                                  title="Airlines" 
+                                  @change-header="changeSelected('Airlines')" 
+                                  :selectedTitle="headerTitle" 
+                                />
+
                                 <multiStepCircleVertical number="3" title="Other Transportation" @change-header="changeSelected('Other Transportation')" :selectedTitle="headerTitle" limit="3"  />
-                            </div>
+                            
+                              </div>
 
                             <div class="py-12 px-4" v-else-if="purposeOfTripName === 'Taxi Voucher'">
                               <multiStepCircleVertical number="1" title="Traveller" 
@@ -593,6 +609,7 @@
                                <buttonAddFormView 
                                v-if="isEditing & headerTitle !== 'Cash Advance' " 
                                @click="changeType('Add')"
+                               title="Add"
                               />
   
                               <!-- Issued Ticket Button -->

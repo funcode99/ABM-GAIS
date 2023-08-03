@@ -89,7 +89,7 @@
                         <label :class="labelStylingClass">
                             Name<span class="text-red-star">*</span>
                         </label>
-                        <input type="text" :class="inputStylingClass" v-model="name" required />
+                        <input type="text" :class="inputStylingClass" v-model="name" required disabled />
                     </div>
                 </div>
 
@@ -163,7 +163,7 @@
                         <label :class="labelStylingClass">
                             <span>Account Name</span>
                         </label>
-                        <input type="text" :class='inputStylingClass' placeholder="Account Name" v-model="accountName">
+                        <input type="text" :class='inputStylingClass' placeholder="Account Name" v-model="name" disabled>
                     </div>
                 </div>
 

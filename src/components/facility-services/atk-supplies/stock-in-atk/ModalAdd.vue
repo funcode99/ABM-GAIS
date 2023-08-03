@@ -151,7 +151,7 @@ const fetchDataEdit = async () => {
       id_employee: selectedEmployee.value,
       remarks: elements.remarks,
       id_item: elements.id_item,
-      id_brand: elements.id_brand,
+      id_brand: elements.id_brand ? elements.id_brand : "",
       id_uom: elements.id_uom,
       qty: elements.qty,
       nameWarehouse: elements.warehouse_name,
@@ -159,7 +159,7 @@ const fetchDataEdit = async () => {
       namaUOM: elements.uom_name,
       namItem: elements.item_name,
       codeItem: elements.code_item,
-      id:elements.id
+      id: elements.id,
     });
     obj[parseInt(elements.id_warehouse)] = elements.qty;
   });
@@ -167,6 +167,12 @@ const fetchDataEdit = async () => {
   qtyWarehouse.value = qtyWarehouse.value[0];
 };
 // END FETCH DATA
+
+function checkExists(wh, item) {
+  return itemsTable.value.some(function (el) {
+    return el.id_warehouse === wh && el.id_item === item;
+  });
+}
 
 const addItem = async () => {
   if (
@@ -223,23 +229,31 @@ const addItem = async () => {
 
     for (let index = 0; index < warehouseName.value.length; index++) {
       if (qtyInput.value[index]) {
-        itemsTable.value.push({
-          id_company: selectedCompany.value,
-          id_departement: "",
-          id_site: selectedSite.value,
-          id_warehouse: parseInt(warehouseName.value[index].split("-")[1]),
-          id_employee: selectedEmployee.value,
-          remarks: remark.value,
-          id_item: itemNames.value,
-          id_brand: selectedBrand.value,
-          id_uom: selectedUOM.value,
-          qty: qtyInput.value[index],
-          nameWarehouse: warehouseName.value[index].split("-")[0],
-          namaBrand: brandName.value,
-          namaUOM: uomName.value,
-          namItem: namaItem.value,
-          codeItem: codeItem.value,
-        });
+        let id_wh = parseInt(warehouseName.value[index].split("-")[1]);
+        let checkData = checkExists(id_wh, itemNames.value);
+        if (!checkData) {
+          itemsTable.value.push({
+            id_company: selectedCompany.value,
+            id_departement: "",
+            id_site: selectedSite.value,
+            id_warehouse: parseInt(warehouseName.value[index].split("-")[1]),
+            id_employee: selectedEmployee.value,
+            remarks: remark.value,
+            id_item: itemNames.value,
+            id_brand: selectedBrand.value ? selectedBrand.value : "",
+            id_uom: selectedUOM.value,
+            qty: qtyWarehouse.value[id_wh],
+            nameWarehouse: warehouseName.value[index].split("-")[0],
+            namaBrand: brandName.value,
+            namaUOM: uomName.value,
+            namItem: namaItem.value,
+            codeItem: codeItem.value,
+          });
+        } else {
+          itemsTable.value.map((element) => {
+            element.qty = qtyWarehouse.value[element.id_warehouse];
+          });
+        }
       }
     }
 
@@ -287,7 +301,7 @@ const save = async () => {
       array_detail: itemsTable.value,
       remarks: remark.value,
       id_department: "",
-      id_cost_center: ""
+      id_cost_center: "",
     };
 
     let api =
@@ -480,10 +494,7 @@ onMounted(() => {
               </option>
             </select>
           </div>
-          <div
-            class="mb-4"
-            :class="company_code != '8000'"
-          >
+          <div class="mb-4" :class="company_code != '8000'">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Remarks</label
             >

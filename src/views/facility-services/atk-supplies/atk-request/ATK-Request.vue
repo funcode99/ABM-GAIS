@@ -176,10 +176,8 @@ const fetchData = async (
   lenghtPagination = res.data.data.total;
   paginateIndex.value = res.data.data.current_page - 1;
   showingValue.value = res.data.data.current_page;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const perPage = async () => {
-  // console.log(pageMultiplier.value)
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -189,30 +187,24 @@ const perPage = async () => {
     searchFilter.value,
     pageMultiplier.value
   );
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchGetCompanyID = async (id_company) => {
-  // changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
-  // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
-  // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
     if (id_company === element.id) {
       selectedType.value = id_company;
     }
   }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const deleteValue = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -262,13 +254,11 @@ const deleteValue = async (id) => {
     }
   });
 
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
   const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
-  // changeCompany()
 };
 
 const openModal = (type, id) => {
@@ -284,12 +274,11 @@ const closeModal = () => {
   fetchData(
     showingValue.value,
     selectedType.value,
-    selectedCompany2.value,
-    selectedWarehouse2.value,
-    valueChecked.value,
+    status.value,
+    start_date.value,
+    end_date.value,
     searchFilter.value,
-    pageMultiplier.value,
-    selectedSite2.value
+    pageMultiplier.value
   );
 };
 
@@ -467,16 +456,6 @@ const format_date = (value) => {
                 </div>
               </div>
 
-              <!-- <div>
-                <div>
-                  <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
-                    End Date
-                  </p>
-
-                  <VueDatePicker v-model="end_date" :enable-time-picker="false" class="my-date lg:w-10" />
-                </div>
-              </div> -->
-
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
@@ -498,36 +477,6 @@ const format_date = (value) => {
                 </button>
               </div>
             </div>
-
-            <!-- <div class="pt-6 w-full ml-2">
-              <label class="relative block">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </span>
-                <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
-                  type="text"
-                  name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
-                />
-              </label>
-            </div> -->
           </div>
 
           <!-- SHOWING -->

@@ -227,6 +227,20 @@ watch(purposeOfTripData, () => {
       }
     }
 
+    const assignSelectedData = () => {
+      headerTitle.value === 'Traveller' ? currentSelectedData.value = travellerGuestData.value 
+      : headerTitle.value === 'Airlines' ? currentSelectedData.value = airlinesData.value 
+      : headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value 
+      : headerTitle.value === 'Other Transportation' ? currentSelectedData.value = otherTransportationData.value
+      : headerTitle.value === 'Accomodation' ? currentSelectedData.value = accomodationData.value
+      : headerTitle.value === 'Cash Advance' ? currentSelectedData.value = cashAdvanceData.value
+      : travellerGuestData.value
+    }
+
+    const changeSelected = (title) => {
+      headerTitle.value = title
+    }
+
 </script>
 
 <template>
@@ -344,18 +358,43 @@ watch(purposeOfTripData, () => {
               <!-- step circle -->
               <div>
 
-                            <div class="py-12 px-4" v-if="purposeOfTripName === 'Field Break'">
-                                <multiStepCircleVertical number="1" title="Traveller" 
-                                @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
+                              <div class="py-12 px-4" v-if="purposeOfTripName === 'Field Break'">
+                                
+                                <multiStepCircleVertical 
+                                  number="1" 
+                                  title="Traveller" 
+                                  @change-header="changeSelected('Traveller')" 
+                                  :selectedTitle="headerTitle"       
+                                />
+
                                 <multiStepCircleVertical number="2" title="Airlines" 
                                 @change-header="changeSelected('Airlines')" :selectedTitle="headerTitle" />
+                                
                                 <multiStepCircleVertical number="3" title="Other Transportation" @change-header="changeSelected('Other Transportation')" :selectedTitle="headerTitle" limit="3"  />
-                            </div>
+                            
+                              </div>
 
                             <div class="py-12 px-4" v-else-if="purposeOfTripName === 'Taxi Voucher'">
-                              <multiStepCircleVertical number="1" title="Traveller" 
-                                @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="2" title="Taxi Voucher" @change-header="changeSelected('Taxi Voucher')" :selectedTitle="headerTitle" limit="2"  />
+                              
+                              <multiStepCircleVertical 
+                              
+                                number="1" 
+                                title="Traveller" 
+                                @change-header="changeSelected('Traveller')" 
+                                :selectedTitle="headerTitle" 
+                              
+                              />
+
+                              <multiStepCircleVertical 
+                                
+                                number="2" 
+                                limit="2"
+                                title="Taxi Voucher" 
+                                @change-header="changeSelected('Taxi Voucher')" 
+                                :selectedTitle="headerTitle" 
+
+                              />
+
                             </div>
 
                             <div class="py-12 px-4" v-else>

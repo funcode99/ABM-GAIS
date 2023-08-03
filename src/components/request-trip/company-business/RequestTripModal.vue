@@ -22,6 +22,19 @@ import taxiVoucherForm from '@/components/request-trip/modal-step-form/taxi-vouc
 import otherTransportationForm from '@/components/request-trip/modal-step-form/other-transportation-form.vue'
 import accomodationForm from '@/components/request-trip/modal-step-form/accomodation-form.vue'
 import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-advance-form.vue'
+
+    let employeeLoginData = ref([])
+    let costCenterId = ref()
+
+    const getEmployeeByLogin = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get('/employee/get_by_login')
+      employeeLoginData.value = api.data.data
+      costCenterId.value = employeeLoginData.value[0].id_cost_center
+
+    }
   
     let referenceFetch = useReferenceFetchResult()
 
@@ -38,6 +51,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     let optionDataCompany = ref([])
     let optionDataJobBand = ref([])
     let optionDataTransportationType = ref([])
+    let optionDataCostCenter = ref([])
 
     let travellerGuestTableData = ref([])
     let airlinesTableData = ref([])
@@ -548,6 +562,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       fetchTypeOfTransportation()
 
       fetchTravellerType()
+      fetchCostCenter()
+      getEmployeeByLogin()
       
     })
 
@@ -593,6 +609,13 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       optionDataZona.value = api.data.data
       zona.value = optionDataZona.value[0].id_zona
       zonaName.value = optionDataZona.value[0].zona_name
+    }
+
+    const fetchCostCenter = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/company/get_cost_center`)
+      optionDataCostCenter.value = api.data.data
     }
 
     watch(zona, () => {
@@ -827,6 +850,25 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
                 </div>
 
+                <div :class="columnClass + ' mx-4 my-3'">
+                    
+                    <label for="cost_center">
+                        Cost Center<span class="text-[#f5333f]">*</span>
+                    </label>
+
+                    <select
+                    v-model="costCenterId"
+                    :class="inputStylingWithoutWidthClass" 
+                    >
+                      
+                      <option v-for="data in optionDataCostCenter" :value="data.id">
+                          {{ data.cost_center_code }} - {{ data.cost_center_name }}
+                      </option>
+
+                    </select>
+
+                </div>
+
                 <h1 class="mx-4 mt-6">Itinerary</h1>
                 
                 <div :class="rowClass">
@@ -959,7 +1001,10 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                 </div>
 
                 <!-- step 6 form Other Transportation -->
-                <div class="px-2" :class="formStep == 5 ? 'block' : 'hidden'">
+                <div 
+                  class="px-2"
+                  :class="formStep == 5 ? 'block' : 'hidden'"
+                >
                     <otherTransportationTable @fetchOtherTransportation="fetchOtherTransportation" />
                 </div>
 
@@ -1170,7 +1215,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     <taxiVoucherForm :isOpen="isVisibleTaxiVoucher" @changeVisibility="isVisibleTaxiVoucher = false" @fetchTaxiVoucher="fetchTaxiVoucher" />
 
     <!-- Step 6 Modal Add Other Transportation -->
-    <otherTransportationForm :isOpen="isVisibleOtherTransportation" @changeVisibility="isVisibleOtherTransportation = false" @fetchOtherTransportation="fetchOtherTransportation" />
+    <otherTransportationForm 
+      :purposeType="requestType[1]"
+      :isOpen="isVisibleOtherTransportation" 
+      @changeVisibility="isVisibleOtherTransportation = false" 
+      @fetchOtherTransportation="fetchOtherTransportation" 
+    />
 
     <!-- Step 7 Modal Add Accomodation -->
     <accomodationForm :isOpen="isVisibleAccomodation" @changeVisibility="isVisibleAccomodation = false" @fetchAccomodation="fetchAccomodation" />
