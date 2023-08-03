@@ -139,7 +139,7 @@ const fetchDataEdit = async () => {
 
   itemNames.value = props.dataItem[0].id_item;
   changeUomBrand(itemNames.value);
-  remark.value = props.dataItem[0].remarks;
+  remark.value = props.dataItem[0].remarks ? props.dataItem[0].remarks : "";
   var obj = {};
 
   props.dataItem.map((elements) => {
@@ -238,7 +238,7 @@ const addItem = async () => {
             id_site: selectedSite.value,
             id_warehouse: parseInt(warehouseName.value[index].split("-")[1]),
             id_employee: selectedEmployee.value,
-            remarks: remark.value,
+            remarks: remark.value ? remark.value : "",
             id_item: itemNames.value,
             id_brand: selectedBrand.value ? selectedBrand.value : "",
             id_uom: selectedUOM.value,
