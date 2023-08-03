@@ -160,9 +160,9 @@
                     <div :class="columnClass">
                         <div class="w-full">
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                            Gender
+                            Gender<span class="text-red-star">*</span>
                             </label>
-                            <select :class="inputStylingClass" v-model="gender" required>
+                            <select :class="inputStylingClass" v-model="gender" required disabled>
                                 <option value="L">
                                     Male
                                 </option>
@@ -181,13 +181,14 @@
                     <div :class="columnClass">
                         <div class="w-full">
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                                Hotel Fare
+                                Hotel Fare<span class="text-red-star">*</span>
                             </label>
                             <input 
                                 type="text" 
                                 placeholder="Max Fare" 
                                 :class="inputStylingClass" 
                                 v-model="hotelFare"
+                                disabled
                                 required
                             />
                         </div>
@@ -203,7 +204,7 @@
                     <!-- City -->
                     <div :class="columnClass">
                         <div class="w-full">
-                            <label :class="labelStylingClass">City</label>
+                            <label :class="labelStylingClass">City<span class="text-red-star">*</span></label>
                             <select :class="inputStylingClass" v-model="city" required>
                                 <option v-for="data in cityData" :value="data.id">
                                 {{ data.city_name }}
@@ -213,7 +214,8 @@
                     </div>
     
                     <!-- Remarks will show if accomodation type is hotel -->
-                    <div v-if="accomodationType[1] == 'Hotel'" :class="columnClass">
+                     <!-- v-if="accomodationType[1] == 'Hotel'" -->
+                    <div :class="columnClass">
 
                         <div class="w-full">
                             <label :class="labelStylingClass">Remarks</label>
@@ -230,7 +232,7 @@
                     <div :class="columnClass">
                         <div class="w-full">
                             <label :class="labelStylingClass">
-                                Check In
+                                Check In<span class="text-red-star">*</span>
                             </label>
                             <input 
                                 :class="inputStylingClass" 
@@ -267,7 +269,7 @@
                     <div :class="columnClass">
                         <div class="w-full">
                             <label :class="labelStylingClass">
-                                Check Out
+                                Check Out<span class="text-red-star">*</span>
                             </label>
                             <input 
                                 :class="inputStylingClass" 
@@ -279,7 +281,7 @@
                     </div>
     
                     <!-- Create GL -->
-                    <div :class="columnClass">
+                    <div :class="columnClass" class="hidden">
                         <div class="flex flex-col gap-2">
                             <span :class="labelStylingClass">Create GL?</span>
                             <div>
@@ -301,7 +303,7 @@
                     <!-- Accomodation Type -->
                     <div :class="columnClass">
                         <label :class="labelStylingClass">
-                            Mess
+                            Accomodation Type<span class="text-red-star">*</span>
                         </label>
                         <select 
                             :class="inputStylingClass" 

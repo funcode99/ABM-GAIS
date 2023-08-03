@@ -34,7 +34,7 @@
 
     let employeeLoginData = ref([])
 
-    const submitGuestTraveller = async () => {
+  const submitGuestTraveller = async () => {
 
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -59,17 +59,22 @@
       emits('fetchTravellerGuest')
       emits('changeVisibility')
 
-}
+  }
 
-      if(props.value.length === 0) {
+  let isFetched = ref(false)
+
+  watch(props, () => {
+
+      if(!isFetched.value & props.value.length === 0) {
         submitGuestTraveller()
+        isFetched.value = true
+      } 
+      else if (isFetched.value & props.value.length === 0) {
+        isFetched.value = false
+        emits('fetchTravellerGuest')
       }
 
-    watch(props, () => {
-      if(props.value.length === 0) {
-        submitGuestTraveller()
-      }
-    })
+  })
 
 
 </script>
@@ -78,10 +83,7 @@
 
     <div class="overflow-x-auto mt-5 flex justify-center">
 
-      {{ props.length }}
-
       <table class="table">
-
       
         <thead>
           <tr>

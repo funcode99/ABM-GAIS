@@ -838,14 +838,14 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
                 <div :class="columnClass + ' mx-4 my-3'">
                   
-                  <label for="attachment">File Attachment<span v-if="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break' || requestType[1] === 'Company Business'" class="text-[#f5333f]">*</span></label>
+                  <label for="attachment">File Attachment<span v-if="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break'" class="text-[#f5333f]">*</span></label>
                   
                   <input 
                     type="file" 
                     id="attachment" 
                     @change="updateFile" 
                     :class="inputStylingWithoutWidthClass" 
-                    :required="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break' || requestType[1] === 'Company Business'" 
+                    :required="requestType[1] == 'Site Visit' || requestType[1] === 'Field Break'" 
                   />
 
                 </div>
