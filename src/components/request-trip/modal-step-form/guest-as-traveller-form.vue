@@ -9,9 +9,11 @@
     })
 
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
+    import fetchFlightClassUtils from '@/utils/Fetch/Reference/fetchFlightClass'
 
     let optionDataTravellerType = ref([])
     let employeeLoginData = ref([])
+    let flightClassData = ref([])
 
     let emits = defineEmits(['fetchTravellerGuest', 'changeVisibility'])
 
@@ -22,6 +24,7 @@
     let company = ref('')
     let gender = ref('')
     let hotelFare = ref('')
+    let showHotelFare = ref('')
     let NIK = ref('')
     let flightClassGuestAsATraveller = ref('')
     let contactNumber = ref('')
@@ -62,6 +65,7 @@
     onBeforeMount(() => {
         fetchTravellerType()
         fetchEmployeeByLoginUtils(employeeLoginData)
+        fetchFlightClassUtils(flightClassData)
     })
 
     watch(employeeLoginData, () => {
@@ -76,11 +80,27 @@
         name.value = ''
         company.value = ''
         gender.value = ''
-        hotelFare.value = ''
+        showHotelFare.value = 0
+        hotelFare.value = 0
         NIK.value = ''
         contactNumber.value = ''
         notesGuestAsTraveller.value = ''
     })
+
+    const formatCurrency = () => {
+    
+        showHotelFare.value = showHotelFare.value.replace(/\D/g, "")
+
+        if (showHotelFare.value === "" || showHotelFare.value === "0") {
+        showHotelFare.value = ""
+        } else {
+        const formattedMinCA = parseFloat(showHotelFare.value.replace(/\./g, ""));
+        showHotelFare.value = formattedMinCA.toLocaleString("id-ID");
+        }
+
+        hotelFare.value = showHotelFare.replaceAll(".", "")
+
+    }
 
     const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
@@ -178,7 +198,13 @@
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
                                 Hotel Fare<span class="text-red-star">*</span>
                             </label>
-                            <input type="text" :class="inputStylingClass" v-model="hotelFare" />
+                            <input 
+                                placeholder="Hotel Fare" 
+                                type="text" 
+                                :class="inputStylingClass" 
+                                v-model="showHotelFare"
+                                @input="formatCurrency" 
+                            />
                         </div>
                     </div>
     
@@ -200,7 +226,15 @@
                             <label class="block mb-2 font-JakartaSans font-medium text-sm">
                                 Flight Class<span class="text-red-star">*</span>
                             </label>
-                            <input :class="inputStylingClass" type="text" v-model="flightClassGuestAsATraveller" />
+                            <select :class="inputStylingClass" v-model="flightId">
+                                <option
+                                    v-for="data in flightClassData" 
+                                    :class="inputStylingClass"
+                                    :value="data.id"
+                                >
+                                    {{ data.flight_class }}
+                                </option>
+                            </select>
                         </div>
                     </div>
     
