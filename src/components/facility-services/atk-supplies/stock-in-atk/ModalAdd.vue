@@ -149,7 +149,7 @@ const fetchDataEdit = async () => {
       id_site: selectedSite.value,
       id_warehouse: elements.id_warehouse,
       id_employee: selectedEmployee.value,
-      remarks: elements.remarks,
+      remarks: elements.remarks ? elements.remarks : "",
       id_item: elements.id_item,
       id_brand: elements.id_brand ? elements.id_brand : "",
       id_uom: elements.id_uom,

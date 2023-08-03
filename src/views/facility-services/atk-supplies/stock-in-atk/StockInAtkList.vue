@@ -12,6 +12,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
+import viewicon from "@/assets/eye.png"
 
 import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue";
 
@@ -529,36 +530,6 @@ const closeModal = () => {
                 </button>
               </div>
             </div>
-
-            <!-- <div class="pt-6 w-full ml-2">
-              <label class="relative block">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </span>
-                <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
-                  type="text"
-                  name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
-                />
-              </label>
-            </div> -->
           </div>
 
           <!-- SHOWING -->
@@ -680,19 +651,16 @@ const closeModal = () => {
                       >
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/viewstockinatk/${data.id}`">
+                      <router-link :to="`/viewstockinatk/${data.id}`" v-if="data.status == 'Draft'">
                         <img :src="editicon" class="w-6 h-6" />
                       </router-link>
-                      <!-- <button v-else disabled>
-                        <img :src="editicon" class="w-6 h-6" />
-                      </button> -->
+                      <router-link :to="`/viewstockinatk/${data.id}`" v-else>
+                        <img :src="viewicon" class="w-6 h-6" />
+                      </router-link>
                       <button
                         v-if="data.status == 'Draft'"
                         @click="deleteValue(data.id)"
                       >
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
-                      <button v-else disabled>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
