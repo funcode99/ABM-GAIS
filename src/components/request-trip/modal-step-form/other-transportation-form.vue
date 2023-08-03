@@ -76,6 +76,9 @@
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 
+    const dateDeparture = ref(localStorage.getItem('dateDeparture'))
+    const dateArrival = ref(localStorage.getItem('dateArrival'))
+
 </script>
 
 <template>
@@ -152,7 +155,13 @@
                                 <label :class="labelStylingClass">
                                     From Date<span class="text-red-star">*</span>
                                 </label>
-                                <input v-model="fromDate" type="date" :class="inputStylingClass" :min="minDate" required>
+                                <input 
+                                v-model="fromDate" 
+                                type="date" 
+                                :class="inputStylingClass" 
+                                :min="dateDeparture" 
+                                :max="dateArrival" 
+                                required>
                         </div>
                     </div>
     
@@ -176,7 +185,13 @@
                             <label :class="labelStylingClass">
                             To Date<span class="text-red-star">*</span>
                             </label>
-                            <input v-model="toDate" type="date" :class="inputStylingClass" :min="minDate" required>
+                            <input
+                                v-model="toDate" 
+                                type="date" 
+                                :class="inputStylingClass"                                 
+                                :min="dateDeparture" 
+                                :max="dateArrival" 
+                            required>
     
                         </div>
     
