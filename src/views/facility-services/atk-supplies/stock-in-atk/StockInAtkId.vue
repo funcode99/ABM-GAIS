@@ -62,7 +62,6 @@ let statusForm = ref("edit");
 let visibleModal = ref(false);
 let idItem = ref(0);
 
-
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -78,39 +77,41 @@ const fetchDataById = async (id) => {
     status.value = element.status;
   }
 };
-const fetchDetailById = async (id) => {
+const fetchDetailById = async (id, type) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/stock_in/get_by_stock_in_id/${id}`);
   arrItem.value = res.data.data;
-  
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
 
-    ItemTable.value.push({
-      Warehouse: element.warehouse_name,
-      itemNames: element.item_name,
-      idItems: element.code_item,
-      alertQuantity: element.qty,
-      brandName: element.brand_name,
-      UOMName: element.uom_name,
-      remark: element.remarks,
-    });
-    itemsTable.value.push({
-      id_warehouse: element.id_warehouse,
-      remarks: element.remark,
-      id_item: element.id_item,
-      id_brand: element.id_brand,
-      id_uom: element.id_uom,
-      qty: element.qty,
-      Warehouse: element.warehouse_name,
-      itemNames: element.item_name,
-      idItems: element.code_item,
-      alertQuantity: element.qty,
-      brandName: element.brand_name,
-      UOMName: element.uom_name,
-      remark: element.remarks,
-    });
+  if (type != "close") {
+    for (let index = 0; index < res.data.data.length; index++) {
+      const element = res.data.data[index];
+
+      ItemTable.value.push({
+        Warehouse: element.warehouse_name,
+        itemNames: element.item_name,
+        idItems: element.code_item,
+        alertQuantity: element.qty,
+        brandName: element.brand_name,
+        UOMName: element.uom_name,
+        remark: element.remarks,
+      });
+      itemsTable.value.push({
+        id_warehouse: element.id_warehouse,
+        remarks: element.remark,
+        id_item: element.id_item,
+        id_brand: element.id_brand,
+        id_uom: element.id_uom,
+        qty: element.qty,
+        Warehouse: element.warehouse_name,
+        itemNames: element.item_name,
+        idItems: element.code_item,
+        alertQuantity: element.qty,
+        brandName: element.brand_name,
+        UOMName: element.uom_name,
+        remark: element.remarks,
+      });
+    }
   }
 };
 
@@ -143,6 +144,8 @@ const openModal = (type, id) => {
 
 const closeModal = () => {
   visibleModal.value = false;
+  fetchDataById(router.currentRoute.value.params.id);
+  fetchDetailById(router.currentRoute.value.params.id, "close");
 };
 
 onBeforeMount(() => {
