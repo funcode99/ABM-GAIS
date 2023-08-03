@@ -12,6 +12,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
+import viewicon from "@/assets/eye.png"
 
 import ModalAdd from "@/components/facility-services/atk-supplies/stock-opname-atk/ModalAddOpname.vue";
 
@@ -23,6 +24,10 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 import Swal from "sweetalert2";
 import moment from "moment";
 const sidebar = useSidebarStore();
+
+let statusForm = ref("add");
+let visibleModal = ref(false);
+let idItem = ref(0);
 
 //for sort & search
 const start_date = ref("");
@@ -189,30 +194,24 @@ const perPage = async () => {
     searchFilter.value,
     pageMultiplier.value
   );
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get");
   Company.value = res.data.data;
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchGetCompanyID = async (id_company) => {
-  // changeCompany(id_company)
   const token = JSON.parse(localStorage.getItem("token"));
-  // const id_company = JSON.parse(localStorage.getItem("id_company"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get/${id_company}`);
   Company.value = res.data.data;
-  // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
     if (id_company === element.id) {
       selectedType.value = id_company;
     }
   }
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const deleteValue = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -261,8 +260,6 @@ const deleteValue = async (id) => {
       return;
     }
   });
-
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchCondition = async () => {
   const id_company = JSON.parse(localStorage.getItem("id_company"));
@@ -292,21 +289,38 @@ onBeforeMount(() => {
       name: "Submitted",
     }
   );
-  // console.log(stockindata)
-  // instanceArray = stockindata;
-  // sortedData.value = instanceArray;
-  // lengthCounter = sortedData.value.length;
 });
 
-//for searching
-const filteredItems = (search) => {
+// for modal
+const openModal = (type, id) => {
+  visibleModal.value = true;
+  statusForm.value = type;
+  if (id) {
+    idItem.value = parseInt(id);
+  }
+};
+const closeModal = () => {
+  visibleModal.value = false;
   fetchData(
-    1,
+    showingValue.value,
     selectedType.value,
     status.value,
     start_date.value,
     end_date.value,
-    search,
+    searchFilter.value,
+    pageMultiplier.value
+  );
+};
+
+//for searching
+const filteredItems = (search) => {
+  fetchData(
+    showingValue.value,
+    selectedType.value,
+    status.value,
+    start_date.value,
+    end_date.value,
+    searchFilter.value,
     pageMultiplier.value
   );
 };
@@ -351,18 +365,17 @@ const format_date = (value) => {
                 <img :src="gearicon" class="w-6 h-6" />
               </button>
 
+              <label
+                @click="openModal('add', 0)"
+                for="my-modal-stock-in"
+                class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+                >+ Add Stock Opname</label
+              >
               <ModalAdd
-                @close="
-                  fetchData(
-                    showingValue,
-                    selectedType,
-                    status,
-                    start_date,
-                    end_date,
-                    searchFilter,
-                    pageMultiplier
-                  )
-                "
+                @close="closeModal"
+                :status="statusForm"
+                :id="idItem"
+                v-if="visibleModal"
               />
 
               <button
@@ -470,36 +483,6 @@ const format_date = (value) => {
                 </button>
               </div>
             </div>
-
-            <!-- <div class="pt-6 w-full ml-2">
-              <label class="relative block">
-                <span class="absolute inset-y-0 left-0 flex items-center pl-2">
-                  <svg
-                    aria-hidden="true"
-                    class="w-5 h-5 text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    ></path>
-                  </svg>
-                </span>
-                <input
-                  class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  placeholder="Search..."
-                  type="text"
-                  name="search"
-                  v-model="search"
-                  @keyup="filteredItems(search)"
-                />
-              </label>
-            </div> -->
           </div>
 
           <!-- SHOWING -->
@@ -622,12 +605,12 @@ const format_date = (value) => {
                       >
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/stockOpname/${data.id}`">
+                      <router-link :to="`/stockOpname/${data.id}`" v-if="data.status == 'Draft'">
                         <img :src="editicon" class="w-6 h-6" />
                       </router-link>
-                      <!-- <button v-else disabled>
-                        <img :src="editicon" class="w-6 h-6" />
-                      </button> -->
+                      <router-link :to="`/stockOpname/${data.id}`" v-else>
+                        <img :src="viewicon" class="w-6 h-6" />
+                      </router-link>
                       <button
                         v-if="data.status == 'Draft'"
                         @click="deleteValue(data.id)"
