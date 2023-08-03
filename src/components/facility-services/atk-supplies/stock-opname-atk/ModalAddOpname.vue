@@ -222,7 +222,7 @@ const addItem = async () => {
       id_site: selectedSite.value,
       id_warehouse: selectedWarehouse.value,
       id_employee: selectedEmployee.value,
-      remarks: remark.value,
+      remarks: remark.value ? remark.value : "",
       id_item: itemNames.value,
       id_brand: selectedBrand.value ? selectedBrand.value : "",
       id_uom: selectedUOM.value,
@@ -242,7 +242,7 @@ const addItem = async () => {
       id_uom: selectedUOM.value,
       adjustment_type: selectedAdjusment.value,
       qty_adjustment: quantityOpname.value,
-      remarks: remark.value,
+      remarks: remark.value ? remark.value : "",
     });
     resetButCompanyDisable();
     return itemsTable;
@@ -264,11 +264,6 @@ const resetButCompanyDisable = async () => {
 };
 const removeItems = async (id) => {
   itemsTable.value.splice(id, 1);
-  if (id == 0) {
-    disableSite.value = false;
-    disableCompany.value = false;
-    reset();
-  }
   // return itemsTable
 };
 const save = async () => {
@@ -286,11 +281,8 @@ const save = async () => {
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const payload = {
       id_company: selectedCompany.value,
-      // id_departement:1,
       id_site: selectedSite.value,
-      // id_warehouse:selectedWarehouse.value,
-      // id_employee:selectedEmployee.value,
-      remarks: remark.value,
+      remarks: remark.value ? remark.value : "",
       array_detail: itemsTable2.value,
     };
     Api.post("stock_opname/store/", payload)

@@ -59,43 +59,41 @@ const fetchDetailById = async (id, type) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/stock_opname/get_by_stock_opname_id/${id}`);
   // console.log(res.data.data)
-  if (type != "close") {
-    for (let index = 0; index < res.data.data.length; index++) {
-      const element = res.data.data[index];
-      ItemTable.value.push({
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-        QuantityAdjusment: element.qty_adjustment,
-        adjusmentType: element.adjustment_type,
-        id_item: element.id_item,
-        id_uom: element.id_uom,
-        id_brand: element.id_brand,
-        id: elements.id,
-      });
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    ItemTable.value.push({
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+      QuantityAdjusment: element.qty_adjustment,
+      adjusmentType: element.adjustment_type,
+      id_item: element.id_item,
+      id_uom: element.id_uom,
+      id_brand: element.id_brand,
+      id: elements.id,
+    });
 
-      itemsTableEdit.value.push({
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-        QuantityAdjusment: element.qty_adjustment,
-        adjusmentType: element.adjustment_type,
-        id_item: element.id_item,
-        id_uom: element.id_uom,
-        id_brand: element.id_brand,
-        id: elements.id,
-      });
-    }
-    dataItem.value = itemsTableEdit.value;
+    itemsTableEdit.value.push({
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+      QuantityAdjusment: element.qty_adjustment,
+      adjusmentType: element.adjustment_type,
+      id_item: element.id_item,
+      id_uom: element.id_uom,
+      id_brand: element.id_brand,
+      id: elements.id,
+    });
   }
+  dataItem.value = itemsTableEdit.value;
 };
 
 const submit = async () => {
