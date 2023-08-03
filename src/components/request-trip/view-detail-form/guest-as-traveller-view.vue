@@ -172,7 +172,8 @@
 </script>
 
 <template>
-    <div>
+
+    <form @submit.prevent="">
 
         <div :class="rowClass">
 
@@ -407,5 +408,6 @@
 
         </div>
 
-    </div>
+    </form>
+    
 </template>

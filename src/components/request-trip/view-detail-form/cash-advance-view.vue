@@ -538,9 +538,6 @@
 
       <div>
 
-        <!-- {{ arrayDetail }} -->
-        <!-- {{ grandTotal }} -->
-
         <!-- untuk Add ca header -->
         <form @submit.prevent="">
 
