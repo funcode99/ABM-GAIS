@@ -23,6 +23,8 @@ const sidebar = useSidebarStore();
 
 const selectedStatus = ref("");
 const selectedCatype = ref("");
+const selectedSettlement = ref("");
+const selectedCostCenter = ref("");
 const search = ref("");
 const date = ref();
 const dateStart = ref();
@@ -31,6 +33,7 @@ const dateEnd = ref();
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
+let costCenter = ref([]);
 
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
@@ -84,7 +87,10 @@ const fetchSettlementReport = async (id) => {
     search: search.value,
     perPage: pageMultiplier.value,
     page: id ? id : 1,
+    filter_cost_center: selectedCostCenter.value,
+    settlement_type: selectedSettlement.value,
   };
+
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/settlement/report", { params });
@@ -96,8 +102,25 @@ const fetchSettlementReport = async (id) => {
   showingValueTo.value = instanceArray.to;
 };
 
+// const fetchCostCenter = async (companyID) => {
+//   companyID = localStorage.getItem("id_company");
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const res = await Api.get(`/company/get_cost_center/${companyID}`);
+//   costCenter.value = res.data.data;
+// };
+
+const fetchCostCenter = async () => {
+  // companyID = localStorage.getItem("id_company");
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get_cost_center");
+  costCenter.value = res.data.data;
+};
+
 onBeforeMount(() => {
   fetchSettlementReport();
+  fetchCostCenter();
   getSessionForSidebar();
 });
 
@@ -118,6 +141,7 @@ const format_price = (value) => {
 const resetData = () => {
   selectedCatype.value = "";
   selectedStatus.value = "";
+  selectedCostCenter.value = "";
   dateStart.value = "";
   dateEnd.value = "";
   date.value = null;
@@ -253,8 +277,8 @@ const showClearButton = computed(() => {
                 >
                   <option disabled selected>Type</option>
                   <option value="1">Claim</option>
-                  <option value="2">Refund</option>
-                  <option value="3">Equal</option>
+                  <option value="2">Equal</option>
+                  <option value="3">Refund</option>
                 </select>
               </div>
 
@@ -269,9 +293,9 @@ const showClearButton = computed(() => {
                   v-model="selectedCostCenter"
                 >
                   <option disabled selected>Type</option>
-                  <option value="1">Claim</option>
-                  <option value="2">Refund</option>
-                  <option value="3">Equal</option>
+                  <option v-for="data in costCenter" :value="data.id">
+                    {{ data.cost_center_name }}
+                  </option>
                 </select>
               </div>
 
