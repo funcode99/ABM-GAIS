@@ -295,7 +295,11 @@ const save = async () => {
       remarks: remark.value ? remark.value : "",
       array_detail: itemsTable2.value,
     };
-    Api.post("stock_opname/store/", payload)
+    let api =
+      props.status === "add"
+        ? "stock_opname/store/"
+        : `stock_opname/update_data/${props.id}`;
+    Api.post(api, payload)
       .then((res) => {
         Swal.fire({
           position: "center",
@@ -340,6 +344,7 @@ onMounted(() => {
   if (props.status === "edit") {
     fetchDataEdit();
   }
+  console.log(props.id)
 });
 </script>
 
