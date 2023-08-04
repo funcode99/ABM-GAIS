@@ -433,7 +433,6 @@ onMounted(() => {
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               v-model="itemNames"
-              @change="changeUomBrand(itemNames)"
             >
               <option disabled selected>Item</option>
               <option v-for="(item, i) in Item" :key="i" :value="item.id">
@@ -467,6 +466,7 @@ onMounted(() => {
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               v-model="selectedWarehouse"
+              @change="changeUomBrand(itemNames)"
             >
               <option disabled selected>ATK Warehouse</option>
               <option
