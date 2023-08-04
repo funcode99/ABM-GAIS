@@ -46,6 +46,10 @@ let disableCompany = ref(false);
 let disableSite = ref(false);
 let addModal = ref(false);
 
+const id_company = JSON.parse(localStorage.getItem("id_company"));
+const id_site = JSON.parse(localStorage.getItem("id_site"));
+const id_role = JSON.parse(localStorage.getItem("id_role"));
+
 const emits = defineEmits(["unlockScrollbar", "close"]);
 const fetchGetCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -89,27 +93,34 @@ const fetchBrand = async () => {
   const res = await Api.get("/brand/");
   Brand.value = res.data.data;
 };
-const fetItems = async (id_warehouse) => {
+
+const fetItems = async (id_company, id_site) => {
+  let payload = {
+    id_company: id_company,
+    id_site: id_site,
+  };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(
-    `/management_atk/get_by_warehouse_id/${id_warehouse}`
-  );
+  const res = await Api.get(`/management_atk/get/`, { params: payload });
   Item.value = res.data.data;
 };
+
 const changeUomBrand = async (id_item) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get/${id_item}`);
   selectedBrand.value = res.data.data[0].id_brand;
   selectedUOM.value = res.data.data[0].id_uom;
-
-    for (let index = 0; index < res.data.data[0].array_warehouse.length; index++) {
-      const element = res.data.data[0].array_warehouse[index];
-      if (selectedWarehouse.value === element.id_warehouse) {
-        alertQuantity.value = element.current_stock;
-      }
+  for (
+    let index = 0;
+    index < res.data.data[0].array_warehouse.length;
+    index++
+  ) {
+    const element = res.data.data[0].array_warehouse[index];
+    if (selectedWarehouse.value === element.id_warehouse) {
+      alertQuantity.value = element.current_stock;
     }
+  }
 };
 const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -120,8 +131,6 @@ const changeSite = async (id_site) => {
 
 //get kondisi local storage
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  const id_role = JSON.parse(localStorage.getItem("id_role"));
   id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
   Adjusment.value.push(
     { value: "addition", name: "increase" },
@@ -252,7 +261,7 @@ const addItem = async () => {
 const resetButCompanyDisable = async () => {
   disableSite.value = true;
   disableCompany.value = true;
-  // selectedWarehouse.value = ''
+  selectedWarehouse.value = ''
   selectedUOM.value = "";
   idItems.value = "";
   alertQuantity.value = "";
@@ -309,12 +318,6 @@ const save = async () => {
       });
   }
 };
-const coba = async () => {
-  addModal.value = true;
-};
-const coba2 = async () => {
-  addModal.value = false;
-};
 const reset = async () => {
   selectedCompany.value = "";
   selectedSite.value = "";
@@ -332,6 +335,7 @@ onMounted(() => {
   fetchCondition();
   fetchUOM();
   fetchBrand();
+  fetItems(id_company, id_site);
   if (props.status === "edit") {
     fetchDataEdit();
   }
@@ -420,23 +424,19 @@ onMounted(() => {
         <div class="flex justify-between px-6 items-center gap-2">
           <div class="mb-6 w-full">
             <label
-              for="warehouse"
+              for="item_name"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >ATK Warehouse<span class="text-red">*</span></label
+              >Item Name<span class="text-red">*</span></label
             >
             <select
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
-              v-model="selectedWarehouse"
-              @change="fetItems(selectedWarehouse)"
+              v-model="itemNames"
+              @change="changeUomBrand(itemNames)"
             >
-              <option disabled selected>ATK Warehouse</option>
-              <option
-                v-for="(warehouse, i) in Warehouse"
-                :key="i"
-                :value="warehouse.id"
-              >
-                {{ warehouse.warehouse_name }}
+              <option disabled selected>Item</option>
+              <option v-for="(item, i) in Item" :key="i" :value="item.id">
+                {{ item.code_item }} - {{ item.item_name }}
               </option>
             </select>
           </div>
@@ -458,26 +458,22 @@ onMounted(() => {
         <div class="flex justify-between px-6 items-center gap-2">
           <div class="mb-6 w-full">
             <label
-              for="item_name"
+              for="warehouse"
               class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Item Name<span class="text-red">*</span></label
+              >ATK Warehouse<span class="text-red">*</span></label
             >
-            <!-- <input
-                type="text"
-                v-model="itemNames"
-                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                placeholder="Item Name"
-                required
-              /> -->
             <select
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
-              v-model="itemNames"
-              @change="changeUomBrand(itemNames)"
+              v-model="selectedWarehouse"
             >
-              <option disabled selected>Item</option>
-              <option v-for="(item, i) in Item" :key="i" :value="item.id">
-                {{ item.code_item }} - {{ item.item_name }}
+              <option disabled selected>ATK Warehouse</option>
+              <option
+                v-for="(warehouse, i) in Warehouse"
+                :key="i"
+                :value="warehouse.id"
+              >
+                {{ warehouse.warehouse_name }}
               </option>
             </select>
           </div>
