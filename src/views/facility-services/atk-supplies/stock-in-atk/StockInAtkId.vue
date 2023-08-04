@@ -83,35 +83,34 @@ const fetchDetailById = async (id, type) => {
   const res = await Api.get(`/stock_in/get_by_stock_in_id/${id}`);
   arrItem.value = res.data.data;
 
-  if (type != "close") {
-    for (let index = 0; index < res.data.data.length; index++) {
-      const element = res.data.data[index];
+  ItemTable.value = [];
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
 
-      ItemTable.value.push({
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-      });
-      itemsTable.value.push({
-        id_warehouse: element.id_warehouse,
-        remarks: element.remark,
-        id_item: element.id_item,
-        id_brand: element.id_brand,
-        id_uom: element.id_uom,
-        qty: element.qty,
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-      });
-    }
+    ItemTable.value.push({
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+    });
+    itemsTable.value.push({
+      id_warehouse: element.id_warehouse,
+      remarks: element.remark,
+      id_item: element.id_item,
+      id_brand: element.id_brand,
+      id_uom: element.id_uom,
+      qty: element.qty,
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+    });
   }
 };
 
