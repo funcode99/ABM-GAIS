@@ -8,77 +8,48 @@ import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 const router = useRouter();
 const notesName = ref("");
-let item = ref([]);
+let qtyApproved = ref([]);
 const id = router.currentRoute.value.params.id;
-const itemName = ref("");
-const uomName = ref("");
-const quantity = ref("");
-const qtyAwal = ref("");
 const itemTable = ref([]);
+const itemApprove = ref([]);
+const headerApprove = ref([]);
 const itemPayload = ref([]);
 const payload = ref([]);
 
-const idItem = ref("");
 const isApprove = ref(false);
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
-  //   console.log(res.data.data)
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    itemTable.value.push({
-      itemName: element.item_name,
-      uomName: element.uom_name,
-      qtyAwal: element.stock_available,
-      qty: element.qty,
-      id: element.id_item,
-      qtyApproved: element.qty,
-      idItem: element.id
-    });
-  }
+  itemTable.value = res.data.data;
+};
 
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+const detailItemApprove = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/approval_request_atk/get_confirm_approve/${id}`);
+  itemApprove.value = res.data.data[0].array_warehouse;
+  headerApprove.value = res.data.data[0];
 };
 
 const submit = async () => {
-  //   console.log(itemTable.value);
-  for (let index = 0; index < itemTable.value.length; index++) {
-    const element = itemTable.value[index];
-    if (element.qty > element.qtyAwal) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: "Input Quantity tidak boleh lebih dari stock available",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      return false;
-    } else if (element.qtyApproved > element.qty) {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title:
-          "Input Quantity Approved tidak boleh lebih dari Quantity Request",
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      return false;
-    } else {
-      itemPayload.value.push({
-        qty: element.qtyApproved,
-        id: element.idItem,
-      });
-      payload.value = {
-        notes: notesName.value,
-        array_detail: itemPayload.value,
-      };
-      isApprove.value = true;
-    }
+  itemPayload.value = [];
+  for (let index = 0; index < itemApprove.value.length; index++) {
+    const element = itemApprove.value[index];
+    itemPayload.value.push({
+      id_item: headerApprove.value.id_item,
+      id_atk_request_detail: router.currentRoute.value.params.id,
+      id_warehouse: element.id_warehouse,
+      qty_approved: qtyApproved.value[element.id_warehouse],
+      remarks: notesName.value ? notesName.value : "",
+    });
+    payload.value = {
+      warehouse_detail: itemPayload.value,
+    };
+    isApprove.value = true;
   }
   if (isApprove.value) {
     const token = JSON.parse(localStorage.getItem("token"));
-
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const res = await Api.post(
       `/approval_request_atk/approve/${router.currentRoute.value.params.id}`,
@@ -91,17 +62,15 @@ const submit = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    // reset()
     router.push({
       path: "/approvalatkrequest",
     });
   }
-
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 
 onBeforeMount(() => {
-  fetchDetailById(router.currentRoute.value.params.id);
+  fetchDetailById(id);
+  detailItemApprove(id);
 });
 </script>
 
@@ -118,7 +87,7 @@ onBeforeMount(() => {
 
   <input type="checkbox" id="my-modal-approve-atk" class="modal-toggle" />
   <div class="modal">
-    <div class="modal-box relative w-3/5">
+    <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           for="my-modal-approve-atk"
@@ -132,12 +101,92 @@ onBeforeMount(() => {
       </nav>
 
       <main class="modal-box-inner-approval-atk">
-        <p class="font-JakartaSans font-medium text-sm py-2">
-          Are you sure want to approve this document?
-        </p>
         <form class="pt-4">
-          <div v-for="(value, i) in itemTable" :key="i">
-            <div class="flex flex-wrap justify-start gap-2">
+          <table class="table table-compact w-full">
+            <thead class="font-JakartaSans font-bold text-xs">
+              <tr class="bg-blue text-white h-8">
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  No
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Item
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Uom
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Quantity Requested
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  ATK Warehouse
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Stock Available
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Quantity Approve
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              class="font-JakartaSans font-normal text-xs"
+              v-for="(value, ind) in itemApprove"
+              :key="ind"
+            >
+              <tr class="h-16">
+                <td class="border border-[#B9B9B9]">
+                  {{ (ind += 1) }}
+                </td>
+                <td class="border border-[#B9B9B9]">
+                  {{ headerApprove.code_item }} - {{ headerApprove.item_name }}
+                </td>
+                <td class="border border-[#B9B9B9]">
+                  {{ headerApprove.uom_name }}
+                </td>
+                <td class="border border-[#B9B9B9]">
+                  {{ headerApprove.qty }}
+                </td>
+                <td class="border border-[#B9B9B9]">
+                  {{ value.id_warehouse }}
+                </td>
+                <td class="border border-[#B9B9B9]">
+                  {{ value.stock_available }}
+                </td>
+                <td class="border border-[#B9B9B9]">
+                  <input
+                    type="number"
+                    v-model="qtyApproved[value.id_warehouse]"
+                    class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                    @input="
+                      () => {
+                        if (
+                          qtyApproved[value.id_warehouse] > headerApprove.qty ||
+                          qtyApproved[value.id_warehouse] < 0
+                        ) {
+                          qtyApproved[value.id_warehouse] = headerApprove.qty;
+                        }
+                      }
+                    "
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <!-- <div class="flex flex-wrap justify-start gap-2">
               <div class="form-control">
                 <label class="block mt-2 font-JakartaSans font-medium text-sm">
                   Item
@@ -208,21 +257,7 @@ onBeforeMount(() => {
                 />
               </div>
             </div>
-            <hr class="mt-3 mb-3" />
-          </div>
-          <!-- <div class="flex flex-wrap justify-start">
-            <div class="form-control">
-              <label class="block mt-2 font-JakartaSans font-medium text-sm">
-                Quantity </label>
-                <input
-                  type="text"
-                  v-model="quantity"
-                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  required
-                />
-              
-            </div>
-          </div> -->
+            <hr class="mt-3 mb-3" /> -->
 
           <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
           <textarea
