@@ -107,7 +107,7 @@ const doneRequestTrip = async () => {
     Swal.fire({
       position: "center",
       icon: "success",
-      title: "Succeess to Update Car Request Status",
+      title: "Success to Update Car Request Status",
       showConfirmButton: false,
       timer: 1500,
     })

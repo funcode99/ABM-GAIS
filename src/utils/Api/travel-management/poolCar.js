@@ -105,7 +105,7 @@ const deleteCarById = async (carId) => {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Succeess to Delete Car Data",
+        title: "Success to Delete Car Data",
         showConfirmButton: false,
         timer: 1500,
       })
