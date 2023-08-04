@@ -4,6 +4,9 @@
     import deleteicon from "@/assets/navbar/delete_icon.svg"
     import editicon from "@/assets/navbar/edit_icon.svg"
 
+    import { useRequestTripStore } from "@/stores/requesttrip.js"
+     const requestTrip = useRequestTripStore()
+
     const props = inject('travellerDataView')
     const tableHeadTravellers = [
         {id: 1, title: 'Name'},
@@ -61,27 +64,28 @@
 
   }
 
-  let isFetched = ref(false)
-
   watch(props, () => {
 
-      if(!isFetched.value & props.value.length === 0) {
+      if(!requestTrip.isFetched & props.value.length === 0) {
         submitGuestTraveller()
-        isFetched.value = true
+        requestTrip.isFetched = true
       } 
-      else if (isFetched.value & props.value.length === 0) {
-        isFetched.value = false
+      else if (requestTrip.isFetched & props.value.length === 0) {
         emits('fetchTravellerGuest')
       }
 
   })
-
 
 </script>
 
 <template>
 
     <div class="overflow-x-auto mt-5 flex justify-center">
+
+      <!-- <div>
+        {{ requestTrip.isFetched }}
+        {{ props.length }}
+      </div> -->
 
       <table class="table">
       

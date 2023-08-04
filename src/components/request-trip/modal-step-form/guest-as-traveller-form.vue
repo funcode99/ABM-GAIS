@@ -39,7 +39,7 @@
     }
 
     const submitGuestTraveller = async () => {
-
+        
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         
@@ -98,7 +98,7 @@
         showHotelFare.value = formattedMinCA.toLocaleString("id-ID");
         }
 
-        hotelFare.value = showHotelFare.replaceAll(".", "")
+        hotelFare.value = showHotelFare.value.replaceAll(".", "")
 
     }
 

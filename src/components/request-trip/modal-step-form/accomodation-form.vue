@@ -1,10 +1,12 @@
 <script setup>
-    import { ref, onBeforeMount, watch } from 'vue'
+    import { inject, ref, onBeforeMount, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
     import Api from '@/utils/Api'
     import modalHeader from '@/components/modal/modalHeader.vue'
     import modalFooter from '@/components/modal/modalFooter.vue'
     import checkButton from '@/components/molecules/checkButton.vue'
+
+    import Multiselect from '@vueform/multiselect'
 
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchTypeOfHotelUtils from "@/utils/Fetch/Reference/fetchTypeOfHotel"
@@ -22,6 +24,8 @@
         isOpen: Boolean        
     })
 
+    const checkGuest = inject('travellerDataView')
+
     const emits = defineEmits(['fetchAccomodation', 'changeVisibility'])
 
     // Accomodation
@@ -34,18 +38,15 @@
     let checkOut = ref('')
     let createGL = ref(false)
     let showSharingWith = ref(false)
-    let sharingWith = ref('')
+    let sharingWith = ref([])
     let accomodationType = ref([0, ''])
     let vendor = ref('')
+    let guestList = ref()
 
     let price = ref(0)
     let codeHotel = ref(0)
 
     let accomodationData = ref()
-
-    watch(accomodationType, () => {
-        console.log(accomodationType.value)
-    })
 
     const submitAccomodation = async () => {
         createGL.value === true ? createGL.value = 1 : createGL.value = 0
@@ -84,6 +85,12 @@
         gender.value = employeeLoginData.value[0].jenkel
     })
 
+    watch(showSharingWith, () => {
+        if(showSharingWith.value === false) {
+            sharingWith.value = []
+        }
+    })
+
     watch(props, () => {
         city.value = ''
         remarks.value = ''
@@ -91,10 +98,20 @@
         checkOut.value = ''
         createGL.value = false
         showSharingWith.value = false
-        sharingWith.value = ''
+        sharingWith.value = []
         accomodationType.value = [0, '']
         vendor.value = ''
         codeHotel.value = 0
+
+        if(checkGuest.value.length !== 0) {
+            guestList.value = checkGuest.value.filter((item) => {
+                return item.name_guest !== localStorage.getItem('username')
+            })
+            guestList.value.map((item) => {
+                item.value = item.id
+            })
+        }
+
     })
 
     let dataLength = ref(0)
@@ -134,6 +151,9 @@
 <template>
 
     <Modal v-model:visible="props.isOpen" v-model:offsetTop="modalPaddingHeight">
+
+        <!-- {{ checkGuest }} -->
+        <!-- {{ guestList }} -->
 
         <main>
             
@@ -251,15 +271,50 @@
                     <!-- Sharing with is not required -->
                     <div :class="columnClass">
 
-                        <div class="w-full">
+                        <div class="w-full" :class="checkGuest.length > 1 ? '' : 'hidden'">
                             
                             <div class="flex gap-2 items-center ml-2 mb-2">
                                 <input type="checkbox" class="w-5 h-5 rounded-2xl" v-model="showSharingWith">
-                                <label>Sharing with</label>
+                                <label for="sharing_with">Sharing with</label>
                             </div>
 
                             <div v-if="showSharingWith">
-                                <input :class="inputStylingClass" type="text" placeholder="Name" v-model="sharingWith" />
+
+                                <Multiselect
+                                    id="sharing_with"
+                                    v-model="sharingWith"
+                                    mode="tags"
+                                    placeholder="Select guest"
+                                    track-by="name_guest"
+                                    label="name_guest"
+                                    :close-on-select="false"
+                                    :searchable="true"
+                                    :options="guestList"
+                                    required
+                                >
+                      
+                                    <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                                        
+                                        <div
+                                        class="multiselect-tag is-user"
+                                        :class="{
+                                            'is-disabled': disabled
+                                        }"
+                                        >
+                                        {{ option.name_guest }}
+                                        <span
+                                            v-if="!disabled"
+                                            class="multiselect-tag-remove"
+                                            @click="handleTagRemove(option, $event)"
+                                        >
+                                            <span class="multiselect-tag-remove-icon"></span>
+                                        </span>
+                                        </div>
+
+                                    </template>
+
+                                </Multiselect>
+
                             </div>
 
                         </div>

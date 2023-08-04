@@ -637,6 +637,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       localStorage.removeItem('dateArrival')
       localStorage.removeItem('dateDeparture')
     })
+    
+    watch(isVisibleAccomodation, () => {
+      if(isVisibleAccomodation.value) {
+          fetchTravellerGuest()
+      }
+    })
 
     const updateFile = (event) => {
       siteVisitAttachmentFile.value = event.target.files[0]
@@ -1027,7 +1033,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                   <!-- step 3 form Traveller -->
                   <div class="px-2" :class="formStep == 2 ? 'block' : 'hidden'">
     
-                    <guestAsTravellerTable />
+                    <guestAsTravellerTable @fetchTravellerGuest="fetchTravellerGuest" />
   
                   </div>
   
@@ -1077,7 +1083,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       + Add Guest
                     </button>
   
-                    <guestAsTravellerTable />
+                    <guestAsTravellerTable @fetchTravellerGuest="fetchTravellerGuest" />
   
                   </div>
   
@@ -1114,7 +1120,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                       + Add Guest
                     </button>
       
-                    <guestAsTravellerTable />
+                    <guestAsTravellerTable @fetchTravellerGuest="fetchTravellerGuest" />
   
                   </div>
   
@@ -1140,7 +1146,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
     + Add Guest
   </button>
 
-  <guestAsTravellerTable />
+  <guestAsTravellerTable @fetchTravellerGuest="fetchTravellerGuest" />
 
                   </div>
 
