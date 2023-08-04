@@ -299,7 +299,7 @@ const save = async () => {
       id_site: selectedSite.value,
       id_employee: selectedEmployee.value,
       array_detail: itemsTable.value,
-      remarks: remark.value,
+      remarks: remark.value ? remark.value : "",
       id_department: "",
       id_cost_center: "",
     };
@@ -318,7 +318,6 @@ const save = async () => {
           timer: 1500,
         });
         reset();
-        addModal.value = false;
         emits("close");
       })
       .catch((error) => {

@@ -33,7 +33,7 @@ const idDetail = ref("");
 const company_code = JSON.parse(localStorage.getItem("company_code"));
 let dataArr = ref([]);
 let dataItem = ref([]);
-
+let id = ref(router.currentRoute.value.params.id)
 let statusForm = ref("add");
 let visibleModal = ref(false);
 let idItem = ref(0);
@@ -59,9 +59,9 @@ const fetchDetailById = async (id, type) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/stock_opname/get_by_stock_opname_id/${id}`);
   // console.log(res.data.data)
-  if (type != "close") {
-    for (let index = 0; index < res.data.data.length; index++) {
-      const element = res.data.data[index];
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if (type != "close") {
       ItemTable.value.push({
         Warehouse: element.warehouse_name,
         itemNames: element.item_name,
@@ -77,7 +77,6 @@ const fetchDetailById = async (id, type) => {
         id_brand: element.id_brand,
         id: elements.id,
       });
-
       itemsTableEdit.value.push({
         Warehouse: element.warehouse_name,
         itemNames: element.item_name,
@@ -94,8 +93,8 @@ const fetchDetailById = async (id, type) => {
         id: elements.id,
       });
     }
-    dataItem.value = itemsTableEdit.value;
   }
+  dataItem.value = itemsTableEdit.value;
 };
 
 const submit = async () => {
@@ -190,7 +189,7 @@ const closeModal = () => {
               <label
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
                 v-if="status == 'Draft'"
-                @click="openModal('edit', 0)"
+                @click="openModal('edit', id)"
                 for="my-modal-stock-in"
               >
                 Edit
