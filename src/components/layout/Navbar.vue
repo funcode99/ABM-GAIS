@@ -63,7 +63,9 @@ const fetchNotifNonApproval = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/notification/get_notif");
   instanceArrayNotif = res.data.data;
-  sortedDataNotif.value = instanceArrayNotif;
+  if (instanceArrayNotif !== undefined) {
+    sortedDataNotif.value = instanceArrayNotif;
+  }
 };
 
 const fetchNotifApproval = async () => {
@@ -71,7 +73,9 @@ const fetchNotifApproval = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/notification/get_approval");
   instanceArrayApproval = res.data.data;
-  sortedDataApproval.value = instanceArrayApproval;
+  if (instanceArrayApproval !== undefined) {
+    sortedDataApproval.value = instanceArrayApproval;
+  }
 };
 
 const readNotif = async (id, id_document) => {
@@ -202,13 +206,16 @@ const format_date = (value) => {
                   </a>
                 </div>
 
+                <!-- tab notification -->
                 <main v-if="activeTab === 0">
                   <li
                     v-if="
-                      sortedDataNotif.value != undefined ||
+                      sortedDataNotif.value !== undefined ||
                       sortedDataNotif.length > 0
                     "
-                    v-for="data in sortedDataNotif"
+                    v-for="data in sortedDataNotif
+                      .filter((item) => item.is_viewed)
+                      .slice(0, 5)"
                     :key="data.id"
                     class="border-2 py-2 my-2 rounded-box"
                     :style="{
@@ -236,7 +243,14 @@ const format_date = (value) => {
                     </button>
                   </li>
 
-                  <li v-else class="border-2 py-2 rounded-box mb-2">
+                  <li
+                    v-if="
+                      sortedDataNotif.length == 0 ||
+                      sortedDataNotif.filter((data) => data.is_viewed === 1)
+                        .length == 0
+                    "
+                    class="border-2 py-2 my-2 rounded-box"
+                  >
                     <button>
                       <a class="flex justify-start gap-2 items-center mx-1"
                         ><img
@@ -249,13 +263,16 @@ const format_date = (value) => {
                   </li>
                 </main>
 
+                <!-- tab approval -->
                 <main v-else>
                   <li
                     v-if="
-                      sortedDataApproval.value != undefined ||
+                      sortedDataApproval.value !== undefined ||
                       sortedDataApproval.length > 0
                     "
-                    v-for="data in sortedDataApproval"
+                    v-for="data in sortedDataApproval
+                      .filter((item) => item.is_viewed)
+                      .slice(0, 5)"
                     :key="data.id"
                     class="border-2 py-2 my-2 rounded-box"
                     :style="{
@@ -283,7 +300,14 @@ const format_date = (value) => {
                     </button>
                   </li>
 
-                  <li v-else class="border-2 py-2 rounded-box mb-2">
+                  <li
+                    v-if="
+                      sortedDataApproval.length == 0 ||
+                      sortedDataApproval.filter((data) => data.is_viewed === 1)
+                        .length == 0
+                    "
+                    class="border-2 py-2 my-2 rounded-box"
+                  >
                     <button>
                       <a class="flex justify-start gap-2 items-center mx-1"
                         ><img
