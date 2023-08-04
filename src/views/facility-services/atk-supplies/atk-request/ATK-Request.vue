@@ -12,6 +12,7 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
+import viewicon from "@/assets/eye.png"
 
 import ModalAdd from "@/components/facility-services/atk-supplies/atk-request/ModalAddRequest.vue";
 
@@ -606,15 +607,12 @@ const format_date = (value) => {
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link :to="`/atkRequest/${data.id}`">
-                        <img :src="editicon" class="w-6 h-6" />
+                        <img :src="data.status == 'Draft' ? editicon : viewicon" class="w-6 h-6" />
                       </router-link>
                       <button
                         v-if="data.status == 'Draft'"
                         @click="deleteValue(data.id)"
                       >
-                        <img :src="deleteicon" class="w-6 h-6" />
-                      </button>
-                      <button v-else disabled>
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>
