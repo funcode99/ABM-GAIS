@@ -14,18 +14,28 @@ let role = localStorage.getItem("id_role").replace(/"/g, "");
 let adminRole = role == "ADMTR" || role == "ADM" || role == "SUPADM";
 
 import Api from "@/utils/Api";
+import moment from "moment";
 
 const router = useRouter();
-
 const sidebar = useSidebarStore();
+const tabs = ref(["Notification", "Approval"]);
+const activeTab = ref(0);
 
 let isOpen = ref(false);
 let isNotificationOpen = ref(false);
 let sortedData = ref([]);
 let instanceArray = [];
+let sortedDataNotif = ref([]);
+let instanceArrayNotif = [];
+let sortedDataApproval = ref([]);
+let instanceArrayApproval = [];
 
 const changeViewStatus = () => {
   isOpen.value = false;
+};
+
+const changeTab = (index) => {
+  activeTab.value = index;
 };
 
 const logout = async () => {
@@ -48,10 +58,24 @@ const getNotif = async () => {
     res.data.message == "Success Get Data" ? instanceArray : [];
 };
 
-const getNotifClick = async () => {
+const fetchNotifNonApproval = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/notification/get_data");
+  const res = await Api.get("/notification/get_notif");
+  instanceArrayNotif = res.data.data;
+  if (instanceArrayNotif !== undefined) {
+    sortedDataNotif.value = instanceArrayNotif;
+  }
+};
+
+const fetchNotifApproval = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/notification/get_approval");
+  instanceArrayApproval = res.data.data;
+  if (instanceArrayApproval !== undefined) {
+    sortedDataApproval.value = instanceArrayApproval;
+  }
 };
 
 const readNotif = async (id, id_document) => {
@@ -78,7 +102,15 @@ const readNotifApproval = async (id, id_document) => {
 
 onBeforeMount(() => {
   getNotif();
+  fetchNotifNonApproval();
+  fetchNotifApproval();
 });
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY, h:mm:ss");
+  }
+};
 </script>
 
 <template>
@@ -117,10 +149,7 @@ onBeforeMount(() => {
           <!-- notification -->
           <div class="relative">
             <button
-              @click="
-                isNotificationOpen = !isNotificationOpen;
-                getNotifClick();
-              "
+              @click="isNotificationOpen = !isNotificationOpen"
               class="mx-10 hover:scale-125"
             >
               <div class="indicator hover:bg-slate-300 hover:rounded-full p-1">
@@ -150,50 +179,146 @@ onBeforeMount(() => {
             <Transition name="slide">
               <ul
                 v-if="isNotificationOpen"
-                class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-96 top-[50px] overflow-y-scroll overflow-x-hidden max-h-52 min-h-12"
+                class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-[500px] top-[50px] overflow-y-scroll overflow-x-hidden max-h-60 min-h-12"
               >
-                <li
-                  v-if="sortedData.value != undefined || sortedData.length > 0"
-                  v-for="data in sortedData"
-                  :key="data.id"
-                  class="border-2 py-2 rounded-box mb-2"
-                  :style="{
-                    'background-color': data.is_viewed
-                      ? 'rgba(0, 0, 255, 0.1)'
-                      : 'transparent',
-                  }"
-                >
-                  <button
-                    @click="
-                      data.text.includes(`requested your approval`)
-                        ? readNotifApproval(data.id, data.id_document)
-                        : readNotif(data.id, data.id_document)
+                <div class="tabs">
+                  <a
+                    v-for="(tab, index) in tabs"
+                    :key="index"
+                    :class="[
+                      'tab',
+                      'tab-bordered',
+                      'tab-lifted',
+                      'font-JakartaSans font-normal text-md',
+                      { 'tab-active': activeTab === index },
+                    ]"
+                    @click="changeTab(index)"
+                    v-show="
+                      tab == 'Approval' &&
+                      (role == 'ADMTR' || role == 'ADM' || role == 'SUPADM')
+                        ? true
+                        : tab == 'Notification'
+                        ? true
+                        : false
                     "
-                    v-if="adminRole || role"
                   >
-                    <a class="flex justify-start gap-2 items-center mx-1">
-                      <img
-                        :src="user"
-                        class="background rounded-full w-[42px] h-[42px]"
-                      />
-                      <span class="text-start">
-                        {{ data.text }}
-                      </span>
-                    </a>
-                  </button>
-                </li>
+                    {{ tab }}
+                  </a>
+                </div>
 
-                <li v-else class="border-2 py-2 rounded-box mb-2">
-                  <button>
-                    <a class="flex justify-start gap-2 items-center mx-1"
-                      ><img
-                        :src="user"
-                        class="background rounded-full w-[42px] h-[42px]"
-                      />
-                      <span class="text-start"> No Notification </span>
-                    </a>
-                  </button>
-                </li>
+                <!-- tab notification -->
+                <main v-if="activeTab === 0">
+                  <li
+                    v-if="
+                      sortedDataNotif.value !== undefined ||
+                      sortedDataNotif.length > 0
+                    "
+                    v-for="data in sortedDataNotif
+                      .filter((item) => item.is_viewed)
+                      .slice(0, 5)"
+                    :key="data.id"
+                    class="border-2 py-2 my-2 rounded-box"
+                    :style="{
+                      'background-color': data.is_viewed
+                        ? 'rgba(0, 0, 255, 0.1)'
+                        : 'transparent',
+                    }"
+                  >
+                    <button
+                      @click="readNotif(data.id, data.id_document)"
+                      v-if="adminRole || role"
+                    >
+                      <a class="flex justify-start gap-2 items-center mx-2">
+                        <img
+                          :src="user"
+                          class="background rounded-full w-[42px] h-[42px]"
+                        />
+                        <div class="mx-1">
+                          <p class="text-left">{{ data.text }}</p>
+                          <p class="text-left text-sm">
+                            {{ format_date(data.date) }}
+                          </p>
+                        </div>
+                      </a>
+                    </button>
+                  </li>
+
+                  <li
+                    v-if="
+                      sortedDataNotif.length == 0 ||
+                      sortedDataNotif.filter((data) => data.is_viewed === 1)
+                        .length == 0
+                    "
+                    class="border-2 py-2 my-2 rounded-box"
+                  >
+                    <button>
+                      <a class="flex justify-start gap-2 items-center mx-1"
+                        ><img
+                          :src="user"
+                          class="background rounded-full w-[42px] h-[42px]"
+                        />
+                        <span class="text-start"> No Notification </span>
+                      </a>
+                    </button>
+                  </li>
+                </main>
+
+                <!-- tab approval -->
+                <main v-else>
+                  <li
+                    v-if="
+                      sortedDataApproval.value !== undefined ||
+                      sortedDataApproval.length > 0
+                    "
+                    v-for="data in sortedDataApproval
+                      .filter((item) => item.is_viewed)
+                      .slice(0, 5)"
+                    :key="data.id"
+                    class="border-2 py-2 my-2 rounded-box"
+                    :style="{
+                      'background-color': data.is_viewed
+                        ? 'rgba(0, 0, 255, 0.1)'
+                        : 'transparent',
+                    }"
+                  >
+                    <button
+                      @click="readNotifApproval(data.id, data.id_document)"
+                      v-if="adminRole || role"
+                    >
+                      <a class="flex justify-start gap-2 items-center mx-2">
+                        <img
+                          :src="user"
+                          class="background rounded-full w-[42px] h-[42px]"
+                        />
+                        <div class="mx-1">
+                          <p class="text-left">{{ data.text }}</p>
+                          <p class="text-left text-sm">
+                            {{ format_date(data.date) }}
+                          </p>
+                        </div>
+                      </a>
+                    </button>
+                  </li>
+
+                  <li
+                    v-if="
+                      sortedDataApproval.length == 0 ||
+                      sortedDataApproval.filter((data) => data.is_viewed === 1)
+                        .length == 0
+                    "
+                    class="border-2 py-2 my-2 rounded-box"
+                  >
+                    <button>
+                      <a class="flex justify-start gap-2 items-center mx-1"
+                        ><img
+                          :src="user"
+                          class="background rounded-full w-[42px] h-[42px]"
+                        />
+                        <span class="text-start"> No Notification </span>
+                      </a>
+                    </button>
+                  </li>
+                </main>
               </ul>
             </Transition>
           </div>
