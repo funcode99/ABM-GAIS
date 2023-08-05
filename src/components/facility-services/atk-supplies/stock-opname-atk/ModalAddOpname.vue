@@ -145,22 +145,22 @@ const fetchDataEdit = async () => {
 
   props.dataItem.map((elements) => {
     itemsTable.value.push({
-      id_company: selectedCompany.value,
       id_departement: "",
-      id_site: selectedSite.value,
       id_warehouse: elements.id_warehouse,
       id_employee: selectedEmployee.value,
       remarks: elements.remark ? elements.remark : "",
       id_item: elements.id_item,
       id_brand: elements.id_brand ? elements.id_brand : "",
       id_uom: elements.id_uom,
-      qtyOpname: elements.QuantityAdjusment,
+      qty_adjustment: elements.QuantityAdjusment,
       nameWarehouse: elements.Warehouse,
       namaBrand: elements.brandName,
       namaUOM: elements.UOMName,
       namItem: elements.itemNames,
       codeItem: elements.idItems,
       id: elements.id,
+      id_warehouse: elements.id_warehouse,
+      adjustment_type: elements.adjustment_type
     });
   });
 };
@@ -226,9 +226,7 @@ const addItem = async () => {
       }
     }
     itemsTable.value.push({
-      id_company: selectedCompany.value,
       id_departement: "",
-      id_site: selectedSite.value,
       id_warehouse: selectedWarehouse.value,
       id_employee: selectedEmployee.value,
       remarks: remark.value ? remark.value : "",
@@ -236,27 +234,16 @@ const addItem = async () => {
       id_brand: selectedBrand.value ? selectedBrand.value : "",
       id_uom: selectedUOM.value,
       qty: alertQuantity.value,
-      qtyOpname: quantityOpname.value,
-      adjusment: selectedAdjusment.value,
+      qty_adjustment: quantityOpname.value,
+      adjusment_type: selectedAdjusment.value,
       nameWarehouse: warehouseName.value,
       namaBrand: brandName.value,
       namaUOM: uomName.value,
       namItem: namaItem.value,
     });
-
-    itemsTable2.value.push({
-      id_item: itemNames.value,
-      id_warehouse: selectedWarehouse.value,
-      id_brand: selectedBrand.value ? selectedBrand.value : "",
-      id_uom: selectedUOM.value,
-      adjustment_type: selectedAdjusment.value,
-      qty_adjustment: quantityOpname.value,
-      remarks: remark.value ? remark.value : "",
-    });
     resetButCompanyDisable();
     return itemsTable;
   }
-  // return itemsTable2
 };
 
 const resetButCompanyDisable = async () => {
@@ -293,12 +280,13 @@ const save = async () => {
       id_company: selectedCompany.value,
       id_site: selectedSite.value,
       remarks: remark.value ? remark.value : "",
-      array_detail: itemsTable2.value,
+      array_detail: itemsTable.value,
     };
+    console.log(itemsTable.value)
     let api =
       props.status === "add"
         ? "stock_opname/store/"
-        : `stock_opname/update_data/${props.id}`;
+        : `stock_opname/update/${props.id}`;
     Api.post(api, payload)
       .then((res) => {
         Swal.fire({
@@ -344,7 +332,6 @@ onMounted(() => {
   if (props.status === "edit") {
     fetchDataEdit();
   }
-  console.log(props.id)
 });
 </script>
 
@@ -606,11 +593,11 @@ onMounted(() => {
                 >
                   Adjusment Type
                 </th>
-                <th
+                <!-- <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   Quantity
-                </th>
+                </th> -->
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
@@ -650,11 +637,11 @@ onMounted(() => {
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.adjusment == "addition" ? "Increase" : "Decrease" }}
                 </td>
-                <td class="border border-[#B9B9B9] text-center">
+                <!-- <td class="border border-[#B9B9B9] text-center">
                   {{ items.qty }}
-                </td>
+                </td> -->
                 <td class="border border-[#B9B9B9] text-center">
-                  {{ items.qtyOpname }}
+                  {{ items.qty_adjustment }}
                 </td>
                 <td
                   class="border border-[#B9B9B9] text-center"

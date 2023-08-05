@@ -235,11 +235,6 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      ATK Warehouse
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
                       ID Item
                     </th>
                     <th
@@ -252,6 +247,11 @@ const format_date = (value) => {
                       v-if="company_code != '8000'"
                     >
                       Brand
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      UOM
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -271,11 +271,6 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Uom
-                    </th>
-                    <th
-                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                    >
                       Remarks
                     </th>
                   </tr>
@@ -286,9 +281,6 @@ const format_date = (value) => {
                   :key="ind"
                 >
                   <tr class="h-16">
-                    <td class="border border-[#B9B9B9]">
-                      {{ value.Warehouse }}
-                    </td>
                     <td class="border border-[#B9B9B9]">{{ value.idItems }}</td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.itemNames }}
@@ -296,6 +288,9 @@ const format_date = (value) => {
 
                     <td class="border border-[#B9B9B9]" v-if="company_code != '8000'">
                       {{ value.brandName }}
+                    </td>
+                    <td class="border border-[#B9B9B9]" v-if="company_code != '8000'">
+                      {{ value.UOMName }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.alertQuantity }}
@@ -306,7 +301,6 @@ const format_date = (value) => {
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_unsend }}
                     </td>
-                    <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                   </tr>
                 </tbody>
