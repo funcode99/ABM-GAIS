@@ -67,7 +67,7 @@ onBeforeMount(() => {
 
 })
 
-const emits = defineEmits(['resetTable'])
+const emits = defineEmits(['resetTable', 'changeShowing'])
 
 const resetCompanyAndRole = () => {
   groupCompanyId.value = 'group company'
@@ -306,7 +306,7 @@ const fetchParentCompany = async (id_company) => {
           <select
             class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
             v-model="pageMultiplier"
-            @change="$emit('changeShowing', pageMultiplierReactive)"
+            @change="emits('changeShowing', pageMultiplierReactive)"
           >
             <option>10</option>
             <option>25</option>
@@ -356,7 +356,7 @@ const fetchParentCompany = async (id_company) => {
       <select
         class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
         v-model="pageMultiplier"
-        @change="$emit('changeShowing', pageMultiplierReactive)">
+        @change="emits('changeShowing', pageMultiplierReactive)">
         <option>10</option>
         <option>25</option>
         <option>50</option>
