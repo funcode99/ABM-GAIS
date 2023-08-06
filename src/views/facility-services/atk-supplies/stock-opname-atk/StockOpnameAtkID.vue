@@ -75,7 +75,9 @@ const fetchDetailById = async (id, type) => {
         id_item: element.id_item,
         id_uom: element.id_uom,
         id_brand: element.id_brand,
-        id: elements.id,
+        id: element.id,
+        id_warehouse: element.id_warehouse,
+        adjustment_type: element.adjustment_type
       });
       itemsTableEdit.value.push({
         Warehouse: element.warehouse_name,
@@ -90,7 +92,9 @@ const fetchDetailById = async (id, type) => {
         id_item: element.id_item,
         id_uom: element.id_uom,
         id_brand: element.id_brand,
-        id: elements.id,
+        id: element.id,
+        id_warehouse: element.id_warehouse,
+        adjustment_type: element.adjustment_type
       });
     }
   }

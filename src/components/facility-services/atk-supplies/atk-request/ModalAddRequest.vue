@@ -267,7 +267,7 @@ const save = async () => {
     let api =
       props.status === "add"
         ? "request_atk/store"
-        : `request_atk/update_data/${props.id}`;
+        : `request_atk/update/${props.id}`;
     Api.post(api, payload)
       .then((res) => {
         Swal.fire({
