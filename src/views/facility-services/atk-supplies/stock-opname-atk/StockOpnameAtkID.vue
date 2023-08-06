@@ -33,7 +33,7 @@ const idDetail = ref("");
 const company_code = JSON.parse(localStorage.getItem("company_code"));
 let dataArr = ref([]);
 let dataItem = ref([]);
-let id = ref(router.currentRoute.value.params.id)
+let id = ref(router.currentRoute.value.params.id);
 let statusForm = ref("add");
 let visibleModal = ref(false);
 let idItem = ref(0);
@@ -54,49 +54,48 @@ const fetchDataById = async (id) => {
     status.value = element.status;
   }
 };
-const fetchDetailById = async (id, type) => {
+const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/stock_opname/get_by_stock_opname_id/${id}`);
-  // console.log(res.data.data)
+  ItemTable.value = [];
+  itemsTableEdit.value = [];
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
-    if (type != "close") {
-      ItemTable.value.push({
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-        QuantityAdjusment: element.qty_adjustment,
-        adjusmentType: element.adjustment_type,
-        id_item: element.id_item,
-        id_uom: element.id_uom,
-        id_brand: element.id_brand,
-        id: element.id,
-        id_warehouse: element.id_warehouse,
-        adjustment_type: element.adjustment_type
-      });
-      itemsTableEdit.value.push({
-        Warehouse: element.warehouse_name,
-        itemNames: element.item_name,
-        idItems: element.code_item,
-        alertQuantity: element.qty,
-        brandName: element.brand_name,
-        UOMName: element.uom_name,
-        remark: element.remarks,
-        QuantityAdjusment: element.qty_adjustment,
-        adjusmentType: element.adjustment_type,
-        id_item: element.id_item,
-        id_uom: element.id_uom,
-        id_brand: element.id_brand,
-        id: element.id,
-        id_warehouse: element.id_warehouse,
-        adjustment_type: element.adjustment_type
-      });
-    }
+    ItemTable.value.push({
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+      QuantityAdjusment: element.qty_adjustment,
+      adjusmentType: element.adjustment_type,
+      id_item: element.id_item,
+      id_uom: element.id_uom,
+      id_brand: element.id_brand,
+      id: element.id,
+      id_warehouse: element.id_warehouse,
+      adjustment_type: element.adjustment_type,
+    });
+    itemsTableEdit.value.push({
+      Warehouse: element.warehouse_name,
+      itemNames: element.item_name,
+      idItems: element.code_item,
+      alertQuantity: element.qty,
+      brandName: element.brand_name,
+      UOMName: element.uom_name,
+      remark: element.remarks,
+      QuantityAdjusment: element.qty_adjustment,
+      adjusmentType: element.adjustment_type,
+      id_item: element.id_item,
+      id_uom: element.id_uom,
+      id_brand: element.id_brand,
+      id: element.id,
+      id_warehouse: element.id_warehouse,
+      adjustment_type: element.adjustment_type,
+    });
   }
   dataItem.value = itemsTableEdit.value;
 };
