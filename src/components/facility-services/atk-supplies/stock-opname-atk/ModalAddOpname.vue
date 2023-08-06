@@ -111,17 +111,10 @@ const changeUomBrand = async (id_item) => {
   const res = await Api.get(`/management_atk/get/${id_item}`);
   selectedBrand.value = res.data.data[0].id_brand;
   selectedUOM.value = res.data.data[0].id_uom;
-  for (
-    let index = 0;
-    index < res.data.data[0].array_warehouse.length;
-    index++
-  ) {
-    const element = res.data.data[0].array_warehouse[index];
-    if (selectedWarehouse.value === element.id_warehouse) {
-      alertQuantity.value = element.current_stock;
-    }
-  }
+  alertQuantity.value = res.data.data[0].alert_qty
+  Warehouse.value = res.data.data[0].array_warehouse
 };
+
 const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -235,7 +228,7 @@ const addItem = async () => {
       id_uom: selectedUOM.value,
       qty: alertQuantity.value,
       qty_adjustment: quantityOpname.value,
-      adjusment_type: selectedAdjusment.value,
+      adjustment_type: selectedAdjusment.value,
       nameWarehouse: warehouseName.value,
       namaBrand: brandName.value,
       namaUOM: uomName.value,
@@ -425,6 +418,7 @@ onMounted(() => {
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               v-model="itemNames"
+              @change="changeUomBrand(itemNames)"
             >
               <option disabled selected>Item</option>
               <option v-for="(item, i) in Item" :key="i" :value="item.id">
@@ -458,7 +452,6 @@ onMounted(() => {
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               v-model="selectedWarehouse"
-              @change="changeUomBrand(itemNames)"
             >
               <option disabled selected>ATK Warehouse</option>
               <option
