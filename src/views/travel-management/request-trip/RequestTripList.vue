@@ -12,6 +12,8 @@
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin.js'
     import fetchDocumentCodeUtils from '@/utils/Fetch/Travel-Management/fetchDocumentCode.js'
 
+    import moment from "moment"
+
     import icon_receive from "@/assets/icon-receive.svg"
     import icon_filter from "@/assets/icon_filter.svg"
     import icon_reset from "@/assets/icon_reset.svg"
@@ -77,20 +79,41 @@
     const fetch = async () => {
       
       try {
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)      
-        instanceArray = api.data.data
+
+        if(date.value[0] !== '' & date.value[1] !== '') {
+          
+          console.log('ada tanggal nya')
+
+          let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
+          let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
+
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}`)
+          instanceArray = api.data.data
+
+        } else {
+          
+          console.log('tidak ada tanggal nya')
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)
+          instanceArray = api.data.data
+          
+        }
+
         sortedData.value = instanceArray
+
       } catch (error) {
         console.log(error)
         sortedData.value = []
+        date.value = ['', '']
       }
 
     }
 
     const resetAndFetch = () => {
       requestTripType.value = ''
+      date.value = ['', '']
       fetch()
     }
 
@@ -249,7 +272,11 @@
   
                   <select v-model="requestTripType" class="font-JakartaSans capitalize block bg-white w-[200px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm">
                     <option value="">All Purpose</option>
-                    <option v-for="data in documentCodeData" :key="data.id" :value="data.id">
+                    <option 
+                      v-for="data in documentCodeData" 
+                      :key="data.id" 
+                      :value="data.id"
+                    >
                       {{ data.document_name }}
                     </option>
                   </select>
@@ -259,15 +286,15 @@
                 <div>
 
                   <p class="capitalize font-Fira text-xs text-black font-medium">
-                    Date
+                    Date {{ date }}
                   </p>
 
                   <VueDatePicker 
                       v-model="date"
                       range
                       :enable-time-picker="false"
-                      format="yyyy-mm-dd"
                   />
+                      <!-- format="yyyy-mm-dd" -->
 
                 </div>
   

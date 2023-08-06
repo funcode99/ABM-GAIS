@@ -1,55 +1,52 @@
 <script setup>
-import { ref, onBeforeMount, computed } from "vue";
-import Api from "@/utils/Api";
+import { ref, onBeforeMount, computed } from "vue"
+import Api from "@/utils/Api"
 
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import iconView from "@/assets/view-details.png";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
+import moment from "moment"
 
-import { useSidebarStore } from "@/stores/sidebar.js";
-const sidebar = useSidebarStore();
+import fetchDocumentCodeUtils from '@/utils/Fetch/Travel-Management/fetchDocumentCode.js'
+
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import iconView from "@/assets/view-details.png"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+
+import { useSidebarStore } from "@/stores/sidebar.js"
+const sidebar = useSidebarStore()
 
 //for sort & search
-const date = ref();
-const search = ref("");
-let sortedData = ref([]);
-const selectedType = ref("Purpose");
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
+const date = ref(['', ''])
+const search = ref("")
+let sortedData = ref([])
+const selectedType = ref("Purpose")
+let sortedbyASC = true
+let instanceArray = []
+let lengthCounter = 0
 
 //for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
+let showingValue = ref(1)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
+
+let documentCodeData = ref([])
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
+  paginateIndex.value = pageOfItem - 1
   showingValue.value = pageOfItem;
-};
-
-//for filter & reset button
-const filterDataByType = () => {
-  if (selectedType.value === "") {
-    sortedData.value = instanceArray;
-  } else {
-    sortedData.value = instanceArray.filter(
-      (item) => item.type === selectedType.value
-    );
-  }
-};
+}
 
 //for filter & reset button
 const resetData = () => {
-  sortedData.value = instanceArray;
-  selectedType.value = "Type";
+  sortedData.value = instanceArray
+  selectedType.value = "Purpose";
+  date.value = ['', '']
+  fetchRequestTrip()
 };
 
 //for check & uncheck all
@@ -88,24 +85,75 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
-};
+}
 
 const fetchRequestTrip = async () => {
+  
   try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    let api = await Api.get("/approval_request_trip/get_data");
-    sortedData.value = api.data.data;
+    
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+    if(date.value[0] !== '' & date.value[1] !== '' & selectedType.value === 'Purpose') {
+
+      console.log('masuk ke 1')
+
+      let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
+      let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
+
+      let api = await Api.get(`/approval_request_trip/get_data?start_date=${firstDate}&end_date=${lastDate}`)
+      instanceArray = api.data.data
+
+      console.log(api)
+
+    }
+    else if (date.value[0] !== '' & date.value[1] !== '' & selectedType.value !== 'Purpose') {
+
+      console.log('masuk ke 2')
+
+      let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
+      let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
+
+      let api = await Api.get(`/approval_request_trip/get_data?code_doc=${selectedType.value}&start_date=${firstDate}&end_date=${lastDate}`)
+      instanceArray = api.data.data
+
+      console.log(api)
+    }
+    else if (date.value[0] === '' & date.value[1] === '' & selectedType.value !== 'Purpose') {
+
+      console.log('masuk ke 3')
+      
+      let api = await Api.get(`/approval_request_trip/get_data?code_doc=${selectedType.value}`)
+      instanceArray = api.data.data
+
+      console.log(api)
+
+    }
+    else if (date.value[0] === '' & date.value[1] === '' & selectedType.value === 'Purpose') {
+
+      console.log('masuk ke 4')
+      
+      let api = await Api.get(`/approval_request_trip/get_data`)
+      instanceArray = api.data.data
+
+      console.log(api)
+
+    }
+
+    sortedData.value = instanceArray
+
   } catch (error) {
-    console.log(error);
-    sortedData.value = [];
+    console.log(error)
+    sortedData.value = []
   }
-};
+
+}
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchRequestTrip();
-});
+  getSessionForSidebar()
+  fetchRequestTrip()
+  fetchDocumentCodeUtils(documentCodeData)
+})
 
 //for searching
 const filteredItems = (search) => {
@@ -121,15 +169,18 @@ const filteredItems = (search) => {
   sortedData.value = filteredR;
   lengthCounter = sortedData.value.length;
   onChangePage(1);
-};
+}
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+}
+
 </script>
 
 <template>
+
   <div class="flex flex-col basis-full grow-0 shrink-0 w-full this">
+    
     <Navbar />
 
     <div class="flex w-screen mt-[115px]">
@@ -171,8 +222,12 @@ const getSessionForSidebar = () => {
                   v-model="selectedType"
                 >
                   <option disabled selected>Purpose</option>
-                  <option v-for="data in sortedData" :key="data.id">
-                    {{ data.purpose_of_trip }}
+                  <option 
+                    v-for="data in documentCodeData" 
+                    :key="data.id" 
+                    :value="data.code_document"
+                  >
+                    {{ data.document_name }}
                   </option>
                 </select>
               </div>
@@ -182,7 +237,7 @@ const getSessionForSidebar = () => {
                   <p
                     class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                   >
-                    Date
+                    Date {{ date }}
                   </p>
 
                   <VueDatePicker
@@ -197,7 +252,7 @@ const getSessionForSidebar = () => {
               <div class="flex flex-wrap gap-1 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="filterDataByType"
+                  @click="fetchRequestTrip"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -303,10 +358,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(
-                      paginateIndex * pageMultiplierReactive,
-                      (paginateIndex + 1) * pageMultiplierReactive
-                    )"
+                    v-for="data in sortedData.slice(paginateIndex * pageMultiplierReactive, (paginateIndex + 1) * pageMultiplierReactive)"
                     :key="data.id"
                   >
                     <td>
@@ -358,7 +410,9 @@ const getSessionForSidebar = () => {
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
+
   </div>
+
 </template>
 
 <style scoped>
