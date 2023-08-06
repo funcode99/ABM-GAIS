@@ -179,7 +179,8 @@
     const filteredItems = (search) => {
       sortedData.value = instanceArray
         const filteredR = sortedData.value.filter(item => {
-          return item.id.toString().indexOf(search.toLowerCase()) > -1 | item.role_name.toLowerCase().indexOf(search.toLowerCase()) > -1
+          return item.id.toString().indexOf(search.toLowerCase()) > -1 | 
+          item.role_name.toLowerCase().indexOf(search.toLowerCase()) > -1
         })
       sortedData.value = filteredR
       // lengthCounter = sortedData.value.length
