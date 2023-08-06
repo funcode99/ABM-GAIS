@@ -199,17 +199,21 @@
       }
     }
 
-    watch(search, () => {
-      filteredItems()
-    })
-
     const filteredItems = () => {
+
       sortedData.value = instanceArray
         const filteredR = sortedData.value.filter(item => {
-          return item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1
+        return (
+          (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+          (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+          (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+          (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
+        )
       })
+
       sortedData.value = filteredR
       onChangePage(1)
+      
     }
 
     const assignRequestTripId = (tripId) => {
@@ -286,7 +290,7 @@
                 <div>
 
                   <p class="capitalize font-Fira text-xs text-black font-medium">
-                    Date {{ date }}
+                    Date
                   </p>
 
                   <VueDatePicker 
@@ -356,6 +360,7 @@
                     type="text"
                     name="search"
                     v-model="search"
+                    @keyup.enter="filteredItems"
                   />
 
                 </label>
@@ -414,8 +419,8 @@
                       </span>
                     </th>
 
-                    <th>
-                      Actions
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
                     </th>
 
                   </tr>
@@ -440,7 +445,7 @@
                     <td>{{ data.employee_name }}</td>
                     <td>{{ data.document_name }}</td>
                     <td>{{ data.status }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
+                    <td class="flex flex-wrap gap-4 justify-center items-center">
                       <router-link to="/request-view" @click="assignRequestTripId(data.id)">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />

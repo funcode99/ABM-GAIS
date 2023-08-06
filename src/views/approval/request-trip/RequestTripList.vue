@@ -68,12 +68,12 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "created_date" },
-  { Id: 3, title: "Request No", jsonData: " requestor_no" },
-  { Id: 4, title: "Requestor", jsonData: "requestor" },
-  { Id: 5, title: "Purpose Of Trip", jsonData: "purpose_of_trip" },
+  { Id: 2, title: "Created Date", jsonData: "created_at" },
+  { Id: 3, title: "Request No", jsonData: " no_request_trip" },
+  { Id: 4, title: "Requestor", jsonData: "employee_name" },
+  { Id: 5, title: "Purpose Of Trip", jsonData: "document_name" },
   { Id: 6, title: "Status", jsonData: "status" },
-  { Id: 7, title: "Actions" },
+  // { Id: 7, title: "Actions" },
 ];
 
 //for sort
@@ -140,7 +140,7 @@ const fetchRequestTrip = async () => {
 
     }
 
-    sortedData.value = instanceArray
+    sortedData.value = instanceArray.reverse()
 
   } catch (error) {
     console.log(error)
@@ -156,19 +156,23 @@ onBeforeMount(() => {
 })
 
 //for searching
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
+const filteredItems = () => {
+
+  sortedData.value = instanceArray
+  
   const filteredR = sortedData.value.filter((item) => {
-    (item.requestor_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1);
     return (
-      (item.requestor_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
+      (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
+    )
+  })
+
+  sortedData.value = filteredR
+  lengthCounter = sortedData.value.length
+  onChangePage(1)
+
 }
 
 const getSessionForSidebar = () => {
@@ -237,7 +241,7 @@ const getSessionForSidebar = () => {
                   <p
                     class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
                   >
-                    Date {{ date }}
+                    Date
                   </p>
 
                   <VueDatePicker
@@ -296,7 +300,7 @@ const getSessionForSidebar = () => {
                   type="text"
                   name="search"
                   v-model="search"
-                  @keyup="filteredItems(search)"
+                  @keyup.enter="filteredItems"
                 />
               </label>
             </div>
@@ -330,6 +334,7 @@ const getSessionForSidebar = () => {
                 >
                   <tr>
                     <th>
+
                       <div class="flex justify-center">
                         <input
                           type="checkbox"
@@ -337,6 +342,7 @@ const getSessionForSidebar = () => {
                           @click="selectAll((checkList = !checkList))"
                         />
                       </div>
+
                     </th>
 
                     <th
@@ -352,6 +358,11 @@ const getSessionForSidebar = () => {
                         </button>
                       </span>
                     </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
                   </tr>
                 </thead>
 
