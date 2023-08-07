@@ -31,11 +31,15 @@ const idR = ref(router.currentRoute.value.params.id);
 let dataApproval = ref([]);
 let tabId = ref(1);
 const company_code = JSON.parse(localStorage.getItem("company_code"));
+let dataArr = ref([])
+let dataItem = ref([])
+
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/request_atk/get/${id}`);
+  dataArr.value = res.data.data[0]
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -53,6 +57,7 @@ const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
+  dataItem.value = res.data.data
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -123,7 +128,7 @@ const format_date = (value) => {
           </router-link>
 
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
-            <ModalApproveAtk v-if="status == 'Waiting Approval'" />
+            <ModalApproveAtk v-if="status == 'Waiting Approval'" :data-arr="dataArr" :data-item="dataItem"/>
             <ModalRejectAtk v-if="status == 'Waiting Approval'" />
             <!-- <button
               class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"

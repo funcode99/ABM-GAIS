@@ -1,6 +1,12 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_done from "@/assets/icon_done.svg";
+import icon_add from "@/assets/icon_add_square.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+
+const props = defineProps({
+  dataArr: [Object, Array],
+});
 
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
@@ -11,12 +17,28 @@ const notesName = ref("");
 let qtyApproved = ref([]);
 const id = router.currentRoute.value.params.id;
 const itemTable = ref([]);
-const itemApprove = ref([]);
+const dataItem = ref([]);
 const headerApprove = ref([]);
 const itemPayload = ref([]);
 const payload = ref([]);
+const idWh = ref([]);
+const warehouseName = ref("");
+const listChildItem = ref([]);
+const Warehouse = ref([]);
+const filteredData = ref([]);
+
+const inputClass =
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
 const isApprove = ref(false);
+
+const changeSite = async (id_site) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
+  Warehouse.value = res.data.data;
+};
+
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -24,53 +46,82 @@ const fetchDetailById = async (id) => {
   itemTable.value = res.data.data;
 };
 
-const detailItemApprove = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/approval_request_atk/get_confirm_approve/${id}`);
-  itemApprove.value = res.data.data[0].array_warehouse;
-  headerApprove.value = res.data.data[0];
+const addItem = async (ind, data) => {
+  const wh = Warehouse.value;
+  for (let index = 0; index < wh.length; index++) {
+    const element = wh[index];
+    if (element.id == idWh.value[ind]) {
+      warehouseName.value = element.warehouse_name;
+    }
+  }
+
+  listChildItem.value.push({
+    id_item: itemTable.value[ind].id_item,
+    id_atk_request_detail: router.currentRoute.value.params.id,
+    id_warehouse: idWh.value[ind],
+    name_warehouse: warehouseName.value,
+    qty_approved: qtyApproved.value[ind],
+    item_name: data.item_name,
+    code_item: data.code_item,
+    remarks: notesName.value ? notesName.value : "",
+  });
+
+  listChildItem.value.forEach((element) => {
+    filteredData.value[element.id_item] = listChildItem.value.filter((item) => {
+      return item.id_item == element.id_item;
+    });
+  });
+  console.log(listChildItem.value);
+};
+
+const removeItem = async (ind, id, ind_parent) => {
+  filteredData.value[id].splice(ind - 1, 1);
+  listChildItem.value.splice(ind_parent, 1);
 };
 
 const submit = async () => {
   itemPayload.value = [];
-  for (let index = 0; index < itemApprove.value.length; index++) {
-    const element = itemApprove.value[index];
-    itemPayload.value.push({
-      id_item: headerApprove.value.id_item,
-      id_atk_request_detail: router.currentRoute.value.params.id,
-      id_warehouse: element.id_warehouse,
-      qty_approved: qtyApproved.value[element.id_warehouse],
-      remarks: notesName.value ? notesName.value : "",
-    });
-    payload.value = {
-      warehouse_detail: itemPayload.value,
-    };
-    isApprove.value = true;
-  }
+  listChildItem.value.map((element) => {
+    element.remarks = notesName.value ? notesName.value : "";
+  });
+  payload.value = {
+    warehouse_detail: listChildItem.value,
+  };
+  isApprove.value = true;
   if (isApprove.value) {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.post(
+    Api.post(
       `/approval_request_atk/approve/${router.currentRoute.value.params.id}`,
       payload.value
-    );
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: res.data.message,
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    router.push({
-      path: "/approvalatkrequest",
-    });
+    )
+      .then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        router.push({
+          path: "/approvalatkrequest",
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      });
   }
 };
 
 onBeforeMount(() => {
-  fetchDetailById(id);
-  detailItemApprove(id);
+  changeSite(props.dataArr.id_site);
+  fetchDetailById(router.currentRoute.value.params.id);
 });
 </script>
 
@@ -101,173 +152,178 @@ onBeforeMount(() => {
       </nav>
 
       <main class="modal-box-inner-approval-atk">
-        <form class="pt-4">
-          <table class="table table-compact w-full">
-            <thead class="font-JakartaSans font-bold text-xs">
-              <tr class="bg-blue text-white h-8">
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  No
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Item
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Uom
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Quantity Requested
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  ATK Warehouse
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Stock Available
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                >
-                  Quantity Approve
-                </th>
-              </tr>
-            </thead>
-            <tbody
-              class="font-JakartaSans font-normal text-xs"
-              v-for="(value, ind) in itemApprove"
-              :key="ind"
-            >
-              <tr class="h-16">
-                <td class="border border-[#B9B9B9]">
-                  {{ (ind += 1) }}
-                </td>
-                <td class="border border-[#B9B9B9]">
-                  {{ headerApprove.code_item }} - {{ headerApprove.item_name }}
-                </td>
-                <td class="border border-[#B9B9B9]">
-                  {{ headerApprove.uom_name }}
-                </td>
-                <td class="border border-[#B9B9B9]">
-                  {{ headerApprove.qty }}
-                </td>
-                <td class="border border-[#B9B9B9]">
-                  {{ value.id_warehouse }}
-                </td>
-                <td class="border border-[#B9B9B9]">
-                  {{ value.stock_available }}
-                </td>
-                <td class="border border-[#B9B9B9]">
-                  <input
-                    type="number"
-                    v-model="qtyApproved[value.id_warehouse]"
-                    class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                    @input="
-                      () => {
-                        if (
-                          qtyApproved[value.id_warehouse] > headerApprove.qty ||
-                          qtyApproved[value.id_warehouse] < 0
-                        ) {
-                          qtyApproved[value.id_warehouse] = headerApprove.qty;
-                        }
-                      }
-                    "
-                  />
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!-- <div class="flex flex-wrap justify-start gap-2">
-              <div class="form-control">
-                <label class="block mt-2 font-JakartaSans font-medium text-sm">
-                  Item
-                </label>
-                <input type="hidden" v-model="value.id" />
-                <input
-                  type="text"
-                  v-model="value.itemName"
-                  disabled="true"
-                  style="background-color: #d3d3d3"
-                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                />
-              </div>
-              <div class="form-control">
-                <label class="block mt-2 font-JakartaSans font-medium text-sm">
-                  UOM
-                </label>
-                <input
-                  type="text"
-                  v-model="value.uomName"
-                  disabled="true"
-                  style="background-color: #d3d3d3"
-                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                />
-              </div>
-              <div class="form-control">
-                <label class="block mt-2 font-JakartaSans font-medium text-sm">
-                  Quantity Request
-                </label>
+        <table class="table table-compact w-full">
+          <thead class="font-JakartaSans font-bold text-xs">
+            <tr class="bg-blue text-white h-8">
+              <th
+                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+              >
+                Item
+              </th>
+              <th
+                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+              >
+                Uom
+              </th>
+              <th
+                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+              >
+                Quantity Requested
+              </th>
+              <th
+                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+              >
+                ATK Warehouse
+              </th>
+              <th
+                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+              >
+                Stock Available
+              </th>
+              <th
+                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+              >
+                Quantity Approve
+              </th>
+              <th
+                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody
+            class="font-JakartaSans font-normal text-xs"
+            v-for="(value, ind) in itemTable"
+            :key="ind"
+          >
+            <tr class="h-16">
+              <td class="border border-[#B9B9B9]">
+                {{ value.code_item }} - {{ value.item_name }}
+              </td>
+              <td class="border border-[#B9B9B9]">
+                {{ value.uom_name }}
+              </td>
+              <td class="border border-[#B9B9B9]">
+                {{ value.qty }}
+              </td>
+              <td class="border border-[#B9B9B9]">
+                <select v-model="idWh[ind]" :class="inputClass">
+                  <option
+                    v-for="data in value.array_warehouse"
+                    :key="data.id_warehouse"
+                    :value="data.id_warehouse"
+                  >
+                    {{ data.warehouse_name }}
+                  </option>
+                </select>
+              </td>
+              <td class="border border-[#B9B9B9]">
+                {{ value.total_stock }}
+              </td>
+              <td class="border border-[#B9B9B9]">
                 <input
                   type="number"
-                  v-model="value.qty"
-                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  disabled="true"
-                  style="background-color: #d3d3d3"
-                />
-              </div>
-              <div class="form-control">
-                <label class="block mt-2 font-JakartaSans font-medium text-sm">
-                  Stock Available
-                </label>
-                <input
-                  type="text"
-                  disabled="true"
-                  style="background-color: #d3d3d3"
-                  v-model="value.qtyAwal"
-                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                />
-              </div>
-              <div class="form-control">
-                <label class="block mt-2 font-JakartaSans font-medium text-sm">
-                  Quantity Approve
-                </label>
-                <input
-                  type="number"
-                  v-model="value.qtyApproved"
+                  v-model="qtyApproved[ind]"
                   class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   @input="
                     () => {
                       if (
-                        value.qtyApproved > value.qty ||
-                        value.qtyApproved < 0
+                        qtyApproved[ind] > value.total_stock ||
+                        qtyApproved[ind] < 0
                       ) {
-                        value.qtyApproved = value.qty;
+                        qtyApproved[ind] = value.total_stock;
                       }
                     }
                   "
                 />
-              </div>
-            </div>
-            <hr class="mt-3 mb-3" /> -->
+              </td>
+              <td class="border border-[#B9B9B9] text-center">
+                <button @click="addItem(ind, value)">
+                  <img :src="icon_add" class="w-6 h-6" alt="" />
+                </button>
+              </td>
+            </tr>
+            <tr
+              v-if="
+                filteredData[value.id_item] &&
+                filteredData[value.id_item].length > 0
+              "
+            >
+              <td colspan="7" class="justify-center px-10 py-5">
+                <div class="overflow-x-auto">
+                  <table class="table-auto w-full justify-center">
+                    <thead class="font-JakartaSans font-bold text-xs">
+                      <tr class="bg-indigo-500 text-white h-8">
+                        <th
+                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
+                        >
+                          No
+                        </th>
+                        <th
+                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
+                        >
+                          Item
+                        </th>
+                        <th
+                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
+                        >
+                          ATK Warehouse
+                        </th>
+                        <th
+                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
+                        >
+                          Quantity Approve
+                        </th>
+                        <th
+                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
+                        >
+                          Action
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody
+                      class="font-JakartaSans font-normal text-xs"
+                      v-for="(dt, index) in filteredData[value.id_item]"
+                      :key="index"
+                    >
+                      <tr>
+                        <td class="border border-[#B9B9B9]">
+                          {{ (index += 1) }}
+                        </td>
+                        <td class="border border-[#B9B9B9]">
+                          {{ value.code_item }} - {{ value.item_name }}
+                        </td>
+                        <td class="border border-[#B9B9B9]">
+                          {{ dt.name_warehouse }}
+                        </td>
+                        <td class="border border-[#B9B9B9] text-center">
+                          {{ dt.qty_approved }}
+                        </td>
+                        <td class="border border-[#B9B9B9] text-center">
+                          <button
+                            @click="removeItem(index, value.id_item, ind)"
+                          >
+                            <img :src="deleteicon" class="w-6 h-6" alt="" />
+                          </button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-          <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
-          <textarea
-            type="text"
-            rows="5"
-            v-model="notesName"
-            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-            placeholder="Notes"
-          ></textarea>
-        </form>
+        <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
+        <textarea
+          type="text"
+          rows="5"
+          v-model="notesName"
+          class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+          placeholder="Notes"
+        ></textarea>
       </main>
 
       <div class="sticky bottom-0 bg-white py-2">
