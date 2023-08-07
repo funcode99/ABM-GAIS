@@ -5,7 +5,6 @@ import Footer from "@/components/layout/Footer.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
 import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
@@ -396,9 +395,9 @@ const showClearButton = computed(() => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0" class="fixed_header">
-            <thead class="text-center font-JakartaSans text-sm font-bold">
-              <tr>
+          <div class="table-wrapper" v-if="sortedData.length > 0">
+            <table>
+              <thead class="text-center font-JakartaSans text-sm font-bold">
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -408,52 +407,32 @@ const showClearButton = computed(() => {
                     {{ data.title }}
                   </span>
                 </th>
-              </tr>
-            </thead>
+              </thead>
+              <tbody>
+                <tr
+                  class="font-JakartaSans font-normal text-sm"
+                  v-for="data in sortedData"
+                  :key="data.id"
+                >
+                  <td>{{ data.no }}</td>
+                  <td>{{ format_date(data.created_at) }}</td>
+                  <td>{{ data.no_settlement }}</td>
+                  <td>{{ data.employee_name }}</td>
+                  <td>{{ data.no_ca }}</td>
+                  <td>{{ format_price(data.total_real) }}</td>
+                  <td>{{ data.settlement_type }}</td>
+                  <td>{{ data.cost_center_name }}</td>
+                  <td>{{ data.status }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-            <tbody>
-              <tr
-                class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData"
-                :key="data.id"
-              >
-                <td>{{ data.no }}</td>
-                <td>{{ format_date(data.created_at) }}</td>
-                <td>{{ data.no_settlement }}</td>
-                <td>{{ data.employee_name }}</td>
-                <td>{{ data.no_ca }}</td>
-                <td>{{ format_price(data.total_real) }}</td>
-                <td>{{ data.settlement_type }}</td>
-                <td>{{ data.cost_center_name }}</td>
-                <td>{{ data.status }}</td>
-              </tr>
-            </tbody>
-          </tableData>
-
-          <tableData
+          <div
+            class="table-wrapper"
             v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
-                <th
-                  v-for="data in tableHead"
-                  :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                >
-                  <div class="flex justify-center items-center">
-                    <p class="font-JakartaSans font-bold text-sm">
-                      {{ data.title }}
-                    </p>
-                  </div>
-                </th>
-              </tr>
-            </thead>
-
-            <SkeletonLoadingTable :column="9" :row="5" />
-          </tableData>
-
-          <div v-else>
-            <tableData>
+            <table>
               <thead
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
@@ -472,17 +451,33 @@ const showClearButton = computed(() => {
                 </tr>
               </thead>
 
+              <SkeletonLoadingTable :column="9" :row="5" />
+            </table>
+          </div>
+
+          <div class="table-wrapper" v-else>
+            <table>
+              <thead class="text-center font-JakartaSans text-sm font-bold">
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                >
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }}
+                  </span>
+                </th>
+              </thead>
               <tbody>
-                <tr>
+                <tr class="font-JakartaSans font-normal text-sm">
                   <td
-                    colspan="9"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Data not Found
                   </td>
                 </tr>
               </tbody>
-            </tableData>
+            </table>
           </div>
 
           <!-- PAGINATION -->
@@ -513,45 +508,8 @@ const showClearButton = computed(() => {
 </template>
 
 <style scoped>
-th {
-  padding: 8px;
-  text-align: left;
-  position: relative;
-}
-
-tr td {
-  text-align: center;
-  white-space: nowrap;
-}
-
-tr th {
-  background-color: #015289;
-  text-transform: capitalize;
-  color: white;
-}
-
-.table-zebra tbody tr:hover td {
-  background-color: rgb(193, 192, 192);
-  cursor: pointer;
-}
-
 .this {
   overflow-x: hidden;
-}
-
-.readmore-text {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-
-.readmore-text:hover {
-  max-width: 400px;
-  white-space: nowrap;
-  word-break: break-word;
 }
 
 .my-date {
@@ -564,26 +522,61 @@ input.nosubmit {
     no-repeat 13px center;
 }
 
-.fixed_header {
-  table-layout: fixed;
-  border-collapse: collapse;
+.table-wrapper {
+  overflow-y: scroll;
+  overflow-x: scroll;
+  height: fit-content;
+  max-height: 66.4vh;
+  margin-top: 22px;
+  margin: 15px;
+  padding-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid rgb(229, 228, 228);
 }
 
-.fixed_header tbody {
-  display: block;
-  width: 100%;
-  overflow: auto;
-  overflow-x: hidden;
-  height: 360px;
+table {
+  min-width: max-content;
 }
 
-.fixed_header thead tr {
-  display: block;
+table tbody :hover {
+  background-color: rgb(193, 192, 192);
+  cursor: pointer;
 }
 
-.fixed_header th,
-.fixed_header td {
+tbody tr:nth-child(even) th,
+tbody tr:nth-child(even) td {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--b2, var(--b1)) / var(--tw-bg-opacity));
+}
+
+tbody tr:nth-child(even) th,
+tbody tr:nth-child(even) td {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--b2, var(--b1)) / var(--tw-bg-opacity));
+}
+
+table th {
+  position: sticky;
+  top: 0px;
+  text-align: center;
+  font-weight: normal;
+  padding: 8px;
   text-align: left;
-  width: 200px;
+  background-color: #015289;
+  text-transform: capitalize;
+  color: white;
+}
+
+table th,
+table td {
+  padding: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+table td {
+  text-align: left;
+  font-size: 15px;
+  padding-left: 20px;
 }
 </style>
