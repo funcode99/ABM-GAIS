@@ -138,11 +138,11 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchCity = async (id) => {
+const fetchCity = async (page) => {
   const params = {
     search: search.value,
     perPage: pageMultiplier.value,
-    page: id ? id : 1,
+    page: page,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -309,7 +309,7 @@ const exportToExcel = () => {
                 type="text"
                 placeholder="Search..."
                 v-model="search"
-                @keyup.enter="fetchCity()"
+                @keyup.enter="fetchCity(onChangePage(1))"
               />
 
               <button
