@@ -108,15 +108,6 @@ const resetData = () => {
   fetchDepartement();
 };
 
-const clearSearch = () => {
-  search.value = "";
-  fetchDepartement();
-};
-
-const showClearButton = computed(() => {
-  return search.value !== "";
-});
-
 watch(Company, () => {
   referenceFetch.fetchCompanyResult = Company.value;
 });
@@ -250,30 +241,8 @@ const exportToExcel = () => {
                 type="text"
                 placeholder="Search..."
                 v-model="search"
-                @keyup.enter="fetchDepartement(onChangePage(1))"
+                @keyup="fetchDepartement(onChangePage(1))"
               />
-
-              <button
-                v-if="showClearButton"
-                @click="clearSearch"
-                type="button"
-                class="cursor-pointer absolute right-8 mt-3"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  class="h-4 w-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
 
