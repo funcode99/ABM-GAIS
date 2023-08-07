@@ -246,7 +246,11 @@ const showClearButton = computed(() => {
             </button>
 
             <button
-            @click="() => { onChangePage(1); }"
+              @click="
+                () => {
+                  onChangePage(1);
+                }
+              "
               type="submit"
               class="w-36 p-2.5 ml-2 text-sm rounded-lg font-medium text-white font-JakartaSans capitalize border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
@@ -342,7 +346,11 @@ const showClearButton = computed(() => {
               <div class="flex gap-4 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="() => { onChangePage(1); }"
+                  @click="
+                    () => {
+                      onChangePage(1);
+                    }
+                  "
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -388,8 +396,8 @@ const showClearButton = computed(() => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0">
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+          <tableData v-if="sortedData.length > 0" class="fixed_header">
+            <thead class="text-center font-JakartaSans text-sm font-bold">
               <tr>
                 <th
                   v-for="data in tableHead"
@@ -506,7 +514,7 @@ const showClearButton = computed(() => {
 
 <style scoped>
 th {
-  padding: 2px;
+  padding: 8px;
   text-align: left;
   position: relative;
 }
@@ -554,5 +562,28 @@ input.nosubmit {
   background: transparent
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
     no-repeat 13px center;
+}
+
+.fixed_header {
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.fixed_header tbody {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+  height: 360px;
+}
+
+.fixed_header thead tr {
+  display: block;
+}
+
+.fixed_header th,
+.fixed_header td {
+  text-align: left;
+  width: 200px;
 }
 </style>
