@@ -74,12 +74,12 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchEmployee = async (id) => {
+const fetchEmployee = async (page) => {
   const params = {
     filterCompany: selectedCompany.value,
     search: search.value,
     perPage: pageMultiplier.value,
-    page: id ? id : 1,
+    page: page,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -247,7 +247,7 @@ const exportToExcel = () => {
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="fetchEmployee()"
+                  @click="() => { onChangePage(1); }"
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -272,7 +272,7 @@ const exportToExcel = () => {
                 type="text"
                 placeholder="Search..."
                 v-model="search"
-                @keyup.enter="fetchEmployee()"
+                @keyup.enter="fetchEmployee(onChangePage(1))"
               />
 
               <button
