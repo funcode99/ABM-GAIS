@@ -432,7 +432,7 @@ const showClearButton = computed(() => {
             class="table-wrapper"
             v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
-            <table>
+            <table class="table-notfound">
               <thead
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
@@ -456,7 +456,7 @@ const showClearButton = computed(() => {
           </div>
 
           <div class="table-wrapper" v-else>
-            <table>
+            <table class="table-notfound">
               <thead class="text-center font-JakartaSans text-sm font-bold">
                 <th
                   v-for="data in tableHead"
@@ -471,6 +471,7 @@ const showClearButton = computed(() => {
               <tbody>
                 <tr class="font-JakartaSans font-normal text-sm">
                   <td
+                    colspan="9"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Data not Found
@@ -558,10 +559,8 @@ tbody tr:nth-child(even) td {
 table th {
   position: sticky;
   top: 0px;
-  text-align: center;
   font-weight: normal;
   padding: 8px;
-  text-align: left;
   background-color: #015289;
   text-transform: capitalize;
   color: white;
@@ -575,8 +574,12 @@ table td {
 }
 
 table td {
-  text-align: left;
   font-size: 15px;
   padding-left: 20px;
+}
+
+.table-notfound {
+  width: 100%;
+  column-span: all;
 }
 </style>
