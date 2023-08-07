@@ -77,7 +77,7 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchRoomsReport = async (id) => {
+const fetchRoomsReport = async (page) => {
   if (date.value != undefined) {
     if (date.value[0] != null) {
       dateStart.value = date.value[0].toISOString().split("T")[0];
@@ -99,7 +99,7 @@ const fetchRoomsReport = async (id) => {
     code_status_doc: selectedStatus.value,
     search: search.value,
     perPage: pageMultiplier.value,
-    page: id ? id : 1,
+    page: page,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -307,7 +307,11 @@ const showClearButton = computed(() => {
             </button>
 
             <button
-              @click="fetchRoomsReport()"
+              @click="
+                () => {
+                  onChangePage(1);
+                }
+              "
               type="submit"
               class="w-36 p-2.5 ml-2 text-sm rounded-lg font-medium text-white font-JakartaSans capitalize border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
@@ -421,7 +425,11 @@ const showClearButton = computed(() => {
               <div class="flex gap-4 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="fetchRoomsReport()"
+                  @click="
+                    () => {
+                      onChangePage(1);
+                    }
+                  "
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
