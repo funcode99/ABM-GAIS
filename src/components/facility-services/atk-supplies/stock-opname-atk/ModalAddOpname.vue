@@ -45,7 +45,7 @@ const itemsTable2 = ref([]);
 let disableCompany = ref(false);
 let disableSite = ref(false);
 let addModal = ref(false);
-
+let dataHeader = ref([]);
 const id_company = JSON.parse(localStorage.getItem("id_company"));
 const id_site = JSON.parse(localStorage.getItem("id_site"));
 const id_role = JSON.parse(localStorage.getItem("id_role"));
@@ -109,10 +109,23 @@ const changeUomBrand = async (id_item) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/management_atk/get/${id_item}`);
-  selectedBrand.value = res.data.data[0].id_brand;
-  selectedUOM.value = res.data.data[0].id_uom;
-  alertQuantity.value = res.data.data[0].alert_qty
-  Warehouse.value = res.data.data[0].array_warehouse
+  dataHeader.value = res.data.data[0];
+  selectedBrand.value = dataHeader.value.id_brand;
+  selectedUOM.value = dataHeader.value.id_uom;
+  Warehouse.value = dataHeader.value.array_warehouse;
+};
+
+const changeQty = () => {
+  for (
+    let index = 0;
+    index < dataHeader.value.array_warehouse.length;
+    index++
+  ) {
+    const element = dataHeader.value.array_warehouse[index];
+    if (selectedWarehouse.value == element.id_warehouse) {
+      alertQuantity.value = element.current_stock;
+    }
+  }
 };
 
 const changeSite = async (id_site) => {
@@ -133,8 +146,6 @@ const fetchCondition = async () => {
 
 const fetchDataEdit = async () => {
   itemsTable.value = [];
-  itemNames.value = props.dataItem[0].id_item;
-  remark.value = props.dataItem[0].remarks;
 
   props.dataItem.map((elements) => {
     itemsTable.value.push({
@@ -153,7 +164,7 @@ const fetchDataEdit = async () => {
       codeItem: elements.idItems,
       id: elements.id,
       id_warehouse: elements.id_warehouse,
-      adjustment_type: elements.adjustment_type
+      adjustment_type: elements.adjustment_type,
     });
   });
 };
@@ -193,7 +204,7 @@ const addItem = async () => {
     const wh = Warehouse.value;
     for (let index = 0; index < wh.length; index++) {
       const element = wh[index];
-      if (element.id == selectedWarehouse.value) {
+      if (element.id_warehouse == selectedWarehouse.value) {
         warehouseName.value = element.warehouse_name;
       }
     }
@@ -242,7 +253,7 @@ const addItem = async () => {
 const resetButCompanyDisable = async () => {
   disableSite.value = true;
   disableCompany.value = true;
-  selectedWarehouse.value = ''
+  selectedWarehouse.value = "";
   selectedUOM.value = "";
   idItems.value = "";
   alertQuantity.value = "";
@@ -275,7 +286,6 @@ const save = async () => {
       remarks: remark.value ? remark.value : "",
       array_detail: itemsTable.value,
     };
-    console.log(itemsTable.value)
     let api =
       props.status === "add"
         ? "stock_opname/store/"
@@ -452,12 +462,13 @@ onMounted(() => {
               class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               v-model="selectedWarehouse"
+              @change="changeQty()"
             >
               <option disabled selected>ATK Warehouse</option>
               <option
                 v-for="(warehouse, i) in Warehouse"
                 :key="i"
-                :value="warehouse.id"
+                :value="warehouse.id_warehouse"
               >
                 {{ warehouse.warehouse_name }}
               </option>
@@ -628,7 +639,7 @@ onMounted(() => {
                   {{ items.namItem }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
-                  {{ items.adjusment == "addition" ? "Increase" : "Decrease" }}
+                  {{ items.adjustment_type == "addition" ? "Increase" : "Decrease" }}
                 </td>
                 <!-- <td class="border border-[#B9B9B9] text-center">
                   {{ items.qty }}
