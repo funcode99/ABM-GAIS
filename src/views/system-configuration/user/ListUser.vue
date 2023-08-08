@@ -97,13 +97,19 @@
       }
     }
 
+    let searchTable = ref('')
+
     const filteredItems = (search) => {
-      sortedData.value = instanceArray
-        const filteredR = sortedData.value.filter(item => {
-          return item.username.toLowerCase().indexOf(search.toLowerCase()) > -1
-      })
-      sortedData.value = filteredR
-      onChangePage(1)
+
+      if(typeof search !== 'undefined') {
+        searchTable.value = search
+        fetch()
+      } else {
+        fetch()
+      }
+
+      // onChangePage(1)
+
     }
 
     const fillPageMultiplier = (value) => {
@@ -251,16 +257,19 @@
     const fetch = async () => {
       try {
 
-        console.log(showingValue.value)
-        console.log(paginateIndex.value+1)
-
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-        const showApi = await Api.get(`/users?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}`)
+        // console.log(paginateIndex.value+1)
+        // console.log(pageMultiplier.value)
+        // console.log(idFilter.value)
+        // console.log(roleIdFilter.value)
+
+        const showApi = await Api.get(`/users?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}&filterCompany=${idFilter.value}&filterRole=${roleIdFilter.value}&search=${searchTable.value}`)
 
         additionalData.value = showApi.data.data
         sortedData.value = showApi.data.data.data
+        instanceArray = showApi.data.data.data
 
         from.value = additionalData.value.from
         to.value = additionalData.value.to
@@ -290,6 +299,12 @@
       fetchMenuStatusUtils(instanceArray, addMenuStatusData)
       fetchApproverAuthoritiesUserUtils(addAuthoritiesData)
       fetch()
+    })
+
+    watch(showingValue, () => {
+      if(searchTable.value !== '') {
+        filteredItems()
+      }
     })
 
     watch(addRoleData, () => {
@@ -328,23 +343,39 @@
       deleteCheckedArrayUtils(deleteArray, 'users', sortedData, fetch)
     }
 
+    let idFilter = ref(0)
+    let roleIdFilter = ref(0)
+
     const filterTable = async (id, roleId) => {
 
       if(typeof id !== "number") {
-        id = 0
+        idFilter.value = 0
+      } else {
+        idFilter.value = id
       }
 
       if(typeof roleId !== "number") {
-        roleId = 0
+        roleIdFilter.value = 0
+      } else {
+        roleIdFilter.value = roleId
       }
 
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get(`/users?filterCompany=${id}&filterRole=${roleId}`)
-      instanceArray = api.data.data
-      sortedData.value = instanceArray
+      const showApi = await Api.get(`/users?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}&filterCompany=${idFilter.value}&filterRole=${roleIdFilter.value}`)
+      // instanceArray = api.data.data
+      // sortedData.value = instanceArray
 
-      onChangePage(1)
+      additionalData.value = showApi.data.data
+        sortedData.value = showApi.data.data.data
+        instanceArray = showApi.data.data.data
+
+        from.value = additionalData.value.from
+        to.value = additionalData.value.to
+        totalData.value = additionalData.value.total
+        perPage.value = additionalData.value.per_page
+
+      // onChangePage(1)
 
     }
 
@@ -372,6 +403,13 @@
       writeMenuList.value = sidebar.writeMenu
     })
 
+    const resetFilterSearchThenFetch = () => {
+        idFilter.value = 0
+        roleIdFilter.value = 0
+        searchTable.value = ''
+        fetch()
+    }
+
 </script>
 
 
@@ -398,7 +436,7 @@
           @do-search="filteredItems"
           @changeShowing="fillPageMultiplier"
           @filter-table="filterTable"
-          @reset-table="fetch"
+          @reset-table="resetFilterSearchThenFetch"
           @export-to-excel="exportToExcel"
           @fetchSiteForCompany="fetchSiteByCompanyId"
         />
