@@ -25,7 +25,9 @@ const idWh = ref([]);
 const warehouseName = ref("");
 const listChildItem = ref([]);
 const Warehouse = ref([]);
-const filteredData = ref([]);
+const btnApprove = ref(
+  props.dataArr.status == "Approve" ? "Delivery" : "Approve"
+);
 
 const inputClass =
   "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
@@ -42,8 +44,21 @@ const changeSite = async (id_site) => {
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
-  itemTable.value = res.data.data;
+  if (props.dataArr.status == "Approve") {
+    const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`);
+    const get_wh = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
+
+    itemTable.value = res.data.data;
+    itemTable.value.map((element, index) => {
+        element.total_stock = element.stock_available_wh
+        idWh.value[index] = element.id_warehouse
+        qtyApproved.value[index] = element.qty_approved
+        element.array_warehouse = get_wh.data.data[0].array_warehouse
+    })
+  } else {
+    const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
+    itemTable.value = res.data.data;
+  }
 };
 
 const addItem = async (ind, data) => {
@@ -55,7 +70,11 @@ const addItem = async (ind, data) => {
     }
   }
 
-  listChildItem.value.push({
+  let filter_wh = data.array_warehouse.filter(function (item) {
+    return !idWh.value.includes(item.id_warehouse);
+  });
+
+  itemTable.value.push({
     id_item: itemTable.value[ind].id_item,
     id_atk_request_detail: router.currentRoute.value.params.id,
     id_warehouse: idWh.value[ind],
@@ -63,29 +82,36 @@ const addItem = async (ind, data) => {
     qty_approved: qtyApproved.value[ind],
     item_name: data.item_name,
     code_item: data.code_item,
+    uom_name: data.uom_name,
+    qty: data.qty,
     remarks: notesName.value ? notesName.value : "",
+    array_warehouse: filter_wh,
+    total_stock: data.total_stock,
+    status: "add_new",
   });
-
-  listChildItem.value.forEach((element) => {
-    filteredData.value[element.id_item] = listChildItem.value.filter((item) => {
-      return item.id_item == element.id_item;
-    });
+  itemTable.value.sort(function (a, b) {
+    var keyA = a.id_item,
+      keyB = b.id_item;
+    if (keyA < keyB) return -1;
+    if (keyA > keyB) return 1;
+    return 0;
   });
-  console.log(listChildItem.value);
 };
 
-const removeItem = async (ind, id, ind_parent) => {
-  filteredData.value[id].splice(ind - 1, 1);
-  listChildItem.value.splice(ind_parent, 1);
+const removeItem = async (ind) => {
+  itemTable.value.splice(ind, 1);
 };
 
 const submit = async () => {
   itemPayload.value = [];
-  listChildItem.value.map((element) => {
+  itemTable.value.map((element, index) => {
     element.remarks = notesName.value ? notesName.value : "";
+    element.qty_approved = qtyApproved.value[index];
+    element.id_warehouse = idWh.value[index];
+    element.id_atk_request_detail = router.currentRoute.value.params.id;
   });
   payload.value = {
-    warehouse_detail: listChildItem.value,
+    warehouse_detail: itemTable.value,
   };
   isApprove.value = true;
   if (isApprove.value) {
@@ -133,11 +159,11 @@ onBeforeMount(() => {
     <span>
       <img :src="icon_done" class="w-5 h-5" />
     </span>
-    Approve
+    {{ btnApprove }}
   </label>
 
   <input type="checkbox" id="my-modal-approve-atk" class="modal-toggle" />
-  <div class="modal">
+  <div class="modal" style="overflow-x: auto">
     <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
@@ -239,78 +265,15 @@ onBeforeMount(() => {
                 />
               </td>
               <td class="border border-[#B9B9B9] text-center">
-                <button @click="addItem(ind, value)">
+                <button
+                  @click="addItem(ind, value)"
+                  v-if="value.status != 'add_new'"
+                >
                   <img :src="icon_add" class="w-6 h-6" alt="" />
                 </button>
-              </td>
-            </tr>
-            <tr
-              v-if="
-                filteredData[value.id_item] &&
-                filteredData[value.id_item].length > 0
-              "
-            >
-              <td colspan="7" class="justify-center px-10 py-5">
-                <div class="overflow-x-auto">
-                  <table class="table-auto w-full justify-center">
-                    <thead class="font-JakartaSans font-bold text-xs">
-                      <tr class="bg-indigo-500 text-white h-8">
-                        <th
-                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
-                        >
-                          No
-                        </th>
-                        <th
-                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
-                        >
-                          Item
-                        </th>
-                        <th
-                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
-                        >
-                          ATK Warehouse
-                        </th>
-                        <th
-                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
-                        >
-                          Quantity Approve
-                        </th>
-                        <th
-                          class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
-                        >
-                          Action
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody
-                      class="font-JakartaSans font-normal text-xs"
-                      v-for="(dt, index) in filteredData[value.id_item]"
-                      :key="index"
-                    >
-                      <tr>
-                        <td class="border border-[#B9B9B9]">
-                          {{ (index += 1) }}
-                        </td>
-                        <td class="border border-[#B9B9B9]">
-                          {{ value.code_item }} - {{ value.item_name }}
-                        </td>
-                        <td class="border border-[#B9B9B9]">
-                          {{ dt.name_warehouse }}
-                        </td>
-                        <td class="border border-[#B9B9B9] text-center">
-                          {{ dt.qty_approved }}
-                        </td>
-                        <td class="border border-[#B9B9B9] text-center">
-                          <button
-                            @click="removeItem(index, value.id_item, ind)"
-                          >
-                            <img :src="deleteicon" class="w-6 h-6" alt="" />
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
+                <button @click="removeItem(ind)" v-else>
+                  <img :src="deleteicon" class="w-6 h-6" alt="" />
+                </button>
               </td>
             </tr>
           </tbody>

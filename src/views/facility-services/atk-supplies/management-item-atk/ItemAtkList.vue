@@ -31,7 +31,8 @@ const sidebar = useSidebarStore();
 
 const id_role = JSON.parse(localStorage.getItem("id_role"));
 const company_code = JSON.parse(localStorage.getItem("company_code"));
-
+const details = ref(false);
+const id_details = ref(0);
 //for sort & search
 let selectedCompany =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
@@ -383,7 +384,6 @@ const editValue = async (id, type, detail_warehouse) => {
     array_warehouse: selectedWarehouse.value,
   };
   payload.value = dataEdit;
-  console.log(payload.value);
   disabledField.value = type == "view" ? true : false;
 };
 
@@ -657,6 +657,9 @@ const addItem = async () => {
   }
 };
 
+const seeDetails = (id) => {
+  id_details.value = id;
+};
 // multiselect
 let isLoading = ref(false);
 watchEffect(() => {
@@ -938,7 +941,10 @@ const getSessionForSidebar = () => {
                       {{ data.item_name === null ? "-" : data.item_name }}
                     </td>
                     <td class="p-0" v-if="id_role != 'EMPLY'">
-                      <div class="collapse collapse-arrow p-0 m-0">
+                      <div
+                        class="collapse collapse-arrow p-0 m-0"
+                        @click="seeDetails(data.id)"
+                      >
                         <input type="checkbox" />
                         <div class="collapse-title">
                           <div class="flex justify-center items-center gap-2">
@@ -948,82 +954,6 @@ const getSessionForSidebar = () => {
                               {{ data.warehouse_count }}
                             </div>
                           </div>
-                        </div>
-                        <div class="collapse-content">
-                          <tr
-                            v-if="
-                              data.array_warehouse &&
-                              data.array_warehouse.length > 0
-                            "
-                            class="flex"
-                          >
-                            <td colspan="10" class="justify-center px-10 py-5">
-                              <div class="overflow-x-auto">
-                                <table class="table-auto w-full justify-center">
-                                  <thead
-                                    class="font-JakartaSans font-bold text-xs"
-                                  >
-                                    <tr class="bg-indigo-500 text-white h-8">
-                                      <th
-                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
-                                      >
-                                        No
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
-                                      >
-                                        ATK Warehouse
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        Real Stock
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        Booked Stock
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        Available Stock To Approve
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody
-                                    class="font-JakartaSans font-normal text-xs"
-                                    v-for="(dt, index) in data.array_warehouse"
-                                    :key="index"
-                                  >
-                                    <tr>
-                                      <td class="border border-[#B9B9B9]">
-                                        {{ (index += 1) }}
-                                      </td>
-                                      <td class="border border-[#B9B9B9]">
-                                        {{ dt.name_warehouse }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ dt.current_stock }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ dt.current_stock }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ dt.stock_to_approve_wh }}
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                            </td>
-                          </tr>
                         </div>
                       </div>
                     </td>
@@ -1511,6 +1441,37 @@ const getSessionForSidebar = () => {
                         </button>
                       </div>
                     </td>
+                  </tr>
+
+                  <tr v-for="(dt, index) in data.array_warehouse" :key="index">
+                    <td colspan="4" v-if="data.id == id_details"></td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm py-2 font-bold"
+                      v-if="data.id == id_details"
+                    >
+                      {{ dt.warehouse_name }}
+                    </td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center"
+                      v-if="data.id == id_details"
+                    >
+                      {{ dt.current_stock }}
+                    </td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center"
+                      v-if="data.id == id_details"
+                    ></td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center"
+                      v-if="data.id == id_details"
+                    ></td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center"
+                      v-if="data.id == id_details"
+                    >
+                      {{ dt.stock_to_approve_wh }}
+                    </td>
+                    <td colspan="3" v-if="data.id == id_details"></td>
                   </tr>
                 </tbody>
               </table>
