@@ -9,25 +9,28 @@ import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vu
 import ModalAddSequence from "@/components/system-configuration/sequence/ModalAddSequence.vue"
 import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue"
 
-import { ref, computed, onBeforeMount } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+
+import { ref, computed, onBeforeMount, watch } from "vue"
 
 import Api from "@/utils/Api";
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const sidebar = useSidebarStore()
 
 let search = ref("")
 let companyId = ref('company')
 let groupCompanyId = ref('group company')
 let roleId = ref('role')
 let pageMultiplier = ref(10)
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
 
 const props = defineProps({
   title: String,
   modalAddType: String,
   numberSelected: Number
-});
+})
 
 let groupCompanyData = ref([])
 let companyData = ref([])
@@ -84,6 +87,15 @@ const fetchParentCompany = async (id_company) => {
   companyData.value = res.data.data;
 };
 
+  let readMenuList = ref([])
+  let writeMenuList = ref([])
+
+  watch(sidebar, () => {
+    console.log('terjadi perubahan di sidebar tabletopbar')
+    readMenuList.value = sidebar.readMenu
+    writeMenuList.value = sidebar.writeMenu
+  })
+
 </script>
 
 <template>
@@ -109,27 +121,29 @@ const fetchParentCompany = async (id_company) => {
         </div>
 
         <!-- modal add ini perlu di segregasi -->
+
+        <!-- {{ sidebar.readMenu }} -->
         
         <ModalAddMenu
           @add-menu="$emit('increaseMenu')"
-          v-if="props.modalAddType === 'menu'"
+          v-if="props.modalAddType === 'menu' & writeMenuList.includes('Menu')"
         />
         <ModalAddUser
           @fetchSiteForCompany="$emit('fetchSiteForCompany')"
           @add-user="$emit('increaseUser')"
-          v-if="props.modalAddType === 'user'"
+          v-if="props.modalAddType === 'user' & writeMenuList.includes('User')"
         />
         <ModalAddApproval
           @add-approver="$emit('increaseApprover')"
-          v-if="props.modalAddType === 'approval'"
+          v-if="props.modalAddType === 'approval' & writeMenuList.includes('Approval')"
         />
         <ModalAddSequence
           @add-sequence="$emit('increaseSequence')"
-          v-if="props.modalAddType === 'sequence'"
+          v-if="props.modalAddType === 'sequence' & writeMenuList.includes('Sequence')"
         />
         <ModalAddRole
           @add-role="$emit('increaseRole')"
-          v-if="props.modalAddType === 'role'"
+          v-if="props.modalAddType === 'role' & writeMenuList.includes('Role')"
         />
 
         <button

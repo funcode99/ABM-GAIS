@@ -273,6 +273,15 @@
       pageMultiplier.value = value
       onChangePage(1)
     }
+
+    let readMenuList = ref([])
+    let writeMenuList = ref([])
+
+    watch(sidebar, () => {
+      console.log('terjadi perubahan di sidebar approval')
+      readMenuList.value = sidebar.readMenu
+      writeMenuList.value = sidebar.writeMenu
+    })
   
 </script>
 
@@ -329,7 +338,7 @@
                     </span>
                   </th>
 
-                  <th class="overflow-x-hidden cursor-pointer">
+                  <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('Approval')">
                     <span class="flex justify-center items-center gap-1">
                       Actions
                     </span>
@@ -368,7 +377,7 @@
                       </span>
                     </td>
 
-                    <td class="flex flex-wrap gap-4 justify-center">
+                    <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('Approval')">
                       <ModalEditApproval @fetchApproval="fetch" @edit-approver="editExistingApprover(data.id)" 
                       :formContent="[
                         data.approval_name, 

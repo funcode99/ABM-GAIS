@@ -257,13 +257,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-        // const api = await Api.get(`/users`)
-
         const showApi = await Api.get(`/users?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}`)
-        
-        // instanceArray = api.data.data
-        // responseStatus.value = api.status
-        // showDataTable.value = api.data.data
 
         additionalData.value = showApi.data.data
         sortedData.value = showApi.data.data.data
@@ -369,6 +363,15 @@
 
     }
 
+    let readMenuList = ref([])
+    let writeMenuList = ref([])
+
+    watch(sidebar, () => {
+      console.log('terjadi perubahan di sidebar user')
+      readMenuList.value = sidebar.readMenu
+      writeMenuList.value = sidebar.writeMenu
+    })
+
 </script>
 
 
@@ -424,7 +427,7 @@
                       </span>
                     </th>
 
-                    <th class="overflow-x-hidden cursor-pointer">
+                    <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('User')">
                       <span class="flex justify-center items-center gap-1">
                         Actions
                       </span>
@@ -436,11 +439,6 @@
                 <tbody>
 
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
-
-                  <!-- sortedData.slice(
-                        paginateIndex * pageMultiplierReactive,
-                        (paginateIndex + 1) * pageMultiplierReactive
-                      ) -->
 
                     <tr v-for="data in sortedData" :key="data.id">
 
@@ -466,7 +464,7 @@
                         {{ data.auth_name }}
                       </td>
 
-                      <td class="flex flex-wrap gap-4 justify-center">
+                      <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('User')">
                         <ModalEditUser 
                         @fetchSiteForCompany="fetchSiteByCompanyId"
                         @fetchEmployeeIndividualInfo="fetchEmployeeInfo"
