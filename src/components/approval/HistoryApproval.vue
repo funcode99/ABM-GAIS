@@ -1,5 +1,4 @@
 <script setup>
-import icon_done from "@/assets/icon_done.svg";
 import { ref } from "vue";
 import moment from "moment";
 import userImg from "@/assets/3-user.png";
@@ -44,6 +43,7 @@ let classWaiting =
               ></polyline>
             </span>
           </div>
+
           <div
             class="flex items-center justify-center w-10 h-10 border rounded-full"
             v-else
@@ -58,18 +58,27 @@ let classWaiting =
             </span>
           </div>
         </div>
+
         <div
           class="w-px h-full bg-gray-300"
           v-if="index != historyApproval.length - 1"
         ></div>
       </div>
+
       <div class="bg-blue bg-opacity-10 p-4 rounded-lg mb-5">
         <div v-if="typeApproval == 'ATK'">
-          <p class="mb-2" >
-            <span v-if="data.code_status_doc == 9" class="font-bold">Rejected By: </span> <span v-else>Approved By:</span> <span class="font-normal">{{ data.name_updated }}</span>
+          <p class="mb-2">
+            <span v-if="data.code_status_doc == 9" class="font-bold"
+              >Rejected By:
+            </span>
+            <span v-else>Approved By:</span>
+            <span class="font-normal">{{ data.name_updated }}</span>
           </p>
           <p class="mb-2">
-            <span v-if="data.code_status_doc == 9" class="font-bold">Rejected At: </span> <span v-else>Approved At:</span>
+            <span v-if="data.code_status_doc == 9" class="font-bold"
+              >Rejected At:
+            </span>
+            <span v-else>Approved At:</span>
             <span v-if="data.updated_at" class="font-normal">
               {{ format_date(data.updated_at.split(" ")[0]) }}
             </span>
@@ -78,9 +87,11 @@ let classWaiting =
             </span>
           </p>
           <p class="text-gray-700 mt-1">
-            <span class="font-bold">Notes: </span><span class="font-normal">{{ data.notes }}</span>
+            <span class="font-bold">Notes: </span
+            ><span class="font-normal">{{ data.notes }}</span>
           </p>
         </div>
+
         <div v-else>
           <p class="mb-2 text-lg font-bold">{{ data.text }}</p>
           <p class="text-gray-500" v-if="data.date">
@@ -92,10 +103,17 @@ let classWaiting =
           <p class="text-gray-700 mt-1" v-if="data.date">
             Notes: {{ data.notes }}
           </p>
+          <p class="text-gray-700 mt-1" v-if="data.date">
+            Attachment:
+            <a :href="data.path" target="_blank" class="text-blue" download>
+              {{ data.file }}
+            </a>
+          </p>
         </div>
       </div>
     </div>
   </div>
+  
   <div v-else>
     <p class="text-center p-4">No Approval Log</p>
   </div>
