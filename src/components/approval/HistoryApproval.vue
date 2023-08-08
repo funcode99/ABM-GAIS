@@ -109,7 +109,7 @@ let classWaiting =
           </p>
           <p class="text-gray-700 mt-1" v-if="data.date">
             Attachment:
-            <a @click="openDoc(data.path)" class="text-blue">
+            <a @click="openDoc(data.path)" class="text-blue cursor-pointer">
               {{ data.file }}
             </a>
           </p>

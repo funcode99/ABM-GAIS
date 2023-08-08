@@ -3,8 +3,8 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
-import ModalAddSettlement from "@/components/approval/settlement/ModalAddSettlement.vue";
-import ModalRejectSettlement from "@/components/approval/settlement/ModalRejectSettlement.vue";
+import ModalApprove from "@/components/approval/ModalApprove.vue";
+import ModalReject from "@/components/approval/ModalReject.vue";
 
 import DataNotFound from "@/components/element/dataNotFound.vue";
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
@@ -257,14 +257,14 @@ const getSessionForSidebar = () => {
               </span>
               Reject
             </label>
-            <ModalAddSettlement
+            <ModalApprove
               v-if="visibleModal"
               :role-code="code_role"
               :list-employee="listEmployee"
               @close="closeModal"
               @approve="(data) => approveData(data)"
             />
-            <ModalRejectSettlement
+            <ModalReject
               v-if="visibleModalReject"
               :id="id"
               @close="closeModalReject"
