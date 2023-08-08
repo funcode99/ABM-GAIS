@@ -2,6 +2,7 @@
 import icon_filter from "@/assets/icon_filter.svg"
 import icon_reset from "@/assets/icon_reset.svg"
 import icon_receive from "@/assets/icon-receive.svg"
+import icon_close from '@/assets/close.jpg'
 
 import ModalAddMenu from "@/components/system-configuration/menu/ModalAddMenu.vue"
 import ModalAddApproval from "@/components/system-configuration/approval/ModalAddApprover.vue"
@@ -25,6 +26,10 @@ let groupCompanyId = ref('group company')
 let roleId = ref('role')
 let pageMultiplier = ref(10)
 let pageMultiplierReactive = computed(() => pageMultiplier.value)
+
+const resetSearch = () => {
+  search.value = ''
+}
 
 const props = defineProps({
   title: String,
@@ -304,6 +309,10 @@ const fetchParentCompany = async (id_company) => {
             v-model="search"
             @keyup.enter="$emit('doSearch', search)"
           />
+
+          <span @click="resetSearch" class="absolute inset-y-0 right-0 flex items-center pr-2">
+            <img :src="icon_close" class="w-5 h-5" />
+          </span>
           
         </div>
         
@@ -359,6 +368,7 @@ const fetchParentCompany = async (id_company) => {
               v-model="search"
               @keyup="$emit('doSearch', search)"
             />
+            <img :src="icon_close" />
           </div>
         </div>
       

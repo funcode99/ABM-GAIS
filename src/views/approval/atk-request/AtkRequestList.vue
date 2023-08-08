@@ -143,6 +143,7 @@ const sortList = (sortBy) => {
     sortedbyASC = true;
   }
 };
+
 const perPage = async () => {
   // console.log(pageMultiplier.value)
   fetchData(

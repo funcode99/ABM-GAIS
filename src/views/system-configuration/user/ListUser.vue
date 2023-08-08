@@ -57,7 +57,6 @@
     //for paginations
     let showingValue = ref(1)
     let pageMultiplier = ref(10)
-    let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let paginateIndex = ref(0)
 
     // for catch status & message response from server when status is not 2xx
@@ -259,12 +258,6 @@
 
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-
-        // console.log(paginateIndex.value+1)
-        // console.log(pageMultiplier.value)
-        // console.log(idFilter.value)
-        // console.log(roleIdFilter.value)
-
         const showApi = await Api.get(`/users?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}&filterCompany=${idFilter.value}&filterRole=${roleIdFilter.value}&search=${searchTable.value}`)
 
         additionalData.value = showApi.data.data
@@ -360,22 +353,7 @@
         roleIdFilter.value = roleId
       }
 
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const showApi = await Api.get(`/users?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}&filterCompany=${idFilter.value}&filterRole=${roleIdFilter.value}`)
-      // instanceArray = api.data.data
-      // sortedData.value = instanceArray
-
-      additionalData.value = showApi.data.data
-        sortedData.value = showApi.data.data.data
-        instanceArray = showApi.data.data.data
-
-        from.value = additionalData.value.from
-        to.value = additionalData.value.to
-        totalData.value = additionalData.value.total
-        perPage.value = additionalData.value.per_page
-
-      // onChangePage(1)
+      fetch()
 
     }
 

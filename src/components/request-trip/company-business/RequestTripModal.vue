@@ -94,6 +94,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
         stepCounter.value = 4
       } else if (newValue[1] == 'Taxi Voucher') {
         stepCounter.value = 3
+      } else if (newValue[1] == 'Crewing') {
+        stepCounter.value = 4
       }
 
     })
