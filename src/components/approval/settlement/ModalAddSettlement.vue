@@ -12,16 +12,16 @@ let dataEmployee = ref(props.listEmployee);
 let code_role = ref(props.roleCode);
 let notes = ref(null);
 let id_employee = ref(null);
-let fileUrl = ref(null);
 
-const file = ref({});
-const isApprovalOnBehalf = ref(false);
 const selectedFile = ref(null);
+const fileUrl = ref(null);
+const filename = ref(null);
+const isApprovalOnBehalf = ref(false);
 const emits = defineEmits(["close", "approve"]);
 
 const onFileSelected = (event) => {
   selectedFile.value = event.target.files[0];
-  filename = file.name;
+  filename.value = selectedFile.value.name;
 
   const reader = new FileReader();
 
@@ -29,8 +29,8 @@ const onFileSelected = (event) => {
     fileUrl.value = reader.result;
   };
 
-  if (file) {
-    reader.readAsDataURL(file);
+  if (selectedFile.value) {
+    reader.readAsDataURL(selectedFile.value);
   } else {
     fileUrl.value = null;
   }
@@ -127,6 +127,7 @@ const approve = () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               @change="onFileSelected"
+              accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             />
           </div>
 

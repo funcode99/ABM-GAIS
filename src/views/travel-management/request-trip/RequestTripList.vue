@@ -12,6 +12,8 @@
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin.js'
     import fetchDocumentCodeUtils from '@/utils/Fetch/Travel-Management/fetchDocumentCode.js'
 
+    import moment from "moment"
+
     import icon_receive from "@/assets/icon-receive.svg"
     import icon_filter from "@/assets/icon_filter.svg"
     import icon_reset from "@/assets/icon_reset.svg"
@@ -77,20 +79,41 @@
     const fetch = async () => {
       
       try {
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)      
-        instanceArray = api.data.data
+
+        if(date.value[0] !== '' & date.value[1] !== '') {
+          
+          console.log('ada tanggal nya')
+
+          let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
+          let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
+
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}`)
+          instanceArray = api.data.data
+
+        } else {
+          
+          console.log('tidak ada tanggal nya')
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)
+          instanceArray = api.data.data
+          
+        }
+
         sortedData.value = instanceArray
+
       } catch (error) {
         console.log(error)
         sortedData.value = []
+        date.value = ['', '']
       }
 
     }
 
     const resetAndFetch = () => {
       requestTripType.value = ''
+      date.value = ['', '']
       fetch()
     }
 
@@ -176,17 +199,21 @@
       }
     }
 
-    watch(search, () => {
-      filteredItems()
-    })
-
     const filteredItems = () => {
+
       sortedData.value = instanceArray
         const filteredR = sortedData.value.filter(item => {
-          return item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1
+        return (
+          (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+          (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+          (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+          (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
+        )
       })
+
       sortedData.value = filteredR
       onChangePage(1)
+      
     }
 
     const assignRequestTripId = (tripId) => {
@@ -249,7 +276,11 @@
   
                   <select v-model="requestTripType" class="font-JakartaSans capitalize block bg-white w-[200px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm">
                     <option value="">All Purpose</option>
-                    <option v-for="data in documentCodeData" :key="data.id" :value="data.id">
+                    <option 
+                      v-for="data in documentCodeData" 
+                      :key="data.id" 
+                      :value="data.id"
+                    >
                       {{ data.document_name }}
                     </option>
                   </select>
@@ -266,8 +297,8 @@
                       v-model="date"
                       range
                       :enable-time-picker="false"
-                      format="yyyy-mm-dd"
                   />
+                      <!-- format="yyyy-mm-dd" -->
 
                 </div>
   
@@ -329,6 +360,7 @@
                     type="text"
                     name="search"
                     v-model="search"
+                    @keyup.enter="filteredItems"
                   />
 
                 </label>
@@ -387,8 +419,8 @@
                       </span>
                     </th>
 
-                    <th>
-                      Actions
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
                     </th>
 
                   </tr>
@@ -413,7 +445,7 @@
                     <td>{{ data.employee_name }}</td>
                     <td>{{ data.document_name }}</td>
                     <td>{{ data.status }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
+                    <td class="flex flex-wrap gap-4 justify-center items-center">
                       <router-link to="/request-view" @click="assignRequestTripId(data.id)">
                         <button>
                           <img :src="editicon" class="w-6 h-6" />

@@ -138,11 +138,11 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchCity = async (id) => {
+const fetchCity = async (page) => {
   const params = {
     search: search.value,
     perPage: pageMultiplier.value,
-    page: id ? id : 1,
+    page: page,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -202,15 +202,6 @@ const deleteCity = async (id) => {
     }
   });
 };
-
-const clearSearch = () => {
-  search.value = "";
-  fetchCity();
-};
-
-const showClearButton = computed(() => {
-  return search.value !== "";
-});
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -309,30 +300,8 @@ const exportToExcel = () => {
                 type="text"
                 placeholder="Search..."
                 v-model="search"
-                @keyup.enter="fetchCity()"
+                @keyup="fetchCity(onChangePage(1))"
               />
-
-              <button
-                v-if="showClearButton"
-                @click="clearSearch"
-                type="button"
-                class="cursor-pointer absolute right-8 mt-3"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  class="h-4 w-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
 

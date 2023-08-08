@@ -87,8 +87,6 @@
 
   const submitEdit = () => {
 
-    console.log(secondaryList.value)
-
       formEditState.user.username = username.value
       formEditState.user.email = email.value
       formEditState.user.password = password.value
@@ -356,7 +354,12 @@
 
             <!-- {{ company }} -->
               
-            <select :disabled="isEmployee" id="company" v-model="company" :class="inputStylingClass">
+            <select 
+              :class="inputStylingClass"
+              :disabled="isEmployee" 
+              id="company" 
+              v-model="company" 
+            >
                 <option 
                   :selected="data.id == props.formContent[4] ? true : false"
                   v-for="data in responseCompanyArray" 

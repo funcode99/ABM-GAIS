@@ -339,13 +339,25 @@
 
                 <div v-else>
 
-                  <label for="location" class="text-sm">Location <span class="text-red-star">*</span></label>
+                  <label for="location" class="text-sm">
+                    Location <span class="text-red-star">*</span>
+                  </label>
                     
-                    <select :disabled="isLoading" id="location" :class="inputStylingClass">
-                      <option selected>
-                          Retrieving location data...
-                      </option>
-                    </select>
+                  <select 
+                    :class="inputStylingClass"
+                    :disabled="isLoading" 
+                    id="location" 
+                  >
+
+                    <option :selected="company !== null" v-if="company !== null">
+                        Retrieving location data...
+                    </option>
+
+                    <option :selected="company === null" v-if="company === null">
+                        Select company to retrieve location data
+                    </option>
+
+                  </select>
 
                 </div>
 

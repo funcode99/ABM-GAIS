@@ -71,10 +71,16 @@
       {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'}
     ]
 
+    let from = ref(0)
+    let to = ref(0)
+    let totalData = ref(0)
+    let perPage = ref(1)
+
     //for paginations
     const onChangePage = (pageOfItem) => {
       paginateIndex.value = pageOfItem - 1;
       showingValue.value = pageOfItem;
+      fetch()
     }
 
     const selectAll = (checkValue) => { 
@@ -103,6 +109,7 @@
     const fillPageMultiplier = (value) => {
       // ref harus pake .value biar ngaruh sama reactive :')
       pageMultiplier.value = value
+      fetch()
     }
 
     const deleteData = async (event) => {
@@ -239,14 +246,27 @@
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
+    let additionalData = ref()
+
     const fetch = async () => {
       try {
+
+        console.log(showingValue.value)
+        console.log(paginateIndex.value+1)
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get('/users') 
-        instanceArray = api.data.data
-        sortedData.value = instanceArray
-        responseStatus.value = api.status
+
+        const showApi = await Api.get(`/users?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}`)
+
+        additionalData.value = showApi.data.data
+        sortedData.value = showApi.data.data.data
+
+        from.value = additionalData.value.from
+        to.value = additionalData.value.to
+        totalData.value = additionalData.value.total
+        perPage.value = additionalData.value.per_page
+
       } catch(error) {
         responseStatus.value = error.response.status
         responseMessage.value = error.response.data.message
@@ -343,6 +363,15 @@
 
     }
 
+    let readMenuList = ref([])
+    let writeMenuList = ref([])
+
+    watch(sidebar, () => {
+      console.log('terjadi perubahan di sidebar user')
+      readMenuList.value = sidebar.readMenu
+      writeMenuList.value = sidebar.writeMenu
+    })
+
 </script>
 
 
@@ -367,7 +396,7 @@
           @delete-selected-data="deleteCheckedArray()"
           @increase-user="addNewUser" 
           @do-search="filteredItems"
-          @change-showing="fillPageMultiplier"
+          @changeShowing="fillPageMultiplier"
           @filter-table="filterTable"
           @reset-table="fetch"
           @export-to-excel="exportToExcel"
@@ -398,7 +427,7 @@
                       </span>
                     </th>
 
-                    <th class="overflow-x-hidden cursor-pointer">
+                    <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('User')">
                       <span class="flex justify-center items-center gap-1">
                         Actions
                       </span>
@@ -411,10 +440,7 @@
 
                   <!-- sortir nya harus sama dengan key yang di data dummy -->
 
-                    <tr v-for="data in sortedData.slice(
-                        paginateIndex * pageMultiplierReactive,
-                        (paginateIndex + 1) * pageMultiplierReactive
-                      )" :key="data.id">
+                    <tr v-for="data in sortedData" :key="data.id">
 
                       <td style="width: 5%;">
                         <input type="checkbox" name="chk" :value="data.id" v-model="deleteArray">
@@ -438,7 +464,7 @@
                         {{ data.auth_name }}
                       </td>
 
-                      <td class="flex flex-wrap gap-4 justify-center">
+                      <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('User')">
                         <ModalEditUser 
                         @fetchSiteForCompany="fetchSiteByCompanyId"
                         @fetchEmployeeIndividualInfo="fetchEmployeeInfo"
@@ -537,13 +563,17 @@
             <!-- PAGINATION -->
             <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
               <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
+
+                <!-- Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
                 {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-                of {{ sortedData.length }} entries
+                of {{ sortedData.length }} entries -->
+
+                  Showing {{ from }} to {{ to }} of {{ totalData }}
+
               </p>
               <vue-awesome-paginate
-                :total-items="sortedData.length"
-                :items-per-page="parseInt(pageMultiplierReactive)"
+                :total-items="totalData"
+                :items-per-page="parseInt(perPage)"
                 :on-click="onChangePage"
                 v-model="showingValue"
                 :max-pages-shown="4"

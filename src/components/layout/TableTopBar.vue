@@ -9,25 +9,28 @@ import ModalAddUser from "@/components/system-configuration/user/ModalAddUser.vu
 import ModalAddSequence from "@/components/system-configuration/sequence/ModalAddSequence.vue"
 import ModalAddRole from "@/components/system-configuration/role/ModalAddRole.vue"
 
-import { ref, computed, onBeforeMount } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+
+import { ref, computed, onBeforeMount, watch } from "vue"
 
 import Api from "@/utils/Api";
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const sidebar = useSidebarStore()
 
 let search = ref("")
 let companyId = ref('company')
 let groupCompanyId = ref('group company')
 let roleId = ref('role')
 let pageMultiplier = ref(10)
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
 
 const props = defineProps({
   title: String,
   modalAddType: String,
   numberSelected: Number
-});
+})
 
 let groupCompanyData = ref([])
 let companyData = ref([])
@@ -67,7 +70,7 @@ onBeforeMount(() => {
 
 })
 
-const emits = defineEmits(['resetTable'])
+const emits = defineEmits(['resetTable', 'changeShowing'])
 
 const resetCompanyAndRole = () => {
   groupCompanyId.value = 'group company'
@@ -83,6 +86,15 @@ const fetchParentCompany = async (id_company) => {
   const res = await Api.get(`/company/get_parent/${id_company}`);
   companyData.value = res.data.data;
 };
+
+  let readMenuList = ref([])
+  let writeMenuList = ref([])
+
+  watch(sidebar, () => {
+    console.log('terjadi perubahan di sidebar tabletopbar')
+    readMenuList.value = sidebar.readMenu
+    writeMenuList.value = sidebar.writeMenu
+  })
 
 </script>
 
@@ -109,27 +121,29 @@ const fetchParentCompany = async (id_company) => {
         </div>
 
         <!-- modal add ini perlu di segregasi -->
+
+        <!-- {{ sidebar.readMenu }} -->
         
         <ModalAddMenu
           @add-menu="$emit('increaseMenu')"
-          v-if="props.modalAddType === 'menu'"
+          v-if="props.modalAddType === 'menu' & writeMenuList.includes('Menu')"
         />
         <ModalAddUser
           @fetchSiteForCompany="$emit('fetchSiteForCompany')"
           @add-user="$emit('increaseUser')"
-          v-if="props.modalAddType === 'user'"
+          v-if="props.modalAddType === 'user' & writeMenuList.includes('User')"
         />
         <ModalAddApproval
           @add-approver="$emit('increaseApprover')"
-          v-if="props.modalAddType === 'approval'"
+          v-if="props.modalAddType === 'approval' & writeMenuList.includes('Approval')"
         />
         <ModalAddSequence
           @add-sequence="$emit('increaseSequence')"
-          v-if="props.modalAddType === 'sequence'"
+          v-if="props.modalAddType === 'sequence' & writeMenuList.includes('Sequence')"
         />
         <ModalAddRole
           @add-role="$emit('increaseRole')"
-          v-if="props.modalAddType === 'role'"
+          v-if="props.modalAddType === 'role' & writeMenuList.includes('Role')"
         />
 
         <button
@@ -288,7 +302,7 @@ const fetchParentCompany = async (id_company) => {
             placeholder="Search..."
             class="placeholder:text-slate-400 placeholder:font-JakartaSans placeholder:text-xs capitalize block bg-white w-full border border-slate-300 rounded-md py-2 pl-9 pr-3 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
             v-model="search"
-            @keyup="$emit('doSearch', search)"
+            @keyup.enter="$emit('doSearch', search)"
           />
           
         </div>
@@ -306,7 +320,7 @@ const fetchParentCompany = async (id_company) => {
           <select
             class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
             v-model="pageMultiplier"
-            @change="$emit('changeShowing', pageMultiplierReactive)"
+            @change="emits('changeShowing', pageMultiplierReactive)"
           >
             <option>10</option>
             <option>25</option>
@@ -356,7 +370,7 @@ const fetchParentCompany = async (id_company) => {
       <select
         class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
         v-model="pageMultiplier"
-        @change="$emit('changeShowing', pageMultiplierReactive)">
+        @change="emits('changeShowing', pageMultiplierReactive)">
         <option>10</option>
         <option>25</option>
         <option>50</option>

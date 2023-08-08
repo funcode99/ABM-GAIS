@@ -32,6 +32,7 @@
         localStorage.setItem('id_site', JSON.stringify(data.data.users.id_site))
         localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
         localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
+        localStorage.setItem('id_role_number', JSON.stringify(data.data.users.id_role))
 
         if(typeof data.data.users.logo_path == 'string') {
           let deleteBacktick = data.data.users.group_company_logo_path.replaceAll('"', '')
@@ -44,9 +45,6 @@
           let username = data.data.users.employee_name.replaceAll('"', '')
           localStorage.setItem('username', username)
         }
-        
-        // $cookies.set('token', data.data.data.access_token)
-        // store.commit('isLoading', false)
 
         router.push('/user');
 

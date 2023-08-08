@@ -219,8 +219,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
             file: siteVisitAttachmentFile.value,
           })
 
-          console.log(api)
-          console.log(api.data.data)
+          // console.log(api)
+          // console.log(api.data.data)
           localStorage.setItem('dateArrival', api.data.data.date_arrival)
           localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip site visit dengan id yang sudah ada')

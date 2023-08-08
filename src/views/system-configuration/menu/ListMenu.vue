@@ -204,8 +204,8 @@
     const tableHead = [
       {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Name', jsonData: 'menu'},
-      {Id: 3, title: 'Parent Menu', jsonData: 'parent_id'},
-      {Id: 4, title: 'Status', jsonData: 'id_status_menu'},
+      {Id: 3, title: 'Parent Menu', jsonData: 'parent'},
+      {Id: 4, title: 'Status', jsonData: 'status_name'},
     ]
 
     const sortList = (sortBy) => {
@@ -268,9 +268,17 @@
     }
 
     const filteredItems = (search) => {
+
+      console.log(search)
+
       sortedData.value = instanceArray
           const filteredR = sortedData.value.filter(item => {
-          return item.ApprovalAuthorities.toLowerCase().indexOf(search.toLowerCase()) > -1 | item.Username.toLowerCase().indexOf(search.toLowerCase()) > -1
+
+            return (
+              (item.menu?.toLowerCase().indexOf(search.toLowerCase())) > -1 | 
+              (item.parent?.toLowerCase().indexOf(search.toLowerCase())) > -1 |
+              (item.status_name?.toLowerCase().indexOf(search.toLowerCase())) > -1
+            )
       })
       sortedData.value = filteredR
       onChangePage(1)
@@ -279,6 +287,15 @@
     const fetchMenuStatusUtilsHelper = () => {
       fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
     }
+
+    let readMenuList = ref([])
+    let writeMenuList = ref([])
+
+    watch(sidebar, () => {
+      console.log('terjadi perubahan di sidebar menu')
+      readMenuList.value = sidebar.readMenu
+      writeMenuList.value = sidebar.writeMenu
+    })
 
 </script>
 
@@ -334,7 +351,7 @@
                           </span>
                         </th>
 
-                        <th class="overflow-x-hidden cursor-pointer">
+                        <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('Menu')">
                           <span class="flex justify-center items-center gap-1">
                             Actions
                           </span>
@@ -378,7 +395,7 @@
                               Disabled
                             </td>
       
-                            <td class="flex flex-wrap gap-4 justify-center">
+                            <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('Menu')">
                                 <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[
                                   data.menu, 
                                   data.url, 
