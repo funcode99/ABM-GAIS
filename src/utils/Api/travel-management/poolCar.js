@@ -42,9 +42,33 @@ const saveCarInspection = async (body, progressEvent) => {
   }
 }
 
-const fetchDriverCarCheckupByRequesId = async (requestId) => {
+const changeCar = async (requestId, body) => {
   try {
-    const res = await Api.get(`${ENDPOINT}/get_check/${requestId}`)
+    const res = await Api.post(`${ENDPOINT}/update_data/${requestId}`, body)
+
+    return res
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchDriverCarCheckupByRequesId = async (requestId, status) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/get_check/${requestId}`, {
+      params: { status },
+    })
+
+    return res.data
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchP2hHistory = async ({ status, id_car, id_pool_car }) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/get_p2h_history`, {
+      params: { status, id_car, id_pool_car },
+    })
 
     return res.data
   } catch (error) {
@@ -55,6 +79,16 @@ const fetchDriverCarCheckupByRequesId = async (requestId) => {
 const setPoolRequestStatus = async (requestId) => {
   try {
     return await Api.post(`${ENDPOINT}/update_status/${requestId}`)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const fetchPoolRequestHistory = async (requestId) => {
+  try {
+    const res = await Api.get(`${ENDPOINT}/get_history/${requestId}`)
+
+    return res.data
   } catch (error) {
     console.error(error)
   }
@@ -159,6 +193,8 @@ const getAllSite = async () => {
 }
 
 export {
+  changeCar,
+  fetchP2hHistory,
   fetchPoolCarRequest,
   fetchCarMaster,
   getSiteByCompany,
@@ -173,4 +209,5 @@ export {
   setPoolRequestStatus,
   fetchPoolCarStatus,
   updateCarData,
+  fetchPoolRequestHistory,
 }

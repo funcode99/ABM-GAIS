@@ -21,6 +21,8 @@ import {
   fetchCarType,
   fethDrivers,
   saveCarData,
+  fetchP2hHistory,
+  setPoolRequestStatus,
 } from "@/utils/Api/travel-management/poolCar.js"
 
 const emits = defineEmits(["update:modelValue", "success"])
@@ -31,6 +33,7 @@ const props = defineProps({
   modelValue: false,
   data: Object,
   isEditable: Boolean,
+  status: Number,
 })
 
 const form = ref({
@@ -75,10 +78,36 @@ watch(
   }
 )
 
+const doneRequestTrip = async () => {
+  const requestId = route.params.id
+  const res = await setPoolRequestStatus(requestId)
+
+  if (res.data.data.success) {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Success to Update Car Request Status",
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    emits("success")
+  }
+}
+
 const getFormData = async () => {
+  let res
   const requestId = route.params.id
 
-  const res = await fetchDriverCarCheckupByRequesId(requestId)
+  if (props.data.is_history) {
+    const params = {
+      status: props.status,
+      id_car: props.data.id_car,
+      id_pool_car: props.data.id_pool_car,
+    }
+    res = await fetchP2hHistory(params)
+  } else {
+    res = await fetchDriverCarCheckupByRequesId(requestId, props.status)
+  }
 
   checkupList.value = res.data.data
   dataExisting.value = res.data.data_existing
@@ -93,6 +122,7 @@ const saveForm = async () => {
     odometer: form.value.odometer,
     is_usable: form.value.is_usable,
     notes: form.value.notes,
+    status: props.status,
   }
 
   const data = Object.entries(form.value.data).map((item) => {
@@ -106,7 +136,7 @@ const saveForm = async () => {
   var form_data = new FormData()
 
   for (var key in body) {
-    if (body[key]) form_data.append(key, body[key])
+    if (body[key] != null) form_data.append(key, body[key])
   }
 
   data.forEach((item, index) => {
@@ -114,8 +144,6 @@ const saveForm = async () => {
       form_data.append(`data[${index}][${key}]`, item[key])
     }
   })
-
-  console.log(form_data)
 
   Swal.fire({
     title: "Saving Data",
@@ -130,8 +158,6 @@ const saveForm = async () => {
     },
   })
 
-  console.log(body)
-
   const onUploadProgress = (progressEvent) => {
     const { loaded, total } = progressEvent
     progress = Math.floor((loaded * 100) / total)
@@ -141,6 +167,7 @@ const saveForm = async () => {
   const res = await saveCarInspection(form_data, onUploadProgress)
 
   if (res.data.success) {
+    if (props.status == 2) await doneRequestTrip()
     Swal.fire({
       position: "center",
       icon: "success",
@@ -319,7 +346,7 @@ onMounted(async () => {
                     :disabled="form.files[matrix.id_detail]"
                   >
                     <span
-                      v-if="form.files[matrix.id_detail]"
+                      v-if="form.files?.[matrix.id_detail]"
                       class="truncate overflow-hidden text-xs text-slate-600"
                     >
                       {{ form.files[matrix.id_detail].name }}
@@ -345,6 +372,7 @@ onMounted(async () => {
                   </button>
 
                   <button
+                    v-if="matrix.path"
                     type="button"
                     class="p-2 relative rounded-lg w-[150px] flex justify-around bg-white border border-primary text-primary"
                     @click="openImgUrl(matrix.path)"
