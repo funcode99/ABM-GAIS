@@ -106,6 +106,11 @@ watch(
 const getData = debounce(async function () {
   // const { sortBy, sortDesc, page, limit } = paging
 
+  if (props.data.length > 0) {
+    items.value = props.data
+    return
+  }
+
   try {
     items.value = []
     loading.value = true
@@ -118,11 +123,11 @@ const getData = debounce(async function () {
       paramsSerializer: (params) => stringify(params),
     })
 
-    paging.value.totalData = res.data.total || 0
+    paging.value.totalData = res.data?.total || 0
     items.value = res.data.data || []
-    // items.value = []
   } catch (error) {
     console.error(error)
+    items.value = []
   } finally {
     loading.value = false
   }
@@ -158,11 +163,7 @@ const sortTableByKey = (key, orderBy) => {
 defineExpose({ getData, exportToXls })
 
 onMounted(() => {
-  if (props.data.length == 0) {
-    getData()
-  } else {
-    items.value = props.data
-  }
+  getData()
 })
 </script>
 
@@ -247,7 +248,7 @@ onMounted(() => {
             </td>
 
             <td v-for="headerKey in headerKeys" :key="`${index}-${headerKey}`">
-              <slot :item="item" :name="`item-${headerKey}`">
+              <slot :item="item" :index="index" :name="`item-${headerKey}`">
                 {{
                   item[headerKey] !== undefined ? item[headerKey] || "-" : "-"
                 }}

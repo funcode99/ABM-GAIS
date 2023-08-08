@@ -29,6 +29,10 @@ const props = defineProps({
     type: Object,
     default: () => {},
   },
+  dialog: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const references = ref({
@@ -108,7 +112,7 @@ const saveCar = async () => {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Succeess to Save Car Data",
+        title: "Success to Save Car Data",
         showConfirmButton: false,
         timer: 1500,
       })
@@ -150,21 +154,26 @@ watch(dialog, () => {
 
 defineExpose({ dialog })
 
-onMounted(async () => {
-  references.value.company = await fetchCompanyRefs()
-  references.value.site = await fetchSiteRefs()
-  references.value.carType = await fetchCarType()
-  references.value.driver = await fethDrivers()
-})
+watch(
+  () => dialog.value,
+  async () => {
+    references.value.company = await fetchCompanyRefs()
+    references.value.site = await fetchSiteRefs()
+    references.value.carType = await fetchCarType()
+    references.value.driver = await fethDrivers()
+  }
+)
 </script>
 
 <template>
-  <button
-    @click="dialog = true"
-    class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-  >
-    + Add New
-  </button>
+  <slot>
+    <button
+      @click="dialog = true"
+      class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+    >
+      + Add New
+    </button>
+  </slot>
 
   <Modal
     width="600px"
@@ -276,7 +285,7 @@ onMounted(async () => {
               class="v-text-field"
               v-model="form.type_name"
               type="text"
-              placeholder="Input Car Name"
+              placeholder="Input Asset No."
               required
             />
           </div>
