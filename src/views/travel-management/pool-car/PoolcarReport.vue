@@ -328,7 +328,7 @@ const showClearButton = computed(() => {
                 <p
                   class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
                 >
-                  Date
+                  Created Date
                 </p>
                 <VueDatePicker
                   v-model="date"
