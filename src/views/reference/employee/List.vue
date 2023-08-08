@@ -74,12 +74,12 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchEmployee = async (id) => {
+const fetchEmployee = async (page) => {
   const params = {
     filterCompany: selectedCompany.value,
     search: search.value,
     perPage: pageMultiplier.value,
-    page: id ? id : 1,
+    page: page,
   };
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -124,15 +124,6 @@ const resetData = () => {
   selectedGrupCompany.value = "";
   fetchEmployee();
 };
-
-const clearSearch = () => {
-  search.value = "";
-  fetchEmployee();
-};
-
-const showClearButton = computed(() => {
-  return search.value !== "";
-});
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -247,7 +238,11 @@ const exportToExcel = () => {
               <div class="flex flex-wrap gap-4 items-center pt-6">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="fetchEmployee()"
+                  @click="
+                    () => {
+                      onChangePage(1);
+                    }
+                  "
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -272,30 +267,8 @@ const exportToExcel = () => {
                 type="text"
                 placeholder="Search..."
                 v-model="search"
-                @keyup.enter="fetchEmployee()"
+                @keyup="fetchEmployee(onChangePage(1))"
               />
-
-              <button
-                v-if="showClearButton"
-                @click="clearSearch"
-                type="button"
-                class="cursor-pointer absolute right-8 mt-3"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  class="h-4 w-4"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
 

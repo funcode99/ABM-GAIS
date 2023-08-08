@@ -190,7 +190,6 @@ const tableHeadEmployee = [
   { Id: 1, title: "No", jsonData: "id" },
   { Id: 2, title: "ID Item", jsonData: "code_item" },
   { Id: 3, title: "Item Name", jsonData: "item_name" },
-  { Id: 4, title: "ATK Warehouse", jsonData: "warehouse_name" },
   { Id: 5, title: "Stock Available to Request", jsonData: "current_stock" },
   { Id: 6, title: "Alert Quantity", jsonData: "alert_qty" },
   { Id: 7, title: "UOM", jsonData: "uom_name" },
@@ -384,7 +383,7 @@ const editValue = async (id, type, detail_warehouse) => {
     array_warehouse: selectedWarehouse.value,
   };
   payload.value = dataEdit;
-  console.log(payload.value)
+  console.log(payload.value);
   disabledField.value = type == "view" ? true : false;
 };
 
@@ -708,6 +707,7 @@ const getSessionForSidebar = () => {
               </button>
 
               <label
+                v-if="id_role != 'EMPLY'"
                 @click="openModal('add', 0)"
                 for="my-modal-item-atk"
                 class="btn btn-success bg-green border-green hover:bg-none text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
@@ -883,7 +883,8 @@ const getSessionForSidebar = () => {
           >
             <div class="block overflow-x-auto">
               <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg flex"
+                v-if="sortedData.length > 0"
               >
                 <thead
                   class="text-center font-JakartaSans text-sm font-bold h-10"
@@ -901,7 +902,7 @@ const getSessionForSidebar = () => {
                     <th
                       v-for="data in tableType"
                       :key="data.id"
-                      class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-sm"
+                      class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-sm max-w-[7rem] whitespace-normal"
                       @click="sortList(`${data.jsonData}`)"
                     >
                       <span class="flex justify-center items-center gap-1">
@@ -914,16 +915,16 @@ const getSessionForSidebar = () => {
                   </tr>
                 </thead>
 
-                <tbody v-if="sortedData.length > 0">
-                  <tr
-                    :class="
-                      data.current_stock <= data.alert_qty
-                        ? 'font-JakartaSans font-normal text-sm text-red'
-                        : 'font-JakartaSans font-normal text-sm'
-                    "
-                    v-for="(data, index) in sortedData"
-                    :key="data.id"
-                  >
+                <tbody
+                  :class="
+                    data.current_stock <= data.alert_qty
+                      ? 'font-JakartaSans font-normal text-sm text-red'
+                      : 'font-JakartaSans font-normal text-sm'
+                  "
+                  v-for="(data, index) in sortedData"
+                  :key="data.id"
+                >
+                  <tr>
                     <td class="p-0">
                       <input type="checkbox" name="checks" />
                     </td>
@@ -936,7 +937,7 @@ const getSessionForSidebar = () => {
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_name === null ? "-" : data.item_name }}
                     </td>
-                    <td class="p-0">
+                    <td class="p-0" v-if="id_role != 'EMPLY'">
                       <div class="collapse collapse-arrow p-0 m-0">
                         <input type="checkbox" />
                         <div class="collapse-title">
@@ -949,18 +950,80 @@ const getSessionForSidebar = () => {
                           </div>
                         </div>
                         <div class="collapse-content">
-                          <ol class="list-decimal">
-                            <li
-                              v-for="(detail, i) in data.array_warehouse"
-                              :key="detail.id"
-                              class="overflow-x-hidden cursor-pointer"
-                            >
-                              {{ i + 1 }}.
-                              <span class="ml-1">{{
-                                detail.warehouse_name
-                              }}</span>
-                            </li>
-                          </ol>
+                          <tr
+                            v-if="
+                              data.array_warehouse &&
+                              data.array_warehouse.length > 0
+                            "
+                            class="flex"
+                          >
+                            <td colspan="10" class="justify-center px-10 py-5">
+                              <div class="overflow-x-auto">
+                                <table class="table-auto w-full justify-center">
+                                  <thead
+                                    class="font-JakartaSans font-bold text-xs"
+                                  >
+                                    <tr class="bg-indigo-500 text-white h-8">
+                                      <th
+                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
+                                      >
+                                        No
+                                      </th>
+                                      <th
+                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs"
+                                      >
+                                        ATK Warehouse
+                                      </th>
+                                      <th
+                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
+                                      >
+                                        Real Stock
+                                      </th>
+                                      <th
+                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
+                                      >
+                                        Booked Stock
+                                      </th>
+                                      <th
+                                        class="border border-[#B9B9B9] bg-indigo-500 capitalize font-JakartaSans font-bold text-xs text-center"
+                                      >
+                                        Available Stock To Approve
+                                      </th>
+                                    </tr>
+                                  </thead>
+                                  <tbody
+                                    class="font-JakartaSans font-normal text-xs"
+                                    v-for="(dt, index) in data.array_warehouse"
+                                    :key="index"
+                                  >
+                                    <tr>
+                                      <td class="border border-[#B9B9B9]">
+                                        {{ (index += 1) }}
+                                      </td>
+                                      <td class="border border-[#B9B9B9]">
+                                        {{ dt.name_warehouse }}
+                                      </td>
+                                      <td
+                                        class="border border-[#B9B9B9] text-center"
+                                      >
+                                        {{ dt.current_stock }}
+                                      </td>
+                                      <td
+                                        class="border border-[#B9B9B9] text-center"
+                                      >
+                                        {{ dt.current_stock }}
+                                      </td>
+                                      <td
+                                        class="border border-[#B9B9B9] text-center"
+                                      >
+                                        {{ dt.stock_to_approve_wh }}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </td>
+                          </tr>
                         </div>
                       </div>
                     </td>
@@ -974,7 +1037,7 @@ const getSessionForSidebar = () => {
                       class="font-JakartaSans font-normal text-sm p-0"
                       v-if="id_role != 'EMPLY'"
                     >
-                      {{ data.stock_booked == null ? "-" : data.stock_booked }}
+                      {{ data.booked_stock == null ? "-" : data.booked_stock }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{
@@ -1011,6 +1074,7 @@ const getSessionForSidebar = () => {
                           ><img :src="editicon" class="w-6 h-6"
                         /></label>
                         <label
+                          v-else
                           @click="
                             editValue(data.id, 'view', data.array_warehouse)
                           "
@@ -1449,12 +1513,12 @@ const getSessionForSidebar = () => {
                     </td>
                   </tr>
                 </tbody>
-                <tbody v-else>
-                  <tr>
-                    <td colspan="9">Data Not Found</td>
-                  </tr>
-                </tbody>
               </table>
+              <tbody v-else>
+                <tr>
+                  <td colspan="9">Data Not Found</td>
+                </tr>
+              </tbody>
             </div>
           </div>
 

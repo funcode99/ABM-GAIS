@@ -125,11 +125,12 @@ const fetchCondition = async () => {
 
 const fetchDataEdit = async () => {
   itemsTable.value = [];
-
-  itemNames.value = props.dataItem[0].id_item;
-  changeUomBrand(itemNames.value);
-  remark.value = props.dataItem[0].remark;
-  alertQuantity.value = props.dataItem[0].qty
+  if (props.dataItem.length <= 1) {
+    itemNames.value = props.dataItem[0].id_item;
+    changeUomBrand(itemNames.value);
+    remark.value = props.dataItem[0].remark;
+    alertQuantity.value = props.dataItem[0].qty;
+  }
 
   props.dataItem.map((elements) => {
     itemsTable.value.push({
@@ -223,7 +224,9 @@ const addItem = async () => {
       });
     } else {
       itemsTable.value.map((element) => {
-        element.qty = alertQuantity.value;
+        if (itemNames.value == element.id_item) {
+          element.qty = alertQuantity.value;
+        }
       });
     }
     resetButCompanyDisable();
@@ -290,9 +293,6 @@ const save = async () => {
         });
       });
   }
-};
-const coba = async () => {
-  addModal.value = true;
 };
 const coba2 = async () => {
   addModal.value = false;

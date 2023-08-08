@@ -5,7 +5,6 @@ import Footer from "@/components/layout/Footer.vue";
 
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
 import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
@@ -36,7 +35,6 @@ let Departement = ref([]);
 let Status = ref([]);
 
 let sortedData = ref([]);
-let sortedbyASC = true;
 let instanceArray = [];
 
 let showingValue = ref(1);
@@ -68,7 +66,7 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-const fetchPoolCarReport = async (id) => {
+const fetchPoolCarReport = async (page) => {
   if (date.value != undefined) {
     if (date.value[0] != null) {
       dateStart.value = date.value[0].toISOString().split("T")[0];
@@ -87,7 +85,7 @@ const fetchPoolCarReport = async (id) => {
     status: selectedStatus.value,
     search: search.value,
     perPage: pageMultiplier.value,
-    page: id ? id : 1,
+    page: page,
     id_company: selectedCompany.value,
     id_departement: selectedDepartement.value,
     type_car: selectedCartype.value,
@@ -260,7 +258,11 @@ const showClearButton = computed(() => {
             </button>
 
             <button
-              @click="fetchPoolCarReport()"
+              @click="
+                () => {
+                  onChangePage(1);
+                }
+              "
               type="submit"
               class="w-36 p-2.5 ml-2 text-sm rounded-lg font-medium text-white font-JakartaSans capitalize border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
             >
@@ -356,7 +358,11 @@ const showClearButton = computed(() => {
               <div class="flex gap-2 items-center pt-7">
                 <button
                   class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                  @click="fetchPoolCarReport()"
+                  @click="
+                    () => {
+                      onChangePage(1);
+                    }
+                  "
                 >
                   <span>
                     <img :src="icon_filter" class="w-5 h-5" />
@@ -402,9 +408,9 @@ const showClearButton = computed(() => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0">
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
+          <div class="table-wrapper" v-if="sortedData.length > 0">
+            <table>
+              <thead class="text-center font-JakartaSans text-sm font-bold">
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -414,68 +420,58 @@ const showClearButton = computed(() => {
                     {{ data.title }}
                   </span>
                 </th>
-              </tr>
-            </thead>
+              </thead>
+              <tbody>
+                <tr
+                  class="font-JakartaSans font-normal text-sm"
+                  v-for="data in sortedData"
+                  :key="data.id"
+                >
+                  <td>{{ data.no }}</td>
+                  <td>{{ format_date(data.created_at) }}</td>
+                  <td>{{ data.plate }}</td>
+                  <td>{{ format_date(data.from_date) }}</td>
+                  <td>{{ format_date(data.to_date) }}</td>
+                  <td>{{ data.odometer }}</td>
+                  <td>{{ data.status }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-            <tbody>
-              <tr
-                class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData"
-                :key="data.id"
-              >
-                <td>{{ data.no }}</td>
-                <td>{{ format_date(data.created_at) }}</td>
-                <td>{{ data.plate }}</td>
-                <td>{{ format_date(data.from_date) }}</td>
-                <td>{{ format_date(data.to_date) }}</td>
-                <td>{{ data.odometer }}</td>
-                <td>{{ data.status }}</td>
-              </tr>
-            </tbody>
-          </tableData>
-
-          <tableData
+          <div
+            class="table-wrapper"
             v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
+            <table class="table-notfound">
+              <thead class="text-center font-JakartaSans text-sm font-bold">
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
                   class="overflow-x-hidden cursor-pointer"
                 >
-                  <div class="flex justify-center items-center">
-                    <p class="font-JakartaSans font-bold text-sm">
-                      {{ data.title }}
-                    </p>
-                  </div>
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }}
+                  </span>
                 </th>
-              </tr>
-            </thead>
-
-            <SkeletonLoadingTable :column="7" :row="5" />
-          </tableData>
-
-          <div v-else>
-            <tableData>
-              <thead
-                class="text-center font-JakartaSans text-sm font-bold h-10"
-              >
-                <tr>
-                  <th
-                    v-for="data in tableHead"
-                    :key="data.Id"
-                    class="overflow-x-hidden cursor-pointer"
-                  >
-                    <div class="flex justify-center items-center">
-                      <p class="font-JakartaSans font-bold text-sm">
-                        {{ data.title }}
-                      </p>
-                    </div>
-                  </th>
-                </tr>
               </thead>
+              <SkeletonLoadingTable :column="7" :row="5" />
+            </table>
+          </div>
 
+          <div class="table-wrapper" v-else>
+            <table class="table-notfound">
+              <thead class="text-center font-JakartaSans text-sm font-bold">
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                >
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }}
+                  </span>
+                </th>
+              </thead>
               <tbody>
                 <tr>
                   <td
@@ -486,7 +482,7 @@ const showClearButton = computed(() => {
                   </td>
                 </tr>
               </tbody>
-            </tableData>
+            </table>
           </div>
 
           <!-- PAGINATION -->
@@ -517,45 +513,8 @@ const showClearButton = computed(() => {
 </template>
 
 <style scoped>
-th {
-  padding: 2px;
-  text-align: left;
-  position: relative;
-}
-
-tr td {
-  text-align: center;
-  white-space: nowrap;
-}
-
-tr th {
-  background-color: #015289;
-  text-transform: capitalize;
-  color: white;
-}
-
-.table-zebra tbody tr:hover td {
-  background-color: rgb(193, 192, 192);
-  cursor: pointer;
-}
-
 .this {
   overflow-x: hidden;
-}
-
-.readmore-text {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-
-.readmore-text:hover {
-  max-width: 400px;
-  white-space: nowrap;
-  word-break: break-word;
 }
 
 .my-date {
@@ -566,5 +525,65 @@ input.nosubmit {
   background: transparent
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
     no-repeat 13px center;
+}
+
+.table-wrapper {
+  overflow-y: scroll;
+  overflow-x: auto;
+  height: fit-content;
+  max-height: 66.4vh;
+  margin-top: 22px;
+  margin: 15px;
+  padding-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid rgb(229, 228, 228);
+}
+
+table {
+  width: 100%;
+}
+
+table tbody :hover {
+  background-color: rgb(193, 192, 192);
+  cursor: pointer;
+}
+
+tbody tr:nth-child(even) th,
+tbody tr:nth-child(even) td {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--b2, var(--b1)) / var(--tw-bg-opacity));
+}
+
+tbody tr:nth-child(even) th,
+tbody tr:nth-child(even) td {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--b2, var(--b1)) / var(--tw-bg-opacity));
+}
+
+table th {
+  position: sticky;
+  top: 0px;
+  font-weight: normal;
+  padding: 8px;
+  background-color: #015289;
+  text-transform: capitalize;
+  color: white;
+}
+
+table th,
+table td {
+  padding: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+table td {
+  font-size: 15px;
+  padding-left: 40px;
+}
+
+.table-notfound {
+  width: 100%;
+  column-span: all;
 }
 </style>
