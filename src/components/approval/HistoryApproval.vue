@@ -15,6 +15,10 @@ const format_date = (value) => {
   }
 };
 
+const openDoc = (path) => {
+  window.open(path, "_blank");
+};
+
 let historyApproval = ref(props.dataApproval);
 let level = ref(props.currentLevel);
 let typeApproval = ref(props.type);
@@ -105,7 +109,7 @@ let classWaiting =
           </p>
           <p class="text-gray-700 mt-1" v-if="data.date">
             Attachment:
-            <a :href="data.path" target="_blank" class="text-blue" download>
+            <a @click="openDoc(data.path)" class="text-blue">
               {{ data.file }}
             </a>
           </p>
@@ -113,7 +117,7 @@ let classWaiting =
       </div>
     </div>
   </div>
-  
+
   <div v-else>
     <p class="text-center p-4">No Approval Log</p>
   </div>
