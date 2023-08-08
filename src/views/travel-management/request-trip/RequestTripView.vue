@@ -404,7 +404,7 @@
                     </div>
 
                     <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
-                    <div class="flex gap-4 mt-6 mb-3 ml-5" v-if="purposeOfTripData[currentIndex].status === 'Waiting Approval'">
+                    <div class="flex gap-4 mt-6 mb-3 ml-5" v-if="purposeOfTripData[currentIndex].status === 'Draft' || purposeOfTripData[currentIndex].status === 'Revision'">
                         
                       <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
                       <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
