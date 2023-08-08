@@ -127,7 +127,7 @@ const approve = () => {
               class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
               required
               @change="onFileSelected"
-              accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+              accept="application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, image/jpeg, image/png"
             />
           </div>
 
