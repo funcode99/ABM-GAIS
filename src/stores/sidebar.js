@@ -6,7 +6,9 @@ export const useSidebarStore = defineStore('sidebar', {
             sidebarMenu: '',
             isWide: true,
             scrollValue: 0,
-            menuData: ''
+            menuData: '',
+            writeMenu: [],
+            readMenu: []
         }
     },
     actions: {

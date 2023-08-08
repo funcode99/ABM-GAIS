@@ -288,6 +288,15 @@
       fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
     }
 
+    let readMenuList = ref([])
+    let writeMenuList = ref([])
+
+    watch(sidebar, () => {
+      console.log('terjadi perubahan di sidebar menu')
+      readMenuList.value = sidebar.readMenu
+      writeMenuList.value = sidebar.writeMenu
+    })
+
 </script>
 
 <template>
@@ -342,7 +351,7 @@
                           </span>
                         </th>
 
-                        <th class="overflow-x-hidden cursor-pointer">
+                        <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('Menu')">
                           <span class="flex justify-center items-center gap-1">
                             Actions
                           </span>
@@ -386,7 +395,7 @@
                               Disabled
                             </td>
       
-                            <td class="flex flex-wrap gap-4 justify-center">
+                            <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('Menu')">
                                 <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[
                                   data.menu, 
                                   data.url, 

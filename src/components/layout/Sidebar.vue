@@ -37,18 +37,18 @@ const id_role = JSON.parse(localStorage.getItem("id_role"));
 let menuData = ref();
 
 const fetchSidebarAppearance = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  let api = await Api.get(`/role/get_sidebar_menu`);
-  sidebar.menuData = api.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  let api = await Api.get(`/role/get_sidebar_menu`)
+  sidebar.menuData = api.data.data
+}
 
 onBeforeMount(() => {
   if (sidebar.menuData === "") {
-    console.log("menarik data");
-    fetchSidebarAppearance();
+    console.log("menarik data")
+    fetchSidebarAppearance()
   }
-});
+})
 
 // masukkin params ke actions harus pake variable ga boleh pake primitive data langsung
 let system = "systemConfiguration";
@@ -58,18 +58,48 @@ let approval = "approval";
 let facility = "facilityServiceSystem";
 
 onMounted(() => {
+  
   // let scroller = window.document.querySelector(".scroller")
   // scroller.scrollTop = sidebar.scrollValue
   // scroller.addEventListener("scroll", () => {
   //   sidebar.scrollValue = Math.round(scroller.scrollTop)
   // })
-});
 
-const isNotifSelected = ref(false);
+    if(JSON.stringify(sidebar.readMenu) === '[]') {
+      fetchMenuReadByRole()
+    }
+
+    if(JSON.stringify(sidebar.writeMenu) === '[]') {
+      fetchMenuWriteByRole()
+    }
+
+})
+
+const isNotifSelected = ref(false)
 
 const handleNotifClick = () => {
-  isNotifSelected.value = !isNotifSelected.value;
-};
+  isNotifSelected.value = !isNotifSelected.value
+}
+
+  const fetchMenuReadByRole = async () => {
+
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.get(`/role/get_menu_read/${localStorage.getItem('id_role_number')}`)
+    sidebar.readMenu = api.data.data.menu
+
+  }
+
+  const fetchMenuWriteByRole = async () => {
+    
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.get(`/role/get_menu_write/${localStorage.getItem('id_role_number')}`)
+    sidebar.writeMenu = api.data.data.menu
+
+  }
+
+
 </script>
 
 <template>
@@ -167,7 +197,7 @@ const handleNotifClick = () => {
               >
                 <div class="flex justify-between w-full items-center">
                   <div class="flex gap-4 items-center">
-                    <img />
+                    <img  />
                     <img />
                     <h3
                       class="text-left"

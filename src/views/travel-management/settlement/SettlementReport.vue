@@ -388,39 +388,43 @@ const showClearButton = computed(() => {
           </div>
 
           <!-- TABLE -->
-          <tableData v-if="sortedData.length > 0">
-            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
-              <tr>
-                <th
-                  v-for="data in tableHead"
-                  :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
+          <div class="scrollable" v-if="sortedData.length > 0">
+            <tableData>
+  
+              <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+                <tr>
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                  >
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+  
+              <tbody>
+                <tr
+                  class="font-JakartaSans font-normal text-sm"
+                  v-for="data in sortedData"
+                  :key="data.id"
                 >
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }}
-                  </span>
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              <tr
-                class="font-JakartaSans font-normal text-sm"
-                v-for="data in sortedData"
-                :key="data.id"
-              >
-                <td>{{ data.no }}</td>
-                <td>{{ format_date(data.created_at) }}</td>
-                <td>{{ data.no_settlement }}</td>
-                <td>{{ data.employee_name }}</td>
-                <td>{{ data.no_ca }}</td>
-                <td>{{ format_price(data.total_real) }}</td>
-                <td>{{ data.settlement_type }}</td>
-                <td>{{ data.cost_center_name }}</td>
-                <td>{{ data.status }}</td>
-              </tr>
-            </tbody>
-          </tableData>
+                  <td>{{ data.no }}</td>
+                  <td>{{ format_date(data.created_at) }}</td>
+                  <td>{{ data.no_settlement }}</td>
+                  <td>{{ data.employee_name }}</td>
+                  <td>{{ data.no_ca }}</td>
+                  <td>{{ format_price(data.total_real) }}</td>
+                  <td>{{ data.settlement_type }}</td>
+                  <td>{{ data.cost_center_name }}</td>
+                  <td>{{ data.status }}</td>
+                </tr>
+              </tbody>
+  
+            </tableData>
+          </div>
 
           <tableData
             v-else-if="sortedData.length == 0 && instanceArray.length == 0"
@@ -522,28 +526,9 @@ tr th {
   color: white;
 }
 
-.table-zebra tbody tr:hover td {
-  background-color: rgb(193, 192, 192);
-  cursor: pointer;
-}
 
 .this {
   overflow-x: hidden;
-}
-
-.readmore-text {
-  display: inline-block;
-  max-width: 200px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: max-width 0.3s ease-in-out;
-}
-
-.readmore-text:hover {
-  max-width: 400px;
-  white-space: nowrap;
-  word-break: break-word;
 }
 
 .my-date {
@@ -555,4 +540,17 @@ input.nosubmit {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
     no-repeat 13px center;
 }
+
+/* .scrollable thead tr {
+    display: block;
+    width: 100% !important;
+}
+
+.scrollable tbody {
+    display: block;
+    height: 300px;
+    overflow-y: scroll;
+} */
+
+
 </style>
