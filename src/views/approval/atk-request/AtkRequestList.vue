@@ -422,7 +422,7 @@ const format_date = (value) => {
                             ? 'status-revision'
                             : data.status == 'Completed'
                             ? 'status-done'
-                            : data.status == 'Partial Completed'
+                            : data.status == 'Partial Completed' || data.status == 'Approve'
                             ? 'status-partial'
                             : 'font-bold'
                         "
@@ -432,7 +432,7 @@ const format_date = (value) => {
                     <td class="flex flex-nowrap gap-1 justify-center">
                       <router-link :to="`/viewapprovalatkrrequest/${data.id}`" >
                         <button>
-                          <img :src="icon_ceklis" class="w-6 h-6" v-if="data.status == 'Waiting Approval'"/>
+                          <img :src="icon_ceklis" class="w-6 h-6" v-if="data.status == 'Waiting Approval' || data.status == 'Approve'"/>
                           <img :src="viewicon" class="w-6 h-6" v-else/>
                         </button>
                       </router-link>
