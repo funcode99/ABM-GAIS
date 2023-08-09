@@ -381,9 +381,11 @@
                         data.max_ammount,
                         data.id_job_band_array,
                       ]" />
+
                       <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
+                      
                     </td>
 
                   </tr>

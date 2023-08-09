@@ -150,9 +150,13 @@ const handleNotifClick = () => {
 
     <!-- menu -->
     <div class="sidebar-wrapper mt-3">
+      
       <div class="sidebar scroller">
+        
         <div class="px-4 flex flex-col items-center">
+
           <ul id="myMenu" class="pb-20">
+
             <li>
               <div
                 class="flex justify-center items-center cursor-pointer py-4"
@@ -163,21 +167,20 @@ const handleNotifClick = () => {
             </li>
 
             <!-- dashboard -->
-            <li>
+            <!-- <li>
               <router-link
                 to="/dashboard"
                 class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
               >
                 <img :src="dashboardIcon" class="w-6 h-6" alt="" />
-                <!-- transition ga berlaku untuk teks / ngilangin objek -->
                 <a :class="sidebar.isWide === true ? '' : 'hidden'"
                   >Dashboards</a
                 >
               </router-link>
-            </li>
+            </li> -->
 
             <!-- Notification -->
-            <li>
+            <!-- <li>
               <router-link
                 to="/notification"
                 class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
@@ -192,10 +195,12 @@ const handleNotifClick = () => {
                   >Notification</a
                 >
               </router-link>
-            </li>
+            </li> -->
 
             <li v-for="data in sidebar.menuData">
+
               <button
+                v-if="data.child"
                 @click="sidebar.increment(data.menu)"
                 class="w-full rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
                 :class="
@@ -204,18 +209,25 @@ const handleNotifClick = () => {
                     : ''
                 "
               >
+
+                <!-- jika parent menu nya ada child -->
                 <div class="flex justify-between w-full items-center">
+
                   <div class="flex gap-4 items-center">
+
                     <img :src="data.icon_path" class="w-6 h-6"  />
-                    <!-- <img /> -->
+                    
                     <h3
                       class="text-left"
                       :class="sidebar.isWide === true ? '' : 'hidden'"
                     >
                       {{ data.menu }}
                     </h3>
+
                   </div>
+
                   <div class="relative">
+                    
                     <div
                       class="ease-in-out duration-500 absolute bottom-0"
                       :class="
@@ -243,12 +255,47 @@ const handleNotifClick = () => {
                         :src="expandArrowSelected"
                       />
                     </div>
+                    
                   </div>
+
                 </div>
+
               </button>
 
+              <router-link :to="`${data.url}`" 
+                @click="sidebar.increment(data.menu)"
+                v-if="!data.child"
+                class="w-full rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
+                :class="
+                  sidebar.sidebarMenu === data.menu
+                    ? 'text-white bg-[#015289]'
+                    : ''
+                "
+              >
+                                  
+                <!-- jika parent menu nya tidak ada child -->
+                <div class="flex justify-between w-full items-center">
+                    
+                    <div class="flex gap-4 items-center">
+
+                      <img :src="data.icon_path" class="w-6 h-6"  />
+
+                      <h3
+                        class="text-left"
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                      >
+                        {{ data.menu }}
+                      </h3>
+
+                    </div>
+
+                </div>
+
+              </router-link>
+
               <div v-if="sidebar.isWide">
-                <collapse-transition dimension="height" :duration="500">
+                <collapse-transition v-if="data.child" dimension="height" :duration="500">
+
                   <div
                     v-if="sidebar.sidebarMenu === data.menu"
                     class="pl-4 pb-4 sm:flex sm:flex-col hidden"
@@ -311,13 +358,18 @@ const handleNotifClick = () => {
                       </div>
                     </ul>
                   </div>
+
                 </collapse-transition>
               </div>
+
             </li>
 
           </ul>
+
         </div>
+
       </div>
+
     </div>
 
   </div>
