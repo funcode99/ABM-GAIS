@@ -106,7 +106,10 @@ const getFormData = async () => {
     }
     res = await fetchP2hHistory(params)
   } else {
-    res = await fetchDriverCarCheckupByRequesId(requestId, props.status)
+    res = await fetchDriverCarCheckupByRequesId(requestId, {
+      status: props.status,
+      id_car: props.data.id_car,
+    })
   }
 
   checkupList.value = res.data.data

@@ -411,7 +411,12 @@ onMounted(async () => {
     :model-value="changeCarDialog"
     :data="dataFormDialog"
     @update:model-value="changeCarDialog = $event"
-    @success="fetchPoolRequest()"
+    @success="
+      () => {
+        fetchPoolHistory()
+        fetchPoolRequest()
+      }
+    "
   />
 </template>
 
