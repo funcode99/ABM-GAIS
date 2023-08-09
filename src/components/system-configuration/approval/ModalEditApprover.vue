@@ -270,7 +270,7 @@
       const api = await Api.get(`/company/get_band_job/${localStorage.getItem('id_company')}`)
       jobBandData.value = api.data.data
       jobBandData.value.map((item) => {
-        item.value = item.id
+        item.value = item.band_job_name
       })
 
     }

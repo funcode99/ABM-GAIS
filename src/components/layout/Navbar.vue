@@ -28,24 +28,27 @@ let instanceArray = [];
 let sortedDataNotif = ref([]);
 let instanceArrayNotif = [];
 let sortedDataApproval = ref([]);
-let instanceArrayApproval = [];
+let instanceArrayApproval = []
 
 const changeViewStatus = () => {
-  isOpen.value = false;
-};
+  isOpen.value = false
+}
 
 const changeTab = (index) => {
-  activeTab.value = index;
-};
+  activeTab.value = index
+}
 
 const logout = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   let api = await Api.post("/users/logout");
-  localStorage.removeItem("token");
   localStorage.removeItem("company_logo");
   localStorage.removeItem("username");
-  sidebar.menuData = "";
+  localStorage.removeItem("token");
+  sidebar.menuData = ""
+  sidebar.readMenu = '[]'
+  sidebar.writeMenu = '[]'
+
   router.push({ path: "/" });
 };
 

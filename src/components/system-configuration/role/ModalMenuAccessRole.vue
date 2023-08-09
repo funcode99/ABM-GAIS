@@ -97,63 +97,6 @@ watch(isVisible, () => {
         <form class="modal-box-inner-inner" @submit.prevent="submitAccess">
 
           <div class="mb-3 overflow-x-auto px-5">
-      
-              <!-- <table class="table w-full">
-                
-                <thead>
-                  <tr class="table-layout">
-                    <th></th>
-                    <th class="text-center" v-for="data in menuHeadTable" :key="data.Id">
-                      {{ data.title }}
-                    </th>
-                  </tr>
-                </thead>
-         
-                <tbody v-for="data in sortedData" :key="data.id">
-
-                    <tr>
-                      <th>
-                        {{ data.menu }}
-                      </th>
-                      <th></th>
-                      <th></th>
-                    </tr>
-
-                    <tr v-for="inner in data.child">
-                      
-                          <th class="pl-7">
-                            {{ inner.menu }}
-                          </th>
-                          
-                          <th class="text-center">
-                            <input type="checkbox" :value="inner.id" v-model="writeValue">
-                          </th>
-  
-                          <th class="text-center">
-                            <input type="checkbox" :value="inner.id" v-model="readValue">
-                          </th>
-  
-                    </tr>
-
-                    <tr v-for="inner in data.child">
-                      <tr v-for="innerinner in inner.grand_child">
-                        <th>
-                          {{ innerinner.menu }}
-                        </th>
-  
-                        <th class="text-center">
-                          <input type="checkbox" :value="innerinner.id" v-model="writeGrandChildrenValue">
-                        </th>
-  
-                        <th class="text-center">
-                          <input type="checkbox" :value="innerinner.id" v-model="readGrandChildrenValue">
-                        </th>
-                      </tr>
-                    </tr>
-
-                </tbody>
-      
-              </table> -->
 
               <!-- for header -->
               <div class="flex gap-2 h-7">

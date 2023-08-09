@@ -3,6 +3,7 @@ import { ref, watch, onBeforeMount, provide } from 'vue'
 import { Modal } from 'usemodal-vue3'
 import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
 import Api from '@/utils/Api'
+import Multiselect from "@vueform/multiselect"
 
 import arrow from '@/assets/arrow-multi-step-form.png'
 import check from '@/assets/step-done-check.png'
@@ -622,6 +623,9 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/company/get_cost_center`)
       optionDataCostCenter.value = api.data.data
+      optionDataCostCenter.value.map((item) => {
+      item.value = item.id
+    })
     }
 
     watch(zona, () => {
@@ -866,7 +870,11 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         Cost Center<span class="text-[#f5333f]">*</span>
                     </label>
 
-                    <select
+                    <!-- <div>
+                      {{ costCenterId }}
+                    </div> -->
+
+                    <!-- <select
                     v-model="costCenterId"
                     :class="inputStylingWithoutWidthClass" 
                     >
@@ -875,7 +883,38 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                           {{ data.cost_center_code }} - {{ data.cost_center_name }}
                       </option>
 
-                    </select>
+                    </select> -->
+
+                    <Multiselect
+                      v-model="costCenterId"
+                      mode="single"
+                      placeholder="Select Cost Center"
+                      track-by="cost_center_name"
+                      label="cost_center_name"
+                      :close-on-select="false"
+                      :searchable="true"
+                      :options="optionDataCostCenter"
+                    >
+
+                      <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                        <div
+                          class="multiselect-tag is-user"
+                          :class="{
+                            'is-disabled': disabled,
+                          }"
+                        >
+                          {{ option.cost_center_name }}
+                          <span
+                            v-if="!disabled"
+                            class="multiselect-tag-remove"
+                            @click="handleTagRemove(option, $event)"
+                          >
+                            <span class="multiselect-tag-remove-icon"></span>
+                          </span>
+                        </div>
+                      </template>
+
+                    </Multiselect>
 
                 </div>
 

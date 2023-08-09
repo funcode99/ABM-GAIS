@@ -100,14 +100,19 @@
 
     const filteredItems = (search) => {
 
+      // console.log(typeof search)
+
       if(typeof search !== 'undefined') {
         searchTable.value = search
         fetch()
-      } else {
+      } 
+      else if (search === '') {
+        searchTable.value = search
         fetch()
       }
-
-      // onChangePage(1)
+      else {
+        fetch()
+      }
 
     }
 
@@ -254,6 +259,7 @@
     let additionalData = ref()
 
     const fetch = async () => {
+
       try {
 
         const token = JSON.parse(localStorage.getItem('token'))
@@ -295,9 +301,11 @@
     })
 
     watch(showingValue, () => {
-      if(searchTable.value !== '') {
-        filteredItems()
-      }
+      filteredItems()
+    })
+
+    watch(searchTable, () => {
+      onChangePage(1)
     })
 
     watch(addRoleData, () => {
@@ -372,15 +380,6 @@
 
     }
 
-    let readMenuList = ref([])
-    let writeMenuList = ref([])
-
-    watch(sidebar, () => {
-      console.log('terjadi perubahan di sidebar user')
-      readMenuList.value = sidebar.readMenu
-      writeMenuList.value = sidebar.writeMenu
-    })
-
     const resetFilterSearchThenFetch = () => {
         idFilter.value = 0
         roleIdFilter.value = 0
@@ -412,6 +411,7 @@
           @delete-selected-data="deleteCheckedArray()"
           @increase-user="addNewUser" 
           @do-search="filteredItems"
+          @reset-search="filteredItems"
           @changeShowing="fillPageMultiplier"
           @filter-table="filterTable"
           @reset-table="resetFilterSearchThenFetch"
@@ -443,7 +443,7 @@
                       </span>
                     </th>
 
-                    <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('User')">
+                    <th class="overflow-x-hidden cursor-pointer" v-if="sidebar.writeMenu.includes('User')">
                       <span class="flex justify-center items-center gap-1">
                         Actions
                       </span>
@@ -480,7 +480,7 @@
                         {{ data.auth_name }}
                       </td>
 
-                      <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('User')">
+                      <td class="flex flex-wrap gap-4 justify-center" v-if="sidebar.writeMenu.includes('User')">
                         <ModalEditUser 
                         @fetchSiteForCompany="fetchSiteByCompanyId"
                         @fetchEmployeeIndividualInfo="fetchEmployeeInfo"
@@ -579,13 +579,7 @@
             <!-- PAGINATION -->
             <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
               <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-
-                <!-- Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-                {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-                of {{ sortedData.length }} entries -->
-
                   Showing {{ from }} to {{ to }} of {{ totalData }}
-
               </p>
               <vue-awesome-paginate
                 :total-items="totalData"

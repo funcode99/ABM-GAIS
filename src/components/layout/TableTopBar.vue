@@ -27,10 +27,6 @@ let roleId = ref('role')
 let pageMultiplier = ref(10)
 let pageMultiplierReactive = computed(() => pageMultiplier.value)
 
-const resetSearch = () => {
-  search.value = ''
-}
-
 const props = defineProps({
   title: String,
   modalAddType: String,
@@ -75,7 +71,12 @@ onBeforeMount(() => {
 
 })
 
-const emits = defineEmits(['resetTable', 'changeShowing'])
+const emits = defineEmits(['resetTable', 'changeShowing', 'resetSearch'])
+
+const resetSearch = () => {
+  search.value = ''
+  emits('resetSearch', search.value)
+}
 
 const resetCompanyAndRole = () => {
   groupCompanyId.value = 'group company'
@@ -90,16 +91,7 @@ const fetchParentCompany = async (id_company) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get_parent/${id_company}`);
   companyData.value = res.data.data;
-};
-
-  let readMenuList = ref([])
-  let writeMenuList = ref([])
-
-  watch(sidebar, () => {
-    console.log('terjadi perubahan di sidebar tabletopbar')
-    readMenuList.value = sidebar.readMenu
-    writeMenuList.value = sidebar.writeMenu
-  })
+}
 
 </script>
 
@@ -131,24 +123,24 @@ const fetchParentCompany = async (id_company) => {
         
         <ModalAddMenu
           @add-menu="$emit('increaseMenu')"
-          v-if="props.modalAddType === 'menu' & writeMenuList.includes('Menu')"
+          v-if="props.modalAddType === 'menu' & sidebar.writeMenu.includes('Menu')"
         />
         <ModalAddUser
           @fetchSiteForCompany="$emit('fetchSiteForCompany')"
           @add-user="$emit('increaseUser')"
-          v-if="props.modalAddType === 'user' & writeMenuList.includes('User')"
+          v-if="props.modalAddType === 'user' & sidebar.writeMenu.includes('User')"
         />
         <ModalAddApproval
           @add-approver="$emit('increaseApprover')"
-          v-if="props.modalAddType === 'approval' & writeMenuList.includes('Approval')"
+          v-if="props.modalAddType === 'approval' & sidebar.writeMenu.includes('Approval')"
         />
         <ModalAddSequence
           @add-sequence="$emit('increaseSequence')"
-          v-if="props.modalAddType === 'sequence' & writeMenuList.includes('Sequence')"
+          v-if="props.modalAddType === 'sequence' & sidebar.writeMenu.includes('Sequence')"
         />
         <ModalAddRole
           @add-role="$emit('increaseRole')"
-          v-if="props.modalAddType === 'role' & writeMenuList.includes('Role')"
+          v-if="props.modalAddType === 'role' & sidebar.writeMenu.includes('Role')"
         />
 
         <button
@@ -368,7 +360,9 @@ const fetchParentCompany = async (id_company) => {
               v-model="search"
               @keyup="$emit('doSearch', search)"
             />
-            <img :src="icon_close" />
+            <span @click="resetSearch" class="absolute inset-y-0 right-0 flex items-center pr-2">
+              <img :src="icon_close" class="w-5 h-5" />
+            </span>
           </div>
         </div>
       

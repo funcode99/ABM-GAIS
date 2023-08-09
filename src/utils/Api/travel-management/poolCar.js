@@ -52,10 +52,13 @@ const changeCar = async (requestId, body) => {
   }
 }
 
-const fetchDriverCarCheckupByRequesId = async (requestId, status) => {
+const fetchDriverCarCheckupByRequesId = async (
+  requestId,
+  { status, id_car }
+) => {
   try {
     const res = await Api.get(`${ENDPOINT}/get_check/${requestId}`, {
-      params: { status },
+      params: { status, id_car },
     })
 
     return res.data
