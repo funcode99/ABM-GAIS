@@ -2,8 +2,10 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalApprove from "@/components/approval/cash-advance-travel/ModalApprove.vue";
-import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
+
+import ModalApprove from "@/components/approval/ModalApprove.vue";
+import ModalReject from "@/components/approval/ModalReject.vue";
+
 import DataNotFound from "@/components/element/dataNotFound.vue";
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
@@ -169,7 +171,6 @@ const fetchHistoryApproval = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(id);
-  fetchDataEmployee();
 });
 
 const getSessionForSidebar = () => {
@@ -336,7 +337,7 @@ const getSessionForSidebar = () => {
                 <p
                   :class="
                     tabId == 1
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -357,7 +358,7 @@ const getSessionForSidebar = () => {
                 <p
                   :class="
                     tabId == 2
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >

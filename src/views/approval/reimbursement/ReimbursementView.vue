@@ -2,8 +2,13 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalApprove from "@/components/approval/cash-advance-travel/ModalApprove.vue";
-import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
+
+import ModalApprove from "@/components/approval/ModalApprove.vue";
+import ModalReject from "@/components/approval/ModalReject.vue";
+
+// import ModalApprove from "@/components/approval/cash-advance-travel/ModalApprove.vue";
+// import ModalReject from "@/components/approval/cash-advance-travel/ModalReject.vue";
+
 import DataNotFound from "@/components/element/dataNotFound.vue";
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
@@ -63,7 +68,8 @@ const fetchDataById = async (id) => {
 
 const fetchDataItem = async (id) => {
   const res = await Api.get(`/claim_reimbursement/get_by_id_claim/${id}`);
-  dataItem.value = res.data.data;
+  dataItem.value = [];
+  if ("data" in res.data) dataItem.value = res.data.data;
 };
 
 let listEmployee = ref([]);
@@ -167,7 +173,7 @@ const fetchHistoryApproval = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(id);
-  fetchDataEmployee();
+  // fetchDataEmployee();
 });
 
 const getSessionForSidebar = () => {
