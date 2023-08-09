@@ -171,7 +171,6 @@ const fetchHistoryApproval = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchDataById(id);
-  fetchDataEmployee();
 });
 
 const getSessionForSidebar = () => {
