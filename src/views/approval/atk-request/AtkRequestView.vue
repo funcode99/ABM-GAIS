@@ -31,15 +31,15 @@ const idR = ref(router.currentRoute.value.params.id);
 let dataApproval = ref([]);
 let tabId = ref(1);
 const company_code = JSON.parse(localStorage.getItem("company_code"));
-let dataArr = ref([])
-let dataItem = ref([])
-
+let dataArr = ref([]);
+let dataItem = ref([]);
+let itemApproval = ref([]);
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/request_atk/get/${id}`);
-  dataArr.value = res.data.data[0]
+  dataArr.value = res.data.data[0];
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -50,14 +50,12 @@ const fetchDataById = async (id) => {
     siteName.value = element.site_name;
     status.value = element.status;
   }
-
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
 const fetchDetailById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
-  dataItem.value = res.data.data
+  dataItem.value = res.data.data;
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
     const element = res.data.data[index];
@@ -73,8 +71,14 @@ const fetchDetailById = async (id) => {
       qty_unsend: element.qty_unsend,
     });
   }
+};
 
-  // console.log("ini data parent" + JSON.stringify(res.data.data));
+const fetchLogApproval = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`);
+
+  itemApproval.value = res.data.data;
 };
 
 const fetchHistoryApproval = async (id) => {
@@ -89,6 +93,7 @@ onBeforeMount(() => {
   fetchHistoryApproval(router.currentRoute.value.params.id);
   fetchDataById(router.currentRoute.value.params.id);
   fetchDetailById(router.currentRoute.value.params.id);
+  fetchLogApproval(router.currentRoute.value.params.id);
 });
 
 const getSessionForSidebar = () => {
@@ -128,7 +133,10 @@ const format_date = (value) => {
           </router-link>
 
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
-            <ModalApproveAtk v-if="status == 'Waiting Approval'" :data-arr="dataArr" :data-item="dataItem"/>
+            <ModalApproveAtk
+              v-if="status == 'Waiting Approval' || status == 'Approve'"
+              :data-arr="dataArr"
+            />
             <ModalRejectAtk v-if="status == 'Waiting Approval'" />
             <!-- <button
               class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
@@ -231,6 +239,27 @@ const format_date = (value) => {
                   Approval
                 </p>
               </div>
+              <div
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 3"
+              >
+                <div
+                  :class="
+                    tabId == 3
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 3
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Approval Log
+                </p>
+              </div>
             </div>
 
             <div class="overflow-x-auto bg-white">
@@ -291,10 +320,15 @@ const format_date = (value) => {
                       {{ value.itemNames }}
                     </td>
 
-                    <td class="border border-[#B9B9B9]" v-if="company_code != '8000'">
+                    <td
+                      class="border border-[#B9B9B9]"
+                      v-if="company_code != '8000'"
+                    >
                       {{ value.brandName }}
                     </td>
-                    <td class="border border-[#B9B9B9]" v-if="company_code != '8000'">
+                    <td
+                      class="border border-[#B9B9B9]"
+                    >
                       {{ value.UOMName }}
                     </td>
                     <td class="border border-[#B9B9B9]">
@@ -311,7 +345,71 @@ const format_date = (value) => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
-                <HistoryApproval :data-approval="dataApproval" type="ATK"/>
+                <table class="table table-compact w-full">
+                  <thead class="font-JakartaSans font-bold text-xs">
+                    <tr class="bg-blue text-white h-8">
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Item
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Uom
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Quantity Requested
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        ATK Warehouse
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Stock Available
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Quantity Approve
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="font-JakartaSans font-normal text-xs"
+                    v-for="(value, ind) in itemApproval"
+                    :key="ind"
+                  >
+                    <tr class="h-16">
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.code_item }} - {{ value.item_name }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.uom_name }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.qty }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.warehouse_name }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.stock_available_wh }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.qty_approved }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div v-if="tabId == 3">
+                <HistoryApproval :data-approval="dataApproval" type="ATK" />
               </div>
             </div>
           </div>

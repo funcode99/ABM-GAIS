@@ -598,7 +598,7 @@ const format_date = (value) => {
                             ? 'status-revision'
                             : data.status == 'Completed'
                             ? 'status-done'
-                            : data.status == 'Partial Completed'
+                            : data.status == 'Partial Completed' || data.status == 'Approve'
                             ? 'status-partial'
                             : 'font-bold'
                         "
