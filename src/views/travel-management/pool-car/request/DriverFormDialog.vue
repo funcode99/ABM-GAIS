@@ -209,7 +209,9 @@ onMounted(async () => {
   >
     <modalHeader
       @closeVisibility="modelValue = false"
-      title="Formulir Pemeriksaan Kendaraan Harian"
+      :title="`Formulir Pemeriksaan Kendaraan Harian - P2H ${
+        status == 1 ? 'Awal' : 'Akhir'
+      }`"
     />
     <main class="overflow-y-scroll">
       <form @submit.prevent="saveForm()" class="p-5">
