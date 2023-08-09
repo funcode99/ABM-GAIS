@@ -372,14 +372,14 @@
 
     }
 
-    let readMenuList = ref([])
-    let writeMenuList = ref([])
+    // let readMenuList = ref([])
+    // let writeMenuList = ref([])
 
-    watch(sidebar, () => {
-      console.log('terjadi perubahan di sidebar user')
-      readMenuList.value = sidebar.readMenu
-      writeMenuList.value = sidebar.writeMenu
-    })
+    // watch(sidebar, () => {
+    //   console.log('terjadi perubahan di sidebar user')
+    //   readMenuList.value = sidebar.readMenu
+    //   writeMenuList.value = sidebar.writeMenu
+    // })
 
     const resetFilterSearchThenFetch = () => {
         idFilter.value = 0
@@ -443,7 +443,7 @@
                       </span>
                     </th>
 
-                    <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('User')">
+                    <th class="overflow-x-hidden cursor-pointer" v-if="sidebar.writeMenu.includes('User')">
                       <span class="flex justify-center items-center gap-1">
                         Actions
                       </span>
@@ -480,7 +480,7 @@
                         {{ data.auth_name }}
                       </td>
 
-                      <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('User')">
+                      <td class="flex flex-wrap gap-4 justify-center" v-if="sidebar.writeMenu.includes('User')">
                         <ModalEditUser 
                         @fetchSiteForCompany="fetchSiteByCompanyId"
                         @fetchEmployeeIndividualInfo="fetchEmployeeInfo"

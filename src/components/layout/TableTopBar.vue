@@ -90,16 +90,7 @@ const fetchParentCompany = async (id_company) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/company/get_parent/${id_company}`);
   companyData.value = res.data.data;
-};
-
-  let readMenuList = ref([])
-  let writeMenuList = ref([])
-
-  watch(sidebar, () => {
-    console.log('terjadi perubahan di sidebar tabletopbar')
-    readMenuList.value = sidebar.readMenu
-    writeMenuList.value = sidebar.writeMenu
-  })
+}
 
 </script>
 
@@ -131,24 +122,24 @@ const fetchParentCompany = async (id_company) => {
         
         <ModalAddMenu
           @add-menu="$emit('increaseMenu')"
-          v-if="props.modalAddType === 'menu' & writeMenuList.includes('Menu')"
+          v-if="props.modalAddType === 'menu' & sidebar.writeMenu.includes('Menu')"
         />
         <ModalAddUser
           @fetchSiteForCompany="$emit('fetchSiteForCompany')"
           @add-user="$emit('increaseUser')"
-          v-if="props.modalAddType === 'user' & writeMenuList.includes('User')"
+          v-if="props.modalAddType === 'user' & sidebar.writeMenu.includes('User')"
         />
         <ModalAddApproval
           @add-approver="$emit('increaseApprover')"
-          v-if="props.modalAddType === 'approval' & writeMenuList.includes('Approval')"
+          v-if="props.modalAddType === 'approval' & sidebar.writeMenu.includes('Approval')"
         />
         <ModalAddSequence
           @add-sequence="$emit('increaseSequence')"
-          v-if="props.modalAddType === 'sequence' & writeMenuList.includes('Sequence')"
+          v-if="props.modalAddType === 'sequence' & sidebar.writeMenu.includes('Sequence')"
         />
         <ModalAddRole
           @add-role="$emit('increaseRole')"
-          v-if="props.modalAddType === 'role' & writeMenuList.includes('Role')"
+          v-if="props.modalAddType === 'role' & sidebar.writeMenu.includes('Role')"
         />
 
         <button

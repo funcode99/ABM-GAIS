@@ -258,14 +258,6 @@
 
     }
 
-    let readMenuList = ref([])
-    let writeMenuList = ref([])
-
-    watch(sidebar, () => {
-      console.log('terjadi perubahan di sidebar menu')
-      readMenuList.value = sidebar.readMenu
-      writeMenuList.value = sidebar.writeMenu
-    })
   
 </script>
 
@@ -354,13 +346,13 @@
                       <ModalMenuAccessRole :roleAccess="[data.write, data.read]" :roleId="data.id" @submit-menu-access="submitAccess" />
 
                       <ModalEditRole 
-                        v-if="writeMenuList.includes('Role')"
+                        v-if="sidebar.writeMenu.includes('Role')"
                         @change-role="editRole(data.id)" 
                         :formContent="[data.role_name, data.code_role]" 
                         />
 
                       <button 
-                        v-if="writeMenuList.includes('Role')" 
+                        v-if="sidebar.writeMenu.includes('Role')" 
                         @click="deleteData(data.id)"
                       >
                         <img :src="deleteicon" class="w-6 h-6" />

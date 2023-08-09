@@ -288,15 +288,6 @@
       fetchMenuUtils(baitArray, responseStatus, responseMessage, addMenuData, sortedData)
     }
 
-    let readMenuList = ref([])
-    let writeMenuList = ref([])
-
-    watch(sidebar, () => {
-      console.log('terjadi perubahan di sidebar menu')
-      readMenuList.value = sidebar.readMenu
-      writeMenuList.value = sidebar.writeMenu
-    })
-
 </script>
 
 <template>
@@ -324,6 +315,8 @@
           @reset-table="fetchMenuStatusUtilsHelper"
           @export-to-excel="exportToExcel"
         />
+
+        {{ writeMenuList }}
         
         <!-- actual table -->
         <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
@@ -351,7 +344,7 @@
                           </span>
                         </th>
 
-                        <th class="overflow-x-hidden cursor-pointer" v-if="writeMenuList.includes('Menu')">
+                        <th class="overflow-x-hidden cursor-pointer" v-if="sidebar.writeMenu.includes('Menu')">
                           <span class="flex justify-center items-center gap-1">
                             Actions
                           </span>
@@ -395,7 +388,7 @@
                               Disabled
                             </td>
       
-                            <td class="flex flex-wrap gap-4 justify-center" v-if="writeMenuList.includes('Menu')">
+                            <td class="flex flex-wrap gap-4 justify-center" v-if="sidebar.writeMenu.includes('Menu')">
                                 <ModalEditMenu @unlock-scrollbar="lockScrollbar = !lockScrollbar" @change-menu="editMenu(data.id)" :formContent="[
                                   data.menu, 
                                   data.url, 

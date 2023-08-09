@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, onBeforeMount, ref } from "vue";
+import { onMounted, onBeforeMount, ref, watch } from "vue";
 import Api from "@/utils/Api";
 
 import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
@@ -45,8 +45,17 @@ const fetchSidebarAppearance = async () => {
 
 onBeforeMount(() => {
   if (sidebar.menuData === "") {
-    console.log("menarik data")
     fetchSidebarAppearance()
+  }
+})
+
+watch(sidebar, () => {
+  if (sidebar.menuData === "") {
+    fetchSidebarAppearance()
+  }
+
+  if(sidebar.writeMenu === '[]') {
+    fetchMenuWriteByRole()
   }
 })
 
