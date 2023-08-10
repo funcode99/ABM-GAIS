@@ -228,7 +228,6 @@ const selectedStatus = ref("");
                     range
                     :enable-time-picker="false"
                     class="my-date"
-                    format="yyyy-mm-dd"
                   />
                 </div>
 
@@ -478,7 +477,6 @@ const selectedStatus = ref("");
                     range
                     :enable-time-picker="false"
                     class="my-date"
-                    format="yyyy-mm-dd"
                   />
                 </div>
 
