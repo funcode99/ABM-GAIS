@@ -290,7 +290,7 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
-                      Quantity
+                      Quantity Requested
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -361,11 +361,6 @@ const format_date = (value) => {
                       <th
                         class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                       >
-                        Quantity Requested
-                      </th>
-                      <th
-                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                      >
                         ATK Warehouse
                       </th>
                       <th
@@ -391,9 +386,6 @@ const format_date = (value) => {
                       </td>
                       <td class="border border-[#B9B9B9]">
                         {{ value.uom_name }}
-                      </td>
-                      <td class="border border-[#B9B9B9]">
-                        {{ value.qty }}
                       </td>
                       <td class="border border-[#B9B9B9]">
                         {{ value.warehouse_name }}

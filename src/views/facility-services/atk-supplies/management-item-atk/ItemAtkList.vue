@@ -17,7 +17,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
 
 import ModalAdd from "@/components/facility-services/atk-supplies/management-item-atk/ModalAdd.vue";
-import ModalEdit from "@/components/facility-services/atk-supplies/management-item-atk/ModalEdit.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
 import Swal from "sweetalert2";
 
 // import itemdata from "@/utils/Api/facility-service-system/management-item-atk/itemdata.js";
@@ -94,7 +94,7 @@ let uomName = ref("");
 const payload = ref([]);
 let disableCompany = ref(false);
 let disableSite = ref(false);
-
+let tempId = ref([]);
 //for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
@@ -249,6 +249,7 @@ const fetchSite = async (id, id_company) => {
   if (id) {
     changeSite(id);
   }
+
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/site/get_by_company/${id_company}`);
@@ -259,6 +260,11 @@ const fetchSite = async (id, id_company) => {
       selectedSite.value = id;
       selectedSite2.value = id;
     }
+  }
+  if (id_role == "EMPLY") {
+    Site.value = Site.value.filter(function (item) {
+      return id !== item.id;
+    });
   }
 };
 const fetchSite2 = async (id, id_company) => {
@@ -392,6 +398,11 @@ const save = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
   payload.value.array_warehouse = selectedWarehouse.value;
+  payload.value.id_uom = selectedUOM.value;
+  payload.value.id_brand = selectedBrand.value;
+  payload.value.item_name = itemNames.value;
+  payload.value.alert_qty = alertQuantity.value;
+  payload.value.remarks = remarks.value ? remarks.value : "";
 
   Api.post(`/management_atk/update/${idS.value}`, payload.value)
     .then((res) => {
@@ -641,7 +652,7 @@ const addItem = async () => {
         array_warehouse: selectedWarehouse.value,
       });
     }
-    payload.value.push({
+    payload.value = {
       code_item: idItems.value,
       item_name: itemNames.value,
       id_brand: selectedBrand.value,
@@ -651,7 +662,7 @@ const addItem = async () => {
       id_site: selectedSite.value,
       remarks: remarks.value,
       array_warehouse: selectedWarehouse.value,
-    });
+    };
     resetButCompanyDisable();
     return arrItem.value;
   }
@@ -659,6 +670,12 @@ const addItem = async () => {
 
 const seeDetails = (id) => {
   id_details.value = id;
+  const index = tempId.value.indexOf(id);
+  if (index > -1) {
+    tempId.value.splice(index, 1);
+  } else {
+    tempId.value.push(id);
+  }
 };
 // multiselect
 let isLoading = ref(false);
@@ -961,30 +978,22 @@ const getSessionForSidebar = () => {
                       class="font-JakartaSans font-normal text-sm p-0"
                       v-if="id_role != 'EMPLY'"
                     >
-                      {{ data.total_stock == null ? "-" : data.total_stock }}
+                      {{ !data.total_stock ? "0" : data.total_stock }}
                     </td>
                     <td
                       class="font-JakartaSans font-normal text-sm p-0"
                       v-if="id_role != 'EMPLY'"
                     >
-                      {{ data.booked_stock == null ? "-" : data.booked_stock }}
+                      {{ !data.booked_stock ? "0" : data.booked_stock }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
-                      {{
-                        data.stock_to_booked == null
-                          ? "-"
-                          : data.stock_to_booked
-                      }}
+                      {{ !data.stock_to_booked ? "0" : data.stock_to_booked }}
                     </td>
                     <td
                       class="font-JakartaSans font-normal text-sm p-0"
                       v-if="id_role != 'EMPLY'"
                     >
-                      {{
-                        data.stock_to_approve == null
-                          ? "-"
-                          : data.stock_to_approve
-                      }}
+                      {{ !data.stock_to_approve ? "0" : data.stock_to_approve }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.alert_qty === null ? "-" : data.alert_qty }}
@@ -1444,42 +1453,133 @@ const getSessionForSidebar = () => {
                   </tr>
 
                   <tr v-for="(dt, index) in data.array_warehouse" :key="index">
-                    <td colspan="4" v-if="data.id == id_details"></td>
                     <td
-                      class="font-JakartaSans font-normal text-sm py-2 font-bold"
-                      v-if="data.id == id_details"
+                      colspan="4"
+                      v-if="tempId.includes(data.id)"
+                      class="bg-purple-200"
+                    ></td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm py-2 bg-purple-200"
+                      v-if="tempId.includes(data.id)"
                     >
-                      {{ dt.warehouse_name }}
+                      <span class="font-semibold">{{ dt.warehouse_name }}</span>
                     </td>
                     <td
-                      class="font-JakartaSans font-normal text-sm p-0 text-center"
-                      v-if="data.id == id_details"
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
+                      v-if="tempId.includes(data.id)"
                     >
-                      {{ dt.current_stock }}
+                      {{ dt.current_stock ? dt.current_stock : "-" }}
                     </td>
                     <td
-                      class="font-JakartaSans font-normal text-sm p-0 text-center"
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
+                      v-if="tempId.includes(data.id)"
+                    >
+                      {{ dt.booked_stock_wh ? dt.booked_stock_wh : "-" }}
+                    </td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
+                      v-if="tempId.includes(data.id)"
+                    ></td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
+                      v-if="tempId.includes(data.id)"
+                    >
+                      {{
+                        dt.stock_to_approve_wh ? dt.stock_to_approve_wh : "-"
+                      }}
+                    </td>
+                    <td
+                      colspan="3"
+                      v-if="tempId.includes(data.id)"
+                      class="bg-purple-200"
+                    ></td>
+                  </tr>
+                  <!-- <tr
+                    v-for="(dt, index) in data.array_warehouse"
+                    :key="index"
+                    class="collaps info"
+                  >
+                    <td
+                      colspan="4"
+                      v-if="data.id == id_details && data.id == tempId"
+                      class="bg-purple-200"
+                    ></td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm py-2 bg-purple-200"
+                      v-if="data.id == id_details && data.id != tempId"
+                    >
+                      <span class="font-semibold">{{ dt.warehouse_name }}</span>
+                    </td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
+                      v-if="data.id == id_details"
+                    >
+                      {{ dt.current_stock ? dt.current_stock : "-" }}
+                    </td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
+                      v-if="data.id == id_details"
+                    >
+                      {{ dt.booked_stock_wh ? dt.booked_stock_wh : "-" }}
+                    </td>
+                    <td
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
                       v-if="data.id == id_details"
                     ></td>
                     <td
-                      class="font-JakartaSans font-normal text-sm p-0 text-center"
-                      v-if="data.id == id_details"
-                    ></td>
-                    <td
-                      class="font-JakartaSans font-normal text-sm p-0 text-center"
+                      class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
                       v-if="data.id == id_details"
                     >
-                      {{ dt.stock_to_approve_wh }}
+                      {{
+                        dt.stock_to_approve_wh ? dt.stock_to_approve_wh : "-"
+                      }}
                     </td>
-                    <td colspan="3" v-if="data.id == id_details"></td>
+                    <td
+                      colspan="3"
+                      v-if="data.id == id_details"
+                      class="bg-purple-200"
+                    ></td>
+                  </tr> -->
+                </tbody>
+              </table>
+              <table
+                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg flex"
+                v-else
+              >
+                <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
+                  <tr>
+                    <th>
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+                    </th>
+                    <th
+                      v-for="data in tableType"
+                      :key="data.id"
+                      class="overflow-x-hidden cursor-pointer font-JakartaSans font-normal text-sm max-w-[7rem] whitespace-normal"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <DataNotFound :cnt-col="12" />
                   </tr>
                 </tbody>
               </table>
-              <tbody v-else>
-                <tr>
-                  <td colspan="9">Data Not Found</td>
-                </tr>
-              </tbody>
             </div>
           </div>
 
