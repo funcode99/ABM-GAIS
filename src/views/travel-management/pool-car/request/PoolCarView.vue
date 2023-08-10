@@ -207,17 +207,17 @@ onMounted(async () => {
           <div class="flex flex-col gap-2">
             <span class="font-medium text-sm">Reference</span>
             <input
-              :value="form.no_pool_car"
+              :value="form.no_request_trip"
               type="text"
               disabled
-              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
+              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[100%] font-semibold text-base"
             />
           </div>
 
           <div class="flex flex-col gap-2">
             <span class="font-medium text-sm">Created By</span>
             <input
-              :value="form.created_by"
+              :value="form.created_by_name"
               type="text"
               disabled
               class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-semibold text-base"
