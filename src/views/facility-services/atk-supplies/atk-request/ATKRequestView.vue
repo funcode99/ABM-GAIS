@@ -28,14 +28,9 @@ const sidebar = useSidebarStore();
 const router = useRouter();
 let lengthCounter = 0;
 const idDetail = ref("");
-let itemNamesSelect = ref("");
 let stockName = ref("");
 let createdDate = ref("");
 let createdBy = ref("");
-let brandName = ref("");
-let warehouseName = ref("");
-let namaItem = ref("");
-let uomName = ref("");
 let Company = ref("");
 let Site = ref("");
 let Warehouse = ref("");
@@ -54,6 +49,7 @@ const id_role = JSON.parse(localStorage.getItem("id_role"));
 const company_code = JSON.parse(localStorage.getItem("company_code"));
 let dataArr = ref([]);
 let dataItem = ref([]);
+let itemApproval = ref([]);
 
 const widthType = id_role == "EMPLY" ? "w-[50%]" : "w-full";
 const fetchGetCompanyID = async (id_company) => {
@@ -190,12 +186,21 @@ const closeModal = () => {
   fetchDetailById(router.currentRoute.value.params.id);
 };
 
+const fetchLogApproval = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`);
+
+  itemApproval.value = res.data.data;
+};
+
 onBeforeMount(() => {
   getSessionForSidebar();
   fetchHistoryApproval(router.currentRoute.value.params.id);
   fetchDataById(router.currentRoute.value.params.id);
   fetchDetailById(router.currentRoute.value.params.id);
   idDetail.value = parseInt(router.currentRoute.value.params.id);
+  fetchLogApproval(router.currentRoute.value.params.id);
 });
 
 const getSessionForSidebar = () => {
@@ -243,10 +248,9 @@ const format_date = (value) => {
             </div>
           </div>
 
-          <div class="flex justify-between ml-10">
+          <div class="flex justify-between ml-10" v-if="status == 'Draft'">
             <div class="flex gap-2">
               <label
-                v-if="status == 'Draft'"
                 class="btn btn-sm text-blue text-base font-JakartaSans font-bold capitalize w-[100px] border-blue bg-white hover:bg-blue hover:text-white hover:border-blue"
                 @click="openModal('edit', 0)"
                 for="my-modal-stock-in"
@@ -263,7 +267,6 @@ const format_date = (value) => {
               />
 
               <button
-                v-if="status == 'Draft'"
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="submit"
               >
@@ -383,6 +386,27 @@ const format_date = (value) => {
                   Approval
                 </p>
               </div>
+              <div
+                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
+                @click="tabId = 3"
+              >
+                <div
+                  :class="
+                    tabId == 3
+                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
+                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
+                  "
+                ></div>
+                <p
+                  :class="
+                    tabId == 3
+                      ? 'font-JakartaSans text-sm text-center font-semibold text-blue'
+                      : 'font-JakartaSans font-normal text-sm text-center'
+                  "
+                >
+                  Approval Log
+                </p>
+              </div>
             </div>
             <div class="overflow-x-auto bg-white">
               <table class="table table-compact w-full" v-if="tabId == 1">
@@ -407,6 +431,11 @@ const format_date = (value) => {
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
                       Quantity Approved
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
+                      Quantity Delivery
                     </th>
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -453,6 +482,9 @@ const format_date = (value) => {
                       {{ value.qty_send }}
                     </td>
                     <td class="border border-[#B9B9B9]">
+                      {{ value.qty_delivery }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
                       {{ value.qty_unsend }}
                     </td>
                     <td
@@ -467,6 +499,70 @@ const format_date = (value) => {
                 </tbody>
               </table>
               <div v-if="tabId == 2">
+                <table class="table table-compact w-full">
+                  <thead class="font-JakartaSans font-bold text-xs">
+                    <tr class="bg-blue text-white h-8">
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Item
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Uom
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        ATK Warehouse
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Stock Available
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Quantity Approve
+                      </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Quantity Delivery
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    class="font-JakartaSans font-normal text-xs"
+                    v-for="(value, ind) in itemApproval"
+                    :key="ind"
+                  >
+                    <tr class="h-16">
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.code_item }} - {{ value.item_name }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.uom_name }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.warehouse_name }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.stock_available_wh }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.qty_approved }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.qty_delivery }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div v-if="tabId == 3">
                 <HistoryApproval :data-approval="dataApproval" type="ATK" />
               </div>
             </div>

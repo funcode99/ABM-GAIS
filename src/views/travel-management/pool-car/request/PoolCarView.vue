@@ -95,6 +95,7 @@ const dataFormDialog = ref({
 const items = ref([])
 const historyItems = ref([])
 const isShowP2hAkhir = ref(false)
+const p2hAkhirRef = ref()
 
 const form = ref({
   name: "",
@@ -177,8 +178,15 @@ onMounted(async () => {
       <div class="px-10 py-5 flex justify-between">
         <button
           v-if="form.status == 'Ready' && isDriver && !isShowP2hAkhir"
-          class="btn h-[5px] btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
-          @click="isShowP2hAkhir = true"
+          class="btn px-10 h-[5px] btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-base hover:bg-white hover:text-green hover:border-green"
+          @click="
+            () => {
+              formDialog = true
+              isEditable = isDriver && form.status == 'Ready'
+              p2hStatus = 2
+              dataFormDialog = { ...items[0] }
+            }
+          "
         >
           Done
         </button>
@@ -327,10 +335,8 @@ onMounted(async () => {
                 </div>
 
                 <button
-                  v-if="
-                    (form.status == 'Ready' && isShowP2hAkhir) ||
-                    form.status == 'Done'
-                  "
+                  ref="p2hAkhirRef"
+                  v-show="form.status == 'Done'"
                   class="btn bg-primary"
                   @click="
                     () => {
@@ -411,7 +417,12 @@ onMounted(async () => {
     :model-value="changeCarDialog"
     :data="dataFormDialog"
     @update:model-value="changeCarDialog = $event"
-    @success="fetchPoolRequest()"
+    @success="
+      () => {
+        fetchPoolHistory()
+        fetchPoolRequest()
+      }
+    "
   />
 </template>
 

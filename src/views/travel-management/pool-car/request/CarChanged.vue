@@ -40,9 +40,9 @@ const updateChangeCar = async () => {
     const poolRequestId = route.params.id
     const res = await changeCar(poolRequestId, form.value)
 
-    console.log(res)
+    if (res.data.success) {
+      console.log(res)
 
-    if (res.data.data.success) {
       Swal.fire({
         position: "center",
         icon: "success",

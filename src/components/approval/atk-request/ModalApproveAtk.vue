@@ -28,6 +28,7 @@ const Warehouse = ref([]);
 const btnApprove = ref(
   props.dataArr.status == "Approve" ? "Delivery" : "Approve"
 );
+const disableField = ref(false);
 
 const inputClass =
   "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
@@ -50,15 +51,26 @@ const fetchDetailById = async (id) => {
 
     itemTable.value = res.data.data;
     itemTable.value.map((element, index) => {
-        element.total_stock = element.stock_available_wh
-        idWh.value[index] = element.id_warehouse
-        qtyApproved.value[index] = element.qty_approved
-        element.array_warehouse = get_wh.data.data[0].array_warehouse
-    })
+      element.total_stock = element.stock_available_wh;
+      idWh.value[index] = element.id_warehouse;
+      qtyApproved.value[index] = element.qty_approved;
+      element.array_warehouse = get_wh.data.data[0].array_warehouse;
+    });
   } else {
     const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
     itemTable.value = res.data.data;
   }
+};
+
+const changeWarehouse = async (e, id_item, ind) => {
+  itemTable.value.map((element, i) => {
+    if (element.id_item == id_item && ind == i) {
+      let temp = element.array_warehouse.filter(function (item) {
+        return item.id_warehouse == e.target.value;
+      });
+      element.total_stock = temp[0].stock_available;
+    }
+  });
 };
 
 const addItem = async (ind, data) => {
@@ -73,9 +85,8 @@ const addItem = async (ind, data) => {
   let filter_wh = data.array_warehouse.filter(function (item) {
     return !idWh.value.includes(item.id_warehouse);
   });
-
-  itemTable.value.push({
-    id_item: itemTable.value[ind].id_item,
+  let datas = {
+    id_item: data.id_item,
     id_atk_request_detail: router.currentRoute.value.params.id,
     id_warehouse: idWh.value[ind],
     name_warehouse: warehouseName.value,
@@ -88,13 +99,13 @@ const addItem = async (ind, data) => {
     array_warehouse: filter_wh,
     total_stock: data.total_stock,
     status: "add_new",
-  });
-  itemTable.value.sort(function (a, b) {
-    var keyA = a.id_item,
-      keyB = b.id_item;
-    if (keyA < keyB) return -1;
-    if (keyA > keyB) return 1;
-    return 0;
+  };
+  let a = ind;
+  let b = (ind += 1);
+  itemTable.value.splice(b, a, datas);
+
+  itemTable.value.map((element) => {
+    element.stock_available = data.stock_available ? data.stock_available : "";
   });
 };
 
@@ -112,15 +123,17 @@ const submit = async () => {
   });
   payload.value = {
     warehouse_detail: itemTable.value,
+    notes: notesName.value ? notesName.value : "",
   };
   isApprove.value = true;
   if (isApprove.value) {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    Api.post(
-      `/approval_request_atk/approve/${router.currentRoute.value.params.id}`,
-      payload.value
-    )
+    let api =
+      props.dataArr.status == "Approve"
+        ? `/approval_request_atk/completed/${router.currentRoute.value.params.id}`
+        : `/approval_request_atk/approve/${router.currentRoute.value.params.id}`;
+    Api.post(api, payload.value)
       .then((res) => {
         Swal.fire({
           position: "center",
@@ -148,6 +161,7 @@ const submit = async () => {
 onBeforeMount(() => {
   changeSite(props.dataArr.id_site);
   fetchDetailById(router.currentRoute.value.params.id);
+  disableField.value = props.dataArr.status == "Approve" ? true : false;
 });
 </script>
 
@@ -163,8 +177,8 @@ onBeforeMount(() => {
   </label>
 
   <input type="checkbox" id="my-modal-approve-atk" class="modal-toggle" />
-  <div class="modal" style="overflow-x: auto">
-    <div class="modal-dialog bg-white w-3/5">
+  <div class="modal">
+    <div class="modal-dialog bg-white w-4/5">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           for="my-modal-approve-atk"
@@ -213,6 +227,7 @@ onBeforeMount(() => {
               </th>
               <th
                 class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                v-if="!disableField"
               >
                 Action
               </th>
@@ -234,7 +249,12 @@ onBeforeMount(() => {
                 {{ value.qty }}
               </td>
               <td class="border border-[#B9B9B9]">
-                <select v-model="idWh[ind]" :class="inputClass">
+                <select
+                  v-model="idWh[ind]"
+                  :class="inputClass"
+                  @change="changeWarehouse($event, value.id_item, ind)"
+                  :disabled="disableField"
+                >
                   <option
                     v-for="data in value.array_warehouse"
                     :key="data.id_warehouse"
@@ -264,7 +284,10 @@ onBeforeMount(() => {
                   "
                 />
               </td>
-              <td class="border border-[#B9B9B9] text-center">
+              <td
+                class="border border-[#B9B9B9] text-center"
+                v-if="!disableField"
+              >
                 <button
                   @click="addItem(ind, value)"
                   v-if="value.status != 'add_new'"

@@ -106,7 +106,10 @@ const getFormData = async () => {
     }
     res = await fetchP2hHistory(params)
   } else {
-    res = await fetchDriverCarCheckupByRequesId(requestId, props.status)
+    res = await fetchDriverCarCheckupByRequesId(requestId, {
+      status: props.status,
+      id_car: props.data.id_car,
+    })
   }
 
   checkupList.value = res.data.data
@@ -206,7 +209,9 @@ onMounted(async () => {
   >
     <modalHeader
       @closeVisibility="modelValue = false"
-      title="Formulir Pemeriksaan Kendaraan Harian"
+      :title="`Formulir Pemeriksaan Kendaraan Harian - P2H ${
+        status == 1 ? 'Awal' : 'Akhir'
+      }`"
     />
     <main class="overflow-y-scroll">
       <form @submit.prevent="saveForm()" class="p-5">
