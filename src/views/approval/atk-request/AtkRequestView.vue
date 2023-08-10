@@ -122,16 +122,25 @@ const format_date = (value) => {
       >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
           <!-- HEADER -->
-          <router-link
-            to="/approvalatkrequest"
-            class="flex items-center gap-2 py-4 mx-4"
-          >
-            <img :src="arrow" class="w-3 h-3" alt="" />
-            <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
-              {{ stockName }}
-            </h1>
-          </router-link>
-
+          <div class="flex justify-between">
+            <router-link
+              to="/approvalatkrequest"
+              class="flex items-center gap-2 py-4 mx-4"
+            >
+              <img :src="arrow" class="w-3 h-3" alt="" />
+              <h1 class="text-blue font-semibold font-JakartaSans text-2xl">
+                {{ stockName }}
+              </h1>
+            </router-link>
+            <div class="py-4">
+              <button
+                type="button"
+                class="btn btn-sm border-none mx-4 capitalize status-default"
+              >
+                {{ dataArr.status }}
+              </button>
+            </div>
+          </div>
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
             <ModalApproveAtk
               v-if="status == 'Waiting Approval' || status == 'Approve'"
@@ -300,6 +309,11 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
+                      Quantity Delivery
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Quantity Rejected
                     </th>
                     <th
@@ -326,9 +340,7 @@ const format_date = (value) => {
                     >
                       {{ value.brandName }}
                     </td>
-                    <td
-                      class="border border-[#B9B9B9]"
-                    >
+                    <td class="border border-[#B9B9B9]">
                       {{ value.UOMName }}
                     </td>
                     <td class="border border-[#B9B9B9]">
@@ -336,6 +348,9 @@ const format_date = (value) => {
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_send }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.qty_delivery }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_unsend }}
@@ -373,6 +388,11 @@ const format_date = (value) => {
                       >
                         Quantity Approve
                       </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Quantity Delivery
+                      </th>
                     </tr>
                   </thead>
                   <tbody
@@ -396,6 +416,9 @@ const format_date = (value) => {
                       <td class="border border-[#B9B9B9]">
                         {{ value.qty_approved }}
                       </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.qty_delivery }}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -416,5 +439,19 @@ const format_date = (value) => {
 .custom-card {
   box-shadow: 0px -4px #015289;
   border-radius: 4px;
+}
+
+.status-partial {
+  color: #ef9d22;
+  font-weight: 800;
+}
+
+.status-default {
+  background-color: #2970ff;
+  font-weight: 800;
+}
+.status-done {
+  color: #00c851;
+  font-weight: 800;
 }
 </style>

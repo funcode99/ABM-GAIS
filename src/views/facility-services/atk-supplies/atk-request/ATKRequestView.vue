@@ -200,7 +200,7 @@ onBeforeMount(() => {
   fetchDataById(router.currentRoute.value.params.id);
   fetchDetailById(router.currentRoute.value.params.id);
   idDetail.value = parseInt(router.currentRoute.value.params.id);
-  fetchLogApproval(router.currentRoute.value.params.id)
+  fetchLogApproval(router.currentRoute.value.params.id);
 });
 
 const getSessionForSidebar = () => {
@@ -435,6 +435,11 @@ const format_date = (value) => {
                     <th
                       class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                     >
+                      Quantity Delivery
+                    </th>
+                    <th
+                      class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                    >
                       Quantity Rejected
                     </th>
                     <th
@@ -475,6 +480,9 @@ const format_date = (value) => {
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_send }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ value.qty_delivery }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_unsend }}
@@ -519,6 +527,11 @@ const format_date = (value) => {
                       >
                         Quantity Approve
                       </th>
+                      <th
+                        class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                      >
+                        Quantity Delivery
+                      </th>
                     </tr>
                   </thead>
                   <tbody
@@ -541,6 +554,9 @@ const format_date = (value) => {
                       </td>
                       <td class="border border-[#B9B9B9]">
                         {{ value.qty_approved }}
+                      </td>
+                      <td class="border border-[#B9B9B9]">
+                        {{ value.qty_delivery }}
                       </td>
                     </tr>
                   </tbody>
