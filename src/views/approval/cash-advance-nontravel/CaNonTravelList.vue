@@ -445,7 +445,7 @@ const selectedStatus = ref("");
               </p>
             </div>
 
-            <div class="flex flex-wrap gap-2 px-4 py-4 justify-between">
+            <div class="flex flex-wrap gap-2 px-4 justify-between">
               <div class="flex gap-4">
                 <div class="flex flex-col pt-[3px]">
                   <p
