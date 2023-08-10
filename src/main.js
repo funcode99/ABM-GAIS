@@ -15,7 +15,11 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import '@vuepic/vue-datepicker/dist/main.css'
 
+import Emitter from 'tiny-emitter';
+
 const app = createApp(App)
+// app.config.globalProperties.$msalInstance = {};
+// app.config.globalProperties.$emitter = new Emitter();
 app.use(createPinia())
 app.use(router)
 app.use(VueAwesomePaginate)

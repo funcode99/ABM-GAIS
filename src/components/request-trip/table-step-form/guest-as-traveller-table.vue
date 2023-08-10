@@ -47,7 +47,7 @@
 
       const api2 = await Api.post('/travel_guest/store', {
           nik: employeeLoginData.value[0].nik,
-          notes: '',
+          notes: 'requestor asli',
           gender: employeeLoginData.value[0].jenkel,
           company: employeeLoginData.value[0].company_name,
           name_guest: employeeLoginData.value[0].employee_name,
@@ -76,6 +76,8 @@
 
   })
 
+  let usernameRequestor = ref(localStorage.getItem('username'))
+
 </script>
 
 <template>
@@ -86,6 +88,10 @@
         {{ requestTrip.isFetched }}
         {{ props.length }}
       </div> -->
+
+      <!-- {{ props }} -->
+
+      <!-- {{ usernameRequestor }} -->
 
       <table class="table">
       
@@ -99,7 +105,7 @@
             </th>
           </tr>
         </thead>
-
+        
         <tbody>
           <tr v-for="data in props" :key="data.id">
             <td>
@@ -127,12 +133,15 @@
               {{ data.flight_class }}
             </td>
             <td v-if="$route.path === '/request'" class="flex flex-wrap gap-4 justify-center">
-              <button>
+              <button v-if="data.notes !== 'requestor asli'">
                 <img :src="editicon" class="w-6 h-6" />
               </button>
-              <button @click="deleteData(data.id)">
+              <button v-if="data.notes !== 'requestor asli'" @click="deleteData(data.id)">
                 <img :src="deleteicon" class="w-6 h-6" />
               </button>
+              <div v-if="data.notes === 'requestor asli'">
+                -
+              </div>
             </td>
           </tr>
         </tbody>

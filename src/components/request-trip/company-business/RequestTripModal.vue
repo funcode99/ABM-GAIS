@@ -1220,8 +1220,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
 
       <!-- change step button -->
       <div v-if="formStep !== 1" class="fixed left-0 right-0 bg-white bottom-0 px-5 py-2">
-  
-            <div class="flex justify-between font-bold">
+        
+        <div class="flex justify-between font-bold">
   
                 <button v-if="formStep > 0" @click="formStep--" class="border border-blue text-blue py-3 px-11 rounded-lg max-w-[141px]">
                   Back
@@ -1247,8 +1247,8 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
   
                 </div>
   
-            </div>
-            
+        </div>
+        
       </div>
      
     </Modal>

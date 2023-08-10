@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import msal from '@/components/msal/msal.vue'
+
 // auth
 import Login from "@/views/auth/Login.vue";
 import ForgotPassword from "@/views/auth/ForgotPassword.vue";
@@ -1331,6 +1333,14 @@ const router = createRouter({
         }
 
         return next("/");
+      },
+    },
+    {
+      path: "/msal",
+      name: "MSAL Login Test",
+      component: msal,
+      meta: {
+        title: "MSAL Login Test",
       },
     },
   ],
