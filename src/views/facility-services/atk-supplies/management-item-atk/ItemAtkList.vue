@@ -15,6 +15,8 @@ import icondanger2 from "@/assets/icon-danger-circle.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
+import downloadIcon from "@/assets/download-template-icon.png";
+import importIcon from "@/assets/import-data-icon.png";
 
 import ModalAdd from "@/components/facility-services/atk-supplies/management-item-atk/ModalAdd.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
@@ -26,6 +28,7 @@ import { ref, onBeforeMount, computed, watchEffect } from "vue";
 
 import { useSidebarStore } from "@/stores/sidebar.js";
 import Api from "@/utils/Api";
+import { useRouter } from "vue-router";
 
 const sidebar = useSidebarStore();
 
@@ -102,6 +105,9 @@ let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 let lenghtPagination = ref(0);
 const searchFilter = ref("");
+let fileImport = ref("");
+
+const router = useRouter();
 //for paginations
 const onChangePage = (pageOfItem) => {
   fetchData(
@@ -691,6 +697,79 @@ watchEffect(() => {
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
+
+const downloadTemplate = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  Api.get(`/management_atk/download_template`, {
+    responseType: "blob",
+  }).then((res) => {
+    let blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    let link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "Template Management Item ATK.xlsx";
+    link.click();
+  });
+};
+
+const onFileSelected = (event) => {
+  if (event.target.files[0].size >= 3000000) {
+    Swal.fire({
+      html: "<b>Max File is 3MB</b>",
+      timer: 2000,
+      timerProgressBar: true,
+      position: "top-end",
+      background: "#EA5455",
+      color: "#ffffff",
+      showCancelButton: false,
+      showConfirmButton: false,
+      width: "300px",
+    });
+  } else {
+    const file = event.target.files[0];
+
+    fileImport.value = file ? file : null;
+  }
+};
+
+const importData = async () => {
+  if (fileImport.value) {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    Api.post(`/management_atk/import_data`, {
+      file: fileImport.value,
+    })
+      .then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        router.go();
+      })
+      .catch((error) => {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      });
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "File is Required",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+};
 </script>
 
 <template>
@@ -720,11 +799,61 @@ const getSessionForSidebar = () => {
             </p>
 
             <div class="flex justify-between gap-4 items-center">
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-              >
-                <img :src="gearicon" class="w-6 h-6" />
-              </button>
+              <div class="dropdown">
+                <button
+                  class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                >
+                  <img :src="gearicon" class="w-6 h-6" />
+                </button>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <label for="modal-import">
+                      <img :src="importIcon" class="w-6 h-6" /> Import
+                      Data</label
+                    >
+                  </li>
+                  <li @click="downloadTemplate">
+                    <a
+                      ><img :src="downloadIcon" class="w-6 h-6" />Download
+                      Template</a
+                    >
+                  </li>
+                </ul>
+              </div>
+
+              <input
+                type="checkbox"
+                id="modal-import"
+                class="modal-toggle z-[10]"
+              />
+              <div class="modal z-[10]">
+                <div class="modal-box">
+                  <h3 class="font-bold text-md">Import Data</h3>
+                  <div class="flex items-center py-5">
+                    <input
+                      type="file"
+                      class="file-input file-input-bordered w-full max-w-xs mr-3"
+                      @change="onFileSelected"
+                    />
+                    <label
+                      class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+                      @click="importData"
+                      >Import</label
+                    >
+                  </div>
+                  <div class="modal-action">
+                    <label
+                      for="modal-import"
+                      class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red btn-md"
+                    >
+                      Cancel
+                    </label>
+                  </div>
+                </div>
+              </div>
 
               <label
                 v-if="id_role != 'EMPLY'"
