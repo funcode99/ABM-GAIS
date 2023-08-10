@@ -984,7 +984,7 @@ const getSessionForSidebar = () => {
                       class="font-JakartaSans font-normal text-sm p-0"
                       v-if="id_role != 'EMPLY'"
                     >
-                      {{ !data.booked_stock ? "0" : data.booked_stock }}
+                      {{ !data.stock_booked ? "0" : data.stock_booked }}
                     </td>
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ !data.stock_to_booked ? "0" : data.stock_to_booked }}
