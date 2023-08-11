@@ -5,8 +5,8 @@ export const useMSALStore = defineStore('msal', {
         return {
             msalConfig: {
                 auth: {
-                    clientId: '949ac9dc-c596-43e9-a8fb-8e6ac160095c',
-                    authority: 'https://login.microsoftonline.com/83b0f7db-ea2a-4580-9ca9-5435ef0cae12'
+                    clientId: import.meta.env.VITE_APP_CLIENT_ID,
+                    authority: import.meta.env.VITE_APP_TENANT_ID
                 },
                 cache: {
                     cacheLocation: 'localStorage'

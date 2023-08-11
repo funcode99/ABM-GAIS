@@ -5,7 +5,6 @@
 
     let msalStore = useMSALStore()
     let account = ref(undefined)
-
     let emits = defineEmits(['login', 'logout'])
 
     msalStore.msalInstance = new PublicClientApplication(

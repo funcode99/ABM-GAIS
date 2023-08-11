@@ -3,67 +3,165 @@
   import closeEye from '@/assets/eye-off.png'
   import openEye from '@/assets/eye.png'
 
+  import { PublicClientApplication } from '@azure/msal-browser'
+  import { useMSALStore } from '@/stores/msal'
+
   import NavbarLogin from '@/components/layout/NavbarLogin.vue'
   import Footer from '@/components/layout/Footer.vue'
 
-  import { ref } from 'vue'
+  import { onMounted, ref } from 'vue'
   import Api from '@/utils/Api'
   import router from '@/router'
 
-  const username = ref('')
-  const password = ref('')
-  const isHide = ref(true)
+    const username = ref('')
+    const password = ref('')
+    const isHide = ref(true)
+    let accessTokenValue = ref()
 
-  const submit = async () => {
+    const submit = async () => {
+        
+      console.log('masuk ke submit')
       
-    console.log('masuk ke submit')
-    
-    try {
+      try {
 
-        const data = await Api.post('/login', 
-        {
-            username: username.value,
-            password: password.value
-        })
+          const data = await Api.post('/login', 
+          {
+              username: username.value,
+              password: password.value
+          })
 
-        localStorage.setItem('id_role', JSON.stringify(data.data.users.code_role))
-        localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
-        localStorage.setItem('company_code', JSON.stringify(data.data.users?.company_code))
-        localStorage.setItem('id_site', JSON.stringify(data.data.users.id_site))
-        localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
-        localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
-        localStorage.setItem('id_role_number', JSON.stringify(data.data.users.id_role))
+          localStorage.setItem('id_role', JSON.stringify(data.data.users.code_role))
+          localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
+          localStorage.setItem('company_code', JSON.stringify(data.data.users?.company_code))
+          localStorage.setItem('id_site', JSON.stringify(data.data.users.id_site))
+          localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
+          localStorage.setItem('token', JSON.stringify(data.data.token.data.access_token))
+          localStorage.setItem('id_role_number', JSON.stringify(data.data.users.id_role))
 
-        if(typeof data.data.users.logo_path == 'string') {
-          let deleteBacktick = data.data.users.group_company_logo_path.replaceAll('"', '')
-          localStorage.setItem('company_logo', deleteBacktick)
-        }
-      
+          if(typeof data.data.users.logo_path == 'string') {
+            let deleteBacktick = data.data.users.group_company_logo_path.replaceAll('"', '')
+            localStorage.setItem('company_logo', deleteBacktick)
+          }
+        
 
-        if(typeof data.data.users.employee_name == 'string') {
-          console.log(data.data.users.employee_name)
-          let username = data.data.users.employee_name.replaceAll('"', '')
-          localStorage.setItem('username', username)
-        }
+          if(typeof data.data.users.employee_name == 'string') {
+            console.log(data.data.users.employee_name)
+            let username = data.data.users.employee_name.replaceAll('"', '')
+            localStorage.setItem('username', username)
+          }
 
-        router.push('/user');
+          router.push('/user');
 
-    } catch (error) {
-        console.log(error)
-        if (error?.response?.status === 400) {
+      } catch (error) {
+          console.log(error)
+          if (error?.response?.status === 400) {
 
-            // router.push('/registration')
-        }
-        else {
-            // store.commit('isLoading', false);
-            // const toast = useToast();
-            // toast.error(error?.response?.data?.message, {
-            //     position: 'top-center',
-            //     timeout: 2000
-            // });
-        }
+              // router.push('/registration')
+          }
+          else {
+              // store.commit('isLoading', false);
+              // const toast = useToast();
+              // toast.error(error?.response?.data?.message, {
+              //     position: 'top-center',
+              //     timeout: 2000
+              // });
+          }
+      }
+
     }
-}
+
+    let msalStore = useMSALStore()
+    let account = ref(undefined)
+    let emits = defineEmits(['login', 'logout'])
+
+    msalStore.msalInstance = new PublicClientApplication(
+        msalStore.msalConfig
+    )
+
+    onMounted(() => {
+        const accounts = msalStore.msalInstance.getAllAccounts()
+        if (accounts.length == 0) {
+            return
+        }
+        account.value = accounts[0]
+        emits('login', account.value)
+    })
+
+    const submitSSO = async () => {
+
+      console.log('masuk ke submit SSO')
+
+      try {
+        
+        const data = await Api.post('/login', 
+          {
+              username: 'mssso',
+              password: 'mssso',
+              access_token: accessTokenValue?.value?.secret,
+              email: MSEmail.value
+          })
+
+          localStorage.setItem('id_role', JSON.stringify(data.data.users.code_role))
+          localStorage.setItem('id_company', JSON.stringify(data.data.users.id_company))
+          localStorage.setItem('company_code', JSON.stringify(data.data.users?.company_code))
+          localStorage.setItem('id_site', JSON.stringify(data.data.users.id_site))
+          localStorage.setItem('id_employee', JSON.stringify(data.data.users.id_employee))
+          localStorage.setItem('token', JSON.stringify(data.data.token))
+          localStorage.setItem('id_role_number', JSON.stringify(data.data.users.id_role))
+          localStorage.setItem('ms_access_token', JSON.stringify(data.data.users.ms_access_token))
+
+          if(typeof data.data.users.logo_path == 'string') {
+            let deleteBacktick = data.data.users.group_company_logo_path.replaceAll('"', '')
+            localStorage.setItem('company_logo', deleteBacktick)
+          }
+        
+
+          if(typeof data.data.users.employee_name == 'string') {
+            console.log(data.data.users.employee_name)
+            let username = data.data.users.employee_name.replaceAll('"', '')
+            localStorage.setItem('username', username)
+          }
+
+          router.push('/user');
+
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    let MSEmail = ref('')
+
+    const SignIn = async () => {
+        await msalStore.msalInstance.loginPopup({}).then(() => {
+            const myAccounts = msalStore.msalInstance.getAllAccounts()
+            account.value = myAccounts[0]
+            MSEmail.value = account.value.username
+            Object.keys(localStorage).map((key) => {
+
+              if(localStorage.getItem(key).includes('AccessToken')) {
+                  accessTokenValue.value = localStorage.getItem(key)
+                  accessTokenValue.value = JSON.parse(accessTokenValue.value)
+              }
+
+            })
+            submitSSO()
+        })
+        .catch(error => {
+            console.error(`error during authentication: ${error}`)
+        })
+    }
+
+    const SignOut = async () => {
+        await msalStore.msalInstance.logout({}).then(() => {
+        })
+        .catch(error => {
+          console.error(error)
+        })
+        router.push({ path: "/" });
+      }
+
+
 
 </script>
 
@@ -72,6 +170,9 @@
   <div class="flex flex-col h-screen">
     
     <NavbarLogin />
+
+    <!-- {{ account?.username }}
+    {{ accessTokenValue?.secret }} -->
   
     <!-- content -->
       <div class="flex items-center justify-center content h-full py-[20px] lg:py-[30px] bg-[#e4e4e6]">
@@ -140,9 +241,17 @@
                           </button>
                           <h1 class="text-center py-2 lg:py-5 font-bold">OR</h1>
                           <!-- login via falcon button -->
-                          <button class="text-sm sm:text-base lg:text-lg font-semibold bg-[#015289] w-full text-white rounded-lg px-4 lg:px-6 py-2 lg:py-3 block shadow-xl hover:text-white hover:bg-black">
+                          <button 
+                            @click="SignIn"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-sm sm:text-base lg:text-lg font-semibold bg-[#015289] w-full text-white rounded-lg px-4 lg:px-6 py-2 lg:py-3 block shadow-xl hover:text-white hover:bg-black"
+                          >
                                   Login via Falcon
                           </button>
+                          <!-- <button
+                            @click="SignOut"
+                          >Logout</button> -->
                       </div>
                     </div>
     

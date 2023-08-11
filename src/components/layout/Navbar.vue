@@ -8,6 +8,14 @@ import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import { useRouter } from "vue-router";
 
+import { PublicClientApplication } from '@azure/msal-browser'
+import { useMSALStore } from '@/stores/msal'
+let msalStore = useMSALStore()
+
+msalStore.msalInstance = new PublicClientApplication(
+        msalStore.msalConfig
+    )
+
 let companyLogo = localStorage.getItem("company_logo");
 let userName = localStorage.getItem("username");
 let role = localStorage.getItem("id_role").replace(/"/g, "");
@@ -39,18 +47,64 @@ const changeTab = (index) => {
 }
 
 const logout = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  let api = await Api.post("/users/logout");
-  localStorage.removeItem("company_logo");
-  localStorage.removeItem("username");
-  localStorage.removeItem("token");
-  sidebar.menuData = ""
-  sidebar.readMenu = '[]'
-  sidebar.writeMenu = '[]'
 
-  router.push({ path: "/" });
+  if(localStorage.getItem('ms_access_token')) {
+    console.log('masuk ke microsoft')
+    SignOut()
+  } else {
+
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    let api = await Api.post("/users/logout");
+
+    localStorage.removeItem("token")
+    localStorage.removeItem("username")
+    localStorage.removeItem("company_logo")
+    localStorage.removeItem("company_code")
+    localStorage.removeItem("id_site")
+    localStorage.removeItem("id_role")
+    localStorage.removeItem("id_company")
+    localStorage.removeItem("id_employee")
+    localStorage.removeItem("id_role_number")
+    localStorage.removeItem("ms_access_token")
+
+    sidebar.menuData = ""
+    sidebar.readMenu = '[]'
+    sidebar.writeMenu = '[]'
+
+    router.push({ path: "/" })
+
+  }
+
+
 };
+
+  const SignOut = async () => {
+
+    const token = JSON.parse(localStorage.getItem("token"));
+          Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+          let api = await Api.post("/users/logout");
+          localStorage.removeItem("token")
+          localStorage.removeItem("username")
+          localStorage.removeItem("company_logo")
+          localStorage.removeItem("company_code")
+          localStorage.removeItem("id_site")
+          localStorage.removeItem("id_role")
+          localStorage.removeItem("id_company")
+          localStorage.removeItem("id_employee")
+          localStorage.removeItem("id_role_number")
+          localStorage.removeItem("ms_access_token")
+
+        await msalStore.msalInstance.logout({}).then(() => {
+          router.push('/');
+        })
+        .catch(error => {
+          console.error(error)
+        })
+
+
+
+  }
 
 const getNotif = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
