@@ -8,22 +8,22 @@
     let account = ref(undefined)
     let containers = ref([])
     let msalStore = useMSALStore()
-    const storageAccountName = 'cmatskasbackup'
+    // const storageAccountName = 'cmatskasbackup'
 
     const login = (account) => {
-        console.log(account)
+        // console.log(account)
         account.value = account
-        getAzureStorageData()
+        // getAzureStorageData()
     }
 
     const logout = (account) => {
-        console.log(account)
+        // console.log(account)
     }
 
     const getAzureStorageData = async () => {
         
         if(msalStore.accessToken === '') {
-            await getAccessToken()
+            // await getAccessToken()
         }
         // let tokenCredential = new customTokenCredential(msalStore.accessToken)
         // const blobClient = new BlobServiceClient(
@@ -100,6 +100,6 @@
         @logout="logout"
     />
 
-    {{ msalStore }}
+    <!-- {{ msalStore }} -->
 
 </template>

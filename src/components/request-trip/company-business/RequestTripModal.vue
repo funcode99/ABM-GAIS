@@ -24,6 +24,9 @@ import otherTransportationForm from '@/components/request-trip/modal-step-form/o
 import accomodationForm from '@/components/request-trip/modal-step-form/accomodation-form.vue'
 import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-advance-form.vue'
 
+import { useRequestTripStore } from "@/stores/requesttrip.js"
+     const requestTrip = useRequestTripStore()
+
     const emits = defineEmits('updateRequestTripTable')
 
     let employeeLoginData = ref([])
@@ -481,6 +484,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
         } catch (error) {
           console.log(error)
           travellerGuestTableData.value = []
+          requestTrip.isFetched = false
         }
 
       }
@@ -625,6 +629,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
       optionDataCostCenter.value = api.data.data
       optionDataCostCenter.value.map((item) => {
       item.value = item.id
+      item.format = `${item.cost_center_code} - ${item.cost_center_name}`
     })
     }
 
@@ -870,27 +875,12 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                         Cost Center<span class="text-[#f5333f]">*</span>
                     </label>
 
-                    <!-- <div>
-                      {{ costCenterId }}
-                    </div> -->
-
-                    <!-- <select
-                    v-model="costCenterId"
-                    :class="inputStylingWithoutWidthClass" 
-                    >
-                      
-                      <option v-for="data in optionDataCostCenter" :value="data.id">
-                          {{ data.cost_center_code }} - {{ data.cost_center_name }}
-                      </option>
-
-                    </select> -->
-
                     <Multiselect
                       v-model="costCenterId"
                       mode="single"
                       placeholder="Select Cost Center"
                       track-by="cost_center_name"
-                      label="cost_center_name"
+                      label="format"
                       :close-on-select="false"
                       :searchable="true"
                       :options="optionDataCostCenter"
@@ -903,7 +893,7 @@ import cashAdvanceForm from '@/components/request-trip/modal-step-form/cash-adva
                             'is-disabled': disabled,
                           }"
                         >
-                          {{ option.cost_center_name }}
+                          {{ option.format }}
                           <span
                             v-if="!disabled"
                             class="multiselect-tag-remove"

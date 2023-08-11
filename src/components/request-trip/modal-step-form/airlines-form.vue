@@ -153,6 +153,7 @@
                         <div :class="columnClass">
                             <div class="w-full">
                                 <label :class="labelStylingClass">
+                                    {{ dateDeparture }} {{ dateArrival }}
                                     Departure Date<span class="text-red-star">*</span>
                                 </label>
                                 <input type="date" :min="dateDeparture" :max="dateArrival" :class="inputStylingClass" v-model="departureDateAirlines" />
