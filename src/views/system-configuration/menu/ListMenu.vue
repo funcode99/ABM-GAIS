@@ -16,7 +16,6 @@ import fetchCompanyUtils from "@/utils/Fetch/Reference/fetchCompany.js";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
 
-// import untuk approval table
 import { ref, onBeforeMount, computed, watch } from "vue";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
@@ -48,7 +47,6 @@ let deleteArray = ref([]);
 let sortedbyASC = true;
 let editDataId = ref(0);
 
-//for paginations
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
@@ -59,7 +57,6 @@ let addCompanyData = ref([]);
 let addMenuStatusData = ref([]);
 let baitArray = ref([]);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
@@ -84,8 +81,7 @@ const deleteData = async (event) => {
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
     confirmButtonText: "Yes",
-  })
-  .then((result) => {
+  }).then((result) => {
     if (result.isConfirmed) {
       Api.delete(`/menu/delete_data/${event}`).then((res) => {
         Swal.fire({
@@ -133,7 +129,7 @@ const callApi = async () => {
     code_sequence: formState.menu.sequenceCode,
     description: "kosong",
     url: formState.menu.url,
-    url_view: formState.menu.url,
+    url_view: formState.menu.urlApproval,
     icon: formState.menu.icon,
     id_company: formState.menu.companyId,
   });
@@ -157,7 +153,6 @@ const callApi = async () => {
 
 const editMenu = async (data) => {
   editDataId.value = data;
-  // masukin argumen membuat nya jadi lama
   setTimeout(callEditApi, 1000);
 };
 
@@ -313,7 +308,6 @@ const fetchMenuStatusUtilsHelper = () => {
   <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
-    <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen content mt-[115px]">
       <Sidebar class="flex-none" />
 
@@ -334,7 +328,6 @@ const fetchMenuStatusUtilsHelper = () => {
 
         {{ writeMenuList }}
 
-        <!-- actual table -->
         <div
           class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
         >
@@ -381,8 +374,6 @@ const fetchMenuStatusUtilsHelper = () => {
               </thead>
 
               <tbody>
-                <!-- sortir nya harus sama dengan key yang di data dummy -->
-
                 <tr
                   v-for="data in sortedData.slice(
                     paginateIndex * pageMultiplierReactive,
@@ -408,7 +399,6 @@ const fetchMenuStatusUtilsHelper = () => {
                   </td>
 
                   <td style="width: 30%">
-                    <!-- <img class="w-16 h-16" :src="data.icon_path" /> -->
                     {{ data.parent }}
                   </td>
 
@@ -443,8 +433,6 @@ const fetchMenuStatusUtilsHelper = () => {
                     </button>
                   </td>
                 </tr>
-
-                <!-- tr gak boleh di dalam div ternyata, kalo enggak hasil nya bakal berantakan -->
               </tbody>
             </table>
 
