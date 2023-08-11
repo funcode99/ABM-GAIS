@@ -41,6 +41,14 @@
         })
     }
 
+    let accessTokenValue = ref()
+
+    Object.keys(localStorage).map((key) => {
+         if(localStorage.getItem(key).includes('AccessToken')) {
+             accessTokenValue.value = localStorage.getItem(key)
+             accessTokenValue.value = JSON.parse(accessTokenValue.value)
+         }
+    })
 
 </script>
 
@@ -56,13 +64,11 @@
                         rel="noopener noreferrer"
                     >
                         login
-                        <!-- <i class="fas fa-sign-in-alt fa-2x" aria-hidden="false"></i> -->
                     </a>
                     <a v-else @click="SignOut" target="_blank" rel="noopener noreferrer">
-                        <!-- <i class="fas fa-sign-out-alt fa-2x" aria-hidden="false"></i> -->
                         logout
                     </a>
-                    <div v-if="account">{{ account.name }}</div>
+                    <div v-if="account">{{ account.name }} {{ account.username }} {{ accessTokenValue }}</div>
                 </div>
             </div>
         </div>

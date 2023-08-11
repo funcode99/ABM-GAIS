@@ -76,8 +76,6 @@
 
   })
 
-  let usernameRequestor = ref(localStorage.getItem('username'))
-
 </script>
 
 <template>

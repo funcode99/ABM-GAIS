@@ -8,6 +8,9 @@
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
+    import { useRequestTripStore } from "@/stores/requesttrip.js"
+    const requestTrip = useRequestTripStore()
+
     const props = defineProps({
         isOpen: Boolean,
         purposeType: String  
@@ -75,9 +78,6 @@
     const columnClass = 'flex flex-col flex-1'
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
-
-    const dateDeparture = ref(localStorage.getItem('dateDeparture'))
-    const dateArrival = ref(localStorage.getItem('dateArrival'))
 
 </script>
 
@@ -159,8 +159,8 @@
                                 v-model="fromDate" 
                                 type="date" 
                                 :class="inputStylingClass" 
-                                :min="dateDeparture" 
-                                :max="dateArrival" 
+                                :min="requestTrip.dateDeparture" 
+                                :max="requestTrip.dateArrival" 
                                 required>
                         </div>
                     </div>
@@ -189,8 +189,8 @@
                                 v-model="toDate" 
                                 type="date" 
                                 :class="inputStylingClass"                                 
-                                :min="dateDeparture" 
-                                :max="dateArrival" 
+                                :min="requestTrip.dateDeparture" 
+                                :max="requestTrip.dateArrival" 
                             required>
     
                         </div>

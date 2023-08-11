@@ -12,6 +12,9 @@
     import fetchTypeOfHotelUtils from "@/utils/Fetch/Reference/fetchTypeOfHotel"
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
+    import { useRequestTripStore } from "@/stores/requesttrip.js"
+    const requestTrip = useRequestTripStore()
+
     const tableHeadAccomodation = [
       {id: 1, title: 'Hotel Name'},
       {id: 2, title: 'Location'},
@@ -137,9 +140,6 @@
         price.value = forPrice.price
     }
 
-    const dateDeparture = ref(localStorage.getItem('dateDeparture'))
-    const dateArrival = ref(localStorage.getItem('dateArrival'))
-
     const modalPaddingHeight = '15vh'
     const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
     const columnClass = 'flex flex-col flex-1'
@@ -262,8 +262,8 @@
                                 type="date" 
                                 v-model="checkIn" 
                                 required
-                                :min="dateDeparture" 
-                                :max="dateArrival" 
+                                :min="requestTrip.dateDeparture" 
+                                :max="requestTrip.dateArrival" 
                             />
                         </div>
                     </div>
@@ -336,8 +336,8 @@
                                 type="date" 
                                 v-model="checkOut"
                                 required
-                                :min="dateDeparture" 
-                                :max="dateArrival" 
+                                :min="requestTrip.dateDeparture" 
+                                :max="requestTrip.dateArrival" 
                             />
                         </div>
                     </div>
