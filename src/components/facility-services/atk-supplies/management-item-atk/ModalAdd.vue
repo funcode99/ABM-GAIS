@@ -97,15 +97,8 @@ const changeCompany = async (id_company) => {
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
 };
-const fetchBrandCompany = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/brand/get_by_site_id/${id_site}`);
-  Brand.value = res.data.data;
-};
-const changeSite = async (id_site) => {
-  fetchBrandCompany(id_site);
 
+const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
@@ -427,21 +420,6 @@ watchEffect(() => {
               required
             />
           </div>
-          <div class="mb-4 w-full" v-if="company_code != '8000'">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Brand<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedBrand"
-            >
-              <option disabled value="">Brand</option>
-              <option v-for="(brand, i) in Brand" :key="i" :value="brand.id">
-                {{ brand.brand_name }}
-              </option>
-            </select>
-          </div>
           <div class="mb-4 w-full">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Description</label
@@ -521,12 +499,6 @@ watchEffect(() => {
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                  v-if="company_code != '8000'"
-                >
-                  Brand
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                 >
                   UOM
                 </th>
@@ -557,12 +529,6 @@ watchEffect(() => {
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.item_name }}
-                </td>
-                <td
-                  class="border border-[#B9B9B9] text-center"
-                  v-if="company_code != '8000'"
-                >
-                  {{ items.namaBrand }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.namaUOM }}

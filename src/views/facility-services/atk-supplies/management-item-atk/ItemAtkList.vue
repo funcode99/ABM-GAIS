@@ -285,18 +285,7 @@ const fetchSite2 = async (id, id_company) => {
     }
   }
 };
-const fetchBrand = async (id, id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/brand/get_by_site_id/${id_site}`);
-  Brand.value = res.data.data;
-  for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    if (id === element.id) {
-      selectedBrand.value = id;
-    }
-  }
-};
+
 const fetchUOM = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -373,10 +362,6 @@ const editValue = async (id, type, detail_warehouse) => {
   selectedUOM.value = fetchUOM(res.data.data[0].id_uom);
   itemNames.value = res.data.data[0].item_name;
   alertQuantity.value = res.data.data[0].alert_qty;
-  selectedBrand.value = fetchBrand(
-    res.data.data[0].id_brand,
-    res.data.data[0].id_site
-  );
   remarks.value = res.data.data[0].remarks;
   idItems.value = res.data.data[0].code_item;
   selectedWarehouse.value = [];
@@ -1342,7 +1327,7 @@ const importData = async () => {
                                     :disabled="disabledField"
                                   />
                                 </div>
-                                <div
+                                <!-- <div
                                   class="mb-4 w-full"
                                   v-if="company_code != '8000'"
                                 >
@@ -1366,7 +1351,7 @@ const importData = async () => {
                                       {{ brand.brand_name }}
                                     </option>
                                   </select>
-                                </div>
+                                </div> -->
                                 <div class="mb-4 w-full">
                                   <label
                                     for="id_item"
@@ -1464,12 +1449,12 @@ const importData = async () => {
                                       >
                                         Item Name
                                       </th>
-                                      <th
+                                      <!-- <th
                                         class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                                         v-if="company_code != '8000'"
                                       >
                                         Brand
-                                      </th>
+                                      </th> -->
                                       <th
                                         class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                                       >
@@ -1516,12 +1501,12 @@ const importData = async () => {
                                       >
                                         {{ itemNames }}
                                       </td>
-                                      <td
+                                      <!-- <td
                                         class="border border-[#B9B9B9] text-center"
                                         v-if="company_code != '8000'"
                                       >
                                         {{ arrData.brand_name }}
-                                      </td>
+                                      </td> -->
                                       <td
                                         class="border border-[#B9B9B9] text-center"
                                       >
