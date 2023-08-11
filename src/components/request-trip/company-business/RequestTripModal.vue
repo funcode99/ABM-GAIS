@@ -225,10 +225,6 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             file: siteVisitAttachmentFile.value,
           })
 
-          // console.log(api)
-          // console.log(api.data.data)
-          localStorage.setItem('dateArrival', api.data.data.date_arrival)
-          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip site visit dengan id yang sudah ada')
 
         } 
@@ -250,12 +246,7 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             id_site: localStorage.getItem('id_site')
           })
 
-          console.log(api)
-          console.log(api.data.data)
-          localStorage.setItem('dateArrival', api.data.data.date_arrival)
-          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip field break dengan id yang sudah ada')
-
         }
         
         else {
@@ -274,12 +265,7 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             id_site: localStorage.getItem('id_site')
           })
 
-          console.log(api)
-          console.log(api.data.data)
-          localStorage.setItem('dateArrival', api.data.data.date_arrival)
-          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip dengan id yang sudah ada')
-
         }
 
         formStep.value++
@@ -306,13 +292,8 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             file: siteVisitAttachmentFile.value,
           })
 
-          console.log(api)
-          console.log(api.data.data)
-          localStorage.setItem('dateArrival', api.data.data.date_arrival)
-          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip site visit dengan id baru')
           localStorage.setItem('tripId', api.data.data.id)
-
         }
 
         else if (requestType.value[1] == 'Field Break') {
@@ -332,13 +313,8 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             id_site: localStorage.getItem('id_site')
           })
 
-          console.log(api)
-          console.log(api.data.data)
-          localStorage.setItem('dateArrival', api.data.data.date_arrival)
-          localStorage.setItem('dateDeparture', api.data.data.date_departure)
           console.log('membuat request trip field break dengan id baru')
           localStorage.setItem('tripId', api.data.data.id)
-
         }
 
         else {
@@ -357,11 +333,6 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             id_site: localStorage.getItem('id_site')
           })
 
-          console.log(api)
-          localStorage.setItem('dateArrival', api.data.data.date_arrival)
-          localStorage.setItem('dateDeparture', api.data.data.date_departure)
-          console.log(api.data.data)
-
           if(api.data.message !== 'Already Has Draft Data') {
             console.log('membuat request trip dengan id baru')
             localStorage.setItem('tripId', api.data.data.id)
@@ -377,8 +348,10 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
 
       }
 
-      emits('updateRequestTripTable')
+      requestTrip.dateArrival = returnDate.value
+      requestTrip.dateDeparture = departureDate.value
 
+      emits('updateRequestTripTable')
     }
 
     const submitRequestTrip = async () => {
