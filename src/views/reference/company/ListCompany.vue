@@ -2,7 +2,7 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import ModalAdd from "@/components/reference/company/ModalAdd.vue";
+
 import ModalEdit from "@/components/reference/company/ModalEdit.vue";
 import ModalView from "@/components/reference/company/ModalView.vue";
 import ModalAddGrupCompany from "@/components/reference/company/GroupCompany/ModalAddGrupCompany.vue";
@@ -79,16 +79,18 @@ let sortedData = ref([]);
 let addVendorData = ref([]);
 let addGrupCompanyData = ref([]);
 
-const search = ref("");
 let sortedbyASC = true;
 let instanceArray = [];
-const showFullText = ref({});
 let checkList = false;
 
 let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
+
+const selectedGrupCompany = ref("");
+const search = ref("");
+const showFullText = ref({});
 
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
@@ -184,48 +186,6 @@ const fetch = async () => {
   const res = await Api.get("/company/get");
   instanceArray = res.data.data;
   sortedData.value = instanceArray;
-};
-
-const deleteCompany = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Api.delete(`/company/delete_data/${id}`).then((res) => {
-        Swal.fire({
-          title: "Successfully",
-          text: "Company has been deleted.",
-          icon: "success",
-          showCancelButton: false,
-          confirmButtonColor: "#015289",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        fetch();
-      });
-    } else {
-      return;
-    }
-  });
 };
 
 const exportToExcel = () => {
@@ -494,7 +454,7 @@ const callEditApiGroupCompany = async () => {
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
           <main v-if="activeTab === 0">
             <div
-              class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
+              class="grid grid-flow-col auto-cols-max items-center justify-between mx-4"
             >
               <p
                 class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
@@ -510,7 +470,6 @@ const callEditApiGroupCompany = async () => {
                 >
                   Delete
                 </button>
-                <!-- <ModalAdd @company-saved="fetch" /> -->
                 <button
                   class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
                   @click="exportToExcel"
@@ -520,8 +479,29 @@ const callEditApiGroupCompany = async () => {
               </div>
             </div>
 
+            <div class="flex flex-wrap gap-2 px-4 justify-between">
+              <div class="flex gap-4">
+                <div class="flex flex-col pt-[3px]">
+                  <p
+                    class="capitalize font-JakartaSans text-sm text-black font-medium pb-2"
+                  >
+                    Group Company
+                  </p>
+                  <select
+                    class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                    v-model="selectedGrupCompany"
+                  >
+                    <option disabled selected>Group Company</option>
+                    <option v-for="data in addGrupCompanyData" :value="data.id">
+                      {{ data.group_company_name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
             <!-- SEARCH & SHOWING-->
-            <div class="flex flex-wrap justify-between items-center mx-4">
+            <div class="flex flex-wrap justify-between items-center mx-4 pt-1">
               <div class="flex flex-wrap gap-2">
                 <h1
                   class="text-xs font-JakartaSans font-normal flex justify-center items-center"
@@ -658,9 +638,6 @@ const callEditApiGroupCompany = async () => {
                         data.code_erp,
                       ]"
                     />
-                    <!-- <button @click="deleteCompany(data.id)">
-                      <img :src="deleteicon" class="w-6 h-6" />
-                    </button> -->
                   </td>
                 </tr>
               </tbody>

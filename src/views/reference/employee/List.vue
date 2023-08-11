@@ -295,9 +295,9 @@ const exportToExcel = () => {
                 @click="syncData()"
               >
                 <span>
-                  <img :src="iconSync" class="w-5 h-5" />
+                  <img :src="iconSync" class="w-7 h-7" />
                 </span>
-                <p class="font-JakartaSans font-medium text-xs">Sync</p>
+                <p class="font-JakartaSans font-medium text-sm">Sync</p>
               </button>
             </div>
           </div>
