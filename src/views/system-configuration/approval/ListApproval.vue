@@ -295,6 +295,7 @@
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()"   
           @do-search="filteredItems" 
+          @reset-search="filteredItems"
           @increase-approver="addNewApprover" 
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"

@@ -310,6 +310,7 @@
           @delete-selected-data="deleteCheckedArray()" 
           @increase-menu="addNewMenu"
           @do-search="filteredItems"
+          @reset-search="filteredItems"
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
           @reset-table="fetchMenuStatusUtilsHelper"

@@ -281,6 +281,7 @@
           @delete-selected-data="deleteCheckedArray()" 
           @increase-role="addRole" 
           @do-search="filteredItems" 
+          @reset-search="filteredItems"
           @change-showing="fillPageMultiplier"
         />
 

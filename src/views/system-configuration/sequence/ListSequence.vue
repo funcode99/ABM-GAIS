@@ -288,7 +288,9 @@
             :title="'Sequence'" 
             :numberSelected="deleteArray.length" 
             @delete-selected-data="deleteCheckedArray()" 
-            @do-search="filteredItems" 
+            @do-search="filteredItems"
+            @reset-search="filteredItems
+            "
             @increase-sequence="addNewSequence" 
             @change-showing="fillPageMultiplier" 
             @filter-table="filterTable"
