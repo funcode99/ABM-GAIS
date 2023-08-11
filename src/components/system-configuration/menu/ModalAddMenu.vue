@@ -69,6 +69,7 @@ const submit = () => {
 const resetInput = () => {
   menuName.value = "";
   url.value = "";
+  urlApproval.value = "";
   idStatusMenu.value = 1;
   ParentId.value = null;
   sort.value = 1;
