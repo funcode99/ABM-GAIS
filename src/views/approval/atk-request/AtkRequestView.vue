@@ -34,6 +34,8 @@ const company_code = JSON.parse(localStorage.getItem("company_code"));
 let dataArr = ref([]);
 let dataItem = ref([]);
 let itemApproval = ref([]);
+const site_user = JSON.parse(localStorage.getItem("id_site"));
+const company_user = JSON.parse(localStorage.getItem("id_company"));
 
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -141,7 +143,10 @@ const format_date = (value) => {
               </button>
             </div>
           </div>
-          <div class="flex flex-wrap justify-start gap-4 px-[70px]">
+          <div
+            class="flex flex-wrap justify-start gap-4 px-[70px]"
+            v-if="dataArr.id_site == site_user && dataArr.id_company == company_user"
+          >
             <ModalApproveAtk
               v-if="status == 'Waiting Approval' || status == 'Approve'"
               :data-arr="dataArr"
