@@ -568,7 +568,7 @@ onBeforeMount(() => {
                       <div class="flex justify-center items-center gap-2">
                         <label
                           @click="openModal('edit', data.id)"
-                          for="booking_modal"
+                          for="my-modal-3"
                         >
                           <img :src="editicon" class="w-6 h-6" />
                         </label>
