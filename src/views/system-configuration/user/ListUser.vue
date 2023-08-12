@@ -588,7 +588,7 @@
                 v-model="showingValue"
                 :max-pages-shown="4"
                 :show-breakpoint-buttons="false"
-                :show-jump-buttons="true"
+                :show-ending-buttons="true"
               />
             </div>
             
