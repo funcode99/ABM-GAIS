@@ -207,7 +207,7 @@ const addItem = async () => {
         id_warehouse: selectedWarehouse.value,
         remarks: remark.value,
         id_item: itemNames.value,
-        id_brand: selectedBrand.value,
+        id_brand: selectedBrand.value ? selectedBrand.value : "",
         id_uom: selectedUOM.value,
         qty: alertQuantity.value,
         nameWarehouse: warehouseName.value,
@@ -220,6 +220,7 @@ const addItem = async () => {
       itemsTable.value.map((element) => {
         if (itemNames.value == element.id_item) {
           element.qty = alertQuantity.value;
+          element.remarks = remark.value
         }
       });
     }
@@ -258,7 +259,7 @@ const save = async () => {
     const payload = {
       id_company: selectedCompany.value,
       id_site: selectedSite.value,
-      remarks: "",
+      remarks: remark.value,
       array_detail: itemsTable.value,
     };
     let api =

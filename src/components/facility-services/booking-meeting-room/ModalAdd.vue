@@ -5,10 +5,12 @@ import Multiselect from "@vueform/multiselect";
 import { useReferenceFetchResult } from "@/stores/fetch/reference.js";
 const referenceFetch = useReferenceFetchResult();
 
-import { ref, onMounted, watch, watchEffect } from "vue";
+import { ref, onMounted, watch, watchEffect, computed } from "vue";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
+import moment from "moment";
 import { useRouter } from "vue-router";
+import icondanger from "@/assets/icon-danger-circle.png";
 
 const props = defineProps({
   status: String,
@@ -46,7 +48,8 @@ let floor = ref("");
 let link = ref("");
 let participant = ref([]);
 let capacity = ref("");
-let date = ref("");
+let start_date = ref("");
+let end_date = ref("");
 let time = ref("");
 let itemsId = 0;
 let title = ref("");
@@ -55,10 +58,40 @@ let startTime = ref({ hours: 0, minutes: 0 });
 let endTime = ref({ hours: 0, minutes: 0 });
 let tempTime = ref([]);
 let isLoading = ref(false);
-const rowClass = "flex justify-between px-6 items-center gap-2";
+let Company = ref("");
+let Site = ref("");
+let selectedCompany = ref("");
+let selectedSite = ref("");
+let is_online_meeting = ref(false);
+let is_recurrence = ref(false);
+let external = ref("");
+let reccurence = ref("");
+let disabledDates = ref([]);
+const selectedImage = ref(null);
+let filename = ref(null);
+
+const listReccurence = ["Daily", "Weekly", "Monthly", "Yearly"];
+
+const rowClass = "grid grid-cols-2 px-6 items-center gap-2";
 const colClass = "mb-6 w-full";
 const inputClass =
   "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+
+const format_date = (type) => {
+  if (type === "monthly") {
+    const day = start_date.value.getDate();
+    const month = end_date.value.getMonth() + 1;
+    const year = end_date.value.getFullYear();
+    return `${day}/${month}/${year}`;
+  } else if (type === "yearly") {
+    const day = start_date.value.getDate();
+    const month = start_date.value.getMonth() + 1;
+    const year = end_date.value.getFullYear();
+    return `${day}/${month}/${year}`;
+  } else {
+    return end_date.value;
+  }
+};
 
 // FETCH DATA
 const fetchEmployee = async (query) => {
@@ -109,7 +142,7 @@ const fetchDataById = async () => {
   //   participant.value = dataForm.value.participant;
   tempDate.value[0] = dataForm.value.start_date;
   tempDate.value[1] = dataForm.value.end_date;
-  date.value = tempDate.value;
+  start_date.value = tempDate.value;
   startTime.value.hours = dataForm.value.start_time.split(":")[0];
   startTime.value.minutes = dataForm.value.start_time.split(":")[1];
   endTime.value.hours = dataForm.value.end_time.split(":")[0];
@@ -120,21 +153,62 @@ const fetchDataById = async () => {
 
   const api = await Api.get(`employee/get`);
   listEmployee.value = api.data.data;
-
-  //   let numberArray = [];
-
-  //   if (dataForm.value.participant.includes(",")) {
-  //     participant.value = dataForm.value.participant.split(",");
-  //     participant.value.forEach((ele) => numberArray.push(+ele));
-  //   } else {
-  //     numberArray.push(dataForm.value.participant)
-  //   }
-
   selectedEmployee.value = dataForm.value.participant;
+};
+
+const fetchGetCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get");
+  Company.value = res.data.data;
+};
+
+const fetchGetCompanyID = async (id_company) => {
+  changeCompany(id_company);
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/company/get/${id_company}`);
+  Company.value = res.data.data;
+  selectedCompany.value = id_company;
+};
+
+const changeCompany = async (id_company) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  Site.value = res.data.data;
+  for (let index = 0; index < res.data.data.length; index++) {
+    const element = res.data.data[index];
+    if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
+      selectedSite.value = element.id;
+    }
+  }
 };
 // END
 
+const onFileSelected = (event) => {
+  if (event.target.files[0].size >= 3000000) {
+    Swal.fire({
+      html: "<b>Max File is 3MB</b>",
+      timer: 2000,
+      timerProgressBar: true,
+      position: "top-end",
+      background: "#EA5455",
+      color: "#ffffff",
+      showCancelButton: false,
+      showConfirmButton: false,
+      width: "300px",
+    });
+  } else {
+    const file = event.target.files[0];
+
+    selectedImage.value = file ? file : null;
+    filename.value = file.name;
+  }
+};
+
 const saveForm = async () => {
+  external.value = external.value != "" ? external.value.split(/\s*,\s*/) : [];
   const payload = {
     id_company: id_company,
     id_site: site_local,
@@ -143,23 +217,28 @@ const saveForm = async () => {
     title: title.value,
     capacity: capacity.value,
     floor: floor.value,
+    is_online_meeting: is_online_meeting.value,
     link: link.value,
     participant: selectedEmployee.value,
-    start_date: date.value ? date.value[0] : "",
-    end_date: date.value ? date.value[1] : "",
+    start_date: start_date.value,
+    end_date: format_date(reccurence.value.toLowerCase()),
     start_time: time.value
       ? time.value[0].hours + ":" + time.value[0].minutes
       : "",
     end_time: time.value
       ? time.value[1].hours + ":" + time.value[1].minutes
       : "",
+    external: external.value,
+    is_recurrence: is_recurrence.value,
+    reccurence: reccurence.value.toLowerCase(),
+    attachment: selectedImage.value,
   };
-
-  if (type.value == "add") {
-    save(payload);
-  } else if (type.value == "edit" || type.value == "view") {
-    edit(payload);
-  }
+  
+    if (type.value == "add") {
+      save(payload);
+    } else if (type.value == "edit" || type.value == "view") {
+      edit(payload);
+    }
 };
 
 const edit = async (payload) => {
@@ -209,15 +288,14 @@ const save = async (payload) => {
     });
 };
 
-onMounted(() => {
-  fetchMeetingRoom();
-  if (dataForm.value) {
-    fetchDataById();
-
-    getDetailRoom();
+const getWeekly = async () => {
+  disabledDates.value = [];
+  for (let i = 0; i <= 6; i++) {
+    if (start_date.value.getDay() != i) {
+      disabledDates.value.push(i);
+    }
   }
-  //   fetchEmployee();
-});
+};
 
 const close = () => {
   remarks.value = "";
@@ -227,10 +305,14 @@ const close = () => {
   floor.value = "";
   link.value = "";
   participant.value = "";
-  date.value = "";
+  start_date.value = "";
   time.value = "";
   selectedEmployee.value = [];
   emits("close");
+};
+
+const fetchCondition = async () => {
+  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
 };
 
 watchEffect((newValue) => {
@@ -250,12 +332,22 @@ watch(
     deep: true,
   }
 );
+
+onMounted(() => {
+  fetchMeetingRoom();
+  fetchCondition();
+  if (dataForm.value) {
+    fetchDataById();
+    getDetailRoom();
+  }
+  //   fetchEmployee();
+});
 </script>
 
 <template>
   <input type="checkbox" id="booking_modal" class="modal-toggle" />
-  <div class="modal min-h-[350px]">
-    <div class="modal-box relative h-[85vh]">
+  <div class="modal">
+    <div class="modal-dialog bg-white w-3/5 rounded-2xl">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="close"
@@ -269,19 +361,75 @@ watch(
           Booking Meeting Room
         </p>
       </nav>
-      <main class="modal-box-inner pb-5 h-full">
+
+      <main class="modal-box-inner pb-5">
+        <div
+          class="flex flex-wrap gap-2 justify-start items-center px-5 pb-5 ma-5"
+        >
+          <img :src="icondanger" class="w-5 h-5" />
+          <p class="font-JakartaSans font-semibold text-lg">Requestor Info</p>
+        </div>
+
+        <div class="grid grid-cols-2 px-6 items-center gap-2">
+          <div class="mb-4 w-full">
+            <label
+              for="company"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Company<span class="text-red">*</span></label
+            >
+            <select
+              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              required
+              v-model="selectedCompany"
+              @change="changeCompany(selectedCompany)"
+            >
+              <option disabled selected>Company</option>
+              <option
+                v-for="(company, i) in Company"
+                :key="i"
+                :value="company.id"
+              >
+                {{ company.company_name }}
+              </option>
+            </select>
+          </div>
+          <div class="mb-4 w-full">
+            <label
+              for="site"
+              class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Site<span class="text-red">*</span></label
+            >
+            <select
+              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              required
+              v-model="selectedSite"
+              @change="changeSite(selectedSite)"
+            >
+              <option disabled selected>Site</option>
+              <option v-for="(site, i) in Site" :key="i" :value="site.id">
+                {{ site.site_name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2 justify-start items-center p-5 ma-5">
+          <img :src="icondanger" class="w-5 h-5" />
+          <p class="font-JakartaSans font-semibold text-lg">Booking Info</p>
+        </div>
+
         <div :class="rowClass">
           <div :class="colClass">
             <input type="hidden" name="idItem" v-model="itemsId" />
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Title<span class="text-red">*</span></label
+              >Subject<span class="text-red">*</span></label
             >
             <input
               v-model="title"
               type="text"
               name="item"
               :class="inputClass"
-              placeholder="Item"
+              placeholder="Subject"
               :disabled="props.readOnly"
               required
             />
@@ -302,8 +450,6 @@ watch(
               </option>
             </select>
           </div>
-        </div>
-        <div :class="rowClass">
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Floor<span class="text-red">*</span></label
@@ -332,20 +478,19 @@ watch(
               disabled
             />
           </div>
-        </div>
-        <div :class="rowClass">
           <div :class="colClass">
             <input type="hidden" name="idItem" v-model="itemsId" />
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Date<span class="text-red">*</span></label
             >
             <VueDatePicker
-              v-model="date"
-              range
+              v-model="start_date"
               :enable-time-picker="false"
               placeholder="Select Date"
               :disabled="props.readOnly"
               :min-date="new Date()"
+              auto-apply
+              @update:model-value="getWeekly"
             />
           </div>
           <div :class="colClass">
@@ -362,11 +507,32 @@ watch(
               placeholder="Select Time"
             />
           </div>
-        </div>
-        <div :class="rowClass">
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Participant<span class="text-red">*</span></label
+              >Online Meetings<span class="text-red">*</span></label
+            >
+            <input
+              type="checkbox"
+              class="toggle toggle-primary"
+              v-model="is_online_meeting"
+            />
+          </div>
+          <div :class="colClass" v-if="is_online_meeting">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Link<span class="text-red">*</span></label
+            >
+            <input
+              v-model="link"
+              name="link"
+              :class="inputClass"
+              placeholder="Generate by System"
+              required
+              disabled
+            />
+          </div>
+          <div :class="colClass">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Participant</label
             >
             <Multiselect
               v-model="selectedEmployee"
@@ -404,26 +570,113 @@ watch(
           </div>
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Link</label
+              >External Participant</label
             >
             <input
-              v-model="link"
-              type="text"
+              v-model="external"
               name="link"
               :class="inputClass"
-              placeholder="Link"
               :disabled="props.readOnly"
+              placeholder="External Participant"
               required
             />
           </div>
-        </div>
-        <div :class="rowClass">
+          <div :class="colClass">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Reccurence<span class="text-red">*</span></label
+            >
+            <input
+              type="checkbox"
+              class="toggle toggle-primary"
+              v-model="is_recurrence"
+            />
+          </div>
+          <div :class="colClass" v-if="is_recurrence">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Reccurence<span class="text-red">*</span></label
+            >
+            <select
+              v-model="reccurence"
+              :class="inputClass"
+              :disabled="props.readOnly"
+            >
+              <option disabled selected>List Reccurence</option>
+              <option
+                v-for="data in listReccurence"
+                :key="data"
+                :value="data"
+                class="capitalize"
+              >
+                {{ data }}
+              </option>
+            </select>
+          </div>
+          <div :class="colClass" v-if="reccurence">
+            <input type="hidden" name="idItem" v-model="itemsId" />
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Occurs Until<span class="text-red">*</span></label
+            >
+            <VueDatePicker
+              v-if="reccurence == 'Daily'"
+              v-model="end_date"
+              :enable-time-picker="false"
+              placeholder="Select Date"
+              :disabled="props.readOnly"
+              :min-date="new Date()"
+              auto-apply
+            />
+            <VueDatePicker
+              v-else-if="reccurence == 'Weekly'"
+              v-model="end_date"
+              :enable-time-picker="false"
+              placeholder="Select Date"
+              :disabled="props.readOnly"
+              :disabled-week-days="disabledDates"
+              :min-date="new Date()"
+              auto-apply
+              hide-offset-dates
+            />
+            <VueDatePicker
+              v-else-if="reccurence == 'Monthly'"
+              v-model="end_date"
+              :enable-time-picker="false"
+              placeholder="Select Date"
+              :disabled="props.readOnly"
+              month-picker
+              auto-apply
+            />
+            <VueDatePicker
+              v-else-if="reccurence == 'Yearly'"
+              v-model="end_date"
+              :enable-time-picker="false"
+              placeholder="Select Date"
+              :disabled="props.readOnly"
+              year-picker
+              auto-apply
+            />
+          </div>
+          <div :class="colClass">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Attachment (Optional)
+              <span class="text-slate-400 text-xs italic"
+                >Format file: jpg,jpeg,png,pdf,xlsx. Max file: 3MB</span
+              >
+            </label>
+            <input
+              type="file"
+              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+              placeholder="Attachment"
+              accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              @change="onFileSelected"
+            />
+          </div>
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Remarks</label
             >
             <textarea
-              class="textarea textarea-bordered w-max-[50%] h-[200px] resize-none"
+              rows="1"
+              class="textarea textarea-bordered resize-none"
               placeholder="Remarks"
               v-model="remarks"
               :disabled="props.readOnly"
@@ -481,8 +734,8 @@ watch(
 }
 
 .modal-box-inner {
-  height: 650px;
-  --tw-scale-x: 0.9;
+  height: 450px;
+  --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
