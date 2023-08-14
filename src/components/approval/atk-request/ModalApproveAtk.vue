@@ -187,7 +187,10 @@ onBeforeMount(() => {
           <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
         </label>
         <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
-          Approval Confirmation
+          <span v-if="props.dataArr.status == 'Approve'"
+            >Delivery Confirmation</span
+          >
+          <span v-else>Approval Confirmation</span>
         </p>
       </nav>
 
@@ -223,7 +226,10 @@ onBeforeMount(() => {
               <th
                 class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
               >
-                Quantity Approve
+                <span v-if="props.dataArr.status == 'Approve'"
+                  >Quantity Delivery</span
+                >
+                <span v-else>Quantity Approve</span>
               </th>
               <th
                 class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -323,7 +329,8 @@ onBeforeMount(() => {
             class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
             @click="submit"
           >
-            Approve
+            <span v-if="props.dataArr.status == 'Approve'">Delivery</span>
+            <span v-else>Approve</span>
           </button>
         </div>
       </div>
