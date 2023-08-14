@@ -1,24 +1,24 @@
 <script setup>
-import modalHeader from "@/components/modal/modalHeader.vue";
-import modalFooter from "@/components/modal/modalFooter.vue";
+import modalHeader from "@/components/modal/modalHeader.vue"
+import modalFooter from "@/components/modal/modalFooter.vue"
 
-import { Modal } from "usemodal-vue3";
-import Swal from "sweetalert2";
-import Api from "@/utils/Api";
+import { Modal } from "usemodal-vue3"
+import Swal from "sweetalert2"
+import Api from "@/utils/Api"
 
-import { ref, watch, onBeforeMount } from "vue";
+import { ref, watch, onBeforeMount } from "vue"
 
-const emits = defineEmits(["unlockScrollbar", "approvaldelegation-saved"]);
+const emits = defineEmits(["unlockScrollbar", "approvaldelegation-saved"])
 
-let Delegator = localStorage.getItem("username");
-let selectedDelegateTo = ref("DelegateTo");
-let DelegateTo = ref("");
-const DateStart = ref();
-const DateEnd = ref();
+let Delegator = localStorage.getItem("username")
+let selectedDelegateTo = ref("DelegateTo")
+let DelegateTo = ref("")
+const DateStart = ref()
+const DateEnd = ref()
 
-let isVisible = ref(false);
-let modalPaddingHeight = "25vh";
-let isAdding = ref(false);
+let isVisible = ref(false)
+let modalPaddingHeight = "25vh"
+let isAdding = ref(false)
 
 const resetInput = () => {
   selectedDelegateTo.value = "";

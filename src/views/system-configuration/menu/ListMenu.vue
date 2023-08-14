@@ -170,6 +170,7 @@ const callEditApi = async () => {
       sort: formEditState.menu.sort,
       parent_id: formEditState.menu.parentId,
       use_sequence: formEditState.menu.sequence,
+      code_sequence: formEditState.menu.sequenceCode,
       id_status_menu: formEditState.menu.idStatusMenu,
       id_company: formEditState.menu.companyId,
     });

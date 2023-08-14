@@ -11,7 +11,7 @@
   import { useFormEditStore } from '@/stores/sysconfig/edit-modal.js'
   import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
   import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
-  let formState = useFormEditStore()
+  let formEditState = useFormEditStore()
   const referenceFetch = useReferenceFetchResult()
   const sysconfigFetch = useSysconfigFetchResult()
 
@@ -68,14 +68,15 @@
           sequenceCode.value = null
         }
 
-        formState.menu.menuName = menuName.value
-        formState.menu.sort = sort.value
-        formState.menu.sequence = sequenceCode.value
-        formState.menu.url = url.value
-        formState.menu.icon = file.value
-        formState.menu.idStatusMenu = idStatusMenu.value
-        formState.menu.companyId = companyIdArray.value
-        formState.menu.parentId = ParentId.value
+        formEditState.menu.menuName = menuName.value
+        formEditState.menu.sort = sort.value
+        formEditState.menu.sequence = sequence.value
+        formEditState.menu.sequenceCode = sequenceCode.value
+        formEditState.menu.url = url.value
+        formEditState.menu.icon = file.value
+        formEditState.menu.idStatusMenu = idStatusMenu.value
+        formEditState.menu.companyId = companyIdArray.value
+        formEditState.menu.parentId = ParentId.value
 
         emits('changeMenu')
 

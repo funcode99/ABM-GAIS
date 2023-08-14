@@ -3,6 +3,8 @@
   import closeEye from '@/assets/eye-off.png'
   import openEye from '@/assets/eye.png'
 
+  import Swal from "sweetalert2"
+
   import { PublicClientApplication } from '@azure/msal-browser'
   import { useMSALStore } from '@/stores/msal'
 
@@ -54,17 +56,16 @@
 
       } catch (error) {
           console.log(error)
-          if (error?.response?.status === 400) {
 
-              // router.push('/registration')
-          }
-          else {
-              // store.commit('isLoading', false);
-              // const toast = useToast();
-              // toast.error(error?.response?.data?.message, {
-              //     position: 'top-center',
-              //     timeout: 2000
-              // });
+          Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        })
+
+          if (error?.response?.status === 400) {
           }
       }
 
