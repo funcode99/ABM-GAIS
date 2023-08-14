@@ -388,7 +388,7 @@ watchEffect(() => {
                     'is-disabled': disabled,
                   }"
                 >
-                  {{ option.username }}
+                  {{ option.email }}
                   <span
                     v-if="!disabled"
                     class="multiselect-tag-remove"
@@ -401,11 +401,11 @@ watchEffect(() => {
           </div>
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Reccurence<span class="text-red">*</span></label
+              >Facility<span class="text-red">*</span></label
             >
             <Multiselect
               v-model="facility"
-              placeholder="Select Reccurence"
+              placeholder="Select Facility"
               mode="tags"
               track-by="name"
               label="name"

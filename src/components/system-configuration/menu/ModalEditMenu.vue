@@ -329,7 +329,7 @@ const inputStylingClass =
             for="url"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
           >
-            URL Approval<span class="text-red-star">*</span>
+            URL Approval
           </label>
           <input
             :class="inputStylingClass"
@@ -338,7 +338,6 @@ const inputStylingClass =
             type="text"
             placeholder="URL"
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
           />
         </div>
 
