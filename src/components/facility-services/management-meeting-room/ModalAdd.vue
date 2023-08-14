@@ -36,7 +36,7 @@ let floor = ref("");
 let available_status = ref("");
 let name_meeting_room = ref("");
 let capacity = ref("");
-let fasilitas = ref([]);
+let facility = ref([]);
 let approver = ref([]);
 let is_approval = ref(false);
 let err_messages = ref("");
@@ -120,7 +120,7 @@ const fetchEmployee = async (query) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   if (query) {
-    await Api.get(`employee/get_by_keyword`, { params: payload }).then(
+    await Api.get(`site/get_user_site/${id_site.value}`, { params: payload }).then(
       (res) => {
         listEmployee.value = res.data.data;
         isLoading.value = false;
@@ -145,7 +145,7 @@ const saveForm = async () => {
     capacity: capacity.value,
     floor: floor.value,
     available_status: available_status.value,
-    fasilitas: fasilitas.value,
+    facility: facility.value,
     is_approval: is_approval.value,
     approver: is_approval.value ? approver.value : []
   };
@@ -405,7 +405,7 @@ watchEffect(() => {
               >Reccurence<span class="text-red">*</span></label
             >
             <Multiselect
-              v-model="fasilitas"
+              v-model="facility"
               placeholder="Select Reccurence"
               mode="tags"
               track-by="name"
