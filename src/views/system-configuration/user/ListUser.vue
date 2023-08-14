@@ -84,8 +84,13 @@
     }
 
     const onChangePageCustom = () => {
-      paginateIndex.value = showingValueDuplicate.value - 1
-      showingValue.value = showingValueDuplicate.value
+      if(showingValueDuplicate.value > lastPage.value) {
+        paginateIndex.value = lastPage.value - 1
+        showingValue.value = lastPage.value
+      } else {
+        paginateIndex.value = showingValueDuplicate.value - 1
+        showingValue.value = showingValueDuplicate.value
+      }
       fetch()
     }
 
@@ -401,6 +406,8 @@
 
     const inputStylingClass = 'py-2 px-2 w-20 text-center border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm font-JakartaSans font-semibold text-base'
 
+let coeg = ref(0)
+
 </script>
 
 
@@ -414,8 +421,9 @@
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen content mt-[115px]">
 
+      
       <Sidebar class="flex-none" />
-
+      
       <tableContainer>
 
         <TableTopBar 
@@ -465,6 +473,8 @@
 
                   </tr>
                 </thead>
+
+                {{ deleteArray }}
 
                 <tbody>
 
@@ -599,11 +609,16 @@
               <div class="flex gap-5">
                 
                 <div class="flex gap-2 items-center">
+                  <label for="pagination-sequence">
+
+                  </label>
                   <input
+                    id="pagination-sequence"
                     v-model="showingValueDuplicate"
                     type="number" 
                     :class="inputStylingClass"
                     @keyup.enter="onChangePageCustom"
+                    :max="lastPage"
                   />
 
                   of
