@@ -87,7 +87,12 @@
       if(showingValueDuplicate.value > lastPage.value) {
         paginateIndex.value = lastPage.value - 1
         showingValue.value = lastPage.value
-      } else {
+      } 
+      else if (showingValueDuplicate.value < 1) {
+        paginateIndex.value = 0
+        showingValue.value = 1
+      }
+      else {
         paginateIndex.value = showingValueDuplicate.value - 1
         showingValue.value = showingValueDuplicate.value
       }

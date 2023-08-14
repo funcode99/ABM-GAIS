@@ -30,9 +30,13 @@ const deleteCheckedArray = (deleteArray, endpointName, sortedData, fetchFunction
         if (result.isConfirmed) {
 
           if(additionalEndpoint) {
-            Api.delete(`/${endpointName}/delete_data_${additionalEndpoint}/${deleteArray.value}`)
+            try {
+              Api.delete(`/${endpointName}/delete_data_${additionalEndpoint}/[${deleteArray.value}]`)
+            } catch (error) {
+              
+            }
           } else {
-            Api.delete(`/${endpointName}/delete_data/${deleteArray.value}`)
+            Api.delete(`/${endpointName}/delete_data/[${deleteArray.value}]`)
           }
 
         // deleteArray.value.map((item) => {
