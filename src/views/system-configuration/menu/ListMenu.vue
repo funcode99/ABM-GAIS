@@ -165,7 +165,7 @@ const callEditApi = async () => {
       menu: formEditState.menu.menuName,
       description: "kosong",
       url: formEditState.menu.url,
-      url_view: formEditState.menu.url,
+      url_view: formEditState.menu.urlView,
       icon: formEditState.menu.icon,
       sort: formEditState.menu.sort,
       parent_id: formEditState.menu.parentId,
@@ -427,6 +427,7 @@ const fetchMenuStatusUtilsHelper = () => {
                         data.code_sequence,
                         data.icon_path,
                         data.use_sequence,
+                        data.url_view,
                       ]"
                     />
                     <button @click="deleteData(data.id)">
