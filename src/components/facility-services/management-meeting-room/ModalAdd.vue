@@ -1,11 +1,10 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import iconPlus from "@/assets/navbar/icon_plus.svg";
-import { ref, onBeforeMount, computed, reactive, onMounted } from "vue";
+import { ref, watchEffect, onMounted } from "vue";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
-import { Modal } from "usemodal-vue3";
-import { useRouter } from "vue-router";
+import Multiselect from "@vueform/multiselect";
 
 const props = defineProps({
   status: String,
@@ -20,12 +19,15 @@ const listStatus = [
   { id: 2, title: "Unavailable" },
 ];
 
+let listEmployee = ref([]);
+let detailEmployee = ref([]);
 let listCompany = ref([]);
 let listSite = ref([]);
 let dataArr = ref([]);
 
 let type = ref(props.status);
 let idItem = ref(props.id);
+let isLoading = ref(false);
 
 let id_company = ref("");
 let id_site = ref("");
@@ -34,12 +36,20 @@ let floor = ref("");
 let available_status = ref("");
 let name_meeting_room = ref("");
 let capacity = ref("");
-let itemsId = 0;
-
-let localIdSite = ref("");
+let facility = ref([]);
+let approver = ref([]);
+let is_approval = ref(false);
+let err_messages = ref("");
 let selectSite = ref(true);
 
-const rowClass = "flex justify-between px-6 items-center gap-2";
+const listFasilitis = [
+  { id: 1, name: "Projector" },
+  { id: 2, name: "TV" },
+  { id: 3, name: "Speaker" },
+  { id: 4, name: "WebCam" },
+  { id: 5, name: "Jabra" },
+];
+const rowClass = "grid grid-cols-2 px-6 items-center gap-2";
 const colClass = "mb-6 w-full";
 const inputClass =
   "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
@@ -99,7 +109,26 @@ const fetchDataById = async (id) => {
   name_meeting_room.value = dataArr.value.name_meeting_room;
   available_status.value = dataArr.value.available_status;
   capacity.value = dataArr.value.capacity;
+  facility.value = dataArr.value.facility;
+  is_approval.value = dataArr.value.is_approval;
+  approver.value = dataArr.value.approver;
   fetchSite(id_company.value);
+};
+
+const fetchEmployee = async (query) => {
+  let payload = {
+    search: query,
+    filterRole: 91, //secretary
+  };
+  isLoading.value = true;
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  await Api.get(`users/${id_site.value}`, {
+    params: payload,
+  }).then((res) => {
+    listEmployee.value = res.data.data;
+    isLoading.value = false;
+  });
 };
 // END
 
@@ -109,13 +138,15 @@ const generateNumber = async () => {
 
 const saveForm = async () => {
   const payload = {
-    code_meeting_room: code_meeting_room.value,
     id_company: id_company.value,
     id_site: id_site.value,
     name_meeting_room: name_meeting_room.value,
     capacity: capacity.value,
     floor: floor.value,
     available_status: available_status.value,
+    facility: facility.value,
+    is_approval: is_approval.value,
+    approver: is_approval.value ? approver.value : [""],
   };
   if (type.value == "add") {
     save(payload);
@@ -125,34 +156,52 @@ const saveForm = async () => {
 };
 
 const edit = async (payload) => {
-  const api = await Api.post(
-    `master_meeting_room/update_data/${idItem.value}`,
-    payload
-  );
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  if (api.data.success) {
-    close();
-  }
+  Api.post(`master_meeting_room/update_data/${idItem.value}`, payload)
+    .then((res) => {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      close();
+    })
+    .catch((error) => {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: error.response.data.error,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    });
 };
 
 const save = async (payload) => {
-  const api = await Api.post("master_meeting_room/store/", payload);
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  if (api.data.success) {
-    close();
-  }
+  Api.post("master_meeting_room/store/", payload)
+    .then((res) => {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      close();
+    })
+    .catch((error) => {
+      Object.keys(error.response.data.error).forEach(function (key, index) {
+        err_messages.value += error.response.data.error[key] + "\n";
+      });
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: err_messages.value,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    });
 };
 
 const fetchCondition = async () => {
@@ -161,6 +210,7 @@ const fetchCondition = async () => {
 };
 
 onMounted(() => {
+  fetchEmployee();
   fetchCondition();
   if (type.value == "edit" && idItem.value != 0) {
     fetchDataById(idItem.value);
@@ -177,12 +227,21 @@ const close = () => {
   available_status.value = "";
   emits("close");
 };
+
+watchEffect(() => {
+  listFasilitis.map((item) => {
+    item.value = parseInt(item.id);
+  });
+  listEmployee.value.map((item) => {
+    item.value = parseInt(item.id);
+  });
+});
 </script>
 
 <template>
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <div class="modal">
-    <div class="modal-box relative">
+    <div class="modal-dialog bg-white w-3/5">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="close"
@@ -243,34 +302,21 @@ const close = () => {
 
         <div :class="rowClass">
           <div :class="colClass">
-            <input type="hidden" name="idItem" v-model="itemsId" />
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >ID Meeting Room<span class="text-red">*</span></label
+              >Meeting Room Name<span class="text-red">*</span></label
             >
-            <div class="flex items-center w-full">
-              <input
-                v-model="code_meeting_room"
-                type="text"
-                name="item"
-                :class="inputClass"
-                placeholder="Item"
-                required
-                :disabled="type == 'edit' ? true : false"
-              />
-              <button
-                v-if="type == 'add'"
-                class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded"
-                type="button"
-                title="Generate Number"
-                @click="generateNumber"
-              >
-                <img :src="iconPlus" class="w-[10px] h-[10px]" />
-              </button>
-            </div>
+            <input
+              v-model="name_meeting_room"
+              type="text"
+              name="remarks"
+              :class="inputClass"
+              placeholder="Meeting Room Name"
+              required
+            />
           </div>
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Floor<span class="text-red">*</span></label
+              >Floor</label
             >
             <input
               v-model="floor"
@@ -281,19 +327,16 @@ const close = () => {
               required
             />
           </div>
-        </div>
-
-        <div :class="rowClass">
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Meeting Room Name</label
+              >Capacity<span class="text-red">*</span></label
             >
             <input
-              v-model="name_meeting_room"
-              type="text"
-              name="remarks"
+              v-model="capacity"
+              type="number"
+              name="capacity"
               :class="inputClass"
-              placeholder="Meeting Room Name"
+              placeholder="Capacity"
               required
             />
           </div>
@@ -312,21 +355,81 @@ const close = () => {
               </option>
             </select>
           </div>
-        </div>
-        <div :class="rowClass">
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Capacity<span class="text-red">*</span></label
+              >Approval<span class="text-red">*</span></label
             >
             <input
-              v-model="capacity"
-              type="number"
-              name="capacity"
-              :class="inputClass"
-              class="max-w-[50%]"
-              placeholder="Capacity"
-              required
+              type="checkbox"
+              class="toggle toggle-primary"
+              v-model="is_approval"
             />
+          </div>
+          <div :class="colClass" v-if="is_approval">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Approver<span class="text-red">*</span></label
+            >
+            <Multiselect
+              v-model="approver"
+              placeholder="Select Employee"
+              track-by="username"
+              label="username"
+              mode="tags"
+              :close-on-select="false"
+              :searchable="true"
+              :options="listEmployee"
+              :limit="10"
+              :loading="isLoading"
+              :hide-selected="true"
+              ><template v-slot:tag="{ option, handleTagRemove, disabled }">
+                <div
+                  class="multiselect-tag is-user"
+                  :class="{
+                    'is-disabled': disabled,
+                  }"
+                >
+                  {{ option.username }}
+                  <span
+                    v-if="!disabled"
+                    class="multiselect-tag-remove"
+                    @click="handleTagRemove(option, $event)"
+                  >
+                    <span class="multiselect-tag-remove-icon"></span>
+                  </span>
+                </div> </template
+            ></Multiselect>
+          </div>
+          <div :class="colClass">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Reccurence<span class="text-red">*</span></label
+            >
+            <Multiselect
+              v-model="facility"
+              placeholder="Select Reccurence"
+              mode="tags"
+              track-by="name"
+              label="name"
+              :close-on-select="false"
+              :searchable="true"
+              :options="listFasilitis"
+              :hide-selected="true"
+              ><template v-slot:tag="{ option, handleTagRemove, disabled }">
+                <div
+                  class="multiselect-tag is-user"
+                  :class="{
+                    'is-disabled': disabled,
+                  }"
+                >
+                  {{ option.name }}
+                  <span
+                    v-if="!disabled"
+                    class="multiselect-tag-remove"
+                    @click="handleTagRemove(option, $event)"
+                  >
+                    <span class="multiselect-tag-remove-icon"></span>
+                  </span>
+                </div> </template
+            ></Multiselect>
           </div>
         </div>
       </main>

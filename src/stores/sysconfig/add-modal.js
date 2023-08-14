@@ -6,11 +6,13 @@ export const useFormAddStore = defineStore('add-form', {
             menu: {
                 menuName: '',
                 url: '',
+                urlView: '',
+                urlApproval: '',
                 sequence: '',
                 sequenceCode: '',
                 icon: {},
                 sort: 1,
-                idStatusMenu: 0, 
+                idStatusMenu: 0,
                 parentId: 3,
                 companyId: null
             },
@@ -27,7 +29,7 @@ export const useFormAddStore = defineStore('add-form', {
                 idStatusMenu: 0
             },
             role: {
-                roleName : '',
+                roleName: '',
                 roleCode: ''
             },
             approval: {

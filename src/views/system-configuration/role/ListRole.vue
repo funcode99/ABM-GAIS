@@ -281,6 +281,7 @@
           @delete-selected-data="deleteCheckedArray()" 
           @increase-role="addRole" 
           @do-search="filteredItems" 
+          @reset-search="filteredItems"
           @change-showing="fillPageMultiplier"
         />
 
@@ -447,7 +448,7 @@
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
 

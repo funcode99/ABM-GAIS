@@ -295,6 +295,7 @@
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()"   
           @do-search="filteredItems" 
+          @reset-search="filteredItems"
           @increase-approver="addNewApprover" 
           @change-showing="fillPageMultiplier"
           @filter-table="filterTable"
@@ -475,7 +476,7 @@
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
           

@@ -109,7 +109,7 @@ const fetchNotifApproval = async (id) => {
   showingValueToApproval.value = instanceArrayApproval.to;
 };
 
-const readNotif = async (id, id_document) => {
+const readNotif = async (id, url) => {
   try {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -117,10 +117,10 @@ const readNotif = async (id, id_document) => {
   } catch (error) {
     console.error("Error while updating is_viewed:", error);
   }
-  router.push({ path: `/viewcashadvancenontravel/${id_document}` });
+  router.push({ path: `${url}` });
 };
 
-const readNotifApproval = async (id, id_document) => {
+const readNotifApproval = async (id, url) => {
   try {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -128,7 +128,7 @@ const readNotifApproval = async (id, id_document) => {
   } catch (error) {
     console.error("Error while updating is_viewed:", error);
   }
-  router.push({ path: `/viewapprovalcanontravel/${id_document}` });
+  router.push({ path: `${url}` });
 };
 
 onBeforeMount(() => {
@@ -222,7 +222,7 @@ const format_date = (value) => {
                   </td>
 
                   <td style="width: 10%">
-                    <button @click="readNotif(data.id, data.id_document)">
+                    <button @click="readNotif(data.id, data.url)">
                       <img :src="iconGoto" class="w-6 h-6" />
                     </button>
                   </td>
@@ -352,9 +352,7 @@ const format_date = (value) => {
                     {{ data.text }}
                   </td>
                   <td style="width: 10%">
-                    <button
-                      @click="readNotifApproval(data.id, data.id_document)"
-                    >
+                    <button @click="readNotifApproval(data.id, data.url)">
                       <img :src="iconGoto" class="w-6 h-6" />
                     </button>
                   </td>

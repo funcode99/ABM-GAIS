@@ -29,13 +29,18 @@ const deleteCheckedArray = (deleteArray, endpointName, sortedData, fetchFunction
 
         if (result.isConfirmed) {
 
-        deleteArray.value.map((item) => {
-            if(additionalEndpoint) {
-              Api.delete(`/${endpointName}/delete_data_${additionalEndpoint}/${item}`)
-            } else {
-              Api.delete(`/${endpointName}/delete_data/${item}`)
+          if(additionalEndpoint) {
+            try {
+              Api.delete(`/${endpointName}/delete_data_${additionalEndpoint}/[${deleteArray.value}]`)
+            } catch (error) {
+              
             }
-        })
+          } else {
+            Api.delete(`/${endpointName}/delete_data/[${deleteArray.value}]`)
+          }
+
+        // deleteArray.value.map((item) => {
+        // })
           
         Swal.fire({
               title: "Successfully",

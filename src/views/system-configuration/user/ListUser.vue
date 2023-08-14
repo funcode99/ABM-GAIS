@@ -74,11 +74,28 @@
     let to = ref(0)
     let totalData = ref(0)
     let perPage = ref(1)
+    let lastPage = ref(0)
 
     //for paginations
     const onChangePage = (pageOfItem) => {
       paginateIndex.value = pageOfItem - 1;
       showingValue.value = pageOfItem;
+      fetch()
+    }
+
+    const onChangePageCustom = () => {
+      if(showingValueDuplicate.value > lastPage.value) {
+        paginateIndex.value = lastPage.value - 1
+        showingValue.value = lastPage.value
+      } 
+      else if (showingValueDuplicate.value < 1) {
+        paginateIndex.value = 0
+        showingValue.value = 1
+      }
+      else {
+        paginateIndex.value = showingValueDuplicate.value - 1
+        showingValue.value = showingValueDuplicate.value
+      }
       fetch()
     }
 
@@ -274,6 +291,7 @@
         to.value = additionalData.value.to
         totalData.value = additionalData.value.total
         perPage.value = additionalData.value.per_page
+        lastPage.value = additionalData.value.last_page
 
       } catch(error) {
         responseStatus.value = error.response.status
@@ -300,7 +318,11 @@
       fetch()
     })
 
+    // computed is readonly
+    let showingValueDuplicate = ref(showingValue.value)
+
     watch(showingValue, () => {
+      showingValueDuplicate.value = showingValue.value
       filteredItems()
     })
 
@@ -387,6 +409,10 @@
         fetch()
     }
 
+    const inputStylingClass = 'py-2 px-2 w-20 text-center border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm font-JakartaSans font-semibold text-base'
+
+let coeg = ref(0)
+
 </script>
 
 
@@ -400,8 +426,9 @@
     <!-- sudah betul w-screen nya disini jadi gaada sisa space lagi -->
     <div class="flex w-screen content mt-[115px]">
 
+      
       <Sidebar class="flex-none" />
-
+      
       <tableContainer>
 
         <TableTopBar 
@@ -451,6 +478,8 @@
 
                   </tr>
                 </thead>
+
+                {{ deleteArray }}
 
                 <tbody>
 
@@ -581,15 +610,39 @@
               <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
                   Showing {{ from }} to {{ to }} of {{ totalData }}
               </p>
-              <vue-awesome-paginate
-                :total-items="totalData"
-                :items-per-page="parseInt(perPage)"
-                :on-click="onChangePage"
-                v-model="showingValue"
-                :max-pages-shown="4"
-                :show-breakpoint-buttons="false"
-                :show-jump-buttons="true"
-              />
+
+              <div class="flex gap-5">
+                
+                <div class="flex gap-2 items-center">
+                  <label for="pagination-sequence">
+
+                  </label>
+                  <input
+                    id="pagination-sequence"
+                    v-model="showingValueDuplicate"
+                    type="number" 
+                    :class="inputStylingClass"
+                    @keyup.enter="onChangePageCustom"
+                    :max="lastPage"
+                  />
+
+                  of
+
+                  {{ lastPage }}
+
+                </div>
+
+                <vue-awesome-paginate
+                  :total-items="totalData"
+                  :items-per-page="parseInt(perPage)"
+                  :on-click="onChangePage"
+                  v-model="showingValue"
+                  :max-pages-shown="4"
+                  :show-breakpoint-buttons="false"
+                  :show-ending-buttons="true"
+                />
+              </div>
+
             </div>
             
         </div>

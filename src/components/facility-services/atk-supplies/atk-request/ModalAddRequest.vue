@@ -85,13 +85,7 @@ const changeCompany = async (id_company) => {
       changeSite(element.id)
     }
   }
-}
-const fetchBrand = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get("/brand/")
-  Brand.value = res.data.data
-}
+};
 
 const fetItems = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"))
@@ -213,7 +207,7 @@ const addItem = async () => {
         id_warehouse: selectedWarehouse.value,
         remarks: remark.value,
         id_item: itemNames.value,
-        id_brand: selectedBrand.value,
+        id_brand: selectedBrand.value ? selectedBrand.value : "",
         id_uom: selectedUOM.value,
         qty: alertQuantity.value,
         nameWarehouse: warehouseName.value,
@@ -225,7 +219,8 @@ const addItem = async () => {
     } else {
       itemsTable.value.map((element) => {
         if (itemNames.value == element.id_item) {
-          element.qty = alertQuantity.value
+          element.qty = alertQuantity.value;
+          element.remarks = remark.value
         }
       })
     }
@@ -264,7 +259,7 @@ const save = async () => {
     const payload = {
       id_company: selectedCompany.value,
       id_site: selectedSite.value,
-      remarks: "",
+      remarks: remark.value,
       array_detail: itemsTable.value,
     }
     let api =
@@ -309,10 +304,8 @@ const reset = async () => {
 }
 
 onMounted(() => {
-  fetchCondition()
-  fetchUOM()
-  fetchBrand()
-
+  fetchCondition();
+  fetchUOM();
   if (props.status == "edit") {
     fetchDataEdit()
   }
@@ -461,26 +454,6 @@ onMounted(() => {
               </option>
             </select>
           </div>
-
-          <div class="mb-6 w-full" v-if="company_code != '8000'">
-            <label
-              for="uom"
-              class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Brand<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedBrand"
-              disabled="true"
-              style="background-color: #d3d3d3"
-            >
-              <option disabled selected>Brand</option>
-              <option v-for="(brand, i) in Brand" :key="i" :value="brand.id">
-                {{ brand.brand_name }}
-              </option>
-            </select>
-          </div>
           <div
             class="mb-6"
             :class="company_code != '8000' ? 'w-full' : 'w-[50%]'"
@@ -532,12 +505,6 @@ onMounted(() => {
                 </th>
                 <th
                   class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
-                  v-if="company_code != '8000'"
-                >
-                  Brand
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs text-center"
                 >
                   UOM
                 </th>
@@ -563,12 +530,6 @@ onMounted(() => {
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.qty }}
-                </td>
-                <td
-                  class="border border-[#B9B9B9] text-center"
-                  v-if="company_code != '8000'"
-                >
-                  {{ items.namaBrand }}
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
                   {{ items.namaUOM }}

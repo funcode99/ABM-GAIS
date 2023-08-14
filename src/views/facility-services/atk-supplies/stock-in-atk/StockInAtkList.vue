@@ -12,18 +12,21 @@ import icon_receive from "@/assets/icon-receive.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import gearicon from "@/assets/system-configuration-not-selected.png";
-import viewicon from "@/assets/eye.png"
+import viewicon from "@/assets/eye.png";
 
 import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue";
-
+import downloadIcon from "@/assets/download-template-icon.png";
+import importIcon from "@/assets/import-data-icon.png";
 // import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
-
+import { useRouter } from "vue-router";
 import { ref, onBeforeMount, computed } from "vue";
 import Api from "@/utils/Api";
 import { useSidebarStore } from "@/stores/sidebar.js";
 import Swal from "sweetalert2";
 import moment from "moment";
 const sidebar = useSidebarStore();
+const router = useRouter();
+const fileImport = ref("");
 
 //for sort & search
 const start_date = ref("");
@@ -377,6 +380,79 @@ const closeModal = () => {
     pageMultiplier.value
   );
 };
+
+const downloadTemplate = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  Api.get(`/stock_in/download_template`, {
+    responseType: "blob",
+  }).then((res) => {
+    let blob = new Blob([res.data], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    let link = document.createElement("a");
+    link.href = window.URL.createObjectURL(blob);
+    link.download = "Template Stock In.xlsx";
+    link.click();
+  });
+};
+
+const onFileSelected = (event) => {
+  if (event.target.files[0].size >= 3000000) {
+    Swal.fire({
+      html: "<b>Max File is 3MB</b>",
+      timer: 2000,
+      timerProgressBar: true,
+      position: "top-end",
+      background: "#EA5455",
+      color: "#ffffff",
+      showCancelButton: false,
+      showConfirmButton: false,
+      width: "300px",
+    });
+  } else {
+    const file = event.target.files[0];
+
+    fileImport.value = file ? file : null;
+  }
+};
+
+const importData = async () => {
+  if (fileImport.value) {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    Api.post(`/stock_in/import_data`, {
+      file: fileImport.value,
+    })
+      .then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        router.go();
+      })
+      .catch((error) => {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      });
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "File is Required",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+};
 </script>
 
 <template>
@@ -406,12 +482,60 @@ const closeModal = () => {
             </p>
 
             <div class="flex justify-between gap-4 items-center">
-              <button
-                class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
-              >
-                <img :src="gearicon" class="w-6 h-6" />
-              </button>
-
+              <div class="dropdown">
+                <button
+                  class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                >
+                  <img :src="gearicon" class="w-6 h-6" />
+                </button>
+                <ul
+                  tabindex="0"
+                  class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li>
+                    <label for="modal-import">
+                      <img :src="importIcon" class="w-6 h-6" /> Import
+                      Data</label
+                    >
+                  </li>
+                  <li @click="downloadTemplate">
+                    <a
+                      ><img :src="downloadIcon" class="w-6 h-6" />Download
+                      Template</a
+                    >
+                  </li>
+                </ul>
+              </div>
+              <input
+                type="checkbox"
+                id="modal-import"
+                class="modal-toggle z-[10]"
+              />
+              <div class="modal z-[10]">
+                <div class="modal-box">
+                  <h3 class="font-bold text-md">Import Data</h3>
+                  <div class="flex items-center py-5">
+                    <input
+                      type="file"
+                      class="file-input file-input-bordered w-full max-w-xs mr-3"
+                      @change="onFileSelected"
+                    />
+                    <label
+                      class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
+                      @click="importData"
+                      >Import</label
+                    >
+                  </div>
+                  <div class="modal-action">
+                    <label
+                      for="modal-import"
+                      class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red btn-md"
+                    >
+                      Cancel
+                    </label>
+                  </div>
+                </div>
+              </div>
               <label
                 @click="openModal('add', 0)"
                 for="my-modal-stock-in"
@@ -651,7 +775,10 @@ const closeModal = () => {
                       >
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/viewstockinatk/${data.id}`" v-if="data.status == 'Draft'">
+                      <router-link
+                        :to="`/viewstockinatk/${data.id}`"
+                        v-if="data.status == 'Draft'"
+                      >
                         <img :src="editicon" class="w-6 h-6" />
                       </router-link>
                       <router-link :to="`/viewstockinatk/${data.id}`" v-else>

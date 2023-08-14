@@ -9,6 +9,9 @@
     import fetchEmployeeByLoginUtils from '@/utils/Fetch/Reference/fetchEmployeeByLogin'
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
+    import { useRequestTripStore } from "@/stores/requesttrip.js"
+    const requestTrip = useRequestTripStore()
+
     const props = defineProps({
         isOpen: Boolean        
     })
@@ -91,9 +94,6 @@
     const inputStylingClass = 'w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
     const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 
-    const dateDeparture = ref(localStorage.getItem('dateDeparture'))
-    const dateArrival = ref(localStorage.getItem('dateArrival'))
-
 </script>
 
 <template>
@@ -153,9 +153,10 @@
                         <div :class="columnClass">
                             <div class="w-full">
                                 <label :class="labelStylingClass">
+                                    {{ dateDeparture }} {{ dateArrival }}
                                     Departure Date<span class="text-red-star">*</span>
                                 </label>
-                                <input type="date" :min="dateDeparture" :max="dateArrival" :class="inputStylingClass" v-model="departureDateAirlines" />
+                                <input type="date" :min="requestTrip.dateDeparture" :max="requestTrip.dateArrival" :class="inputStylingClass" v-model="departureDateAirlines" />
                             </div>
                         </div>
         
@@ -164,7 +165,7 @@
                                 <label class="block mb-2 font-JakartaSans font-medium text-sm">
                                 Return Date<span class="text-red-star">*</span>
                                 </label>
-                                <input type="date" :min="dateDeparture" :max="dateArrival" :class="inputStylingClass" v-model="returnDateAirlines" />
+                                <input type="date" :min="requestTrip.dateDeparture" :max="requestTrip.dateArrival" :class="inputStylingClass" v-model="returnDateAirlines" />
                             </div>
                         </div>
         
