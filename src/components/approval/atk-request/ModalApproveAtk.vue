@@ -51,7 +51,7 @@ const fetchDetailById = async (id) => {
 
     itemTable.value = res.data.data;
     itemTable.value.map((element, index) => {
-      element.total_stock = element.stock_available_wh;
+      element.total_stock = element.stock_real_wh;
       idWh.value[index] = element.id_warehouse;
       qtyApproved.value[index] = element.qty_approved;
       element.array_warehouse = get_wh.data.data[0].array_warehouse;
