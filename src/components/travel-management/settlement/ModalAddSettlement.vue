@@ -15,7 +15,7 @@ import moment from "moment"
 import { fetchCurrencyList } from "@/utils/Api/reference/currencydata.js"
 
 import fetchEmployeeByLoginUtils from "@/utils/Fetch/Reference/fetchEmployeeByLogin"
-import CurrencyInput from "../../atomics/CurrencyInput.vue"
+import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
 import Multiselect from "@vueform/multiselect"
 
 const router = useRouter()
@@ -131,7 +131,7 @@ const fetchTravel = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const api = await Api.get("/settlement/get_travel")
   instanceArray = api.data.data
-  listTravel.value = instanceArray?.filter(({ total }) => total)
+  listTravel.value = instanceArray
 }
 
 const fetchNonTravel = async () => {
@@ -164,6 +164,23 @@ const close = () => {
   emits("close")
 }
 
+const isEmptyDetail = (items) => {
+  console.log(items)
+  return items.some(
+    ({ attachment, frequency, detail_item_name, nominal_ca, nominal_real }) => {
+      if (
+        !attachment ||
+        !frequency ||
+        !detail_item_name ||
+        !nominal_ca ||
+        !nominal_real
+      ) {
+        return true
+      }
+    }
+  )
+}
+
 const nextStep = async (step) => {
   if (step == 0) {
     stepForm.value += 1
@@ -177,13 +194,14 @@ const nextStep = async (step) => {
     const api = await Api.get(`cash_advance/get_by_cash_id/${idItem.value}`)
     instanceArray = api.data.data
     detailItemData.value = instanceArray
-    detailItemData.value.map((elements) => {
+    detailItemData.value.forEach((elements) => {
+      console.log(elements)
       let data = {
         nominal_real: 0,
         nominal_ca: elements.nominal,
         attachment: "",
         frequency: elements.frequency,
-        item_name: elements.nama_item || elements.item_name,
+        detail_item_name: elements?.nama_item || elements?.item_name,
         currency_name: elements.currency_name,
         created_at: elements.created_at,
         cost_center_name: elements.cost_center_name,
@@ -195,6 +213,16 @@ const nextStep = async (step) => {
       tempItem.value.push(data)
     })
   } else {
+    if (isEmptyDetail(tempItem.value)) {
+      Swal.fire({
+        title: "Please check item details!",
+        text: "Item Details cannot empty or 0 value",
+        icon: "error",
+        showConfirmButton: true,
+      })
+      return
+    }
+
     const token = JSON.parse(localStorage.getItem("token"))
     Api.defaults.headers.common.Authorization = `Bearer ${token}`
     let payload = {
@@ -247,18 +275,17 @@ const nextStep = async (step) => {
 const addNewItem = (item) => {
   const default_item = {
     isFromCA: false,
-    detail_item_name: "",
     nominal_real: 0,
     nominal_ca: 0,
     attachment: "",
     frequency: 0,
-    item_name: "",
+    detail_item_name: "",
     currency_name: item.currency_name,
     cost_center_name: null,
     id_ca_detail: item.id || id_ca,
     total: null,
     cost_center_name: item.cost_center_name,
-    created_at: item.created_at
+    created_at: item.created_at,
   }
 
   tempItem.value.unshift({ ...default_item })
@@ -291,7 +318,6 @@ const addNewItem = (item) => {
           />
         </div>
       </div>
-
       <div v-if="stepForm == 0">
         <div class="flex flex-col items-center gap-3 mt-20">
           <div>
@@ -300,6 +326,7 @@ const addNewItem = (item) => {
               v-model="CAOption"
               :class="'w-[163px] mt-2 ' + inputStylingClass"
               @change="idItem = ''"
+              :disabled="employeeLoginData?.group_company_code == 'CKB'"
             >
               <option
                 v-for="data in listCAType"
@@ -420,6 +447,7 @@ const addNewItem = (item) => {
             <button
               class="btn bg-green capitalize border-none"
               @click="addNewItem(tempItem[0])"
+              v-if="CAOption == 1"
             >
               Add Item
             </button>
@@ -442,11 +470,14 @@ const addNewItem = (item) => {
                 <tr v-for="(data, index) in tempItem" :key="data.id">
                   <td style="min-width: 170px">
                     <input
+                      v-if="CAOption == 1"
                       type="text"
                       :class="inputStylingClass"
-                      v-model="data.item_name"
-                      :disabled="data?.isFromCA"
+                      v-model="data.detail_item_name"
                     />
+                    <!-- :disabled="data?.isFromCA" -->
+
+                    <div v-else>{{ data.detail_item_name }}</div>
                   </td>
                   <td>
                     <!-- {{
@@ -504,11 +535,16 @@ const addNewItem = (item) => {
                     /> -->
 
                     <CurrencyInput
+                      v-if="CAOption == 1"
                       v-model="data.nominal_ca"
                       :class="inputClass"
                       required
                     >
                     </CurrencyInput>
+
+                    <div v-else>
+                      {{ data.nominal_ca }}
+                    </div>
                   </td>
                   <td v-if="CAOption == '1'" style="min-width: 100px">
                     {{ format_price(data.nominal_ca * data.frequency) }}
@@ -523,11 +559,16 @@ const addNewItem = (item) => {
                     /> -->
 
                     <CurrencyInput
+                      v-if="CAOption == 1"
                       v-model="data.nominal_real"
                       :class="inputClass"
                       required
                     >
                     </CurrencyInput>
+
+                    <div v-else>
+                      {{ data.nominal_real }}
+                    </div>
                   </td>
                   <td>
                     <input
@@ -552,6 +593,10 @@ const addNewItem = (item) => {
                       </a>
                     </div> -->
                   </td>
+
+                  <td v-if="!data.isFromCA">
+                    <button class="btn btn-sm bg-error">delete</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -565,6 +610,7 @@ const addNewItem = (item) => {
           <label
             @click="close"
             class="btn bg-white text-base font-JakartaSans font-bold capitalize w-[141px] text-[#1F7793] border-[#1F7793]"
+            type="submit"
           >
             Cancel
           </label>
