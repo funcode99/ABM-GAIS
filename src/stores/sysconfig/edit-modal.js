@@ -12,6 +12,7 @@ export const useFormEditStore = defineStore('add-form', {
                 sequenceCode: '',
                 url: '',
                 urlView: '',
+                urlApproval: '',
                 icon: {},
                 companyId: null
             },

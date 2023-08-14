@@ -37,7 +37,8 @@ let filename = ref(props.formContent[3]);
 let sequence = ref();
 let sequenceCode = ref(props.formContent[7]);
 let ParentId = ref(props.formContent[5]);
-let urlApproval = ref(props.formContent[10]);
+let urlView = ref(props.formContent[10]);
+let urlApproval = ref(props.formContent[11]);
 
 let companyIdObject = ref(props.formContent[4]);
 let companyIdObjectKeys = ref(Object.values(companyIdObject.value));
@@ -76,7 +77,8 @@ const submitEdit = () => {
     formEditState.menu.idStatusMenu = idStatusMenu.value;
     formEditState.menu.companyId = companyIdArray.value;
     formEditState.menu.parentId = ParentId.value;
-    formEditState.menu.urlView = urlApproval.value;
+    formEditState.menu.urlView = urlView.value;
+    formEditState.menu.urlApproval = urlApproval.value;
 
     emits("changeMenu");
   } catch (error) {
@@ -90,7 +92,8 @@ const resetInput = () => {
   url.value = props.formContent[1];
   sort.value = props.formContent[2];
   filename.value = props.formContent[3];
-  urlApproval.value = props.formContent[10];
+  urlView.value = props.formContent[10];
+  urlApproval.value = props.formContent[11];
 };
 
 watch(isVisible, () => {
@@ -113,7 +116,6 @@ const inputStylingClass =
   "py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base";
 </script>
 
-<!-- komponen ini mendapat warisan styling dari komponen parent nya (listMenu) -->
 <template class="font-JakartaSans">
   <button @click="isVisible = !isVisible">
     <img :src="editIcon" alt="" />
@@ -142,24 +144,6 @@ const inputStylingClass =
               required
             />
           </div>
-
-          <!-- <div class="mb-3">
-            <label
-              for="url"
-              class="block mb-2 font-JakartaSans font-medium text-sm text-left"
-            >
-              URL<span class="text-red-star">*</span>
-            </label>
-            <input
-              id="url"
-              :class="inputStylingClass"
-              v-model="url"
-              type="text"
-              placeholder="Nama Menu"
-              class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-              required
-            />
-          </div> -->
 
           <div class="mb-3 flex flex-col">
             <label
@@ -309,7 +293,7 @@ const inputStylingClass =
             for="url"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
           >
-            URL View<span class="text-red-star">*</span>
+            URL<span class="text-red-star">*</span>
           </label>
           <input
             :class="inputStylingClass"
@@ -327,12 +311,30 @@ const inputStylingClass =
             for="url"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
           >
+            URL View<span class="text-red-star">*</span>
+          </label>
+          <input
+            :class="inputStylingClass"
+            v-model="urlView"
+            id="urlView"
+            type="text"
+            placeholder="URL"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+
+        <div class="py-2">
+          <label
+            for="url"
+            class="block mb-2 font-JakartaSans font-medium text-sm text-left"
+          >
             URL Approval<span class="text-red-star">*</span>
           </label>
           <input
             :class="inputStylingClass"
             v-model="urlApproval"
-            id="urlapproval"
+            id="urlApproval"
             type="text"
             placeholder="URL"
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
