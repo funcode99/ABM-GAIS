@@ -75,14 +75,14 @@ let classWaiting =
             <span v-if="data.code_status_doc == 9" class="font-bold"
               >Rejected By:
             </span>
-            <span v-else>Approved By:</span>
-            <span class="font-normal">{{ data.name_updated }}</span>
+            <span v-else>Approved by:</span>
+            <span class="font-normal">{{ data.name_approved }}</span>
           </p>
           <p class="mb-2">
             <span v-if="data.code_status_doc == 9" class="font-bold"
-              >Rejected At:
+              >Rejected at:
             </span>
-            <span v-else>Approved At:</span>
+            <span v-else>Approved at:</span>
             <span v-if="data.updated_at" class="font-normal">
               {{ format_date(data.updated_at.split(" ")[0]) }}
             </span>
