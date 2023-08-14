@@ -257,6 +257,8 @@ const addNewItem = (item) => {
     cost_center_name: null,
     id_ca_detail: item.id || id_ca,
     total: null,
+    cost_center_name: item.cost_center_name,
+    created_at: item.created_at
   }
 
   tempItem.value.unshift({ ...default_item })
@@ -439,12 +441,11 @@ const addNewItem = (item) => {
               <tbody>
                 <tr v-for="(data, index) in tempItem" :key="data.id">
                   <td style="min-width: 170px">
-                    <!-- {{ data.item_name }} -->
                     <input
                       type="text"
                       :class="inputStylingClass"
                       v-model="data.item_name"
-                      :disabled="item.isFromCA"
+                      :disabled="data?.isFromCA"
                     />
                   </td>
                   <td>
