@@ -129,7 +129,8 @@ const callApi = async () => {
     code_sequence: formState.menu.sequenceCode,
     description: "kosong",
     url: formState.menu.url,
-    url_view: formState.menu.urlApproval,
+    url_view: formState.menu.urlView,
+    url_approval: formState.menu.urlApproval,
     icon: formState.menu.icon,
     id_company: formState.menu.companyId,
   });
