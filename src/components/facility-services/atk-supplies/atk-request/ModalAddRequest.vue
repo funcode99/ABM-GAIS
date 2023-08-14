@@ -1,135 +1,135 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import icondanger from "@/assets/icon-danger-circle.png";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import { ref, onMounted, watch } from "vue";
-import Api from "@/utils/Api";
-import Swal from "sweetalert2";
-import { useRouter } from "vue-router";
+import iconClose from "@/assets/navbar/icon_close.svg"
+import icondanger from "@/assets/icon-danger-circle.png"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import { ref, onMounted, watch } from "vue"
+import Api from "@/utils/Api"
+import Swal from "sweetalert2"
+import { useRouter } from "vue-router"
 
 const props = defineProps({
   status: String,
   id: Number,
   dataItem: [Object, Array],
   dataArr: [Object, Array],
-});
+})
 
-const router = useRouter();
+const router = useRouter()
 
-let selectedCompany = ref("");
-let selectedSite = ref("");
-let selectedWarehouse = ref("");
-let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")));
-let selectedUOM = ref("UOM");
-let selectedBrand = ref("");
-let brandName = ref("");
-let warehouseName = ref("");
-let namaItem = ref("");
-let uomName = ref("");
-let Company = ref("");
-let Site = ref("");
-let Item = ref("");
-let Warehouse = ref("");
-let UOM = ref("");
-let idItems = ref("");
-let alertQuantity = ref("");
-let Brand = ref("");
-let itemNames = ref("");
-let codeItem = ref("");
-let remark = ref("");
-const itemsTable = ref([]);
-let disableCompany = ref(false);
-let disableSite = ref(false);
-let addModal = ref(false);
-const company_code = JSON.parse(localStorage.getItem("company_code"));
+let selectedCompany = ref("")
+let selectedSite = ref("")
+let selectedWarehouse = ref("")
+let selectedEmployee = ref(JSON.parse(localStorage.getItem("id_employee")))
+let selectedUOM = ref("UOM")
+let selectedBrand = ref("")
+let brandName = ref("")
+let warehouseName = ref("")
+let namaItem = ref("")
+let uomName = ref("")
+let Company = ref("")
+let Site = ref("")
+let Item = ref("")
+let Warehouse = ref("")
+let UOM = ref("")
+let idItems = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let codeItem = ref("")
+let remark = ref("")
+const itemsTable = ref([])
+let disableCompany = ref(false)
+let disableSite = ref(false)
+let addModal = ref(false)
+const company_code = JSON.parse(localStorage.getItem("company_code"))
 
-const emits = defineEmits(["unlockScrollbar", "close"]);
+const emits = defineEmits(["unlockScrollbar", "close"])
 const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/company/get")
+  Company.value = res.data.data
+}
 
 const fetchGetCompanyID = async (id_company) => {
-  changeCompany(id_company);
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
-  Company.value = res.data.data;
-  selectedCompany.value = id_company;
-};
+  changeCompany(id_company)
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_company}`)
+  Company.value = res.data.data
+  selectedCompany.value = id_company
+}
 
 const fetchUOM = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/uom");
-  UOM.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/uom")
+  UOM.value = res.data.data
+}
 
 const changeCompany = async (id_company) => {
   disableCompany.value =
-    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false;
+    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false
   disableSite.value =
-    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false;
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
+    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/site/get_by_company/${id_company}`)
   // console.log(res)
-  Site.value = res.data.data;
+  Site.value = res.data.data
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
-      selectedSite.value = element.id;
-      changeSite(element.id);
+      selectedSite.value = element.id
+      changeSite(element.id)
     }
   }
-};
+}
 const fetchBrand = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/brand/");
-  Brand.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/brand/")
+  Brand.value = res.data.data
+}
 
 const fetItems = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get_by_site/${id_site}`);
-  Item.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/management_atk/get_by_site/${id_site}`)
+  Item.value = res.data.data
+}
 
 const changeUomBrand = async (id_item) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get/${id_item}`);
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/management_atk/get/${id_item}`)
 
-  selectedBrand.value = res.data.data[0].id_brand;
-  selectedUOM.value = res.data.data[0].id_uom;
-};
+  selectedBrand.value = res.data.data[0].id_brand
+  selectedUOM.value = res.data.data[0].id_uom
+}
 
 const changeSite = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  Warehouse.value = res.data.data;
-  fetItems(id_site);
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`)
+  Warehouse.value = res.data.data
+  fetItems(id_site)
+}
 //get kondisi local storage
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
-};
+  const id_company = JSON.parse(localStorage.getItem("id_company"))
+  const id_role = JSON.parse(localStorage.getItem("id_role"))
+  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company)
+}
 
 const fetchDataEdit = async () => {
-  itemsTable.value = [];
+  itemsTable.value = []
   if (props.dataItem.length <= 1) {
-    itemNames.value = props.dataItem[0].id_item;
-    changeUomBrand(itemNames.value);
-    remark.value = props.dataItem[0].remark;
-    alertQuantity.value = props.dataItem[0].qty;
+    itemNames.value = props.dataItem[0].id_item
+    changeUomBrand(itemNames.value)
+    remark.value = props.dataItem[0].remark
+    alertQuantity.value = props.dataItem[0].qty
   }
 
   props.dataItem.map((elements) => {
@@ -149,14 +149,14 @@ const fetchDataEdit = async () => {
       codeItem: elements.idItems,
       id: elements.id,
       remarks: elements.remark,
-    });
-  });
-};
+    })
+  })
+}
 
 function checkExists(item) {
   return itemsTable.value.some(function (el) {
-    return el.id_item === item;
-  });
+    return el.id_item === item
+  })
 }
 
 const addItem = async () => {
@@ -173,39 +173,39 @@ const addItem = async () => {
       title: "Data required Tidak Boleh Kosong",
       showConfirmButton: false,
       timer: 1500,
-    });
-    return false;
+    })
+    return false
   } else {
-    const wh = Warehouse.value;
+    const wh = Warehouse.value
     for (let index = 0; index < wh.length; index++) {
-      const element = wh[index];
+      const element = wh[index]
       if (element.id == selectedWarehouse.value) {
-        warehouseName.value = element.warehouse_name;
+        warehouseName.value = element.warehouse_name
       }
     }
-    const br = Brand.value;
+    const br = Brand.value
     for (let index = 0; index < br.length; index++) {
-      const element = br[index];
+      const element = br[index]
       if (element.id == selectedBrand.value) {
-        brandName.value = element.brand_name;
+        brandName.value = element.brand_name
       }
     }
-    const uom = UOM.value;
+    const uom = UOM.value
     for (let index = 0; index < uom.length; index++) {
-      const element = uom[index];
+      const element = uom[index]
       if (element.id == selectedUOM.value) {
-        uomName.value = element.uom_name;
+        uomName.value = element.uom_name
       }
     }
-    const it = Item.value;
+    const it = Item.value
     for (let index = 0; index < it.length; index++) {
-      const element = it[index];
+      const element = it[index]
       if (element.id == itemNames.value) {
-        namaItem.value = element.item_name;
-        codeItem.value = element.code_item;
+        namaItem.value = element.item_name
+        codeItem.value = element.code_item
       }
     }
-    let checkData = checkExists(itemNames.value);
+    let checkData = checkExists(itemNames.value)
     if (!checkData) {
       itemsTable.value.push({
         id_company: selectedCompany.value,
@@ -221,33 +221,33 @@ const addItem = async () => {
         namaUOM: uomName.value,
         namItem: namaItem.value,
         codeItem: codeItem.value,
-      });
+      })
     } else {
       itemsTable.value.map((element) => {
         if (itemNames.value == element.id_item) {
-          element.qty = alertQuantity.value;
+          element.qty = alertQuantity.value
         }
-      });
+      })
     }
-    resetButCompanyDisable();
-    return itemsTable;
+    resetButCompanyDisable()
+    return itemsTable
   }
-};
+}
 const resetButCompanyDisable = async () => {
-  disableSite.value = true;
-  disableCompany.value = true;
-  selectedWarehouse.value = "";
-  selectedUOM.value = "";
-  idItems.value = "";
-  alertQuantity.value = "";
-  itemNames.value = "";
-  remark.value = "";
-  selectedBrand.value = "";
-};
+  disableSite.value = true
+  disableCompany.value = true
+  selectedWarehouse.value = ""
+  selectedUOM.value = ""
+  idItems.value = ""
+  alertQuantity.value = ""
+  itemNames.value = ""
+  remark.value = ""
+  selectedBrand.value = ""
+}
 const removeItems = async (id) => {
-  itemsTable.value.splice(id, 1);
+  itemsTable.value.splice(id, 1)
   // return itemsTable
-};
+}
 const save = async () => {
   if (selectedCompany.value == "") {
     Swal.fire({
@@ -256,21 +256,21 @@ const save = async () => {
       title: "Data Di Table Tidak Boleh Kosong",
       showConfirmButton: false,
       timer: 1500,
-    });
-    return false;
+    })
+    return false
   } else {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
     const payload = {
       id_company: selectedCompany.value,
       id_site: selectedSite.value,
       remarks: "",
       array_detail: itemsTable.value,
-    };
+    }
     let api =
       props.status === "add"
         ? "request_atk/store"
-        : `request_atk/update/${props.id}`;
+        : `request_atk/update/${props.id}`
     Api.post(api, payload)
       .then((res) => {
         Swal.fire({
@@ -279,9 +279,9 @@ const save = async () => {
           title: res.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-        reset();
-        emits("close");
+        })
+        reset()
+        emits("close")
       })
       .catch((error) => {
         Swal.fire({
@@ -290,33 +290,33 @@ const save = async () => {
           title: error.response.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-      });
+        })
+      })
   }
-};
+}
 const coba2 = async () => {
-  addModal.value = false;
-};
+  addModal.value = false
+}
 const reset = async () => {
-  selectedCompany.value = "";
-  selectedSite.value = "";
-  selectedWarehouse.value = "";
-  selectedUOM.value = "";
-  alertQuantity.value = "";
-  itemNames.value = "";
-  remark.value = "";
-  selectedBrand.value = "";
-};
+  selectedCompany.value = ""
+  selectedSite.value = ""
+  selectedWarehouse.value = ""
+  selectedUOM.value = ""
+  alertQuantity.value = ""
+  itemNames.value = ""
+  remark.value = ""
+  selectedBrand.value = ""
+}
 
 onMounted(() => {
-  fetchCondition();
-  fetchUOM();
-  fetchBrand();
+  fetchCondition()
+  fetchUOM()
+  fetchBrand()
 
   if (props.status == "edit") {
-    fetchDataEdit();
+    fetchDataEdit()
   }
-});
+})
 </script>
 
 <template>
@@ -379,10 +379,23 @@ onMounted(() => {
               @change="changeSite(selectedSite)"
               :disabled="disableSite"
             >
-              <option disabled selected>Site</option>
-              <option v-for="(site, i) in Site" :key="i" :value="site.id">
-                {{ site.site_name }}
-              </option>
+              <select
+                id="menu"
+                v-model="menu"
+                :class="inputStylingClass"
+                placeholder="Select Menu"
+                required
+              >
+                <option
+                  v-for="data in addMenuData.filter(
+                    ({ code_sequence }) => code_sequence
+                  )"
+                  :key="data.id"
+                  :value="data.id"
+                >
+                  {{ data.menu }}
+                </option>
+              </select>
             </select>
           </div>
         </div>

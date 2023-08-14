@@ -1,4 +1,6 @@
 <script setup>
+import Swal from "sweetalert2"
+
 import { ref, watch, onMounted } from "vue"
 import { getPReviewSequenceCode } from "@/utils/Api/system-configuration/sequence.service"
 
@@ -9,6 +11,10 @@ const props = defineProps({
   formData: {
     type: Object,
     default: () => {},
+  },
+  action: {
+    type: String,
+    default: "edit",
   },
 })
 
@@ -24,7 +30,6 @@ const getSequenceCode = async () => {
       sequence_code: props.formData.sequenceCode,
     }
 
-    console.log(params)
     if (
       !params.prefix ||
       !params.sufix ||
@@ -32,6 +37,12 @@ const getSequenceCode = async () => {
       !params.sequence_size ||
       !params.sequence_code
     ) {
+      Swal.fire({
+        icon: "error",
+        title: "Check Your Input!",
+        html: "Please Fill All Mandatory (<span class='text-error'>*</span>) Field!",
+      })
+
       return
     }
     const res = await getPReviewSequenceCode({ params })
@@ -43,7 +54,7 @@ const getSequenceCode = async () => {
 }
 
 onMounted(() => {
-  getSequenceCode()
+  if (props.action == "edit") getSequenceCode()
 })
 </script>
 

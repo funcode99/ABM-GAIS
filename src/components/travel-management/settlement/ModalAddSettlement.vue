@@ -1,79 +1,88 @@
 <script setup>
-import multiStepCircle from "@/components/molecules/multiStepCircle.vue";
+import multiStepCircle from "@/components/molecules/multiStepCircle.vue"
 
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconUpload from "@/assets/icon_upload.svg";
+import iconClose from "@/assets/navbar/icon_close.svg"
+import iconUpload from "@/assets/icon_upload.svg"
 
 // cuma gara2 lupa import ref sidebar gua error terus anjing
-import { ref, onBeforeMount, reactive } from "vue";
-import Api from "@/utils/Api";
-import { elements } from "chart.js";
-import Swal from "sweetalert2";
-import { useRouter } from "vue-router";
-import moment from "moment";
+import { ref, onBeforeMount, reactive } from "vue"
+import Api from "@/utils/Api"
+import { elements } from "chart.js"
+import Swal from "sweetalert2"
+import { useRouter } from "vue-router"
+import moment from "moment"
 
-const router = useRouter();
+import { fetchCurrencyList } from "@/utils/Api/reference/currencydata.js"
+
+import fetchEmployeeByLoginUtils from "@/utils/Fetch/Reference/fetchEmployeeByLogin"
+import CurrencyInput from "../../atomics/CurrencyInput.vue"
+import Multiselect from "@vueform/multiselect"
+
+const router = useRouter()
 const props = defineProps({
   listType: Array,
-});
-const emits = defineEmits(["close"]);
+})
+const emits = defineEmits(["close"])
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
+    return moment(String(value)).format("DD/MM/YYYY")
   }
-};
+}
 
-let listCAType = ref(props.listType);
-let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
+let listCAType = ref(props.listType)
+let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
 // let visibleModal = ref(props.visible);
 
-let listTravel = ref([]);
-let listNonTravel = ref([]);
-let detailHeaderData = ref([]);
-let detailItemData = ref([]);
+let employeeLoginData = ref()
+
+let listTravel = ref([])
+let listNonTravel = ref([])
+let detailHeaderData = ref([])
+let detailItemData = ref([])
 let arrItem = {
   nominal_ca: ref([]),
   nominal_real: ref([]),
   attachment: ref([]),
-};
-const tempItem = ref([]);
+}
+const tempItem = ref([])
+let currenciesList = ref([])
 
-let instanceArray = [];
-let sortedDataDetail = ref([]);
-let idItem = ref("");
-let tempAttach = ref("");
+let instanceArray = []
+let sortedDataDetail = ref([])
+let idItem = ref("")
+let tempAttach = ref("")
 let titleArray = [
   { id: 0, title: "Choose Cash Advance" },
   { id: 1, title: "Settlement Cash Advance" },
-];
+]
 
-let stepMinimum = 0;
-let stepLength = 2;
-let stepForm = ref(0);
-let CAOption = ref("1");
+let stepMinimum = 0
+let stepLength = 2
+let stepForm = ref(0)
+let CAOption = ref("1")
 
-let CANo = ref("");
-let reference = ref("");
+let CANo = ref("")
+let reference = ref("")
 
 const inputStylingClass =
-  "py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base";
+  "py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base"
 
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 const tableHeadCATravel = [
   { id: 1, title: "CA No" },
   { id: 2, title: "Reference" },
   { id: 3, title: "Total" },
   { id: 4, title: "Status" },
-];
+]
 
 const tableHeadCANonTravel = [
   { id: 1, title: "CANo" },
   { id: 2, title: "Event" },
   { id: 3, title: "Total" },
   { id: 4, title: "Status" },
-];
+]
 
 const tableHeadDetailsItem = [
   { id: 1, title: "Item" },
@@ -83,7 +92,7 @@ const tableHeadDetailsItem = [
   { id: 5, title: "Total" },
   { id: 6, title: "Total Pemakaian Real" },
   { id: 7, title: "Attachment" },
-];
+]
 
 const tableHeadDetailsItemNon = [
   { id: 1, title: "Item" },
@@ -92,110 +101,113 @@ const tableHeadDetailsItemNon = [
   { id: 4, title: "Nominal" },
   { id: 5, title: "Nominal Pemakaian Real" },
   { id: 6, title: "Attachment" },
-];
+]
 
 const format_price = (value) => {
   if (!value) {
-    return "0.00";
+    return "0.00"
   }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
+  // let val = (value / 1).toFixed(2).replace(".", ",")
+
+  return new Intl.NumberFormat().format(value)
+
+  // return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+}
 
 // image
-const selectedImage = ref(null);
-let filename = ref(null);
+const selectedImage = ref(null)
+let filename = ref(null)
 
 const onFileSelected = (event, ind, nominal, dataId) => {
-  const file = event.target.files[0];
-  selectedImage.value = file ? file : null;
-  filename.value = file.name;
-  tempItem.value[ind].attachment = selectedImage.value;
-  tempItem.value[ind].id = dataId;
-};
-// end
+  const file = event.target.files[0]
+  selectedImage.value = file ? file : null
+  filename.value = file.name
+  tempItem.value[ind].attachment = selectedImage.value
+  tempItem.value[ind].id = dataId
+}
 
 const fetchTravel = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("/settlement/get_travel");
-  instanceArray = api.data.data;
-  listTravel.value = instanceArray;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("/settlement/get_travel")
+  instanceArray = api.data.data
+  listTravel.value = instanceArray?.filter(({ total }) => total)
+}
 
 const fetchNonTravel = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("/settlement/get_non_travel");
-  instanceArray = api.data.data;
-  listNonTravel.value = instanceArray;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("/settlement/get_non_travel")
+  instanceArray = api.data.data
+  listNonTravel.value = instanceArray
+}
 
 const addItem = (id) => {
-  idItem.value = id;
-};
+  idItem.value = id
+}
 
-onBeforeMount(() => {
-  fetchTravel();
-  fetchNonTravel();
-});
+onBeforeMount(async () => {
+  fetchTravel()
+  fetchNonTravel()
+  fetchEmployeeByLoginUtils(employeeLoginData)
+  currenciesList.value = await fetchCurrencyList()
+})
 
 const resetState = () => {
-  CANo.value = "";
-  reference.value = "";
-  stepForm.value = 0;
-};
+  CANo.value = ""
+  reference.value = ""
+  stepForm.value = 0
+}
 
 const close = () => {
-  idItem.value = "";
-  emits("close");
-};
+  idItem.value = ""
+  emits("close")
+}
 
 const nextStep = async (step) => {
   if (step == 0) {
-    stepForm.value += 1;
-    let type_name = CAOption.value == 1 ? "travel" : "non_travel";
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.get(
-      `/cash_advance/` + type_name + `/${idItem.value}`
-    );
-    instanceArray = res.data.data;
-    detailHeaderData.value = instanceArray[0];
+    stepForm.value += 1
+    let type_name = CAOption.value == 1 ? "travel" : "non_travel"
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const res = await Api.get(`/cash_advance/` + type_name + `/${idItem.value}`)
+    instanceArray = res.data.data
+    detailHeaderData.value = instanceArray[0]
 
-    const api = await Api.get(`cash_advance/get_by_cash_id/${idItem.value}`);
-    instanceArray = api.data.data;
-    detailItemData.value = instanceArray;
+    const api = await Api.get(`cash_advance/get_by_cash_id/${idItem.value}`)
+    instanceArray = api.data.data
+    detailItemData.value = instanceArray
     detailItemData.value.map((elements) => {
       let data = {
         nominal_real: 0,
         nominal_ca: elements.nominal,
         attachment: "",
         frequency: elements.frequency,
-        item_name: elements.item_name,
+        item_name: elements.nama_item || elements.item_name,
         currency_name: elements.currency_name,
         created_at: elements.created_at,
         cost_center_name: elements.cost_center_name,
         id: elements.id,
         id_ca_detail: elements.id,
         total: elements.total,
-      };
-      tempItem.value.push(data);
-    });
+        isFromCA: true,
+      }
+      tempItem.value.push(data)
+    })
   } else {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
     let payload = {
       id_employee: selectedEmployee,
       id_ca: idItem.value,
       id_ca_type: CAOption.value,
       no_ca: detailHeaderData.value.no_ca,
       array_detail: tempItem.value,
-    };
+    }
     await Api.post(`/settlement/store`, payload)
       .then((res) => {
-        instanceArray = res.data.data;
-        detailItemData.value = instanceArray;
+        instanceArray = res.data.data
+        detailItemData.value = instanceArray
         if (res.data.success) {
           Swal.fire({
             position: "center",
@@ -203,8 +215,8 @@ const nextStep = async (step) => {
             title: res.data.message,
             showConfirmButton: false,
             timer: 1500,
-          });
-          router.push({ path: `/settlement/${res.data.data.id}` });
+          })
+          router.push({ path: `/settlement/${res.data.data.id}` })
         } else {
           Swal.fire({
             html: "<b>Please fill in the form!</b>",
@@ -216,7 +228,7 @@ const nextStep = async (step) => {
             showCancelButton: false,
             showConfirmButton: false,
             width: "300px",
-          });
+          })
         }
       })
       .catch((error) => {
@@ -226,11 +238,29 @@ const nextStep = async (step) => {
           title: error.message,
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
         // console.log(error.response.data.message)
-      });
+      })
   }
-};
+}
+
+const addNewItem = (item) => {
+  const default_item = {
+    isFromCA: false,
+    detail_item_name: "",
+    nominal_real: 0,
+    nominal_ca: 0,
+    attachment: "",
+    frequency: 0,
+    item_name: "",
+    currency_name: item.currency_name,
+    cost_center_name: null,
+    id_ca_detail: item.id || id_ca,
+    total: null,
+  }
+
+  tempItem.value.unshift({ ...default_item })
+}
 </script>
 
 <template>
@@ -383,9 +413,17 @@ const nextStep = async (step) => {
 
         <!-- TABLE -->
         <div>
-          <h1 class="mb-10">Details Item</h1>
+          <h1 class="mb-5">Details Item</h1>
+          <div class="mb-5">
+            <button
+              class="btn bg-green capitalize border-none"
+              @click="addNewItem(tempItem[0])"
+            >
+              Add Item
+            </button>
+          </div>
           <div class="overflow-x-auto">
-            <table class="table">
+            <table class="table" width="100%">
               <thead>
                 <tr>
                   <th
@@ -400,51 +438,101 @@ const nextStep = async (step) => {
               </thead>
               <tbody>
                 <tr v-for="(data, index) in tempItem" :key="data.id">
-                  <td>
-                    {{ data.item_name }}
+                  <td style="min-width: 170px">
+                    <!-- {{ data.item_name }} -->
+                    <input
+                      type="text"
+                      :class="inputStylingClass"
+                      v-model="data.item_name"
+                      :disabled="item.isFromCA"
+                    />
                   </td>
                   <td>
-                    {{
+                    <!-- {{
                       CAOption == "1"
                         ? data.frequency
                         : format_date(data.created_at)
-                    }}
+                    }} -->
+
+                    <div v-if="CAOption == 1">
+                      <CurrencyInput
+                        v-model="data.frequency"
+                        :class="inputClass"
+                        required
+                      >
+                      </CurrencyInput>
+                    </div>
+                    <div v-else>{{ format_date(data.created_at) }}</div>
                   </td>
-                  <td>
-                    {{
+                  <td style="min-width: 170px">
+                    <!-- {{
                       CAOption == "1"
                         ? data.currency_name
                         : data.cost_center_name
-                    }}
+                    }} -->
+
+                    <div v-if="CAOption == 1">
+                      <!-- <Multiselect
+                        v-model="data.currency_name"
+                        mode="single"
+                        placeholder="Select Currency"
+                        :options="currenciesList"
+                        track-by="id"
+                        label="currency_name"
+                        valueProp="currency_name"
+                        class="text-sm"
+                        required
+                        clear
+                        searchable
+                      >
+                      </Multiselect> -->
+
+                      {{ data.currency_name }}
+                    </div>
+
+                    <div v-else>{{ data.cost_center_name }}</div>
                   </td>
-                  <td>
-                    <input
+                  <td style="min-width: 130px">
+                    <!-- <input
                       type="number"
                       name="remarks"
                       :class="inputClass"
                       required
                       v-model="data.nominal_real"
                       class="hidden"
-                    />
-                    {{ format_price(data.nominal_ca) }}
+                    /> -->
+
+                    <CurrencyInput
+                      v-model="data.nominal_ca"
+                      :class="inputClass"
+                      required
+                    >
+                    </CurrencyInput>
                   </td>
-                  <td v-if="CAOption == '1'">
-                    {{ format_price(data.total) }}
+                  <td v-if="CAOption == '1'" style="min-width: 100px">
+                    {{ format_price(data.nominal_ca * data.frequency) }}
                   </td>
-                  <td>
-                    <input
+                  <td style="min-width: 130px">
+                    <!-- <input
                       type="number"
                       name="remarks"
                       :class="inputClass"
                       required
                       v-model="data.nominal_real"
-                    />
+                    /> -->
+
+                    <CurrencyInput
+                      v-model="data.nominal_real"
+                      :class="inputClass"
+                      required
+                    >
+                    </CurrencyInput>
                   </td>
                   <td>
                     <input
                       type="file"
                       id="logo_company"
-                      class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+                      class="px-4 py-3 w-[300px] border border-[#e0e0e0] rounded-lg font-JakartaSans font-semibold text-base"
                       accept="image/*"
                       @change="
                         onFileSelected($event, index, data.nominal, data.id)
