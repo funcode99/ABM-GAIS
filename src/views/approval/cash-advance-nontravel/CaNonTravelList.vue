@@ -146,6 +146,7 @@ const filterDataByType = async (id) => {
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
+  fetchHistory();
 });
 
 const resetData = () => {
@@ -172,6 +173,127 @@ const format_price = (value) => {
 
 //for approval history
 const selectedStatus = ref("");
+
+let showingValueHistory = ref(1);
+let showingValueFromHistory = ref(0);
+let showingValueToHistory = ref(0);
+let pageMultiplierHistory = ref(10);
+let pageMultiplierReactiveHistory = computed(() => pageMultiplier.value);
+let paginateIndexHistory = ref(0);
+let totalPageHistory = ref(0);
+let totalDataHistory = ref(0);
+
+let sortedDataHistory = ref([]);
+let sortedbyASCHistory = true;
+let instanceArrayHistory = [];
+let paginationArrayHistory = [];
+let lengthCounterHistory = 0;
+let filterHistory = reactive({
+  status: "",
+  date: "",
+  search: "",
+});
+
+const onChangePageHistory = (pageOfItem) => {
+  paginateIndexHistory.value = pageOfItem - 1;
+  showingValueHistory.value = pageOfItem;
+  fetchHistory(pageOfItem);
+};
+
+const tableHeadHistory = [
+  { Id: 1, title: "No", jsonData: "no" },
+  { Id: 2, title: "Created Date", jsonData: "created_at" },
+  { Id: 3, title: "CA No", jsonData: "no_ca" },
+  { Id: 4, title: "Requestor", jsonData: "requestor" },
+  { Id: 5, title: "Event", jsonData: "event" },
+  { Id: 7, title: "Total", jsonData: "grand_total" },
+  { Id: 8, title: "Status", jsonData: "status_approva" },
+];
+
+const selectAllHistory = (checkValue) => {
+  const checkList = checkValue;
+  if (checkList == true) {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = true;
+    }
+  } else {
+    let check = document.getElementsByName("checks");
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type == "checkbox") check[i].checked = false;
+    }
+  }
+};
+
+const sortListHistory = (sortBy) => {
+  if (sortedbyASCHistory) {
+    sortedDataHistory.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
+    sortedbyASCHistory = false;
+  } else {
+    sortedDataHistory.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
+    sortedbyASCHistory = true;
+  }
+};
+
+const fetchHistory = async (id) => {
+  let payload = {
+    perPage: pageMultiplierHistory.value,
+    page: id ? id : 1,
+  };
+
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("approval_non_travel/history", {
+    params: payload,
+  });
+
+  paginationArrayHistory = api.data.data;
+  instanceArrayHistory = paginationArrayHistory.data;
+  sortedDataHistory.value = instanceArrayHistory;
+  lengthCounterHistory = sortedDataHistory.value.length;
+  totalPageHistory.value = paginationArrayHistory.last_page;
+  totalDataHistory.value = paginationArrayHistory.total;
+  showingValueFromHistory.value = paginationArrayHistory.from
+    ? paginationArrayHistory.from
+    : 0;
+  showingValueToHistory.value = paginationArrayHistory.to;
+};
+
+const filterDataByTypeHistory = async (id) => {
+  let payload = {
+    search: filter.search,
+    status: filter.status,
+    start_date: filter.date ? filter.date[0] : "",
+    end_date: filter.date ? filter.date[1] : "",
+    perPage: pageMultiplier.value,
+    page: id ? id : 1,
+  };
+
+  const api = await Api.get("approval_non_travel/history", {
+    params: payload,
+  });
+
+  paginationArrayHistory = api.data.data;
+  instanceArrayHistory = paginationArrayHistory.data;
+  sortedDataHistory.value = instanceArrayHistory;
+  lengthCounterHistory = sortedDataHistory.value.length;
+  sortedDataHistory.value = instanceArrayHistory;
+  lengthCounterHistory = sortedDataHistory.value.length;
+  totalPageHistory.value = paginationArrayHistory.last_page;
+  totalDataHistory.value = paginationArrayHistory.total;
+  showingValueFromHistory.value = paginationArrayHistory.from
+    ? paginationArrayHistory.from
+    : 0;
+  showingValueToHistory.value = paginationArrayHistory.to;
+  showingValueHistory.value = paginationArrayHistory.current_page;
+};
+
+const resetDataHistory = () => {
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
+  fetchHistory();
+};
 </script>
 
 <template>
@@ -428,7 +550,7 @@ const selectedStatus = ref("");
                 v-model="showingValue"
                 :max-pages-shown="4"
                 :show-breakpoint-buttons="false"
-                :show-jump-buttons="true"
+                :show-ending-buttons="true"
               />
             </div>
           </main>
@@ -458,9 +580,7 @@ const selectedStatus = ref("");
                     v-model="selectedStatus"
                   >
                     <option disabled selected>Status</option>
-                    <option value="0">Draft</option>
-                    <option value="1">Waiting Approval</option>
-                    <option value="2">Revision</option>
+                    <option value="4">Revision</option>
                     <option value="9">Rejected</option>
                     <option value="10">Completed</option>
                   </select>
@@ -483,7 +603,7 @@ const selectedStatus = ref("");
                 <div class="flex gap-4 items-center pt-7">
                   <button
                     class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                    @click="filterDataByType()"
+                    @click="filterDataByTypeHistory()"
                   >
                     <span>
                       <img :src="icon_filter" class="w-5 h-5" />
@@ -539,8 +659,8 @@ const selectedStatus = ref("");
               <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                v-model="pageMultiplier"
-                @change="fetch()"
+                v-model="pageMultiplierHistory"
+                @change="fetchHistory()"
               >
                 <option>10</option>
                 <option>25</option>
@@ -550,7 +670,7 @@ const selectedStatus = ref("");
               </select>
             </div>
 
-            <tableData v-if="sortedData.length > 0">
+            <tableData v-if="sortedDataHistory.length > 0">
               <thead
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
@@ -560,16 +680,16 @@ const selectedStatus = ref("");
                       <input
                         type="checkbox"
                         name="checked"
-                        @click="selectAll((checkList = !checkList))"
+                        @click="selectAllHistory((checkList = !checkList))"
                       />
                     </div>
                   </th>
 
                   <th
-                    v-for="data in tableHead"
+                    v-for="data in tableHeadHistory"
                     :key="data.Id"
                     class="overflow-x-hidden cursor-pointer"
-                    @click="sortList(`${data.jsonData}`)"
+                    @click="sortListHistory(`${data.jsonData}`)"
                   >
                     <span class="flex justify-center items-center gap-1">
                       {{ data.title }}
@@ -584,10 +704,10 @@ const selectedStatus = ref("");
                 </tr>
               </thead>
 
-              <tbody v-if="sortedData.length > 0">
+              <tbody v-if="sortedDataHistory.length > 0">
                 <tr
                   class="font-JakartaSans font-normal text-sm"
-                  v-for="data in sortedData"
+                  v-for="data in sortedDataHistory"
                   :key="data.id"
                 >
                   <td>
@@ -599,7 +719,7 @@ const selectedStatus = ref("");
                   <td>{{ data.requestor }}</td>
                   <td>{{ data.event }}</td>
                   <td>{{ format_price(data.grand_total) }}</td>
-                  <td>{{ data.status }}</td>
+                  <td>{{ data.status_approval }}</td>
                   <td class="flex flex-wrap gap-4 justify-center">
                     <button
                       @click="
@@ -624,16 +744,16 @@ const selectedStatus = ref("");
                         <input
                           type="checkbox"
                           name="checked"
-                          @click="selectAll((checkList = !checkList))"
+                          @click="selectAllHistory((checkList = !checkList))"
                         />
                       </div>
                     </th>
 
                     <th
-                      v-for="data in tableHead"
+                      v-for="data in tableHeadHistory"
                       :key="data.Id"
                       class="overflow-x-hidden cursor-pointer"
-                      @click="sortList(`${data.jsonData}`)"
+                      @click="sortListHistory(`${data.jsonData}`)"
                     >
                       <div class="flex justify-center items-center">
                         <p class="font-JakartaSans font-bold text-sm">
@@ -666,18 +786,18 @@ const selectedStatus = ref("");
               <p
                 class="font-JakartaSans text-xs font-normal text-[#888888] py-2"
               >
-                Showing {{ showingValueFrom }} to
-                {{ showingValueTo }}
-                of {{ totalData }} entries
+                Showing {{ showingValueFromHistory }} to
+                {{ showingValueToHistory }}
+                of {{ totalDataHistory }} entries
               </p>
               <vue-awesome-paginate
-                :total-items="totalData"
-                :items-per-page="parseInt(pageMultiplierReactive)"
-                :on-click="onChangePage"
-                v-model="showingValue"
+                :total-items="totalDataHistory"
+                :items-per-page="parseInt(pageMultiplierReactiveHistory)"
+                :on-click="onChangePageHistory"
+                v-model="showingValueHistory"
                 :max-pages-shown="4"
                 :show-breakpoint-buttons="false"
-                :show-jump-buttons="true"
+                :show-ending-buttons="true"
               />
             </div>
           </main>
