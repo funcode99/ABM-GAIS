@@ -288,7 +288,7 @@ const addNewItem = (item) => {
     created_at: item.created_at,
   }
 
-  tempItem.value.unshift({ ...default_item })
+  tempItem.value.push({ ...default_item })
 }
 </script>
 
@@ -474,6 +474,7 @@ const addNewItem = (item) => {
                       type="text"
                       :class="inputStylingClass"
                       v-model="data.detail_item_name"
+                      :disabled="data.id_ca_detail"
                     />
                     <!-- :disabled="data?.isFromCA" -->
 
@@ -539,6 +540,7 @@ const addNewItem = (item) => {
                       v-model="data.nominal_ca"
                       :class="inputClass"
                       required
+                      :disabled="data.id_ca_detail"
                     >
                     </CurrencyInput>
 

@@ -534,6 +534,7 @@ const inputClass =
                         type="text"
                         :class="inputClass"
                         v-model="data.detail_item_name"
+                        :disabled="data.id_ca_detail"
                       />
                     </td>
                     <td>
@@ -542,7 +543,7 @@ const inputClass =
                       <CurrencyInput
                         v-else
                         v-model="data.frequency"
-                        :disabled="data.id == idEdit ? false : true"
+                        :disabled="data.id_ca_detail"
                         :class="inputClass"
                         required
                       >
@@ -568,7 +569,7 @@ const inputClass =
                       <CurrencyInput
                         v-else
                         v-model="data.nominal_ca"
-                        :disabled="data.id == idEdit ? false : true"
+                        :disabled="data.id_ca_detail"
                         :class="inputClass"
                         required
                       >
