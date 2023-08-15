@@ -261,11 +261,11 @@ const fetchHistory = async (id) => {
 
 const filterDataByTypeHistory = async (id) => {
   let payload = {
-    search: filter.search,
-    status: filter.status,
-    start_date: filter.date ? filter.date[0] : "",
-    end_date: filter.date ? filter.date[1] : "",
-    perPage: pageMultiplier.value,
+    search: filterHistory.search,
+    status: filterHistory.status,
+    start_date: filterHistory.date ? filterHistory.date[0] : "",
+    end_date: filterHistory.date ? filterHistory.date[1] : "",
+    perPage: pageMultiplierHistory.value,
     page: id ? id : 1,
   };
 
@@ -289,9 +289,9 @@ const filterDataByTypeHistory = async (id) => {
 };
 
 const resetDataHistory = () => {
-  filter.search = "";
-  filter.status = "";
-  filter.date = "";
+  filterHistory.search = "";
+  filterHistory.status = "";
+  filterHistory.date = "";
   fetchHistory();
 };
 </script>
@@ -577,7 +577,7 @@ const resetDataHistory = () => {
                   </p>
                   <select
                     class="font-JakartaSans bg-white w-36 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                    v-model="selectedStatus"
+                    v-model="filterHistory.status"
                   >
                     <option disabled selected>Status</option>
                     <option value="4">Revision</option>
@@ -593,7 +593,7 @@ const resetDataHistory = () => {
                     Date
                   </p>
                   <VueDatePicker
-                    v-model="filter.date"
+                    v-model="filterHistory.date"
                     range
                     :enable-time-picker="false"
                     class="my-date"
@@ -612,7 +612,7 @@ const resetDataHistory = () => {
                   </button>
                   <button
                     class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                    @click="resetData"
+                    @click="resetDataHistory"
                   >
                     <span>
                       <img :src="icon_reset" class="w-5 h-5" />
@@ -648,8 +648,8 @@ const resetDataHistory = () => {
                     placeholder="Search..."
                     type="text"
                     name="search"
-                    v-model="filter.search"
-                    @keyup="filterDataByType()"
+                    v-model="filterHistory.search"
+                    @keyup="filterDataByTypeHistory()"
                   />
                 </label>
               </div>
