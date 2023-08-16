@@ -46,7 +46,6 @@ const tableHead = [
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1
   showingValue.value = pageOfItem
-//   fetchEmployee(pageOfItem)
 }
 
     const fetchActualizationTrip = async () => {

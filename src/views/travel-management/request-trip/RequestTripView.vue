@@ -248,11 +248,15 @@
       : travellerGuestData.value
     }
 
+    let actualizationData = ref()
+
     const getActualizationByTripId = async () => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem("tripIdView")}`)
-      console.log(api)
+      // console.log(api)
+      actualizationData.value = api.data.data
+      console.log(actualizationData.value.length)
     }
 
     onBeforeMount(() => {
@@ -465,7 +469,7 @@
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
 
-                      <AddActualizationTripModal />
+                      <AddActualizationTripModal v-if="actualizationData.length === 0" />
 
                       <div class="flex-1"></div>
 
