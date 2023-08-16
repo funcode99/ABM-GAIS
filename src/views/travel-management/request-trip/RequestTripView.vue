@@ -110,6 +110,7 @@
     }
 
     const getAirlines = async () => {
+
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -119,6 +120,7 @@
         console.log(error)
         airlinesData.value = [{}]
       }
+
     }
  
     const getTaxiVoucher = async () => {
@@ -149,7 +151,7 @@
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)      
+        let api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
         accomodationData.value = api.data.data
       } catch (error) {
         console.log(error)
@@ -177,7 +179,7 @@
     const getApprovalStatus = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
         let api = await Api.get(`/request_trip/get_history_approval/${localStorage.getItem('tripIdView')}`)    
         approvalStatusData.value = api.data.data
       } catch (error) {
@@ -225,7 +227,6 @@
       }
 
       const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, payload)
-      console.log(api)
 
       delete payload.file
       fileSend.value = null
@@ -240,11 +241,18 @@
     const assignSelectedData = () => {
       headerTitle.value === 'Traveller' ? currentSelectedData.value = travellerGuestData.value 
       : headerTitle.value === 'Airlines' ? currentSelectedData.value = airlinesData.value 
-      : headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value 
+      : headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value
       : headerTitle.value === 'Other Transportation' ? currentSelectedData.value = otherTransportationData.value
       : headerTitle.value === 'Accomodation' ? currentSelectedData.value = accomodationData.value
       : headerTitle.value === 'Cash Advance' ? currentSelectedData.value = cashAdvanceData.value
       : travellerGuestData.value
+    }
+
+    const getActualizationByTripId = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem("tripIdView")}`)
+      console.log(api)
     }
 
     onBeforeMount(() => {
@@ -256,6 +264,7 @@
       getAccomodation()
       getCashAdvance()
       getApprovalStatus()
+      getActualizationByTripId()
     })
 
     watch(purposeOfTripData, () => {
@@ -371,11 +380,9 @@
     }
 
     const onChangePage = (pageOfItem) => {
-
       typeOfSubmitToProps.value = 'none'
       assignSelectedData()
       dataIndex.value = pageOfItem-1
-
     }
 
     const changeViewLayout = (layout) => {
@@ -457,13 +464,6 @@
                         v-if="isEditing"
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
-
-                      <!-- <button
-                        @click="showActualizationModal"
-                        class="bg-orange text-white rounded-lg py-[5px] px-[18px] font-bold"  
-                      >
-                        Actualization
-                      </button> -->
 
                       <AddActualizationTripModal />
 
@@ -664,7 +664,6 @@
                                 v-if="isEditing & headerTitle !== 'Cash Advance' " 
                                 @click="changeType('Check Props')"
                                 />
-                                <!-- @click="changeType('Add')" -->
   
                               <!-- Issued Ticket Button -->
                               <button 

@@ -43,8 +43,6 @@
     }
 
     const resetValue = () => {
-        // departureId.value = props.value[status.currentIndex].id_departure_city
-        // arrivalId.value = props.value[status.currentIndex].id_arrival_city
         departureId.value = 0
         arrivalId.value = 0
         date.value = ''

@@ -15,6 +15,9 @@ import icon_reset from "@/assets/icon_reset.svg";
 import icon_receive from "@/assets/icon-receive.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
+
 import Api from "@/utils/Api";
 
 let showingValue = ref(1)
@@ -32,7 +35,7 @@ let actualizationTripStatus = ref('All')
 
 const tableHead = [
     { title: "No" },
-    { title: "Actualization Trip" },
+    { title: "Actualization No" },
     { title: "Request Trip No" },
     { title: "Date" },
     { title: "Requestor" },
@@ -49,7 +52,7 @@ const onChangePage = (pageOfItem) => {
     const fetchActualizationTrip = async () => {
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const res = await Api.get(`/approval_actual/get_data/${id.value}`)
+        const res = await Api.get(`/actual_trip/get_data/`)
         console.log(res)
         sortedData.value = res.data.data
     }
@@ -203,6 +206,7 @@ const onChangePage = (pageOfItem) => {
                     </div>
 
                     <tableData v-if="sortedData.length > 0">
+
                         <thead class="text-center font-JakartaSans text-sm font-bold h-10">
                             <tr>
                                 <th
@@ -217,11 +221,56 @@ const onChangePage = (pageOfItem) => {
                                         </p>
                                     </div>
                                 </th>
+                                <th>
+                                    <div class="flex justify-center items-center">
+                                        <p class="font-JakartaSans font-bold text-sm">
+                                            Actions
+                                        </p>
+                                    </div>
+                                </th>
                             </tr>
                         </thead>
-                        <tbody>
 
+                        <tbody>
+                            <tr
+                                v-for="(data, index) in sortedData"
+                            >
+                                <td>
+                                    {{ index+1 }}
+                                </td>    
+                                <td>
+                                    {{ data.no_act }}
+                                </td>
+                                <td>
+                                    {{ data.no_request_trip }}
+                                </td>
+                                <td>
+                                    {{ data.created_at }}
+                                </td>
+                                <td>
+                                    {{ data.employee_name }}
+                                </td>
+                                <td>
+                                    {{ data.days_of_trip }}
+                                </td>
+                                <td>
+                                    {{ data.status }}
+                                </td>
+
+                                <td class="flex flex-wrap gap-4 justify-center items-center">
+                                    <router-link to="/request-view" @click="assignRequestTripId(data.id)">
+                                        <button>
+                                        <img :src="editicon" class="w-6 h-6" />
+                                        </button>
+                                    </router-link>
+                                    <button @click="deleteData(data.id)">
+                                        <img :src="deleteicon" class="w-6 h-6" />
+                                    </button>
+                                </td>
+
+                            </tr>
                         </tbody>
+
                     </tableData>
 
                     <tableData v-else-if="sortedData.length == 0">
