@@ -100,7 +100,9 @@ import DocumentDeliveryReport from "@/views/facility-services/reports/DocumentDe
 import avoidduplicatedropdown from "@/views/experiment/avoidduplicatedropdown.vue";
 import experimentPage from "@/views/experiment/experiment.vue";
 
-const router = createRouter({
+const router = createRouter(
+  
+  {
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
@@ -1269,8 +1271,8 @@ const router = createRouter({
         title: "MSAL Login Test",
       },
     },
-  ],
-});
+  
+);
 
 router.beforeEach((to, from, next) => {
     document.title = `GAIS || ${to.meta.title}`;
