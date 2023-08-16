@@ -102,15 +102,14 @@ import experimentPage from "@/views/experiment/experiment.vue";
 
 const router = createRouter(
   
-  {
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes: [
-        {
-            path: "/experiment",
-            component: experimentPage,
-        },
-      ],
-    },
+    {
+      history: createWebHistory(import.meta.env.BASE_URL),
+      routes: [
+          {
+              path: "/experiment",
+              component: experimentPage,
+          },
+        
 
     //notification page
     {
@@ -1270,9 +1269,11 @@ const router = createRouter(
       meta: {
         title: "MSAL Login Test",
       },
-    },
-  
-);
+    },  
+  ],
+  },
+)
+
 
 router.beforeEach((to, from, next) => {
     document.title = `GAIS || ${to.meta.title}`;
