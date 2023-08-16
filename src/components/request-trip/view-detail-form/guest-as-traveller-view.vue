@@ -1,6 +1,8 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
     import Api from '@/utils/Api'
+    
+    import fetchFlightClassUtils from '@/utils/Fetch/Reference/fetchFlightClass'
 
     const status = defineProps({
         isEditing: Boolean,
@@ -23,6 +25,8 @@
     let nik = ref()
 
     let travellerTypeData = ref()
+
+    let flightClassData = ref([])
 
     const assignValue = () => {
         name.value = props.value[status.currentIndex].name_guest
@@ -162,6 +166,7 @@
 
     onBeforeMount(() => {
         getTravellerType()
+        fetchFlightClassUtils(flightClassData)
     })
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
@@ -174,6 +179,8 @@
 <template>
 
     <form @submit.prevent="">
+
+        {{ JSON.stringify(props) === '[{}]' }}
 
         <div :class="rowClass">
 
@@ -228,6 +235,7 @@
                     </label>
                     
                     <input
+                        v-if="JSON.stringify(props) !== '[{}]'"
                         v-model="flightClass"
                         type="text"
                         placeholder="Flight Class"
@@ -235,6 +243,21 @@
                         required
                         :disabled="!status.isEditing"
                     />
+
+                    <select
+                        :class="inputStylingClass" 
+                        v-model="flightClass"
+                        :disabled="!status.isEditing"
+                        v-else
+                    >
+                        <option
+                            v-for="data in flightClassData" 
+                            :class="inputStylingClass"
+                            :value="data.id"
+                        >
+                            {{ data.flight_class }}
+                        </option>
+                    </select>
 
                 </div>
 
