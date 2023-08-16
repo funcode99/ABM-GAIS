@@ -11,7 +11,7 @@ const props = defineProps({
 import { onBeforeMount, ref } from "vue";
 import { useRouter } from "vue-router";
 import Api from "@/utils/Api";
-import Swal from "sweetalert2";
+import Swal from "sweetalert2"
 const router = useRouter();
 const notesName = ref("");
 let qtyApproved = ref([]);

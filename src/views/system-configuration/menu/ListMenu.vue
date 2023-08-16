@@ -273,8 +273,8 @@ const exportToExcel = () => {
     "menu",
     "parent",
     "status_name"
-  );
-};
+  )
+}
 
 const fillPageMultiplier = (value) => {
   pageMultiplier.value = value;
@@ -315,6 +315,7 @@ const fetchMenuStatusUtilsHelper = () => {
       <Sidebar class="flex-none" />
 
       <tableContainer>
+
         <TableTopBar
           title="Menu"
           modalAddType="menu"
@@ -547,6 +548,7 @@ const fetchMenuStatusUtilsHelper = () => {
             />
           </div>
         </div>
+        
       </tableContainer>
     </div>
   </div>

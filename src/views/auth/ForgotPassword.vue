@@ -4,6 +4,7 @@
     import arrowLeft from '@/assets/Arrow-Left.png'
     import NavbarLogin from '@/components/layout/NavbarLogin.vue'
     import Footer from '@/components/layout/Footer.vue'
+    import Swal from "sweetalert2"
 
     import { ref } from 'vue'
 
@@ -12,13 +13,33 @@
 
     const forgotPassword = async () => {
         serverResponse.value = 0
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.post(`/forget_password`, {
-            email: email.value
-        })
-        console.log(api)
-        serverResponse.value = api.status
+
+        try {
+            
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.post(`/forget_password`, {
+                email: email.value
+            })
+            // console.log(api)
+            serverResponse.value = api.status
+
+        } catch (error) {
+
+            console.log(error)
+            
+            // position: "center",
+            Swal.fire({
+                icon: "error",
+                title: error.response.data.error.email,
+                showConfirmButton: false,
+                showCloseButton: true
+            })
+            
+            serverResponse.value = error.response.status
+            
+        }
+
     }
     
 </script>
@@ -41,6 +62,7 @@
                     </div>
 
                     <div class="flex flex-wrap items-center justify-center gap-8">
+
                         <div class="hidden sm:block">
                             <img :src=forgotPasswordImage class="w-[574px] h-[373px] object-scale-down" alt="">
                         </div>
@@ -66,6 +88,7 @@
                                 </div>
                             </form>
                         </div>
+                        
                     </div>
 
             </div>

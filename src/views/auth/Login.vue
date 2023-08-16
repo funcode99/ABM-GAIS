@@ -21,8 +21,6 @@
     let accessTokenValue = ref()
 
     const submit = async () => {
-        
-      console.log('masuk ke submit')
       
       try {
 
@@ -47,7 +45,6 @@
         
 
           if(typeof data.data.users.employee_name == 'string') {
-            console.log(data.data.users.employee_name)
             let username = data.data.users.employee_name.replaceAll('"', '')
             localStorage.setItem('username', username)
           }

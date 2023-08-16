@@ -47,6 +47,7 @@ import NonTravelView from "@/views/travel-management/cash-advance-non-travel/Non
 import SettlementList from "@/views/travel-management/settlement/SettlementList.vue";
 import SettlementView from "@/views/travel-management/settlement/SettlementView.vue";
 import SettlementReport from "@/views/travel-management/settlement/SettlementReport.vue";
+import ActualizationTrip from '@/views/travel-management/actualization-trip/ActualizationTripList.vue'
 
 import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue";
 import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue";
@@ -99,32 +100,39 @@ import DocumentDeliveryReport from "@/views/facility-services/reports/DocumentDe
 import avoidduplicatedropdown from "@/views/experiment/avoidduplicatedropdown.vue";
 import experimentPage from "@/views/experiment/experiment.vue";
 
-const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes: [
-        {
-            path: "/experiment",
-            component: experimentPage,
-        },
-        ...poolCarRoutes,
-        {
-            path: "/addfield",
-            // component: addinputfield,
-            component: avoidduplicatedropdown,
-        },
+const router = createRouter(
+  
+    {
+      history: createWebHistory(import.meta.env.BASE_URL),
+      routes: [
+          
+    {
+              path: "/experiment",
+              component: experimentPage,
+    },
 
-        // Not found Page
-        {
-            path: "/:pathMatch(.*)*",
-            name: "Not Found Page",
-            component: NotFound,
-            meta: {
-                title: "Not Found X(",
-            },
-        },
 
-        // auth pages
-        {
+    ...poolCarRoutes,
+    {
+        path: "/addfield",
+        // component: addinputfield,
+        component: avoidduplicatedropdown,
+    },
+
+    // Not found Page
+    {
+        path: "/:pathMatch(.*)*",
+        name: "Not Found Page",
+        component: NotFound,
+        meta: {
+            title: "Not Found X(",
+        },
+    },
+
+
+
+           // auth pages
+           {
             path: "/",
             name: "login",
             component: Login,
@@ -203,1183 +211,1207 @@ const router = createRouter({
             ],
         },
 
-        //notification page
-        {
-            path: "/notification",
-            name: "notification",
-            component: ListNotifications,
-            meta: {
-                title: "Notification",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-
-        //reference pages
-        {
-            path: "/brand",
-            name: "brand",
-            component: ListBrand,
-            meta: {
-                title: "Brand",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/glaccount",
-            name: "gl account",
-            component: ListGl,
-            meta: {
-                title: "GL Account",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/company",
-            name: "company",
-            component: ListCompany,
-            meta: {
-                title: "Company",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/currency",
-            name: "currency",
-            component: ListCurrency,
-            meta: {
-                title: "Currency",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/departement",
-            name: "departement",
-            component: ListDepartement,
-            meta: {
-                title: "Departement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/employee",
-            name: "employee",
-            component: List,
-            meta: {
-                title: "Employee",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/classtransportation",
-            name: "Class Transportation",
-            component: ListFlight,
-            meta: {
-                title: "Class Transportation",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/job",
-            name: "job",
-            component: ListJob,
-            meta: {
-                title: "Job Band",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/city",
-            name: "city",
-            component: ListCity,
-            meta: {
-                title: "City",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/reimbursement",
-            name: "reimbursement",
-            component: ListReimbursement,
-            meta: {
-                title: "Reimbursement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/site",
-            name: "site",
-            component: ListSite,
-            meta: {
-                title: "Site",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/uom",
-            name: "uom",
-            component: ListUom,
-            meta: {
-                title: "Unit Of Measure Categories",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/warehouse",
-            name: "warehouse",
-            component: ListWarehouse,
-            meta: {
-                title: "Warehouse",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/zona",
-            name: "zona",
-            component: ListZona,
-            meta: {
-                title: "Zona / Tunjangan Lokasi Kerja",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/hotel",
-            name: "hotel",
-            component: HotelList,
-            meta: {
-                title: "Hotel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-
-        // system-configuration page
-        {
-            path: "/user",
-            name: "user",
-            component: ListUser,
-            meta: {
-                title: "User",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/role",
-            name: "role",
-            component: ListRole,
-            meta: {
-                title: "Role",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approval",
-            name: "approval",
-            component: ListApproval,
-            meta: {
-                title: "Approval",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/menu",
-            name: "menu",
-            component: ListMenu,
-            meta: {
-                title: "Menu",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/sequence",
-            name: "sequence",
-            component: ListSequence,
-            meta: {
-                title: "Sequence",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-
-        // travel management system
-        {
-            path: "/request",
-            name: "request trip",
-            component: RequestTripListTMS,
-            meta: {
-                title: "Request Trip",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/request-view",
-            name: "form view request trip",
-            component: RequestTripViewTMS,
-            meta: {
-                title: "View Request Trip",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/cashadvancetravel",
-            name: "cash advance travel",
-            component: TravelList,
-            meta: {
-                title: "CA Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewcashadvancetravel/:id",
-            name: "view cash advance travel",
-            component: TravelView,
-            meta: {
-                title: "View CA Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/cashadvancenontravel",
-            name: "cash advance non travel",
-            component: NonTravelList,
-            meta: {
-                title: "CA Non Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewcashadvancenontravel/:id",
-            name: "view cash advance non travel",
-            component: NonTravelView,
-            meta: {
-                title: "View CA Non Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/settlement",
-            name: "Settlement",
-            component: SettlementList,
-            meta: {
-                title: "Settlement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/settlement/:id",
-            name: "View Settlement",
-            component: SettlementView,
-            meta: {
-                title: "View Settlement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/settlement-report",
-            name: "Settlement Reports",
-            component: SettlementReport,
-            meta: {
-                title: "Settlement Report",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/claimreimbursement",
-            name: "Claim Reimbursement",
-            component: ClaimReimbursementList,
-            meta: {
-                title: "Claim Reimbursement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewclaimreimbursement/:id",
-            name: "View Claim Reimbursement",
-            component: ClaimReimbursementView,
-            meta: {
-                title: "View Claim Reimbursement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-
-        {
-            path: "/poolcar-report",
-            name: "Pool Car Reports",
-            component: PoolcarReport,
-            meta: {
-                title: "Pool Car Reports",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-
-        //approval page
-        {
-            path: "/approvalcatravel",
-            name: "approval cash advance travel",
-            component: CaTravelList,
-            meta: {
-                title: "Approval CA Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewapprovalcatravel/:id",
-            name: "view approval cash advance travel",
-            component: CaTravelView,
-            meta: {
-                title: "View Approval CA Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approvalcanontravel",
-            name: "approval cash advance non travel",
-            component: CaNonTravelList,
-            meta: {
-                title: "Approval CA Non Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewapprovalcanontravel/:id",
-            name: "view approval cash advance non travel",
-            component: CaNonTravelView,
-            meta: {
-                title: "View Approval CA Non Travel",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approvalrequesttrip",
-            name: "approval request trip",
-            component: RequestTripList,
-            meta: {
-                title: "Approval Request Trip",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewapprovalrequesttrip/:id/:approvalid",
-            name: "view approval request trip",
-            component: RequestTripView,
-            meta: {
-                title: "View Approval Request Trip",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approvalsettlement",
-            name: "approval settlemet",
-            component: ApprovalSettlementList,
-            meta: {
-                title: "Approval Settlement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewapprovalsettlement/:id",
-            name: "view approval settlement",
-            component: ApprovalSettlementView,
-            meta: {
-                title: "View Approval Settlement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approvalreimbursement",
-            name: "approval reimbursement",
-            component: ApporvalReimbursementList,
-            meta: {
-                title: "Approval Reimbursement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewapprovalreimbursement/:id",
-            name: "view approval reimbursement",
-            component: ApporvalReimbursementView,
-            meta: {
-                title: "View Approval Reimbursement",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approvalatkrequest",
-            name: "approval atk request",
-            component: ApprovalAtkRequestList,
-            meta: {
-                title: "Approval ATK Request",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewapprovalatkrrequest/:id",
-            name: "view approval atk request",
-            component: ApprovalAtkRequestView,
-            meta: {
-                title: "View Approval ATK Request",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approvaldelegation",
-            name: "approval delegation",
-            component: ApprovalDelegationList,
-            meta: {
-                title: "Approval Delegation",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approval-meeting-room",
-            name: "list approval meeting room",
-            component: ApprovalMeetingRoomList,
-            meta: {
-                title: "List Approval Meeting Room",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/approval-meeting-room/:id",
-            name: "view approval meeting room",
-            component: ApprovalMeetingRoomView,
-            meta: {
-                title: "View Approval Meeting Room",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        //facility service system
-        {
-            path: "/managementitem",
-            name: "management item atk",
-            component: ItemAtkList,
-            meta: {
-                title: "Management Item ATK",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/stockinatk",
-            name: "stock in atk",
-            component: StockInAtkList,
-            meta: {
-                title: "Stock In ATK",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewstockinatk",
-            name: "viewstock in atk",
-            component: StockInAtkView,
-            meta: {
-                title: "View Stock In ATK",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/viewstockinatk/:id",
-            name: "viewstock_in_atk",
-            component: StockInAtkID,
-            meta: {
-                title: "View Stock In ATK",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/stockOpname/:id",
-            name: "stockOpname",
-            component: StockOpnameAtkID,
-            meta: {
-                title: "View Stock Opname ATK",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/atkRequest/:id",
-            name: "atk-request",
-            component: ATKRequestView,
-            meta: {
-                title: "ATK Request",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/atk-request",
-            name: "ATK Request",
-            component: ATKRequestList,
-            meta: {
-                title: "View Request In ATK",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/doc-delivery/:type/:id",
-            name: "doc-delivery-id",
-            component: DOCDeliveryListID,
-            meta: {
-                title: "Detail Document Delivery",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/doc-delivery",
-            name: "Doc-delivery",
-            component: DOCDeliveryList,
-            meta: {
-                title: "View Document Delivery",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        // {
-        //   path: '/atk-request-view',
-        //   name: 'ATK Request View',
-        //   component: ATKRequestView,
-        //   meta: {
-        //     title: 'Request ATK View'
-        //   },
-        //   beforeEnter: (to, from, next) => {
-        //     const token = localStorage.getItem('token');
-
-        //     if (token) {
-        //       return next()
-        //     }
-
-        //     return next('/')
-        //   }
-        // },
-        {
-            path: "/stock-opname-atk",
-            name: "stock-opname-atk",
-            component: StockOpnameATKList,
-            meta: {
-                title: "Stock Opname ATK List",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/stock-opname-atk-view",
-            name: "Stock Opname ATK View",
-            component: StockOpnameATKView,
-            meta: {
-                title: "Stock Opname ATK View",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/management-meeting-room",
-            name: "Management Meeting Room",
-            component: ManagementMeetingRoomList,
-            meta: {
-                title: "Management Meeting Room",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/booking-meeting-room",
-            name: "Booking Meeting Room",
-            component: BookingMeetingRoomList,
-            meta: {
-                title: "Booking Meeting Room",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/booking-meeting-room/:id",
-            name: "View Booking Meeting Room",
-            component: BookingMeetingRoomView,
-            meta: {
-                title: "View Booking Meeting Room",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/dashboard-meeting-room",
-            name: "Dashboard Meeting Room",
-            component: DashboardMeetingRoom,
-            meta: {
-                title: "Dashboard Meeting Room",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/meetingroomreports",
-            name: "Meeting Room Reports",
-            component: MeetingRoomReports,
-            meta: {
-                title: "Meeting Room Reports",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/stockreport",
-            name: "Stock Reports",
-            component: StockReport,
-            meta: {
-                title: "Stock Reports",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/atkrequestreport",
-            name: "ATK Request Reports",
-            component: AtkRequestReport,
-            meta: {
-                title: "ATK Request Reports",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/documentdeliveryreports",
-            name: "Document Delivery Report",
-            component: DocumentDeliveryReport,
-            meta: {
-                title: "Document Delivery Report",
-            },
-            beforeEnter: (to, from, next) => {
-                const token = localStorage.getItem("token");
-
-                if (token) {
-                    return next();
-                }
-
-                return next("/");
-            },
-        },
-        {
-            path: "/msal",
-            name: "MSAL Login Test",
-            component: msal,
-            meta: {
-                title: "MSAL Login Test",
-            },
-        },
-    ],
-});
+
+    //notification page
+    {
+      path: "/notification",
+      name: "notification",
+      component: ListNotifications,
+      meta: {
+        title: "Notification",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+
+    //reference pages
+    {
+      path: "/brand",
+      name: "brand",
+      component: ListBrand,
+      meta: {
+        title: "Brand",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/glaccount",
+      name: "gl account",
+      component: ListGl,
+      meta: {
+        title: "GL Account",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/company",
+      name: "company",
+      component: ListCompany,
+      meta: {
+        title: "Company",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/currency",
+      name: "currency",
+      component: ListCurrency,
+      meta: {
+        title: "Currency",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/departement",
+      name: "departement",
+      component: ListDepartement,
+      meta: {
+        title: "Departement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/employee",
+      name: "employee",
+      component: List,
+      meta: {
+        title: "Employee",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/classtransportation",
+      name: "Class Transportation",
+      component: ListFlight,
+      meta: {
+        title: "Class Transportation",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token")
+
+        if (token) {
+          return next()
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/job",
+      name: "job",
+      component: ListJob,
+      meta: {
+        title: "Job Band",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/city",
+      name: "city",
+      component: ListCity,
+      meta: {
+        title: "City",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/reimbursement",
+      name: "reimbursement",
+      component: ListReimbursement,
+      meta: {
+        title: "Reimbursement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/site",
+      name: "site",
+      component: ListSite,
+      meta: {
+        title: "Site",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/uom",
+      name: "uom",
+      component: ListUom,
+      meta: {
+        title: "Unit Of Measure Categories",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/warehouse",
+      name: "warehouse",
+      component: ListWarehouse,
+      meta: {
+        title: "Warehouse",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/zona",
+      name: "zona",
+      component: ListZona,
+      meta: {
+        title: "Zona / Tunjangan Lokasi Kerja",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/hotel",
+      name: "hotel",
+      component: HotelList,
+      meta: {
+        title: "Hotel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+
+    // system-configuration page
+    {
+      path: "/user",
+      name: "user",
+      component: ListUser,
+      meta: {
+        title: "User",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/role",
+      name: "role",
+      component: ListRole,
+      meta: {
+        title: "Role",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/approval",
+      name: "approval",
+      component: ListApproval,
+      meta: {
+        title: "Approval",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/menu",
+      name: "menu",
+      component: ListMenu,
+      meta: {
+        title: "Menu",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/sequence",
+      name: "sequence",
+      component: ListSequence,
+      meta: {
+        title: "Sequence",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+
+    // travel management system
+    {
+      path: "/request",
+      name: "request trip",
+      component: RequestTripListTMS,
+      meta: {
+        title: "Request Trip",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/request-view",
+      name: "form view request trip",
+      component: RequestTripViewTMS,
+      meta: {
+        title: "View Request Trip",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/cashadvancetravel",
+      name: "cash advance travel",
+      component: TravelList,
+      meta: {
+        title: "CA Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewcashadvancetravel/:id",
+      name: "view cash advance travel",
+      component: TravelView,
+      meta: {
+        title: "View CA Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/cashadvancenontravel",
+      name: "cash advance non travel",
+      component: NonTravelList,
+      meta: {
+        title: "CA Non Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewcashadvancenontravel/:id",
+      name: "view cash advance non travel",
+      component: NonTravelView,
+      meta: {
+        title: "View CA Non Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/settlement",
+      name: "Settlement",
+      component: SettlementList,
+      meta: {
+        title: "Settlement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/settlement/:id",
+      name: "View Settlement",
+      component: SettlementView,
+      meta: {
+        title: "View Settlement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/settlement-report",
+      name: "Settlement Reports",
+      component: SettlementReport,
+      meta: {
+        title: "Settlement Report",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/claimreimbursement",
+      name: "Claim Reimbursement",
+      component: ClaimReimbursementList,
+      meta: {
+        title: "Claim Reimbursement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewclaimreimbursement/:id",
+      name: "View Claim Reimbursement",
+      component: ClaimReimbursementView,
+      meta: {
+        title: "View Claim Reimbursement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+
+    {
+      path: "/poolcar-report",
+      name: "Pool Car Reports",
+      component: PoolcarReport,
+      meta: {
+        title: "Pool Car Reports",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+
+    //approval page
+    {
+      path: "/approvalcatravel",
+      name: "approval cash advance travel",
+      component: CaTravelList,
+      meta: {
+        title: "Approval CA Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewapprovalcatravel/:id",
+      name: "view approval cash advance travel",
+      component: CaTravelView,
+      meta: {
+        title: "View Approval CA Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/approvalcanontravel",
+      name: "approval cash advance non travel",
+      component: CaNonTravelList,
+      meta: {
+        title: "Approval CA Non Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewapprovalcanontravel/:id",
+      name: "view approval cash advance non travel",
+      component: CaNonTravelView,
+      meta: {
+        title: "View Approval CA Non Travel",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/approvalrequesttrip",
+      name: "approval request trip",
+      component: RequestTripList,
+      meta: {
+        title: "Approval Request Trip",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewapprovalrequesttrip/:id/:approvalid",
+      name: "view approval request trip",
+      component: RequestTripView,
+      meta: {
+        title: "View Approval Request Trip",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/approvalsettlement",
+      name: "approval settlemet",
+      component: ApprovalSettlementList,
+      meta: {
+        title: "Approval Settlement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewapprovalsettlement/:id",
+      name: "view approval settlement",
+      component: ApprovalSettlementView,
+      meta: {
+        title: "View Approval Settlement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/approvalreimbursement",
+      name: "approval reimbursement",
+      component: ApporvalReimbursementList,
+      meta: {
+        title: "Approval Reimbursement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewapprovalreimbursement/:id",
+      name: "view approval reimbursement",
+      component: ApporvalReimbursementView,
+      meta: {
+        title: "View Approval Reimbursement",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/approvalatkrequest",
+      name: "approval atk request",
+      component: ApprovalAtkRequestList,
+      meta: {
+        title: "Approval ATK Request",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewapprovalatkrrequest/:id",
+      name: "view approval atk request",
+      component: ApprovalAtkRequestView,
+      meta: {
+        title: "View Approval ATK Request",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/approvaldelegation",
+      name: "approval delegation",
+      component: ApprovalDelegationList,
+      meta: {
+        title: "Approval Delegation",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+
+    {
+      path: "/approval-meeting-room",
+      name: "list approval meeting room",
+      component: ApprovalMeetingRoomList,
+      meta: {
+          title: "List Approval Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+          const token = localStorage.getItem("token");
+
+          if (token) {
+              return next();
+          }
+
+          return next("/");
+      },
+  },
+  {
+      path: "/approval-meeting-room/:id",
+      name: "view approval meeting room",
+      component: ApprovalMeetingRoomView,
+      meta: {
+          title: "View Approval Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+          const token = localStorage.getItem("token");
+
+          if (token) {
+              return next();
+          }
+
+          return next("/");
+      },
+  },
+
+
+    //facility service system
+    {
+      path: "/managementitem",
+      name: "management item atk",
+      component: ItemAtkList,
+      meta: {
+        title: "Management Item ATK",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/stockinatk",
+      name: "stock in atk",
+      component: StockInAtkList,
+      meta: {
+        title: "Stock In ATK",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewstockinatk",
+      name: "viewstock in atk",
+      component: StockInAtkView,
+      meta: {
+        title: "View Stock In ATK",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/viewstockinatk/:id",
+      name: "viewstock_in_atk",
+      component: StockInAtkID,
+      meta: {
+        title: "View Stock In ATK",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/stockOpname/:id",
+      name: "stockOpname",
+      component: StockOpnameAtkID,
+      meta: {
+        title: "View Stock Opname ATK",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/atkRequest/:id",
+      name: "atk-request",
+      component: ATKRequestView,
+      meta: {
+        title: "ATK Request",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/atk-request",
+      name: "ATK Request",
+      component: ATKRequestList,
+      meta: {
+        title: "View Request In ATK",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/doc-delivery/:type/:id",
+      name: "doc-delivery-id",
+      component: DOCDeliveryListID,
+      meta: {
+        title: "Detail Document Delivery",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/doc-delivery",
+      name: "Doc-delivery",
+      component: DOCDeliveryList,
+      meta: {
+        title: "View Document Delivery",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    // {
+    //   path: '/atk-request-view',
+    //   name: 'ATK Request View',
+    //   component: ATKRequestView,
+    //   meta: {
+    //     title: 'Request ATK View'
+    //   },
+    //   beforeEnter: (to, from, next) => {
+    //     const token = localStorage.getItem('token');
+
+    //     if (token) {
+    //       return next()
+    //     }
+
+    //     return next('/')
+    //   }
+    // },
+    {
+      path: "/stock-opname-atk",
+      name: "stock-opname-atk",
+      component: StockOpnameATKList,
+      meta: {
+        title: "Stock Opname ATK List",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/stock-opname-atk-view",
+      name: "Stock Opname ATK View",
+      component: StockOpnameATKView,
+      meta: {
+        title: "Stock Opname ATK View",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/management-meeting-room",
+      name: "Management Meeting Room",
+      component: ManagementMeetingRoomList,
+      meta: {
+        title: "Management Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/booking-meeting-room",
+      name: "Booking Meeting Room",
+      component: BookingMeetingRoomList,
+      meta: {
+        title: "Booking Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/booking-meeting-room/:id",
+      name: "View Booking Meeting Room",
+      component: BookingMeetingRoomView,
+      meta: {
+        title: "View Booking Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/dashboard-meeting-room",
+      name: "Dashboard Meeting Room",
+      component: DashboardMeetingRoom,
+      meta: {
+        title: "Dashboard Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/meetingroomreports",
+      name: "Meeting Room Reports",
+      component: MeetingRoomReports,
+      meta: {
+        title: "Meeting Room Reports",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/stockreport",
+      name: "Stock Reports",
+      component: StockReport,
+      meta: {
+        title: "Stock Reports",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/atkrequestreport",
+      name: "ATK Request Reports",
+      component: AtkRequestReport,
+      meta: {
+        title: "ATK Request Reports",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/documentdeliveryreports",
+      name: "Document Delivery Report",
+      component: DocumentDeliveryReport,
+      meta: {
+        title: "Document Delivery Report",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/actualization",
+      name: "Actualization Trip",
+      component: ActualizationTrip,
+      meta: {
+        title: "Actualization Trip",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/msal",
+      name: "MSAL Login Test",
+      component: msal,
+      meta: {
+        title: "MSAL Login Test",
+      },
+    },  
+      ],
+    }
+
+)
+
 
 router.beforeEach((to, from, next) => {
     document.title = `GAIS || ${to.meta.title}`;

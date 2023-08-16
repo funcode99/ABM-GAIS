@@ -4,22 +4,9 @@ import Api from "@/utils/Api";
 
 import CollapseTransition from "@ivanv/vue-collapse-transition/src/CollapseTransition.vue";
 
-import dashboardIcon from "@/assets/dashboard-icon.png";
-import travelManagementSystemIcon from "@/assets/travel-management-system-icon.png";
-import travelManagementSystemSelected from "@/assets/travel-management-system-selected.png";
-import systemConfigurationIcon from "@/assets/system-configuration-not-selected.png";
-import systemConfigurationIconSelected from "@/assets/system-configuration-selected.png";
-import referenceIcon from "@/assets/reference.png";
-import referenceIconSelected from "@/assets/reference-selected.png";
-import approvalIcon from "@/assets/approval.png";
-import approvalSelected from "@/assets/approval-selected.png";
 import submenuLine from "@/assets/submenu-line.png";
 import submenuLineSelected from "@/assets/submenu-line-selected.png";
 import submenuInner from "@/assets/inner-sub-menu.png";
-import facilityIcon from "@/assets/facilityIcon.png";
-import facilityIconSelected from "@/assets/facilityIconSelected.png";
-import notifIcon from "@/assets/notifIcon.png";
-import notifIconSelected from "@/assets/notifIconSelected.png";
 
 import searchIcon from "@/assets/Icons.png";
 import expandArrow from "@/assets/ExpandArrow.png";
@@ -32,9 +19,6 @@ import { useSidebarStore } from "@/stores/sidebar.js";
 
 const sidebar = useSidebarStore();
 const searchSidebarValue = ref("");
-const id_role = JSON.parse(localStorage.getItem("id_role"));
-
-let menuData = ref();
 
 const fetchSidebarAppearance = async () => {
   const token = JSON.parse(localStorage.getItem("token"))
@@ -166,36 +150,7 @@ const handleNotifClick = () => {
               </div>
             </li>
 
-            <!-- dashboard -->
-            <!-- <li>
-              <router-link
-                to="/dashboard"
-                class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
-              >
-                <img :src="dashboardIcon" class="w-6 h-6" alt="" />
-                <a :class="sidebar.isWide === true ? '' : 'hidden'"
-                  >Dashboards</a
-                >
-              </router-link>
-            </li> -->
-
-            <!-- Notification -->
-            <!-- <li>
-              <router-link
-                to="/notification"
-                class="flex items-center gap-4 p-4 rounded-lg anchorMenu"
-                @click="handleNotifClick"
-              >
-                <img
-                  :src="isNotifSelected ? notifIconSelected : notifIcon"
-                  class="w-6 h-6"
-                  alt=""
-                />
-                <a :class="sidebar.isWide === true ? '' : 'hidden'"
-                  >Notification</a
-                >
-              </router-link>
-            </li> -->
+            <!-- {{ sidebar.menuData }} -->
 
             <li v-for="data in sidebar.menuData">
 

@@ -2,7 +2,7 @@
 import modalHeader from "@/components/modal/modalHeader.vue";
 import modalFooter from "@/components/modal/modalFooter.vue";
 
-import { Modal } from "usemodal-vue3";
+import { Modal } from "usemodal-vue3"
 
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
@@ -94,6 +94,7 @@ watch(Site, () => {
 </script>
 
 <template>
+
   <button
     @click="isVisible = true"
     class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
@@ -102,10 +103,13 @@ watch(Site, () => {
   </button>
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
+    
     <main>
+      
       <modalHeader @closeVisibility="isVisible = false" title="New Brand" />
 
       <form class="pt-4" @submit.prevent="saveBrand">
+        
         <div class="mb-6 w-full px-4">
           <label class="block mb-2 font-JakartaSans font-medium text-sm"
             >Company<span class="text-red">*</span></label
@@ -168,8 +172,11 @@ watch(Site, () => {
         </div>
 
         <modalFooter @closeEdit="isVisible = false" class="pb-2" />
+
       </form>
+
     </main>
+
   </Modal>
 </template>
 

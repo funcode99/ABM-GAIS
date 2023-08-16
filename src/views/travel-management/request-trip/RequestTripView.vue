@@ -4,6 +4,7 @@
     import miniABM from '@/assets/mini-abm.png'
     import userImg from '@/assets/3-user.png'
     import deleteDocumentIcon from '@/assets/delete_document_icon.png'
+    import walletImg from '@/assets/wallet.png'
 
     import Api from '@/utils/Api'
 
@@ -11,13 +12,14 @@
     import buttonCancelFormView from '@/components/atomics/buttonCancelFormView.vue'
     import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
     import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
+
+    import AddActualizationTripModal from '@/components/travel-management/actualization-trip/AddActualizationTrip.vue'
     
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Footer from '@/components/layout/Footer.vue'
     import multiStepCircleVertical from '@/components/molecules/multiStepCircleVertical.vue'
     import detailsFormHeader from '@/components/organisms/detailsFormHeader.vue'
-
 
     import guestAsTravellerFormView from '@/components/request-trip/view-detail-form/guest-as-traveller-view.vue'
     import airlinesFormView from '@/components/request-trip/view-detail-form/airlines-view.vue'
@@ -422,6 +424,24 @@
                         v-if="isEditing"
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
+
+                      <!-- <button
+                        @click="showActualizationModal"
+                        class="bg-orange text-white rounded-lg py-[5px] px-[18px] font-bold"  
+                      >
+                        Actualization
+                      </button> -->
+
+                      <AddActualizationTripModal />
+
+                      <div class="flex-1"></div>
+
+                      <div class="absolute right-5">
+                        <button class="flex gap-3 items-center bg-blue text-white rounded-lg font-bold py-[14px] px-[10px]">
+                          <img :src="walletImg" />
+                          Actualization
+                        </button>
+                      </div>
 
                     </div>
 

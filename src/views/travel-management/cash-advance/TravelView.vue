@@ -115,7 +115,7 @@ const getSessionForSidebar = () => {
             </div>
           </div>
           <div class="float-right">
-            <ModalJurnal @change-flight="editFlight(id)" />
+            <ModalJurnal />
           </div>
 
           <!-- FORM READ ONLY-->
@@ -199,7 +199,7 @@ const getSessionForSidebar = () => {
                 <p
                   :class="
                     tabId == 1
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -221,7 +221,7 @@ const getSessionForSidebar = () => {
                 <p
                   :class="
                     tabId == 2
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
