@@ -67,7 +67,7 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
-      const api = await Api.post(`/flight_trip/update_data/${props.value[status.currentIndex].id}`, {
+      const api = await Api.post(`/flight_trip/update_data/${props.value[statusEdit.currentIndex].id}`, {
           id_request_trip: props.value[statusEdit.currentIndex].id_request_trip,
           id_vendor: vendor.value,
           flight_no: flightNumber.value,
@@ -104,8 +104,13 @@
 
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      console.log(props.value)
+
+      // isi nya undefined
+      console.log(statusEdit.currentIndex)
       
-      const api = await Api.delete(`/flight_trip/delete_data/${props.value[status.currentIndex].id}`)
+      const api = await Api.delete(`/flight_trip/delete_data/${props.value[statusEdit.currentIndex].id}`)
         
       console.log(api)
       emits('fetchAirlines')  

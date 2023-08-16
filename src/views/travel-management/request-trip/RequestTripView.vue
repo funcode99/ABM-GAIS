@@ -78,6 +78,8 @@
     provide('accomodationDataView', accomodationData)
     provide('cashAdvanceDataView', cashAdvanceData)
 
+    let listOfFormDataProps = [travellerGuestData, airlinesData, taxiVoucherData, otherTransportationData, accomodationData, cashAdvanceData] 
+
     const getPurposeOfTrip = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -260,8 +262,28 @@
       notes.value = purposeOfTripData.value[currentIndex].notes
     })
 
+    let propsCheck = ref(null)
+
+    const assignToCheckProps = () => {
+      if(headerTitle.value === 'Traveller') {
+        propsCheck.value = travellerGuestData.value
+      } else if (headerTitle.value === 'Airlines') {
+        propsCheck.value = airlinesData.value
+      } else if (headerTitle.value === 'Taxi Voucher') {
+        propsCheck.value = taxiVoucherData.value  
+      } else if (headerTitle.value === 'Other Transportation') {
+        propsCheck.value = otherTransportationData.value    
+      } else if (headerTitle.value === 'Accomodation') {
+        propsCheck.value = accomodationData.value      
+      } else if (headerTitle.value === 'Accomodation') {
+        propsCheck.value = cashAdvanceData.value        
+      }
+    }
+
     watch(headerTitle, () => {
       
+      assignToCheckProps()
+
       assignSelectedData()
       dataIndex.value = 0
       showingValue.value = 1
@@ -270,6 +292,10 @@
         getCashAdvance()
       }
 
+    })
+
+    watch(listOfFormDataProps, () => {
+      assignToCheckProps()
     })
 
     let count = ref(1)
@@ -622,14 +648,14 @@
                             <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
 
                               <buttonEditFormView
-                              v-if="isEditing & headerTitle !== 'Cash Advance' " 
+                              v-if="isEditing & headerTitle !== 'Cash Advance' && JSON.stringify(propsCheck) !== '[{}]'" 
                               @click="changeType('Edit')"
                                />
 
                                <buttonAddFormView 
-                               v-if="isEditing & headerTitle !== 'Cash Advance' " 
-                               @click="changeType('Add')"
-                               title="Add"
+                                title="Add"
+                                v-if="isEditing & headerTitle !== 'Cash Advance' " 
+                                @click="changeType('Add')"
                               />
   
                               <!-- Issued Ticket Button -->
@@ -677,7 +703,7 @@
                             <!-- DELETE BUTTON -->
                             <button 
                               @click="changeType('Delete')"
-                              v-if="isEditing && viewLayout === 'document'" 
+                              v-if="isEditing && viewLayout === 'document' && JSON.stringify(propsCheck) !== '[{}]'" 
                               class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
                             >
 
@@ -688,6 +714,8 @@
 
                           </detailsFormHeader>
 
+                          {{propsCheck}}
+
                           <!-- BUTTON INI MUNCUL UNTUK MENAMBAH DOCUMENT REQUEST TRIP (Add) -->
                           <detailsFormHeader 
                             :title="headerTitle"
@@ -696,8 +724,9 @@
                           >
 
                             <buttonAddFormView 
+                              title="Confirm Add"
                               @click="changeType('Submit Add')"
-                              class="mx-7" 
+                              class="mx-7"
                             />
                             
                             <buttonCancelFormView 
@@ -705,21 +734,6 @@
                             />
 
                           </detailsFormHeader>
-
-                          <!-- {{ typeOfSubmitToProps }} -->
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                           <!-- form Step 3 -->
@@ -914,8 +928,6 @@
                                       v-if="currentlyEditCAHeader"
                                       @click="currentlyEditCAHeader = !currentlyEditCAHeader"
                                     />
-
-                          
 
                                     <buttonAddFormView
                                       title="Add Cash Advance"
