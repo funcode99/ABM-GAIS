@@ -2,14 +2,18 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+
 import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
+import arrow from "@/assets/request-trip-view-arrow.png";
+
 import Api from "@/utils/Api";
 import moment from "moment";
-
-import arrow from "@/assets/request-trip-view-arrow.png";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -17,6 +21,7 @@ import { useRoute } from "vue-router";
 
 const sidebar = useSidebarStore();
 const route = useRoute();
+
 let dataArr = ref([]);
 let dataItem = ref([]);
 let dataApproval = ref([]);
@@ -24,19 +29,20 @@ let dataApproval = ref([]);
 let lengthCounter = 0;
 let id = route.params.id;
 let tabId = ref(1);
+let alert = ref([]);
 
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
+const listStatus = [
+  { id: 0, status: "Draft", value: "alert bg-[#8d8e8f]" },
+  { id: 1, status: "Waiting Approval", value: "alert alert-warning" },
+  { id: 2, status: "Revision", value: "alert alert-error" },
+  { id: 3, status: "Cancelled", value: "alert alert-error" },
+  { id: 5, status: "Confirmed", value: "alert alert-info" },
+  { id: 9, status: "Rejected", value: "alert alert-error" },
+  { id: 10, status: "Completed", value: "alert alert-success" },
+];
 
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
 const fetchDataById = async (id) => {
@@ -44,6 +50,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/cash_advance/travel/${id}`);
   dataArr.value = res.data.data[0];
+  alert = listStatus.find((item) => item.status === dataArr.value.status);
   fetchDataItem(id);
   fetchHistoryApproval(dataArr.value.id_request_trip);
 };
@@ -65,27 +72,29 @@ onBeforeMount(() => {
   fetchDataById(id);
 });
 
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 </script>
 
 <template>
-  <div
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
+      <tableContainer>
+        <tableTop>
           <!-- HEADER -->
           <div class="flex justify-between">
             <router-link
@@ -101,19 +110,29 @@ const getSessionForSidebar = () => {
                 </span>
               </h1>
             </router-link>
-            <div class="py-4">
-              <button
-                type="button"
-                :class="
-                  dataArr.status == 'Revision' || dataArr.status == 'Rejected'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize status-default'
-                "
+
+            <div class="py-4 mx-4">
+              <span
+                :class="`capitalize ${alert.value} text-white text-sm font-JakartaSans font-bold`"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
                 {{ dataArr.status }}
-              </button>
+              </span>
             </div>
           </div>
+
           <div class="float-right">
             <ModalJurnal />
           </div>
@@ -273,7 +292,7 @@ const getSessionForSidebar = () => {
                 >
                   <tr class="h-16" v-for="data in dataItem" :key="data.id">
                     <td class="border border-[#B9B9B9]">
-                      {{ data.item_name }}
+                      {{ data.nama_item }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ data.frequency }}
@@ -290,12 +309,14 @@ const getSessionForSidebar = () => {
                     <td class="border border-[#B9B9B9]">{{ data.remarks }}</td>
                   </tr>
                 </tbody>
+
                 <tbody v-else>
                   <tr>
                     <DataNotFound :cnt-col="6" />
                   </tr>
                 </tbody>
               </table>
+
               <div v-if="tabId == 2">
                 <HistoryApproval
                   :data-approval="dataApproval"
@@ -304,24 +325,12 @@ const getSessionForSidebar = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+        </tableTop>
+      </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
 
-<style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-
-.status-revision {
-  background: #ef3022;
-}
-
-.status-default {
-  background: #2970ff;
-}
-</style>
+<style scoped></style>
