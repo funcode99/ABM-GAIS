@@ -105,11 +105,112 @@ const router = createRouter(
     {
       history: createWebHistory(import.meta.env.BASE_URL),
       routes: [
-          {
+          
+    {
               path: "/experiment",
               component: experimentPage,
-          },
-        
+    },
+
+
+    ...poolCarRoutes,
+    {
+        path: "/addfield",
+        // component: addinputfield,
+        component: avoidduplicatedropdown,
+    },
+
+    // Not found Page
+    {
+        path: "/:pathMatch(.*)*",
+        name: "Not Found Page",
+        component: NotFound,
+        meta: {
+            title: "Not Found X(",
+        },
+    },
+
+
+
+           // auth pages
+           {
+            path: "/",
+            name: "login",
+            component: Login,
+            meta: {
+                title: "Welcome",
+            },
+            beforeEnter: (to, from, next) => {
+                const token = localStorage.getItem("token");
+
+                if (token) {
+                    return next("/user");
+                }
+
+                return next();
+            },
+        },
+        {
+            path: "/forgot",
+            name: "forgotPassword",
+            component: ForgotPassword,
+            meta: {
+                title: "Forgot Password",
+            },
+            // beforeEnter: (to, from, next) => {
+            //   const token = localStorage.getItem('token');
+
+            //   if (token) {
+            //     return next()
+            //   }
+
+            //   return next('/')
+            // }
+        },
+        {
+            path: "/profile",
+            name: "profileDetails",
+            component: Profile,
+            meta: {
+                title: "Profile",
+            },
+            beforeEnter: (to, from, next) => {
+                const token = localStorage.getItem("token");
+
+                if (token) {
+                    return next();
+                }
+
+                return next("/");
+            },
+        },
+        {
+            path: "/dashboard",
+            name: "dashboard",
+            component: () => import("@/components/layout/AdminLayout.vue"),
+            meta: {
+                title: "Dashboard",
+            },
+            beforeEnter: (to, from, next) => {
+                const token = localStorage.getItem("token");
+
+                if (token) {
+                    return next();
+                }
+
+                return next("/");
+            },
+            children: [
+                {
+                    path: "",
+                    name: "DashboardPage",
+                    component: () => import("@/views/dashboard/Dashboard.vue"),
+                    meta: {
+                        title: "Dashboard",
+                    },
+                },
+            ],
+        },
+
 
     //notification page
     {
@@ -904,6 +1005,42 @@ const router = createRouter(
       },
     },
 
+    {
+      path: "/approval-meeting-room",
+      name: "list approval meeting room",
+      component: ApprovalMeetingRoomList,
+      meta: {
+          title: "List Approval Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+          const token = localStorage.getItem("token");
+
+          if (token) {
+              return next();
+          }
+
+          return next("/");
+      },
+  },
+  {
+      path: "/approval-meeting-room/:id",
+      name: "view approval meeting room",
+      component: ApprovalMeetingRoomView,
+      meta: {
+          title: "View Approval Meeting Room",
+      },
+      beforeEnter: (to, from, next) => {
+          const token = localStorage.getItem("token");
+
+          if (token) {
+              return next();
+          }
+
+          return next("/");
+      },
+  },
+
+
     //facility service system
     {
       path: "/managementitem",
@@ -1270,8 +1407,9 @@ const router = createRouter(
         title: "MSAL Login Test",
       },
     },  
-  ],
-  },
+      ],
+    }
+
 )
 
 
