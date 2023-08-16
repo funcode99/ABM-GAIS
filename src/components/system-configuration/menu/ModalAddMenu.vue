@@ -23,6 +23,7 @@ let modalPaddingHeight = "10vh";
 
 let menuName = ref("");
 let url = ref("");
+let urlView = ref("");
 let urlApproval = ref("");
 let idStatusMenu = ref(1);
 let ParentId = ref(null);
@@ -52,6 +53,7 @@ const submit = () => {
     formState.menu.sequence = sequence.value;
     formState.menu.sequenceCode = sequenceCode.value;
     formState.menu.url = url.value;
+    formState.menu.urlView = urlView.value;
     formState.menu.urlApproval = urlApproval.value;
     formState.menu.icon = file.value;
     formState.menu.companyId = companyIdArray.value;
@@ -69,6 +71,7 @@ const submit = () => {
 const resetInput = () => {
   menuName.value = "";
   url.value = "";
+  urlView.value = "";
   urlApproval.value = "";
   idStatusMenu.value = 1;
   ParentId.value = null;
@@ -135,7 +138,7 @@ const inputStylingClass =
             for="icon"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
           >
-            Icon<span class="text-red-star">*</span>
+            Icon
           </label>
           <input
             :class="inputStylingClass"
@@ -144,7 +147,6 @@ const inputStylingClass =
             type="file"
             accept="image/*"
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
           />
         </div>
 
@@ -270,7 +272,7 @@ const inputStylingClass =
             for="url"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
           >
-            URL View<span class="text-red-star">*</span>
+            URL Pages<span class="text-red-star">*</span>
           </label>
           <input
             :class="inputStylingClass"
@@ -288,7 +290,25 @@ const inputStylingClass =
             for="url"
             class="block mb-2 font-JakartaSans font-medium text-sm text-left"
           >
-            URL Approval<span class="text-red-star">*</span>
+            URL View<span class="text-red-star">*</span>
+          </label>
+          <input
+            :class="inputStylingClass"
+            v-model="urlView"
+            id="url"
+            type="text"
+            placeholder="URL"
+            class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
+            required
+          />
+        </div>
+
+        <div class="py-2">
+          <label
+            for="url"
+            class="block mb-2 font-JakartaSans font-medium text-sm text-left"
+          >
+            URL Approval
           </label>
           <input
             :class="inputStylingClass"
@@ -297,7 +317,6 @@ const inputStylingClass =
             type="text"
             placeholder="URL"
             class="input input-bordered input-accent w-full font-JakartaSans font-semibold text-base"
-            required
           />
         </div>
 

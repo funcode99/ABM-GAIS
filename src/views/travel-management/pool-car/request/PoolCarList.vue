@@ -25,8 +25,8 @@ import {
 const headers = [
   {
     text: "Request No",
-    key: "no_request_trip",
-    value: "no_request_trip",
+    key: "no_pool_car",
+    value: "no_pool_car",
   },
   {
     text: "Created Date",
@@ -248,18 +248,18 @@ onMounted(async () => {
             {{ toFilterDate(item.to_date, "DD/MM/YYYY") }}
           </template>
 
-          <template #[`item-no_request_trip`]="{ item }">
+          <template #[`item-no_pool_car`]="{ item }">
             <router-link
               :to="{
                 name: 'PoolCarRequestDetail',
                 params: {
-                  requestNumber: item.no_request_trip,
+                  requestNumber: item.no_pool_car,
                   id: item.id,
                 },
               }"
             >
               <span class="font-bold text-primary">
-                {{ item.no_request_trip }}</span
+                {{ item.no_pool_car }}</span
               >
             </router-link>
           </template>

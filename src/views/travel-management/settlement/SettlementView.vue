@@ -1,41 +1,43 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import DataNotFound from "@/components/element/dataNotFound.vue";
-import Swal from "sweetalert2";
-import HistoryApproval from "@/components/approval/HistoryApproval.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import DataNotFound from "@/components/element/dataNotFound.vue"
+import Swal from "sweetalert2"
+import HistoryApproval from "@/components/approval/HistoryApproval.vue"
 
-import arrow from "@/assets/request-trip-view-arrow.png";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import Api from "@/utils/Api";
-import moment from "moment";
+import arrow from "@/assets/request-trip-view-arrow.png"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import Api from "@/utils/Api"
+import moment from "moment"
 
-import { ref, onBeforeMount } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
-import { useRoute, useRouter } from "vue-router";
+import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
 
-const sidebar = useSidebarStore();
-const route = useRoute();
-const router = useRouter();
+import { ref, onBeforeMount } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+import { useRoute, useRouter } from "vue-router"
 
-let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
+const sidebar = useSidebarStore()
+const route = useRoute()
+const router = useRouter()
 
-let lockScrollbar = ref(false);
-let dataArr = ref([]);
-let dataItem = ref([]);
-let dataApproval = ref([]);
-let tabId = ref(1);
-let lengthCounter = 0;
-let tempTotal = 0;
-let idSettlement = route.params.id;
-let statusForm = "";
-let idEdit = ref("");
-let visibleHeader = ref(false);
-let editItem = ref(false);
-let addItem = ref(false);
-let type = ref("");
+let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
+
+let lockScrollbar = ref(false)
+let dataArr = ref([])
+let dataItem = ref([])
+let dataApproval = ref([])
+let tabId = ref(1)
+let lengthCounter = 0
+let tempTotal = 0
+let idSettlement = route.params.id
+let statusForm = ""
+let idEdit = ref("")
+let visibleHeader = ref(false)
+let editItem = ref(false)
+let addItem = ref(false)
+let type = ref("")
 
 const tableHeadDetailsItem = [
   { id: 1, title: "Item" },
@@ -45,7 +47,7 @@ const tableHeadDetailsItem = [
   { id: 5, title: "Total" },
   { id: 6, title: "Total Pemakaian Real" },
   { id: 7, title: "Attachment" },
-];
+]
 
 const tableHeadDetailsItemNon = [
   { id: 1, title: "Item" },
@@ -53,98 +55,130 @@ const tableHeadDetailsItemNon = [
   { id: 4, title: "Nominal" },
   { id: 5, title: "Nominal Pemakaian Real" },
   { id: 6, title: "Attachment" },
-];
+]
 
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
+    return moment(String(value)).format("DD/MM/YYYY")
   }
-};
+}
 
 const format_price = (value) => {
   if (!value) {
-    return "0.00";
+    return "0.00"
   }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
+  let val = (value / 1).toFixed(2).replace(".", ",")
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+}
 const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/settlement/get_data/${id}`);
-  dataArr.value = res.data.data[0];
-  generateType(dataArr.value.total_real, dataArr.value.total_ca);
-  fetchDataItem(id);
-  fetchHistoryApproval(id);
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/settlement/get_data/${id}`)
+  dataArr.value = res.data.data[0]
+  generateType(dataArr.value.total_real, dataArr.value.total_ca)
+  fetchDataItem(id)
+  fetchHistoryApproval(id)
+}
 
 const fetchDataItem = async (id) => {
-  const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`);
-  dataItem.value = res.data.data;
-};
+  const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`)
+  dataItem.value = res.data.data
+}
 
 const edit = () => {
-  visibleHeader.value = true;
-  statusForm = "edit-header";
+  visibleHeader.value = true
+  statusForm = "edit-header"
   dataItem.value.forEach((dt) => {
-    tempTotal += Number(dt.nominal);
-  });
-  dataArr.value.grand_total = tempTotal;
-};
+    tempTotal += Number(dt.nominal)
+  })
+  dataArr.value.grand_total = tempTotal
+}
 
 const cancelHeader = () => {
-  visibleHeader.value = false;
-  editItem.value = false;
-  idEdit.value = "";
-};
+  visibleHeader.value = false
+  editItem.value = false
+  idEdit.value = ""
+
+  cancelNewData()
+}
 
 const editItems = (id) => {
-  idEdit.value = id;
-  editItem.value = true;
-};
+  idEdit.value = id
+  editItem.value = true
+}
 
 const saveItems = async (type, id = null, item = null) => {
   const payload = {
+    id: id,
     attachment: selectedImage.value,
     nominal_ca: item.nominal_ca,
     nominal_real: item.nominal_real,
     id_settlement: idSettlement,
-  };
-  if (type == "edit") {
-    const api = await Api.post(`settlement/update_detail/${id}`, payload);
+    detail_item_name: item.detail_item_name,
+    frequency: item.frequency,
+  }
+  if (
+    !payload.attachment ||
+    !payload.nominal_ca ||
+    !payload.nominal_real ||
+    !payload.id_settlement
+  ) {
+    Swal.fire({
+      title: "Please check item details!",
+      text: "Item Details cannot empty or 0 value",
+      icon: "error",
+      showConfirmButton: true,
+    })
+    return
+  }
+
+  if (payload.id != "new") {
+    const api = await Api.post(`settlement/update_detail/${id}`, payload)
     Swal.fire({
       position: "center",
       icon: "success",
       title: api.data.message,
       showConfirmButton: false,
       timer: 1500,
-    });
-    fetchDataById(idSettlement);
-    router.push({ path: `/settlement/${idSettlement}` });
+    })
+    fetchDataById(idSettlement)
+    router.push({ path: `/settlement/${idSettlement}` })
+  } else {
+    delete payload.id
+
+    const api = await Api.post(`settlement/store_detail`, payload)
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: api.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    fetchDataById(idSettlement)
   }
-  editItem.value = false;
-  addItem.value = false;
-  idEdit.value = "";
-  fetchDataItem(idSettlement);
-};
+  editItem.value = false
+  addItem.value = false
+  idEdit.value = ""
+  fetchDataItem(idSettlement)
+}
 
 const submit = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Api.post(`settlement/submit/${idSettlement}`)
     .then((res) => {
-      let status = res.data.success == true ? "success" : "error";
+      let status = res.data.success == true ? "success" : "error"
       Swal.fire({
         position: "center",
         icon: status,
         title: res.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
-      fetchDataById(idSettlement);
+      })
+      fetchDataById(idSettlement)
     })
     .catch((e) => {
-      console.log(e);
+      console.log(e)
       Swal.fire({
         position: "center",
         icon: "error",
@@ -154,49 +188,74 @@ const submit = async () => {
         timerProgressBar: true,
         background: "#EA5455",
         color: "#ffffff",
-      });
-    });
-};
+      })
+    })
+}
+
+const addNewItem = (item) => {
+  const default_item = {
+    id: "new",
+    attachment: null,
+    nominal_ca: null,
+    nominal_real: null,
+    id_settlement: idSettlement,
+    detail_item_name: null,
+    frequency: null,
+  }
+
+  dataItem.value.unshift({ ...default_item })
+
+  editItem.value = true
+  idEdit.value = "new"
+}
+
+const cancelNewData = () => {
+  const newDataIndex = dataItem.value.findIndex(({ id }) => id == "new")
+
+  if (newDataIndex >= 0) {
+    dataItem.value.splice(newDataIndex, 1)
+  }
+}
 
 const generateType = (after, before) => {
   if (parseInt(after) > parseInt(before)) {
-    type.value = "Claim";
+    type.value = "Claim"
   } else if (parseInt(after) < parseInt(before)) {
-    type.value = "Refund";
+    type.value = "Refund"
   } else {
-    type.value = "Equal";
+    type.value = "Equal"
   }
-};
+}
 
 // image
-const selectedImage = ref(null);
-let filename = ref(null);
+const selectedImage = ref(null)
+let filename = ref(null)
 
 const onFileSelected = (event, id, nominal) => {
-  const file = event.target.files[0];
-  selectedImage.value = file ? file : null;
-  filename.value = file.name;
-};
+  const file = event.target.files[0]
+  selectedImage.value = file ? file : null
+  filename.value = file.name
+}
 // end
 
 const fetchHistoryApproval = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/settlement/approval_history/${id}`);
-  dataApproval.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/settlement/approval_history/${id}`)
+  dataApproval.value = res.data.data
+}
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchDataById(idSettlement);
-});
+  getSessionForSidebar()
+  fetchDataById(idSettlement)
+})
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 </script>
 
 <template>
@@ -381,6 +440,16 @@ const inputClass =
             </div>
           </div>
 
+          <div class="px-20 py-5" v-if="visibleHeader">
+            <button
+              class="btn bg-green capitalize border-none"
+              @click="addNewItem(dataItem[0])"
+              :disabled="dataItem[0].id == 'new'"
+            >
+              Add Item
+            </button>
+          </div>
+
           <!-- TAB & TABLE-->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
             <div class="flex items-center">
@@ -455,24 +524,55 @@ const inputClass =
                 >
                   <tr v-for="(data, index) in dataItem" :key="data.id">
                     <td>
-                      {{ data.item_name }}
+                      <div v-if="data.id != idEdit">
+                        {{ data.item_name || data.detail_item_name }}
+                      </div>
+
+                      <input
+                        style="min-width: 170px"
+                        v-else
+                        type="text"
+                        :class="inputClass"
+                        v-model="data.detail_item_name"
+                      />
                     </td>
                     <td>
-                      {{ data.frequency }}
+                      <div v-if="data.id != idEdit">{{ data.frequency }}</div>
+
+                      <CurrencyInput
+                        v-else
+                        v-model="data.frequency"
+                        :disabled="data.id == idEdit ? false : true"
+                        :class="inputClass"
+                        required
+                      >
+                      </CurrencyInput>
                     </td>
                     <td>
                       {{ dataArr.currency_name }}
                     </td>
                     <td>
-                      <input
+                      <!-- <input
                         type="number"
                         name="remarks"
                         :class="inputClass"
                         required
                         v-model="data.nominal_real"
                         class="hidden"
-                      />
-                      {{ format_price(data.nominal_ca) }}
+                      /> -->
+
+                      <di v-if="data.id != idEdit">
+                        {{ format_price(data.nominal_ca) }}
+                      </di>
+
+                      <CurrencyInput
+                        v-else
+                        v-model="data.nominal_ca"
+                        :disabled="data.id == idEdit ? false : true"
+                        :class="inputClass"
+                        required
+                      >
+                      </CurrencyInput>
                     </td>
                     <td>
                       {{ format_price(data.nominal_ca * data.frequency) }}
@@ -481,16 +581,25 @@ const inputClass =
                       <div v-if="data.id != idEdit">
                         {{ format_price(data.nominal_real) }}
                       </div>
-                      <input
+
+                      <CurrencyInput
+                        v-else
+                        v-model="data.nominal_real"
+                        :disabled="data.id == idEdit ? false : true"
+                        :class="inputClass"
+                        required
+                      >
+                      </CurrencyInput>
+                      <!-- <input
                         v-else
                         type="number"
                         :class="inputClass"
                         required
                         v-model="data.nominal_real"
                         :disabled="data.id == idEdit ? false : true"
-                      />
+                      /> -->
                     </td>
-                    <td>
+                    <td style="max-width: 350px">
                       <div
                         v-if="
                           !visibleHeader || (visibleHeader && data.id != idEdit)
@@ -532,13 +641,31 @@ const inputClass =
                           />
                         </button>
                       </div>
-                      <div v-else>
+                      <div
+                        v-else
+                        class="flex justify-around"
+                        style="width: 150px"
+                      >
                         <button
                           v-if="data.id == idEdit"
                           class="btn btn-sm text-white capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
                           @click="saveItems('edit', data.id, data)"
                         >
                           Save
+                        </button>
+
+                        <button
+                          v-if="data.id == idEdit"
+                          class="btn btn-sm text-white capitalize border-red bg-red hover:bg-white hover:text-red hover:border-red"
+                          @click="
+                            () => {
+                              idEdit = ''
+                              editItem = false
+                              cancelNewData()
+                            }
+                          "
+                        >
+                          Cancel
                         </button>
                       </div>
                     </td>

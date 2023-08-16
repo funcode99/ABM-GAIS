@@ -1,4 +1,6 @@
 <script setup>
+import Multiselect from "@vueform/multiselect"
+
 import { computed, ref, watch } from "vue"
 import { vMaska } from "maska"
 
@@ -90,11 +92,9 @@ const inputStylingClass =
 
   <Modal v-model:visible="isVisible" v-model:offsetTop="modalPaddingHeight">
     <modalHeader @closeVisibility="isVisible = false" title="New Sequence" />
-
-    <main class="p-5 h-max-[80vh] overflow-y-auto">
-      <form
-        class="modal-box-inner-inner pb-5 max-h-[50vh]"
-        @submit.prevent="submitSequence"
+    <form @submit.prevent="submitSequence" class="h-full">
+      <main
+        class="p-5 h-max-[80vh] overflow-y-auto modal-box-inner-inner pb-5 max-h-[50vh]"
       >
         <div :class="rowClass">
           <!-- Company -->
@@ -105,6 +105,7 @@ const inputStylingClass =
             >
               Company<span class="text-red">*</span>
             </label>
+
             <select
               id="company"
               v-model="company"
@@ -192,14 +193,33 @@ const inputStylingClass =
                 class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Menu<span class="text-red">*</span>
               </label>
+
+              <!-- <Multiselect
+                v-model="menu"
+                mode="single"
+                placeholder="Select Menu"
+                :options="addMenuData"
+                track-by="id"
+                label="menu"
+                valueProp="id"
+                :class="inputStylingClass"
+                class="text-xs"
+                required
+                clear
+                searchable
+              >
+              </Multiselect> -->
               <select
                 id="menu"
                 v-model="menu"
                 :class="inputStylingClass"
+                placeholder="Select Menu"
                 required
               >
                 <option
-                  v-for="data in addMenuData"
+                  v-for="data in addMenuData.filter(
+                    ({ code_sequence }) => code_sequence
+                  )"
                   :key="data.id"
                   :value="data.id"
                 >
@@ -299,6 +319,7 @@ const inputStylingClass =
         </div>
 
         <SequencePreview
+          action="add"
           :form-data="{
             sequenceSize,
             company,
@@ -308,10 +329,9 @@ const inputStylingClass =
             sequenceCode,
           }"
         ></SequencePreview>
-      </form>
-
-      <modalFooter @closeEdit="isVisible = false">
-        <div class="my-5">
+      </main>
+      <modalFooter @closeEdit="isVisible = false" class="p-5">
+        <div class="mt-3">
           <div class="flex flex-col gap-2">
             <h1 class="text-left font-semibold text-sm">
               Sequence Format Info (Prefix & Suffix)
@@ -351,7 +371,7 @@ const inputStylingClass =
           </div>
         </div>
       </modalFooter>
-    </main>
+    </form>
   </Modal>
 </template>
 

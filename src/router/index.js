@@ -69,6 +69,8 @@ import ApporvalReimbursementView from "@/views/approval/reimbursement/Reimbursem
 import ApprovalAtkRequestList from "@/views/approval/atk-request/AtkRequestList.vue";
 import ApprovalAtkRequestView from "@/views/approval/atk-request/AtkRequestView.vue";
 import ApprovalDelegationList from "@/views/approval/approval-delegation/ApprovalDelegationList.vue";
+import ApprovalMeetingRoomList from "@/views/approval/meeting-room/MeetingRoomList.vue";
+import ApprovalMeetingRoomView from "@/views/approval/meeting-room/MeetingRoomView.vue";
 
 //facility service system
 import ItemAtkList from "@/views/facility-services/atk-supplies/management-item-atk/ItemAtkList.vue";
@@ -99,105 +101,11 @@ import avoidduplicatedropdown from "@/views/experiment/avoidduplicatedropdown.vu
 import experimentPage from "@/views/experiment/experiment.vue";
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/experiment",
-      component: experimentPage,
-    },
-    ...poolCarRoutes,
-    {
-      path: "/addfield",
-      // component: addinputfield,
-      component: avoidduplicatedropdown,
-    },
-
-    // Not found Page
-    {
-      path: "/:pathMatch(.*)*",
-      name: "Not Found Page",
-      component: NotFound,
-      meta: {
-        title: "Not Found X(",
-      },
-    },
-
-    // auth pages
-    {
-      path: "/",
-      name: "login",
-      component: Login,
-      meta: {
-        title: "Welcome",
-      },
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem("token");
-
-        if (token) {
-          return next("/user");
-        }
-
-        return next();
-      },
-    },
-    {
-      path: "/forgot",
-      name: "forgotPassword",
-      component: ForgotPassword,
-      meta: {
-        title: "Forgot Password",
-      },
-      // beforeEnter: (to, from, next) => {
-      //   const token = localStorage.getItem('token');
-
-      //   if (token) {
-      //     return next()
-      //   }
-
-      //   return next('/')
-      // }
-    },
-    {
-      path: "/profile",
-      name: "profileDetails",
-      component: Profile,
-      meta: {
-        title: "Profile",
-      },
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem("token");
-
-        if (token) {
-          return next();
-        }
-
-        return next("/");
-      },
-    },
-    {
-      path: "/dashboard",
-      name: "dashboard",
-      component: () => import("@/components/layout/AdminLayout.vue"),
-      meta: {
-        title: "Dashboard",
-      },
-      beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem("token");
-
-        if (token) {
-          return next();
-        }
-
-        return next("/");
-      },
-      children: [
+    history: createWebHistory(import.meta.env.BASE_URL),
+    routes: [
         {
-          path: "",
-          name: "DashboardPage",
-          component: () => import("@/views/dashboard/Dashboard.vue"),
-          meta: {
-            title: "Dashboard",
-          },
+            path: "/experiment",
+            component: experimentPage,
         },
       ],
     },
@@ -1365,8 +1273,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  document.title = `GAIS || ${to.meta.title}`;
-  next();
+    document.title = `GAIS || ${to.meta.title}`;
+    next();
 });
 
 export default router;

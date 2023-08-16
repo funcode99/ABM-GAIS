@@ -129,7 +129,8 @@ const callApi = async () => {
     code_sequence: formState.menu.sequenceCode,
     description: "kosong",
     url: formState.menu.url,
-    url_view: formState.menu.urlApproval,
+    url_view: formState.menu.urlView,
+    url_approval: formState.menu.urlApproval,
     icon: formState.menu.icon,
     id_company: formState.menu.companyId,
   });
@@ -165,7 +166,8 @@ const callEditApi = async () => {
       menu: formEditState.menu.menuName,
       description: "kosong",
       url: formEditState.menu.url,
-      url_view: formEditState.menu.url,
+      url_view: formEditState.menu.urlView,
+      url_approval: formEditState.menu.urlApproval,
       icon: formEditState.menu.icon,
       sort: formEditState.menu.sort,
       parent_id: formEditState.menu.parentId,
@@ -428,6 +430,8 @@ const fetchMenuStatusUtilsHelper = () => {
                         data.code_sequence,
                         data.icon_path,
                         data.use_sequence,
+                        data.url_view,
+                        data.url_approval,
                       ]"
                     />
                     <button @click="deleteData(data.id)">

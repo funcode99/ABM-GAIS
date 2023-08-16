@@ -476,7 +476,7 @@ const format_date = (value) => {
                       {{ value.qty_send }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ value.qty_delivery }}
+                      {{ value.qty_delivered }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_unsend }}
@@ -544,7 +544,7 @@ const format_date = (value) => {
                         {{ value.qty_approved }}
                       </td>
                       <td class="border border-[#B9B9B9]">
-                        {{ value.qty_delivery }}
+                        {{ value.qty_delivered }}
                       </td>
                     </tr>
                   </tbody>

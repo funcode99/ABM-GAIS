@@ -9,7 +9,7 @@ Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
 const getPReviewSequenceCode = async (params) => {
   try {
-    console.log(params)
+  
     const res = await Api.get(`/preview/${ENDPOINT}`, params)
 
     return res.data || ""

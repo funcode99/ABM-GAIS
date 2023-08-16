@@ -109,27 +109,26 @@ const fetchDataById = async (id) => {
   name_meeting_room.value = dataArr.value.name_meeting_room;
   available_status.value = dataArr.value.available_status;
   capacity.value = dataArr.value.capacity;
+  facility.value = dataArr.value.facility;
+  is_approval.value = dataArr.value.is_approval;
+  approver.value = dataArr.value.approver;
   fetchSite(id_company.value);
 };
 
 const fetchEmployee = async (query) => {
   let payload = {
     search: query,
+    filterRole: 91, //secretary
   };
   isLoading.value = true;
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  if (query) {
-    await Api.get(`site/get_user_site/${id_site.value}`, { params: payload }).then(
-      (res) => {
-        listEmployee.value = res.data.data;
-        isLoading.value = false;
-      }
-    );
-  } else {
-    listEmployee.value = [];
+  await Api.get(`users/${id_site.value}`, {
+    params: payload,
+  }).then((res) => {
+    listEmployee.value = res.data.data;
     isLoading.value = false;
-  }
+  });
 };
 // END
 
@@ -147,7 +146,7 @@ const saveForm = async () => {
     available_status: available_status.value,
     facility: facility.value,
     is_approval: is_approval.value,
-    approver: is_approval.value ? approver.value : []
+    approver: is_approval.value ? approver.value : [""],
   };
   if (type.value == "add") {
     save(payload);
@@ -211,6 +210,7 @@ const fetchCondition = async () => {
 };
 
 onMounted(() => {
+  fetchEmployee();
   fetchCondition();
   if (type.value == "edit" && idItem.value != 0) {
     fetchDataById(idItem.value);
@@ -372,8 +372,8 @@ watchEffect(() => {
             <Multiselect
               v-model="approver"
               placeholder="Select Employee"
-              track-by="employee_name"
-              label="employee_name"
+              track-by="username"
+              label="username"
               mode="tags"
               :close-on-select="false"
               :searchable="true"
@@ -381,7 +381,6 @@ watchEffect(() => {
               :limit="10"
               :loading="isLoading"
               :hide-selected="true"
-              @search-change="fetchEmployee"
               ><template v-slot:tag="{ option, handleTagRemove, disabled }">
                 <div
                   class="multiselect-tag is-user"
@@ -389,7 +388,7 @@ watchEffect(() => {
                     'is-disabled': disabled,
                   }"
                 >
-                  {{ option.employee_name }}
+                  {{ option.email }}
                   <span
                     v-if="!disabled"
                     class="multiselect-tag-remove"
@@ -402,11 +401,11 @@ watchEffect(() => {
           </div>
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Reccurence<span class="text-red">*</span></label
+              >Facility<span class="text-red">*</span></label
             >
             <Multiselect
               v-model="facility"
-              placeholder="Select Reccurence"
+              placeholder="Select Facility"
               mode="tags"
               track-by="name"
               label="name"

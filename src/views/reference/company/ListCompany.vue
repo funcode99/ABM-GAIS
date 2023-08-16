@@ -21,6 +21,8 @@ import deleteicon from "@/assets/navbar/delete_icon.svg";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import icondanger from "@/assets/Danger.png";
 import iconClose from "@/assets/navbar/icon_close.svg";
+import icon_filter from "@/assets/icon_filter.svg";
+import icon_reset from "@/assets/icon_reset.svg";
 
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
@@ -95,6 +97,22 @@ const showFullText = ref({});
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
+};
+
+const filterDataByGrupCompany = () => {
+  if (selectedGrupCompany.value === "Company") {
+    sortedData.value = instanceArray.value;
+  } else {
+    sortedData.value = instanceArray.filter(
+      (item) => item.id_group_company === selectedGrupCompany.value
+    );
+  }
+  onChangePage(1);
+};
+
+const resetData = () => {
+  fetch();
+  selectedGrupCompany.value = "";
 };
 
 const selectAll = (checkValue) => {
@@ -496,6 +514,27 @@ const callEditApiGroupCompany = async () => {
                       {{ data.group_company_name }}
                     </option>
                   </select>
+                </div>
+
+                <div class="flex flex-wrap gap-4 items-center pt-6">
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                    @click="filterDataByGrupCompany"
+                  >
+                    <span>
+                      <img :src="icon_filter" class="w-5 h-5" />
+                    </span>
+                    Filter
+                  </button>
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                    @click="resetData"
+                  >
+                    <span>
+                      <img :src="icon_reset" class="w-5 h-5" />
+                    </span>
+                    Reset
+                  </button>
                 </div>
               </div>
             </div>

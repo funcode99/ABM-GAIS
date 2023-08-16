@@ -6,6 +6,7 @@ export const useFormAddStore = defineStore('add-form', {
             menu: {
                 menuName: '',
                 url: '',
+                urlView: '',
                 urlApproval: '',
                 sequence: '',
                 sequenceCode: '',

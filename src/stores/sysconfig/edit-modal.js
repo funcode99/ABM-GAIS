@@ -6,11 +6,13 @@ export const useFormEditStore = defineStore('add-form', {
             menu: {
                 menuName: '',
                 sort: 1,
-                idStatusMenu: 1, 
+                idStatusMenu: 1,
                 parentId: 1,
                 sequence: '',
                 sequenceCode: '',
                 url: '',
+                urlView: '',
+                urlApproval: '',
                 icon: {},
                 companyId: null
             },

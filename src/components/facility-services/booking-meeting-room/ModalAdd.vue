@@ -12,6 +12,14 @@ import moment from "moment";
 import { useRouter } from "vue-router";
 import icondanger from "@/assets/icon-danger-circle.png";
 
+let listFasilitis = [
+  { id: 1, name: "Projector" },
+  { id: 2, name: "TV" },
+  { id: 3, name: "Speaker" },
+  { id: 4, name: "WebCam" },
+  { id: 5, name: "Jabra" },
+];
+
 const props = defineProps({
   status: String,
   id: Number,
@@ -38,7 +46,7 @@ let idItem = ref(props.id);
 let dataForm = ref(props.data);
 
 let id_meeting_room = ref("");
-let id_site = "";
+let facility = ref([]);
 let site_local = JSON.parse(localStorage.getItem("id_site"));
 let id_company = JSON.parse(localStorage.getItem("id_company"));
 const id_role = JSON.parse(localStorage.getItem("id_role"));
@@ -129,7 +137,9 @@ const getDetailRoom = async () => {
   const api = await Api.get(`master_meeting_room/get/${id_meeting_room.value}`);
   floor.value = api.data.data[0].floor;
   capacity.value = api.data.data[0].capacity;
-  //   selectSite.value = false;
+  listFasilitis = listFasilitis.filter(function (item) {
+    return api.data.data[0].facility.includes(item.id);
+  });
 };
 
 const fetchDataById = async () => {
@@ -232,13 +242,14 @@ const saveForm = async () => {
     is_recurrence: is_recurrence.value,
     reccurence: reccurence.value.toLowerCase(),
     attachment: selectedImage.value,
+    facility: facility.value,
   };
-  
-    if (type.value == "add") {
-      save(payload);
-    } else if (type.value == "edit" || type.value == "view") {
-      edit(payload);
-    }
+
+  if (type.value == "add") {
+    save(payload);
+  } else if (type.value == "edit" || type.value == "view") {
+    edit(payload);
+  }
 };
 
 const edit = async (payload) => {
@@ -300,7 +311,7 @@ const getWeekly = async () => {
 const close = () => {
   remarks.value = "";
   id_meeting_room.value = "";
-  id_site = "";
+  facility = [];
   capacity.value = "";
   floor.value = "";
   link.value = "";
@@ -316,6 +327,9 @@ const fetchCondition = async () => {
 };
 
 watchEffect((newValue) => {
+  listFasilitis.map((item) => {
+    item.value = parseInt(item.id);
+  });
   listEmployee.value.map((item) => {
     item.value = parseInt(item.id);
   });
@@ -340,7 +354,6 @@ onMounted(() => {
     fetchDataById();
     getDetailRoom();
   }
-  //   fetchEmployee();
 });
 </script>
 
@@ -657,6 +670,38 @@ onMounted(() => {
           </div>
           <div :class="colClass">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
+              >Facility<span class="text-red">*</span></label
+            >
+            <Multiselect
+              v-model="facility"
+              placeholder="Select Facility"
+              mode="tags"
+              track-by="name"
+              label="name"
+              :close-on-select="false"
+              :searchable="true"
+              :options="listFasilitis"
+              :hide-selected="true"
+              ><template v-slot:tag="{ option, handleTagRemove, disabled }">
+                <div
+                  class="multiselect-tag is-user"
+                  :class="{
+                    'is-disabled': disabled,
+                  }"
+                >
+                  {{ option.name }}
+                  <span
+                    v-if="!disabled"
+                    class="multiselect-tag-remove"
+                    @click="handleTagRemove(option, $event)"
+                  >
+                    <span class="multiselect-tag-remove-icon"></span>
+                  </span>
+                </div> </template
+            ></Multiselect>
+          </div>
+          <div :class="colClass">
+            <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Attachment (Optional)
               <span class="text-slate-400 text-xs italic"
                 >Format file: jpg,jpeg,png,pdf,xlsx. Max file: 3MB</span
@@ -707,7 +752,7 @@ onMounted(() => {
         </div>
       </main>
 
-      <div class="sticky bottom-0 bg-white" v-if="!props.readOnly">
+      <div class="sticky bottom-0 bg-white py-2" v-if="!props.readOnly">
         <div class="flex justify-end gap-4 mr-6">
           <label
             @click="close"
