@@ -47,6 +47,7 @@ import NonTravelView from "@/views/travel-management/cash-advance-non-travel/Non
 import SettlementList from "@/views/travel-management/settlement/SettlementList.vue";
 import SettlementView from "@/views/travel-management/settlement/SettlementView.vue";
 import SettlementReport from "@/views/travel-management/settlement/SettlementReport.vue";
+import ActualizationTrip from '@/views/travel-management/actualization-trip/ActualizationTripList.vue'
 
 import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue";
 import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue";
@@ -331,10 +332,10 @@ const router = createRouter({
         title: "Class Transportation",
       },
       beforeEnter: (to, from, next) => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token")
 
         if (token) {
-          return next();
+          return next()
         }
 
         return next("/");
@@ -1324,6 +1325,23 @@ const router = createRouter({
       component: DocumentDeliveryReport,
       meta: {
         title: "Document Delivery Report",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: "/actualization",
+      name: "Actualization Trip",
+      component: ActualizationTrip,
+      meta: {
+        title: "Actualization Trip",
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem("token");

@@ -1,48 +1,48 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
 
-import ModalView from "@/components/reference/employee/ModalView.vue";
+import ModalView from "@/components/reference/employee/ModalView.vue"
 
-import tableContainer from "@/components/table/tableContainer.vue";
-import tableTop from "@/components/table/tableTop.vue";
-import tableData from "@/components/table/tableData.vue";
-import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
+import tableTop from "@/components/table/tableTop.vue"
+import tableData from "@/components/table/tableData.vue"
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue"
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import iconSync from "@/assets/icon_sync.png";
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import icon_receive from "@/assets/icon-receive.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import iconSync from "@/assets/icon_sync.png"
 
-import Api from "@/utils/Api";
+import Api from "@/utils/Api"
 
-import { Workbook } from "exceljs";
-import { ref, onBeforeMount, computed } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
+import { Workbook } from "exceljs"
+import { ref, onBeforeMount, computed } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
 
-const sidebar = useSidebarStore();
+const sidebar = useSidebarStore()
 
-const search = ref("");
-const selectedGrupCompany = ref("");
-const selectedCompany = ref("");
-const showFullText = ref({});
+const search = ref("")
+const selectedGrupCompany = ref("")
+const selectedCompany = ref("")
+const showFullText = ref({})
 
-let instanceArray = [];
-let sortedData = ref([]);
-let GrupCompany = ref([]);
-let ParentCompany = ref([]);
-let sortedbyASC = true;
+let instanceArray = []
+let sortedData = ref([])
+let GrupCompany = ref([])
+let ParentCompany = ref([])
+let sortedbyASC = true
 
-let showingValue = ref(1);
-let showingValueFrom = ref(0);
-let showingValueTo = ref(0);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
-let totalPage = ref(0);
-let totalData = ref(0);
+let showingValue = ref(1)
+let showingValueFrom = ref(0)
+let showingValueTo = ref(0)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
+let totalPage = ref(0)
+let totalData = ref(0)
 
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
@@ -75,22 +75,25 @@ const getSessionForSidebar = () => {
 };
 
 const fetchEmployee = async (page) => {
+  
   const params = {
     filterCompany: selectedCompany.value,
     search: search.value,
     perPage: pageMultiplier.value,
     page: page,
-  };
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/employee/get/", { params });
-  instanceArray = res.data.data;
-  sortedData.value = instanceArray.data;
-  totalPage.value = instanceArray.last_page;
-  totalData.value = instanceArray.total;
-  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0;
-  showingValueTo.value = instanceArray.to;
-};
+  }
+
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/employee/get/", { params })
+  instanceArray = res.data.data
+  sortedData.value = instanceArray.data
+  totalPage.value = instanceArray.last_page
+  totalData.value = instanceArray.total
+  showingValueFrom.value = instanceArray.from ? instanceArray.from : 0
+  showingValueTo.value = instanceArray.to
+
+}
 
 const fetchGrupCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -107,11 +110,11 @@ const fetchParentCompany = async (id_company) => {
 };
 
 const syncData = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  await Api.get("/integrate/falcon/employee");
-  fetchEmployee();
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  await Api.get("/integrate/falcon/employee")
+  fetchEmployee()
+}
 
 onBeforeMount(() => {
   getSessionForSidebar();
@@ -120,10 +123,10 @@ onBeforeMount(() => {
 });
 
 const resetData = () => {
-  selectedCompany.value = "";
-  selectedGrupCompany.value = "";
-  fetchEmployee();
-};
+  selectedCompany.value = ""
+  selectedGrupCompany.value = ""
+  fetchEmployee()
+}
 
 const exportToExcel = () => {
   const workbook = new Workbook();
@@ -137,11 +140,11 @@ const exportToExcel = () => {
     { title: "Gender" },
     { title: "Email" },
     { title: "Phone" },
-  ];
+  ]
 
   tableHead.forEach((column, index) => {
     worksheet.getCell(1, index + 1).value = column.title;
-  });
+  })
 
   sortedData.value.forEach((data, rowIndex) => {
     worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
@@ -151,7 +154,7 @@ const exportToExcel = () => {
     worksheet.getCell(rowIndex + 2, 5).value = data.jenkel;
     worksheet.getCell(rowIndex + 2, 6).value = data.email;
     worksheet.getCell(rowIndex + 2, 7).value = data.phone_number;
-  });
+  })
 
   workbook.xlsx.writeBuffer().then((buffer) => {
     const blob = new Blob([buffer], {
@@ -163,23 +166,27 @@ const exportToExcel = () => {
     a.download = "employee_data.xlsx";
     a.click();
     URL.revokeObjectURL(url);
-  });
-};
+  })
+}
+
 </script>
 
 <template>
+
   <div class="flex flex-col w-full this h-[100vh]">
+    
     <Navbar />
 
     <div class="flex w-screen content mt-[115px]">
+
       <Sidebar class="flex-none" />
 
       <tableContainer>
+
         <tableTop>
+
           <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
-          <div
-            class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
-          >
+          <div class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2">
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
             >
@@ -304,6 +311,7 @@ const exportToExcel = () => {
 
           <!-- TABLE -->
           <tableData v-if="sortedData.length > 0">
+
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
                 <th
@@ -370,10 +378,10 @@ const exportToExcel = () => {
                 </td>
               </tr>
             </tbody>
+
           </tableData>
 
-          <tableData
-            v-else-if="sortedData.length == 0 && instanceArray.length == 0"
+          <tableData v-else-if="sortedData.length == 0 && instanceArray.length == 0"
           >
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
@@ -436,9 +444,7 @@ const exportToExcel = () => {
           </div>
 
           <!-- PAGINATION -->
-          <div
-            class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
-          >
+          <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
               Showing {{ showingValueFrom }} to
               {{ showingValueTo }}
@@ -454,12 +460,17 @@ const exportToExcel = () => {
               :show-ending-buttons="true"
             />
           </div>
+
         </tableTop>
+
       </tableContainer>
 
       <Footer />
+
     </div>
+
   </div>
+
 </template>
 
 <style scoped>
@@ -509,4 +520,5 @@ input.nosubmit {
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'%3E%3C/path%3E%3C/svg%3E")
     no-repeat 13px center;
 }
+
 </style>

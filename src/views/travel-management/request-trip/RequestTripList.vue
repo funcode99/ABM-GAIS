@@ -298,8 +298,6 @@
                       range
                       :enable-time-picker="false"
                   />
-                      <!-- format="yyyy-mm-dd" -->
-
                 </div>
   
                 <!-- FILTER -->

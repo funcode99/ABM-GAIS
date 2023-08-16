@@ -1,6 +1,6 @@
 <script setup>
-  import iconPlus from "@/assets/navbar/icon_plus.svg";
-  import deleteicon from "@/assets/navbar/delete_icon.svg";
+  import iconPlus from "@/assets/navbar/icon_plus.svg"
+  import deleteicon from "@/assets/navbar/delete_icon.svg"
  
   import { ref, watch } from 'vue'
   import { Modal } from "usemodal-vue3"
@@ -17,6 +17,7 @@
   import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
   import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig"
   import { useTravelManagementFetchResult } from "@/stores/fetch/travel-management"
+
   const formState = useFormAddStore()
   const referenceFetch = useReferenceFetchResult()
   const sysconfigFetch = useSysconfigFetchResult()
@@ -131,8 +132,6 @@
     } else {
       resetInput()
     }
-
- 
 
   })
 
@@ -367,10 +366,6 @@
                   <tbody class="bg-[#F5F5F5]">
         
                     <tr class="text-center" v-for="(input, index) in approverLines" :key="`${index}`">
-                      
-                      <!-- nilai awalnya PM -->
-
-                      <!-- {{ input.approverName }} -->
                       
                       <td v-if="input.id_approval_auth == ''">
                         0

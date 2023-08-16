@@ -935,23 +935,23 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
                   <!-- Zona -->
                   <div class="w-full invisible">
 
-<div :class="columnClass">
-  
-  <span>
-    Zona<span class="text-red-star">*</span>
-  </span>
-  
-  <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
-  @change="fetchTLKByJobBand"
-  placeholder="Zona" 
-  v-model="zonaName" 
-  required>
-    <option v-for="data in optionDataZona" :value="data.zona_name">
-      {{ data.zona_name }}
-    </option>
-  </select>
+                    <div :class="columnClass">
+                      
+                      <span>
+                        Zona<span class="text-red-star">*</span>
+                      </span>
+                      
+                      <select class="w-full md:w-52 lg:w-56 py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer mt-2" 
+                      @change="fetchTLKByJobBand"
+                      placeholder="Zona" 
+                      v-model="zonaName" 
+                      required>
+                        <option v-for="data in optionDataZona" :value="data.zona_name">
+                          {{ data.zona_name }}
+                        </option>
+                      </select>
 
-</div>
+                    </div>
 
                   </div>
                   
