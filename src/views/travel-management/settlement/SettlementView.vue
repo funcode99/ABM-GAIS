@@ -183,11 +183,8 @@ const submit = async () => {
         position: "center",
         icon: "error",
         title: e.error,
+        text: "Unable to Submit Settlement",
         showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        background: "#EA5455",
-        color: "#ffffff",
       })
     })
 }
