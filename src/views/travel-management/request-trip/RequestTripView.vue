@@ -352,10 +352,17 @@
     })
 
     const changeType = (typeOfSubmit) => {
+
+      if(typeOfSubmit === 'Check Props') {
+        JSON.stringify(propsCheck.value) === '[{}]' ? typeOfSubmit = 'Submit Add' : typeOfSubmit = 'Add'
+      }
+
       typeOfSubmitToProps.value = typeOfSubmit
+
       if(typeOfSubmit === 'Add') {
         isAdding.value = true
       }
+
     }
 
     const resetTypeOfSubmit = (Type) => {
@@ -655,8 +662,9 @@
                                <buttonAddFormView 
                                 title="Add"
                                 v-if="isEditing & headerTitle !== 'Cash Advance' " 
-                                @click="changeType('Add')"
-                              />
+                                @click="changeType('Check Props')"
+                                />
+                                <!-- @click="changeType('Add')" -->
   
                               <!-- Issued Ticket Button -->
                               <button 
@@ -713,8 +721,6 @@
                             </button>
 
                           </detailsFormHeader>
-
-                          {{propsCheck}}
 
                           <!-- BUTTON INI MUNCUL UNTUK MENAMBAH DOCUMENT REQUEST TRIP (Add) -->
                           <detailsFormHeader 
