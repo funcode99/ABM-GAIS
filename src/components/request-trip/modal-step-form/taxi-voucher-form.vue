@@ -18,8 +18,8 @@
     let name = ref('')
     let date = ref('')
     let departure = ref('')
-    let arrival = ref('')
-    let amount = ref('')
+    let arrival = ref(0)
+    let amount = ref(0)
     let remarks = ref('')
     let accountName = ref('')
     let voucherCode = ref('')
@@ -58,8 +58,8 @@
 
     watch(props, () => {
         date.value = ''
-        departure.value = ''
-        arrival.value = ''
+        departure.value = 0
+        arrival.value = 0
         amount.value = ''
         remarks.value = ''
         accountName.value = ''
@@ -84,6 +84,8 @@
         <modalHeader @closeVisibility="$emit('changeVisibility')" :title="'Taxi Voucher'" />
 
         <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="submitTaxiVoucher">
+
+
 
             <div :class="rowClass">
 
