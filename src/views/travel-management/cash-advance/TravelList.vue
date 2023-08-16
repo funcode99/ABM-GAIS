@@ -2,46 +2,26 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import DataNotFound from "@/components/element/dataNotFound.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
 import icon_reset from "@/assets/icon_reset.svg";
 import showicon from "@/assets/eye.png";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import moment from "moment";
 
 import Api from "@/utils/Api";
+import moment from "moment";
 
+import { Workbook } from "exceljs";
 import { ref, onBeforeMount, computed, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
-const listStatus = [
-  { id: 0, title: "Draft" },
-  { id: 1, title: "Waiting Approval" },
-  { id: 2, title: "Revision" },
-  { id: 3, title: "Cancelled" },
-  { id: 9, title: "Rejected" },
-  { id: 10, title: "Completed" },
-];
 
-// format date & price
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
-//for sort, search, & filter
-const date = ref();
-const selectedType = ref("Status");
 let sortedData = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
@@ -53,7 +33,6 @@ let filter = reactive({
   search: "",
 });
 
-//for paginations & showing
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
 let showingValueTo = ref(0);
@@ -62,33 +41,26 @@ let pageMultiplierReactive = computed(() => pageMultiplier.value);
 let paginateIndex = ref(0);
 let totalPage = ref(0);
 let totalData = ref(0);
-//for paginations
+
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
   fetch(pageOfItem);
 };
 
-//for check & uncheck all
-const selectAll = (checkValue) => {
-  const checkList = checkValue;
-  if (checkList == true) {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
-    }
-  } else {
-    let check = document.getElementsByName("checks");
-    for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
-    }
-  }
-};
+const listStatus = [
+  { id: 0, title: "Draft" },
+  { id: 1, title: "Waiting Approval" },
+  { id: 2, title: "Revision" },
+  { id: 3, title: "Cancelled" },
+  { id: 5, title: "Confirmed" },
+  { id: 9, title: "Rejected" },
+  { id: 10, title: "Completed" },
+];
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "Created Date", jsonData: "created_date" },
+  { Id: 2, title: "Created Date", jsonData: "created_at" },
   { Id: 3, title: "CA No", jsonData: "no_ca" },
   { Id: 4, title: "Requestor", jsonData: "employee_name" },
   { Id: 5, title: "Item", jsonData: "item_count" },
@@ -97,7 +69,6 @@ const tableHead = [
   { Id: 8, title: "Status", jsonData: "status" },
 ];
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -106,6 +77,10 @@ const sortList = (sortBy) => {
     sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
     sortedbyASC = true;
   }
+};
+
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
 const fetch = async (id) => {
@@ -117,6 +92,7 @@ const fetch = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const api = await Api.get("cash_advance/travel/", { params: payload });
+
   paginationArray = api.data.data;
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
@@ -127,12 +103,6 @@ const fetch = async (id) => {
   showingValueTo.value = paginationArray.to;
 };
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetch();
-});
-
-//for filter & reset button
 const filterDataByType = async (id) => {
   let payload = {
     search: filter.search,
@@ -144,6 +114,7 @@ const filterDataByType = async (id) => {
   };
 
   const api = await Api.get("cash_advance/travel", { params: payload });
+
   paginationArray = api.data.data;
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
@@ -157,6 +128,11 @@ const filterDataByType = async (id) => {
   showingValue.value = paginationArray.current_page;
 };
 
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetch();
+});
+
 const resetData = () => {
   filter.search = "";
   filter.status = "";
@@ -164,24 +140,61 @@ const resetData = () => {
   fetch();
 };
 
-//for searching
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.name.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
 };
 
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Cash Advance Travel Reports");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "Created Date" },
+    { title: "CA No" },
+    { title: "Requestor" },
+    { title: "Item" },
+    { title: "Currency" },
+    { title: "Total" },
+    { title: "Status" },
+  ];
+
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  sortedData.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
+    worksheet.getCell(rowIndex + 2, 3).value = data.no_ca;
+    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.item_count;
+    worksheet.getCell(rowIndex + 2, 6).value = data.currency_name;
+    worksheet.getCell(rowIndex + 2, 7).value = data.grand_total;
+    worksheet.getCell(rowIndex + 2, 8).value = data.status;
+  });
+
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "cash_advance_travel_report_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
 };
 </script>
 
@@ -189,17 +202,10 @@ const getSessionForSidebar = () => {
   <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
     <div class="flex w-screen content mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
+      <tableContainer>
+        <tableTop>
           <div
             class="flex flex-wrap sm:grid sm:grid-flow-col sm:auto-cols-max sm:items-center sm:justify-between mx-4 py-2"
           >
@@ -208,16 +214,17 @@ const getSessionForSidebar = () => {
             >
               Cash Advance Travel
             </p>
+
             <div class="flex gap-4">
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
             </div>
           </div>
 
-          <!-- SORT, DATE & SEARCH -->
           <div
             class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
@@ -232,7 +239,7 @@ const getSessionForSidebar = () => {
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="filter.status"
                 >
-                  <option disabled selected>status</option>
+                  <option disabled selected>Status</option>
                   <option
                     v-for="data in listStatus"
                     :key="data.id"
@@ -255,7 +262,6 @@ const getSessionForSidebar = () => {
                   range
                   :enable-time-picker="false"
                   class="my-date"
-                  format="yyyy-mm-dd"
                 />
               </div>
 
@@ -312,12 +318,12 @@ const getSessionForSidebar = () => {
             </div>
           </div>
 
-          <!-- SHOWING -->
           <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
+              @change="fetch()"
             >
               <option>10</option>
               <option>25</option>
@@ -327,83 +333,86 @@ const getSessionForSidebar = () => {
             </select>
           </div>
 
-          <!-- TABLE -->
-          <div
-            class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
-          >
-            <div class="block overflow-x-auto">
-              <table
-                :class="sortedData.length > 0 ? 'table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg' : 'table table-zebra table-compact border h-full w-full rounded-lg'"
-              >
-                <thead
-                  class="text-center font-JakartaSans text-sm font-bold h-10"
+          <tableData v-if="sortedData.length > 0">
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
                 >
-                  <tr>
-                    <th>
-                      <div class="flex justify-center">
-                        <input
-                          type="checkbox"
-                          name="checked"
-                          @click="selectAll((checkList = !checkList))"
-                        />
-                      </div>
-                    </th>
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }}
+                    <button>
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </span>
+                </th>
+                <th>
+                  <div class="text-center">Actions</div>
+                </th>
+              </tr>
+            </thead>
 
-                    <th
-                      v-for="data in tableHead"
-                      :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer"
-                      @click="sortList(`${data.jsonData}`)"
-                    >
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }}
-                        <button>
-                          <img :src="arrowicon" class="w-[9px] h-3" />
-                        </button>
-                      </span>
-                    </th>
-                    <th>
-                      <div class="text-center">Actions</div>
-                    </th>
-                  </tr>
-                </thead>
+            <tbody v-if="sortedData.length > 0">
+              <tr
+                class="font-JakartaSans font-normal text-sm"
+                v-for="data in sortedData"
+                :key="data.id"
+              >
+                <td>{{ data.no }}</td>
+                <td>{{ format_date(data.created_at) }}</td>
+                <td>{{ data.no_ca }}</td>
+                <td>{{ data.employee_name }}</td>
+                <td>{{ data.item_count }}</td>
+                <td>{{ data.currency_name }}</td>
+                <td>{{ format_price(data.grand_total) }}</td>
+                <td>{{ data.status }}</td>
+                <td class="flex flex-wrap gap-4 justify-center">
+                  <router-link :to="`/viewcashadvancetravel/${data.id}`">
+                    <button>
+                      <img :src="showicon" class="w-6 h-6" />
+                    </button>
+                  </router-link>
+                </td>
+              </tr>
+            </tbody>
+          </tableData>
 
-                <tbody v-if="sortedData.length > 0">
-                  <tr
-                    class="font-JakartaSans font-normal text-sm"
-                    v-for="(data) in sortedData"
-                    :key="data.id"
+          <div v-else>
+            <tableData>
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
                   >
-                    <td>
-                      <input type="checkbox" name="checks" />
-                    </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ format_date(data.created_at) }}</td>
-                    <td>{{ data.no_ca }}</td>
-                    <td>{{ data.employee_name }}</td>
-                    <td>{{ data.item_count }}</td>
-                    <td>{{ data.currency_name }}</td>
-                    <td>{{ format_price(data.grand_total) }}</td>
-                    <td>{{ data.status }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link :to="`/viewcashadvancetravel/${data.id}`">
-                        <button>
-                          <img :src="showicon" class="w-6 h-6" />
-                        </button>
-                      </router-link>
-                    </td>
-                  </tr>
-                </tbody>
-                <tbody v-else>
-                  <tr>
-                    <DataNotFound :cnt-col="10" />
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="9"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                    Data not Found
+                  </td>
+                </tr>
+              </tbody>
+            </tableData>
           </div>
 
-          <!-- PAGINATION -->
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
@@ -419,12 +428,13 @@ const getSessionForSidebar = () => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
-        </div>
-      </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+        </tableTop>
+      </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
