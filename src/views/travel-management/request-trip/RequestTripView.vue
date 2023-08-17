@@ -473,7 +473,7 @@
 
                       <div class="flex-1"></div>
 
-                      <div class="absolute right-5">
+                      <div class="absolute right-5" v-if="actualizationData.length > 0">
                         <button class="flex gap-3 items-center bg-blue text-white rounded-lg font-bold py-[14px] px-[10px]">
                           <img :src="walletImg" />
                           Actualization
@@ -814,15 +814,15 @@
                           />
 
                           <!-- form Step 7 -->
-                          <accomodationFormView 
-                            v-if="headerTitle === 'Accomodation' && viewLayout === 'document'" 
-                            class="ml-8" 
-                            :isEditing="isEditing" 
-                            :currentIndex="dataIndex"
-                            :typeOfSubmitData="typeOfSubmitToProps"
-                            @fetchAccomodation="getAccomodation"
-                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
-                          />
+                              <accomodationFormView 
+                                v-if="headerTitle === 'Accomodation' && viewLayout === 'document'" 
+                                class="ml-8" 
+                                :isEditing="isEditing" 
+                                :currentIndex="dataIndex"
+                                :typeOfSubmitData="typeOfSubmitToProps"
+                                @fetchAccomodation="getAccomodation"
+                                @resetTypeOfSubmitData = "resetTypeOfSubmit"
+                              />
 
                           <!-- table Step 7 -->
                           <accomodationTableView 
