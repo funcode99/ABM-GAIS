@@ -1,116 +1,135 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import HistoryApproval from "@/components/approval/HistoryApproval.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import HistoryApproval from "@/components/approval/HistoryApproval.vue"
 
-import arrow from "@/assets/request-trip-view-arrow.png";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import iconClose from "@/assets/navbar/icon_close.svg";
-import ModalAdd from "@/components/facility-services/atk-supplies/atk-request/ModalAddRequest.vue";
+import arrow from "@/assets/request-trip-view-arrow.png"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import iconClose from "@/assets/navbar/icon_close.svg"
+import ModalAdd from "@/components/facility-services/atk-supplies/atk-request/ModalAddRequest.vue"
 
-import { onBeforeMount, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useSidebarStore } from "@/stores/sidebar.js";
-import Api from "@/utils/Api";
-import Swal from "sweetalert2";
-import moment from "moment";
+import { onBeforeMount, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useSidebarStore } from "@/stores/sidebar.js"
+import Api from "@/utils/Api"
+import Swal from "sweetalert2"
+import moment from "moment"
 
-let dataApproval = ref([]);
-let tabId = ref(1);
+const atkStatus = {
+  Draft: {
+    statusLevel: 0,
+    class: "text-black border-black",
+  },
+  "Waiting Approval": {
+    statusLevel: 1,
+    class: "text-[#2970ff] border-[#2970ff]",
+  },
+  Approve: {
+    statusLevel: 2,
+    class: "text-orange border-orange",
+  },
+  Completed: {
+    statusLevel: 3,
+    class: "text-green border-green",
+  },
+}
+
+let dataApproval = ref([])
+let tabId = ref(1)
 
 // for modal
-let statusForm = ref("edit");
-let visibleModal = ref(false);
+let statusForm = ref("edit")
+let visibleModal = ref(false)
 
-const sidebar = useSidebarStore();
-const router = useRouter();
-let lengthCounter = 0;
-const idDetail = ref("");
-let stockName = ref("");
-let createdDate = ref("");
-let createdBy = ref("");
-let Company = ref("");
-let Site = ref("");
-let Warehouse = ref("");
-let siteName = ref("");
-let companyName = ref("");
-let status = ref("");
-let ItemTable = ref([]);
-let lockScrollbarEdit = ref(false);
-const selectedCompany = ref("");
-const selectedSite = ref("");
-const notes = ref("");
-let disableCompany = ref(false);
-let disableSite = ref(false);
-let itemsTable = ref([]);
-const id_role = JSON.parse(localStorage.getItem("id_role"));
-const company_code = JSON.parse(localStorage.getItem("company_code"));
-let dataArr = ref([]);
-let dataItem = ref([]);
-let itemApproval = ref([]);
+const sidebar = useSidebarStore()
+const router = useRouter()
+let lengthCounter = 0
+const idDetail = ref("")
+let stockName = ref("")
+let createdDate = ref("")
+let createdBy = ref("")
+let Company = ref("")
+let Site = ref("")
+let Warehouse = ref("")
+let siteName = ref("")
+let companyName = ref("")
+let status = ref("")
+let ItemTable = ref([])
+let lockScrollbarEdit = ref(false)
+const selectedCompany = ref("")
+const selectedSite = ref("")
+const notes = ref("")
+let disableCompany = ref(false)
+let disableSite = ref(false)
+let itemsTable = ref([])
+const id_role = JSON.parse(localStorage.getItem("id_role"))
+const company_code = JSON.parse(localStorage.getItem("company_code"))
+let dataArr = ref([])
+let dataItem = ref([])
+let itemApproval = ref([])
 
-const widthType = id_role == "EMPLY" ? "w-[50%]" : "w-full";
+const widthType = id_role == "EMPLY" ? "w-[50%]" : "w-full"
 const fetchGetCompanyID = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
-  Company.value = res.data.data;
-  selectedCompany.value = id_company;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_company}`)
+  Company.value = res.data.data
+  selectedCompany.value = id_company
+}
 
 const fetchSite2 = async (id, id_company) => {
   disableCompany.value =
-    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false;
+    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false
   disableSite.value =
-    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false;
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
-  Site.value = res.data.data;
+    JSON.parse(localStorage.getItem("id_role")) == "EMPLY" ? true : false
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/site/get_by_company/${id_company}`)
+  Site.value = res.data.data
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (id === element.id) {
-      selectedSite.value = id;
-      changeSite(element.id);
+      selectedSite.value = id
+      changeSite(element.id)
       // selectedSite2.value = id
     }
   }
-};
+}
 const changeSite = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_site_id/${id}`);
-  Warehouse.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/warehouse/get_by_site_id/${id}`)
+  Warehouse.value = res.data.data
+}
 
 const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get/${id}`);
-  dataArr.value = res.data.data[0];
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get/${id}`)
+  dataArr.value = res.data.data[0]
 
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    companyName.value = element.company_name;
-    stockName.value = element.no_atk_request;
-    createdDate.value = format_date(element.created_at);
-    createdBy.value = element.employee_name;
-    siteName.value = element.site_name;
-    status.value = element.status;
-    notes.value = element.remarks;
+    const element = res.data.data[index]
+    companyName.value = element.company_name
+    stockName.value = element.no_atk_request
+    createdDate.value = format_date(element.created_at)
+    createdBy.value = element.employee_name
+    siteName.value = element.site_name
+    status.value = element.status
+    notes.value = element.remarks
   }
-};
+}
 const fetchDetailById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
-  itemsTable.value = [];
-  ItemTable.value = [];
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
+  itemsTable.value = []
+  ItemTable.value = []
 
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     ItemTable.value.push({
       Warehouse: element.warehouse_name,
       itemNames: element.item_name,
@@ -125,7 +144,7 @@ const fetchDetailById = async (id) => {
       id_brand: element.id_brand,
       id_uom: element.id_uom,
       qty: element.qty,
-    });
+    })
     itemsTable.value.push({
       Warehouse: element.warehouse_name,
       itemNames: element.item_name,
@@ -140,77 +159,77 @@ const fetchDetailById = async (id) => {
       id_brand: element.id_brand,
       id_uom: element.id_uom,
       qty: element.qty,
-    });
+    })
   }
 
-  dataItem.value = itemsTable.value;
-};
+  dataItem.value = itemsTable.value
+}
 
 const submit = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const res = await Api.post(
     `/request_atk/submit/${router.currentRoute.value.params.id}`
-  );
+  )
   Swal.fire({
     position: "center",
     icon: "success",
     title: res.data.message,
     showConfirmButton: false,
     timer: 1500,
-  });
+  })
   router.push({
     path: "/atk-request",
-  });
-};
+  })
+}
 
 const fetchHistoryApproval = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_history/${id}`);
-  dataApproval.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get_history/${id}`)
+  dataApproval.value = res.data.data
+}
 
 const openModal = (type, id) => {
-  visibleModal.value = true;
-  statusForm.value = type;
+  visibleModal.value = true
+  statusForm.value = type
   if (id) {
-    idDetail.value = parseInt(id);
+    idDetail.value = parseInt(id)
   }
-};
+}
 
 const closeModal = () => {
-  visibleModal.value = false;
-  fetchHistoryApproval(router.currentRoute.value.params.id);
-  fetchDataById(router.currentRoute.value.params.id);
-  fetchDetailById(router.currentRoute.value.params.id);
-};
+  visibleModal.value = false
+  fetchHistoryApproval(router.currentRoute.value.params.id)
+  fetchDataById(router.currentRoute.value.params.id)
+  fetchDetailById(router.currentRoute.value.params.id)
+}
 
 const fetchLogApproval = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`);
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`)
 
-  itemApproval.value = res.data.data;
-};
+  itemApproval.value = res.data.data
+}
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchHistoryApproval(router.currentRoute.value.params.id);
-  fetchDataById(router.currentRoute.value.params.id);
-  fetchDetailById(router.currentRoute.value.params.id);
-  idDetail.value = parseInt(router.currentRoute.value.params.id);
-  fetchLogApproval(router.currentRoute.value.params.id);
-});
+  getSessionForSidebar()
+  fetchHistoryApproval(router.currentRoute.value.params.id)
+  fetchDataById(router.currentRoute.value.params.id)
+  fetchDetailById(router.currentRoute.value.params.id)
+  idDetail.value = parseInt(router.currentRoute.value.params.id)
+  fetchLogApproval(router.currentRoute.value.params.id)
+})
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD-MM-YYYY");
+    return moment(String(value)).format("DD-MM-YYYY")
   }
-};
+}
 </script>
 
 <template>
@@ -242,6 +261,7 @@ const format_date = (value) => {
             <div class="flex justify-start gap-4 mx-4 py-4">
               <span
                 class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[120px] h-[50px] border-blue bg-white text-center"
+                :class="atkStatus[status]?.class"
               >
                 {{ status }}
               </span>
@@ -479,7 +499,9 @@ const format_date = (value) => {
                       {{ value.qty_delivered }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ value.qty_unsend }}
+                      <div v-if="status == 'Completed'">
+                        {{ value.qty_unsend }}
+                      </div>
                     </td>
                     <td class="border border-[#B9B9B9]">{{ value.UOMName }}</td>
                     <td class="border border-[#B9B9B9]">{{ value.remark }}</td>

@@ -1,32 +1,32 @@
 <script setup>
-import { ref } from "vue";
-import moment from "moment";
-import userImg from "@/assets/3-user.png";
+import { ref } from "vue"
+import moment from "moment"
+import userImg from "@/assets/3-user.png"
 
 const props = defineProps({
   dataApproval: Array,
   currentLevel: Number,
   type: String,
-});
+})
 
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("dddd, MMMM Do YYYY");
+    return moment(String(value)).format("dddd, MMMM Do YYYY")
   }
-};
+}
 
 const openDoc = (path) => {
-  window.open(path, "_blank");
-};
+  window.open(path, "_blank")
+}
 
-let historyApproval = ref(props.dataApproval);
-let level = ref(props.currentLevel);
-let typeApproval = ref(props.type);
+let historyApproval = ref(props.dataApproval)
+let level = ref(props.currentLevel)
+let typeApproval = ref(props.type)
 
 let classDone =
-  "absolute flex items-center justify-center rounded-full w-8 h-8 ring-4 bg-blue";
+  "absolute flex items-center justify-center rounded-full w-8 h-8 ring-4 bg-blue"
 let classWaiting =
-  "absolute flex items-center justify-center rounded-full w-8 h-8 ring-0 bg-slate-200";
+  "absolute flex items-center justify-center rounded-full w-8 h-8 ring-0 bg-slate-200"
 </script>
 
 <template>
@@ -91,8 +91,8 @@ let classWaiting =
             </span>
           </p>
           <p class="text-gray-700 mt-1">
-            <span class="font-bold">Notes: </span
-            ><span class="font-normal">{{ data.notes }}</span>
+            <div class="font-bold">Notes: </div>
+            <div style="white-space: pre" class="font-normal">{{ data.notes }}</div>
           </p>
         </div>
 
@@ -105,7 +105,10 @@ let classWaiting =
             {{ data.date.split(" ")[1] }}
           </p>
           <p class="text-gray-700 mt-1" v-if="data.date">
-            Notes: {{ data.notes }}
+            Notes: 
+            <div>
+              <span style="white-space: pre">{{ data.notes }}</span>
+            </div>
           </p>
           <p class="text-gray-700 mt-1" v-if="data.date">
             Attachment:
