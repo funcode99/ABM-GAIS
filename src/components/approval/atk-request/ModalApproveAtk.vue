@@ -244,9 +244,6 @@ onBeforeMount(() => {
             v-for="(value, ind) in itemTable"
             :key="ind"
           >
-            {{
-              value
-            }}
             <tr class="h-16">
               <td class="border border-[#B9B9B9]">
                 {{ value.code_item }} - {{ value.item_name }}
