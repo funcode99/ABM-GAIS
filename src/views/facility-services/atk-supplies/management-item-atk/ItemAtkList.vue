@@ -107,6 +107,8 @@ let lenghtPagination = ref(0)
 const searchFilter = ref("")
 let fileImport = ref("")
 
+const formUpdated = ref(false)
+
 const router = useRouter()
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -385,13 +387,36 @@ const editValue = async (id, type, detail_warehouse) => {
 }
 
 const save = async () => {
+  const isValid = validateInput()
+  if (isValid) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Data required Tidak Boleh Kosong",
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    return
+  }
+
+  if (formUpdated) {
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "Input Changed, Please Click Add to Update Table!",
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    return
+  }
+
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
   const formData = {
     ...payload.value,
     id_uom: selectedUOM.value,
-    // id_brand: selectedBrand,
+    id_brand: "",
     item_name: itemNames.value,
     alert_qty: alertQuantity.value,
     remarks: remarks.value ? remarks.value : "",
@@ -400,11 +425,7 @@ const save = async () => {
 
   console.log(formData)
 
-  Api.post(`/management_atk/update/${idS.value}`, formData, {
-    // headers: {
-    //   "Content-Type": "application/json",
-    // },
-  })
+  Api.post(`/management_atk/update/${idS.value}`, formData, {})
     .then((res) => {
       Swal.fire({
         position: "center",
@@ -588,16 +609,21 @@ const removeItems = async (id) => {
   // return itemsTable
 }
 
-const addItem = async () => {
-  if (
+const validateInput = () => {
+  return (
     selectedCompany.value == "" ||
     selectedSite.value == "" ||
-    selectedWarehouse.value == [] ||
+    selectedWarehouse.value.length == 0 ||
     selectedUOM.value == "" ||
     itemNames.value == "" ||
     alertQuantity.value == "" ||
     idItems.value == ""
-  ) {
+  )
+}
+
+const addItem = async () => {
+  const isValid = validateInput()
+  if (isValid) {
     Swal.fire({
       position: "center",
       icon: "error",
@@ -605,67 +631,68 @@ const addItem = async () => {
       showConfirmButton: false,
       timer: 1500,
     })
-    return false
-  } else {
-    arrData.value.alert_qty = alertQuantity.value
-    arrData.value.remarks = remarks.value
-    warehouseName.value = []
-    warehouseId.value = []
-    arrItem.value = []
-    const wh = Warehouse.value
-    for (let index = 0; index < wh.length; index++) {
-      const element = wh[index]
-      if (selectedWarehouse.value.includes(element.id)) {
-        warehouseName.value.push(element.warehouse_name)
-        warehouseId.value.push(element.id)
-      }
-    }
-    const br = Brand.value
-    for (let index = 0; index < br.length; index++) {
-      const element = br[index]
-      if (element.id == selectedBrand.value) {
-        arrData.value.brand_name = element.brand_name
-      }
-    }
-    const uom = UOM.value
-    for (let index = 0; index < uom.length; index++) {
-      const element = uom[index]
-      if (element.id == selectedUOM.value) {
-        arrData.value.uom_name = element.uom_name
-      }
-    }
+    return
+  }
 
-    for (let index = 0; index < warehouseId.value.length; index++) {
-      arrItem.value.push({
-        code_item: idItems.value,
-        item_name: itemNames.value,
-        id_brand: selectedBrand.value,
-        id_uom: selectedUOM.value,
-        id_company: selectedCompany.value,
-        id_site: selectedSite.value,
-        id_warehouse: warehouseId.value[index],
-        current_stock: "",
-        remarks: remarks.value,
-        warehouse_name: warehouseName.value[index],
-        namaBrand: brandName.value,
-        namaUOM: uomName.value,
-        array_warehouse: selectedWarehouse.value,
-      })
+  arrData.value.alert_qty = alertQuantity.value
+  arrData.value.remarks = remarks.value
+  arrData.value.item_name = itemNames.value
+  warehouseName.value = []
+  warehouseId.value = []
+  arrItem.value = []
+  const wh = Warehouse.value
+  for (let index = 0; index < wh.length; index++) {
+    const element = wh[index]
+    if (selectedWarehouse.value.includes(element.id)) {
+      warehouseName.value.push(element.warehouse_name)
+      warehouseId.value.push(element.id)
     }
-    payload.value = {
+  }
+  const br = Brand.value
+  for (let index = 0; index < br.length; index++) {
+    const element = br[index]
+    if (element.id == selectedBrand.value) {
+      arrData.value.brand_name = element.brand_name
+    }
+  }
+  const uom = UOM.value
+  for (let index = 0; index < uom.length; index++) {
+    const element = uom[index]
+    if (element.id == selectedUOM.value) {
+      arrData.value.uom_name = element.uom_name
+    }
+  }
+
+  for (let index = 0; index < warehouseId.value.length; index++) {
+    arrItem.value.push({
       code_item: idItems.value,
       item_name: itemNames.value,
       id_brand: selectedBrand.value,
       id_uom: selectedUOM.value,
-      alert_qty: alertQuantity.value,
       id_company: selectedCompany.value,
       id_site: selectedSite.value,
+      id_warehouse: warehouseId.value[index],
+      current_stock: "",
       remarks: remarks.value,
+      warehouse_name: warehouseName.value[index],
+      namaBrand: brandName.value,
+      namaUOM: uomName.value,
       array_warehouse: selectedWarehouse.value,
-    }
-    resetButCompanyDisable()
-    return arrItem.value
+    })
   }
+  payload.value = {
+    code_item: idItems.value,
+    item_name: itemNames.value,
+    id_brand: selectedBrand.value,
+    id_uom: selectedUOM.value,
+    alert_qty: alertQuantity.value,
+    id_company: selectedCompany.value,
+    id_site: selectedSite.value,
+    remarks: remarks.value,
+    array_warehouse: selectedWarehouse.value,
+  }
+  resetButCompanyDisable()
+  return arrItem.value
 }
 
 const seeDetails = (id) => {
@@ -1202,7 +1229,7 @@ const importData = async () => {
                                     required
                                     v-model="selectedCompany"
                                     @change="changeCompany(selectedCompany)"
-                                    :disabled="disabledField"
+                                    :disabled="disabledField || idS"
                                   >
                                     <option disabled selected>Company</option>
                                     <option
@@ -1225,7 +1252,7 @@ const importData = async () => {
                                     required
                                     v-model="selectedSite"
                                     @change="changeSite(selectedSite)"
-                                    :disabled="disabledField"
+                                    :disabled="disabledField || idS"
                                   >
                                     <option disabled selected>Site</option>
                                     <option
@@ -1268,6 +1295,7 @@ const importData = async () => {
                                     placeholder="Item Name"
                                     required
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   />
                                 </div>
                                 <div class="mb-4 w-full">
@@ -1308,6 +1336,7 @@ const importData = async () => {
                                     required
                                     v-model="selectedUOM"
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   >
                                     <option disabled selected>UOM</option>
                                     <option
@@ -1334,6 +1363,7 @@ const importData = async () => {
                                     placeholder="Alert Quantity"
                                     required
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   />
                                 </div>
                                 <!-- <div
@@ -1374,6 +1404,7 @@ const importData = async () => {
                                     placeholder="Description"
                                     required
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   />
                                 </div>
                                 <div class="mb-4 w-full">
@@ -1395,6 +1426,7 @@ const importData = async () => {
                                     :options="Warehouse"
                                     :loading="isLoading"
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   >
                                     <template
                                       v-slot:tag="{
@@ -1508,7 +1540,7 @@ const importData = async () => {
                                       <td
                                         class="border border-[#B9B9B9] text-center"
                                       >
-                                        {{ itemNames }}
+                                        {{ arrData.item_name }}
                                       </td>
                                       <!-- <td
                                         class="border border-[#B9B9B9] text-center"
