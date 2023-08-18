@@ -4,6 +4,9 @@
 
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
     import fetchTypeOfHotelUtils from "@/utils/Fetch/Reference/fetchTypeOfHotel"
+
+
+    import Swal from "sweetalert2"
     
     const cityData = ref()
     const typeOfHotelData = ref()
@@ -53,7 +56,7 @@
     })
 
     const props = inject('accomodationDataView')
-    const emits = defineEmits('fetchAccomodation', 'resetTypeOfSubmitData')
+    const emits = defineEmits(['fetchAccomodation', 'resetTypeOfSubmitData'])
 
     let name = ref()
     let city = ref()
@@ -69,9 +72,7 @@
     let codeHotel = ref(0)
     let useGL = ref(0)
     let remarks = ref()
-    let price = ref()
-
-
+    let price = ref(0)
 
     const assignValue = () => {
 
@@ -119,7 +120,6 @@
     }
 
     watch(props, () => {
-      // console.log('perubahan di props')
 
       if(props.value[0].city_name !== undefined) {
         defaultValue()
@@ -157,24 +157,39 @@
 
     const addAccomodation = async () => {
 
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.post(`/accomodation_trip/store`, {
-        id_request_trip: localStorage.getItem('tripIdView'),
-        id_type_accomodation: idType.value,
-        id_city: idCity.value,
-        check_in_date: checkIn.value,
-        check_out_date: checkOut.value,
-        id_vendor: vendor.value,
-        use_gl: useGL.value,
-        sharing_w_name: sharingWith.value,
-        remarks: remarks.value,
-        price: price.value,
-        code_hotel: codeHotel.value,
-      })
-      // console.log(api)
-      emits('fetchAccomodation')
-      emits('resetTypeOfSubmitData', 'Add')
+      if(codeHotel.value === 0 & price.value === 0) {
+              Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: "Please choose your hotel & price",
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          emits('resetTypeOfSubmitData', 'Add')
+      } 
+      else {
+        try {
+          const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post(`/accomodation_trip/store`, {
+          id_request_trip: localStorage.getItem('tripIdView'),
+          id_type_accomodation: idType.value,
+          id_city: idCity.value,
+          check_in_date: checkIn.value,
+          check_out_date: checkOut.value,
+          id_vendor: vendor.value,
+          use_gl: useGL.value,
+          sharing_w_name: sharingWith.value,
+          remarks: remarks.value,
+          price: price.value,
+          code_hotel: codeHotel.value,
+        })        
+        } catch (error) {
+          
+        }
+        emits('fetchAccomodation')
+        emits('resetTypeOfSubmitData', 'Add')
+      }
 
     }
 
@@ -194,8 +209,8 @@
         remarks: remarks.value,
         price: price.value,
         code_hotel: codeHotel.value,
+        // hotelname nya gak ada
       })
-      // console.log(api)
       emits('fetchAccomodation')
       emits('resetTypeOfSubmitData')
 
@@ -206,7 +221,6 @@
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.delete(`/accomodation_trip/delete_data/${props.value[status.currentIndex].id}`)
-      // console.log(api)
       emits('fetchAccomodation')
       emits('resetTypeOfSubmitData')
 
@@ -225,272 +239,273 @@
 
 <template>
 
-    <form @submit.prevent="">
+    <div>
 
-      <!-- data Index = {{ status.currentIndex }} -->
-
-      <div>
-        <!-- {{ props }} -->
-      </div>
-                              
-        <div :class="rowClass">
-  
-          <!-- Name -->
-          <div :class="columnClass">
-
-            <div class="w-full">
-                                      
-              <label :class="labelStylingClass">
-                Name<span class="text-red-star">*</span>
-              </label>
-
-              <input
-                v-model="name"
-                type="text"
-                placeholder="Name"
-                :class="inputStylingClass"
-                required
-                :disabled="!status.isEditing"
-              />
-
-            </div>
-
-          </div>
-                     
-          <!-- City -->
-          <div :class="columnClass">
-
-            <div class="w-full">
-                                    
-              <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                City<span class="text-red-star">*</span>
-              </label>
-
-              <input
-                v-if="!status.isEditing"
-                v-model="city"
-                type="text"
-                placeholder="City"
-                :class="inputStylingClass"
-                disabled
-              />
-
-              <select 
-                v-if="status.isEditing"
-                v-model="idCity"
-                :class="inputStylingClass"
-                required
-              >
-                <option v-for="data in cityData" :value="data.id">
-                  {{ data.city_name }}
-                </option>
-              </select>
-
-            </div>
-
-          </div>
-  
-        </div>
-  
-        <div :class="rowClass">
-  
-          <!-- Hotel Name -->
-          <div :class="columnClass">
-
-            <div class="w-full">
-                                      
-              <label :class="labelStylingClass">
-                Hotel Name<span class="text-red-star">*</span>
-              </label>
-
-              <input 
-                v-model="hotelName"
-                type="text"
-                placeholder="Hotel Name"
-                :class="inputStylingClass"
-                required
-                :disabled="!status.isEditing"
-              />
-
-            </div>
-
-          </div>
+          <div :class="rowClass">
     
-          <!-- Hotel Type -->
-          <div :class="columnClass">
-                                  
-            <div class="w-full">
-
-              <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                Type<span class="text-red-star">*</span>
-              </label>
-
-              <input
-                v-if="!status.isEditing"
-                v-model="type" 
-                type="text" 
-                placeholder="Type" 
-                :class=inputStylingClass 
-                :disabled="!status.isEditing"
-              />
-
-              <select 
-                v-if="status.isEditing" 
-                v-model="idType"
-                :class=inputStylingClass 
-              >
-
-                <option v-for="data in typeOfHotelData" :value="data.id">
-                  {{ data.type_accomodation }}
-                </option>
-
-              </select>
-                                  
-            </div>
-
-          </div>
-          
+            <!-- Name -->
+            <div :class="columnClass">
   
-        </div>
-  
-        <div :class="rowClass">
-  
-          <!-- Check In -->
-          <div :class="columnClass">
-                                  
-            <div class="w-full">
-
-              <label :class="labelStylingClass">
-                Check In<span class="text-red-star">*</span>
-              </label>
-
-              <input 
-                v-model="checkIn"
-                type="date"
-                :class="inputStylingClass"
-                placeholder="Date"
-                required
-                :disabled="!status.isEditing"
-              />
-
-            </div>
-
-          </div>
-  
-          <!-- Sharing With -->
-          <div :class="columnClass">
-
-            <div class="w-full">
-                                    
-              <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                Sharing With
-              </label>
-
-              <input
-                v-model="sharingWith" 
-                type="text" 
-                placeholder="Sharing With"
-                :class=inputStylingClass
-                :disabled="!status.isEditing"
-              >
-                                  
-            </div>
-
-          </div>
-  
-        </div>
-  
-        <div :class="rowClass">
-  
-          <!-- Check Out -->
-          <div :class="columnClass">
-
-            <div class="w-full">
-
-              <label :class="labelStylingClass">
-                Check Out<span class="text-red-star">*</span>
-              </label>
-
-              <input
-                v-model="checkOut"
-                type="date"
-                :class="inputStylingClass"           
-                placeholder="Date"
-                required 
-                :disabled="!status.isEditing"
-              />
-
-            </div>
-
-          </div>
-
-          <!-- Remarks -->
-          <div v-if="idType === 1" :class="columnClass">
-
-          <div class="w-full">
-                                    
-                <label :class="labelStylingClass">
-                  Remarks
+              <div class="w-full">
+                                        
+                <label :class="labelStylingClass" for="name">
+                  Name<span class="text-red-star">*</span>
                 </label>
-
-                <input 
-                  v-model="remarks"
+  
+                <input
+                  id="name"
+                  v-model="name"
                   type="text"
-                  placeholder="Remarks"
+                  placeholder="Name"
                   :class="inputStylingClass"
+                  required
                   :disabled="!status.isEditing"
                 />
-
-          </div>
-
-          </div>
   
-        </div>
-
-        <div :class="rowClass" v-if="status.typeOfSubmitData === 'Add'">
-
-          <!-- Create GL -->
-          <div :class="columnClass">
-            <div class="w-full">
-
-              <label :class="labelStylingClass">
-                Create GL
-              </label>
-
-              <div class="flex gap-2">
-                <input
-                  v-model="useGL"
-                  type="checkbox"
-                />
-                <h1>Yes</h1>
               </div>
-
-            </div>
-          </div>
-
-          <!-- Vendor -->
-          <div :class="columnClass">
-
-            <div class="w-full">
-              
-              <label :class="labelStylingClass">
-                Vendor <span class="text-red-star">*</span>
-              </label>
-
-              <select :class="inputStylingClass" v-model="vendor" required>
-                
-                <option value="1">Antavaya</option>
-                <option value="2">Aerowisata</option>
-
-              </select>
-
-            </div>
-
-          </div>
-
-        </div>
   
-    </form>
+            </div>
+                       
+            <!-- City -->
+            <div :class="columnClass">
+  
+              <div class="w-full">
+                                      
+                <label class="block mb-2 font-JakartaSans font-medium text-sm" for="city">
+                  City<span class="text-red-star">*</span>
+                </label>
+  
+                <input
+                  v-if="!status.isEditing"
+                  v-model="city"
+                  type="text"
+                  placeholder="City"
+                  :class="inputStylingClass"
+                  disabled
+                />
+  
+                <select 
+                  v-if="status.isEditing"
+                  v-model="idCity"
+                  :class="inputStylingClass"
+                  required
+                  id="city"
+                >
+                  <option v-for="data in cityData" :value="data.id">
+                    {{ data.city_name }}
+                  </option>
+                </select>
+  
+              </div>
+  
+            </div>
+    
+          </div>
+    
+          <div :class="rowClass">
+    
+            <!-- Hotel Name -->
+            <div :class="columnClass">
+  
+              <div class="w-full">
+                                        
+                <!-- for="hotel name" -->
+                <label :class="labelStylingClass">
+                  Hotel Name<span class="text-red-star">*</span>
+                </label>
+                <!-- id="hotel name" -->
+  
+                <input 
+                  v-model="hotelName"
+                  type="text"
+                  placeholder="Hotel Name"
+                  :class="inputStylingClass"
+                  required
+                  disabled
+                  />
+                  <!-- :disabled="!status.isEditing" -->
+  
+              </div>
+  
+            </div>
+      
+            <!-- Hotel Type -->
+            <div :class="columnClass">
+                                    
+              <div class="w-full">
+  
+                <label class="block mb-2 font-JakartaSans font-medium text-sm" for="type">
+                  Type<span class="text-red-star">*</span>
+                </label>
+  
+                <input
+                  v-if="!status.isEditing"
+                  v-model="type" 
+                  type="text" 
+                  placeholder="Type" 
+                  :class=inputStylingClass 
+                  :disabled="!status.isEditing"
+                />
+  
+                <select
+                  id="type"
+                  v-if="status.isEditing" 
+                  v-model="idType"
+                  :class=inputStylingClass 
+                  required
+                >
+  
+                  <option v-for="data in typeOfHotelData" :value="data.id">
+                    {{ data.type_accomodation }}
+                  </option>
+  
+                </select>
+                                    
+              </div>
+  
+            </div>
+            
+    
+          </div>
+    
+          <div :class="rowClass">
+    
+            <!-- Check In -->
+            <div :class="columnClass">
+                                    
+              <div class="w-full">
+  
+                <label :class="labelStylingClass">
+                  Check In<span class="text-red-star">*</span>
+                </label>
+  
+                <input 
+                  v-model="checkIn"
+                  type="date"
+                  :class="inputStylingClass"
+                  placeholder="Date"
+                  required
+                  :disabled="!status.isEditing"
+                />
+  
+              </div>
+  
+            </div>
+    
+            <!-- Sharing With -->
+            <div :class="columnClass">
+  
+              <div class="w-full">
+                                      
+                <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                  Sharing With
+                </label>
+  
+                <input
+                  v-model="sharingWith" 
+                  type="text" 
+                  placeholder="Sharing With"
+                  :class=inputStylingClass
+                  :disabled="!status.isEditing"
+                >
+                                    
+              </div>
+  
+            </div>
+    
+          </div>
+    
+          <div :class="rowClass">
+    
+            <!-- Check Out -->
+            <div :class="columnClass">
+  
+              <div class="w-full">
+  
+                <label :class="labelStylingClass">
+                  Check Out<span class="text-red-star">*</span>
+                </label>
+  
+                <input
+                  v-model="checkOut"
+                  type="date"
+                  :class="inputStylingClass"           
+                  placeholder="Date"
+                  required 
+                  :disabled="!status.isEditing"
+                />
+  
+              </div>
+  
+            </div>
+  
+            <!-- Remarks -->
+            <div v-if="idType === 1" :class="columnClass">
+  
+            <div class="w-full">
+                                      
+                  <label :class="labelStylingClass">
+                    Remarks
+                  </label>
+  
+                  <input 
+                    v-model="remarks"
+                    type="text"
+                    placeholder="Remarks"
+                    :class="inputStylingClass"
+                    :disabled="!status.isEditing"
+                  />
+  
+            </div>
+  
+            </div>
+    
+          </div>
+  
+          <div :class="rowClass" v-if="status.typeOfSubmitData === 'Add'">
+  
+            <!-- Create GL -->
+            <div :class="columnClass">
+              <div class="w-full">
+  
+                <label :class="labelStylingClass">
+                  Create GL
+                </label>
+  
+                <div class="flex gap-2">
+                  <input
+                    v-model="useGL"
+                    type="checkbox"
+                  />
+                  <h1>Yes</h1>
+                </div>
+  
+              </div>
+            </div>
+  
+            <!-- Vendor -->
+            <div :class="columnClass">
+  
+              <div class="w-full">
+                
+                <label :class="labelStylingClass">
+                  Vendor <span class="text-red-star">*</span>
+                </label>
+  
+                <select :class="inputStylingClass" v-model="vendor" required>
+                  
+                  <option value="1">Antavaya</option>
+                  <option value="2">Aerowisata</option>
+  
+                </select>
+  
+              </div>
+  
+            </div>
+  
+          </div>
+
+    </div>
 
     <div>
       

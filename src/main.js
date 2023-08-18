@@ -15,11 +15,14 @@ import VueDatePicker from '@vuepic/vue-datepicker'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-import Emitter from 'tiny-emitter';
+const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
+const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 
 const app = createApp(App)
-// app.config.globalProperties.$msalInstance = {};
-// app.config.globalProperties.$emitter = new Emitter();
+
+app.config.globalProperties.$inputStyling = inputStylingClass
+app.config.globalProperties.$labelStyling = labelStylingClass
+
 app.use(createPinia())
 app.use(router)
 app.use(VueAwesomePaginate)
