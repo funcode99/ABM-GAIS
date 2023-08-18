@@ -2,10 +2,12 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import DataNotFound from "@/components/element/dataNotFound.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+import tableData from "@/components/table/tableData.vue";
 
 import ModalAddCaNonTravelVue from "@/components/cash-advance/ModalAddCaNonTravel.vue";
-import selectAllCheckbox from "@/utils/selectAllCheckbox";
 
 import icon_receive from "@/assets/icon-receive.svg";
 import icon_filter from "@/assets/icon_filter.svg";
@@ -20,51 +22,25 @@ import Api from "@/utils/Api";
 import moment from "moment";
 import Swal from "sweetalert2";
 
-import { ref, onBeforeMount, computed, onMounted, reactive } from "vue";
+import { Workbook } from "exceljs";
+import { ref, onBeforeMount, computed, reactive } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
+
 const sidebar = useSidebarStore();
-const listStatus = [
-  { id: 2, title: "Draft" },
-  { id: 3, title: "Waiting Approval" },
-  { id: 4, title: "Revision" },
-  { id: 9, title: "Fully Rejected" },
-  { id: 10, title: "Completed" },
-];
+const showFullText = ref({});
 
-// format date & price
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
-//for sort & search
-const search = ref("");
 let sortedData = ref([]);
-let deleteArray = ref([]);
 let sortedbyASC = true;
 let instanceArray = [];
 let paginationArray = [];
 let lengthCounter = 0;
-let lockScrollbar = ref(false);
-let sortedDataReactive = computed(() => sortedData.value);
-let sortAscending = true;
-const showFullText = ref({});
-let checkList = false;
-let statusForm = "create";
+
 let filter = reactive({
   status: "",
   date: "",
   search: "",
 });
-//for paginations
+
 let showingValue = ref(1);
 let showingValueFrom = ref(0);
 let showingValueTo = ref(0);
@@ -74,19 +50,20 @@ let paginateIndex = ref(0);
 let totalPage = ref(0);
 let totalData = ref(0);
 
-//for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1;
   showingValue.value = pageOfItem;
   fetch(pageOfItem);
 };
 
-//for check & uncheck all
-const selectAll = (checkValue) => {
-  selectAllCheckbox(checkValue, deleteArray, sortedData);
-};
+const listStatus = [
+  { id: 2, title: "Draft" },
+  { id: 3, title: "Waiting Approval" },
+  { id: 4, title: "Revision" },
+  { id: 9, title: "Fully Rejected" },
+  { id: 10, title: "Completed" },
+];
 
-//for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Created Date", jsonData: "created_at" },
@@ -98,7 +75,6 @@ const tableHead = [
   { Id: 8, title: "Status", jsonData: "status" },
 ];
 
-//for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
     sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
@@ -109,31 +85,20 @@ const sortList = (sortBy) => {
   }
 };
 
-//for searching
-const filteredItems = (search) => {
-  sortedData.value = instanceArray;
-  const filteredR = sortedData.value.filter((item) => {
-    (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1);
-    return (
-      (item.ca_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.event.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-// get data
 const fetch = async (id) => {
   let payload = {
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
+
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const api = await Api.get("cash_advance/non_travel/", { params: payload });
+
   paginationArray = api.data.data;
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
@@ -142,18 +107,6 @@ const fetch = async (id) => {
   totalData.value = paginationArray.total;
   showingValueFrom.value = paginationArray.from ? paginationArray.from : 0;
   showingValueTo.value = paginationArray.to;
-};
-
-const resetData = () => {
-  filter.search = "";
-  filter.status = "";
-  filter.date = "";
-  deleteArray.value = []
-  fetch();
-};
-
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
 const filterDataByType = async (id) => {
@@ -165,7 +118,9 @@ const filterDataByType = async (id) => {
     perPage: pageMultiplier.value,
     page: id ? id : 1,
   };
+
   const api = await Api.get("cash_advance/non_travel", { params: payload });
+
   paginationArray = api.data.data;
   instanceArray = paginationArray.data;
   sortedData.value = instanceArray;
@@ -179,7 +134,6 @@ const filterDataByType = async (id) => {
   showingValue.value = paginationArray.current_page;
 };
 
-// delete data
 const deleteData = async (event) => {
   Swal.fire({
     title:
@@ -223,78 +177,85 @@ const deleteData = async (event) => {
     }
   });
 };
-const deleteCheckedArray = () => {
-  Swal.fire({
-    title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will delete this data permanently, You cannot undo this action.</div>",
-    iconHtml: `<img src="${icondanger}" />`,
-    showCloseButton: true,
-    closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
-    showCancelButton: true,
-    buttonsStyling: false,
-    cancelButtonText: "Cancel",
-    customClass: {
-      cancelButton: "swal-cancel-button",
-      confirmButton: "swal-confirm-button",
-    },
-    reverseButtons: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes",
-  }).then((result) => {
-    if (result.isConfirmed) {
-      let payload = {
-        id: deleteArray.value,
-      };
-      Api.delete(`/cash_advance/delete_data/`, { params: payload }).then(
-        (res) => {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: res.data.message,
-            showConfirmButton: false,
-            timer: 1500,
-          });
-
-          if (sortedData.value.length == 1) {
-            router.go();
-          } else {
-            fetch();
-          }
-        }
-      );
-    } else {
-      return;
-    }
-  });
-};
-// end
 
 onBeforeMount(() => {
   getSessionForSidebar();
   fetch();
 });
+
+const resetData = () => {
+  filter.search = "";
+  filter.status = "";
+  filter.date = "";
+  fetch();
+};
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const exportToExcel = () => {
+  const workbook = new Workbook();
+  const worksheet = workbook.addWorksheet("Cash Advance Non Travel Reports");
+
+  const tableHead = [
+    { title: "Nomor" },
+    { title: "Created Date" },
+    { title: "CA No" },
+    { title: "Requestor" },
+    { title: "Event Date" },
+    { title: "Event" },
+    { title: "Total" },
+    { title: "Status" },
+  ];
+
+  tableHead.forEach((column, index) => {
+    worksheet.getCell(1, index + 1).value = column.title;
+  });
+
+  sortedData.value.forEach((data, rowIndex) => {
+    worksheet.getCell(rowIndex + 2, 1).value = rowIndex + 1;
+    worksheet.getCell(rowIndex + 2, 2).value = data.created_at;
+    worksheet.getCell(rowIndex + 2, 3).value = data.no_ca;
+    worksheet.getCell(rowIndex + 2, 4).value = data.employee_name;
+    worksheet.getCell(rowIndex + 2, 5).value = data.date;
+    worksheet.getCell(rowIndex + 2, 6).value = data.event;
+    worksheet.getCell(rowIndex + 2, 7).value = data.grand_total;
+    worksheet.getCell(rowIndex + 2, 8).value = data.status;
+  });
+
+  workbook.xlsx.writeBuffer().then((buffer) => {
+    const blob = new Blob([buffer], {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "cash_advance_non_travel_report_data.xlsx";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+};
 </script>
 
 <template>
-  <div
-    class="flex flex-col w-full this h-[100vh]"
-    :class="lockScrollbar === true ? 'fixed' : ''"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
     <div class="flex w-screen content mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
+      <tableContainer style="overflow: auto">
+        <tableTop>
           <div
             class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
           >
@@ -304,28 +265,16 @@ onBeforeMount(() => {
               Cash Advance Non Travel
             </p>
             <div class="flex gap-4">
-              <div
-                v-if="deleteArray.length > 0"
-                class="flex gap-2 items-center"
-              >
-                <h1 class="font-semibold">{{ deleteArray.length }} Selected</h1>
-                <button
-                  @click="deleteCheckedArray"
-                  class="bg-[#f4446c] py-3 px-4 text-xs rounded-lg text-white"
-                >
-                  Delete Selected
-                </button>
-              </div>
               <ModalAddCaNonTravelVue />
               <button
                 class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"
+                @click="exportToExcel"
               >
                 <img :src="icon_receive" class="w-6 h-6" />
               </button>
             </div>
           </div>
 
-          <!-- SORT, DATE & SEARCH -->
           <div
             class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
           >
@@ -340,7 +289,7 @@ onBeforeMount(() => {
                   class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   v-model="filter.status"
                 >
-                  <option disabled selected>status</option>
+                  <option disabled selected>Status</option>
                   <option
                     v-for="data in listStatus"
                     :key="data.id"
@@ -362,7 +311,6 @@ onBeforeMount(() => {
                   range
                   :enable-time-picker="false"
                   class="my-date"
-                  format="yyyy-mm-dd"
                 />
               </div>
 
@@ -419,12 +367,12 @@ onBeforeMount(() => {
             </div>
           </div>
 
-          <!-- SHOWING -->
           <div class="flex items-center gap-1 pt-6 pb-4 px-4 h-4">
             <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
             <select
               class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
               v-model="pageMultiplier"
+              @change="fetch()"
             >
               <option>10</option>
               <option>25</option>
@@ -434,95 +382,100 @@ onBeforeMount(() => {
             </select>
           </div>
 
-          <!-- TABLE -->
-          <div
-            class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
-          >
-            <div class="block overflow-x-auto">
-              <table
-                class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
-              >
-                <thead
-                  class="text-center font-JakartaSans text-sm font-bold h-10"
+          <tableData v-if="sortedData.length > 0">
+            <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+              <tr>
+                <th
+                  v-for="data in tableHead"
+                  :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                  @click="sortList(`${data.jsonData}`)"
                 >
-                  <tr>
-                    <th>
-                      <div class="flex justify-center">
-                        <input
-                          type="checkbox"
-                          name="checked"
-                          @click="selectAll((checkList = !checkList))"
-                        />
-                      </div>
-                    </th>
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }}
+                    <button>
+                      <img :src="arrowicon" class="w-[9px] h-3" />
+                    </button>
+                  </span>
+                </th>
+                <th>
+                  <div class="text-center">Actions</div>
+                </th>
+              </tr>
+            </thead>
 
-                    <th
-                      v-for="data in tableHead"
-                      :key="data.Id"
-                      class="overflow-x-hidden cursor-pointer"
-                      @click="sortList(`${data.jsonData}`)"
-                    >
-                      <span class="flex justify-center items-center gap-1">
-                        {{ data.title }}
-                        <button>
-                          <img :src="arrowicon" class="w-[9px] h-3" />
-                        </button>
-                      </span>
-                    </th>
-                    <th>
-                      <div class="text-center">Actions</div>
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody v-if="sortedData.length > 0">
-                  <tr
-                    class="font-JakartaSans font-normal text-sm"
-                    v-for="(data) in sortedData"
-                    :key="data.no"
+            <tbody v-if="sortedData.length > 0">
+              <tr
+                class="font-JakartaSans font-normal text-sm"
+                v-for="data in sortedData"
+                :key="data.no"
+              >
+                <td>{{ data.no }}</td>
+                <td>{{ format_date(data.created_at) }}</td>
+                <td>{{ data.no_ca }}</td>
+                <td>{{ data.employee_name }}</td>
+                <td>{{ format_date(data.date) }}</td>
+                <td>
+                  <span
+                    :class="[
+                      'readmore-text',
+                      showFullText[data.id] ? 'show-full' : '',
+                    ]"
                   >
-                    <td>
-                      <input
-                        type="checkbox"
-                        name="checks"
-                        :value="data.id"
-                        v-model="deleteArray"
-                      />
-                    </td>
-                    <td>{{ data.no }}</td>
-                    <td>{{ format_date(data.created_at) }}</td>
-                    <td>{{ data.no_ca }}</td>
-                    <td>{{ data.employee_name }}</td>
-                    <td>{{ format_date(data.date) }}</td>
-                    <td>{{ data.event }}</td>
-                    <td>{{ format_price(data.grand_total) }}</td>
-                    <td>{{ data.status }}</td>
-                    <td>
-                      <div class="flex justify-center items-center gap-2">
-                        <router-link
-                          :to="`/viewcashadvancenontravel/${data.id}`"
-                        >
-                          <button>
-                            <img :src="editicon" class="w-6 h-6" />
-                          </button>
-                        </router-link>
-                        <button @click="deleteData(data.id)">
-                          <img :src="deleteicon" class="w-6 h-6" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-                <tbody v-else>
-                  <tr>
-                    <DataNotFound :cnt-col="10" />
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    {{ data.event }}
+                  </span>
+                </td>
+                <td>{{ format_price(data.grand_total) }}</td>
+                <td>{{ data.status }}</td>
+                <td>
+                  <div class="items-center">
+                    <router-link :to="`/viewcashadvancenontravel/${data.id}`">
+                      <button>
+                        <img :src="editicon" class="w-6 h-6" />
+                      </button>
+                    </router-link>
+                    <button @click="deleteData(data.id)">
+                      <img :src="deleteicon" class="w-6 h-6" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </tableData>
+
+          <div v-else>
+            <tableData>
+              <thead
+                class="text-center font-JakartaSans text-sm font-bold h-10"
+              >
+                <tr>
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                  >
+                    <div class="flex justify-center items-center">
+                      <p class="font-JakartaSans font-bold text-sm">
+                        {{ data.title }}
+                      </p>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="8"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                    Data not Found
+                  </td>
+                </tr>
+              </tbody>
+            </tableData>
           </div>
 
-          <!-- PAGINATION -->
           <div
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
@@ -538,22 +491,18 @@ onBeforeMount(() => {
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
           </div>
-        </div>
-      </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+        </tableTop>
+      </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-
 th {
   padding: 2px;
   text-align: left;
@@ -582,5 +531,20 @@ tr th {
 
 .my-date {
   width: 260px !important;
+}
+
+.readmore-text {
+  display: inline-block;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width 0.3s ease-in-out;
+}
+
+.readmore-text:hover {
+  max-width: 400px;
+  white-space: nowrap;
+  word-break: break-word;
 }
 </style>

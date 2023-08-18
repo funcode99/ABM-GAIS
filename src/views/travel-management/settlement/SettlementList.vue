@@ -1,100 +1,100 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import DataNotFound from "@/components/element/dataNotFound.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import DataNotFound from "@/components/element/dataNotFound.vue"
 
-import TableTopBar from "@/components/layout/TableTopBar.vue";
-import ModalAddSettlement from "@/components/travel-management/settlement/ModalAddSettlement.vue";
+import TableTopBar from "@/components/layout/TableTopBar.vue"
+import ModalAddSettlement from "@/components/travel-management/settlement/ModalAddSettlement.vue"
 
-import icon_receive from "@/assets/icon-receive.svg";
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
+import icon_receive from "@/assets/icon-receive.svg"
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
 
-import Api from "@/utils/Api";
-import moment from "moment";
-import Swal from "sweetalert2";
+import Api from "@/utils/Api"
+import moment from "moment"
+import Swal from "sweetalert2"
 
-import { ref, onBeforeMount, computed, reactive } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
-const sidebar = useSidebarStore();
+import { ref, onBeforeMount, computed, reactive } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+const sidebar = useSidebarStore()
 const listStatus = [
   { id: 0, title: "Draft" },
   { id: 1, title: "Waiting Approval" },
   { id: 2, title: "Revision" },
   { id: 9, title: "Rejected" },
   { id: 10, title: "Completed" },
-];
+]
 
 const listCaType = [
   { id: 1, title: "Travel" },
   { id: 2, title: "Non Travel" },
-];
+]
 
 // format date & price
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
+    return moment(String(value)).format("DD/MM/YYYY")
   }
-};
+}
 const format_price = (value) => {
   if (!value) {
-    return "0.00";
+    return "0.00"
   }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
+  let val = (value / 1).toFixed(2).replace(".", ",")
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+}
 
 //for sort, search, & filter
-const selectedStatus = ref("Status");
-const selectedCatype = ref("Type");
-const date = ref();
-const search = ref("");
-let sortedData = ref([]);
-let listReimbursementType = ref([]);
-let listType = ref([]);
+const selectedStatus = ref("Status")
+const selectedCatype = ref("Type")
+const date = ref()
+const search = ref("")
+let sortedData = ref([])
+let listReimbursementType = ref([])
+let listType = ref([])
 
-let deleteArray = ref([]);
-let sortedbyASC = true;
-let instanceArray = [];
-let paginationArray = [];
-let lengthCounter = 0;
-let visibleModal = ref(false);
-let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
+let deleteArray = ref([])
+let sortedbyASC = true
+let instanceArray = []
+let paginationArray = []
+let lengthCounter = 0
+let visibleModal = ref(false)
+let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
 
 let filter = reactive({
   status: "",
   date: "",
   search: "",
   type: "",
-});
+})
 
 //for paginations & showing
-let showingValue = ref(1);
-let showingValueFrom = ref(0);
-let showingValueTo = ref(0);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
-let totalPage = ref(0);
-let totalData = ref(0);
+let showingValue = ref(1)
+let showingValueFrom = ref(0)
+let showingValueTo = ref(0)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
+let totalPage = ref(0)
+let totalData = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1;
-  showingValue.value = pageOfItem;
-  fetch(pageOfItem);
-};
+  paginateIndex.value = pageOfItem - 1
+  showingValue.value = pageOfItem
+  fetch(pageOfItem)
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  selectAllCheckbox(checkValue, deleteArray, sortedData);
-};
+  selectAllCheckbox(checkValue, deleteArray, sortedData)
+}
 
 //for tablehead
 const tableHead = [
@@ -105,68 +105,68 @@ const tableHead = [
   { Id: 5, title: "CA", jsonData: "ca" },
   { Id: 6, title: "Total", jsonData: "total" },
   { Id: 7, title: "Status", jsonData: "status" },
-];
+]
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
   }
-};
+}
 
 //for searching
 const filteredItems = (search) => {
-  sortedData.value = instanceArray;
+  sortedData.value = instanceArray
   const filteredR = sortedData.value.filter((item) => {
-    (item.settlement_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
-      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1);
+    ;(item.settlement_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
+      (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1)
     return (
       (item.settlement_no.toLowerCase().indexOf(search.toLowerCase()) > -1) |
       (item.requestor.toLowerCase().indexOf(search.toLowerCase()) > -1)
-    );
-  });
-  sortedData.value = filteredR;
-  lengthCounter = sortedData.value.length;
-  onChangePage(1);
-};
+    )
+  })
+  sortedData.value = filteredR
+  lengthCounter = sortedData.value.length
+  onChangePage(1)
+}
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
 // get data
 const fetch = async (id) => {
   let payload = {
     perPage: pageMultiplier.value,
     page: id ? id : 1,
-  };
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  }
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const api = await Api.get("settlement/get_data", {
     params: payload,
-  });
-  paginationArray = api.data.data;
-  instanceArray = paginationArray.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  totalPage.value = paginationArray.last_page;
-  totalData.value = paginationArray.total;
-  showingValueFrom.value = paginationArray.from;
-  showingValueTo.value = paginationArray.to;
-};
+  })
+  paginationArray = api.data.data
+  instanceArray = paginationArray.data
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  totalPage.value = paginationArray.last_page
+  totalData.value = paginationArray.total
+  showingValueFrom.value = paginationArray.from
+  showingValueTo.value = paginationArray.to
+}
 
 const resetData = () => {
-  filter.search = "";
-  filter.status = "";
-  filter.date = "";
-  filter.type = "";
+  filter.search = ""
+  filter.status = ""
+  filter.date = ""
+  filter.type = ""
   deleteArray.value = []
-  fetch();
-};
+  fetch()
+}
 
 const filterDataByType = async (id) => {
   let payload = {
@@ -176,22 +176,22 @@ const filterDataByType = async (id) => {
     end_date: filter.date ? filter.date[1] : "",
     perPage: pageMultiplier.value,
     page: id ? id : 1,
-  };
+  }
   const api = await Api.get("settlement/get_data", {
     params: payload,
-  });
-  paginationArray = api.data.data;
-  instanceArray = paginationArray.data;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  totalPage.value = paginationArray.last_page;
-  totalData.value = paginationArray.total;
-  showingValueFrom.value = paginationArray.from;
-  showingValueTo.value = paginationArray.to;
-  showingValue.value = paginationArray.current_page;
-};
+  })
+  paginationArray = api.data.data
+  instanceArray = paginationArray.data
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  totalPage.value = paginationArray.last_page
+  totalData.value = paginationArray.total
+  showingValueFrom.value = paginationArray.from
+  showingValueTo.value = paginationArray.to
+  showingValue.value = paginationArray.current_page
+}
 
 // delete data
 const deleteData = async (event) => {
@@ -224,15 +224,15 @@ const deleteData = async (event) => {
           confirmButtonColor: "#015289",
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
 
-        fetch();
-      });
+        fetch()
+      })
     } else {
-      return;
+      return
     }
-  });
-};
+  })
+}
 const deleteCheckedArray = () => {
   Swal.fire({
     title:
@@ -256,7 +256,7 @@ const deleteCheckedArray = () => {
     if (result.isConfirmed) {
       let payload = {
         id: deleteArray.value,
-      };
+      }
       Api.delete(`settlement/delete_data/`, { params: payload }).then((res) => {
         Swal.fire({
           position: "center",
@@ -264,28 +264,28 @@ const deleteCheckedArray = () => {
           title: res.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
 
         if (sortedData.value.length == 1) {
-          router.go();
+          router.go()
         } else {
-          fetch();
+          fetch()
         }
-      });
+      })
     } else {
-      return;
+      return
     }
-  });
-};
+  })
+}
 // end
 
 const closeModal = () => {
-  visibleModal.value = false;
-};
+  visibleModal.value = false
+}
 onBeforeMount(() => {
-  fetch();
-  getSessionForSidebar();
-});
+  fetch()
+  getSessionForSidebar()
+})
 </script>
 
 <template>
@@ -519,7 +519,7 @@ onBeforeMount(() => {
                 <tbody v-if="sortedData.length > 0">
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="(data) in sortedData"
+                    v-for="data in sortedData"
                     :key="data.no"
                   >
                     <td>
@@ -537,13 +537,23 @@ onBeforeMount(() => {
                     <td>{{ data.no_ca }}</td>
                     <td>{{ format_price(data.total_ca) }}</td>
                     <td>{{ data.status }}</td>
-                    <td class="flex flex-wrap gap-4 justify-center">
-                      <router-link :to="`/settlement/${data.id}`">
+                    <td class="flex flex-wrap gap-4 justify-center h-full">
+                      <router-link
+                        :to="`/settlement/${data.id}`"
+                        v-if="
+                          data.status == 'Draft' || data.status == 'Revision'
+                        "
+                      >
                         <button>
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
                       </router-link>
-                      <button @click="deleteData(data.id)">
+                      <button
+                        @click="deleteData(data.id)"
+                        v-if="
+                          data.status == 'Draft' || data.status == 'Revision'
+                        "
+                      >
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
                     </td>

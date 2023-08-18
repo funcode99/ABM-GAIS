@@ -183,11 +183,8 @@ const submit = async () => {
         position: "center",
         icon: "error",
         title: e.error,
+        text: "Unable to Submit Settlement",
         showConfirmButton: false,
-        timer: 2000,
-        timerProgressBar: true,
-        background: "#EA5455",
-        color: "#ffffff",
       })
     })
 }
@@ -534,6 +531,7 @@ const inputClass =
                         type="text"
                         :class="inputClass"
                         v-model="data.detail_item_name"
+                        :disabled="data.id_ca_detail"
                       />
                     </td>
                     <td>
@@ -542,7 +540,7 @@ const inputClass =
                       <CurrencyInput
                         v-else
                         v-model="data.frequency"
-                        :disabled="data.id == idEdit ? false : true"
+                        :disabled="data.id_ca_detail"
                         :class="inputClass"
                         required
                       >
@@ -568,7 +566,7 @@ const inputClass =
                       <CurrencyInput
                         v-else
                         v-model="data.nominal_ca"
-                        :disabled="data.id == idEdit ? false : true"
+                        :disabled="data.id_ca_detail"
                         :class="inputClass"
                         required
                       >

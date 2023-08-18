@@ -1,66 +1,66 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
 
-import ModalApproveAtk from "@/components/approval/atk-request/ModalApproveAtk.vue";
-import ModalRejectAtk from "@/components/approval/atk-request/ModalRejectAtk.vue";
-import HistoryApproval from "@/components/approval/HistoryApproval.vue";
+import ModalApproveAtk from "@/components/approval/atk-request/ModalApproveAtk.vue"
+import ModalRejectAtk from "@/components/approval/atk-request/ModalRejectAtk.vue"
+import HistoryApproval from "@/components/approval/HistoryApproval.vue"
 
-import arrow from "@/assets/request-trip-view-arrow.png";
-import icon_receive from "@/assets/icon-receive.svg";
+import arrow from "@/assets/request-trip-view-arrow.png"
+import icon_receive from "@/assets/icon-receive.svg"
 
-import { onBeforeMount, ref } from "vue";
-import { useRouter } from "vue-router";
-import { useSidebarStore } from "@/stores/sidebar.js";
-import Api from "@/utils/Api";
-import Swal from "sweetalert2";
-import moment from "moment";
+import { onBeforeMount, ref } from "vue"
+import { useRouter } from "vue-router"
+import { useSidebarStore } from "@/stores/sidebar.js"
+import Api from "@/utils/Api"
+import Swal from "sweetalert2"
+import moment from "moment"
 
-const sidebar = useSidebarStore();
-const router = useRouter();
-let lengthCounter = 0;
-let stockName = ref("");
-let createdDate = ref("");
-let createdBy = ref("");
-let siteName = ref("");
-let companyName = ref("");
-let status = ref("");
-let ItemTable = ref([]);
-const idR = ref(router.currentRoute.value.params.id);
-let dataApproval = ref([]);
-let tabId = ref(1);
-const company_code = JSON.parse(localStorage.getItem("company_code"));
-let dataArr = ref([]);
-let dataItem = ref([]);
-let itemApproval = ref([]);
-const site_user = JSON.parse(localStorage.getItem("id_site"));
-const company_user = JSON.parse(localStorage.getItem("id_company"));
+const sidebar = useSidebarStore()
+const router = useRouter()
+let lengthCounter = 0
+let stockName = ref("")
+let createdDate = ref("")
+let createdBy = ref("")
+let siteName = ref("")
+let companyName = ref("")
+let status = ref("")
+let ItemTable = ref([])
+const idR = ref(router.currentRoute.value.params.id)
+let dataApproval = ref([])
+let tabId = ref(1)
+const company_code = JSON.parse(localStorage.getItem("company_code"))
+let dataArr = ref([])
+let dataItem = ref([])
+let itemApproval = ref([])
+const site_user = JSON.parse(localStorage.getItem("id_site"))
+const company_user = JSON.parse(localStorage.getItem("id_company"))
 
 const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get/${id}`);
-  dataArr.value = res.data.data[0];
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get/${id}`)
+  dataArr.value = res.data.data[0]
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
-    companyName.value = element.company_name;
-    stockName.value = element.no_atk_request;
-    createdDate.value = format_date(element.created_at);
-    createdBy.value = element.employee_name;
-    siteName.value = element.site_name;
-    status.value = element.status;
+    const element = res.data.data[index]
+    companyName.value = element.company_name
+    stockName.value = element.no_atk_request
+    createdDate.value = format_date(element.created_at)
+    createdBy.value = element.employee_name
+    siteName.value = element.site_name
+    status.value = element.status
   }
-};
+}
 const fetchDetailById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
-  dataItem.value = res.data.data;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
+  dataItem.value = res.data.data
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     ItemTable.value.push({
       Warehouse: element.warehouse_name,
       itemNames: element.item_name,
@@ -71,41 +71,41 @@ const fetchDetailById = async (id) => {
       remark: element.remarks,
       qty_send: element.qty_send,
       qty_unsend: element.qty_unsend,
-    });
+    })
   }
-};
+}
 
 const fetchLogApproval = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`);
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`)
 
-  itemApproval.value = res.data.data;
-};
+  itemApproval.value = res.data.data
+}
 
 const fetchHistoryApproval = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/request_atk/get_history/${id}`);
-  dataApproval.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/request_atk/get_history/${id}`)
+  dataApproval.value = res.data.data
+}
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchHistoryApproval(router.currentRoute.value.params.id);
-  fetchDataById(router.currentRoute.value.params.id);
-  fetchDetailById(router.currentRoute.value.params.id);
-  fetchLogApproval(router.currentRoute.value.params.id);
-});
+  getSessionForSidebar()
+  fetchHistoryApproval(router.currentRoute.value.params.id)
+  fetchDataById(router.currentRoute.value.params.id)
+  fetchDetailById(router.currentRoute.value.params.id)
+  fetchLogApproval(router.currentRoute.value.params.id)
+})
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD-MM-YYYY");
+    return moment(String(value)).format("DD-MM-YYYY")
   }
-};
+}
 </script>
 
 <template>
@@ -145,7 +145,9 @@ const format_date = (value) => {
           </div>
           <div
             class="flex flex-wrap justify-start gap-4 px-[70px]"
-            v-if="dataArr.id_site == site_user && dataArr.id_company == company_user"
+            v-if="
+              dataArr.id_site == site_user && dataArr.id_company == company_user
+            "
           >
             <ModalApproveAtk
               v-if="status == 'Waiting Approval' || status == 'Approve'"
@@ -345,7 +347,9 @@ const format_date = (value) => {
                       {{ value.qty_delivered }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ value.qty_unsend }}
+                      <div v-if="status == 'Completed'">
+                        {{ value.qty_unsend }}
+                      </div>
                     </td>
                     <td class="border border-[#B9B9B9]">{{ value.remark }}</td>
                   </tr>
