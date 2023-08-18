@@ -56,11 +56,13 @@ const format_price = (value) => {
   let val = (value / 1).toFixed(2).replace(".", ",");
   return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
+
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/cash_advance/non_travel/${id}`);
   dataArr.value = res.data.data[0];
+  console.log(dataArr.value);
   fetchDataItem(id);
   fetchHistoryApproval(id);
 };
@@ -83,6 +85,7 @@ const saveFormHeader = async () => {
     date: dataArr.value.date,
     id_currency: dataArr.value.id_currency,
     grand_total: dataArr.value.grand_total,
+    id_cost_center: dataArr.value.id_cost_center,
   };
 
   const api = await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
@@ -125,6 +128,7 @@ const update_nominal = async () => {
     dataItem.value.forEach((dt) => {
       tempTotal += Number(dt.nominal);
     });
+
     const payload = {
       id_employee: selectedEmployee,
       id_request_trip: 2,
@@ -166,6 +170,7 @@ const saveItems = async (type, id = null, item = null) => {
       id_cost_center: itemsCostCentre.value,
       remarks: itemsRemarks.value,
     };
+
     const api = await Api.post(`cash_advance/store_detail`, payload);
     if (api.data.success == true) {
       Swal.fire({
@@ -179,6 +184,7 @@ const saveItems = async (type, id = null, item = null) => {
       resetItems();
     }
   }
+
   editItem.value = false;
   addItem.value = false;
 };
@@ -280,7 +286,6 @@ const inputClass =
         ]"
       >
         <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          <!-- HEADER -->
           <div class="flex justify-between">
             <router-link
               to="/cashadvancenontravel"
@@ -295,6 +300,7 @@ const inputClass =
                 </span>
               </h1>
             </router-link>
+
             <div class="py-4">
               <button
                 type="button"
@@ -310,6 +316,7 @@ const inputClass =
               </button>
             </div>
           </div>
+
           <div class="flex justify-start gap-4 mx-10">
             <label
               v-if="
@@ -323,6 +330,7 @@ const inputClass =
             >
               Edit
             </label>
+
             <div class="flex justify-end gap-4 mr-6" v-if="visibleHeader">
               <label
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[121px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
@@ -337,12 +345,7 @@ const inputClass =
                 Save
               </button>
             </div>
-            <!-- <ModalAddCaNonTravelVue
-              v-if="lockScrollbar"
-              :formData="dataArr"
-              :formDataItem="dataItem"
-              :status="statusForm"
-            />-->
+
             <button
               v-if="
                 (dataArr.status == 'Draft' ||
@@ -357,7 +360,7 @@ const inputClass =
             </button>
           </div>
 
-          <!-- FORM READ ONLY-->
+          <!-- FORM READ ONLY HEADERS-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
@@ -370,6 +373,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created By</span
@@ -381,6 +385,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm">Event</span>
               <input
@@ -390,6 +395,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Event Date</span
@@ -402,6 +408,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <label class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Currency</label
@@ -421,6 +428,7 @@ const inputClass =
                 </option>
               </select>
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm">Total</span>
               <input
@@ -429,6 +437,26 @@ const inputClass =
                 :value="format_price(dataArr.grand_total)"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Cost Center</label
+              >
+              <select
+                v-model="dataArr.id_cost_center"
+                class="bg-white max-w-[80%] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                :disabled="!visibleHeader"
+              >
+                <option disabled selected>Cost Center</option>
+                <option
+                  v-for="data in listCostCentre"
+                  :key="data.id"
+                  :value="data.id"
+                >
+                  {{ data.cost_center_code }} - {{ data.cost_center_name }}
+                </option>
+              </select>
             </div>
           </div>
 
@@ -451,6 +479,8 @@ const inputClass =
               Add Item
             </button>
           </div>
+
+          <!-- detail item di tabel -->
           <div v-if="addItem && !editItem" class="mx-[70px]">
             <div class="mx-3">
               <p class="font-JakartaSans font-medium text-sm pb-2">
@@ -473,6 +503,7 @@ const inputClass =
                   required
                 />
               </div>
+
               <div :class="colClass">
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Nominal<span class="text-red">*</span></label
@@ -535,6 +566,7 @@ const inputClass =
               </div>
             </div>
           </div>
+
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
             <div class="flex items-center">
               <div
@@ -551,7 +583,7 @@ const inputClass =
                 <p
                   :class="
                     tabId == 1
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -573,7 +605,7 @@ const inputClass =
                 <p
                   :class="
                     tabId == 2
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -581,6 +613,8 @@ const inputClass =
                 </p>
               </div>
             </div>
+
+            <!-- table detail -->
             <div class="overflow-x-auto bg-white">
               <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
@@ -613,6 +647,7 @@ const inputClass =
                     </th>
                   </tr>
                 </thead>
+
                 <tbody
                   class="font-JakartaSans font-normal text-xs"
                   v-if="dataItem.length > 0"
@@ -629,6 +664,7 @@ const inputClass =
                         :disabled="item.id == idEdit ? false : true"
                       />
                     </td>
+
                     <td class="border border-[#B9B9B9]">
                       <span v-if="!editItem">
                         {{ item.cost_center_name }}
@@ -648,6 +684,7 @@ const inputClass =
                         </option>
                       </select>
                     </td>
+
                     <td class="border border-[#B9B9B9]">
                       <div v-if="item.id != idEdit">
                         {{ format_price(item.nominal) }}
@@ -663,6 +700,7 @@ const inputClass =
                         :disabled="item.id == idEdit ? false : true"
                       />
                     </td>
+
                     <td class="border border-[#B9B9B9]">
                       <input
                         v-model="item.remarks"
@@ -674,6 +712,7 @@ const inputClass =
                         :disabled="item.id == idEdit ? false : true"
                       />
                     </td>
+
                     <td class="border border-[#B9B9B9]" v-if="visibleHeader">
                       <div
                         class="flex justify-center items-center"
@@ -699,6 +738,7 @@ const inputClass =
                           />
                         </button>
                       </div>
+
                       <div v-else>
                         <button
                           v-if="item.id == idEdit"
@@ -711,12 +751,15 @@ const inputClass =
                     </td>
                   </tr>
                 </tbody>
+
                 <tbody v-else>
                   <tr>
                     <DataNotFound :cnt-col="4" />
                   </tr>
                 </tbody>
               </table>
+
+              <!-- tab approval -->
               <div v-if="tabId == 2">
                 <HistoryApproval
                   :data-approval="dataApproval"
