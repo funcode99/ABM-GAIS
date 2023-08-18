@@ -18,8 +18,8 @@
     let name = ref('')
     let date = ref('')
     let departure = ref('')
-    let arrival = ref('')
-    let amount = ref('')
+    let arrival = ref(0)
+    let amount = ref(0)
     let remarks = ref('')
     let accountName = ref('')
     let voucherCode = ref('')
@@ -58,8 +58,8 @@
 
     watch(props, () => {
         date.value = ''
-        departure.value = ''
-        arrival.value = ''
+        departure.value = 0
+        arrival.value = 0
         amount.value = ''
         remarks.value = ''
         accountName.value = ''
@@ -123,16 +123,16 @@
                 </div>
 
                 <div :class="columnClass">
-                <div class="w-full">
-                    <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                        Arrival<span class="text-red-star">*</span>
-                    </label>
-                    <select :class="inputStylingClass" v-model="arrival" required>
-                        <option v-for="data in cityData" :value="data.id">
-                            {{ data.city_name }}
-                        </option>
-                    </select>
-                </div>
+                    <div class="w-full">
+                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                            Arrival<span class="text-red-star">*</span>
+                        </label>
+                        <select :class="inputStylingClass" v-model="arrival" required>
+                            <option v-for="data in cityData" :value="data.id">
+                                {{ data.city_name }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
 
             </div>

@@ -78,6 +78,8 @@
     provide('accomodationDataView', accomodationData)
     provide('cashAdvanceDataView', cashAdvanceData)
 
+    let listOfFormDataProps = [travellerGuestData, airlinesData, taxiVoucherData, otherTransportationData, accomodationData, cashAdvanceData] 
+
     const getPurposeOfTrip = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
@@ -108,6 +110,7 @@
     }
 
     const getAirlines = async () => {
+
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -117,6 +120,7 @@
         console.log(error)
         airlinesData.value = [{}]
       }
+
     }
  
     const getTaxiVoucher = async () => {
@@ -147,7 +151,7 @@
       try {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)      
+        let api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
         accomodationData.value = api.data.data
       } catch (error) {
         console.log(error)
@@ -175,7 +179,7 @@
     const getApprovalStatus = async () => {
       try {
         const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
         let api = await Api.get(`/request_trip/get_history_approval/${localStorage.getItem('tripIdView')}`)    
         approvalStatusData.value = api.data.data
       } catch (error) {
@@ -223,7 +227,6 @@
       }
 
       const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, payload)
-      console.log(api)
 
       delete payload.file
       fileSend.value = null
@@ -238,11 +241,22 @@
     const assignSelectedData = () => {
       headerTitle.value === 'Traveller' ? currentSelectedData.value = travellerGuestData.value 
       : headerTitle.value === 'Airlines' ? currentSelectedData.value = airlinesData.value 
-      : headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value 
+      : headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value
       : headerTitle.value === 'Other Transportation' ? currentSelectedData.value = otherTransportationData.value
       : headerTitle.value === 'Accomodation' ? currentSelectedData.value = accomodationData.value
       : headerTitle.value === 'Cash Advance' ? currentSelectedData.value = cashAdvanceData.value
       : travellerGuestData.value
+    }
+
+    let actualizationData = ref()
+
+    const getActualizationByTripId = async () => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem("tripIdView")}`)
+      // console.log(api)
+      actualizationData.value = api.data.data
+      console.log(actualizationData.value.length)
     }
 
     onBeforeMount(() => {
@@ -254,14 +268,35 @@
       getAccomodation()
       getCashAdvance()
       getApprovalStatus()
+      getActualizationByTripId()
     })
 
     watch(purposeOfTripData, () => {
       notes.value = purposeOfTripData.value[currentIndex].notes
     })
 
+    let propsCheck = ref(null)
+
+    const assignToCheckProps = () => {
+      if(headerTitle.value === 'Traveller') {
+        propsCheck.value = travellerGuestData.value
+      } else if (headerTitle.value === 'Airlines') {
+        propsCheck.value = airlinesData.value
+      } else if (headerTitle.value === 'Taxi Voucher') {
+        propsCheck.value = taxiVoucherData.value  
+      } else if (headerTitle.value === 'Other Transportation') {
+        propsCheck.value = otherTransportationData.value    
+      } else if (headerTitle.value === 'Accomodation') {
+        propsCheck.value = accomodationData.value      
+      } else if (headerTitle.value === 'Accomodation') {
+        propsCheck.value = cashAdvanceData.value        
+      }
+    }
+
     watch(headerTitle, () => {
       
+      assignToCheckProps()
+
       assignSelectedData()
       dataIndex.value = 0
       showingValue.value = 1
@@ -270,6 +305,10 @@
         getCashAdvance()
       }
 
+    })
+
+    watch(listOfFormDataProps, () => {
+      assignToCheckProps()
     })
 
     let count = ref(1)
@@ -326,10 +365,17 @@
     })
 
     const changeType = (typeOfSubmit) => {
+
+      if(typeOfSubmit === 'Check Props') {
+        JSON.stringify(propsCheck.value) === '[{}]' ? typeOfSubmit = 'Submit Add' : typeOfSubmit = 'Add'
+      }
+
       typeOfSubmitToProps.value = typeOfSubmit
+
       if(typeOfSubmit === 'Add') {
         isAdding.value = true
       }
+
     }
 
     const resetTypeOfSubmit = (Type) => {
@@ -338,11 +384,9 @@
     }
 
     const onChangePage = (pageOfItem) => {
-
       typeOfSubmitToProps.value = 'none'
       assignSelectedData()
       dataIndex.value = pageOfItem-1
-
     }
 
     const changeViewLayout = (layout) => {
@@ -425,14 +469,7 @@
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
 
-                      <!-- <button
-                        @click="showActualizationModal"
-                        class="bg-orange text-white rounded-lg py-[5px] px-[18px] font-bold"  
-                      >
-                        Actualization
-                      </button> -->
-
-                      <AddActualizationTripModal />
+                      <AddActualizationTripModal v-if="actualizationData.length === 0" />
 
                       <div class="flex-1"></div>
 
@@ -622,15 +659,15 @@
                             <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
 
                               <buttonEditFormView
-                              v-if="isEditing & headerTitle !== 'Cash Advance' " 
+                              v-if="isEditing & headerTitle !== 'Cash Advance' && JSON.stringify(propsCheck) !== '[{}]'" 
                               @click="changeType('Edit')"
                                />
 
                                <buttonAddFormView 
-                               v-if="isEditing & headerTitle !== 'Cash Advance' " 
-                               @click="changeType('Add')"
-                               title="Add"
-                              />
+                                title="Add"
+                                v-if="isEditing & headerTitle !== 'Cash Advance' " 
+                                @click="changeType('Check Props')"
+                                />
   
                               <!-- Issued Ticket Button -->
                               <button 
@@ -677,7 +714,7 @@
                             <!-- DELETE BUTTON -->
                             <button 
                               @click="changeType('Delete')"
-                              v-if="isEditing && viewLayout === 'document'" 
+                              v-if="isEditing && viewLayout === 'document' && JSON.stringify(propsCheck) !== '[{}]'" 
                               class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
                             >
 
@@ -696,8 +733,9 @@
                           >
 
                             <buttonAddFormView 
+                              title="Confirm Add"
                               @click="changeType('Submit Add')"
-                              class="mx-7" 
+                              class="mx-7"
                             />
                             
                             <buttonCancelFormView 
@@ -705,21 +743,6 @@
                             />
 
                           </detailsFormHeader>
-
-                          <!-- {{ typeOfSubmitToProps }} -->
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                           <!-- form Step 3 -->
@@ -914,8 +937,6 @@
                                       v-if="currentlyEditCAHeader"
                                       @click="currentlyEditCAHeader = !currentlyEditCAHeader"
                                     />
-
-                          
 
                                     <buttonAddFormView
                                       title="Add Cash Advance"

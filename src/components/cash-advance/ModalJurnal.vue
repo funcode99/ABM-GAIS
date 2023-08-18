@@ -16,6 +16,9 @@ const tableHead = [
   { Id: 9, title: "Profit Center", jsonData: "profit_status" },
   { Id: 10, title: "Posting Date", jsonData: "posting_date" },
 ];
+
+let classStyle =
+  "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
 </script>
 
 <template>
@@ -30,7 +33,7 @@ const tableHead = [
 
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <div class="modal">
-    <div class="modal-box relative w-11/12 max-w-5xl">
+    <div class="modal-box relative w-11/12 max-w-6xl">
       <nav class="sticky top-0 z-50 bg-[#015289]">
         <label
           @click="this.$emit('unlockScrollbar')"
@@ -47,22 +50,22 @@ const tableHead = [
       <main class="modal-box-inner">
         <div class="sticky top-0 bg-white">
           <div
-            class="flex flex-wrap justify-start gap-2 items-center px-8 py-2"
+            class="flex flex-wrap justify-start gap-2 items-center px-8 pt-4"
           >
             <button
-              class="btn w-[100px] text-white text-base font-JakartaSans font-bold capitalize bg-blue border-blue hover:bg-white hover:border-blue hover:text-blue"
+              class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-blue border-blue hover:bg-white hover:border-blue hover:text-blue"
             >
               Edit
             </button>
 
             <button
-              class="btn w-[100px] text-white text-base font-JakartaSans font-bold capitalize bg-green border-green hover:bg-white hover:border-green hover:text-green"
+              class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-green border-green hover:bg-white hover:border-green hover:text-green"
             >
               Posting
             </button>
 
             <button
-              class="btn w-[100px] text-white text-base font-JakartaSans font-bold capitalize bg-[#FF9900] border-[#FF9900] hover:bg-white hover:border-[#FF9900] hover:text-[#FF9900]"
+              class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-[#FF9900] border-[#FF9900] hover:bg-white hover:border-[#FF9900] hover:text-[#FF9900]"
             >
               Reverse
             </button>
@@ -77,7 +80,7 @@ const tableHead = [
             <input
               type="text"
               name="doc_number"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Doc Number"
               disabled
             />
@@ -90,7 +93,7 @@ const tableHead = [
             <input
               type="text"
               name="company_code"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Company Code"
               disabled
             />
@@ -103,7 +106,7 @@ const tableHead = [
             <input
               type="text"
               name="doc_date"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Doc Date"
               disabled
             />
@@ -116,7 +119,7 @@ const tableHead = [
             <input
               type="text"
               name="post_date"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Posting Date"
               disabled
             />
@@ -129,7 +132,7 @@ const tableHead = [
             <input
               type="text"
               name="ref_doc"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Ref Doc"
               disabled
             />
@@ -142,7 +145,7 @@ const tableHead = [
             <input
               type="text"
               name="fiscal_year"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Fiscal Year"
               disabled
             />
@@ -155,7 +158,7 @@ const tableHead = [
             <input
               type="text"
               name="currency"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Currency"
               disabled
             />
@@ -168,7 +171,7 @@ const tableHead = [
             <input
               type="text"
               name="period"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Period"
               disabled
             />
@@ -181,7 +184,7 @@ const tableHead = [
             <input
               type="text"
               name="order"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Order"
               disabled
             />
@@ -194,7 +197,7 @@ const tableHead = [
             <input
               type="text"
               name="claim_category"
-              class="font-JakartaSans capitalize block bg-white w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed"
+              :class="classStyle"
               placeholder="Claim Category"
               disabled
             />
@@ -258,7 +261,7 @@ const tableHead = [
 
 .table-wrapper {
   overflow-y: scroll;
-  overflow-x: scroll;
+  overflow-x: hidden;
   height: fit-content;
   max-height: 66.4vh;
   margin-top: 22px;
@@ -308,6 +311,6 @@ table td {
 
 table td {
   font-size: 15px;
-  padding-left: 20px;
+  padding-left: 40px;
 }
 </style>

@@ -37,9 +37,6 @@
 
         let margin = new Date(returnDate.value) - new Date(departureDate.value)
         let totalDays = Math.ceil((margin/(1000*3600*24))+1)
-
-        // console.log(totalDays)
-        console.log(idZona.value)
         
         let params = {
             date_departure: departureDate.value,
@@ -59,7 +56,6 @@
         fromCity.value = 'City'
         toCity.value = 'City'
         idZona.value = 0
-        tlkRate.value = 0
 
     }
 
@@ -79,6 +75,7 @@
                 purpose: purpose.value,
                 total_tlk: totalTLK.value,
             })
+            console.log(api)
         }
 
     }
@@ -86,8 +83,11 @@
 
 
     onBeforeMount(() => {
-        fetchCityUtils(cityData)
-        fetchEmployeeByLogin()
+            fetchCityUtils(cityData)
+            if(!localStorage.getItem('jobBandId')) {
+                console.log('jobBandId tidak ada, memanggil...')
+                fetchEmployeeByLogin()
+            }
     })
 
     const addField = (fieldType) => {
@@ -110,7 +110,6 @@
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/zona/get_by_city/${toCity.value[0]}`)
       optionDataZona.value = api.data.data
-      console.log(api)
       idZona.value = optionDataZona.value[0].id_zona
     }
 
@@ -118,9 +117,11 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get('/employee/get_by_login')
-        console.log(api)
         localStorage.setItem('jobBandId', api.data.data[0].id_job_band)
+        fetchTLKByJobBand()
     }
+
+    let filterData = ref()
 
     const fetchTLKByJobBand = async () => {
       let jobBandId = localStorage.getItem('jobBandId')
@@ -128,7 +129,8 @@
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/zona_job/get_by_job/${jobBandId}`)
       filterData.value = api.data.data
-    //   TLKperDay.value = filterData.value[0].tlk_rate
+      tlkRate.value = filterData.value[0].tlk_rate
+      console.log(filterData.value)
     }
 
     let purpose = ref('')
@@ -151,9 +153,9 @@
 
   <Modal v-model:visible="isVisible">
 
-    {{ arrayDetail }}
-
     <main>
+
+        <!-- {{ tlkRate }} -->
         
         <modalHeader @closeVisibility="isVisible = false" title="Actualization Trip" />
 
@@ -179,9 +181,7 @@
             </div>
         </div>
         
-        <form class="pt-2 px-5" @submit.prevent="addDataToArrayDetail">
-            
-            
+        <form class="pt-2 px-5" @submit.prevent="addDataToArrayDetail">          
             
             <div class="flex gap-5 my-2">
                 <div class="w-full">

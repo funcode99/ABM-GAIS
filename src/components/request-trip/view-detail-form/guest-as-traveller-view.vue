@@ -1,6 +1,8 @@
 <script setup>
     import { ref, inject, onBeforeMount, watch } from 'vue'
     import Api from '@/utils/Api'
+    
+    import fetchFlightClassUtils from '@/utils/Fetch/Reference/fetchFlightClass'
 
     const status = defineProps({
         isEditing: Boolean,
@@ -14,6 +16,7 @@
     let name = ref()
     let department = ref()
     let flightClass = ref()
+    let flightClassName = ref('')
     let sn = ref()
     let company = ref()
     let gender = ref()
@@ -24,10 +27,13 @@
 
     let travellerTypeData = ref()
 
+    let flightClassData = ref([])
+
     const assignValue = () => {
         name.value = props.value[status.currentIndex].name_guest
         department.value = props.value[status.currentIndex].departement
-        flightClass.value = props.value[status.currentIndex].flight_class
+        flightClassName.value = props.value[status.currentIndex].flight_class
+        flightClass.value = props.value[status.currentIndex].id_flight_class
         sn.value = props.value[status.currentIndex]
         company.value = props.value[status.currentIndex].company
         gender.value = props.value[status.currentIndex].gender
@@ -72,13 +78,15 @@
         if(props.value[0].name_guest !== undefined) {
            name.value = props.value[0].name_guest
            department.value = props.value[0].departement
-           flightClass.value = props.value[0].flight_class
+           flightClassName.value = props.value[0].flight_class
+           flightClass.value = props.value[0].id_flight_class
            sn.value = props.value[0]
            company.value = props.value[0].company
            gender.value = props.value[0].gender
            type.value = props.value[0].id_type_traveller
            contactNo.value = props.value[0].contact_no
            maxHotelFare.value = props.value[0].hotel_fare
+           nik.value = props.value[0].nik
         } else {
             assignValue()
         }
@@ -88,7 +96,8 @@
     if(props.value[0].name_guest !== undefined) {
            name.value = props.value[0].name_guest
            department.value = props.value[0].departement
-           flightClass.value = props.value[0].flight_class
+           flightClassName.value = props.value[0].flight_class
+           flightClass.value = props.value[0].id_flight_class
            sn.value = props.value[0]
            company.value = props.value[0].company
            gender.value = props.value[0].gender
@@ -99,25 +108,35 @@
     }
 
     const addTravelGuest = async () => {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.post(`/travel_guest/store`, {
-            // notes: props.value[status.currentIndex].notes,
-            gender: gender.value,
-            company: company.value,
-            name_guest: name.value,
-            hotel_fare: maxHotelFare.value,
-            departement: department.value,
-            contact_no: contactNo.value,
-            id_type_traveller: type.value,
-            nik: props.value[status.currentIndex].nik,
-            id_flight_class: props.value[status.currentIndex].id_flight_class,
-            id_request_trip: props.value[status.currentIndex].id_request_trip,
-            id_company: props.value[status.currentIndex].id_company,
-            id_employee: props.value[status.currentIndex].id_employee
-        })
-        emits('fetchGuestTraveller')
-        emits('resetTypeOfSubmitData', 'Add')
+
+        try {
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.post(`/travel_guest/store`, {
+                // notes: props.value[status.currentIndex].notes,
+                gender: gender.value,
+                company: company.value,
+                name_guest: name.value,
+                hotel_fare: maxHotelFare.value,
+                departement: department.value,
+                contact_no: contactNo.value,
+                id_type_traveller: type.value,
+                nik: nik.value,
+                id_flight_class: flightClass.value,
+                id_request_trip: localStorage.getItem('tripIdView'),
+                id_company: localStorage.getItem('id_company'),
+                id_employee: localStorage.getItem('id_employee')
+            })
+        } catch (error) {
+
+        }
+
+
+
+            emits('fetchGuestTraveller')
+
+            emits('resetTypeOfSubmitData', 'Add')
+
     }
 
     const updateTravelGuest = async () => {
@@ -125,7 +144,7 @@
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post(`/travel_guest/update_data/${props.value[status.currentIndex].id}`, {
-            nik: props.value[status.currentIndex].nik,
+            nik: nik.value,
             notes: props.value[status.currentIndex].notes,
             gender: gender.value,
             company: company.value,
@@ -134,11 +153,12 @@
             departement: department.value,
             contact_no: contactNo.value,
             id_type_traveller: type.value,
-            id_flight_class: props.value[status.currentIndex].id_flight_class,
+            id_flight_class: flightClass.value,
             id_request_trip: props.value[status.currentIndex].id_request_trip,
             id_company: props.value[status.currentIndex].id_company,
             id_employee: props.value[status.currentIndex].id_employee
         })
+        console.log(api)
         emits('fetchGuestTraveller')
         emits('resetTypeOfSubmitData', 'Edit')
 
@@ -162,6 +182,7 @@
 
     onBeforeMount(() => {
         getTravellerType()
+        fetchFlightClassUtils(flightClassData)
     })
 
     const rowClass = 'flex justify-between mx-4 items-center gap-2 my-6'
@@ -228,13 +249,43 @@
                     </label>
                     
                     <input
-                        v-model="flightClass"
+                        v-if="JSON.stringify(props) !== '[{}]' && !status.isEditing"
+                        v-model="flightClassName"
                         type="text"
                         placeholder="Flight Class"
                         :class="inputStylingClass"
                         required
-                        :disabled="!status.isEditing"
+                        disabled
                     />
+
+                    <select
+                    :class="inputStylingClass" 
+                    v-model="flightClass"
+                    v-else-if="JSON.stringify(props) !== '[{}]' && status.isEditing"
+                    >
+                        <option
+                            v-for="data in flightClassData" 
+                            :class="inputStylingClass"
+                            :value="data.id"
+                        >
+                            {{ data.flight_class }}
+                        </option>
+                    </select>
+
+                    <select
+                        :class="inputStylingClass" 
+                        v-model="flightClass"
+                        :disabled="!status.isEditing"
+                        v-else
+                    >
+                        <option
+                            v-for="data in flightClassData" 
+                            :class="inputStylingClass"
+                            :value="data.id"
+                        >
+                            {{ data.flight_class }}
+                        </option>
+                    </select>
 
                 </div>
 
