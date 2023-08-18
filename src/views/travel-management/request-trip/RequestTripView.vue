@@ -14,6 +14,7 @@
     import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
 
     import AddActualizationTripModal from '@/components/travel-management/actualization-trip/AddActualizationTrip.vue'
+    import EditActualizationTripModal from '@/components/travel-management/actualization-trip/EditActualizationTrip.vue'
     
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
@@ -473,12 +474,9 @@
 
                       <div class="flex-1"></div>
 
-                      <div class="absolute right-5" v-if="actualizationData.length > 0">
-                        <button class="flex gap-3 items-center bg-blue text-white rounded-lg font-bold py-[14px] px-[10px]">
-                          <img :src="walletImg" />
-                          Actualization
-                        </button>
-                      </div>
+                      <EditActualizationTripModal v-if="actualizationData.length > 0" />
+
+
 
                     </div>
 

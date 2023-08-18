@@ -30,7 +30,6 @@ let visibleBtn = ref(false);
 let idItem = ref(0);
 const btnLabelSubmit = ref("");
 let dataArr = ref([]);
-let base_url = import.meta.env.VITE_APP_URL
 
 const tableHead = [
   { Id: 1, title: "Sender", jsonData: "sender_name" },
