@@ -1,90 +1,90 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import icon_done from "@/assets/icon_done.svg";
-import icon_add from "@/assets/icon_add_square.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
+import iconClose from "@/assets/navbar/icon_close.svg"
+import icon_done from "@/assets/icon_done.svg"
+import icon_add from "@/assets/icon_add_square.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
 
 const props = defineProps({
   dataArr: [Object, Array],
-});
+})
 
-import { onBeforeMount, ref } from "vue";
-import { useRouter } from "vue-router";
-import Api from "@/utils/Api";
+import { onBeforeMount, ref } from "vue"
+import { useRouter } from "vue-router"
+import Api from "@/utils/Api"
 import Swal from "sweetalert2"
-const router = useRouter();
-const notesName = ref("");
-let qtyApproved = ref([]);
-const id = router.currentRoute.value.params.id;
-const itemTable = ref([]);
-const dataItem = ref([]);
-const headerApprove = ref([]);
-const itemPayload = ref([]);
-const payload = ref([]);
-const idWh = ref([]);
-const warehouseName = ref("");
-const listChildItem = ref([]);
-const Warehouse = ref([]);
+const router = useRouter()
+const notesName = ref("")
+let qtyApproved = ref([])
+const id = router.currentRoute.value.params.id
+const itemTable = ref([])
+const dataItem = ref([])
+const headerApprove = ref([])
+const itemPayload = ref([])
+const payload = ref([])
+const idWh = ref([])
+const warehouseName = ref("")
+const listChildItem = ref([])
+const Warehouse = ref([])
 const btnApprove = ref(
   props.dataArr.status == "Approve" ? "Delivery" : "Approve"
-);
-const disableField = ref(false);
+)
+const disableField = ref(false)
 
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
-const isApprove = ref(false);
+const isApprove = ref(false)
 
 const changeSite = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  Warehouse.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`)
+  Warehouse.value = res.data.data
+}
 
 const fetchDetailById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   if (props.dataArr.status == "Approve") {
-    const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`);
-    const get_wh = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
+    const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`)
+    const get_wh = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
 
-    itemTable.value = res.data.data;
+    itemTable.value = res.data.data
     itemTable.value.map((element, index) => {
-      element.total_stock = element.stock_real_wh;
-      idWh.value[index] = element.id_warehouse;
-      qtyApproved.value[index] = element.qty_approved;
-      element.array_warehouse = get_wh.data.data[0].array_warehouse;
-    });
+      element.total_stock = element.stock_real_wh
+      idWh.value[index] = element.id_warehouse
+      qtyApproved.value[index] = element.qty_approved
+      element.array_warehouse = get_wh.data.data[0].array_warehouse
+    })
   } else {
-    const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`);
-    itemTable.value = res.data.data;
+    const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
+    itemTable.value = res.data.data
   }
-};
+}
 
 const changeWarehouse = async (e, id_item, ind) => {
   itemTable.value.map((element, i) => {
     if (element.id_item == id_item && ind == i) {
       let temp = element.array_warehouse.filter(function (item) {
-        return item.id_warehouse == e.target.value;
-      });
-      element.total_stock = temp[0].stock_available;
+        return item.id_warehouse == e.target.value
+      })
+      element.total_stock = temp[0].stock_available
     }
-  });
-};
+  })
+}
 
 const addItem = async (ind, data) => {
-  const wh = Warehouse.value;
+  const wh = Warehouse.value
   for (let index = 0; index < wh.length; index++) {
-    const element = wh[index];
+    const element = wh[index]
     if (element.id == idWh.value[ind]) {
-      warehouseName.value = element.warehouse_name;
+      warehouseName.value = element.warehouse_name
     }
   }
 
   let filter_wh = data.array_warehouse.filter(function (item) {
-    return !idWh.value.includes(item.id_warehouse);
-  });
+    return !idWh.value.includes(item.id_warehouse)
+  })
   let datas = {
     id_item: data.id_item,
     id_atk_request_detail: router.currentRoute.value.params.id,
@@ -99,40 +99,40 @@ const addItem = async (ind, data) => {
     array_warehouse: filter_wh,
     total_stock: data.total_stock,
     status: "add_new",
-  };
-  let a = ind;
-  let b = (ind += 1);
-  itemTable.value.splice(b, a, datas);
+  }
+  let a = ind
+  let b = (ind += 1)
+  itemTable.value.splice(b, a, datas)
 
   itemTable.value.map((element) => {
-    element.stock_available = data.stock_available ? data.stock_available : "";
-  });
-};
+    element.stock_available = data.stock_available ? data.stock_available : ""
+  })
+}
 
 const removeItem = async (ind) => {
-  itemTable.value.splice(ind, 1);
-};
+  itemTable.value.splice(ind, 1)
+}
 
 const submit = async () => {
-  itemPayload.value = [];
+  itemPayload.value = []
   itemTable.value.map((element, index) => {
-    element.remarks = notesName.value ? notesName.value : "";
-    element.qty_approved = qtyApproved.value[index];
-    element.id_warehouse = idWh.value[index];
-    element.id_atk_request_detail = router.currentRoute.value.params.id;
-  });
+    element.remarks = notesName.value ? notesName.value : ""
+    element.qty_approved = qtyApproved.value[index]
+    element.id_warehouse = idWh.value[index]
+    element.id_atk_request_detail = router.currentRoute.value.params.id
+  })
   payload.value = {
     warehouse_detail: itemTable.value,
     notes: notesName.value ? notesName.value : "",
-  };
-  isApprove.value = true;
+  }
+  isApprove.value = true
   if (isApprove.value) {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
     let api =
       props.dataArr.status == "Approve"
         ? `/approval_request_atk/completed/${router.currentRoute.value.params.id}`
-        : `/approval_request_atk/approve/${router.currentRoute.value.params.id}`;
+        : `/approval_request_atk/approve/${router.currentRoute.value.params.id}`
     Api.post(api, payload.value)
       .then((res) => {
         Swal.fire({
@@ -141,10 +141,10 @@ const submit = async () => {
           title: res.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
         router.push({
           path: "/approvalatkrequest",
-        });
+        })
       })
       .catch((error) => {
         Swal.fire({
@@ -153,16 +153,16 @@ const submit = async () => {
           title: error.response.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-      });
+        })
+      })
   }
-};
+}
 
 onBeforeMount(() => {
-  changeSite(props.dataArr.id_site);
-  fetchDetailById(router.currentRoute.value.params.id);
-  disableField.value = props.dataArr.status == "Approve" ? true : false;
-});
+  changeSite(props.dataArr.id_site)
+  fetchDetailById(router.currentRoute.value.params.id)
+  disableField.value = props.dataArr.status == "Approve" ? true : false
+})
 </script>
 
 <template>
@@ -244,6 +244,9 @@ onBeforeMount(() => {
             v-for="(value, ind) in itemTable"
             :key="ind"
           >
+            {{
+              value
+            }}
             <tr class="h-16">
               <td class="border border-[#B9B9B9]">
                 {{ value.code_item }} - {{ value.item_name }}
@@ -284,7 +287,7 @@ onBeforeMount(() => {
                         qtyApproved[ind] > value.total_stock ||
                         qtyApproved[ind] < 0
                       ) {
-                        qtyApproved[ind] = value.total_stock;
+                        qtyApproved[ind] = value.total_stock
                       }
                     }
                   "
