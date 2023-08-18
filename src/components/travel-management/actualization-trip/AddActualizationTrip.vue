@@ -137,9 +137,6 @@
     let totalTLK = ref(0)
     let notes = ref('')
 
-    const inputStylingClass = 'py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm w-full font-JakartaSans font-semibold text-base'
-    const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
-
 </script>
 
 <template>
@@ -186,7 +183,7 @@
             <div class="flex gap-5 my-2">
                 <div class="w-full">
                     <label 
-                        :class="labelStylingClass" 
+                        :class="$labelStyling" 
                         for="departure"
                     >
                         Date Departure<span class="text-red">*</span>
@@ -194,14 +191,14 @@
                     <input
                         v-model="departureDate"
                         id="departure" 
-                        :class="inputStylingClass" 
+                        :class="$inputStyling" 
                         type="date" 
                         required 
                     />
                 </div>
                 <div class="w-full">
                     <label 
-                        :class="labelStylingClass"
+                        :class="$labelStyling"
                         for="return"
                     >
                         Date Return<span class="text-red">*</span>
@@ -209,7 +206,7 @@
                     <input 
                         v-model="returnDate"
                         id="return"
-                        :class="inputStylingClass" 
+                        :class="$inputStyling" 
                         type="date" 
                         required 
                     />
@@ -220,12 +217,12 @@
 
                 <div class="w-full">
                     
-                    <label :class="labelStylingClass">
+                    <label :class="$labelStyling">
                         From<span class="text-red">*</span>
                     </label>
 
                     <select
-                        :class="inputStylingClass"
+                        :class="$inputStyling"
                         required
                         v-model="fromCity"
                     >
@@ -241,12 +238,12 @@
 
                 <div class="w-full">
 
-                    <label :class="labelStylingClass">
+                    <label :class="$labelStyling">
                         To<span class="text-red">*</span>                     
                     </label>
 
                     <select
-                    :class="inputStylingClass"
+                    :class="$inputStyling"
                     required
                     v-model="toCity"
                     @change="fetchZonaByCity(activitiesDetail, index)"
@@ -277,12 +274,12 @@
 
             <div class="mt-2">
                 
-                <label :class="labelStylingClass">
+                <label :class="$labelStyling">
                     Purpose <span class="text-red">*</span>
                 </label>
 
                 <input 
-                    :class="inputStylingClass"
+                    :class="$inputStyling"
                     v-model="purpose" 
                     required 
                 />
@@ -333,22 +330,22 @@
             </div>
 
             <div>
-                <label :class="labelStylingClass">
+                <label :class="$labelStyling">
                     Total TLK<span class="text-red">*</span>
                 </label>
                 <input 
-                    :class="inputStylingClass" 
+                    :class="$inputStyling" 
                     placeholder="TLK"
                     v-model="totalTLK" 
                 />
             </div>
 
             <div>
-                <label :class="labelStylingClass">
+                <label :class="$labelStyling">
                     Notes<span class="text-red">*</span>
                 </label>
                 <input 
-                    :class="inputStylingClass" 
+                    :class="$inputStyling" 
                     placeholder="Notes" 
                     v-model="notes"    
                 />
