@@ -2,15 +2,21 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+
 import DataNotFound from "@/components/element/dataNotFound.vue";
-import Swal from "sweetalert2";
+
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+
 import Api from "@/utils/Api";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -42,35 +48,15 @@ let itemsNominal = ref("");
 let itemsCostCentre = ref("");
 let itemsRemarks = ref("");
 let tabId = ref(1);
+let alert = ref([]);
 
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
-
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
-const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/cash_advance/non_travel/${id}`);
-  dataArr.value = res.data.data[0];
-  console.log(dataArr.value);
-  fetchDataItem(id);
-  fetchHistoryApproval(id);
-};
-
-const fetchDataItem = async (id) => {
-  const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
-  dataItem.value = res.data.data;
-};
+const listStatus = [
+  { id: 0, status: "Draft", value: "alert bg-[#8d8e8f]" },
+  { id: 1, status: "Waiting Approval", value: "alert alert-warning" },
+  { id: 2, status: "Revision", value: "alert alert-error" },
+  { id: 3, status: "Fully Rejected", value: "alert alert-error" },
+  { id: 10, status: "Completed", value: "alert alert-success" },
+];
 
 const edit = () => {
   visibleHeader.value = true;
@@ -197,20 +183,6 @@ const cancelItems = () => {
   addItem.value = false;
 };
 
-const fetchCurrency = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("currency");
-  listCurrency.value = api.data.data;
-};
-
-const fetchCostCentre = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("company/get_cost_center");
-  listCostCentre.value = api.data.data;
-};
-
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -241,11 +213,37 @@ const submit = async () => {
     });
 };
 
-const resetItems = async () => {
-  itemsItem.value = "";
-  itemsNominal.value = "";
-  itemsCostCentre.value = "";
-  itemsRemarks.value = "";
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/cash_advance/non_travel/${id}`);
+  dataArr.value = res.data.data[0];
+  alert = listStatus.find((item) => item.status === dataArr.value.status);
+  fetchDataItem(id);
+  fetchHistoryApproval(id);
+};
+
+const fetchDataItem = async (id) => {
+  const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
+  dataItem.value = res.data.data;
+};
+
+const fetchCurrency = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("currency");
+  listCurrency.value = api.data.data;
+};
+
+const fetchCostCentre = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("company/get_cost_center");
+  listCostCentre.value = api.data.data;
 };
 
 const fetchHistoryApproval = async (id) => {
@@ -262,8 +260,25 @@ onBeforeMount(() => {
   fetchCostCentre();
 });
 
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+const resetItems = async () => {
+  itemsItem.value = "";
+  itemsNominal.value = "";
+  itemsCostCentre.value = "";
+  itemsRemarks.value = "";
+};
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 const rowClass = "flex justify-between px-6 items-center gap-2";
@@ -275,17 +290,11 @@ const inputClass =
 <template>
   <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
+      <tableContainer>
+        <tableTop>
           <div class="flex justify-between">
             <router-link
               to="/cashadvancenontravel"
@@ -301,19 +310,25 @@ const inputClass =
               </h1>
             </router-link>
 
-            <div class="py-4">
-              <button
-                type="button"
-                :class="
-                  dataArr.status == 'Revision' ||
-                  dataArr.status == 'Rejected' ||
-                  dataArr.status == 'Fully Rejected'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize status-default'
-                "
+            <div class="py-4 mx-4">
+              <span
+                :class="`capitalize ${alert.value} text-white text-sm font-JakartaSans font-bold`"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
                 {{ dataArr.status }}
-              </button>
+              </span>
             </div>
           </div>
 
@@ -768,8 +783,8 @@ const inputClass =
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </tableTop>
+      </tableContainer>
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
   </div>
