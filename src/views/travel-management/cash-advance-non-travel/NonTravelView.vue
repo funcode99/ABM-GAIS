@@ -6,8 +6,8 @@ import Footer from "@/components/layout/Footer.vue";
 import tableContainer from "@/components/table/tableContainer.vue";
 import tableTop from "@/components/table/tableTop.vue";
 
+import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
-
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
@@ -330,6 +330,10 @@ const inputClass =
                 {{ dataArr.status }}
               </span>
             </div>
+          </div>
+
+          <div class="float-right">
+            <ModalJurnal />
           </div>
 
           <div class="flex justify-start gap-4 mx-10">
