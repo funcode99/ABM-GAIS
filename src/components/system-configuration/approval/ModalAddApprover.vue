@@ -422,7 +422,7 @@
                           @input="formatCurrency('a', input)"
                           id="minCA"
                           v-model="input.show_min_ammount"
-                          placeholder="Amount"  
+                          placeholder="Amount"
                         />
                       </td>
 
@@ -437,7 +437,9 @@
                       </td>
 
                       <!-- absolut true -->
-                      <td v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full">
+                      <td 
+                        v-if="input.level != 'R' ? currentAuthoritiesId = input.id_approval_auth : ''" class="hidden h-full"
+                      >
                       </td>
         
                       <td v-if="index+1 === approverLines.length" class="flex flex-wrap gap-4 justify-center">

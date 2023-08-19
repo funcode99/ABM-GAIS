@@ -593,17 +593,20 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
       optionDataZona.value = api.data.data
       zona.value = optionDataZona.value[0].id_zona
       zonaName.value = optionDataZona.value[0].zona_name
+    
     }
 
     const fetchCostCenter = async () => {
+
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/company/get_cost_center`)
       optionDataCostCenter.value = api.data.data
       optionDataCostCenter.value.map((item) => {
-      item.value = item.id
-      item.format = `${item.cost_center_code} - ${item.cost_center_name}`
-    })
+        item.value = item.id
+        item.format = `${item.cost_center_code} - ${item.cost_center_name}`
+      })
+
     }
 
     watch(zona, () => {

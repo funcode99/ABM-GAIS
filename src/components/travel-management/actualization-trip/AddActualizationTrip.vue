@@ -14,24 +14,25 @@
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
     
     let isVisible = ref(false)
-
     let departureDate = ref(new Date().toJSON().slice(0, 10))
     let returnDate = ref(new Date().toJSON().slice(0, 10))
     let fromCity = ref('City')
     let toCity = ref('City')
     let idZona = ref(0)
     let tlkRate = ref(0)
-
     let arrayDetail = ref([])
     let activitiesDetail = ref([])
-
+    let optionDataZona = ref()
+    let filterData = ref()
+    let cityData = ref([{}])
+    let purpose = ref('')
+    let totalTLK = ref(0)
+    let notes = ref('')
     let activitiesTableHead = ref([
         {title: 'Date'},
         {title: 'Activity'},
         {title: 'Actions'}
     ])
-
-    let cityData = ref([{}])
 
     const addDataToArrayDetail = () => {
 
@@ -80,8 +81,6 @@
 
     }
 
-
-
     onBeforeMount(() => {
             fetchCityUtils(cityData)
             if(!localStorage.getItem('jobBandId')) {
@@ -103,8 +102,6 @@
         fieldType.splice(index, 1)
     }
 
-    let optionDataZona = ref()
-
     const fetchZonaByCity = async (fieldType, index) => {
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -121,8 +118,6 @@
         fetchTLKByJobBand()
     }
 
-    let filterData = ref()
-
     const fetchTLKByJobBand = async () => {
       let jobBandId = localStorage.getItem('jobBandId')
       const token = JSON.parse(localStorage.getItem('token'))
@@ -132,10 +127,6 @@
       tlkRate.value = filterData.value[0].tlk_rate
       console.log(filterData.value)
     }
-
-    let purpose = ref('')
-    let totalTLK = ref(0)
-    let notes = ref('')
 
 </script>
 
@@ -151,8 +142,6 @@
   <Modal v-model:visible="isVisible">
 
     <main>
-
-        <!-- {{ tlkRate }} -->
         
         <modalHeader @closeVisibility="isVisible = false" title="Actualization Trip" />
 
