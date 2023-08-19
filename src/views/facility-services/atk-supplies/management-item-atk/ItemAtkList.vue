@@ -399,7 +399,7 @@ const save = async () => {
     return
   }
 
-  if (formUpdated) {
+  if (formUpdated.value) {
     Swal.fire({
       position: "center",
       icon: "warning",
@@ -1180,193 +1180,198 @@ const importData = async () => {
 
                         <!-- MODAL EDIT -->
                         <div v-if="lockScrollbarEdit == true" class="modal">
-                          <div class="modal-dialog bg-white w-3/5">
-                            <nav class="sticky top-0 z-50 bg-[#015289]">
-                              <label
-                                @click="lockScrollbar"
-                                for="my-modal-item-edit-atk"
-                                class="cursor-pointer absolute right-3 top-3"
-                              >
-                                <img
-                                  :src="iconClose"
-                                  class="w-[34px] h-[34px] hover:scale-75"
-                                />
-                              </label>
-                              <p
-                                class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
-                              >
-                                <span
-                                  v-if="id_role != 'EMPLY' && !disabledField"
-                                  >Edit Item</span
+                          <div class="modal-dialog bg-white w-3/5 h-[80vh] overflow-hidden">
+                            <div class="overflow-auto h-full">
+                              <nav class="sticky top-0 z-50 bg-[#015289]">
+                                <label
+                                  @click="lockScrollbar"
+                                  for="my-modal-item-edit-atk"
+                                  class="cursor-pointer absolute right-3 top-3"
                                 >
-                                <span v-else>View Item</span>
-                              </p>
-                            </nav>
-
-                            <div
-                              class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4 mb-6"
-                            >
-                              <img :src="icondanger2" class="w-5 h-5" />
-                              <p class="font-JakartaSans font-semibold">
-                                Item Info
-                              </p>
-                            </div>
-
-                            <main class="modal-box-inner-brand pb-14">
-                              <div
-                                class="flex justify-between px-6 items-center gap-2"
-                              >
-                                <div class="mb-6 w-full">
-                                  <label
-                                    for="company"
-                                    class="block text-black text-left mb-2 font-JakartaSans font-medium text-sm"
-                                    >Company<span class="text-red"
-                                      >*</span
-                                    ></label
-                                  >
-                                  <select
-                                    class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black"
-                                    required
-                                    v-model="selectedCompany"
-                                    @change="changeCompany(selectedCompany)"
-                                    :disabled="disabledField || idS"
-                                  >
-                                    <option disabled selected>Company</option>
-                                    <option
-                                      v-for="(company, i) in Company"
-                                      :key="i"
-                                      :value="company.id"
-                                    >
-                                      {{ company.company_name }}
-                                    </option>
-                                  </select>
-                                </div>
-                                <div class="mb-6 w-full">
-                                  <label
-                                    for="site"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >Site<span class="text-red">*</span></label
-                                  >
-                                  <select
-                                    class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black"
-                                    required
-                                    v-model="selectedSite"
-                                    @change="changeSite(selectedSite)"
-                                    :disabled="disabledField || idS"
-                                  >
-                                    <option disabled selected>Site</option>
-                                    <option
-                                      v-for="(site, i) in Site"
-                                      :key="i"
-                                      :value="site.id"
-                                    >
-                                      {{ site.site_name }}
-                                    </option>
-                                  </select>
-                                </div>
-                              </div>
-                              <div
-                                class="flex justify-between px-6 items-center gap-2"
-                              >
-                                <div class="mb-6 w-full">
-                                  <label
-                                    for="detail"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >Details</label
-                                  >
-                                  <hr />
-                                </div>
-                              </div>
-                              <div
-                                class="grid grid-cols-2 px-6 items-center gap-2"
-                              >
-                                <div class="mb-4 w-full">
-                                  <label
-                                    for="item_name"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >Item Name<span class="text-red"
-                                      >*</span
-                                    ></label
-                                  >
-                                  <input
-                                    type="text"
-                                    v-model="itemNames"
-                                    class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
-                                    placeholder="Item Name"
-                                    required
-                                    :disabled="disabledField"
-                                    @change="formUpdated = true"
+                                  <img
+                                    :src="iconClose"
+                                    class="w-[34px] h-[34px] hover:scale-75"
                                   />
-                                </div>
-                                <div class="mb-4 w-full">
-                                  <label
-                                    for="warehouse"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >ID Items<span class="text-red"
-                                      >*</span
-                                    ></label
+                                </label>
+                                <p
+                                  class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2 text-start"
+                                >
+                                  <span
+                                    v-if="id_role != 'EMPLY' && !disabledField"
+                                    >Edit Item</span
                                   >
-                                  <div
-                                    class="flex justify-start px-6 items-center gap-2"
-                                  >
-                                    <div
-                                      class="flex items-center border-b border-teal-500 py-2 mb-6 w-full"
+                                  <span v-else>View Item</span>
+                                </p>
+                              </nav>
+
+                              <div
+                                class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4 mb-6"
+                              >
+                                <img :src="icondanger2" class="w-5 h-5" />
+                                <p class="font-JakartaSans font-semibold">
+                                  Item Info
+                                </p>
+                              </div>
+
+                              <main
+                                class="modal-box-inner-brand overflow-y-auto"
+                              >
+                                <div
+                                  class="flex justify-between px-6 items-center gap-2"
+                                >
+                                  <div class="mb-6 w-full">
+                                    <label
+                                      for="company"
+                                      class="block text-black text-left mb-2 font-JakartaSans font-medium text-sm"
+                                      >Company<span class="text-red"
+                                        >*</span
+                                      ></label
                                     >
-                                      <input
-                                        class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                                        v-model="idItems"
-                                        maxlength="9"
-                                        type="number"
-                                        placeholder="ID Item"
-                                        aria-label="Full name"
-                                        disabled="true"
-                                      />
-                                    </div>
-                                    <div class="mb-6 w-full"></div>
+                                    <select
+                                      class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black"
+                                      required
+                                      v-model="selectedCompany"
+                                      @change="changeCompany(selectedCompany)"
+                                      :disabled="disabledField || idS"
+                                    >
+                                      <option disabled selected>Company</option>
+                                      <option
+                                        v-for="(company, i) in Company"
+                                        :key="i"
+                                        :value="company.id"
+                                      >
+                                        {{ company.company_name }}
+                                      </option>
+                                    </select>
+                                  </div>
+                                  <div class="mb-6 w-full">
+                                    <label
+                                      for="site"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >Site<span class="text-red"
+                                        >*</span
+                                      ></label
+                                    >
+                                    <select
+                                      class="cursor-pointer font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black"
+                                      required
+                                      v-model="selectedSite"
+                                      @change="changeSite(selectedSite)"
+                                      :disabled="disabledField || idS"
+                                    >
+                                      <option disabled selected>Site</option>
+                                      <option
+                                        v-for="(site, i) in Site"
+                                        :key="i"
+                                        :value="site.id"
+                                      >
+                                        {{ site.site_name }}
+                                      </option>
+                                    </select>
                                   </div>
                                 </div>
-                                <div class="mb-4 w-full">
-                                  <label
-                                    for="uom"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >UOM<span class="text-red">*</span></label
-                                  >
-                                  <select
-                                    class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
-                                    required
-                                    v-model="selectedUOM"
-                                    :disabled="disabledField"
-                                    @change="formUpdated = true"
-                                  >
-                                    <option disabled selected>UOM</option>
-                                    <option
-                                      v-for="(uom, i) in UOM"
-                                      :key="i"
-                                      :value="uom.id"
+                                <div
+                                  class="flex justify-between px-6 items-center gap-2"
+                                >
+                                  <div class="mb-6 w-full">
+                                    <label
+                                      for="detail"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >Details</label
                                     >
-                                      {{ uom.uom_name }}
-                                    </option>
-                                  </select>
+                                    <hr />
+                                  </div>
                                 </div>
-                                <div class="mb-4 w-full">
-                                  <label
-                                    for="alert"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >Alert Quantity<span class="text-red"
-                                      >*</span
-                                    ></label
-                                  >
-                                  <input
-                                    type="number"
-                                    v-model="alertQuantity"
-                                    class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
-                                    placeholder="Alert Quantity"
-                                    required
-                                    :disabled="disabledField"
-                                    @change="formUpdated = true"
-                                  />
-                                </div>
-                                <!-- <div
+                                <div
+                                  class="grid grid-cols-2 px-6 items-center gap-2"
+                                >
+                                  <div class="mb-4 w-full">
+                                    <label
+                                      for="item_name"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >Item Name<span class="text-red"
+                                        >*</span
+                                      ></label
+                                    >
+                                    <input
+                                      type="text"
+                                      v-model="itemNames"
+                                      class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                      placeholder="Item Name"
+                                      required
+                                      :disabled="disabledField"
+                                      @change="formUpdated = true"
+                                    />
+                                  </div>
+                                  <div class="mb-4 w-full">
+                                    <label
+                                      for="warehouse"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >ID Items<span class="text-red"
+                                        >*</span
+                                      ></label
+                                    >
+                                    <div
+                                      class="flex justify-start px-6 items-center gap-2"
+                                    >
+                                      <div
+                                        class="flex items-center border-b border-teal-500 py-2 mb-6 w-full"
+                                      >
+                                        <input
+                                          class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                                          v-model="idItems"
+                                          maxlength="9"
+                                          type="number"
+                                          placeholder="ID Item"
+                                          aria-label="Full name"
+                                          disabled="true"
+                                        />
+                                      </div>
+                                      <div class="mb-6 w-full"></div>
+                                    </div>
+                                  </div>
+                                  <div class="mb-4 w-full">
+                                    <label
+                                      for="uom"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >UOM<span class="text-red">*</span></label
+                                    >
+                                    <select
+                                      class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                      required
+                                      v-model="selectedUOM"
+                                      :disabled="disabledField"
+                                      @change="formUpdated = true"
+                                    >
+                                      <option disabled selected>UOM</option>
+                                      <option
+                                        v-for="(uom, i) in UOM"
+                                        :key="i"
+                                        :value="uom.id"
+                                      >
+                                        {{ uom.uom_name }}
+                                      </option>
+                                    </select>
+                                  </div>
+                                  <div class="mb-4 w-full">
+                                    <label
+                                      for="alert"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >Alert Quantity<span class="text-red"
+                                        >*</span
+                                      ></label
+                                    >
+                                    <input
+                                      type="number"
+                                      v-model="alertQuantity"
+                                      class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                      placeholder="Alert Quantity"
+                                      required
+                                      :disabled="disabledField"
+                                      @change="formUpdated = true"
+                                    />
+                                  </div>
+                                  <!-- <div
                                   class="mb-4 w-full"
                                   v-if="company_code != '8000'"
                                 >
@@ -1391,209 +1396,216 @@ const importData = async () => {
                                     </option>
                                   </select>
                                 </div> -->
-                                <div class="mb-4 w-full">
-                                  <label
-                                    for="id_item"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >Description</label
-                                  >
-                                  <input
-                                    type="text"
-                                    v-model="remarks"
-                                    class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
-                                    placeholder="Description"
-                                    required
-                                    :disabled="disabledField"
-                                    @change="formUpdated = true"
-                                  />
-                                </div>
-                                <div class="mb-4 w-full">
-                                  <label
-                                    for="warehouse"
-                                    class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                    >ATK Warehouse<span class="text-red"
-                                      >*</span
-                                    ></label
-                                  >
-                                  <Multiselect
-                                    v-model="selectedWarehouse"
-                                    mode="tags"
-                                    placeholder="Select Warehouse"
-                                    track-by="warehouse_name"
-                                    label="warehouse_name"
-                                    :close-on-select="false"
-                                    :searchable="true"
-                                    :options="Warehouse"
-                                    :loading="isLoading"
-                                    :disabled="disabledField"
-                                    @change="formUpdated = true"
-                                  >
-                                    <template
-                                      v-slot:tag="{
-                                        option,
-                                        handleTagRemove,
-                                        disabled,
-                                      }"
+                                  <div class="mb-4 w-full">
+                                    <label
+                                      for="id_item"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >Description</label
                                     >
-                                      <div
-                                        class="multiselect-tag is-user"
-                                        :class="{
-                                          'is-disabled': disabled,
+                                    <input
+                                      type="text"
+                                      v-model="remarks"
+                                      class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm text-black text-left"
+                                      placeholder="Description"
+                                      required
+                                      :disabled="disabledField"
+                                      @change="formUpdated = true"
+                                    />
+                                  </div>
+                                  <div class="mb-4 w-full">
+                                    <label
+                                      for="warehouse"
+                                      class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
+                                      >ATK Warehouse<span class="text-red"
+                                        >*</span
+                                      ></label
+                                    >
+                                    <Multiselect
+                                      v-model="selectedWarehouse"
+                                      mode="tags"
+                                      placeholder="Select Warehouse"
+                                      track-by="warehouse_name"
+                                      label="warehouse_name"
+                                      :close-on-select="false"
+                                      :searchable="true"
+                                      :options="Warehouse"
+                                      :loading="isLoading"
+                                      :disabled="disabledField"
+                                      @change="formUpdated = true"
+                                    >
+                                      <template
+                                        v-slot:tag="{
+                                          option,
+                                          handleTagRemove,
+                                          disabled,
                                         }"
                                       >
-                                        {{ option.warehouse_name }}
-                                        <span
-                                          v-if="!disabled"
-                                          class="multiselect-tag-remove"
-                                          @click="
-                                            handleTagRemove(option, $event)
-                                          "
+                                        <div
+                                          class="multiselect-tag is-user"
+                                          :class="{
+                                            'is-disabled': disabled,
+                                          }"
                                         >
+                                          {{ option.warehouse_name }}
                                           <span
-                                            class="multiselect-tag-remove-icon"
-                                          ></span>
-                                        </span>
-                                      </div>
-                                    </template>
-                                  </Multiselect>
+                                            v-if="!disabled"
+                                            class="multiselect-tag-remove"
+                                            @click="
+                                              handleTagRemove(option, $event)
+                                            "
+                                          >
+                                            <span
+                                              class="multiselect-tag-remove-icon"
+                                            ></span>
+                                          </span>
+                                        </div>
+                                      </template>
+                                    </Multiselect>
+                                  </div>
                                 </div>
-                              </div>
-                              <div class="flex justify-center py-2">
-                                <button
-                                  class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
-                                  @click="addItem"
-                                  v-if="!disabledField"
-                                >
-                                  Add
-                                </button>
-                              </div>
-
-                              <!-- INNER TABLE -->
-                              <div class="inner-table px-6">
-                                <table class="table table-compact w-full">
-                                  <thead
-                                    class="font-JakartaSans font-bold text-xs text-centre"
+                                <div class="flex justify-center py-2">
+                                  <button
+                                    class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+                                    @click="
+                                      () => {
+                                        formUpdated = false
+                                        addItem()
+                                      }
+                                    "
+                                    v-if="!disabledField"
                                   >
-                                    <tr class="bg-blue text-white h-8">
-                                      <th
-                                        class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        ATK Warehouse
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        ID Item
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        Item Name
-                                      </th>
-                                      <!-- <th
+                                    Add
+                                  </button>
+                                </div>
+
+                                <!-- INNER TABLE -->
+                                <div class="inner-table px-6 my-6">
+                                  <table class="table table-compact w-full">
+                                    <thead
+                                      class="font-JakartaSans font-bold text-xs text-centre"
+                                    >
+                                      <tr class="bg-blue text-white h-8">
+                                        <th
+                                          class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                                        >
+                                          ATK Warehouse
+                                        </th>
+                                        <th
+                                          class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                                        >
+                                          ID Item
+                                        </th>
+                                        <th
+                                          class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                                        >
+                                          Item Name
+                                        </th>
+                                        <!-- <th
                                         class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
                                         v-if="company_code != '8000'"
                                       >
                                         Brand
                                       </th> -->
-                                      <th
-                                        class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        UOM
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        Alert Quantity
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                                      >
-                                        Remarks
-                                      </th>
-                                      <th
-                                        class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                                        v-if="!disabledField"
-                                      >
-                                        Actions
-                                      </th>
-                                    </tr>
-                                  </thead>
-                                  <tbody
-                                    class="font-JakartaSans font-normal text-xs"
-                                  >
-                                    <tr
-                                      class="h-16"
-                                      v-for="(items, i) in arrItem"
-                                      :key="i"
+                                        <th
+                                          class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                                        >
+                                          UOM
+                                        </th>
+                                        <th
+                                          class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                                        >
+                                          Alert Quantity
+                                        </th>
+                                        <th
+                                          class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                                        >
+                                          Remarks
+                                        </th>
+                                        <th
+                                          class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                                          v-if="!disabledField"
+                                        >
+                                          Actions
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody
+                                      class="font-JakartaSans font-normal text-xs"
                                     >
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
+                                      <tr
+                                        class="h-16"
+                                        v-for="(items, i) in arrItem"
+                                        :key="i"
                                       >
-                                        {{ items.warehouse_name }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ idItems }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ arrData.item_name }}
-                                      </td>
-                                      <!-- <td
+                                        <td
+                                          class="border border-[#B9B9B9] text-center"
+                                        >
+                                          {{ items.warehouse_name }}
+                                        </td>
+                                        <td
+                                          class="border border-[#B9B9B9] text-center"
+                                        >
+                                          {{ idItems }}
+                                        </td>
+                                        <td
+                                          class="border border-[#B9B9B9] text-center"
+                                        >
+                                          {{ arrData.item_name }}
+                                        </td>
+                                        <!-- <td
                                         class="border border-[#B9B9B9] text-center"
                                         v-if="company_code != '8000'"
                                       >
                                         {{ arrData.brand_name }}
                                       </td> -->
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ arrData.uom_name }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ arrData.alert_qty }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9] text-center"
-                                      >
-                                        {{ arrData.remarks }}
-                                      </td>
-                                      <td
-                                        class="border border-[#B9B9B9]"
-                                        v-if="!disabledField"
-                                      >
-                                        <div
-                                          class="flex flex-wrap justify-center items-center gap-2"
+                                        <td
+                                          class="border border-[#B9B9B9] text-center"
                                         >
-                                          <button @click="removeItems(i)">
-                                            <img
-                                              :src="deleteicon"
-                                              class="w-6 h-6"
-                                            />
-                                          </button>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  </tbody>
-                                </table>
-                              </div>
-                              <div class="sticky bottom-0 bg-white py-2">
-                                <div class="flex justify-center gap-4 mr-6">
-                                  <button
-                                    v-if="id_role != 'EMPLY' && !disabledField"
-                                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                                    @click="save"
-                                  >
-                                    Save
-                                  </button>
+                                          {{ arrData.uom_name }}
+                                        </td>
+                                        <td
+                                          class="border border-[#B9B9B9] text-center"
+                                        >
+                                          {{ arrData.alert_qty }}
+                                        </td>
+                                        <td
+                                          class="border border-[#B9B9B9] text-center"
+                                        >
+                                          {{ arrData.remarks }}
+                                        </td>
+                                        <td
+                                          class="border border-[#B9B9B9]"
+                                          v-if="!disabledField"
+                                        >
+                                          <div
+                                            class="flex flex-wrap justify-center items-center gap-2"
+                                          >
+                                            <button @click="removeItems(i)">
+                                              <img
+                                                :src="deleteicon"
+                                                class="w-6 h-6"
+                                              />
+                                            </button>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
                                 </div>
+                              </main>
+                            </div>
+
+                            <div class="sticky bottom-0 bg-white py-2">
+                              <div class="flex justify-center gap-4 mr-6">
+                                <button
+                                  v-if="id_role != 'EMPLY' && !disabledField"
+                                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                                  @click="save"
+                                >
+                                  Save
+                                </button>
                               </div>
-                            </main>
+                            </div>
                           </div>
                         </div>
                         <!-- END MODAL -->

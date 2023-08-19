@@ -252,7 +252,7 @@ onBeforeMount(() => {
                 {{ value.uom_name }}
               </td>
               <td class="border border-[#B9B9B9]">
-                {{ value.qty }}
+                {{ value?.qty_requested }}
               </td>
               <td class="border border-[#B9B9B9]">
                 <select
