@@ -1,88 +1,88 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg"
-import editicon from "@/assets/navbar/edit_icon.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import { ref, onBeforeMount, computed, reactive, onMounted, watch } from "vue"
-import Api from "@/utils/Api"
-import Swal from "sweetalert2"
-import { Modal } from "usemodal-vue3"
-import moment from "moment"
-import { useRouter } from "vue-router"
-import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
+import iconClose from "@/assets/navbar/icon_close.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
+import deleteicon from "@/assets/navbar/delete_icon.svg";
+import { ref, onBeforeMount, computed, reactive, onMounted, watch } from "vue";
+import Api from "@/utils/Api";
+import Swal from "sweetalert2";
+import { Modal } from "usemodal-vue3";
+import moment from "moment";
+import { useRouter } from "vue-router";
+import CurrencyInput from "@/components/atomics/CurrencyInput.vue";
 
-import fetchEmployeeByLoginUtils from "@/utils/Fetch/Reference/fetchEmployeeByLogin"
+import fetchEmployeeByLoginUtils from "@/utils/Fetch/Reference/fetchEmployeeByLogin";
 
-const route = useRouter()
+const route = useRouter();
 
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD/MM/YYYY")
+    return moment(String(value)).format("DD/MM/YYYY");
   }
-}
+};
 const format_price = (value) => {
   if (!value) {
-    return "0.00"
+    return "0.00";
   }
-  let val = (value / 1).toFixed(2).replace(".", ",")
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-}
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
 
-let listCurrency = ref([])
-let listCostCentre = ref([])
+let listCurrency = ref([]);
+let listCostCentre = ref([]);
 
-const router = useRouter()
+const router = useRouter();
 
-let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
-let currency = ref("")
-let event = ref("")
-let date = ref("")
-let itemsItem = ref("")
-let itemsNominal = ref(null)
-let itemsCostCentre = ref("")
-let itemsRemarks = ref("")
-let itemsId = 0
-let total = 0
-let visible = ref(false)
-const employeeData = ref(null)
+let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
+let currency = ref("");
+let event = ref("");
+let date = ref("");
+let itemsItem = ref("");
+let itemsNominal = ref(null);
+let itemsCostCentre = ref("");
+let itemsRemarks = ref("");
+let itemsId = 0;
+let total = 0;
+let visible = ref(false);
+const employeeData = ref(null);
 
-const rowClass = "flex justify-between px-6 items-center gap-2"
-const colClass = "mb-6 w-full"
+const rowClass = "flex justify-between px-6 items-center gap-2";
+const colClass = "mb-6 w-full";
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 
 // FETCH DATA
 const fetchCurrency = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const api = await Api.get("currency")
-  listCurrency.value = api.data.data
-}
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("currency");
+  listCurrency.value = api.data.data;
+};
 
 const fetchCostCentre = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const api = await Api.get("company/get_cost_center")
-  listCostCentre.value = api.data.data
-}
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("company/get_cost_center");
+  listCostCentre.value = api.data.data;
+};
 // END
 
 // ITEMS
-const tempItem = ref([])
+const tempItem = ref([]);
 
 const addItem = async () => {
   if (itemsItem.value && itemsNominal.value && itemsCostCentre.value) {
-    let spl_cost_centre = itemsCostCentre.value.split("+")
+    let spl_cost_centre = itemsCostCentre.value.split("+");
     let data = {
       item_name: itemsItem.value,
       nominal: itemsNominal.value,
       id_cost_center: spl_cost_centre[0],
       remarks: itemsRemarks.value,
       cost_center_name: spl_cost_centre[1],
-    }
-    tempItem.value.push(data)
-    total += Number(itemsNominal.value)
-    itemsId += 1
-    resetItems()
+    };
+    tempItem.value.push(data);
+    total += Number(itemsNominal.value);
+    itemsId += 1;
+    resetItems();
   } else {
     Swal.fire({
       html: "<b>Please fill in the form!</b>",
@@ -94,21 +94,21 @@ const addItem = async () => {
       showCancelButton: false,
       showConfirmButton: false,
       width: "300px",
-    })
+    });
   }
-  return tempItem
-}
+  return tempItem;
+};
 
 const resetItems = async () => {
-  itemsItem.value = ""
-  itemsNominal.value = null
-  itemsRemarks.value = ""
-}
+  itemsItem.value = "";
+  itemsNominal.value = null;
+  itemsRemarks.value = "";
+};
 
 const removeItems = async (id, nominal) => {
-  tempItem.value.splice(id, 1)
-  total -= Number(nominal)
-}
+  tempItem.value.splice(id, 1);
+  total -= Number(nominal);
+};
 // END ITEMS
 const saveForm = async () => {
   const payload = {
@@ -119,17 +119,18 @@ const saveForm = async () => {
     id_currency: currency.value,
     grand_total: total,
     array_detail: tempItem.value,
-    cost_center_code: parsedCostCenter[0],
+    // cost_center_code: parsedCostCenter[0],
     cost_center_name: parsedCostCenter[1],
-  }
-  const api = await Api.post("cash_advance/store", payload)
+    id_cost_center: parsedCostCenter.value[0],
+  };
+  const api = await Api.post("cash_advance/store", payload);
   if (api.data.message == "Already Has Draft Data") {
     Swal.fire({
       position: "center",
       icon: "warning",
       title: api.data.message,
       showConfirmButton: true,
-    })
+    });
   } else {
     Swal.fire({
       position: "center",
@@ -137,59 +138,59 @@ const saveForm = async () => {
       title: api.data.message,
       showConfirmButton: false,
       timer: 1500,
-    })
+    });
     if (api.data.success) {
-      router.push({ path: `/viewcashadvancenontravel/${api.data.data.id}` })
+      router.push({ path: `/viewcashadvancenontravel/${api.data.data.id}` });
     }
 
-    visible.value = false
+    visible.value = false;
   }
-}
+};
 
 const close = () => {
-  console.log(itemsCostCentre.value)
-  resetItems()
-  itemsCostCentre.value = ""
-  event.value = ""
-  total = 0
-  date.value = ""
-  currency.value = ""
-  tempItem.value = []
-  visible.value = false
-}
+  // console.log(itemsCostCentre.value)
+  resetItems();
+  itemsCostCentre.value = "";
+  event.value = "";
+  total = 0;
+  date.value = "";
+  currency.value = "";
+  tempItem.value = [];
+  visible.value = false;
+};
 
 const open = () => {
-  visible.value == true
-}
+  visible.value == true;
+};
 
 const parsedCostCenter = computed(() => {
-  const costCenter = itemsCostCentre.value
+  const costCenter = itemsCostCentre.value;
 
-  return costCenter.split("+") ?? []
-})
+  return costCenter.split("+") ?? [];
+});
 
 watch(
   () => parsedCostCenter,
   () => {
-    console.log(parsedCostCenter.value)
+    // console.log(parsedCostCenter.value)
     tempItem.value.forEach((item) => {
       const newCostCenter = {
         id_cost_center: parsedCostCenter.value[0],
         cost_center_name: parsedCostCenter.value[1],
-      }
-      Object.assign(item, newCostCenter)
-    })
+      };
+      Object.assign(item, newCostCenter);
+    });
   },
   { deep: true }
-)
+);
 
 onMounted(async () => {
-  await fetchCostCentre()
-  await fetchCurrency()
-  await fetchEmployeeByLoginUtils(employeeData)
+  await fetchCostCentre();
+  await fetchCurrency();
+  await fetchEmployeeByLoginUtils(employeeData);
 
-  itemsCostCentre.value = `${employeeData.value[0].id_cost_center}+${employeeData.value[0].cost_center_name}`
-})
+  itemsCostCentre.value = `${employeeData.value[0].id_cost_center}+${employeeData.value[0].cost_center_name}`;
+});
 </script>
 
 <template>

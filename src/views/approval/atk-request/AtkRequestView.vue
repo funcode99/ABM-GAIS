@@ -153,6 +153,7 @@ const format_date = (value) => {
               v-if="status == 'Waiting Approval' || status == 'Approve'"
               :data-arr="dataArr"
             />
+
             <ModalRejectAtk v-if="status == 'Waiting Approval'" />
             <!-- <button
               class="btn btn-md border-green bg-white gap-2 items-center hover:bg-white hover:border-green"

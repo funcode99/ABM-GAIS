@@ -2,15 +2,21 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+
+import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
-import Swal from "sweetalert2";
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
+
 import Api from "@/utils/Api";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -42,33 +48,15 @@ let itemsNominal = ref("");
 let itemsCostCentre = ref("");
 let itemsRemarks = ref("");
 let tabId = ref(1);
+let alert = ref([]);
 
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
-
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/cash_advance/non_travel/${id}`);
-  dataArr.value = res.data.data[0];
-  fetchDataItem(id);
-  fetchHistoryApproval(id);
-};
-
-const fetchDataItem = async (id) => {
-  const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
-  dataItem.value = res.data.data;
-};
+const listStatus = [
+  { id: 0, status: "Draft", value: "alert bg-[#8d8e8f]" },
+  { id: 1, status: "Waiting Approval", value: "alert alert-warning" },
+  { id: 2, status: "Revision", value: "alert alert-error" },
+  { id: 3, status: "Fully Rejected", value: "alert alert-error" },
+  { id: 10, status: "Completed", value: "alert alert-success" },
+];
 
 const edit = () => {
   visibleHeader.value = true;
@@ -83,6 +71,7 @@ const saveFormHeader = async () => {
     date: dataArr.value.date,
     id_currency: dataArr.value.id_currency,
     grand_total: dataArr.value.grand_total,
+    id_cost_center: dataArr.value.id_cost_center,
   };
 
   const api = await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
@@ -125,6 +114,7 @@ const update_nominal = async () => {
     dataItem.value.forEach((dt) => {
       tempTotal += Number(dt.nominal);
     });
+
     const payload = {
       id_employee: selectedEmployee,
       id_request_trip: 2,
@@ -166,6 +156,7 @@ const saveItems = async (type, id = null, item = null) => {
       id_cost_center: itemsCostCentre.value,
       remarks: itemsRemarks.value,
     };
+
     const api = await Api.post(`cash_advance/store_detail`, payload);
     if (api.data.success == true) {
       Swal.fire({
@@ -179,6 +170,7 @@ const saveItems = async (type, id = null, item = null) => {
       resetItems();
     }
   }
+
   editItem.value = false;
   addItem.value = false;
 };
@@ -189,20 +181,6 @@ const addItems = () => {
 
 const cancelItems = () => {
   addItem.value = false;
-};
-
-const fetchCurrency = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("currency");
-  listCurrency.value = api.data.data;
-};
-
-const fetchCostCentre = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("company/get_cost_center");
-  listCostCentre.value = api.data.data;
 };
 
 const submit = async () => {
@@ -235,11 +213,37 @@ const submit = async () => {
     });
 };
 
-const resetItems = async () => {
-  itemsItem.value = "";
-  itemsNominal.value = "";
-  itemsCostCentre.value = "";
-  itemsRemarks.value = "";
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/cash_advance/non_travel/${id}`);
+  dataArr.value = res.data.data[0];
+  alert = listStatus.find((item) => item.status === dataArr.value.status);
+  fetchDataItem(id);
+  fetchHistoryApproval(id);
+};
+
+const fetchDataItem = async (id) => {
+  const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
+  dataItem.value = res.data.data;
+};
+
+const fetchCurrency = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("currency");
+  listCurrency.value = api.data.data;
+};
+
+const fetchCostCentre = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("company/get_cost_center");
+  listCostCentre.value = api.data.data;
 };
 
 const fetchHistoryApproval = async (id) => {
@@ -256,8 +260,25 @@ onBeforeMount(() => {
   fetchCostCentre();
 });
 
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+const resetItems = async () => {
+  itemsItem.value = "";
+  itemsNominal.value = "";
+  itemsCostCentre.value = "";
+  itemsRemarks.value = "";
+};
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 const rowClass = "flex justify-between px-6 items-center gap-2";
@@ -269,18 +290,11 @@ const inputClass =
 <template>
   <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          <!-- HEADER -->
+      <tableContainer>
+        <tableTop>
           <div class="flex justify-between">
             <router-link
               to="/cashadvancenontravel"
@@ -295,21 +309,33 @@ const inputClass =
                 </span>
               </h1>
             </router-link>
-            <div class="py-4">
-              <button
-                type="button"
-                :class="
-                  dataArr.status == 'Revision' ||
-                  dataArr.status == 'Rejected' ||
-                  dataArr.status == 'Fully Rejected'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize status-default'
-                "
+
+            <div class="py-4 mx-4">
+              <span
+                :class="`capitalize ${alert.value} text-white text-sm font-JakartaSans font-bold`"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
                 {{ dataArr.status }}
-              </button>
+              </span>
             </div>
           </div>
+
+          <div class="float-right">
+            <ModalJurnal />
+          </div>
+
           <div class="flex justify-start gap-4 mx-10">
             <label
               v-if="
@@ -323,6 +349,7 @@ const inputClass =
             >
               Edit
             </label>
+
             <div class="flex justify-end gap-4 mr-6" v-if="visibleHeader">
               <label
                 class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[121px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
@@ -337,12 +364,7 @@ const inputClass =
                 Save
               </button>
             </div>
-            <!-- <ModalAddCaNonTravelVue
-              v-if="lockScrollbar"
-              :formData="dataArr"
-              :formDataItem="dataItem"
-              :status="statusForm"
-            />-->
+
             <button
               v-if="
                 (dataArr.status == 'Draft' ||
@@ -357,7 +379,7 @@ const inputClass =
             </button>
           </div>
 
-          <!-- FORM READ ONLY-->
+          <!-- FORM READ ONLY HEADERS-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
@@ -370,6 +392,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created By</span
@@ -381,6 +404,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm">Event</span>
               <input
@@ -390,6 +414,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Event Date</span
@@ -402,6 +427,7 @@ const inputClass =
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <label class="block mb-2 font-JakartaSans font-medium text-sm"
                 >Currency</label
@@ -421,6 +447,7 @@ const inputClass =
                 </option>
               </select>
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm">Total</span>
               <input
@@ -429,6 +456,26 @@ const inputClass =
                 :value="format_price(dataArr.grand_total)"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Cost Center</label
+              >
+              <select
+                v-model="dataArr.id_cost_center"
+                class="bg-white max-w-[80%] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                :disabled="!visibleHeader"
+              >
+                <option disabled selected>Cost Center</option>
+                <option
+                  v-for="data in listCostCentre"
+                  :key="data.id"
+                  :value="data.id"
+                >
+                  {{ data.cost_center_code }} - {{ data.cost_center_name }}
+                </option>
+              </select>
             </div>
           </div>
 
@@ -451,6 +498,8 @@ const inputClass =
               Add Item
             </button>
           </div>
+
+          <!-- detail item di tabel -->
           <div v-if="addItem && !editItem" class="mx-[70px]">
             <div class="mx-3">
               <p class="font-JakartaSans font-medium text-sm pb-2">
@@ -473,6 +522,7 @@ const inputClass =
                   required
                 />
               </div>
+
               <div :class="colClass">
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Nominal<span class="text-red">*</span></label
@@ -535,6 +585,7 @@ const inputClass =
               </div>
             </div>
           </div>
+
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
             <div class="flex items-center">
               <div
@@ -551,7 +602,7 @@ const inputClass =
                 <p
                   :class="
                     tabId == 1
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -573,7 +624,7 @@ const inputClass =
                 <p
                   :class="
                     tabId == 2
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -581,6 +632,8 @@ const inputClass =
                 </p>
               </div>
             </div>
+
+            <!-- table detail -->
             <div class="overflow-x-auto bg-white">
               <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
@@ -613,6 +666,7 @@ const inputClass =
                     </th>
                   </tr>
                 </thead>
+
                 <tbody
                   class="font-JakartaSans font-normal text-xs"
                   v-if="dataItem.length > 0"
@@ -629,6 +683,7 @@ const inputClass =
                         :disabled="item.id == idEdit ? false : true"
                       />
                     </td>
+
                     <td class="border border-[#B9B9B9]">
                       <span v-if="!editItem">
                         {{ item.cost_center_name }}
@@ -648,6 +703,7 @@ const inputClass =
                         </option>
                       </select>
                     </td>
+
                     <td class="border border-[#B9B9B9]">
                       <div v-if="item.id != idEdit">
                         {{ format_price(item.nominal) }}
@@ -663,6 +719,7 @@ const inputClass =
                         :disabled="item.id == idEdit ? false : true"
                       />
                     </td>
+
                     <td class="border border-[#B9B9B9]">
                       <input
                         v-model="item.remarks"
@@ -674,6 +731,7 @@ const inputClass =
                         :disabled="item.id == idEdit ? false : true"
                       />
                     </td>
+
                     <td class="border border-[#B9B9B9]" v-if="visibleHeader">
                       <div
                         class="flex justify-center items-center"
@@ -699,6 +757,7 @@ const inputClass =
                           />
                         </button>
                       </div>
+
                       <div v-else>
                         <button
                           v-if="item.id == idEdit"
@@ -711,12 +770,15 @@ const inputClass =
                     </td>
                   </tr>
                 </tbody>
+
                 <tbody v-else>
                   <tr>
                     <DataNotFound :cnt-col="4" />
                   </tr>
                 </tbody>
               </table>
+
+              <!-- tab approval -->
               <div v-if="tabId == 2">
                 <HistoryApproval
                   :data-approval="dataApproval"
@@ -725,8 +787,8 @@ const inputClass =
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </tableTop>
+      </tableContainer>
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
   </div>

@@ -1,54 +1,54 @@
 <script setup>
-import Multiselect from "@vueform/multiselect";
+import Multiselect from "@vueform/multiselect"
 
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import icondanger from "@/assets/icon-danger-circle.png";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import { ref, onMounted, watchEffect, watch } from "vue";
-import Api from "@/utils/Api";
-import { useMenuAccessStore } from "@/stores/savemenuaccess";
-import Swal from "sweetalert2";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import iconClose from "@/assets/navbar/icon_close.svg"
+import iconPlus from "@/assets/navbar/icon_plus.svg"
+import icondanger from "@/assets/icon-danger-circle.png"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import { ref, onMounted, watchEffect, watch } from "vue"
+import Api from "@/utils/Api"
+import { useMenuAccessStore } from "@/stores/savemenuaccess"
+import Swal from "sweetalert2"
+import { useRouter } from "vue-router"
+const router = useRouter()
 
-let selectedCompany = ref("Company");
-let selectedSite = ref("Site");
-let selectedWarehouse = ref([]);
-let selectedUOM = ref("UOM");
-let selectedBrand = ref("");
-let brandName = ref("");
-let warehouseName = ref([]);
-let warehouseId = ref([]);
-let Company = ref("");
-let Site = ref("");
-let Warehouse = ref(null);
-let UOM = ref("");
-let uomName = ref("");
-let idItems = ref("");
-let alertQuantity = ref("");
-let Brand = ref("");
-let itemNames = ref("");
-let remark = ref("");
-const itemsTable = ref([]);
-const payload = ref([]);
-let disableCompany = ref(false);
-let disableSite = ref(false);
-let addModal = ref(false);
-const company_code = JSON.parse(localStorage.getItem("company_code"));
-let isDoneLoading = ref(false);
+let selectedCompany = ref("Company")
+let selectedSite = ref("Site")
+let selectedWarehouse = ref([])
+let selectedUOM = ref("UOM")
+let selectedBrand = ref("")
+let brandName = ref("")
+let warehouseName = ref([])
+let warehouseId = ref([])
+let Company = ref("")
+let Site = ref("")
+let Warehouse = ref(null)
+let UOM = ref("")
+let uomName = ref("")
+let idItems = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let remark = ref("")
+const itemsTable = ref([])
+const payload = ref([])
+let disableCompany = ref(false)
+let disableSite = ref(false)
+let addModal = ref(false)
+const company_code = JSON.parse(localStorage.getItem("company_code"))
+let isDoneLoading = ref(false)
 
 // multiselect
-let isLoading = ref(false);
+let isLoading = ref(false)
 
-const emits = defineEmits(["unlockScrollbar", "close"]);
-const menuAccess = useMenuAccessStore();
+const emits = defineEmits(["unlockScrollbar", "close"])
+const menuAccess = useMenuAccessStore()
 
 const props = defineProps({
   status: String,
   id: Number,
-});
+})
 // const props = defineProps({
 //   roleId: Number,
 //   roleAccess: Array,
@@ -56,71 +56,73 @@ const props = defineProps({
 // })
 //for get company in select
 const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/company/get")
+  Company.value = res.data.data
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 
 const fetchGetCompanyID = async (id_company) => {
-  changeCompany(id_company);
-  const token = JSON.parse(localStorage.getItem("token"));
+  changeCompany(id_company)
+  const token = JSON.parse(localStorage.getItem("token"))
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
-  Company.value = res.data.data;
-  selectedCompany.value = id_company;
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_company}`)
+  Company.value = res.data.data
+  selectedCompany.value = id_company
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 
 const fetchUOM = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/uom");
-  UOM.value = res.data.data;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/uom")
+  UOM.value = res.data.data
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const changeCompany = async (id_company) => {
   // fetchBrandCompany(id_company)
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/site/get_by_company/${id_company}`)
 
-  Site.value = res.data.data;
+  Site.value = res.data.data
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
-      selectedSite.value = element.id;
-      changeSite(element.id);
+      selectedSite.value = element.id
+      changeSite(element.id)
     }
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 
 const changeSite = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  Warehouse.value = res.data.data;
-  isDoneLoading.value = true;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`)
+  Warehouse.value = res.data.data
+  isDoneLoading.value = true
+}
 //get kondisi local storage
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
-};
+  const id_company = JSON.parse(localStorage.getItem("id_company"))
+  const id_role = JSON.parse(localStorage.getItem("id_role"))
+  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company)
+}
 
 const generateNumber = async () => {
-  idItems.value = Math.floor(100000000 + Math.random() * 900000000);
-};
+  idItems.value = Math.floor(100000000 + Math.random() * 900000000)
+}
 
 const addItem = async () => {
+  console.log(selectedWarehouse.value)
+
   if (
     selectedCompany.value == "" ||
     selectedSite.value == "" ||
-    selectedWarehouse.value == [] ||
+    selectedWarehouse.value.length == 0 ||
     selectedUOM.value == "" ||
     itemNames.value == "" ||
     alertQuantity.value == "" ||
@@ -132,31 +134,31 @@ const addItem = async () => {
       title: "Data required Tidak Boleh Kosong",
       showConfirmButton: false,
       timer: 1500,
-    });
-    return false;
+    })
+    return false
   } else {
-    warehouseName.value = [];
-    warehouseId.value = [];
-    const wh = Warehouse.value;
+    warehouseName.value = []
+    warehouseId.value = []
+    const wh = Warehouse.value
     for (let index = 0; index < wh.length; index++) {
-      const element = wh[index];
+      const element = wh[index]
       if (selectedWarehouse.value.includes(element.id)) {
-        warehouseName.value.push(element.warehouse_name);
-        warehouseId.value.push(element.id);
+        warehouseName.value.push(element.warehouse_name)
+        warehouseId.value.push(element.id)
       }
     }
-    const br = Brand.value;
+    const br = Brand.value
     for (let index = 0; index < br.length; index++) {
-      const element = br[index];
+      const element = br[index]
       if (element.id == selectedBrand.value) {
-        brandName.value = element.brand_name;
+        brandName.value = element.brand_name
       }
     }
-    const uom = UOM.value;
+    const uom = UOM.value
     for (let index = 0; index < uom.length; index++) {
-      const element = uom[index];
+      const element = uom[index]
       if (element.id == selectedUOM.value) {
-        uomName.value = element.uom_name;
+        uomName.value = element.uom_name
       }
     }
 
@@ -176,7 +178,7 @@ const addItem = async () => {
         namaBrand: brandName.value,
         namaUOM: uomName.value,
         array_warehouse: selectedWarehouse.value,
-      });
+      })
     }
     payload.value.push({
       code_item: idItems.value,
@@ -188,20 +190,20 @@ const addItem = async () => {
       id_site: selectedSite.value,
       remarks: remark.value,
       array_warehouse: selectedWarehouse.value,
-    });
-    resetButCompanyDisable();
-    return itemsTable;
+    })
+    resetButCompanyDisable()
+    return itemsTable
   }
-};
+}
 const removeItems = async (id) => {
-  itemsTable.value.splice(id, 1);
+  itemsTable.value.splice(id, 1)
   if (id == 0) {
-    disableSite.value = false;
-    disableCompany.value = false;
-    reset();
+    disableSite.value = false
+    disableCompany.value = false
+    reset()
   }
   // return itemsTable
-};
+}
 
 const save = async () => {
   if (selectedCompany.value == "") {
@@ -211,8 +213,8 @@ const save = async () => {
       title: "Data Di Table Tidak Boleh Kosong",
       showConfirmButton: false,
       timer: 1500,
-    });
-    return false;
+    })
+    return false
   } else {
     Api.post("management_atk/store/", { array_atk: payload.value })
       .then((res) => {
@@ -222,10 +224,10 @@ const save = async () => {
           title: res.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-        reset();
-        addModal.value = false;
-        emits("close");
+        })
+        reset()
+        addModal.value = false
+        emits("close")
       })
       .catch((error) => {
         Swal.fire({
@@ -234,53 +236,53 @@ const save = async () => {
           title: error.response.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-      });
+        })
+      })
   }
-};
+}
 const coba = async () => {
-  addModal.value = true;
-};
+  addModal.value = true
+}
 const coba2 = async () => {
-  addModal.value = false;
-};
+  addModal.value = false
+}
 const reset = async () => {
-  disableSite.value = false;
-  disableCompany.value = false;
-  selectedCompany.value = "";
-  selectedSite.value = "";
-  selectedWarehouse.value = [];
-  selectedUOM.value = "";
-  idItems.value = "";
-  alertQuantity.value = "";
-  itemNames.value = "";
-  remark.value = "";
-  selectedBrand.value = "";
-  itemsTable.value = [];
-};
+  disableSite.value = false
+  disableCompany.value = false
+  selectedCompany.value = ""
+  selectedSite.value = ""
+  selectedWarehouse.value = []
+  selectedUOM.value = ""
+  idItems.value = ""
+  alertQuantity.value = ""
+  itemNames.value = ""
+  remark.value = ""
+  selectedBrand.value = ""
+  itemsTable.value = []
+}
 const resetButCompanyDisable = async () => {
-  disableSite.value = true;
-  disableCompany.value = true;
-  selectedWarehouse.value = [];
-  selectedUOM.value = "";
-  idItems.value = "";
-  alertQuantity.value = "";
-  itemNames.value = "";
-  remark.value = "";
-  selectedBrand.value = "";
-};
+  disableSite.value = true
+  disableCompany.value = true
+  selectedWarehouse.value = []
+  selectedUOM.value = ""
+  idItems.value = ""
+  alertQuantity.value = ""
+  itemNames.value = ""
+  remark.value = ""
+  selectedBrand.value = ""
+}
 onMounted(() => {
-  fetchCondition();
-  fetchUOM();
-});
+  fetchCondition()
+  fetchUOM()
+})
 
 watchEffect(() => {
   if (isDoneLoading.value) {
     Warehouse.value.map((item) => {
-      item.value = parseInt(item.id);
-    });
+      item.value = parseInt(item.id)
+    })
   }
-});
+})
 </script>
 
 <template>

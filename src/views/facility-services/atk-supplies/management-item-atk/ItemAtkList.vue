@@ -1,113 +1,115 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import Multiselect from "@vueform/multiselect";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import Multiselect from "@vueform/multiselect"
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import icondanger from "@/assets/Danger.png";
-import viewicon from "@/assets/eye.png";
-import icondanger2 from "@/assets/icon-danger-circle.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import gearicon from "@/assets/system-configuration-not-selected.png";
-import downloadIcon from "@/assets/download-template-icon.png";
-import importIcon from "@/assets/import-data-icon.png";
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icon_receive from "@/assets/icon-receive.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import icondanger from "@/assets/Danger.png"
+import viewicon from "@/assets/eye.png"
+import icondanger2 from "@/assets/icon-danger-circle.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import gearicon from "@/assets/system-configuration-not-selected.png"
+import downloadIcon from "@/assets/download-template-icon.png"
+import importIcon from "@/assets/import-data-icon.png"
 
-import ModalAdd from "@/components/facility-services/atk-supplies/management-item-atk/ModalAdd.vue";
-import DataNotFound from "@/components/element/dataNotFound.vue";
-import Swal from "sweetalert2";
+import ModalAdd from "@/components/facility-services/atk-supplies/management-item-atk/ModalAdd.vue"
+import DataNotFound from "@/components/element/dataNotFound.vue"
+import Swal from "sweetalert2"
 
 // import itemdata from "@/utils/Api/facility-service-system/management-item-atk/itemdata.js";
 
-import { ref, onBeforeMount, computed, watchEffect } from "vue";
+import { ref, onBeforeMount, computed, watchEffect } from "vue"
 
-import { useSidebarStore } from "@/stores/sidebar.js";
-import Api from "@/utils/Api";
-import { useRouter } from "vue-router";
+import { useSidebarStore } from "@/stores/sidebar.js"
+import Api from "@/utils/Api"
+import { useRouter } from "vue-router"
 
-const sidebar = useSidebarStore();
+const sidebar = useSidebarStore()
 
-const id_role = JSON.parse(localStorage.getItem("id_role"));
-const company_code = JSON.parse(localStorage.getItem("company_code"));
-const details = ref(false);
-const id_details = ref(0);
+const id_role = JSON.parse(localStorage.getItem("id_role"))
+const company_code = JSON.parse(localStorage.getItem("company_code"))
+const details = ref(false)
+const id_details = ref(0)
 //for sort & search
 let selectedCompany =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
     ? ref("")
-    : ref(JSON.parse(localStorage.getItem("id_company")));
-let selectedWarehouse = ref([]);
+    : ref(JSON.parse(localStorage.getItem("id_company")))
+let selectedWarehouse = ref([])
 let selectedSite =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR" ||
   JSON.parse(localStorage.getItem("id_role")) === "SUPADM"
     ? ref("")
-    : ref(JSON.parse(localStorage.getItem("id_site")));
+    : ref(JSON.parse(localStorage.getItem("id_site")))
 
 let selectedCompany2 =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
     ? ref("")
-    : ref(JSON.parse(localStorage.getItem("id_company")));
-let selectedWarehouse2 = ref("");
+    : ref(JSON.parse(localStorage.getItem("id_company")))
+let selectedWarehouse2 = ref("")
 let selectedSite2 =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR" ||
   JSON.parse(localStorage.getItem("id_role")) === "SUPADM"
     ? ref("")
-    : ref(JSON.parse(localStorage.getItem("id_site")));
-let selectedUOM = ref("UOM");
-let selectedBrand = ref("Brand");
-let statusForm = ref("add");
-let visibleModal = ref(false);
-let idItem = ref(0);
-let arrItem = ref([]);
-let arrData = ref([]);
+    : ref(JSON.parse(localStorage.getItem("id_site")))
+let selectedUOM = ref("UOM")
+let selectedBrand = ref("Brand")
+let statusForm = ref("add")
+let visibleModal = ref(false)
+let idItem = ref(0)
+let arrItem = ref([])
+let arrData = ref([])
 // let Company = ref("");
-let Site = ref("");
+let Site = ref("")
 // let Warehouse = ref("");
-let UOM = ref("");
-let idItems = ref("");
-let alertQuantity = ref("");
-let Brand = ref("");
-let itemNames = ref("");
-let remarks = ref("");
-const search = ref("");
-let sortedData = ref([]);
-const selectedType = ref("");
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
-let lockScrollbar = ref(false);
-let lockScrollbarEdit = ref(false);
-let Company = ref("");
-let Warehouse = ref(null);
-let itemdata = ref("");
-let idS = ref("");
-let checkedAlert = ref(false);
-let valueChecked = ref(0);
-let disabledField = ref(false);
-let isDoneLoading = ref(false);
-let brandName = ref("");
-let warehouseName = ref([]);
-let warehouseId = ref([]);
-let uomName = ref("");
-const payload = ref([]);
-let disableCompany = ref(false);
-let disableSite = ref(false);
-let tempId = ref([]);
+let UOM = ref("")
+let idItems = ref("")
+let alertQuantity = ref("")
+let Brand = ref("")
+let itemNames = ref("")
+let remarks = ref("")
+const search = ref("")
+let sortedData = ref([])
+const selectedType = ref("")
+let sortedbyASC = true
+let instanceArray = []
+let lengthCounter = 0
+let lockScrollbar = ref(false)
+let lockScrollbarEdit = ref(false)
+let Company = ref("")
+let Warehouse = ref(null)
+let itemdata = ref("")
+let idS = ref("")
+let checkedAlert = ref(false)
+let valueChecked = ref(0)
+let disabledField = ref(false)
+let isDoneLoading = ref(false)
+let brandName = ref("")
+let warehouseName = ref([])
+let warehouseId = ref([])
+let uomName = ref("")
+const payload = ref([])
+let disableCompany = ref(false)
+let disableSite = ref(false)
+let tempId = ref([])
 //for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
-let lenghtPagination = ref(0);
-const searchFilter = ref("");
-let fileImport = ref("");
+let showingValue = ref(1)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
+let lenghtPagination = ref(0)
+const searchFilter = ref("")
+let fileImport = ref("")
 
-const router = useRouter();
+const formUpdated = ref(false)
+
+const router = useRouter()
 //for paginations
 const onChangePage = (pageOfItem) => {
   fetchData(
@@ -119,9 +121,9 @@ const onChangePage = (pageOfItem) => {
     searchFilter.value,
     pageMultiplier.value,
     selectedSite2.value
-  );
+  )
   // console.log(paginateIndex.value)
-};
+}
 
 //for filter & reset button
 const filterDataByType = () => {
@@ -134,22 +136,22 @@ const filterDataByType = () => {
     searchFilter.value,
     pageMultiplier.value,
     selectedSite2.value
-  );
-};
+  )
+}
 
 //for filter & reset button
 const resetData = () => {
-  selectedType.value = "";
+  selectedType.value = ""
   selectedCompany2.value =
     JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
       ? ""
-      : JSON.parse(localStorage.getItem("id_company"));
-  selectedWarehouse2.value = "";
+      : JSON.parse(localStorage.getItem("id_company"))
+  selectedWarehouse2.value = ""
   selectedSite2.value =
     JSON.parse(localStorage.getItem("id_role")) === "ADMTR" ||
     JSON.parse(localStorage.getItem("id_role")) === "SUPADM"
       ? ""
-      : JSON.parse(localStorage.getItem("id_site"));
+      : JSON.parse(localStorage.getItem("id_site"))
   fetchData(
     showingValue.value,
     "",
@@ -159,24 +161,24 @@ const resetData = () => {
     searchFilter.value,
     pageMultiplier.value,
     selectedSite2.value
-  );
-};
+  )
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
+  const checkList = checkValue
   if (checkList == true) {
-    let check = document.getElementsByName("checks");
+    let check = document.getElementsByName("checks")
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type == "checkbox") check[i].checked = true
     }
   } else {
-    let check = document.getElementsByName("checks");
+    let check = document.getElementsByName("checks")
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type == "checkbox") check[i].checked = false
     }
   }
-};
+}
 
 //for tablehead
 const tableHead = [
@@ -191,7 +193,7 @@ const tableHead = [
   { Id: 9, title: "Alert Quantity", jsonData: "alert_qty" },
   { Id: 10, title: "UOM", jsonData: "uom_name" },
   { Id: 11, title: "Actions" },
-];
+]
 
 const tableHeadEmployee = [
   { Id: 1, title: "No", jsonData: "id" },
@@ -201,109 +203,109 @@ const tableHeadEmployee = [
   { Id: 6, title: "Alert Quantity", jsonData: "alert_qty" },
   { Id: 7, title: "UOM", jsonData: "uom_name" },
   { Id: 8, title: "Actions" },
-];
+]
 
 let tableType =
   JSON.parse(localStorage.getItem("id_role")) == "EMPLY"
     ? tableHeadEmployee
-    : tableHead;
+    : tableHead
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
   }
-};
+}
 //for get company in select
 const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/company/get")
+  Company.value = res.data.data
+}
 
 const fetchGetCompanyID = async (id_company) => {
-  fetchSite(selectedSite2.value, id_company);
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
-  Company.value = res.data.data;
+  fetchSite(selectedSite2.value, id_company)
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_company}`)
+  Company.value = res.data.data
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (id_company === element.id) {
-      selectedCompany.value = id_company;
-      selectedCompany2.value = id_company;
+      selectedCompany.value = id_company
+      selectedCompany2.value = id_company
     }
   }
-};
+}
 const fetchGetCompanyID2 = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_company}`)
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (id_company === element.id) {
-      selectedCompany.value = id_company;
+      selectedCompany.value = id_company
     }
   }
-};
+}
 const fetchSite = async (id, id_company) => {
   if (id) {
-    changeSite(id);
+    changeSite(id)
   }
 
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
-  Site.value = res.data.data;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/site/get_by_company/${id_company}`)
+  Site.value = res.data.data
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (id === element.id) {
-      selectedSite.value = id;
-      selectedSite2.value = id;
+      selectedSite.value = id
+      selectedSite2.value = id
     }
   }
   if (id_role == "EMPLY") {
     Site.value = Site.value.filter(function (item) {
-      return id !== item.id;
-    });
+      return id !== item.id
+    })
   }
-};
+}
 const fetchSite2 = async (id, id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
-  Site.value = res.data.data;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/site/get_by_company/${id_company}`)
+  Site.value = res.data.data
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (id === element.id) {
-      selectedSite.value = id;
+      selectedSite.value = id
     }
   }
-};
+}
 
 const fetchUOM = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/uom");
-  UOM.value = res.data.data;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/uom")
+  UOM.value = res.data.data
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (id === element.id) {
-      selectedUOM.value = id;
+      selectedUOM.value = id
     }
   }
-};
+}
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
+  const id_company = JSON.parse(localStorage.getItem("id_company"))
+  const id_role = JSON.parse(localStorage.getItem("id_role"))
+  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company)
   // changeCompany()
-};
+}
 const fetchData = async (
   page,
   selectedType,
@@ -314,61 +316,61 @@ const fetchData = async (
   pageMultiplier,
   selectedSite
 ) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const res = await Api.get(
     `/management_atk/get?page=${page}&item_name=${selectedType}&id_company=${selectedCompany}&id_warehouse=${selectedWarehouse}&alert_qty=${alert_qty}&search=${searchFilter}&perPage=${pageMultiplier}&id_site=${selectedSite}`
-  );
-  itemdata.value = res.data.data.data;
-  instanceArray = itemdata.value;
+  )
+  itemdata.value = res.data.data.data
+  instanceArray = itemdata.value
   // console.log(instanceArray)
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  lenghtPagination = res.data.data.total;
-  paginateIndex.value = res.data.data.current_page - 1;
-  showingValue.value = res.data.data.current_page;
-};
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  lenghtPagination = res.data.data.total
+  paginateIndex.value = res.data.data.current_page - 1
+  showingValue.value = res.data.data.current_page
+}
 
 const changeCompany = async (id_company) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/site/get_by_company/${id_company}`);
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/site/get_by_company/${id_company}`)
   // console.log(res)
-  Site.value = res.data.data;
+  Site.value = res.data.data
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const changeSite = async (id_site) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`);
-  Warehouse.value = res.data.data;
-  isDoneLoading.value = true;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/warehouse/get_by_site_id/${id_site}`)
+  Warehouse.value = res.data.data
+  isDoneLoading.value = true
+}
 
 const editValue = async (id, type, detail_warehouse) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/management_atk/get/${id}`);
-  arrData.value = res.data.data[0];
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/management_atk/get/${id}`)
+  arrData.value = res.data.data[0]
 
-  idS.value = id;
-  selectedCompany.value = fetchGetCompanyID2(res.data.data[0].id_company);
-  arrItem.value = res.data.data[0].array_warehouse;
-  changeSite(res.data.data[0].id_site);
+  idS.value = id
+  selectedCompany.value = fetchGetCompanyID2(res.data.data[0].id_company)
+  arrItem.value = res.data.data[0].array_warehouse
+  changeSite(res.data.data[0].id_site)
   selectedSite.value = fetchSite2(
     res.data.data[0].id_site,
     res.data.data[0].id_company
-  );
-  selectedUOM.value = fetchUOM(res.data.data[0].id_uom);
-  itemNames.value = res.data.data[0].item_name;
-  alertQuantity.value = res.data.data[0].alert_qty;
-  remarks.value = res.data.data[0].remarks;
-  idItems.value = res.data.data[0].code_item;
-  selectedWarehouse.value = [];
+  )
+  selectedUOM.value = fetchUOM(res.data.data[0].id_uom)
+  itemNames.value = res.data.data[0].item_name
+  alertQuantity.value = res.data.data[0].alert_qty
+  remarks.value = res.data.data[0].remarks
+  idItems.value = res.data.data[0].code_item
+  selectedWarehouse.value = []
   detail_warehouse.forEach((element) => {
-    selectedWarehouse.value.push(element.id_warehouse);
-  });
-  lockScrollbarEdit.value = true;
+    selectedWarehouse.value.push(element.id_warehouse)
+  })
+  lockScrollbarEdit.value = true
   let dataEdit = {
     code_item: idItems.value,
     item_name: itemNames.value,
@@ -379,23 +381,51 @@ const editValue = async (id, type, detail_warehouse) => {
     id_site: arrData.value.id_site,
     remarks: remarks.value ? remarks.value : "",
     array_warehouse: selectedWarehouse.value,
-  };
-  payload.value = dataEdit;
-  disabledField.value = type == "view" ? true : false;
-};
+  }
+  payload.value = dataEdit
+  disabledField.value = type == "view" ? true : false
+}
 
 const save = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const isValid = validateInput()
+  if (isValid) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: "Data required Tidak Boleh Kosong",
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    return
+  }
 
-  payload.value.array_warehouse = selectedWarehouse.value;
-  payload.value.id_uom = selectedUOM.value;
-  payload.value.id_brand = selectedBrand.value;
-  payload.value.item_name = itemNames.value;
-  payload.value.alert_qty = alertQuantity.value;
-  payload.value.remarks = remarks.value ? remarks.value : "";
+  if (formUpdated) {
+    Swal.fire({
+      position: "center",
+      icon: "warning",
+      title: "Input Changed, Please Click Add to Update Table!",
+      showConfirmButton: false,
+      timer: 1500,
+    })
+    return
+  }
 
-  Api.post(`/management_atk/update/${idS.value}`, payload.value)
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+  const formData = {
+    ...payload.value,
+    id_uom: selectedUOM.value,
+    id_brand: "",
+    item_name: itemNames.value,
+    alert_qty: alertQuantity.value,
+    remarks: remarks.value ? remarks.value : "",
+    array_warehouse: selectedWarehouse.value,
+  }
+
+  console.log(formData)
+
+  Api.post(`/management_atk/update/${idS.value}`, formData, {})
     .then((res) => {
       Swal.fire({
         position: "center",
@@ -403,7 +433,7 @@ const save = async () => {
         title: res.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
+      })
       fetchData(
         showingValue.value,
         selectedType.value,
@@ -413,8 +443,8 @@ const save = async () => {
         searchFilter.value,
         pageMultiplier.value,
         selectedSite2.value
-      );
-      lockScrollbarEdit.value = false;
+      )
+      lockScrollbarEdit.value = false
     })
     .catch((error) => {
       Swal.fire({
@@ -423,12 +453,12 @@ const save = async () => {
         title: error.response.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
-    });
-};
+      })
+    })
+}
 const deleteValue = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Swal.fire({
     title:
       "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
@@ -458,7 +488,7 @@ const deleteValue = async (id) => {
           confirmButtonColor: "#015289",
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
         fetchData(
           showingValue.value,
           selectedType.value,
@@ -468,32 +498,32 @@ const deleteValue = async (id) => {
           searchFilter.value,
           pageMultiplier.value,
           selectedSite2.value
-        );
-      });
+        )
+      })
     } else {
-      return;
+      return
     }
-  });
+  })
 
-  isDoneLoading.value = true;
-};
+  isDoneLoading.value = true
+}
 
 const openModal = (type, id) => {
-  visibleModal.value = true;
-  statusForm.value = type;
+  visibleModal.value = true
+  statusForm.value = type
   if (id) {
-    idItem.value = parseInt(id);
+    idItem.value = parseInt(id)
   }
-};
+}
 
 const resetButCompanyDisable = async () => {
-  disableSite.value = true;
-  disableCompany.value = true;
-};
+  disableSite.value = true
+  disableCompany.value = true
+}
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchCondition();
+  getSessionForSidebar()
+  fetchCondition()
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -503,8 +533,8 @@ onBeforeMount(() => {
     searchFilter.value,
     pageMultiplier.value,
     selectedSite2.value
-  );
-});
+  )
+})
 //for searching
 const filteredItems = (search) => {
   fetchData(
@@ -516,8 +546,8 @@ const filteredItems = (search) => {
     search,
     pageMultiplier.value,
     selectedSite2.value
-  );
-};
+  )
+}
 const perPage = async () => {
   // console.log(pageMultiplier.value)
   fetchData(
@@ -529,12 +559,12 @@ const perPage = async () => {
     searchFilter.value,
     pageMultiplier.value,
     selectedSite2.value
-  );
+  )
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const selectAlert = (checked) => {
   if (checked === false) {
-    valueChecked.value = 1;
+    valueChecked.value = 1
     fetchData(
       showingValue.value,
       selectedType.value,
@@ -544,9 +574,9 @@ const selectAlert = (checked) => {
       searchFilter.value,
       pageMultiplier.value,
       selectedSite2.value
-    );
+    )
   } else {
-    valueChecked.value = 0;
+    valueChecked.value = 0
     fetchData(
       showingValue.value,
       selectedType.value,
@@ -556,12 +586,12 @@ const selectAlert = (checked) => {
       searchFilter.value,
       pageMultiplier.value,
       selectedSite2.value
-    );
+    )
   }
-};
+}
 
 const closeModal = () => {
-  visibleModal.value = false;
+  visibleModal.value = false
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -571,133 +601,139 @@ const closeModal = () => {
     searchFilter.value,
     pageMultiplier.value,
     selectedSite2.value
-  );
-};
+  )
+}
 
 const removeItems = async (id) => {
-  arrItem.value.splice(id, 1);
+  arrItem.value.splice(id, 1)
   // return itemsTable
-};
+}
 
-const addItem = async () => {
-  if (
+const validateInput = () => {
+  return (
     selectedCompany.value == "" ||
     selectedSite.value == "" ||
-    selectedWarehouse.value == [] ||
+    selectedWarehouse.value.length == 0 ||
     selectedUOM.value == "" ||
     itemNames.value == "" ||
     alertQuantity.value == "" ||
     idItems.value == ""
-  ) {
+  )
+}
+
+const addItem = async () => {
+  const isValid = validateInput()
+  if (isValid) {
     Swal.fire({
       position: "center",
       icon: "error",
       title: "Data required Tidak Boleh Kosong",
       showConfirmButton: false,
       timer: 1500,
-    });
-    return false;
-  } else {
-    arrData.value.alert_qty = alertQuantity.value;
-    arrData.value.remarks = remarks.value;
-    warehouseName.value = [];
-    warehouseId.value = [];
-    arrItem.value = [];
-    const wh = Warehouse.value;
-    for (let index = 0; index < wh.length; index++) {
-      const element = wh[index];
-      if (selectedWarehouse.value.includes(element.id)) {
-        warehouseName.value.push(element.warehouse_name);
-        warehouseId.value.push(element.id);
-      }
-    }
-    const br = Brand.value;
-    for (let index = 0; index < br.length; index++) {
-      const element = br[index];
-      if (element.id == selectedBrand.value) {
-        arrData.value.brand_name = element.brand_name;
-      }
-    }
-    const uom = UOM.value;
-    for (let index = 0; index < uom.length; index++) {
-      const element = uom[index];
-      if (element.id == selectedUOM.value) {
-        arrData.value.uom_name = element.uom_name;
-      }
-    }
+    })
+    return
+  }
 
-    for (let index = 0; index < warehouseId.value.length; index++) {
-      arrItem.value.push({
-        code_item: idItems.value,
-        item_name: itemNames.value,
-        id_brand: selectedBrand.value,
-        id_uom: selectedUOM.value,
-        id_company: selectedCompany.value,
-        id_site: selectedSite.value,
-        id_warehouse: warehouseId.value[index],
-        current_stock: "",
-        remarks: remarks.value,
-        warehouse_name: warehouseName.value[index],
-        namaBrand: brandName.value,
-        namaUOM: uomName.value,
-        array_warehouse: selectedWarehouse.value,
-      });
+  arrData.value.alert_qty = alertQuantity.value
+  arrData.value.remarks = remarks.value
+  arrData.value.item_name = itemNames.value
+  warehouseName.value = []
+  warehouseId.value = []
+  arrItem.value = []
+  const wh = Warehouse.value
+  for (let index = 0; index < wh.length; index++) {
+    const element = wh[index]
+    if (selectedWarehouse.value.includes(element.id)) {
+      warehouseName.value.push(element.warehouse_name)
+      warehouseId.value.push(element.id)
     }
-    payload.value = {
+  }
+  const br = Brand.value
+  for (let index = 0; index < br.length; index++) {
+    const element = br[index]
+    if (element.id == selectedBrand.value) {
+      arrData.value.brand_name = element.brand_name
+    }
+  }
+  const uom = UOM.value
+  for (let index = 0; index < uom.length; index++) {
+    const element = uom[index]
+    if (element.id == selectedUOM.value) {
+      arrData.value.uom_name = element.uom_name
+    }
+  }
+
+  for (let index = 0; index < warehouseId.value.length; index++) {
+    arrItem.value.push({
       code_item: idItems.value,
       item_name: itemNames.value,
       id_brand: selectedBrand.value,
       id_uom: selectedUOM.value,
-      alert_qty: alertQuantity.value,
       id_company: selectedCompany.value,
       id_site: selectedSite.value,
+      id_warehouse: warehouseId.value[index],
+      current_stock: "",
       remarks: remarks.value,
+      warehouse_name: warehouseName.value[index],
+      namaBrand: brandName.value,
+      namaUOM: uomName.value,
       array_warehouse: selectedWarehouse.value,
-    };
-    resetButCompanyDisable();
-    return arrItem.value;
+    })
   }
-};
+  payload.value = {
+    code_item: idItems.value,
+    item_name: itemNames.value,
+    id_brand: selectedBrand.value,
+    id_uom: selectedUOM.value,
+    alert_qty: alertQuantity.value,
+    id_company: selectedCompany.value,
+    id_site: selectedSite.value,
+    remarks: remarks.value,
+    array_warehouse: selectedWarehouse.value,
+  }
+  resetButCompanyDisable()
+  return arrItem.value
+}
 
 const seeDetails = (id) => {
-  id_details.value = id;
-  const index = tempId.value.indexOf(id);
+  id_details.value = id
+  const index = tempId.value.indexOf(id)
   if (index > -1) {
-    tempId.value.splice(index, 1);
+    tempId.value.splice(index, 1)
   } else {
-    tempId.value.push(id);
+    tempId.value.push(id)
   }
-};
+}
 // multiselect
-let isLoading = ref(false);
+let isLoading = ref(false)
 watchEffect(() => {
   if (isDoneLoading.value) {
     Warehouse.value.map((item) => {
-      item.value = parseInt(item.id);
-    });
+      item.value = parseInt(item.id)
+    })
   }
-});
+})
 // end
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
 const downloadTemplate = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Api.get(`/management_atk/download_template`, {
     responseType: "blob",
   }).then((res) => {
     let blob = new Blob([res.data], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    let link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = "Template Management Item ATK.xlsx";
-    link.click();
-  });
-};
+    })
+    let link = document.createElement("a")
+    link.href = window.URL.createObjectURL(blob)
+    link.download = "Template Management Item ATK.xlsx"
+    link.click()
+  })
+}
 
 const onFileSelected = (event) => {
   if (event.target.files[0].size >= 3000000) {
@@ -711,18 +747,18 @@ const onFileSelected = (event) => {
       showCancelButton: false,
       showConfirmButton: false,
       width: "300px",
-    });
+    })
   } else {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
 
-    fileImport.value = file ? file : null;
+    fileImport.value = file ? file : null
   }
-};
+}
 
 const importData = async () => {
   if (fileImport.value) {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
     Api.post(`/management_atk/import_data`, {
       file: fileImport.value,
     })
@@ -733,8 +769,8 @@ const importData = async () => {
           title: res.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-        router.go();
+        })
+        router.go()
       })
       .catch((error) => {
         Swal.fire({
@@ -743,8 +779,8 @@ const importData = async () => {
           title: error.response.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-      });
+        })
+      })
   } else {
     Swal.fire({
       position: "center",
@@ -752,9 +788,9 @@ const importData = async () => {
       title: "File is Required",
       showConfirmButton: false,
       timer: 1500,
-    });
+    })
   }
-};
+}
 </script>
 
 <template>
@@ -1193,7 +1229,7 @@ const importData = async () => {
                                     required
                                     v-model="selectedCompany"
                                     @change="changeCompany(selectedCompany)"
-                                    :disabled="disabledField"
+                                    :disabled="disabledField || idS"
                                   >
                                     <option disabled selected>Company</option>
                                     <option
@@ -1216,7 +1252,7 @@ const importData = async () => {
                                     required
                                     v-model="selectedSite"
                                     @change="changeSite(selectedSite)"
-                                    :disabled="disabledField"
+                                    :disabled="disabledField || idS"
                                   >
                                     <option disabled selected>Site</option>
                                     <option
@@ -1259,6 +1295,7 @@ const importData = async () => {
                                     placeholder="Item Name"
                                     required
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   />
                                 </div>
                                 <div class="mb-4 w-full">
@@ -1299,6 +1336,7 @@ const importData = async () => {
                                     required
                                     v-model="selectedUOM"
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   >
                                     <option disabled selected>UOM</option>
                                     <option
@@ -1325,6 +1363,7 @@ const importData = async () => {
                                     placeholder="Alert Quantity"
                                     required
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   />
                                 </div>
                                 <!-- <div
@@ -1365,6 +1404,7 @@ const importData = async () => {
                                     placeholder="Description"
                                     required
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   />
                                 </div>
                                 <div class="mb-4 w-full">
@@ -1386,6 +1426,7 @@ const importData = async () => {
                                     :options="Warehouse"
                                     :loading="isLoading"
                                     :disabled="disabledField"
+                                    @change="formUpdated = true"
                                   >
                                     <template
                                       v-slot:tag="{
@@ -1499,7 +1540,7 @@ const importData = async () => {
                                       <td
                                         class="border border-[#B9B9B9] text-center"
                                       >
-                                        {{ itemNames }}
+                                        {{ arrData.item_name }}
                                       </td>
                                       <!-- <td
                                         class="border border-[#B9B9B9] text-center"

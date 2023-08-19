@@ -20,19 +20,19 @@ import moment from "moment"
 const atkStatus = {
   Draft: {
     statusLevel: 0,
-    class: "text-black border-black",
+    class: "bg-[#000] border-[#000]",
   },
   "Waiting Approval": {
     statusLevel: 1,
-    class: "text-[#2970ff] border-[#2970ff]",
+    class: "bg-[#2970ff] border-[#2970ff]",
   },
   Approve: {
     statusLevel: 2,
-    class: "text-orange border-orange",
+    class: "bg-[#ef9d22] border-[#ef9d22]",
   },
   Completed: {
     statusLevel: 3,
-    class: "text-green border-green",
+    class: "bg-[#00c851] border-[#00c851]",
   },
 }
 
@@ -260,7 +260,7 @@ const format_date = (value) => {
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
               <span
-                class="badge text-blue text-base font-JakartaSans font-bold capitalize w-[120px] h-[50px] border-blue bg-white text-center"
+                class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[120px] h-[50px] border-blue bg-white text-center"
                 :class="atkStatus[status]?.class"
               >
                 {{ status }}
