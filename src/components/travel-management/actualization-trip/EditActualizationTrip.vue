@@ -15,7 +15,7 @@
 
     let isVisible = ref(false)
 
-    
+
     let fromCity = ref('City')
     let toCity = ref('City')
     let idZona = ref(0)
@@ -36,6 +36,7 @@
     let tripInfoReturnDate = ref(new Date().toJSON().slice(0, 10))
     let tripInfoFromCity = ref()
     let tripInfoToCity = ref()
+    let tripInfoZona = ref()
 
     let activitiesTableHead = ref([
         {title: 'Date'},
@@ -140,15 +141,23 @@
     }
 
     const submitTripInfoField = async (tripInfoDetail, index) => {
+        
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.post(`/actual_trip/store_activities`, {
-            // id_act: activitiesId.value,
-            act_date: activitiesDetail[index].act_date,
-            activies: activitiesDetail[index].activities
+        
+        const api = await Api.post(`/actual_trip/store_trip_info`, {
+            id_act: activitiesId.value,
+            date_departure: tripInfoDepartureDate.value,
+            date_arrival: tripInfoDateReturn.value,
+            id_city_from: tripInfoFromCity.value,
+            id_city_to: tripInfoToCity.value,
+            id_zona: tripInfoZona.value,
+            tlk_rate: tlkRate.value,
         })
+
         console.log(api)
-        fetchActivitiesByActId()
+        fetchTripInfoByActId()
+
     }
 
     const removeTripInfoField = async (tripInfoDetail, index) => {
@@ -162,7 +171,7 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.delete(`/actual_trip/delete_activities/${activitiesDetail[index].id}`)
         console.log(api)
-        fetchActivitiesByActId()
+        fetchTripInfoByActId()
     }
 
     const fetchActivitiesByActId = async () => {
