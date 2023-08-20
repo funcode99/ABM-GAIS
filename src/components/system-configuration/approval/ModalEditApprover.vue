@@ -1,9 +1,9 @@
 <script setup>
   import { Modal } from 'usemodal-vue3'
   
-  import iconPlus from "@/assets/navbar/icon_plus.svg";
-  import editIcon from "@/assets/navbar/edit_icon.svg";
-  import deleteicon from "@/assets/navbar/delete_icon.svg";
+  import iconPlus from "@/assets/navbar/icon_plus.svg"
+  import editIcon from "@/assets/navbar/edit_icon.svg"
+  import deleteicon from "@/assets/navbar/delete_icon.svg"
   import checkIcon from '@/assets/checkmark.png'
   import closeIcon from '@/assets/close-window.png'
 
