@@ -259,12 +259,12 @@ const format_date = (value) => {
               </h3>
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
-              <span
-                class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[120px] h-[50px] border-blue bg-white text-center"
+              <div
+                class="textcen rounded-lg p-1 text-white text-sm font-JakartaSans font-bold capitalize w-[120px] h-[50px]text-center"
                 :class="atkStatus[status]?.class"
               >
                 {{ status }}
-              </span>
+              </div>
             </div>
           </div>
 

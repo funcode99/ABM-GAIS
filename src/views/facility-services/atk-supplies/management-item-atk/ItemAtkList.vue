@@ -1180,7 +1180,9 @@ const importData = async () => {
 
                         <!-- MODAL EDIT -->
                         <div v-if="lockScrollbarEdit == true" class="modal">
-                          <div class="modal-dialog bg-white w-3/5 h-[80vh] overflow-hidden">
+                          <div
+                            class="modal-dialog bg-white w-3/5 h-[80vh] overflow-hidden"
+                          >
                             <div class="overflow-auto h-full">
                               <nav class="sticky top-0 z-50 bg-[#015289]">
                                 <label
@@ -1416,10 +1418,10 @@ const importData = async () => {
                                     <label
                                       for="warehouse"
                                       class="block mb-2 font-JakartaSans font-medium text-sm text-black text-left"
-                                      >ATK Warehouse<span class="text-red"
-                                        >*</span
-                                      ></label
                                     >
+                                      ATK Warehouse
+                                      <span class="text-red">*</span>
+                                    </label>
                                     <Multiselect
                                       v-model="selectedWarehouse"
                                       mode="tags"
@@ -1593,17 +1595,17 @@ const importData = async () => {
                                   </table>
                                 </div>
                               </main>
-                            </div>
 
-                            <div class="sticky bottom-0 bg-white py-2">
-                              <div class="flex justify-center gap-4 mr-6">
-                                <button
-                                  v-if="id_role != 'EMPLY' && !disabledField"
-                                  class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                                  @click="save"
-                                >
-                                  Save
-                                </button>
+                              <div class="sticky bottom-0 bg-white py-2">
+                                <div class="flex justify-center gap-4 mr-6">
+                                  <button
+                                    v-if="id_role != 'EMPLY' && !disabledField"
+                                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                                    @click="save"
+                                  >
+                                    Save
+                                  </button>
+                                </div>
                               </div>
                             </div>
                           </div>
