@@ -187,7 +187,27 @@ const fetchHistoryApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const res = await Api.get(`/request_atk/get_history/${id}`)
-  dataApproval.value = res.data.data
+  // dataApproval.value = res.data.data
+
+  const {
+    name_approved,
+    updated_at,
+    notes,
+    name_delivered,
+    notes_delivered,
+    delivered_at,
+  } = res.data.data[0]
+
+  dataApproval.value = [
+    name_delivered
+      ? {
+          name_delivered,
+          delivered_at,
+          notes_delivered,
+        }
+      : [],
+    name_approved ? { name_approved, updated_at, notes } : [],
+  ]
 }
 
 const openModal = (type, id) => {
@@ -260,7 +280,7 @@ const format_date = (value) => {
             </router-link>
             <div class="flex justify-start gap-4 mx-4 py-4">
               <div
-                class="textcen rounded-lg p-1 text-white text-sm font-JakartaSans font-bold capitalize w-[120px] h-[50px]text-center"
+                class="text-center rounded-lg p-1 text-white text-sm font-JakartaSans font-bold capitalize w-[120px] h-[50px]text-center"
                 :class="atkStatus[status]?.class"
               >
                 {{ status }}

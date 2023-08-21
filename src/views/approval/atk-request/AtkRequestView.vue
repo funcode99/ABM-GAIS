@@ -98,12 +98,14 @@ const fetchHistoryApproval = async (id) => {
   } = res.data.data[0]
 
   dataApproval.value = [
-    {
-      name_delivered,
-      delivered_at,
-      notes_delivered,
-    },
-    { name_approved, updated_at, notes },
+    name_delivered
+      ? {
+          name_delivered,
+          delivered_at,
+          notes_delivered,
+        }
+      : [],
+    name_approved ? { name_approved, updated_at, notes } : [],
   ]
 }
 
@@ -154,7 +156,7 @@ const format_date = (value) => {
             <div class="py-4">
               <button
                 type="button"
-                class="btn btn-sm border-none mx-4 capitalize status-default"
+                class="btn btn-sm border-none mx-4 capitalize status-default text-center"
               >
                 {{ dataArr.status }}
               </button>
