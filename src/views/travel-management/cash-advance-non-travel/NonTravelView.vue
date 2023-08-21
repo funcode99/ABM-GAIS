@@ -35,6 +35,7 @@ let dataApproval = ref([]);
 
 let lengthCounter = 0;
 let tempTotal = 0;
+let Total = 0;
 let idCaNon = route.params.id;
 let statusForm = "";
 let listCurrency = ref([]);
@@ -73,7 +74,6 @@ const saveFormHeader = async () => {
     grand_total: dataArr.value.grand_total,
     id_cost_center: dataArr.value.id_cost_center,
   };
-
   const api = await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
   Swal.fire({
     position: "center",
@@ -82,6 +82,7 @@ const saveFormHeader = async () => {
     showConfirmButton: false,
     timer: 1500,
   });
+  fetchDataItem(idCaNon);
   visibleHeader.value = false;
   router.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
 };
@@ -101,33 +102,33 @@ const removeItems = async (id) => {
       showConfirmButton: false,
       timer: 1500,
     });
-    update_nominal();
+    // update_nominal();
   }
 };
 
-const update_nominal = async () => {
-  const res = await Api.get(`/cash_advance/get_by_cash_id/${idCaNon}`);
-  dataItem.value = res.data.data;
+// const update_nominal = async () => {
+//   const res = await Api.get(`/cash_advance/get_by_cash_id/${idCaNon}`);
+//   dataItem.value = res.data.data;
 
-  if (res.data.success == true) {
-    tempTotal = 0;
-    dataItem.value.forEach((dt) => {
-      tempTotal += Number(dt.nominal);
-    });
+//   if (res.data.success == true) {
+//     tempTotal = 0;
+//     dataItem.value.forEach((dt) => {
+//       tempTotal += Number(dt.nominal);
+//     });
 
-    const payload = {
-      id_employee: selectedEmployee,
-      id_request_trip: 2,
-      event: dataArr.value.event,
-      date: dataArr.value.date,
-      id_currency: dataArr.value.id_currency,
-      grand_total: tempTotal,
-    };
+//     const payload = {
+//       id_employee: selectedEmployee,
+//       id_request_trip: 2,
+//       event: dataArr.value.event,
+//       date: dataArr.value.date,
+//       id_currency: dataArr.value.id_currency,
+//       grand_total: tempTotal,
+//     };
 
-    await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
-    dataArr.value.grand_total = tempTotal;
-  }
-};
+//     await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
+//     dataArr.value.grand_total = tempTotal;
+//   }
+// };
 
 const editItems = (id) => {
   idEdit.value = id;
@@ -145,7 +146,7 @@ const saveItems = async (type, id = null, item = null) => {
         showConfirmButton: false,
         timer: 1500,
       });
-      update_nominal();
+      // update_nominal();
       idEdit.value = "";
     }
   } else if (type == "create") {
@@ -166,7 +167,7 @@ const saveItems = async (type, id = null, item = null) => {
         showConfirmButton: false,
         timer: 1500,
       });
-      update_nominal();
+      // update_nominal();
       resetItems();
     }
   }
@@ -228,8 +229,13 @@ const fetchDataById = async (id) => {
 };
 
 const fetchDataItem = async (id) => {
+  Total = 0;
   const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
   dataItem.value = res.data.data;
+  dataItem.value.forEach((dt) => {
+    Total += Number(dt.nominal);
+  });
+  console.log(Total);
 };
 
 const fetchCurrency = async () => {
@@ -453,7 +459,7 @@ const inputClass =
               <input
                 type="text"
                 disabled
-                :value="format_price(dataArr.grand_total)"
+                :value="format_price(Total)"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
