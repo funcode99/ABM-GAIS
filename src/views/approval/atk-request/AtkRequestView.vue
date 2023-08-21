@@ -105,7 +105,6 @@ const fetchHistoryApproval = async (id) => {
 
   const {
     name_approved,
-    updated_at,
     notes,
     name_delivered,
     notes_delivered,
@@ -113,7 +112,9 @@ const fetchHistoryApproval = async (id) => {
     notes_rejected,
     rejected_at,
     name_rejected,
+    approved_at,
   } = res.data.data[0]
+
 
   dataApproval.value = [
     name_rejected
