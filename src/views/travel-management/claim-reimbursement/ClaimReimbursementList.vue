@@ -88,6 +88,27 @@ const sortList = (sortBy) => {
   }
 };
 
+const selectAll = (checkValue) => {
+  const check = document.getElementsByName("checks");
+  const btnDelete = document.getElementById("btnDelete");
+
+  if (checkValue === true) {
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type === "checkbox") {
+        check[i].checked = true;
+      }
+    }
+    btnDelete.style.display = "block";
+  } else {
+    for (let i = 0; i < check.length; i++) {
+      if (check[i].type === "checkbox") {
+        check[i].checked = false;
+      }
+    }
+    btnDelete.style.display = "none";
+  }
+};
+
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
@@ -296,6 +317,13 @@ const exportToExcel = () => {
               Claim Reimbursement
             </p>
             <div class="flex gap-4">
+              <button
+                class="btn text-white font-JakartaSans text-xs font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                id="btnDelete"
+                style="display: none"
+              >
+                Delete
+              </button>
               <label
                 @click="visibleModal = true"
                 for="my-modal-claim"
@@ -430,6 +458,16 @@ const exportToExcel = () => {
           <tableData v-if="sortedData.length > 0">
             <thead class="text-center font-JakartaSans text-sm font-bold h-10">
               <tr>
+                <th>
+                  <div class="flex justify-center">
+                    <input
+                      type="checkbox"
+                      name="checked"
+                      @click="selectAll((checkList = !checkList))"
+                    />
+                  </div>
+                </th>
+
                 <th
                   v-for="data in tableHead"
                   :key="data.Id"
@@ -455,6 +493,9 @@ const exportToExcel = () => {
                 v-for="data in sortedData"
                 :key="data.no"
               >
+                <td>
+                  <input type="checkbox" name="checks" />
+                </td>
                 <td>{{ data.no }}</td>
                 <td>{{ format_date(data.created_at) }}</td>
                 <td>{{ data.no_claim }}</td>
@@ -481,6 +522,16 @@ const exportToExcel = () => {
                 class="text-center font-JakartaSans text-sm font-bold h-10"
               >
                 <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="checked"
+                        @click="selectAll((checkList = !checkList))"
+                      />
+                    </div>
+                  </th>
+
                   <th
                     v-for="data in tableHead"
                     :key="data.Id"
@@ -498,7 +549,7 @@ const exportToExcel = () => {
               <tbody>
                 <tr>
                   <td
-                    colspan="7"
+                    colspan="8"
                     class="text-center font-JakartaSans text-base font-medium"
                   >
                     Data not Found
