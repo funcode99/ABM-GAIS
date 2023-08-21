@@ -138,7 +138,7 @@ const saveItems = async (type, id = null, item = null) => {
       id_ca: idCaNon,
       item_name: itemsItem.value,
       nominal: itemsNominal.value.replace(/\./g, ""),
-      id_cost_center: itemsCostCentre.value,
+      id_cost_center: dataArr.value.id_cost_center,
       remarks: itemsRemarks.value,
     };
 
@@ -534,7 +534,12 @@ const inputClass =
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Cost Center<span class="text-red">*</span></label
                 >
-                <select v-model="itemsCostCentre" :class="inputClass" required>
+                <select
+                  v-model="dataArr.id_cost_center"
+                  :class="inputClass"
+                  required
+                  disabled
+                >
                   <option disabled selected>Cost Center</option>
                   <option
                     v-for="data in listCostCentre"
