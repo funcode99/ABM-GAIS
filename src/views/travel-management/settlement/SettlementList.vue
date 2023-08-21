@@ -15,6 +15,7 @@ import deleteicon from "@/assets/navbar/delete_icon.svg"
 import arrowicon from "@/assets/navbar/icon_arrow.svg"
 import icondanger from "@/assets/Danger.png"
 import iconClose from "@/assets/navbar/icon_close.svg"
+import viewicon from "@/assets/eye.png"
 
 import Api from "@/utils/Api"
 import moment from "moment"
@@ -548,6 +549,20 @@ onBeforeMount(() => {
                           <img :src="editicon" class="w-6 h-6" />
                         </button>
                       </router-link>
+
+                      <router-link
+                        :to="`/settlement/${data.id}`"
+                        v-if="
+                          data.status == 'Waiting Approval' ||
+                          data.status == 'Completed' ||
+                          data.status == 'Reject'
+                        "
+                      >
+                        <button>
+                          <img :src="viewicon" class="w-6 h-6" />
+                        </button>
+                      </router-link>
+
                       <button
                         @click="deleteData(data.id)"
                         v-if="
