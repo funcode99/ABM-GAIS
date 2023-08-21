@@ -118,7 +118,7 @@ const fetchDataById = async (id) => {
     createdBy.value = element.employee_name
     siteName.value = element.site_name
     status.value = element.status
-    notes.value = element.remarks
+    notes.value = element.remarks_header
   }
 }
 const fetchDetailById = async (id) => {
@@ -134,32 +134,32 @@ const fetchDetailById = async (id) => {
       Warehouse: element.warehouse_name,
       itemNames: element.item_name,
       idItems: element.code_item,
-      alertQuantity: element.qty,
       brandName: element.brand_name,
       UOMName: element.uom_name,
-      remark: element.remarks,
-      qty_send: element.qty_send,
-      qty_unsend: element.qty_unsend,
+      remark: element.remarks_detail,
       id_item: element.id_item,
       id_brand: element.id_brand,
       id_uom: element.id_uom,
-      qty: element.qty,
-    })
-    itemsTable.value.push({
-      Warehouse: element.warehouse_name,
-      itemNames: element.item_name,
-      idItems: element.code_item,
-      alertQuantity: element.qty,
-      brandName: element.brand_name,
-      UOMName: element.uom_name,
-      remark: element.remarks,
-      qty_send: element.qty_send,
+      qty_requested: element.qty_requested,
+      qty_approved: element.qty_approved,
       qty_unsend: element.qty_unsend,
-      id_item: element.id_item,
-      id_brand: element.id_brand,
-      id_uom: element.id_uom,
-      qty: element.qty,
+      qty_delivered: element.qty_delivered,
     })
+    // itemsTable.value.push({
+    //   Warehouse: element.warehouse_name,
+    //   itemNames: element.item_name,
+    //   idItems: element.code_item,
+    //   alertQuantity: element.qty,
+    //   brandName: element.brand_name,
+    //   UOMName: element.uom_name,
+    //   remark: element.remarks,
+    //   qty_approved: element.qty_approved,
+    //   qty_unsend: element.qty_unsend,
+    //   id_item: element.id_item,
+    //   id_brand: element.id_brand,
+    //   id_uom: element.id_uom,
+    //   qty: element.qty,
+    // })
   }
 
   dataItem.value = itemsTable.value
@@ -196,9 +196,19 @@ const fetchHistoryApproval = async (id) => {
     name_delivered,
     notes_delivered,
     delivered_at,
+    notes_rejected,
+    rejected_at,
+    name_rejected,
   } = res.data.data[0]
 
   dataApproval.value = [
+    name_rejected
+      ? {
+          notes_rejected,
+          rejected_at,
+          name_rejected,
+        }
+      : [],
     name_delivered
       ? {
           name_delivered,
@@ -206,7 +216,7 @@ const fetchHistoryApproval = async (id) => {
           notes_delivered,
         }
       : [],
-    name_approved ? { name_approved, updated_at, notes } : [],
+    name_approved ? { name_approved, approved_at, notes } : [],
   ]
 }
 
@@ -510,10 +520,10 @@ const format_date = (value) => {
                       {{ value.itemNames }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ value.alertQuantity }}
+                      {{ value.qty_requested }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ value.qty_send }}
+                      {{ value.qty_approved }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_delivered }}
