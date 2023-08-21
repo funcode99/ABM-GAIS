@@ -170,7 +170,7 @@ const isEmptyDetail = (items) => {
     ({ attachment, frequency, detail_item_name, nominal_ca, nominal_real }) => {
       if (
         !attachment ||
-        !frequency ||
+        (CAOption.value == '1' && !frequency) ||
         !detail_item_name ||
         !nominal_ca ||
         !nominal_real
@@ -545,7 +545,7 @@ const addNewItem = (item) => {
                     </CurrencyInput>
 
                     <div v-else>
-                      {{ data.nominal_ca }}
+                      {{ format_price(data.nominal_ca) }}
                     </div>
                   </td>
                   <td v-if="CAOption == '1'" style="min-width: 100px">
@@ -561,16 +561,15 @@ const addNewItem = (item) => {
                     /> -->
 
                     <CurrencyInput
-                      v-if="CAOption == 1"
                       v-model="data.nominal_real"
                       :class="inputClass"
                       required
                     >
                     </CurrencyInput>
 
-                    <div v-else>
+                    <!-- <div v-else>
                       {{ data.nominal_real }}
-                    </div>
+                    </div> -->
                   </td>
                   <td>
                     <input
