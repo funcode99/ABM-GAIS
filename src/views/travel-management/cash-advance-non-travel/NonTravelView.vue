@@ -75,6 +75,7 @@ const saveFormHeader = async () => {
     grand_total: dataArr.value.grand_total,
     id_cost_center: dataArr.value.id_cost_center,
   };
+
   const api = await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
   Swal.fire({
     position: "center",
@@ -136,7 +137,7 @@ const saveItems = async (type, id = null, item = null) => {
     const payload = {
       id_ca: idCaNon,
       item_name: itemsItem.value,
-      nominal: itemsNominal.value,
+      nominal: itemsNominal.value.replace(/\./g, ""),
       id_cost_center: itemsCostCentre.value,
       remarks: itemsRemarks.value,
     };
@@ -248,6 +249,18 @@ onBeforeMount(() => {
 const format_date = (value) => {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const formatInputPrice = () => {
+  itemsNominal.value = itemsNominal.value.replace(/\D/g, "");
+  if (itemsNominal.value === "" || itemsNominal.value === "0") {
+    itemsNominal.value = "";
+  } else {
+    const formatteditemsNominal = parseFloat(
+      itemsNominal.value.replace(/\./g, "")
+    );
+    itemsNominal.value = formatteditemsNominal.toLocaleString("id-ID");
   }
 };
 
@@ -506,10 +519,11 @@ const inputClass =
                 >
                 <input
                   v-model="itemsNominal"
-                  type="number"
+                  type="text"
                   name="nominal"
                   :class="inputClass"
                   placeholder="Nominal"
+                  @input="formatInputPrice"
                   required
                 />
               </div>
