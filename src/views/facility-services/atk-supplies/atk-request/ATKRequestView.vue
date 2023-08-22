@@ -201,8 +201,6 @@ const fetchHistoryApproval = async (id) => {
     approved_at,
   } = res.data.data[0]
 
-  console.log(res.data.data[0])
-
   dataApproval.value = [
     name_rejected
       ? {
@@ -210,16 +208,16 @@ const fetchHistoryApproval = async (id) => {
           rejected_at,
           name_rejected,
         }
-      : [],
+      : false,
     name_delivered
       ? {
           name_delivered,
           delivered_at,
           notes_delivered,
         }
-      : [],
-    name_approved ? { name_approved, approved_at, notes } : [],
-  ]
+      : false,
+    name_approved ? { name_approved, approved_at, notes } : false,
+  ].filter(Boolean)
 }
 
 const openModal = (type, id) => {
@@ -379,7 +377,7 @@ const format_date = (value) => {
               />
             </div>
           </div>
-          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
+          <!-- <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm">Notes</span>
               <input
@@ -390,7 +388,7 @@ const format_date = (value) => {
               />
             </div>
             <div class="flex flex-col gap-2"></div>
-          </div>
+          </div> -->
           <!-- TAB & TABLE-->
           <div
             class="bg-blue capitalize font-JakartaSans font-bold text-xs rounded-lg pt-2 mx-[70px]"
