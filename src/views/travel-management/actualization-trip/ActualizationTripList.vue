@@ -1,71 +1,104 @@
 <script setup>
-import { onBeforeMount, ref } from 'vue'
+    import { onBeforeMount, ref, watch } from 'vue'
 
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
+    import Navbar from "@/components/layout/Navbar.vue"
+    import Sidebar from "@/components/layout/Sidebar.vue"
+    import Footer from "@/components/layout/Footer.vue"
 
-import tableContainer from "@/components/table/tableContainer.vue"
-import tableTop from "@/components/table/tableTop.vue"
-import tableData from "@/components/table/tableData.vue"
-import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue"
+    import tableContainer from "@/components/table/tableContainer.vue"
+    import tableTop from "@/components/table/tableTop.vue"
+    import tableData from "@/components/table/tableData.vue"
+    import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue"
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
+    import icon_filter from "@/assets/icon_filter.svg";
+    import icon_reset from "@/assets/icon_reset.svg";
+    import icon_receive from "@/assets/icon-receive.svg";
+    import arrowicon from "@/assets/navbar/icon_arrow.svg";
 
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import editicon from "@/assets/navbar/edit_icon.svg"
+    import deleteicon from "@/assets/navbar/delete_icon.svg"
+    import editicon from "@/assets/navbar/edit_icon.svg"
 
-import Api from "@/utils/Api";
+    import Api from "@/utils/Api"
 
-let showingValue = ref(1)
-let showingValueFrom = ref(0)
-let showingValueTo = ref(0)
-let pageMultiplier = ref(10)
-let paginateIndex = ref(0)
-let totalPage = ref(0)
-let totalData = ref(0)
-let sortedData = ref([])
+    let showingValue = ref(1)
+    let showingValueDuplicate = ref(showingValue.value)
+    let from = ref(0)
+    let to = ref(0)
+    let pageMultiplier = ref(1)
+    let paginateIndex = ref(0)
+    let totalData = ref(0)
 
-let id = ref(0)
+    let perPage = ref(1)
+    let lastPage = ref(0)
+    let searchTable = ref('')
 
-let actualizationTripStatus = ref('All')
+    let sortedData = ref([])
 
-const tableHead = [
-    { title: "No" },
-    { title: "Actualization No" },
-    { title: "Request Trip No" },
-    { title: "Date" },
-    { title: "Requestor" },
-    { title: "Days of Trip" },
-    { title: "Status" },
-]
+    let actualizationTripStatus = ref('All')
+    let additionalData = ref()
 
-const onChangePage = (pageOfItem) => {
-  paginateIndex.value = pageOfItem - 1
-  showingValue.value = pageOfItem
-}
+    const tableHead = [
+        { title: "No" },
+        { title: "Actualization No" },
+        { title: "Request Trip No" },
+        { title: "Date" },
+        { title: "Requestor" },
+        { title: "Days of Trip" },
+        { title: "Status" },
+    ]
+
+    const onChangePage = (pageOfItem) => {
+        paginateIndex.value = pageOfItem - 1
+        showingValue.value = pageOfItem
+    }
 
     const fetchActualizationTrip = async () => {
+
         const token = JSON.parse(localStorage.getItem("token"))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const res = await Api.get(`/actual_trip/get_data/`)
-        console.log(res)
-        sortedData.value = res.data.data
+        const res = await Api.get(`/actual_trip/get_data?page=${paginateIndex.value+1}&perPage=${pageMultiplier.value}`)
+
+        sortedData.value = res.data.data.data
+        additionalData.value = res.data.data
+
+        from.value = additionalData.value.from
+        to.value = additionalData.value.to
+        totalData.value = additionalData.value.total
+        perPage.value = additionalData.value.per_page
+        lastPage.value = additionalData.value.last_page
+
     }
+
+    const filteredItems = (search) => {
+
+        if(typeof search !== 'undefined') {
+        searchTable.value = search
+        fetchActualizationTrip()
+        } 
+        else if (search === '') {
+        searchTable.value = search
+        fetchActualizationTrip()
+        }
+        else {
+        fetchActualizationTrip()
+        }
+
+    }
+
+    watch(showingValue, () => {
+      showingValueDuplicate.value = showingValue.value
+      filteredItems()
+    })
 
     onBeforeMount(() => {
         fetchActualizationTrip()
         //   getSessionForSidebar()
-        //   fetchEmployee()
-        //   fetchGrupCompany()
     })
 
 </script>
 
 <template>
+
     <div class="flex flex-col w-full this h-[100vh]">
         
         <Navbar />
@@ -75,6 +108,7 @@ const onChangePage = (pageOfItem) => {
             <Sidebar class="flex-none" />
 
             <tableContainer>
+
                 <tableTop>
 
                     <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
@@ -147,30 +181,30 @@ const onChangePage = (pageOfItem) => {
 
                         </div>
 
-                        <div class="flex flex-wrap gap-4 items-center pt-6">
-                            <button
-                            class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                            @click="
-                                () => {
-                                onChangePage(1);
-                                }
-                            "
-                            >
-                            <span>
-                                <img :src="icon_filter" class="w-5 h-5" />
-                            </span>
-                            Filter
-                            </button>
-                            <button
-                            class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                            @click="resetData"
-                            >
-                            <span>
-                                <img :src="icon_reset" class="w-5 h-5" />
-                            </span>
-                            Reset
-                            </button>
-                        </div>
+                            <div class="flex flex-wrap gap-4 items-center pt-6">
+                                <button
+                                class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                                @click="
+                                    () => {
+                                    onChangePage(1);
+                                    }
+                                "
+                                >
+                                <span>
+                                    <img :src="icon_filter" class="w-5 h-5" />
+                                </span>
+                                Filter
+                                </button>
+                                <button
+                                class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                                @click="resetData"
+                                >
+                                <span>
+                                    <img :src="icon_reset" class="w-5 h-5" />
+                                </span>
+                                Reset
+                                </button>
+                            </div>
                         </div>
 
                         <div class="pt-6 flex md:mx-0">
@@ -179,8 +213,8 @@ const onChangePage = (pageOfItem) => {
                             type="text"
                             placeholder="Search..."
                             v-model="search"
-                            @keyup="fetchEmployee(onChangePage(1))"
-                        />
+                            />
+                            <!-- @keyup="" -->
                         </div>
                     </div>
 
@@ -190,8 +224,8 @@ const onChangePage = (pageOfItem) => {
                         <h1 class="text-xs font-JakartaSans font-normal">Showing</h1>
                         <select
                             class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                            v-model="pageMultiplier"
-                            @change="fetchEmployee()"
+                            v-model="perPage"
+                            @change="fetchActualizationTrip"
                         >
                             <option>10</option>
                             <option>25</option>
@@ -257,9 +291,9 @@ const onChangePage = (pageOfItem) => {
                                 </td>
 
                                 <td class="flex flex-wrap gap-4 justify-center items-center">
-                                    <router-link to="/request-view" @click="assignRequestTripId(data.id)">
+                                    <router-link to="/actualization-view" @click="assignRequestTripId(data.id)">
                                         <button>
-                                        <img :src="editicon" class="w-6 h-6" />
+                                            <img :src="editicon" class="w-6 h-6" />
                                         </button>
                                     </router-link>
                                     <button @click="deleteData(data.id)">
@@ -295,30 +329,35 @@ const onChangePage = (pageOfItem) => {
                     </tableData>
                     
                     <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
+
                         <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                        Showing {{ showingValueFrom }} to
-                        {{ showingValueTo }}
-                        of {{ totalData }} entries
+                        Showing {{ from }} to
+                        {{ to }}
+                        of {{ sortedData.length }} entries
                         </p>
+
                         <vue-awesome-paginate
-                        :total-items="totalData"
-                        :items-per-page="parseInt(pageMultiplier)"
-                        :on-click="onChangePage"
-                        v-model="showingValue"
-                        :max-pages-shown="4"
-                        :show-breakpoint-buttons="false"
-                        :show-ending-buttons="true"
+                            :total-items="totalData"
+                            :items-per-page="parseInt(perPage)"
+                            :on-click="onChangePage"
+                            v-model="showingValue"
+                            :max-pages-shown="4"
+                            :show-breakpoint-buttons="false"
+                            :show-ending-buttons="true"
                         />
+
                     </div>
 
                 </tableTop>
+
             </tableContainer>
 
             <Footer />
 
         </div>
-
+    
     </div>
+
 </template>
 
 <style scoped>

@@ -53,6 +53,14 @@
     let sortedbyASC = true
     let instanceArray = []
     let editDataUserId = ref(0)
+    let showingValueDuplicate = ref(showingValue.value)
+
+    let addRoleData = ref([])
+    let addCompanyData = ref([])
+    let addEmployeeData = ref([])
+    let addMenuStatusData = ref([])
+    let addAuthoritiesData = ref([])
+    let addSiteByCompanyData = ref([])
 
     //for paginations
     let showingValue = ref(1)
@@ -63,18 +71,22 @@
     let responseStatus = ref('')
     let responseMessage = ref('')
 
+    let from = ref(0)
+    let to = ref(0)
+    let totalData = ref(0)
+    let perPage = ref(1)
+    let lastPage = ref(0)
+    let searchTable = ref('')
+    let additionalData = ref()
+    let idFilter = ref(0)
+    let roleIdFilter = ref(0)
+
     const tableHead = [
       {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Username', jsonData: 'username'},
       {Id: 3, title: 'User Role', jsonData: 'id_role'},
       {Id: 4, title: 'Approval Authoritites', jsonData: 'id_approval_auth'}
     ]
-
-    let from = ref(0)
-    let to = ref(0)
-    let totalData = ref(0)
-    let perPage = ref(1)
-    let lastPage = ref(0)
 
     //for paginations
     const onChangePage = (pageOfItem) => {
@@ -87,7 +99,7 @@
       if(showingValueDuplicate.value > lastPage.value) {
         paginateIndex.value = lastPage.value - 1
         showingValue.value = lastPage.value
-      } 
+      }
       else if (showingValueDuplicate.value < 1) {
         paginateIndex.value = 0
         showingValue.value = 1
@@ -112,8 +124,6 @@
         sortedbyASC = true
       }
     }
-
-    let searchTable = ref('')
 
     const filteredItems = (search) => {
 
@@ -273,8 +283,6 @@
       sidebar.setSidebarRefresh(sessionStorage.getItem('isOpen'))
     }
 
-    let additionalData = ref()
-
     const fetch = async () => {
 
       try {
@@ -298,57 +306,8 @@
         responseMessage.value = error.response.data.message
         sortedData.value = []
       }
+
     }
-
-    let addRoleData = ref([])
-    let addCompanyData = ref([])
-    let addEmployeeData = ref([])
-    let addMenuStatusData = ref([])
-    let addAuthoritiesData = ref([])
-    let addSiteByCompanyData = ref([])
-
-    onBeforeMount(() => {
-      getSessionForSidebar()
-      fetchRoleUtils(instanceArray, addRoleData)
-      fetchCompanyUtils(instanceArray, addCompanyData)
-      fetchUnregisteredEmployee(addEmployeeData)
-
-      fetchMenuStatusUtils(instanceArray, addMenuStatusData)
-      fetchApproverAuthoritiesUserUtils(addAuthoritiesData)
-      fetch()
-    })
-
-    // computed is readonly
-    let showingValueDuplicate = ref(showingValue.value)
-
-    watch(showingValue, () => {
-      showingValueDuplicate.value = showingValue.value
-      filteredItems()
-    })
-
-    watch(searchTable, () => {
-      onChangePage(1)
-    })
-
-    watch(addRoleData, () => {
-      sysconfigFetch.fetchRoleResult = addRoleData.value
-    })
-
-    watch(addMenuStatusData, () => {
-      sysconfigFetch.fetchMenuStatusResult = addMenuStatusData.value 
-    })
-
-    watch(addAuthoritiesData, () => {
-      sysconfigFetch.fetchApproverAuthoritiesResult = addAuthoritiesData.value 
-    })
-    
-    watch(addCompanyData, () => {
-      referenceFetch.fetchCompanyResult = addCompanyData.value
-    })
-
-    watch(addEmployeeData, () => {
-      referenceFetch.fetchEmployeeResult = addEmployeeData.value
-    })
 
     const fetchSiteByCompanyId = async () => {
       setTimeout(runfetch, 500)
@@ -358,16 +317,9 @@
       fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId)
     }
 
-    watch(addSiteByCompanyData, () => {
-      menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
-    })
-
     const deleteCheckedArray = () => {
       deleteCheckedArrayUtils(deleteArray, 'users', sortedData, fetch)
     }
-
-    let idFilter = ref(0)
-    let roleIdFilter = ref(0)
 
     const filterTable = async (id, roleId) => {
 
@@ -409,9 +361,51 @@
         fetch()
     }
 
-    const inputStylingClass = 'py-2 px-2 w-20 text-center border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm font-JakartaSans font-semibold text-base'
+    watch(showingValue, () => {
+      showingValueDuplicate.value = showingValue.value
+      filteredItems()
+    })
 
-let coeg = ref(0)
+    watch(searchTable, () => {
+      onChangePage(1)
+    })
+
+    watch(addRoleData, () => {
+      sysconfigFetch.fetchRoleResult = addRoleData.value
+    })
+
+    watch(addMenuStatusData, () => {
+      sysconfigFetch.fetchMenuStatusResult = addMenuStatusData.value 
+    })
+
+    watch(addAuthoritiesData, () => {
+      sysconfigFetch.fetchApproverAuthoritiesResult = addAuthoritiesData.value 
+    })
+    
+    watch(addCompanyData, () => {
+      referenceFetch.fetchCompanyResult = addCompanyData.value
+    })
+
+    watch(addEmployeeData, () => {
+      referenceFetch.fetchEmployeeResult = addEmployeeData.value
+    })
+
+    watch(addSiteByCompanyData, () => {
+      menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value
+    })
+
+    onBeforeMount(() => {
+      getSessionForSidebar()
+      fetchRoleUtils(instanceArray, addRoleData)
+      fetchCompanyUtils(instanceArray, addCompanyData)
+      fetchUnregisteredEmployee(addEmployeeData)
+
+      fetchMenuStatusUtils(instanceArray, addMenuStatusData)
+      fetchApproverAuthoritiesUserUtils(addAuthoritiesData)
+      fetch()
+    })
+
+    const inputStylingClass = 'py-2 px-2 w-20 text-center border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm font-JakartaSans font-semibold text-base'
 
 </script>
 
@@ -436,7 +430,7 @@ let coeg = ref(0)
           :title="'User'" 
           :numberSelected="deleteArray.length" 
           @delete-selected-data="deleteCheckedArray()"
-          @increase-user="addNewUser" 
+          @increase-user="addNewUser"
           @do-search="filteredItems"
           @reset-search="filteredItems"
           @changeShowing="fillPageMultiplier"
@@ -604,9 +598,10 @@ let coeg = ref(0)
               </table>
 
             </div>
-
+            
             <!-- PAGINATION -->
             <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
+
               <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
                   Showing {{ from }} to {{ to }} of {{ totalData }}
               </p>
@@ -614,9 +609,11 @@ let coeg = ref(0)
               <div class="flex gap-5">
                 
                 <div class="flex gap-2 items-center">
+
                   <label for="pagination-sequence">
 
                   </label>
+
                   <input
                     id="pagination-sequence"
                     v-model="showingValueDuplicate"
@@ -641,6 +638,7 @@ let coeg = ref(0)
                   :show-breakpoint-buttons="false"
                   :show-ending-buttons="true"
                 />
+
               </div>
 
             </div>

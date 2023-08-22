@@ -97,7 +97,6 @@
     }
 
     let activitiesId = ref(0)
-
     let fetchByTripIdData = ref([]) 
 
     const fetchByTripId = async () => {
@@ -114,6 +113,7 @@
 
         fetchActivitiesByActId()
         fetchTripInfoByActId()
+
     }
 
     const fetchTripInfoByActId = async () => {
@@ -129,15 +129,18 @@
     }
 
     const editTripInfoField = async (tripInfoDetail, index) => {
+
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.post(`/actual_trip/update_activities/${activitiesDetail[index].id_act}`, {
-            id_act: activitiesDetail[index].id_act,
-            act_date: activitiesDetail[index].act_date,
-            activies: activitiesDetail[index].activities
+
+        const api = await Api.post(`/actual_trip/update_activities/${tripInfoDetail[index].id_act}`, {
+            id_act: tripInfoDetail[index].id_act,
+            act_date: tripInfoDetail[index].act_date,
+            activies: tripInfoDetail[index].activities
         })
-        fetchActivitiesByActId()
+        fetchTripInfoByActId()
         console.log(api)
+
     }
 
     const submitTripInfoField = async (tripInfoDetail, index) => {
@@ -299,8 +302,6 @@
 
             </div>
 
-            {{ fetchByTripIdData }}
-
             <div class="px-5">
 
                 <div class="w-full">
@@ -349,6 +350,27 @@
                             </li>
                         </ul>
 
+                    </div>
+
+                    <div class="flex justify-center items-start gap-1">
+               
+                                <button 
+                                    type="button" 
+                                    @click="data.from_fetch === true ? 
+                                        editTripInfoField(activitiesDetail, index) : 
+                                        submitTripInfoField(activitiesDetail, index)"
+                                    >
+                                    <img :src="editIcon" class="w-6 h-6" />
+                                </button>
+                                <button 
+                                    type="button"
+                                    @click="data.from_fetch === true ? 
+                                    deleteTripInfoField(index, activitiesDetail) : 
+                                    removeTripInfoField(index, activitiesDetail)"
+                                >
+                                    <img :src="deleteicon" class="w-6 h-6" />
+                                </button>
+                         
                     </div>
 
                 </div>

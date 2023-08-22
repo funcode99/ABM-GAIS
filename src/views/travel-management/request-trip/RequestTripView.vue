@@ -4,7 +4,6 @@
     import miniABM from '@/assets/mini-abm.png'
     import userImg from '@/assets/3-user.png'
     import deleteDocumentIcon from '@/assets/delete_document_icon.png'
-    import walletImg from '@/assets/wallet.png'
 
     import Api from '@/utils/Api'
 
