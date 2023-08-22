@@ -24,7 +24,7 @@ import fetchMenuStatusUtils from "@/utils/Fetch/System-Configuration/fetchMenuSt
 import fetchApproverAuthoritiesUserUtils from "@/utils/Fetch/System-Configuration/fetchApproverAuthoritiesUser.js";
 
 // import untuk user table
-import { ref, computed, onBeforeMount, watch } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import arrowicon from "@/assets/navbar/icon_arrow.svg";
 import Swal from "sweetalert2";
 import Api from "@/utils/Api";
@@ -63,6 +63,24 @@ let paginateIndex = ref(0);
 let responseStatus = ref("");
 let responseMessage = ref("");
 
+let addRoleData = ref([]);
+let addCompanyData = ref([]);
+let addEmployeeData = ref([]);
+let addMenuStatusData = ref([]);
+let addAuthoritiesData = ref([]);
+let addSiteByCompanyData = ref([]);
+
+let from = ref(0);
+let to = ref(0);
+let totalData = ref(0);
+let perPage = ref(1);
+let lastPage = ref(0);
+let searchTable = ref("");
+let additionalData = ref();
+let showingValueDuplicate = ref(showingValue.value);
+let idFilter = ref(0);
+let roleIdFilter = ref(0);
+
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
   { Id: 2, title: "Username", jsonData: "username" },
@@ -70,11 +88,9 @@ const tableHead = [
   { Id: 4, title: "Approval Authoritites", jsonData: "id_approval_auth" },
 ];
 
-let from = ref(0);
-let to = ref(0);
-let totalData = ref(0);
-let perPage = ref(1);
-let lastPage = ref(0);
+const deleteCheckedArray = () => {
+  deleteCheckedArrayUtils(deleteArray, "users", sortedData, fetch);
+};
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -111,8 +127,6 @@ const sortList = (sortBy) => {
   }
 };
 
-let searchTable = ref("");
-
 const filteredItems = (search) => {
   // console.log(typeof search)
 
@@ -130,6 +144,50 @@ const filteredItems = (search) => {
 const fillPageMultiplier = (value) => {
   // ref harus pake .value biar ngaruh sama reactive :')
   pageMultiplier.value = value;
+  fetch();
+};
+
+const filterTable = async (id, roleId) => {
+  if (typeof id !== "number") {
+    idFilter.value = 0;
+  } else {
+    idFilter.value = id;
+  }
+
+  if (typeof roleId !== "number") {
+    roleIdFilter.value = 0;
+  } else {
+    roleIdFilter.value = roleId;
+  }
+
+  fetch();
+};
+
+const exportToExcel = () => {
+  exportExcel(
+    "User Data",
+    tableHead,
+    sortedData,
+    "no",
+    "username",
+    "role_name",
+    "auth_name"
+  );
+};
+
+const fetchEmployeeInfo = (employeeId) => {
+  employeeDataIndexNumber.value = addEmployeeData.value.findIndex((item) => {
+    return item.id == employeeId;
+  });
+
+  employeeData.value = addEmployeeData.value[employeeDataIndexNumber.value];
+  referenceFetch.fetchIndividualEmployeeResult = employeeData.value;
+};
+
+const resetFilterSearchThenFetch = () => {
+  idFilter.value = 0;
+  roleIdFilter.value = 0;
+  searchTable.value = "";
   fetch();
 };
 
@@ -258,7 +316,13 @@ const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
 
-let additionalData = ref();
+const fetchSiteByCompanyId = async () => {
+  setTimeout(runfetch, 500);
+};
+
+const runfetch = () => {
+  fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId);
+};
 
 const fetch = async () => {
   try {
@@ -287,27 +351,6 @@ const fetch = async () => {
     sortedData.value = [];
   }
 };
-
-let addRoleData = ref([]);
-let addCompanyData = ref([]);
-let addEmployeeData = ref([]);
-let addMenuStatusData = ref([]);
-let addAuthoritiesData = ref([]);
-let addSiteByCompanyData = ref([]);
-
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchRoleUtils(instanceArray, addRoleData);
-  fetchCompanyUtils(instanceArray, addCompanyData);
-  fetchUnregisteredEmployee(addEmployeeData);
-
-  fetchMenuStatusUtils(instanceArray, addMenuStatusData);
-  fetchApproverAuthoritiesUserUtils(addAuthoritiesData);
-  fetch();
-});
-
-// computed is readonly
-let showingValueDuplicate = ref(showingValue.value);
 
 watch(showingValue, () => {
   showingValueDuplicate.value = showingValue.value;
@@ -338,73 +381,24 @@ watch(addEmployeeData, () => {
   referenceFetch.fetchEmployeeResult = addEmployeeData.value;
 });
 
-const fetchSiteByCompanyId = async () => {
-  setTimeout(runfetch, 500);
-};
-
-const runfetch = () => {
-  fetchSiteByCompanyIdUtils(addSiteByCompanyData, menuAccessStore.companyId);
-};
-
 watch(addSiteByCompanyData, () => {
   menuAccessStore.fetchSiteByCompanyResult = addSiteByCompanyData.value;
 });
 
-const deleteCheckedArray = () => {
-  deleteCheckedArrayUtils(deleteArray, "users", sortedData, fetch);
-};
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchRoleUtils(instanceArray, addRoleData);
+  fetchCompanyUtils(instanceArray, addCompanyData);
+  fetchUnregisteredEmployee(addEmployeeData);
 
-let idFilter = ref(0);
-let roleIdFilter = ref(0);
-
-const filterTable = async (id, roleId) => {
-  if (typeof id !== "number") {
-    idFilter.value = 0;
-  } else {
-    idFilter.value = id;
-  }
-
-  if (typeof roleId !== "number") {
-    roleIdFilter.value = 0;
-  } else {
-    roleIdFilter.value = roleId;
-  }
-
+  fetchMenuStatusUtils(instanceArray, addMenuStatusData);
+  fetchApproverAuthoritiesUserUtils(addAuthoritiesData);
   fetch();
-};
-
-const exportToExcel = () => {
-  exportExcel(
-    "User Data",
-    tableHead,
-    sortedData,
-    "no",
-    "username",
-    "role_name",
-    "auth_name"
-  );
-};
-
-const fetchEmployeeInfo = (employeeId) => {
-  employeeDataIndexNumber.value = addEmployeeData.value.findIndex((item) => {
-    return item.id == employeeId;
-  });
-
-  employeeData.value = addEmployeeData.value[employeeDataIndexNumber.value];
-  referenceFetch.fetchIndividualEmployeeResult = employeeData.value;
-};
-
-const resetFilterSearchThenFetch = () => {
-  idFilter.value = 0;
-  roleIdFilter.value = 0;
-  searchTable.value = "";
-  fetch();
-};
+});
 
 const inputStylingClass =
   "py-2 px-2 w-20 text-center border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm font-JakartaSans font-semibold text-base";
 
-let coeg = ref(0);
 </script>
 
 <template>
