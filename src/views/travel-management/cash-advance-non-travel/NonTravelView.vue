@@ -28,15 +28,12 @@ const router = useRouter();
 
 let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
 
-let lockScrollbar = ref(false);
 let dataArr = ref([]);
 let dataItem = ref([]);
 let dataApproval = ref([]);
 
-let lengthCounter = 0;
-let tempTotal = 0;
+let Total = 0;
 let idCaNon = route.params.id;
-let statusForm = "";
 let listCurrency = ref([]);
 let listCostCentre = ref([]);
 let idEdit = ref("");
@@ -58,9 +55,14 @@ const listStatus = [
   { id: 10, status: "Completed", value: "alert alert-success" },
 ];
 
+//HEADERS START
 const edit = () => {
   visibleHeader.value = true;
-  statusForm = "edit-header";
+};
+
+const cancelHeader = () => {
+  visibleHeader.value = false;
+  editItem.value = false;
 };
 
 const saveFormHeader = async () => {
@@ -82,105 +84,9 @@ const saveFormHeader = async () => {
     showConfirmButton: false,
     timer: 1500,
   });
+  fetchDataItem(idCaNon);
   visibleHeader.value = false;
   router.push({ path: `/viewcashadvancenontravel/${idCaNon}` });
-};
-
-const cancelHeader = () => {
-  visibleHeader.value = false;
-  editItem.value = false;
-};
-
-const removeItems = async (id) => {
-  const api = await Api.delete(`cash_advance/delete_data_detail/${id}`);
-  if (api.data.success == true) {
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: api.data.message,
-      showConfirmButton: false,
-      timer: 1500,
-    });
-    update_nominal();
-  }
-};
-
-const update_nominal = async () => {
-  const res = await Api.get(`/cash_advance/get_by_cash_id/${idCaNon}`);
-  dataItem.value = res.data.data;
-
-  if (res.data.success == true) {
-    tempTotal = 0;
-    dataItem.value.forEach((dt) => {
-      tempTotal += Number(dt.nominal);
-    });
-
-    const payload = {
-      id_employee: selectedEmployee,
-      id_request_trip: 2,
-      event: dataArr.value.event,
-      date: dataArr.value.date,
-      id_currency: dataArr.value.id_currency,
-      grand_total: tempTotal,
-    };
-
-    await Api.post(`cash_advance/update_data/${idCaNon}`, payload);
-    dataArr.value.grand_total = tempTotal;
-  }
-};
-
-const editItems = (id) => {
-  idEdit.value = id;
-  editItem.value = true;
-};
-
-const saveItems = async (type, id = null, item = null) => {
-  if (type == "edit") {
-    const api = await Api.post(`cash_advance/update_data_detail/${id}`, item);
-    if (api.data.success == true) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: api.data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      update_nominal();
-      idEdit.value = "";
-    }
-  } else if (type == "create") {
-    const payload = {
-      id_ca: idCaNon,
-      item_name: itemsItem.value,
-      nominal: itemsNominal.value,
-      id_cost_center: itemsCostCentre.value,
-      remarks: itemsRemarks.value,
-    };
-
-    const api = await Api.post(`cash_advance/store_detail`, payload);
-    if (api.data.success == true) {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: api.data.message,
-        showConfirmButton: false,
-        timer: 1500,
-      });
-      update_nominal();
-      resetItems();
-    }
-  }
-
-  editItem.value = false;
-  addItem.value = false;
-};
-
-const addItems = () => {
-  addItem.value = true;
-};
-
-const cancelItems = () => {
-  addItem.value = false;
 };
 
 const submit = async () => {
@@ -213,6 +119,82 @@ const submit = async () => {
     });
 };
 
+//DETAIL ITEM HEADERS
+const saveItems = async (type, id = null, item = null) => {
+  if (type == "edit") {
+    const api = await Api.post(`cash_advance/update_data_detail/${id}`, item);
+    if (api.data.success == true) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: api.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      idEdit.value = "";
+    }
+  } else if (type == "create") {
+    const payload = {
+      id_ca: idCaNon,
+      item_name: itemsItem.value,
+      nominal: itemsNominal.value.replace(/\./g, ""),
+      id_cost_center: dataArr.value.id_cost_center,
+      remarks: itemsRemarks.value,
+    };
+
+    const api = await Api.post(`cash_advance/store_detail`, payload);
+    if (api.data.success == true) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: api.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      fetchDataItem(idCaNon);
+      resetItems();
+    }
+  }
+
+  editItem.value = false;
+  addItem.value = false;
+};
+
+const addItems = () => {
+  addItem.value = true;
+};
+
+const cancelItems = () => {
+  addItem.value = false;
+};
+
+const resetItems = async () => {
+  itemsItem.value = "";
+  itemsNominal.value = "";
+  itemsCostCentre.value = "";
+  itemsRemarks.value = "";
+};
+
+//DETAIL ITEM IN TABLE
+const removeItems = async (id) => {
+  const api = await Api.delete(`cash_advance/delete_data_detail/${id}`);
+  if (api.data.success == true) {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: api.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    fetchDataItem(idCaNon);
+  }
+};
+
+const editItems = (id) => {
+  idEdit.value = id;
+  editItem.value = true;
+};
+
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
 };
@@ -228,8 +210,12 @@ const fetchDataById = async (id) => {
 };
 
 const fetchDataItem = async (id) => {
+  Total = 0;
   const res = await Api.get(`/cash_advance/get_by_cash_id/${id}`);
   dataItem.value = res.data.data;
+  dataItem.value.forEach((dt) => {
+    Total += Number(dt.nominal);
+  });
 };
 
 const fetchCurrency = async () => {
@@ -260,16 +246,21 @@ onBeforeMount(() => {
   fetchCostCentre();
 });
 
-const resetItems = async () => {
-  itemsItem.value = "";
-  itemsNominal.value = "";
-  itemsCostCentre.value = "";
-  itemsRemarks.value = "";
-};
-
 const format_date = (value) => {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const formatInputPrice = () => {
+  itemsNominal.value = itemsNominal.value.replace(/\D/g, "");
+  if (itemsNominal.value === "" || itemsNominal.value === "0") {
+    itemsNominal.value = "";
+  } else {
+    const formatteditemsNominal = parseFloat(
+      itemsNominal.value.replace(/\./g, "")
+    );
+    itemsNominal.value = formatteditemsNominal.toLocaleString("id-ID");
   }
 };
 
@@ -379,7 +370,7 @@ const inputClass =
             </button>
           </div>
 
-          <!-- FORM READ ONLY HEADERS-->
+          <!-- FOR FORM HEADERS-->
           <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7">
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
@@ -411,7 +402,7 @@ const inputClass =
                 type="text"
                 :disabled="!visibleHeader"
                 v-model="dataArr.event"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
             </div>
 
@@ -424,7 +415,7 @@ const inputClass =
                 :min="new Date().toISOString().substr(0, 10)"
                 :disabled="!visibleHeader"
                 v-model="dataArr.date"
-                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1"
               />
             </div>
 
@@ -453,7 +444,7 @@ const inputClass =
               <input
                 type="text"
                 disabled
-                :value="format_price(dataArr.grand_total)"
+                :value="format_price(Total)"
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -479,7 +470,7 @@ const inputClass =
             </div>
           </div>
 
-          <!-- TAB & TABLE-->
+          <!-- DETAIL ITEMS FOR HEADERS -->
           <div
             class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7 pt-7 overflow-x-hidden"
           >
@@ -499,7 +490,6 @@ const inputClass =
             </button>
           </div>
 
-          <!-- detail item di tabel -->
           <div v-if="addItem && !editItem" class="mx-[70px]">
             <div class="mx-3">
               <p class="font-JakartaSans font-medium text-sm pb-2">
@@ -529,10 +519,11 @@ const inputClass =
                 >
                 <input
                   v-model="itemsNominal"
-                  type="number"
+                  type="text"
                   name="nominal"
                   :class="inputClass"
                   placeholder="Nominal"
+                  @input="formatInputPrice"
                   required
                 />
               </div>
@@ -543,7 +534,12 @@ const inputClass =
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Cost Center<span class="text-red">*</span></label
                 >
-                <select v-model="itemsCostCentre" :class="inputClass" required>
+                <select
+                  v-model="dataArr.id_cost_center"
+                  :class="inputClass"
+                  required
+                  disabled
+                >
                   <option disabled selected>Cost Center</option>
                   <option
                     v-for="data in listCostCentre"
@@ -586,7 +582,9 @@ const inputClass =
             </div>
           </div>
 
+          <!-- FOR TAB & DETAIL ITEMS IN TABLE-->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
+            <!-- FOR TAB -->
             <div class="flex items-center">
               <div
                 class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
@@ -633,7 +631,7 @@ const inputClass =
               </div>
             </div>
 
-            <!-- table detail -->
+            <!-- FOR DETAIL ITEMS IN TABLE -->
             <div class="overflow-x-auto bg-white">
               <table class="table table-compact w-full" v-if="tabId == 1">
                 <thead class="font-JakartaSans font-bold text-xs">
@@ -692,7 +690,8 @@ const inputClass =
                         v-else
                         v-model="item.id_cost_center"
                         required
-                        :disabled="item.id == idEdit ? false : true"
+                        disabled
+                        class="bg-white border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                       >
                         <option
                           v-for="data in listCostCentre"
@@ -778,7 +777,7 @@ const inputClass =
                 </tbody>
               </table>
 
-              <!-- tab approval -->
+              <!-- FOR TAB APPROVAL -->
               <div v-if="tabId == 2">
                 <HistoryApproval
                   :data-approval="dataApproval"
@@ -789,24 +788,13 @@ const inputClass =
           </div>
         </tableTop>
       </tableContainer>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+
+      <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-.status-revision {
-  background: #ef3022;
-}
-
-.status-default {
-  background: #2970ff;
-}
-
 :disabled {
   background: #eeeeee;
   border-color: #eeeeee;
