@@ -34,6 +34,10 @@ const atkStatus = {
     statusLevel: 3,
     class: "bg-[#00c851] border-[#00c851]",
   },
+  Rejected: {
+    statusLevel: 3,
+    class: "bg-red border-red",
+  },
 }
 
 let dataApproval = ref([])
