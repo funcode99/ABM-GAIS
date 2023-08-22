@@ -69,31 +69,81 @@ let classWaiting =
         ></div>
       </div>
 
-      <div class="bg-blue bg-opacity-10 p-4 rounded-lg mb-5">
+      <div class="bg-blue bg-opacity-10 p-4 rounded-lg mb-5 w-full">
         <div v-if="typeApproval == 'ATK'">
-          <p class="mb-2">
-            <span v-if="data.code_status_doc == 9" class="font-bold"
-              >Rejected By:
-            </span>
-            <span v-else>Approved by:</span>
-            <span class="font-normal">{{ data.name_approved }}</span>
-          </p>
-          <p class="mb-2">
-            <span v-if="data.code_status_doc == 9" class="font-bold"
-              >Rejected at:
-            </span>
-            <span v-else>Approved at:</span>
-            <span v-if="data.updated_at" class="font-normal">
-              {{ format_date(data.updated_at.split(" ")[0]) }}
-            </span>
-            <span v-if="data.updated_at" class="ml-1 font-normal">
-              {{ data.updated_at.split(" ")[1] }}
-            </span>
-          </p>
-          <p class="text-gray-700 mt-1">
-            <div class="font-bold">Notes: </div>
-            <div style="white-space: pre" class="font-normal">{{ data.notes }}</div>
-          </p>
+          <div>
+            <div class="mb-2">
+              <div v-if="data?.name_rejected" class="font-bold">
+                <span>Rejected By:</span>
+                <span class="font-normal">{{ data.name_delivered }}</span>
+              </div>
+
+              <div v-if="data?.name_delivered" class="font-bold">
+                <span>Delivered By:</span>
+                <span class="font-normal">{{ data.name_delivered }}</span>
+              </div>
+
+              <div v-if="data?.name_approved">
+                <span>Approved by: </span>
+                <span class="font-normal">{{ data.name_approved }}</span>
+              </div>
+            </div>
+            <div class="mb-2">
+              <div v-if="data?.rejected_at">
+                <span>Rejected at: </span>
+                <span v-if="data.rejected_at" class="font-normal">
+                  {{ format_date(data.rejected_at.split(" ")[0]) }}
+                </span>
+                <span v-if="data.rejected_at" class="ml-1 font-normal">
+                  {{ data.rejected_at.split(" ")[1] }}
+                </span>
+              </div>
+
+              <div v-if="data?.delivered_at">
+                <span>Delivered at: </span>
+                <span v-if="data.delivered_at" class="font-normal">
+                  {{ format_date(data.delivered_at.split(" ")[0]) }}
+                </span>
+                <span v-if="data.delivered_at" class="ml-1 font-normal">
+                  {{ data.delivered_at.split(" ")[1] }}
+                </span>
+              </div>
+              <!-- <span v-if="data.code_status_doc == 9" class="font-bold"
+                >Rejected at:
+              </span> -->
+              <div v-if="data?.approved_at">
+                <span>Approved at: </span>
+                <span v-if="data.approved_at" class="font-normal">
+                  {{ format_date(data.approved_at.split(" ")[0]) }}
+                </span>
+                <span v-if="data.approved_at" class="ml-1 font-normal">
+                  {{ data.approved_at.split(" ")[1] }}
+                </span>
+              </div>
+            </div>
+            <div class="text-gray-700 mt-1">
+              <div v-if="data?.notes_rejected">
+                <div class="font-bold">Notes Rejected:</div>
+                <div style="white-space: pre" class="font-normal">
+                  {{ data.notes_rejected }}
+                </div>
+              </div>
+
+              <div v-if="data?.notes_delivered">
+                <div class="font-bold">Notes Delivery:</div>
+                <div style="white-space: pre" class="font-normal">
+                  {{ data.notes_delivered }}
+                </div>
+              </div>
+
+              <div v-if="data?.notes">
+                <div class="font-bold">Notes:</div>
+                <div style="white-space: pre" class="font-normal">
+                  {{ data.notes }}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div v-else>
@@ -104,12 +154,12 @@ let classWaiting =
           <p class="text-gray-500" v-if="data.date">
             {{ data.date.split(" ")[1] }}
           </p>
-          <p class="text-gray-700 mt-1" v-if="data.date">
-            Notes: 
+          <div class="text-gray-700 mt-1" v-if="data.date">
+            Notes:
             <div>
               <span style="white-space: pre">{{ data.notes }}</span>
             </div>
-          </p>
+          </div>
           <p class="text-gray-700 mt-1" v-if="data.date">
             Attachment:
             <a @click="openDoc(data.path)" class="text-blue cursor-pointer">

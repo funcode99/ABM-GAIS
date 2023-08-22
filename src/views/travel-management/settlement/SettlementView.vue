@@ -1,43 +1,61 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue"
-import Sidebar from "@/components/layout/Sidebar.vue"
-import Footer from "@/components/layout/Footer.vue"
-import DataNotFound from "@/components/element/dataNotFound.vue"
-import Swal from "sweetalert2"
-import HistoryApproval from "@/components/approval/HistoryApproval.vue"
+import Navbar from "@/components/layout/Navbar.vue";
+import Sidebar from "@/components/layout/Sidebar.vue";
+import Footer from "@/components/layout/Footer.vue";
 
-import arrow from "@/assets/request-trip-view-arrow.png"
-import editicon from "@/assets/navbar/edit_icon.svg"
-import deleteicon from "@/assets/navbar/delete_icon.svg"
-import Api from "@/utils/Api"
-import moment from "moment"
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
 
-import CurrencyInput from "@/components/atomics/CurrencyInput.vue"
+import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
+import DataNotFound from "@/components/element/dataNotFound.vue";
+import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
-import { ref, onBeforeMount } from "vue"
-import { useSidebarStore } from "@/stores/sidebar.js"
-import { useRoute, useRouter } from "vue-router"
+import CurrencyInput from "@/components/atomics/CurrencyInput.vue";
 
-const sidebar = useSidebarStore()
-const route = useRoute()
-const router = useRouter()
+import arrow from "@/assets/request-trip-view-arrow.png";
+import editicon from "@/assets/navbar/edit_icon.svg";
 
-let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
+import Api from "@/utils/Api";
+import moment from "moment";
+import Swal from "sweetalert2";
 
-let lockScrollbar = ref(false)
-let dataArr = ref([])
-let dataItem = ref([])
-let dataApproval = ref([])
-let tabId = ref(1)
-let lengthCounter = 0
-let tempTotal = 0
-let idSettlement = route.params.id
-let statusForm = ""
-let idEdit = ref("")
-let visibleHeader = ref(false)
-let editItem = ref(false)
-let addItem = ref(false)
-let type = ref("")
+import { ref, onBeforeMount } from "vue";
+import { useSidebarStore } from "@/stores/sidebar.js";
+import { useRoute, useRouter } from "vue-router";
+
+const sidebar = useSidebarStore();
+const route = useRoute();
+const router = useRouter();
+
+let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
+
+let dataArr = ref([]);
+let dataItem = ref([]);
+let dataApproval = ref([]);
+
+let lockScrollbar = ref(false);
+let tabId = ref(1);
+let lengthCounter = 0;
+let tempTotal = 0;
+let idSettlement = route.params.id;
+let statusForm = "";
+let idEdit = ref("");
+let visibleHeader = ref(false);
+let editItem = ref(false);
+let addItem = ref(false);
+let type = ref("");
+let alert = ref([]);
+
+let filename = ref(null);
+const selectedImage = ref(null);
+
+const listStatus = [
+  { id: 0, status: "Draft", value: "alert bg-[#8d8e8f]" },
+  { id: 1, status: "Waiting Approval", value: "alert alert-warning" },
+  { id: 2, status: "Revision", value: "alert alert-error" },
+  { id: 3, status: "Rejected", value: "alert alert-error" },
+  { id: 10, status: "Completed", value: "alert alert-success" },
+];
 
 const tableHeadDetailsItem = [
   { id: 1, title: "Item" },
@@ -47,7 +65,7 @@ const tableHeadDetailsItem = [
   { id: 5, title: "Total" },
   { id: 6, title: "Total Pemakaian Real" },
   { id: 7, title: "Attachment" },
-]
+];
 
 const tableHeadDetailsItemNon = [
   { id: 1, title: "Item" },
@@ -55,57 +73,28 @@ const tableHeadDetailsItemNon = [
   { id: 4, title: "Nominal" },
   { id: 5, title: "Nominal Pemakaian Real" },
   { id: 6, title: "Attachment" },
-]
-
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY")
-  }
-}
-
-const format_price = (value) => {
-  if (!value) {
-    return "0.00"
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",")
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
-}
-const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get(`/settlement/get_data/${id}`)
-  dataArr.value = res.data.data[0]
-  generateType(dataArr.value.total_real, dataArr.value.total_ca)
-  fetchDataItem(id)
-  fetchHistoryApproval(id)
-}
-
-const fetchDataItem = async (id) => {
-  const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`)
-  dataItem.value = res.data.data
-}
+];
 
 const edit = () => {
-  visibleHeader.value = true
-  statusForm = "edit-header"
+  visibleHeader.value = true;
+  statusForm = "edit-header";
   dataItem.value.forEach((dt) => {
-    tempTotal += Number(dt.nominal)
-  })
-  dataArr.value.grand_total = tempTotal
-}
+    tempTotal += Number(dt.nominal);
+  });
+  dataArr.value.grand_total = tempTotal;
+};
 
 const cancelHeader = () => {
-  visibleHeader.value = false
-  editItem.value = false
-  idEdit.value = ""
-
-  cancelNewData()
-}
+  visibleHeader.value = false;
+  editItem.value = false;
+  idEdit.value = "";
+  cancelNewData();
+};
 
 const editItems = (id) => {
-  idEdit.value = id
-  editItem.value = true
-}
+  idEdit.value = id;
+  editItem.value = true;
+};
 
 const saveItems = async (type, id = null, item = null) => {
   const payload = {
@@ -116,7 +105,7 @@ const saveItems = async (type, id = null, item = null) => {
     id_settlement: idSettlement,
     detail_item_name: item.detail_item_name,
     frequency: item.frequency,
-  }
+  };
   if (
     !payload.attachment ||
     !payload.nominal_ca ||
@@ -128,66 +117,66 @@ const saveItems = async (type, id = null, item = null) => {
       text: "Item Details cannot empty or 0 value",
       icon: "error",
       showConfirmButton: true,
-    })
-    return
+    });
+    return;
   }
 
   if (payload.id != "new") {
-    const api = await Api.post(`settlement/update_detail/${id}`, payload)
+    const api = await Api.post(`settlement/update_detail/${id}`, payload);
     Swal.fire({
       position: "center",
       icon: "success",
       title: api.data.message,
       showConfirmButton: false,
       timer: 1500,
-    })
-    fetchDataById(idSettlement)
-    router.push({ path: `/settlement/${idSettlement}` })
+    });
+    fetchDataById(idSettlement);
+    router.push({ path: `/settlement/${idSettlement}` });
   } else {
-    delete payload.id
+    delete payload.id;
 
-    const api = await Api.post(`settlement/store_detail`, payload)
+    const api = await Api.post(`settlement/store_detail`, payload);
     Swal.fire({
       position: "center",
       icon: "success",
       title: api.data.message,
       showConfirmButton: false,
       timer: 1500,
-    })
-    fetchDataById(idSettlement)
+    });
+    fetchDataById(idSettlement);
   }
-  editItem.value = false
-  addItem.value = false
-  idEdit.value = ""
-  fetchDataItem(idSettlement)
-}
+  editItem.value = false;
+  addItem.value = false;
+  idEdit.value = "";
+  fetchDataItem(idSettlement);
+};
 
 const submit = async () => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   Api.post(`settlement/submit/${idSettlement}`)
     .then((res) => {
-      let status = res.data.success == true ? "success" : "error"
+      let status = res.data.success == true ? "success" : "error";
       Swal.fire({
         position: "center",
         icon: status,
         title: res.data.message,
         showConfirmButton: false,
         timer: 1500,
-      })
-      fetchDataById(idSettlement)
+      });
+      fetchDataById(idSettlement);
     })
     .catch((e) => {
-      console.log(e)
+      console.log(e);
       Swal.fire({
         position: "center",
         icon: "error",
         title: e.error,
         text: "Unable to Submit Settlement",
         showConfirmButton: false,
-      })
-    })
-}
+      });
+    });
+};
 
 const addNewItem = (item) => {
   const default_item = {
@@ -198,81 +187,96 @@ const addNewItem = (item) => {
     id_settlement: idSettlement,
     detail_item_name: null,
     frequency: null,
-  }
+  };
 
-  dataItem.value.unshift({ ...default_item })
+  dataItem.value.unshift({ ...default_item });
 
-  editItem.value = true
-  idEdit.value = "new"
-}
+  editItem.value = true;
+  idEdit.value = "new";
+};
 
 const cancelNewData = () => {
-  const newDataIndex = dataItem.value.findIndex(({ id }) => id == "new")
+  const newDataIndex = dataItem.value.findIndex(({ id }) => id == "new");
 
   if (newDataIndex >= 0) {
-    dataItem.value.splice(newDataIndex, 1)
+    dataItem.value.splice(newDataIndex, 1);
   }
-}
+};
 
 const generateType = (after, before) => {
   if (parseInt(after) > parseInt(before)) {
-    type.value = "Claim"
+    type.value = "Claim";
   } else if (parseInt(after) < parseInt(before)) {
-    type.value = "Refund"
+    type.value = "Refund";
   } else {
-    type.value = "Equal"
+    type.value = "Equal";
   }
-}
-
-// image
-const selectedImage = ref(null)
-let filename = ref(null)
-
-const onFileSelected = (event, id, nominal) => {
-  const file = event.target.files[0]
-  selectedImage.value = file ? file : null
-  filename.value = file.name
-}
-// end
-
-const fetchHistoryApproval = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  const res = await Api.get(`/settlement/approval_history/${id}`)
-  dataApproval.value = res.data.data
-}
-
-onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchDataById(idSettlement)
-})
+};
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
-}
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/settlement/get_data/${id}`);
+  dataArr.value = res.data.data[0];
+  alert = listStatus.find((item) => item.status === dataArr.value.status);
+  generateType(dataArr.value.total_real, dataArr.value.total_ca);
+  fetchDataItem(id);
+  fetchHistoryApproval(id);
+};
+
+const fetchDataItem = async (id) => {
+  const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`);
+  dataItem.value = res.data.data;
+};
+
+const fetchHistoryApproval = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/settlement/approval_history/${id}`);
+  dataApproval.value = res.data.data;
+};
+
+onBeforeMount(() => {
+  getSessionForSidebar();
+  fetchDataById(idSettlement);
+});
+
+const onFileSelected = (event, id, nominal) => {
+  const file = event.target.files[0];
+  selectedImage.value = file ? file : null;
+  filename.value = file.name;
+};
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
 
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
-  <div
-    :class="lockScrollbar === true ? 'fixed' : ''"
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          <!-- HEADER -->
+      <tableContainer>
+        <tableTop>
           <div class="flex justify-between">
             <router-link
               to="/settlement"
@@ -287,19 +291,33 @@ const inputClass =
                 </span>
               </h1>
             </router-link>
-            <div class="py-4">
-              <button
-                type="button"
-                :class="
-                  dataArr.status == 'Revision' || dataArr.status == 'Rejected'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize status-default'
-                "
+
+            <div class="py-4 mx-4">
+              <span
+                :class="`capitalize ${alert.value} text-white text-sm font-JakartaSans font-bold`"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
                 {{ dataArr.status }}
-              </button>
+              </span>
             </div>
           </div>
+
+          <div class="float-right">
+            <ModalJurnal />
+          </div>
+
           <div class="flex justify-start gap-4 mx-10">
             <label
               v-if="
@@ -464,7 +482,7 @@ const inputClass =
                 <p
                   :class="
                     tabId == 1
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -486,7 +504,7 @@ const inputClass =
                 <p
                   :class="
                     tabId == 2
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
+                      ? 'font-JakartaSans font-normal text-sm text-center text-blue'
                       : 'font-JakartaSans font-normal text-sm text-center'
                   "
                 >
@@ -550,15 +568,6 @@ const inputClass =
                       {{ dataArr.currency_name }}
                     </td>
                     <td>
-                      <!-- <input
-                        type="number"
-                        name="remarks"
-                        :class="inputClass"
-                        required
-                        v-model="data.nominal_real"
-                        class="hidden"
-                      /> -->
-
                       <di v-if="data.id != idEdit">
                         {{ format_price(data.nominal_ca) }}
                       </di>
@@ -588,14 +597,6 @@ const inputClass =
                         required
                       >
                       </CurrencyInput>
-                      <!-- <input
-                        v-else
-                        type="number"
-                        :class="inputClass"
-                        required
-                        v-model="data.nominal_real"
-                        :disabled="data.id == idEdit ? false : true"
-                      /> -->
                     </td>
                     <td style="max-width: 350px">
                       <div
@@ -657,9 +658,9 @@ const inputClass =
                           class="btn btn-sm text-white capitalize border-red bg-red hover:bg-white hover:text-red hover:border-red"
                           @click="
                             () => {
-                              idEdit = ''
-                              editItem = false
-                              cancelNewData()
+                              idEdit = '';
+                              editItem = false;
+                              cancelNewData();
                             }
                           "
                         >
@@ -771,24 +772,17 @@ const inputClass =
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+        </tableTop>
+      </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-.status-revision {
-  background: #ef3022;
-}
-
-.status-default {
-  background: #2970ff;
+.this {
+  overflow-x: hidden;
 }
 
 :disabled {

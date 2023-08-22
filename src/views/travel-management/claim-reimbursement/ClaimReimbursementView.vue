@@ -2,18 +2,23 @@
 import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
+
+import ModalJurnal from "@/components/cash-advance/ModalJurnal.vue";
 import DataNotFound from "@/components/element/dataNotFound.vue";
-import Swal from "sweetalert2";
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
 import arrow from "@/assets/request-trip-view-arrow.png";
 import editicon from "@/assets/navbar/edit_icon.svg";
 import deleteicon from "@/assets/navbar/delete_icon.svg";
 import iconUpload from "@/assets/icon_upload.svg";
-import showicon from "@/assets/eye.png";
+// import showicon from "@/assets/eye.png";
 
 import Api from "@/utils/Api";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -29,7 +34,7 @@ let lockScrollbar = ref(false);
 let dataArr = ref([]);
 let dataItem = ref([]);
 let dataApproval = ref([]);
-let tabId = ref(1);
+
 let lengthCounter = 0;
 let tempTotal = 0;
 let idClaim = route.params.id;
@@ -42,54 +47,21 @@ let addItem = ref(false);
 let itemsNominal = ref("");
 let itemsType = ref("");
 let itemsRemarks = ref("");
-const selectedImage = ref(null);
+
+let tabId = ref(1);
+let alert = ref([]);
 let filename = ref(null);
 
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
+const selectedImage = ref(null);
 
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
+const listStatus = [
+  { id: 0, status: "Draft", value: "alert bg-[#8d8e8f]" },
+  { id: 1, status: "Waiting Approval", value: "alert alert-warning" },
+  { id: 2, status: "Revision", value: "alert alert-error" },
+  { id: 3, status: "Rejected", value: "alert alert-error" },
+  { id: 10, status: "Completed", value: "alert alert-success" },
+];
 
-const onFileSelected = (event) => {
-  const file = event.target.files[0];
-  selectedImage.value = file ? file : null;
-  filename.value = file.name;
-};
-
-// FETCH
-const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/claim_reimbursement/get_data/${id}`);
-  dataArr.value = res.data.data[0];
-  selectedImage.value = dataArr.value.attachment;
-  fetchDataItem(id);
-  fetchHistoryApproval(id);
-};
-
-const fetchDataItem = async (id) => {
-  const res = await Api.get(`/claim_reimbursement/get_by_id_claim/${id}`);
-  dataItem.value = res.data.data;
-};
-
-const fetchType = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("reimbursement");
-  listType.value = api.data.data.data;
-};
-// END
-
-// HEADER
 const edit = () => {
   visibleHeader.value = true;
   statusForm = "edit-header";
@@ -132,6 +104,7 @@ const saveFormHeader = async () => {
         });
       }
     })
+
     .catch((e) => {
       Swal.fire({
         position: "center",
@@ -153,9 +126,7 @@ const cancelHeader = () => {
   filename.value = "";
   selectedImage.value = dataArr.value.attachment;
 };
-// END
 
-// ITEMS
 const removeItems = async (id) => {
   const api = await Api.delete(`claim_reimbursement/delete_data_detail/${id}`);
   Swal.fire({
@@ -255,7 +226,6 @@ const resetItems = () => {
   itemsRemarks.value = "";
   itemsType.value = "";
 };
-// END
 
 const submit = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -286,6 +256,33 @@ const submit = async () => {
     });
 };
 
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/claim_reimbursement/get_data/${id}`);
+  dataArr.value = res.data.data[0];
+  alert = listStatus.find((item) => item.status === dataArr.value.status);
+  selectedImage.value = dataArr.value.attachment;
+  fetchDataItem(id);
+  fetchHistoryApproval(id);
+};
+
+const fetchDataItem = async (id) => {
+  const res = await Api.get(`/claim_reimbursement/get_by_id_claim/${id}`);
+  dataItem.value = res.data.data;
+};
+
+const fetchType = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const api = await Api.get("reimbursement");
+  listType.value = api.data.data.data;
+};
+
 const fetchHistoryApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -299,8 +296,24 @@ onBeforeMount(() => {
   fetchType();
 });
 
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
+const onFileSelected = (event) => {
+  const file = event.target.files[0];
+  selectedImage.value = file ? file : null;
+  filename.value = file.name;
 };
 
 const rowClass = "grid grid-cols-2 gap-y-3 mb-7 pt-7";
@@ -310,23 +323,13 @@ const inputClass =
 </script>
 
 <template>
-  <div
-    :class="lockScrollbar === true ? 'fixed' : ''"
-    class="flex flex-col basis-full grow-0 shrink-0 w-full h-full overflow-y-hidden"
-  >
+  <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
-    <div class="flex w-screen mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+    <div class="flex w-screen content mt-[115px]">
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          <!-- HEADER -->
+      <tableContainer>
+        <tableTop>
           <div class="flex justify-between">
             <router-link
               to="/claimreimbursement"
@@ -341,19 +344,33 @@ const inputClass =
                 </span>
               </h1>
             </router-link>
-            <div class="py-4">
-              <button
-                type="button"
-                :class="
-                  dataArr.status == 'Revision' || dataArr.status == 'Rejected'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize status-default'
-                "
+
+            <div class="py-4 mx-4">
+              <span
+                :class="`capitalize ${alert.value} text-white text-sm font-JakartaSans font-bold`"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
                 {{ dataArr.status }}
-              </button>
+              </span>
             </div>
           </div>
+
+          <div class="float-right">
+            <ModalJurnal />
+          </div>
+
           <div class="flex justify-start gap-4 mx-10">
             <label
               v-if="
@@ -379,12 +396,6 @@ const inputClass =
                 Save
               </button>
             </div>
-            <!-- <ModalAddCaNonTravelVue
-              v-if="lockScrollbar"
-              :formData="dataArr"
-              :formDataItem="dataItem"
-              :status="statusForm"
-            />-->
             <button
               v-if="
                 (dataArr.status == 'Draft' || dataArr.status == 'Revision') &&
@@ -470,18 +481,6 @@ const inputClass =
                 >
                 <span v-else-if="filename">{{ filename }}</span>
               </label>
-              <!-- <div
-                v-if="filename != null && !visibleHeader"
-                class="py-2 font-JakartaSans font-medium text-sm"
-              >
-                <a
-                  :href="dataArr.attachment_path"
-                  target="_blank"
-                  class="text-blue"
-                >
-                  {{ filename }}
-                </a>
-              </div> -->
             </div>
             <div class="flex flex-col gap-2">
               <label class="block mb-2 font-JakartaSans font-medium text-sm"
@@ -766,8 +765,8 @@ const inputClass =
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </tableTop>
+      </tableContainer>
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
   </div>
@@ -789,5 +788,9 @@ const inputClass =
 :disabled {
   background: #eeeeee;
   border-color: #eeeeee;
+}
+
+.this {
+  overflow-x: hidden;
 }
 </style>

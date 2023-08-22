@@ -65,13 +65,28 @@ const fetchDetailById = async (id) => {
       Warehouse: element.warehouse_name,
       itemNames: element.item_name,
       idItems: element.code_item,
-      alertQuantity: element.qty,
       brandName: element.brand_name,
       UOMName: element.uom_name,
-      remark: element.remarks,
-      qty_send: element.qty_send,
+      remark: element.remarks_detail,
+      id_item: element.id_item,
+      id_brand: element.id_brand,
+      id_uom: element.id_uom,
+      qty_requested: element.qty_requested,
+      qty_approved: element.qty_approved,
       qty_unsend: element.qty_unsend,
+      qty_delivered: element.qty_delivered,
     })
+    // ItemTable.value.push({
+    //   Warehouse: element.warehouse_name,
+    //   itemNames: element.item_name,
+    //   idItems: element.code_item,
+    //   alertQuantity: element.qty,
+    //   brandName: element.brand_name,
+    //   UOMName: element.uom_name,
+    //   remark: element.notes,
+    //   qty_send: element.qty_send,
+    //   qty_unsend: element.qty_unsend,
+    // })
   }
 }
 
@@ -87,7 +102,37 @@ const fetchHistoryApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const res = await Api.get(`/request_atk/get_history/${id}`)
-  dataApproval.value = res.data.data
+
+  const {
+    name_approved,
+    notes,
+    name_delivered,
+    notes_delivered,
+    delivered_at,
+    notes_rejected,
+    rejected_at,
+    name_rejected,
+    approved_at,
+  } = res.data.data[0]
+
+
+  dataApproval.value = [
+    name_rejected
+      ? {
+          notes_rejected,
+          rejected_at,
+          name_rejected,
+        }
+      : [],
+    name_delivered
+      ? {
+          name_delivered,
+          delivered_at,
+          notes_delivered,
+        }
+      : [],
+    name_approved ? { name_approved, approved_at, notes } : [],
+  ]
 }
 
 onBeforeMount(() => {
@@ -137,7 +182,7 @@ const format_date = (value) => {
             <div class="py-4">
               <button
                 type="button"
-                class="btn btn-sm border-none mx-4 capitalize status-default"
+                class="btn btn-sm border-none mx-4 capitalize status-default text-center"
               >
                 {{ dataArr.status }}
               </button>
@@ -339,10 +384,10 @@ const format_date = (value) => {
                       {{ value.UOMName }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ value.alertQuantity }}
+                      {{ value.qty_requested }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ value.qty_send }}
+                      {{ value.qty_approved }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ value.qty_delivered }}
