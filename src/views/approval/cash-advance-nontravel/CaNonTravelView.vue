@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
+import ModalJurnal from "@/components/approval/ModalJurnal.vue";
 import ModalApprove from "@/components/approval/ModalApprove.vue";
 import ModalReject from "@/components/approval/ModalReject.vue";
 
@@ -234,6 +235,10 @@ const format_price = (value) => {
                 {{ dataArr.status }}
               </span>
             </div>
+          </div>
+
+          <div class="float-right">
+            <ModalJurnal />
           </div>
 
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
