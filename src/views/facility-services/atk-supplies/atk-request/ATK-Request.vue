@@ -594,8 +594,8 @@ const format_date = (value) => {
                         :class="
                           data.status == 'Waiting Approval'
                             ? 'status-default'
-                            : data.status == 'Cancelled'
-                            ? 'status-revision'
+                            : data.status == 'Rejected'
+                            ? 'status-rejected'
                             : data.status == 'Completed'
                             ? 'status-done'
                             : data.status == 'Partial Completed' || data.status == 'Approve'
@@ -709,7 +709,7 @@ tr th {
   width: 300px !important;
 }
 
-.status-revision {
+.status-rejected {
   color: #ef3022;
   font-weight: 800;
 }

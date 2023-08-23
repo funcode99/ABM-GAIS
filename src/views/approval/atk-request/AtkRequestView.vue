@@ -17,6 +17,29 @@ import Api from "@/utils/Api"
 import Swal from "sweetalert2"
 import moment from "moment"
 
+const atkStatus = {
+  Draft: {
+    statusLevel: 0,
+    class: "bg-[#000] border-[#000]",
+  },
+  "Waiting Approval": {
+    statusLevel: 1,
+    class: "bg-[#2970ff] border-[#2970ff]",
+  },
+  Approve: {
+    statusLevel: 2,
+    class: "bg-[#ef9d22] border-[#ef9d22]",
+  },
+  Completed: {
+    statusLevel: 3,
+    class: "bg-[#00c851] border-[#00c851]",
+  },
+  Rejected: {
+    statusLevel: 3,
+    class: "bg-red border-red",
+  },
+}
+
 const sidebar = useSidebarStore()
 const router = useRouter()
 let lengthCounter = 0
@@ -115,7 +138,6 @@ const fetchHistoryApproval = async (id) => {
     approved_at,
   } = res.data.data[0]
 
-
   dataApproval.value = [
     name_rejected
       ? {
@@ -123,16 +145,16 @@ const fetchHistoryApproval = async (id) => {
           rejected_at,
           name_rejected,
         }
-      : [],
+      : false,
     name_delivered
       ? {
           name_delivered,
           delivered_at,
           notes_delivered,
         }
-      : [],
-    name_approved ? { name_approved, approved_at, notes } : [],
-  ]
+      : false,
+    name_approved ? { name_approved, approved_at, notes } : false,
+  ].filter(Boolean)
 }
 
 onBeforeMount(() => {
@@ -180,12 +202,20 @@ const format_date = (value) => {
               </h1>
             </router-link>
             <div class="py-4">
-              <button
+              <div class="flex justify-start gap-4 mx-4 py-4">
+                <div
+                  class="text-center rounded-lg p-1 text-white text-sm font-JakartaSans font-bold capitalize w-[120px] h-[50px]text-center"
+                  :class="atkStatus[dataArr.status]?.class"
+                >
+                  {{ dataArr.status }}
+                </div>
+              </div>
+              <!-- <button
                 type="button"
                 class="btn btn-sm border-none mx-4 capitalize status-default text-center"
               >
                 {{ dataArr.status }}
-              </button>
+              </button> -->
             </div>
           </div>
           <div
