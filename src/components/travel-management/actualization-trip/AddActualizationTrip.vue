@@ -12,6 +12,8 @@
     import modalFooter from "@/components/modal/modalFooter.vue"
 
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
+
+    const emits = defineEmits('submitsSuccess')
     
     let isVisible = ref(false)
     let departureDate = ref(new Date().toJSON().slice(0, 10))

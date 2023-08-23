@@ -202,13 +202,17 @@
     const filteredItems = () => {
 
       sortedData.value = instanceArray
-        const filteredR = sortedData.value.filter(item => {
+        
+      const filteredR = sortedData.value.filter(item => {
+        
         return (
           (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
           (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
           (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
+          (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+          (item.status.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
         )
+
       })
 
       sortedData.value = filteredR
