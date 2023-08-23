@@ -356,9 +356,15 @@
 </template>
 
 <style scoped>
+    
     tr th {
         background-color: #015289;
         text-transform: capitalize;
         color: white;
     }
+
+    :deep(.modal-vue3-content) {
+        min-width: 700px !important;
+    }
+
 </style>

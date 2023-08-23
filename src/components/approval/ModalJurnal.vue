@@ -4,6 +4,10 @@ import icon_jurnal from "@/assets/icon_jurnal.svg";
 
 const emits = defineEmits(["unlockScrollbar"]);
 
+const props = defineProps({
+  coeg: Array
+})
+
 const tableHead = [
   { Id: 1, title: "Item", jsonData: "item_name" },
   { Id: 2, title: "PK", jsonData: "pk" },
@@ -48,6 +52,9 @@ let classStyle =
       </nav>
 
       <main class="modal-box-inner">
+
+        {{ props.coeg }}
+
         <div class="sticky top-0 bg-white">
           <div
             class="flex flex-wrap justify-start gap-2 items-center px-8 pt-4"
