@@ -423,7 +423,7 @@ const format_date = (value) => {
                       {{ value.qty_delivered }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      <div v-if="status == 'Completed'">
+                      <div v-if="status == 'Completed' || status == 'Rejected'">
                         {{ value.qty_unsend }}
                       </div>
                     </td>
