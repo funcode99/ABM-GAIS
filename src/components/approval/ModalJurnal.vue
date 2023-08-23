@@ -114,9 +114,10 @@ let classStyle =
               type="text"
               name="doc_date"
               :class="classStyle"
-              placeholder="Doc Date"
               disabled
-            />
+              :value="props.coeg.doc_created_at"
+              />
+              <!-- placeholder="Doc Date" -->
           </div>
 
           <div class="mb-3">
@@ -168,6 +169,7 @@ let classStyle =
               :class="classStyle"
               placeholder="Currency"
               disabled
+              :value="props.coeg.currency_name"
             />
           </div>
 
