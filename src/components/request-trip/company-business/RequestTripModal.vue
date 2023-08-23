@@ -31,6 +31,7 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
 
     let employeeLoginData = ref([])
     let costCenterId = ref()
+    let DANumber = ref('')
 
     const getEmployeeByLogin = async () => {
 
@@ -360,7 +361,7 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             throw api.data.message
             // alert(api.data.message)
           }
-          
+
         }
 
         else {
