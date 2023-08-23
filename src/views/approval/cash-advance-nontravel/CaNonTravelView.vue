@@ -238,7 +238,9 @@ const format_price = (value) => {
           </div>
 
           <div class="float-right">
-            <ModalJurnal />
+            <ModalJurnal
+              :coeg="dataArr"
+            />
           </div>
 
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">

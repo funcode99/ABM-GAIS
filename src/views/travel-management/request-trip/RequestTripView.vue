@@ -248,15 +248,15 @@
       : travellerGuestData.value
     }
 
-    let actualizationData = ref()
+    let actualizationData = ref([])
 
     const getActualizationByTripId = async () => {
+
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem("tripIdView")}`)
-      // console.log(api)
       actualizationData.value = api.data.data
-      console.log(actualizationData.value.length)
+
     }
 
     onBeforeMount(() => {
@@ -450,10 +450,16 @@
                     </div>
 
                     <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
-                    <div class="flex gap-4 mt-6 mb-3 ml-5" v-if="purposeOfTripData[currentIndex].status === 'Draft' || purposeOfTripData[currentIndex].status === 'Revision'">
+                    <div class="flex gap-4 mt-6 mb-3 ml-5" 
+                  
+                    >
                         
-                      <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
-                      <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
+                      <div 
+                      v-if="purposeOfTripData[currentIndex].status === 'Draft' || purposeOfTripData[currentIndex].status === 'Revision'"
+                      >
+                        <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
+                        <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
+                      </div>
                         
                       <!-- SUBMIT BUTTON -->
                       <button 
@@ -469,15 +475,22 @@
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
 
-                      <AddActualizationTripModal v-if="actualizationData.length === 0" />
+                      <div>
+                        panjang = {{ actualizationData.length }}
+                      </div>
+
+                      <AddActualizationTripModal 
+                          v-if="actualizationData.length === 0" 
+                          @submit-success=getActualizationByTripId
+                      />
 
                       <div class="flex-1"></div>
 
-                      <EditActualizationTripModal v-if="actualizationData.length > 0" />
-
-
+                      <EditActualizationTripModal v-if="actualizationData.length > 0"  />
 
                     </div>
+
+
 
                     <!-- FORM READ ONLY -->
                     <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">

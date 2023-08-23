@@ -15,10 +15,6 @@
 
     let isVisible = ref(false)
 
-
-    let fromCity = ref('City')
-    let toCity = ref('City')
-    let idZona = ref(0)
     let tlkRate = ref(0)
     let cityData = ref([{}])
 
@@ -26,14 +22,13 @@
     let totalTLK = ref(0)
     let notes = ref('')
 
-    let arrayDetail = ref([])
     let activitiesDetail = ref([])
     let tripInfoDetail = ref([])
     let optionDataZona = ref()
     let filterData = ref()
 
-    let tripInfoDepartureDate = ref(new Date().toJSON().slice(0, 10))
-    let tripInfoReturnDate = ref(new Date().toJSON().slice(0, 10))
+    let tripInfoDateDeparture = ref(new Date().toJSON().slice(0, 10))
+    let tripInfoDateReturn = ref(new Date().toJSON().slice(0, 10))
     let tripInfoFromCity = ref()
     let tripInfoToCity = ref()
     let tripInfoZona = ref()
@@ -53,38 +48,20 @@
         fetchByTripId()
     })
 
-    const addActivitiesField = (fieldType) => {
-
-        fieldType.push({
-            act_date: new Date().toJSON().slice(0, 10),
-            activities: '',
-            from_fetch: false
-        })
-
-    }
-
-    const addTripInfoField = (fieldType) => {
-        fieldType.push({
-            act_date: new Date().toJSON().slice(0, 10),
-            activities: '',
-            from_fetch: false
-        })
-    }
-
-    const fetchZonaByCity = async (fieldType, index) => {
+    const fetchZonaByCity = async () => {
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get(`/zona/get_by_city/${toCity.value[0]}`)
+        const api = await Api.get(`/zona/get_by_city/${tripInfoToCity.value[0]}`)
         optionDataZona.value = api.data.data
-        idZona.value = optionDataZona.value[0].id_zona
+        tripInfoZona.value = optionDataZona.value[0].id_zona
     }
 
     const fetchEmployeeByLogin = async () => {
-    const token = JSON.parse(localStorage.getItem('token'))
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`
-    const api = await Api.get('/employee/get_by_login')
-    localStorage.setItem('jobBandId', api.data.data[0].id_job_band)
-    fetchTLKByJobBand()
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get('/employee/get_by_login')
+        localStorage.setItem('jobBandId', api.data.data[0].id_job_band)
+        fetchTLKByJobBand()
     }
 
     const fetchTLKByJobBand = async () => {
@@ -116,16 +93,34 @@
 
     }
 
+    const addActivitiesField = (fieldType) => {
+
+fieldType.push({
+    act_date: new Date().toJSON().slice(0, 10),
+    activities: '',
+    from_fetch: false
+})
+
+    }
+
+    // TRIP INFO
+
     const fetchTripInfoByActId = async () => {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get(`/actual_trip/get_trip_by_id/${activitiesId.value}`)
-        tripInfoDetail.value = api.data.data
-        tripInfoDetail.value.map((item) => {
-            item.date_departure = new Date(item.date_departure).toJSON().slice(0, 10)
-            item.date_arrival = new Date(item.date_arrival).toJSON().slice(0, 10)
-        })
-        console.log(api)
+        try {            
+            
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.get(`/actual_trip/get_trip_by_id/${activitiesId.value}`)
+            tripInfoDetail.value = api.data.data
+            tripInfoDetail.value.map((item) => {
+                item.date_departure = new Date(item.date_departure).toJSON().slice(0, 10)
+                item.date_arrival = new Date(item.date_arrival).toJSON().slice(0, 10)
+            })
+
+        } catch (error) {
+            tripInfoDetail.value = []
+        }
+
     }
 
     const editTripInfoField = async (tripInfoDetail, index) => {
@@ -143,17 +138,17 @@
 
     }
 
-    const submitTripInfoField = async (tripInfoDetail, index) => {
+    const submitTripInfoField = async () => {
         
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         
         const api = await Api.post(`/actual_trip/store_trip_info`, {
             id_act: activitiesId.value,
-            date_departure: tripInfoDepartureDate.value,
+            date_departure: tripInfoDateDeparture.value,
             date_arrival: tripInfoDateReturn.value,
-            id_city_from: tripInfoFromCity.value,
-            id_city_to: tripInfoToCity.value,
+            id_city_from: tripInfoFromCity.value[0],
+            id_city_to: tripInfoToCity.value[0],
             id_zona: tripInfoZona.value,
             tlk_rate: tlkRate.value,
         })
@@ -177,21 +172,28 @@
         fetchTripInfoByActId()
     }
 
+
+
+    // ACTIVITIES
+
     const fetchActivitiesByActId = async () => {
-        
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        
-        const api = await Api.get(`/actual_trip/get_activities_by_id/${activitiesId.value}`)
 
-        console.log(api.data.data)
+        try {
+            
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            
+            const api = await Api.get(`/actual_trip/get_activities_by_id/${activitiesId.value}`)
 
-        activitiesDetail.value = api.data.data
+            activitiesDetail.value = api.data.data
+            activitiesDetail.value.map((item) => {
+                item.act_date = new Date(item.act_date).toJSON().slice(0, 10)
+                item.from_fetch = true
+            })
 
-        activitiesDetail.value.map((item) => {
-            item.act_date = new Date(item.act_date).toJSON().slice(0, 10)
-            item.from_fetch = true
-        })
+        } catch (error) {
+            activitiesDetail.value = []
+        }
 
     }
 
@@ -204,7 +206,7 @@
         const api = await Api.post(`/actual_trip/update_activities/${activitiesDetail[index].id_act}`, {
             id_act: activitiesDetail[index].id_act,
             act_date: activitiesDetail[index].act_date,
-            activies: activitiesDetail[index].activities
+            activities: activitiesDetail[index].activities
         })
         fetchActivitiesByActId()
         console.log(api)
@@ -212,17 +214,14 @@
 
     const submitActivitiesField = async (activitiesDetail, index) => {
 
-        console.log(index)
-        console.log(activitiesDetail[index])
-
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post(`/actual_trip/store_activities`, {
-            // id_act: activitiesId.value,
+            id_act: activitiesId.value,
             act_date: activitiesDetail[index].act_date,
-            activies: activitiesDetail[index].activities
+            activities: activitiesDetail[index].activities
         })
-        console.log(api)
+
         fetchActivitiesByActId()
     }
 
@@ -388,7 +387,7 @@
                         Date Departure<span class="text-red">*</span>
                     </label>
                     <input
-                        v-model="tripInfoDepartureDate"
+                        v-model="tripInfoDateDeparture"
                         id="departure" 
                         :class="$inputStyling" 
                         type="date" 
@@ -403,7 +402,7 @@
                         Date Return<span class="text-red">*</span>
                     </label>
                     <input 
-                        v-model="tripInfoReturnDate"
+                        v-model="tripInfoDateReturn"
                         id="return"
                         :class="$inputStyling" 
                         type="date" 
@@ -445,7 +444,7 @@
                     :class="$inputStyling"
                     required
                     v-model="tripInfoToCity"
-                    @change="fetchZonaByCity(activitiesDetail, index)"
+                    @change="fetchZonaByCity"
                     >
                         <option selected disabled hidden>
                             City
@@ -461,6 +460,7 @@
 
             <div class="flex justify-center">
                 <button
+                    @click="addTripInfoField"
                     class="bg-blue text-white rounded-lg py-[5px] px-[36px] text-center mt-3"
                 >
                     Add
@@ -608,9 +608,15 @@
 </template>
 
 <style scoped>
+    
     tr th {
         background-color: #015289;
         text-transform: capitalize;
         color: white;
     }
+
+    :deep(.modal-vue3-content) {
+        min-width: 700px !important;
+    }
+
 </style>

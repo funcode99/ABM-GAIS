@@ -75,7 +75,7 @@ let classWaiting =
             <div class="mb-2">
               <div v-if="data?.name_rejected" class="font-bold">
                 <span>Rejected By:</span>
-                <span class="font-normal">{{ data.name_delivered }}</span>
+                <span class="font-normal">{{ data.name_rejected }}</span>
               </div>
 
               <div v-if="data?.name_delivered" class="font-bold">

@@ -12,6 +12,8 @@
     import modalFooter from "@/components/modal/modalFooter.vue"
 
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
+
+    const emits = defineEmits('submitsSuccess')
     
     let isVisible = ref(false)
     let departureDate = ref(new Date().toJSON().slice(0, 10))
@@ -354,9 +356,15 @@
 </template>
 
 <style scoped>
+    
     tr th {
         background-color: #015289;
         text-transform: capitalize;
         color: white;
     }
+
+    :deep(.modal-vue3-content) {
+        min-width: 700px !important;
+    }
+
 </style>

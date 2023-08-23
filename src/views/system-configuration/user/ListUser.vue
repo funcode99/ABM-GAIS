@@ -402,7 +402,7 @@ const inputStylingClass =
 </script>
 
 <template>
-  <!-- kenak loh, ternyata disini overflow x nya -->
+
   <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
 
@@ -663,6 +663,7 @@ const inputStylingClass =
   </div>
 
   <Footer />
+
 </template>
 
 <style scoped>
