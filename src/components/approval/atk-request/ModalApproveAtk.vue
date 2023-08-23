@@ -36,11 +36,11 @@ const inputClass =
 const isApprove = ref(false)
 
 const totalApprove = () => {
-  console.log(itemTable.value)
-  return itemTable.value.reduce(
-    (a, b) => (a?.qtyApproved || 0) + (b?.qtyApproved || 0),
-    0
-  )
+  return itemTable.value
+    .map(({ qtyApproved }) => qtyApproved)
+    .reduce((accumulator, currentValue) => {
+      return accumulator + currentValue
+    }, 0)
 }
 
 const changeSite = async (id_site) => {
@@ -116,7 +116,11 @@ const addItem = async (ind, data) => {
   //   status: "add_new",
   // }
 
-  itemTable.value.push({ ...data, array_warehouse: filter_wh, qty_approved: 0 })
+  itemTable.value.push({
+    ...data,
+    array_warehouse: filter_wh,
+    qtyApproved: null,
+  })
 
   itemTable.value.map((element) => {
     element.stock_available = data.stock_available ? data.stock_available : ""
@@ -131,6 +135,13 @@ const updateQty = (index, data) => {
   if (data.qtyApproved > data.qty_requested) {
     data.qtyApproved = data.qty_requested
   }
+
+  if (totalApprove() > data.qty_requested) {
+    data.qtyApproved = 0
+    data.qtyApproved = data.qty_requested - totalApprove()
+  }
+
+  console.log(totalApprove())
 }
 
 const removeItem = async (ind) => {
@@ -342,10 +353,11 @@ onBeforeMount(() => {
                 <button
                   @click="addItem(ind, value)"
                   v-if="
-                    itemTable.length < value.array_warehouse.length &&
+                    itemTable.length <= value.array_warehouse.length &&
                     ind + 1 == itemTable.length &&
                     value?.id_warehouse &&
-                    value?.qtyApproved
+                    value?.qtyApproved &&
+                    totalApprove() < value.qty_requested
                   "
                 >
                   <img :src="icon_add" class="w-6 h-6" alt="" />
