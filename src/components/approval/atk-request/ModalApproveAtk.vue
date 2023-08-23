@@ -8,7 +8,7 @@ const props = defineProps({
   dataArr: [Object, Array],
 })
 
-import { onBeforeMount, ref } from "vue"
+import { computed, onBeforeMount, ref } from "vue"
 import { useRouter } from "vue-router"
 import Api from "@/utils/Api"
 import Swal from "sweetalert2"
@@ -35,6 +35,14 @@ const inputClass =
 
 const isApprove = ref(false)
 
+const totalApprove = () => {
+  console.log(itemTable.value)
+  return itemTable.value.reduce(
+    (a, b) => (a?.qtyApproved || 0) + (b?.qtyApproved || 0),
+    0
+  )
+}
+
 const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -48,12 +56,15 @@ const fetchDetailById = async (id) => {
   if (props.dataArr.status == "Approve") {
     const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`)
     const get_wh = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
+    console.log("dwaodkawokd")
 
     itemTable.value = res.data.data
+    console.log(itemTable.value)
     itemTable.value.map((element, index) => {
       element.total_stock = element.stock_real_wh
       idWh.value[index] = element.id_warehouse
-      qtyApproved.value[index] = element.qty_approved
+      element.qtyApproved = element.qty_approved
+      element.qty_requested = element.qty_approved
       element.array_warehouse = get_wh.data.data[0].array_warehouse
     })
   } else {
@@ -77,36 +88,49 @@ const addItem = async (ind, data) => {
   const wh = Warehouse.value
   for (let index = 0; index < wh.length; index++) {
     const element = wh[index]
-    if (element.id == idWh.value[ind]) {
+    if (element.id == data.id_warehouse) {
+      element.qty_requested = data.qty_requested
       warehouseName.value = element.warehouse_name
     }
   }
 
   let filter_wh = data.array_warehouse.filter(function (item) {
-    return !idWh.value.includes(item.id_warehouse)
+    return !itemTable.value.some(
+      ({ id_warehouse }) => id_warehouse == item.id_warehouse
+    )
   })
-  let datas = {
-    id_item: data.id_item,
-    id_atk_request_detail: router.currentRoute.value.params.id,
-    id_warehouse: idWh.value[ind],
-    name_warehouse: warehouseName.value,
-    qty_approved: qtyApproved.value[ind],
-    item_name: data.item_name,
-    code_item: data.code_item,
-    uom_name: data.uom_name,
-    qty: data.qty,
-    remarks: notesName.value ? notesName.value : "",
-    array_warehouse: filter_wh,
-    total_stock: data.total_stock,
-    status: "add_new",
-  }
-  let a = ind
-  let b = (ind += 1)
-  itemTable.value.splice(b, a, datas)
+
+  // let datas = {
+  //   id_item: data.id_item,
+  //   id_atk_request_detail: router.currentRoute.value.params.id,
+  //   id_warehouse: idWh.value[ind],
+  //   name_warehouse: warehouseName.value,
+  //   qty_approved: qtyApproved.value[ind],
+  //   item_name: data.item_name,
+  //   code_item: data.code_item,
+  //   uom_name: data.uom_name,
+  //   qty: data.qty,
+  //   remarks: notesName.value ? notesName.value : "",
+  //   array_warehouse: filter_wh,
+  //   total_stock: data.total_stock,
+  //   status: "add_new",
+  // }
+
+  itemTable.value.push({ ...data, array_warehouse: filter_wh, qty_approved: 0 })
 
   itemTable.value.map((element) => {
     element.stock_available = data.stock_available ? data.stock_available : ""
   })
+}
+
+const updateQty = (index, data) => {
+  if (data.qtyApproved > data.total_stock || data.qtyApproved < 0) {
+    data.qtyApproved = data.total_stock
+  }
+
+  if (data.qtyApproved > data.qty_requested) {
+    data.qtyApproved = data.qty_requested
+  }
 }
 
 const removeItem = async (ind) => {
@@ -115,16 +139,28 @@ const removeItem = async (ind) => {
 
 const submit = async () => {
   itemPayload.value = []
-  itemTable.value.map((element, index) => {
-    element.remarks = notesName.value ? notesName.value : ""
-    element.qty_approved = qtyApproved.value[index]
-    element.id_warehouse = idWh.value[index]
-    element.id_atk_request_detail = router.currentRoute.value.params.id
+  const warehouse_detail = itemTable.value.map((element, index) => {
+    // element.remarks = notesName.value ? notesName.value : ""
+    // element.qty_approved = qtyApproved.value[index]
+    // element.id_warehouse = idWh.value[index]
+    // element.id_atk_request_detail = element.id
+
+    return {
+      id_item: element.id_item,
+      id_atk_request_detail: element.id,
+      id_warehouse: element.id_warehouse,
+      qty_approved: element.qtyApproved,
+      remarks: element.remarks_detail,
+    }
   })
+
   payload.value = {
-    warehouse_detail: itemTable.value,
+    warehouse_detail: warehouse_detail,
     notes: notesName.value ? notesName.value : "",
   }
+
+  console.log(payload.value)
+
   isApprove.value = true
   if (isApprove.value) {
     const token = JSON.parse(localStorage.getItem("token"))
@@ -133,7 +169,11 @@ const submit = async () => {
       props.dataArr.status == "Approve"
         ? `/approval_request_atk/completed/${router.currentRoute.value.params.id}`
         : `/approval_request_atk/approve/${router.currentRoute.value.params.id}`
-    Api.post(api, payload.value)
+    Api.post(api, payload.value, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
       .then((res) => {
         Swal.fire({
           position: "center",
@@ -193,7 +233,6 @@ onBeforeMount(() => {
           <span v-else>Approval Confirmation</span>
         </p>
       </nav>
-
       <main class="modal-box-inner-approval-atk">
         <table class="table table-compact w-full">
           <thead class="font-JakartaSans font-bold text-xs">
@@ -211,7 +250,10 @@ onBeforeMount(() => {
               <th
                 class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
               >
-                Quantity Requested
+                <span v-if="props.dataArr.status == 'Approve'">
+                  Quantity Approve
+                </span>
+                <span v-else>Quantity Requested</span>
               </th>
               <th
                 class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
@@ -239,6 +281,7 @@ onBeforeMount(() => {
               </th>
             </tr>
           </thead>
+
           <tbody
             class="font-JakartaSans font-normal text-xs"
             v-for="(value, ind) in itemTable"
@@ -254,12 +297,18 @@ onBeforeMount(() => {
               <td class="border border-[#B9B9B9]">
                 {{ value?.qty_requested }}
               </td>
+
               <td class="border border-[#B9B9B9]">
                 <select
-                  v-model="idWh[ind]"
+                  v-model="value.id_warehouse"
                   :class="inputClass"
-                  @change="changeWarehouse($event, value.id_item, ind)"
-                  :disabled="disableField"
+                  @change="
+                    ($event) => {
+                      changeWarehouse($event, value.id_item, ind)
+                      updateQty(ind, value)
+                    }
+                  "
+                  :disabled="disableField || ind + 1 < itemTable.length"
                 >
                   <option
                     v-for="data in value.array_warehouse"
@@ -276,18 +325,14 @@ onBeforeMount(() => {
               <td class="border border-[#B9B9B9]">
                 <input
                   type="number"
-                  v-model="qtyApproved[ind]"
+                  v-model="value.qtyApproved"
                   class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   @input="
                     () => {
-                      if (
-                        qtyApproved[ind] > value.total_stock ||
-                        qtyApproved[ind] < 0
-                      ) {
-                        qtyApproved[ind] = value.total_stock
-                      }
+                      updateQty(ind, value)
                     }
                   "
+                  :disabled="!value?.id_warehouse"
                 />
               </td>
               <td
@@ -296,11 +341,16 @@ onBeforeMount(() => {
               >
                 <button
                   @click="addItem(ind, value)"
-                  v-if="value.status != 'add_new'"
+                  v-if="
+                    itemTable.length < value.array_warehouse.length &&
+                    ind + 1 == itemTable.length &&
+                    value?.id_warehouse &&
+                    value?.qtyApproved
+                  "
                 >
                   <img :src="icon_add" class="w-6 h-6" alt="" />
                 </button>
-                <button @click="removeItem(ind)" v-else>
+                <button @click="removeItem(ind)" v-else-if="ind > 0">
                   <img :src="deleteicon" class="w-6 h-6" alt="" />
                 </button>
               </td>

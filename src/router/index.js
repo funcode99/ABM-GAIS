@@ -38,22 +38,23 @@ import ListMenu from "@/views/system-configuration/menu/ListMenu.vue";
 import ListSequence from "@/views/system-configuration/sequence/ListSequence.vue";
 
 //travel management system
-import RequestTripListTMS from "@/views/travel-management/request-trip/RequestTripList.vue";
-import RequestTripViewTMS from "@/views/travel-management/request-trip/RequestTripView.vue";
-import TravelList from "@/views/travel-management/cash-advance/TravelList.vue";
-import TravelView from "@/views/travel-management/cash-advance/TravelView.vue";
-import NonTravelList from "@/views/travel-management/cash-advance-non-travel/NonTravelList.vue";
-import NonTravelView from "@/views/travel-management/cash-advance-non-travel/NonTravelView.vue";
-import SettlementList from "@/views/travel-management/settlement/SettlementList.vue";
-import SettlementView from "@/views/travel-management/settlement/SettlementView.vue";
-import SettlementReport from "@/views/travel-management/settlement/SettlementReport.vue";
+import RequestTripListTMS from "@/views/travel-management/request-trip/RequestTripList.vue"
+import RequestTripViewTMS from "@/views/travel-management/request-trip/RequestTripView.vue"
+import TravelList from "@/views/travel-management/cash-advance/TravelList.vue"
+import TravelView from "@/views/travel-management/cash-advance/TravelView.vue"
+import NonTravelList from "@/views/travel-management/cash-advance-non-travel/NonTravelList.vue"
+import NonTravelView from "@/views/travel-management/cash-advance-non-travel/NonTravelView.vue"
+import SettlementList from "@/views/travel-management/settlement/SettlementList.vue"
+import SettlementView from "@/views/travel-management/settlement/SettlementView.vue"
+import SettlementReport from "@/views/travel-management/settlement/SettlementReport.vue"
 import ActualizationTrip from '@/views/travel-management/actualization-trip/ActualizationTripList.vue'
+import ActualizationTripView from '@/views/travel-management/actualization-trip/ActualizationTripView.vue'
 
-import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue";
-import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue";
+import ClaimReimbursementList from "@/views/travel-management/claim-reimbursement/ClaimReimbursementList.vue"
+import ClaimReimbursementView from "@/views/travel-management/claim-reimbursement/ClaimReimbursementView.vue"
 
-import poolCarRoutes from "./travel-management/poolCar";
-import PoolcarReport from "@/views/travel-management/pool-car/PoolcarReport.vue";
+import poolCarRoutes from "./travel-management/poolCar"
+import PoolcarReport from "@/views/travel-management/pool-car/PoolcarReport.vue"
 
 //approval
 import CaTravelList from "@/views/approval/cash-advance-travel/CaTravelList.vue";
@@ -110,8 +111,6 @@ const router = createRouter(
               path: "/experiment",
               component: experimentPage,
     },
-
-
     ...poolCarRoutes,
     {
         path: "/addfield",
@@ -1388,6 +1387,23 @@ const router = createRouter(
       component: ActualizationTrip,
       meta: {
         title: "Actualization Trip",
+      },
+      beforeEnter: (to, from, next) => {
+        const token = localStorage.getItem("token");
+
+        if (token) {
+          return next();
+        }
+
+        return next("/");
+      },
+    },
+    {
+      path: '/actualization-view',
+      name: "Actualization Trip View",
+      component: ActualizationTripView,
+      meta: {
+        title: 'Actualization Trip View'
       },
       beforeEnter: (to, from, next) => {
         const token = localStorage.getItem("token");
