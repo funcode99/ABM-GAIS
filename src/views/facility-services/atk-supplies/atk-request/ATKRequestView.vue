@@ -533,7 +533,7 @@ const format_date = (value) => {
                       {{ value.qty_delivered }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      <div v-if="status == 'Completed'">
+                      <div v-if="status == 'Completed' || status == 'Rejected'">
                         {{ value.qty_unsend }}
                       </div>
                     </td>
@@ -591,13 +591,15 @@ const format_date = (value) => {
                         {{ value.uom_name }}
                       </td>
                       <td class="border border-[#B9B9B9]">
-                        {{ value.warehouse_name }}
+                        {{ status == "Rejected" ? 0 : value.warehouse_name }}
                       </td>
                       <td class="border border-[#B9B9B9]">
-                        {{ value.stock_available_wh }}
+                        {{
+                          status == "Rejected" ? 0 : value.stock_available_wh
+                        }}
                       </td>
                       <td class="border border-[#B9B9B9]">
-                        {{ value.qty_approved }}
+                        {{ status == "Rejected" ? 0 : value.qty_approved }}
                       </td>
                       <td class="border border-[#B9B9B9]">
                         {{ value.qty_delivered }}

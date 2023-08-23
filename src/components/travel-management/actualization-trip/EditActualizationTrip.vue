@@ -48,12 +48,25 @@
         fetchByTripId()
     })
 
-    const fetchZonaByCity = async () => {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.get(`/zona/get_by_city/${tripInfoToCity.value[0]}`)
-        optionDataZona.value = api.data.data
-        tripInfoZona.value = optionDataZona.value[0].id_zona
+    const fetchZonaByCity = async (cityId, data) => {
+
+        // console.log(data)
+
+        // jika terpilih (number)
+        if(typeof cityId !== 'object') {
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.get(`/zona/get_by_city/${cityId}`)
+            optionDataZona.value = api.data.data
+            tripInfoZona.value = optionDataZona.value[0].id_zona   
+        } else {
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.get(`/zona/get_by_city/${tripInfoToCity.value[0]}`)
+            optionDataZona.value = api.data.data
+            tripInfoZona.value = optionDataZona.value[0].id_zona
+        }
+
     }
 
     const fetchEmployeeByLogin = async () => {
@@ -115,26 +128,12 @@ fieldType.push({
             tripInfoDetail.value.map((item) => {
                 item.date_departure = new Date(item.date_departure).toJSON().slice(0, 10)
                 item.date_arrival = new Date(item.date_arrival).toJSON().slice(0, 10)
+                item.isEdit = false
             })
 
         } catch (error) {
             tripInfoDetail.value = []
         }
-
-    }
-
-    const editTripInfoField = async (tripInfoDetail, index) => {
-
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-
-        const api = await Api.post(`/actual_trip/update_activities/${tripInfoDetail[index].id_act}`, {
-            id_act: tripInfoDetail[index].id_act,
-            act_date: tripInfoDetail[index].act_date,
-            activies: tripInfoDetail[index].activities
-        })
-        fetchTripInfoByActId()
-        console.log(api)
 
     }
 
@@ -158,21 +157,33 @@ fieldType.push({
 
     }
 
-    const removeTripInfoField = async (tripInfoDetail, index) => {
-        tripInfoDetail.splice(index, 1)
+    const editTripInfoField = async (tripInfoDetail) => {
+
+        console.log(tripInfoDetail)
+        console.log(tripInfoDetail.id_act)
+
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+        const api = await Api.post(`/actual_trip/update_trip_info/${tripInfoDetail.id}`, {
+            id_act: tripInfoDetail.id_act,
+            id_city_from: tripInfoDetail.id_city_from,
+            id_city_to: tripInfoDetail.id_city_to,
+            date_departure: tripInfoDetail.date_departure,
+            date_arrival: tripInfoDetail.date_arrival,
+        })
+
+        console.log(api)
+        fetchTripInfoByActId()
+
     }
 
     const deleteTripInfoField = async (tripInfoDetail, index) => {
-        console.log(activitiesId.value)
-        console.log(activitiesDetail)
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        const api = await Api.delete(`/actual_trip/delete_activities/${activitiesDetail[index].id}`)
-        console.log(api)
+        const api = await Api.delete(`/actual_trip/delete_trip/${tripInfoDetail[index].id}`)
         fetchTripInfoByActId()
     }
-
-
 
     // ACTIVITIES
 
@@ -322,150 +333,255 @@ fieldType.push({
 
             </div>
 
-            <div class="trip pt-5 px-5">
+            <div class="trip py-5 px-5">
 
                 Trip Info
                 
-                <div class="flex gap-5 mt-2" v-if="tripInfoDetail.length > 0" v-for="(data, index) in tripInfoDetail">
+                <div
+                    class="flex flex-col gap-y-5" 
+                    v-if="tripInfoDetail.length > 0" v-for="(data, index) in tripInfoDetail"
+                >
                     
-                    <div 
-                        class="flex items-center justify-center rounded-full w-10 h-10 bg-blue text-white text-center"
-                    >
-                        {{index+1}}
-                    </div>
-
-                    <div>
-
+                    <div class="flex gap-5 mt-2">
+                        
+                        <div 
+                            class="flex items-center justify-center rounded-full w-10 h-10 bg-blue text-white text-center"
+                        >
+                            {{index+1}}
+                        </div>
+    
                         <div>
-                            {{ data.date_departure }} - {{ data.date_arrival }}, {{ data.name_city_from }} -> {{ data.name_city_to }}
+    
+                            <div>
+                                {{ data.date_departure }} - {{ data.date_arrival }}, {{ data.name_city_from }} -> {{ data.name_city_to }}
+                            </div>
+    
+                            <ul>
+                                <li>
+                                    Zona: {{ data.zona_name }}
+                                </li>
+                                <li>
+                                    TLK Per Day: {{ data.tlk_rate }}
+                                </li>
+                            </ul>
+    
+                        </div>
+    
+                        <div class="flex justify-center items-start gap-1">
+                   
+                            <button 
+                                        type="button" 
+                                        @click="data.isEdit = true"
+                                        >
+                                        <img :src="editIcon" class="w-6 h-6" />
+                            </button>
+    
+                            <button 
+                                        type="button"
+                                        @click="deleteTripInfoField(tripInfoDetail, index)"
+                                    >
+                                        <img :src="deleteicon" class="w-6 h-6" />
+                            </button>
+                             
                         </div>
 
-                        <ul>
-                            <li>
-                                Zona: {{ data.zona_name }}
-                            </li>
-                            <li>
-                                TLK Per Day: {{ data.tlk_rate }}
-                            </li>
-                        </ul>
-
                     </div>
 
-                    <div class="flex justify-center items-start gap-1">
-               
-                                <button 
-                                    type="button" 
-                                    @click="data.from_fetch === true ? 
-                                        editTripInfoField(activitiesDetail, index) : 
-                                        submitTripInfoField(activitiesDetail, index)"
-                                    >
-                                    <img :src="editIcon" class="w-6 h-6" />
-                                </button>
-                                <button 
-                                    type="button"
-                                    @click="data.from_fetch === true ? 
-                                    deleteTripInfoField(index, activitiesDetail) : 
-                                    removeTripInfoField(index, activitiesDetail)"
+                    <form @submit.prevent="editTripInfoField(data)" v-if="data.isEdit === true">
+
+                        <div class="flex gap-5 my-2">
+                            
+                            <div class="w-full">
+
+                                <label 
+                                    :class="$labelStyling" 
+                                    for="departure"
                                 >
-                                    <img :src="deleteicon" class="w-6 h-6" />
-                                </button>
-                         
-                    </div>
+                                    Date Departure<span class="text-red">*</span>
+                                </label>
+                                <input
+                                    v-model="data.date_departure"
+                                    id="departure"
+                                    :class="$inputStyling"
+                                    type="date"
+                                    required
+                                />
+                            </div>
+
+                            <div class="w-full">
+                                <label 
+                                    :class="$labelStyling"
+                                    for="return"
+                                >
+                                    Date Return<span class="text-red">*</span>
+                                </label>
+                                <input
+                                    v-model="data.date_arrival"
+                                    id="return"
+                                    :class="$inputStyling"
+                                    type="date"
+                                    required
+                                />
+                            </div>
+
+                        </div>
+
+                        <div class="flex gap-5 my-2">
+
+                            <div class="w-full">
+                                
+                                <label :class="$labelStyling">
+                                    From<span class="text-red">*</span>
+                                </label>
+
+                                <select
+                                    :class="$inputStyling"
+                                    required
+                                    v-model="data.id_city_from"
+                                >
+                                    <option selected disabled hidden>
+                                        City
+                                    </option>
+                                    <option v-for="data in cityData" :value="data.id">
+                                        {{ data.city_name }}
+                                    </option>
+                                </select>
+
+                            </div>
+
+                            <div class="w-full">
+
+                                <label :class="$labelStyling">
+                                    To<span class="text-red">*</span>                     
+                                </label>
+
+                                <select
+                                :class="$inputStyling"
+                                required
+                                v-model="data.id_city_to"
+                                @change="fetchZonaByCity(data.id_city_to, data.id_zona)"
+                                >
+                                    <option selected disabled hidden>
+                                        City
+                                    </option>
+                                    <option v-for="data in cityData" :value="data.id">
+                                        {{ data.city_name }}
+                                    </option>
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="flex gap-4 justify-center mt-5">
+                            <button 
+                            @click="data.isEdit = false"
+                            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                            >
+                                Save
+                            </button>
+                        </div>
+
+                    </form>
 
                 </div>
 
             </div>
 
             <form class="pt-2 px-5" @submit.prevent="submitTripInfoField">          
-            
-            <div class="flex gap-5 my-2">
-                <div class="w-full">
-                    <label 
-                        :class="$labelStyling" 
-                        for="departure"
-                    >
-                        Date Departure<span class="text-red">*</span>
-                    </label>
-                    <input
-                        v-model="tripInfoDateDeparture"
-                        id="departure" 
-                        :class="$inputStyling" 
-                        type="date" 
-                        required 
-                    />
+                
+                <div class="flex gap-5 my-2">
+                    <div class="w-full">
+                        <label 
+                            :class="$labelStyling" 
+                            for="departure"
+                        >
+                            Date Departure<span class="text-red">*</span>
+                        </label>
+                        <input
+                            v-model="tripInfoDateDeparture"
+                            id="departure" 
+                            :class="$inputStyling" 
+                            type="date" 
+                            required 
+                        />
+                    </div>
+                    <div class="w-full">
+                        <label 
+                            :class="$labelStyling"
+                            for="return"
+                        >
+                            Date Return<span class="text-red">*</span>
+                        </label>
+                        <input 
+                            v-model="tripInfoDateReturn"
+                            id="return"
+                            :class="$inputStyling" 
+                            type="date" 
+                            required 
+                        />
+                    </div>
                 </div>
-                <div class="w-full">
-                    <label 
-                        :class="$labelStyling"
-                        for="return"
-                    >
-                        Date Return<span class="text-red">*</span>
-                    </label>
-                    <input 
-                        v-model="tripInfoDateReturn"
-                        id="return"
-                        :class="$inputStyling" 
-                        type="date" 
-                        required 
-                    />
-                </div>
-            </div>
 
-            <div class="flex gap-5 my-2">
+                <div class="flex gap-5 my-2">
 
-                <div class="w-full">
-                    
-                    <label :class="$labelStyling">
-                        From<span class="text-red">*</span>
-                    </label>
+                    <div class="w-full">
+                        
+                        <label :class="$labelStyling">
+                            From<span class="text-red">*</span>
+                        </label>
 
-                    <select
+                        <select
+                            :class="$inputStyling"
+                            required
+                            v-model="tripInfoFromCity"
+                        >
+                            <option selected disabled hidden>
+                                City
+                            </option>
+                            <option v-for="data in cityData" :value="[data.id, data.city_name]">
+                                {{ data.city_name }}
+                            </option>
+                        </select>
+
+                    </div>
+
+                    <div class="w-full">
+
+                        <label :class="$labelStyling">
+                            To<span class="text-red">*</span>                     
+                        </label>
+
+                        <select
                         :class="$inputStyling"
                         required
-                        v-model="tripInfoFromCity"
-                    >
-                        <option selected disabled hidden>
-                            City
-                        </option>
-                        <option v-for="data in cityData" :value="[data.id, data.city_name]">
-                            {{ data.city_name }}
-                        </option>
-                    </select>
+                        v-model="tripInfoToCity"
+                        @change="fetchZonaByCity"
+                        >
+                            <option selected disabled hidden>
+                                City
+                            </option>
+                            <option v-for="data in cityData" :value="[data.id, data.city_name]">
+                                {{ data.city_name }}
+                            </option>
+                        </select>
+
+                    </div>
 
                 </div>
 
-                <div class="w-full">
-
-                    <label :class="$labelStyling">
-                        To<span class="text-red">*</span>                     
-                    </label>
-
-                    <select
-                    :class="$inputStyling"
-                    required
-                    v-model="tripInfoToCity"
-                    @change="fetchZonaByCity"
+                <div class="flex justify-center">
+                    <button
+                        class="bg-blue text-white rounded-lg py-[5px] px-[36px] text-center mt-3"
                     >
-                        <option selected disabled hidden>
-                            City
-                        </option>
-                        <option v-for="data in cityData" :value="[data.id, data.city_name]">
-                            {{ data.city_name }}
-                        </option>
-                    </select>
-
+                        Add
+                    </button>
                 </div>
-
-            </div>
-
-            <div class="flex justify-center">
-                <button
-                    @click="addTripInfoField"
-                    class="bg-blue text-white rounded-lg py-[5px] px-[36px] text-center mt-3"
-                >
-                    Add
-                </button>
-            </div>
 
             </form>
 

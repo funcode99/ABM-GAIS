@@ -475,9 +475,9 @@
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
 
-                      <div>
+                      <!-- <div>
                         panjang = {{ actualizationData.length }}
-                      </div>
+                      </div> -->
 
                       <AddActualizationTripModal 
                           v-if="actualizationData.length === 0" 
