@@ -172,7 +172,7 @@ fieldType.push({
             date_departure: tripInfoDetail.date_departure,
             date_arrival: tripInfoDetail.date_arrival,
         })
-        
+
         console.log(api)
         fetchTripInfoByActId()
 
@@ -184,8 +184,6 @@ fieldType.push({
         const api = await Api.delete(`/actual_trip/delete_trip/${tripInfoDetail[index].id}`)
         fetchTripInfoByActId()
     }
-
-
 
     // ACTIVITIES
 

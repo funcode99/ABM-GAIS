@@ -249,7 +249,7 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
           console.log('membuat request trip field break dengan id yang sudah ada')
         }
         
-        else {
+        else if (requestType.value[1] == 'Company Business') {
 
           const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
             id_zona: zona.value,
@@ -262,8 +262,27 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             date_arrival: returnDate.value,
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
-            id_site: localStorage.getItem('id_site')
-          })
+            id_site: localStorage.getItem('id_site'),
+            number_da: DANumber.value
+            })
+
+          console.log('membuat request trip dengan id yang sudah ada')
+        }
+
+        else {
+          const api = await Api.post(`/request_trip/update_data/${localStorage.getItem('tripId')}`, {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            id_site: localStorage.getItem('id_site'),
+            })
 
           console.log('membuat request trip dengan id yang sudah ada')
         }
@@ -289,7 +308,7 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
             id_site: siteVisitLocation.value,
-            file: siteVisitAttachmentFile.value,
+            file: siteVisitAttachmentFile.value
           })
 
           console.log('membuat request trip site visit dengan id baru')
@@ -310,11 +329,38 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
             tlk_per_day: TLKperDay.value,
             total_tlk: totalTLK,
             file: siteVisitAttachmentFile.value,
-            id_site: localStorage.getItem('id_site')
+            id_site: localStorage.getItem('id_site'),
           })
 
           console.log('membuat request trip field break dengan id baru')
           localStorage.setItem('tripId', api.data.data.id)
+        }
+
+        else if (requestType.value[1] == 'Company Business') {
+
+          const api = await Api.post('/request_trip/store', {
+            id_zona: zona.value,
+            id_city_to: toCity.value,
+            id_employee: requestor.value,
+            id_city_from: fromCity.value,
+            code_document: requestType.value[0],
+            notes: notesToPurposeOfTrip.value,
+            date_departure: departureDate.value,
+            date_arrival: returnDate.value,
+            tlk_per_day: TLKperDay.value,
+            total_tlk: totalTLK,
+            id_site: localStorage.getItem('id_site'),
+            number_da: DANumber.value
+          })
+
+          if(api.data.message !== 'Already Has Draft Data') {
+            console.log('membuat request trip dengan id baru')
+            localStorage.setItem('tripId', api.data.data.id)
+          } else {
+            throw api.data.message
+            // alert(api.data.message)
+          }
+          
         }
 
         else {
@@ -881,6 +927,20 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
                       </template>
 
                     </Multiselect>
+
+                </div>
+
+                <div v-if="requestType[1] == 'Company Business'" :class="columnClass + ' mx-4 my-3'">
+                    
+                    <label for="da_number">
+                        DA Number
+                    </label>
+
+                    <input
+                      id="da_number"
+                      type="text"
+                      v-model=DANumber
+                    />
 
                 </div>
 
