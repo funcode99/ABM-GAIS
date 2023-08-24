@@ -43,25 +43,40 @@ let tabId = ref(1);
 const code_role = JSON.parse(localStorage.getItem("id_role"));
 
 const listStatus = [
-  { id: 0, status: "Draft", value: "alert bg-[#8d8e8f]", isHide: "" },
+  {
+    id: 0,
+    status: "Draft",
+    value: "alert bg-[#8d8e8f]",
+    isHide: "",
+    isJurnal: "hidden",
+  },
   {
     id: 1,
     status: "Waiting Approval",
     value: "alert alert-warning",
     isHide: "",
+    isJurnal: "",
   },
-  { id: 2, status: "Revision", value: "alert alert-error", isHide: "hidden" },
+  {
+    id: 2,
+    status: "Revision",
+    value: "alert alert-error",
+    isHide: "hidden",
+    isJurnal: "hidden",
+  },
   {
     id: 3,
     status: "Fully Rejected",
     value: "alert alert-error",
     isHide: "hidden",
+    isJurnal: "hidden",
   },
   {
     id: 10,
     status: "Completed",
     value: "alert alert-success",
     isHide: "hidden",
+    isJurnal: "",
   },
 ];
 
@@ -251,7 +266,7 @@ const format_price = (value) => {
             </div>
           </div>
 
-          <div class="float-right">
+          <div :class="`float-right ${alert.isJurnal}`">
             <ModalJurnal :dataJurnal="dataArr" />
           </div>
 
