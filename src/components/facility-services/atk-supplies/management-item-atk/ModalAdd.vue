@@ -380,8 +380,7 @@ watchEffect(() => {
               <input
                 class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                 v-model="idItems"
-                maxlength="9"
-                type="number"
+                maxlength="25"
                 placeholder="ID Item"
                 aria-label="Full name"
               />

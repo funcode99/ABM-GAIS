@@ -1322,14 +1322,11 @@ const importData = async () => {
                                         <input
                                           class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
                                           v-model="idItems"
-                                          maxlength="9"
-                                          type="number"
                                           placeholder="ID Item"
                                           aria-label="Full name"
                                           disabled="true"
                                         />
                                       </div>
-                                      <div class="mb-6 w-full"></div>
                                     </div>
                                   </div>
                                   <div class="mb-4 w-full">

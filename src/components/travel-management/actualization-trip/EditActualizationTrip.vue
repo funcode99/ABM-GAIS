@@ -21,6 +21,11 @@
     let purpose = ref('')
     let totalTLK = ref(0)
     let notes = ref('')
+    let createdDate = ref(0)
+    let userId = ref('')
+    let createdBy = ref('')
+    let noRequestTrip = ref()
+    let noSequence = ref(0)
 
     let activitiesDetail = ref([])
     let tripInfoDetail = ref([])
@@ -95,14 +100,32 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem('tripIdView')}`)
         
-        fetchByTripIdData.value = api?.data?.data[1]
+        fetchByTripIdData.value = api?.data?.data[0]
         notes.value = fetchByTripIdData.value.notes
         purpose.value = fetchByTripIdData.value.purpose
         totalTLK.value = fetchByTripIdData.value.total_tlk
-        activitiesId.value = api.data.data[1].id
+        createdDate.value = new Date(fetchByTripIdData.value.created_at).toJSON().slice(0, 10)
+        activitiesId.value = api.data.data[0].id
+        userId.value = fetchByTripIdData.value.created_by
+        noRequestTrip.value = fetchByTripIdData.value.no_request_trip
+        noSequence.value = fetchByTripIdData.value.no_act
 
+        fetchUserName(userId)
         fetchActivitiesByActId()
         fetchTripInfoByActId()
+
+    }
+
+    const fetchUserName = async (Id) => {
+        
+        try {
+            const token = JSON.parse(localStorage.getItem('token'))
+            Api.defaults.headers.common.Authorization = `Bearer ${token}`
+            const api = await Api.get(`/users/${Id.value}`)
+            createdBy.value = api?.data?.data[0]?.employee_name            
+        } catch (error) {
+            console.log(error)
+        }
 
     }
 
@@ -253,6 +276,7 @@ fieldType.push({
 </script>
 
 <template>
+
     <div class="absolute right-5">
         <button
             @click="isVisible = true" 
@@ -267,8 +291,14 @@ fieldType.push({
         <main class="pb-5 flex flex-col gap-y-3">
 
             <modalHeader @closeVisibility="isVisible = false" title="Actualization Trip" />
+
+            
+            <div class="px-5 font-bold text-lg">
+                {{ noSequence }}
+            </div>
             
             <div class="flex gap-5 px-5">
+                
 
                 <div class="w-full">
                     
@@ -283,7 +313,7 @@ fieldType.push({
                         v-model="createdDate"
                         id="departure" 
                         :class="$inputStyling" 
-                        type="text" 
+                        type="date" 
                         placeholder="Created Date"
                         disabled
                     />
@@ -322,7 +352,7 @@ fieldType.push({
                         Reference<span class="text-red">*</span>
                     </label>
                     <input
-                        v-model="createdBy"
+                        v-model="noRequestTrip"
                         id="departure" 
                         :class="$inputStyling" 
                         type="text" 
@@ -724,7 +754,7 @@ fieldType.push({
 </template>
 
 <style scoped>
-    
+
     tr th {
         background-color: #015289;
         text-transform: capitalize;
