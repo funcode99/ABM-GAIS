@@ -170,7 +170,7 @@ const isEmptyDetail = (items) => {
     ({ attachment, frequency, detail_item_name, nominal_ca, nominal_real }) => {
       if (
         !attachment ||
-        (CAOption.value == '1' && !frequency) ||
+        (CAOption.value == "1" && !frequency) ||
         !detail_item_name ||
         !nominal_ca ||
         !nominal_real
@@ -286,6 +286,7 @@ const addNewItem = (item) => {
     total: null,
     cost_center_name: item.cost_center_name,
     created_at: item.created_at,
+    newItem: true,
   }
 
   tempItem.value.push({ ...default_item })
@@ -474,7 +475,7 @@ const addNewItem = (item) => {
                       type="text"
                       :class="inputStylingClass"
                       v-model="data.detail_item_name"
-                      :disabled="data.id_ca_detail"
+                      :disabled="!data.newItem"
                     />
                     <!-- :disabled="data?.isFromCA" -->
 
@@ -492,6 +493,7 @@ const addNewItem = (item) => {
                         v-model="data.frequency"
                         :class="inputClass"
                         required
+                        :disabled="!data.newItem"
                       >
                       </CurrencyInput>
                     </div>
@@ -540,7 +542,7 @@ const addNewItem = (item) => {
                       v-model="data.nominal_ca"
                       :class="inputClass"
                       required
-                      :disabled="data.id_ca_detail"
+                      :disabled="!data.newItem"
                     >
                     </CurrencyInput>
 

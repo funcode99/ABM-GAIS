@@ -2,11 +2,19 @@
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_jurnal from "@/assets/icon_jurnal.svg";
 
+import Api from "@/utils/Api";
+import moment from "moment";
+
+import { ref, onBeforeMount } from "vue";
+
 const emits = defineEmits(["unlockScrollbar"]);
 
+let companyData = ref([]);
+let companyCode = ref("");
+
 const props = defineProps({
-  coeg: Array
-})
+  dataJurnal: Object,
+});
 
 const tableHead = [
   { Id: 1, title: "Item", jsonData: "item_name" },
@@ -20,6 +28,40 @@ const tableHead = [
   { Id: 9, title: "Profit Center", jsonData: "profit_status" },
   { Id: 10, title: "Posting Date", jsonData: "posting_date" },
 ];
+
+const fetchCompany = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get/");
+  companyData.value = res.data.data;
+  companyData.value.map((item) => {
+    if (item.id === props.dataJurnal.id_company) {
+      companyCode.value = item.company_code;
+    }
+  });
+};
+
+onBeforeMount(() => {
+  fetchCompany();
+});
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_year = (value) => {
+  if (value) {
+    return moment(String(value)).format("YYYY");
+  }
+};
+
+const format_month = (value) => {
+  if (value) {
+    return moment(String(value)).format("M");
+  }
+};
 
 let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
@@ -52,9 +94,6 @@ let classStyle =
       </nav>
 
       <main class="modal-box-inner">
-
-        {{ props.coeg }}
-
         <div class="sticky top-0 bg-white">
           <div
             class="flex flex-wrap justify-start gap-2 items-center px-8 pt-4"
@@ -84,13 +123,7 @@ let classStyle =
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Doc Number</label
             >
-            <input
-              type="text"
-              name="doc_number"
-              :class="classStyle"
-              placeholder="Doc Number"
-              disabled
-            />
+            <input type="text" name="doc_number" :class="classStyle" disabled />
           </div>
 
           <div class="mb-3">
@@ -101,8 +134,8 @@ let classStyle =
               type="text"
               name="company_code"
               :class="classStyle"
-              placeholder="Company Code"
               disabled
+              v-model="companyCode"
             />
           </div>
 
@@ -115,22 +148,15 @@ let classStyle =
               name="doc_date"
               :class="classStyle"
               disabled
-              :value="props.coeg.doc_created_at"
-              />
-              <!-- placeholder="Doc Date" -->
+              :value="format_date(props.dataJurnal.doc_created_at)"
+            />
           </div>
 
           <div class="mb-3">
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Posting Date</label
             >
-            <input
-              type="text"
-              name="post_date"
-              :class="classStyle"
-              placeholder="Posting Date"
-              disabled
-            />
+            <input type="text" name="post_date" :class="classStyle" disabled />
           </div>
 
           <div class="mb-3">
@@ -141,8 +167,8 @@ let classStyle =
               type="text"
               name="ref_doc"
               :class="classStyle"
-              placeholder="Ref Doc"
               disabled
+              :value="props.dataJurnal.no_ca"
             />
           </div>
 
@@ -154,8 +180,8 @@ let classStyle =
               type="text"
               name="fiscal_year"
               :class="classStyle"
-              placeholder="Fiscal Year"
               disabled
+              :value="format_year(props.dataJurnal.doc_created_at)"
             />
           </div>
 
@@ -167,9 +193,8 @@ let classStyle =
               type="text"
               name="currency"
               :class="classStyle"
-              placeholder="Currency"
               disabled
-              :value="props.coeg.currency_name"
+              :value="props.dataJurnal.currency_code"
             />
           </div>
 
@@ -181,8 +206,8 @@ let classStyle =
               type="text"
               name="period"
               :class="classStyle"
-              placeholder="Period"
               disabled
+              :value="format_month(props.dataJurnal.doc_created_at)"
             />
           </div>
 
@@ -190,13 +215,7 @@ let classStyle =
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Order</label
             >
-            <input
-              type="text"
-              name="order"
-              :class="classStyle"
-              placeholder="Order"
-              disabled
-            />
+            <input type="text" name="order" :class="classStyle" disabled />
           </div>
 
           <div class="mb-3">
@@ -207,7 +226,6 @@ let classStyle =
               type="text"
               name="claim_category"
               :class="classStyle"
-              placeholder="Claim Category"
               disabled
             />
           </div>
