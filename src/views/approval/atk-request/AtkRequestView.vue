@@ -414,13 +414,13 @@ const format_date = (value) => {
                       {{ value.UOMName }}
                     </td>
                     <td class="border border-[#B9B9B9]">
-                      {{ status == "Rejected" ? 0 : value.warehouse_name }}
-                    </td>
-                    <td class="border border-[#B9B9B9]">
-                      {{ status == "Rejected" ? 0 : value.stock_available_wh }}
+                      {{ value.qty_requested }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{ status == "Rejected" ? 0 : value.qty_approved }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      {{ status == "Rejected" ? 0 : value.qty_delivered }}
                     </td>
                     <td class="border border-[#B9B9B9]">
                       <div v-if="status == 'Completed' || status == 'Rejected'">

@@ -335,7 +335,7 @@ const closeModal = () => {
                     </td>
                     <td class="border border-[#B9B9B9]">
                       {{
-                        value.adjusmentType == "addition"
+                        value.adjusmentType == "ADDITION"
                           ? "Increase"
                           : "Decrease"
                       }}
