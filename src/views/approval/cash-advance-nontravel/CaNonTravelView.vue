@@ -33,22 +33,51 @@ let dataArr = ref([]);
 let dataItem = ref([]);
 let dataApproval = ref([]);
 let listEmployee = ref([]);
+let alert = ref([]);
 
 let visibleModal = ref(false);
 let visibleModalReject = ref(false);
-let IsVisibleButtonStatus = ref(false);
 let id = route.params.id;
 let tabId = ref(1);
-let alert = ref([]);
 
 const code_role = JSON.parse(localStorage.getItem("id_role"));
 
 const listStatus = [
-  { id: 0, status: "Draft", value: "alert bg-[#8d8e8f]" },
-  { id: 1, status: "Waiting Approval", value: "alert alert-warning" },
-  { id: 2, status: "Revision", value: "alert alert-error" },
-  { id: 3, status: "Fully Rejected", value: "alert alert-error" },
-  { id: 10, status: "Completed", value: "alert alert-success" },
+  {
+    id: 0,
+    status: "Draft",
+    value: "alert bg-[#8d8e8f]",
+    isHide: "",
+    isJurnal: "hidden",
+  },
+  {
+    id: 1,
+    status: "Waiting Approval",
+    value: "alert alert-warning",
+    isHide: "",
+    isJurnal: "",
+  },
+  {
+    id: 2,
+    status: "Revision",
+    value: "alert alert-error",
+    isHide: "hidden",
+    isJurnal: "hidden",
+  },
+  {
+    id: 3,
+    status: "Fully Rejected",
+    value: "alert alert-error",
+    isHide: "hidden",
+    isJurnal: "hidden",
+  },
+  {
+    id: 10,
+    status: "Completed",
+    value: "alert alert-success",
+    isHide: "hidden",
+    isJurnal: "",
+  },
 ];
 
 const approveData = async (payload) => {
@@ -237,7 +266,7 @@ const format_price = (value) => {
             </div>
           </div>
 
-          <div class="float-right">
+          <div :class="`float-right ${alert.isJurnal}`">
             <ModalJurnal :dataJurnal="dataArr" />
           </div>
 
@@ -245,7 +274,7 @@ const format_price = (value) => {
             <label
               @click="visibleModal = true"
               for="my-modal-approve"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250] ${alert.isHide}`"
             >
               <span>
                 <img :src="icon_done" class="w-5 h-5" />
@@ -256,7 +285,7 @@ const format_price = (value) => {
             <label
               @click="visibleModalReject = true"
               for="my-modal-reject"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white"
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white ${alert.isHide}`"
             >
               <span>
                 <img :src="iconClose" class="w-5 h-5" />
