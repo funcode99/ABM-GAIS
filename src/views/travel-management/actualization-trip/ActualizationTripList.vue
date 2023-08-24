@@ -98,14 +98,8 @@
         //   getSessionForSidebar()
     })
 
-    const assignRequestTripId = (a, b, c, d, e) => {
-        actualization.viewActualizationData = {
-            status: a,
-            created_at:  b,
-            created_by: c,
-            no_request_trip: d,
-            id: e
-        }
+    const assignRequestTripId = (a) => {
+        localStorage.setItem('no_request_trip', a)
     }
 
 </script>
@@ -123,8 +117,6 @@
             <tableContainer>
 
                 <tableTop>
-
-                    {{ sortedData }}
 
                     <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
                     <div
@@ -308,7 +300,8 @@
                                 </td>
 
                                 <td class="flex flex-wrap gap-4 justify-center items-center">
-                                    <router-link :to="`/actualization-view/${data.id}`" @click="assignRequestTripId(data.status, data.created_at, data.created_by, data.no_request_trip, data.id)">
+                                    <router-link 
+                                    :to="`/actualization-view/${data.id}/${data.status}/${data.created_at}/${data.created_by}`" @click="assignRequestTripId(data.no_request_trip)">
                                         <button>
                                             <img :src="editicon" class="w-6 h-6" />
                                         </button>

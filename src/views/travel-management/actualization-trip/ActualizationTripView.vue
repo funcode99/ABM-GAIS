@@ -2,9 +2,14 @@
     import { ref, onBeforeMount, provide, watch } from 'vue'
     import Api from '@/utils/Api'
 
+    import { useRoute } from 'vue-router'
+    const location = useRoute();
+
     import Navbar from '@/components/layout/Navbar.vue'
     import Sidebar from '@/components/layout/Sidebar.vue'
     import Footer from '@/components/layout/Footer.vue'
+
+    import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
     import iconPlus from "@/assets/navbar/icon_plus.svg"
     import editIcon from "@/assets/navbar/edit_icon.svg"
@@ -24,15 +29,17 @@
         {title: 'Actions'}
     ])
 
+    let cityData = ref([{}])
     let createdBy = ref()
     let tripInfoDetail = ref()
+    let activitiesDetail = ref()
 
     const fetchUserName = async () => {
         
         try {
             const token = JSON.parse(localStorage.getItem('token'))
             Api.defaults.headers.common.Authorization = `Bearer ${token}`
-            const api = await Api.get(`/users/${actualization.viewActualizationData.created_by}`)
+            const api = await Api.get(`/users/${location.params.created_by}`)
             createdBy.value = api?.data?.data[0]?.employee_name            
         } catch (error) {
             console.log(error)
@@ -41,11 +48,13 @@
     }
 
     const fetchTripInfoByActId = async () => {
-        try {            
+        
+      try {            
             
             const token = JSON.parse(localStorage.getItem('token'))
             Api.defaults.headers.common.Authorization = `Bearer ${token}`
-            const api = await Api.get(`/actual_trip/get_trip_by_id/${actualization.viewActualizationData.id}`)
+            const api = await Api.get(`/actual_trip/get_trip_by_id/${location.params.id}`)
+            console.log(api)
             tripInfoDetail.value = api.data.data
             tripInfoDetail.value.map((item) => {
                 item.date_departure = new Date(item.date_departure).toJSON().slice(0, 10)
@@ -54,17 +63,155 @@
             })
 
         } catch (error) {
-            tripInfoDetail.value = []
-        }
+        tripInfoDetail.value = []
+      }
+
+    }
+
+    const fetchActivitiesByActId = async () => {
+
+try {
+    
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    
+    const api = await Api.get(`/actual_trip/get_activities_by_id/${location.params.id}`)
+
+    activitiesDetail.value = api.data.data
+    activitiesDetail.value.map((item) => {
+        item.act_date = new Date(item.act_date).toJSON().slice(0, 10)
+        item.from_fetch = true
+    })
+
+} catch (error) {
+    activitiesDetail.value = []
+}
+
+    }
+
+    const fetchHistoryApproval = async () => {
+
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.get(`/actual_trip/get_history/${location.params.id}`)
+      console.log(api)
 
     }
 
     onBeforeMount(() => {
       fetchUserName()
+      fetchActivitiesByActId()
       fetchTripInfoByActId()
+      fetchHistoryApproval()
+      fetchCityUtils(cityData)
     })
 
     let tab = ref('details')
+    let noRequestTrip = localStorage.getItem('no_request_trip')
+
+    const addActivitiesField = (fieldType) => {
+
+      fieldType.push({
+          act_date: new Date().toJSON().slice(0, 10),
+          activities: '',
+          from_fetch: false
+      })
+
+    }
+
+    const editActivitiesField = async (activitiesDetail, index) => {
+
+        console.log(activitiesDetail)
+
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.post(`/actual_trip/update_activities/${activitiesDetail[index].id}`, {
+            id_act: activitiesDetail[index].id_act,
+            act_date: activitiesDetail[index].act_date,
+            activities: activitiesDetail[index].activities
+        })
+        console.log(api)
+        fetchActivitiesByActId()
+
+    }
+
+    const submitActivitiesField = async (activitiesDetail, index) => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.post(`/actual_trip/store_activities`, {
+          id_act: location.params.id,
+          act_date: activitiesDetail[index].act_date,
+          activities: activitiesDetail[index].activities
+      })
+      fetchActivitiesByActId()
+    }
+
+    const removeActivitiesField = (index, fieldType) => {
+      fieldType.splice(index, 1)
+    }
+
+    // gak bisa dihapus pakai id apapun, mirip kaya menu access detail kasus nya
+    // berhasil pakai activitiesDetail[index].id, tapi saat fetch tetap ada (gak kehapus)
+    const deleteActivitiesField = async (index, activitiesDetail) => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.delete(`/actual_trip/delete_activities/${activitiesDetail[index].id}`)
+      console.log(api)
+      fetchActivitiesByActId()
+    }
+
+    let optionDataZona = ref()
+    let tlkRate = ref(0)
+    let tripInfoZona = ref()
+
+    const fetchZonaByCity = async (cityId, data) => {
+
+// console.log(data)
+
+// jika terpilih (number)
+if(typeof cityId !== 'object') {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.get(`/zona/get_by_city/${cityId}`)
+    optionDataZona.value = api.data.data
+    tripInfoZona.value = optionDataZona.value[0].id_zona   
+} else {
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.get(`/zona/get_by_city/${tripInfoToCity.value[0]}`)
+    optionDataZona.value = api.data.data
+    tripInfoZona.value = optionDataZona.value[0].id_zona
+}
+
+    }
+
+    const editTripInfoField = async (tripInfoDetail) => {
+
+console.log(tripInfoDetail)
+console.log(tripInfoDetail.id_act)
+
+const token = JSON.parse(localStorage.getItem('token'))
+Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+const api = await Api.post(`/actual_trip/update_trip_info/${tripInfoDetail.id}`, {
+    id_act: tripInfoDetail.id_act,
+    id_city_from: tripInfoDetail.id_city_from,
+    id_city_to: tripInfoDetail.id_city_to,
+    date_departure: tripInfoDetail.date_departure,
+    date_arrival: tripInfoDetail.date_arrival,
+})
+
+console.log(api)
+fetchTripInfoByActId()
+
+}
+
+const deleteTripInfoField = async (tripInfoDetail, index) => {
+const token = JSON.parse(localStorage.getItem('token'))
+Api.defaults.headers.common.Authorization = `Bearer ${token}`
+const api = await Api.delete(`/actual_trip/delete_trip/${tripInfoDetail[index].id}`)
+fetchTripInfoByActId()
+}
 
 </script>
 
@@ -95,7 +242,7 @@
                       <div class="flex-1"></div>
 
                       <div class=" min-w-[114px] h-[42px] text-center text-base font-bold rounded-t-lg rounded-bl-3xl rounded-br-lg border flex items-center justify-center border-black px-3">
-                          {{ actualization.viewActualizationData.status }}
+                        {{ location.params.status }}
                       </div>
                       
                     </div>
@@ -142,7 +289,7 @@
                                 type="text" 
                                 disabled
                                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]"
-                                :value="actualization.viewActualizationData.created_at" 
+                                :value="location.params.created_date" 
                             />
                         </div>
 
@@ -169,7 +316,7 @@
                                 type="text" 
                                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
                                 disabled
-                                :value="actualization.viewActualizationData.no_request_trip"
+                                :value="noRequestTrip"
                             />
                         </div>
 
@@ -206,10 +353,11 @@
                     <!-- DOCUMENT DETAIL -->
                     <div v-if="tab == 'details'" class="flex">
 
-                      <div class="trip py-5 px-5 flex-1">
+                      <div class="flex flex-col gap-y-5 py-5 px-5 flex-1">
 
                         Trip Info
 
+                        <!-- Trip Info -->
                         <div
                             class="flex flex-col gap-y-5"
                             v-if="tripInfoDetail.length > 0" 
@@ -243,26 +391,28 @@
 
                                 <div class="flex justify-center items-start gap-1">
                           
-                                  <!-- @click="data.isEdit = true" -->
-                                    <button 
-                                      type="button" 
-                                    >
-                                      <img :src="editIcon" class="w-6 h-6" />
-                                    </button>
+                                  <button 
+                                    @click="data.isEdit = true"
+                                    type="button" 
+                                  >
+                                    <img :src="editIcon" class="w-6 h-6" />
+                                  </button>
 
-                                  <!-- @click="deleteTripInfoField(tripInfoDetail, index)" -->
-                                    <button 
-                                      type="button"
-                                    >
-                                      <img :src="deleteicon" class="w-6 h-6" />
-                                    </button>
+                                  <button 
+                                    @click="deleteTripInfoField(tripInfoDetail, index)"
+                                    type="button"
+                                  >
+                                    <img :src="deleteicon" class="w-6 h-6" />
+                                  </button>
                                     
                                 </div>
 
                             </div>
 
-                            <!-- v-if="data.isEdit === true" -->
-                            <form @submit.prevent="editTripInfoField(data)" >
+                            <form 
+                              v-if="data.isEdit === true"  
+                              @submit.prevent="editTripInfoField(data)"
+                            >
 
                                 <div class="flex gap-5 my-2">
                                     
@@ -274,12 +424,12 @@
                                         >
                                             Date Departure<span class="text-red">*</span>
                                           </label>
-                                          <!-- v-model="data.date_departure" -->
-                                        <input
-                                            id="departure"
-                                            :class="$inputStyling"
-                                            type="date"
-                                            required
+                                          <input
+                                          id="departure"
+                                          :class="$inputStyling"
+                                          type="date"
+                                          v-model="data.date_departure"
+                                          required
                                         />
                                     </div>
 
@@ -290,12 +440,12 @@
                                         >
                                             Date Return<span class="text-red">*</span>
                                         </label>
-                                        <!-- v-model="data.date_arrival" -->
                                         <input
-                                            id="return"
-                                            :class="$inputStyling"
-                                            type="date"
-                                            required
+                                        id="return"
+                                        :class="$inputStyling"
+                                        type="date"
+                                        v-model="data.date_arrival"
+                                        required
                                         />
                                     </div>
 
@@ -309,19 +459,19 @@
                                             From<span class="text-red">*</span>
                                         </label>
                                         
-                                        <!-- v-model="data.id_city_from" -->
                                         <select
-                                            :class="$inputStyling"
-                                            required
+                                        :class="$inputStyling"
+                                        required
+                                        v-model="data.id_city_from"
                                         >
                                             <option selected disabled hidden>
                                                 City
                                             </option>
-                                            <!-- v-for="data in cityData" 
-                                            :value="data.id" -->
                                             <option 
+                                            v-for="data in cityData" 
+                                            :value="data.id"
                                             >
-                                                <!-- {{ data.city_name }} -->
+                                                {{ data.city_name }}
                                             </option>
                                         </select>
 
@@ -333,18 +483,18 @@
                                             To<span class="text-red">*</span>                     
                                         </label>
 
-                                        <!-- v-model="data.id_city_to"
-                                        @change="fetchZonaByCity(data.id_city_to, data.id_zona)" -->
                                         <select
                                         :class="$inputStyling"
+                                        v-model="data.id_city_to"
+                                        @change="fetchZonaByCity(data.id_city_to, data.id_zona)"
                                         required
                                         >
                                             <option selected disabled hidden>
                                                 City
                                             </option>
-                                            <!-- <option v-for="data in cityData" :value="data.id">
+                                            <option v-for="data in cityData" :value="data.id">
                                                 {{ data.city_name }}
-                                            </option> -->
+                                            </option>
                                         </select>
 
                                     </div>
@@ -369,6 +519,7 @@
 
                         </div>
 
+                        <!-- Purpose -->
                         <div>
 
                           <div class="w-full">
@@ -439,10 +590,10 @@
 
                                         <td></td>
                                         <td></td>
-                                        <td class="flex justify-center">
+                                        <td class="flex justify-center items-center h-full">
                                             <img 
                                                 @click="addActivitiesField(activitiesDetail)" 
-                                                class="cursor-pointer" 
+                                                class="cursor-pointer w-7 h-7" 
                                                 :src="iconPlus" 
                                                 alt=""
                                             />
@@ -457,7 +608,7 @@
                         </div>
 
                         <!-- Total TLK -->
-                        <div>
+                        <div class="mt-5">
 
                             <div class="w-full">
                                 <label
