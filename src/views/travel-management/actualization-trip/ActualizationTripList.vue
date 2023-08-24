@@ -24,7 +24,7 @@
     let showingValueDuplicate = ref(showingValue.value)
     let from = ref(0)
     let to = ref(0)
-    let pageMultiplier = ref(1)
+    let pageMultiplier = ref(10)
     let paginateIndex = ref(0)
     let totalData = ref(0)
 
@@ -135,76 +135,78 @@
                         class="grid grid-flow-col auto-cols-max justify-between items-center mx-4"
                     >
                         <div class="flex flex-wrap items-center gap-4">
-                        <div>
-                            <p
-                            class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
-                            >
-                            Status
-                            </p>
-                            <select
-                            class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                            v-model="actualizationTripStatus"
-                            @change="fetchParentCompany()"
-                            >
-                                <option>
-                                    All
-                                </option>
-                                <option>
-                                    Draft
-                                </option>
-                                <option>
-                                    Waiting Approval
-                                </option>
-                                <option>
-                                    Revision
-                                </option>
-                                <option>
-                                    Reject
-                                </option>
-                                <option>
-                                    Done
-                                </option>
-                            </select>
-                        </div>
 
-                        <div>
+                            <div>
+                                <p
+                                class="capitalize font-JakartaSans text-xs text-black font-medium pb-2"
+                                >
+                                    Status
+                                </p>
+                                <select
+                                    class="font-JakartaSans bg-white w-full lg:w-40 border border-slate-300 rounded-md py-2 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                                    v-model="actualizationTripStatus"
+                                    @change="fetchParentCompany()"
+                                >
+                                    <option>
+                                        All
+                                    </option>
+                                    <option>
+                                        Draft
+                                    </option>
+                                    <option>
+                                        Waiting Approval
+                                    </option>
+                                    <option>
+                                        Revision
+                                    </option>
+                                    <option>
+                                        Reject
+                                    </option>
+                                    <option>
+                                        Done
+                                    </option>
+                                </select>
+                            </div>
 
-                            <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
-                            Date
-                            </p>
-                            
-                            <VueDatePicker 
-                                v-model="date"
-                                range
-                                :enable-time-picker="false"
-                            />
+                            <div>
 
-                        </div>
+                                <p class="capitalize font-JakartaSans text-xs text-black font-medium pb-2">
+                                Date
+                                </p>
+                                
+                                <VueDatePicker 
+                                    v-model="date"
+                                    range
+                                    :enable-time-picker="false"
+                                />
+
+                            </div>
 
                             <div class="flex flex-wrap gap-4 items-center pt-6">
-                                <button
-                                class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
-                                @click="
-                                    () => {
-                                    onChangePage(1);
-                                    }
-                                "
-                                >
-                                <span>
-                                    <img :src="icon_filter" class="w-5 h-5" />
-                                </span>
-                                Filter
-                                </button>
-                                <button
-                                class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                                @click="resetData"
-                                >
-                                <span>
-                                    <img :src="icon_reset" class="w-5 h-5" />
-                                </span>
-                                Reset
-                                </button>
+                                    <button
+                                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+                                    @click="
+                                        () => {
+                                        onChangePage(1);
+                                        }
+                                    "
+                                    >
+                                    <span>
+                                        <img :src="icon_filter" class="w-5 h-5" />
+                                    </span>
+                                    Filter
+                                    </button>
+                                    <button
+                                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[114px] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                                    @click="resetData"
+                                    >
+                                    <span>
+                                        <img :src="icon_reset" class="w-5 h-5" />
+                                    </span>
+                                    Reset
+                                    </button>
                             </div>
+
                         </div>
 
                         <div class="pt-6 flex md:mx-0">

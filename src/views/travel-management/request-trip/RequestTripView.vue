@@ -40,6 +40,8 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
 
+    let requestorName = localStorage.getItem('username')
+
     let headerCAData = ref(true)
 
     let isEditing = ref(false)
@@ -248,15 +250,15 @@
       : travellerGuestData.value
     }
 
-    let actualizationData = ref()
+    let actualizationData = ref([])
 
     const getActualizationByTripId = async () => {
+
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem("tripIdView")}`)
-      // console.log(api)
       actualizationData.value = api.data.data
-      console.log(actualizationData.value.length)
+
     }
 
     onBeforeMount(() => {
@@ -438,7 +440,6 @@
 
                       <h1 class="text-blue font-semibold">
                         Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[currentIndex].no_request_trip }}</span>
-
                       </h1>
 
                       <div class="flex-1"></div>
@@ -450,10 +451,16 @@
                     </div>
 
                     <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
-                    <div class="flex gap-4 mt-6 mb-3 ml-5" v-if="purposeOfTripData[currentIndex].status === 'Draft' || purposeOfTripData[currentIndex].status === 'Revision'">
+                    <div class="flex gap-4 mt-6 mb-3 ml-5" 
+                  
+                    >
                         
-                      <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
-                      <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
+                      <div 
+                      v-if="purposeOfTripData[currentIndex].status === 'Draft' || purposeOfTripData[currentIndex].status === 'Revision'"
+                      >
+                        <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
+                        <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
+                      </div>
                         
                       <!-- SUBMIT BUTTON -->
                       <button 
@@ -469,15 +476,22 @@
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
 
-                      <AddActualizationTripModal v-if="actualizationData.length === 0" />
+                      <!-- <div>
+                        panjang = {{ actualizationData.length }}
+                      </div> -->
+
+                      <AddActualizationTripModal 
+                          v-if="actualizationData.length === 0" 
+                          @submit-success=getActualizationByTripId
+                      />
 
                       <div class="flex-1"></div>
 
-                      <EditActualizationTripModal v-if="actualizationData.length > 0" />
-
-
+                      <EditActualizationTripModal v-if="actualizationData.length > 0"  />
 
                     </div>
+
+
 
                     <!-- FORM READ ONLY -->
                     <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
@@ -589,7 +603,6 @@
 
                     <!-- TAB -->
 
-
                     <!-- DOCUMENT DETAIL -->
                     <div v-if="tab == 'details'" class="flex">
                                           
@@ -634,8 +647,6 @@
                             </div>
 
                         </div>
-
-
 
                         <!-- UNTUK MELIHAT DOCUMENT DETAIL DARI TIAP STEP REQUEST TRIP -->
                         <form class="flex-1" @submit.prevent="">
@@ -891,7 +902,9 @@
                           </detailsFormHeader>
 
                           <!-- Button khusus CA, untuk Add saat data CA header sudah ada -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader" :title=headerTitle>
+                          <detailsFormHeader 
+                            v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader" :title=headerTitle
+                          >
                             
                             <div
                               class="flex gap-2"
@@ -911,7 +924,9 @@
                           </detailsFormHeader>
 
                           <!-- Button khusus CA, untuk RUD muncul saat ada data CA Header -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader" :title=headerTitle>
+                          <detailsFormHeader 
+                            v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader" :title=headerTitle
+                          >
 
                             <!-- muncul saat Cash Advance Header nya ada -->
                             <div
@@ -1003,7 +1018,7 @@
                           </cashAdvanceFormView>
 
                           <!-- table Step 8 -->
-                          <cashAdvanceTableView 
+                          <cashAdvanceTableView
                           v-if="headerTitle === 'Cash Advance' && viewLayout === 'table'" 
                             class="ml-8"
                           />
@@ -1020,7 +1035,7 @@
 
                             <div class="flex flex-col mt-3">
                                 <span>Requestor <span class="text-red-star">*</span></span>
-                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="Gavin McFarland" disabled>
+                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" :value="requestorName" disabled>
                             </div>
 
                             <div class="flex flex-col mt-3">
