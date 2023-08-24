@@ -22,9 +22,20 @@ import ModalAdd from "@/components/facility-services/atk-supplies/management-ite
 import DataNotFound from "@/components/element/dataNotFound.vue"
 import Swal from "sweetalert2"
 
+import { fetchSiteByUseID } from "@/utils/Api/reference/site.js"
+
+import storageHelper from "@/utils/storage.helper.js"
+
 // import itemdata from "@/utils/Api/facility-service-system/management-item-atk/itemdata.js";
 
-import { ref, onBeforeMount, computed, watchEffect } from "vue"
+import {
+  ref,
+  onBeforeMount,
+  computed,
+  watchEffect,
+  onMounted,
+  watch,
+} from "vue"
 
 import { useSidebarStore } from "@/stores/sidebar.js"
 import Api from "@/utils/Api"
@@ -66,7 +77,7 @@ let idItem = ref(0)
 let arrItem = ref([])
 let arrData = ref([])
 // let Company = ref("");
-let Site = ref("")
+let Site = ref([])
 // let Warehouse = ref("");
 let UOM = ref("")
 let idItems = ref("")
@@ -108,6 +119,7 @@ const searchFilter = ref("")
 let fileImport = ref("")
 
 const formUpdated = ref(false)
+const sitesByUserId = ref([])
 
 const router = useRouter()
 //for paginations
@@ -521,10 +533,10 @@ const resetButCompanyDisable = async () => {
   disableCompany.value = true
 }
 
-onBeforeMount(() => {
-  getSessionForSidebar()
-  fetchCondition()
-  fetchData(
+onBeforeMount(async () => {
+  await getSessionForSidebar()
+  await fetchCondition()
+  await fetchData(
     showingValue.value,
     selectedType.value,
     selectedCompany2.value,
@@ -535,6 +547,7 @@ onBeforeMount(() => {
     selectedSite2.value
   )
 })
+
 //for searching
 const filteredItems = (search) => {
   fetchData(
@@ -791,6 +804,38 @@ const importData = async () => {
     })
   }
 }
+
+const fetchSitesByUserId = async () => {
+  const token = localStorage.getItem("token")
+  const decodeToken = storageHelper.decodeToken(token)
+  const userId = decodeToken?.users?.id
+
+  const res = await fetchSiteByUseID(userId)
+
+  sitesByUserId.value = res.data
+}
+
+const filteredSites = computed(() => {
+  const primarySite = JSON.parse(localStorage.getItem("id_site"))
+  const userSitesIds = [
+    ...sitesByUserId.value.map(({ id_site }) => id_site),
+    primarySite,
+  ]
+
+  const sites = Site.value?.filter(({ id }) => userSitesIds.includes(id))
+
+  return sites
+})
+
+watch(filteredSites, () => {
+  if (filteredSites.value.length == 1) {
+    selectedSite2.value = filteredSites.value?.[0]?.id
+  }
+})
+
+onMounted(async () => {
+  await fetchSitesByUserId()
+})
 </script>
 
 <template>
@@ -940,7 +985,11 @@ const importData = async () => {
                   @change="changeSite(selectedSite2)"
                 >
                   <option disabled selected>Site</option>
-                  <option v-for="(site, i) in Site" :key="i" :value="site.id">
+                  <option
+                    v-for="(site, i) in filteredSites"
+                    :key="i"
+                    :value="site.id"
+                  >
                     {{ site.site_name }}
                   </option>
                 </select>

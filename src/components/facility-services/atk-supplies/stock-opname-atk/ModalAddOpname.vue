@@ -608,7 +608,7 @@ onMounted(() => {
                 </td>
                 <td class="border border-[#B9B9B9] text-center">
                   {{
-                    items.adjustment_type == "ADDITION"
+                    items.adjustment_type == "addition"
                       ? "Increase"
                       : "Decrease"
                   }}
