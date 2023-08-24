@@ -40,6 +40,8 @@
     import { useSidebarStore } from "@/stores/sidebar.js"
     const sidebar = useSidebarStore()
 
+    let requestorName = localStorage.getItem('username')
+
     let headerCAData = ref(true)
 
     let isEditing = ref(false)
@@ -438,7 +440,6 @@
 
                       <h1 class="text-blue font-semibold">
                         Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[currentIndex].no_request_trip }}</span>
-
                       </h1>
 
                       <div class="flex-1"></div>
@@ -602,7 +603,6 @@
 
                     <!-- TAB -->
 
-
                     <!-- DOCUMENT DETAIL -->
                     <div v-if="tab == 'details'" class="flex">
                                           
@@ -647,8 +647,6 @@
                             </div>
 
                         </div>
-
-
 
                         <!-- UNTUK MELIHAT DOCUMENT DETAIL DARI TIAP STEP REQUEST TRIP -->
                         <form class="flex-1" @submit.prevent="">
@@ -904,7 +902,9 @@
                           </detailsFormHeader>
 
                           <!-- Button khusus CA, untuk Add saat data CA header sudah ada -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader" :title=headerTitle>
+                          <detailsFormHeader 
+                            v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader" :title=headerTitle
+                          >
                             
                             <div
                               class="flex gap-2"
@@ -924,7 +924,9 @@
                           </detailsFormHeader>
 
                           <!-- Button khusus CA, untuk RUD muncul saat ada data CA Header -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader" :title=headerTitle>
+                          <detailsFormHeader 
+                            v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader" :title=headerTitle
+                          >
 
                             <!-- muncul saat Cash Advance Header nya ada -->
                             <div
@@ -1016,7 +1018,7 @@
                           </cashAdvanceFormView>
 
                           <!-- table Step 8 -->
-                          <cashAdvanceTableView 
+                          <cashAdvanceTableView
                           v-if="headerTitle === 'Cash Advance' && viewLayout === 'table'" 
                             class="ml-8"
                           />
@@ -1033,7 +1035,7 @@
 
                             <div class="flex flex-col mt-3">
                                 <span>Requestor <span class="text-red-star">*</span></span>
-                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="Gavin McFarland" disabled>
+                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" :value="requestorName" disabled>
                             </div>
 
                             <div class="flex flex-col mt-3">
