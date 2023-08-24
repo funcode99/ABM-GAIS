@@ -53,6 +53,7 @@ const listStatus = [
   { id: 2, status: "Revision", value: "alert alert-error" },
   { id: 3, status: "Fully Rejected", value: "alert alert-error" },
   { id: 10, status: "Completed", value: "alert alert-success" },
+  { id: 5, status: "Need to Settlement", value: "alert bg-[#8d8e8f]" },
 ];
 
 //HEADERS START
