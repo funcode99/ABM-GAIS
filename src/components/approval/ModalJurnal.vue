@@ -227,6 +227,7 @@ let classStyle =
               name="claim_category"
               :class="classStyle"
               disabled
+              :value="props.dataJurnal.code_document"
             />
           </div>
         </div>
