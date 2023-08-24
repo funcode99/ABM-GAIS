@@ -131,11 +131,11 @@
 
     const addActivitiesField = (fieldType) => {
 
-fieldType.push({
-    act_date: new Date().toJSON().slice(0, 10),
-    activities: '',
-    from_fetch: false
-})
+            fieldType.push({
+                act_date: new Date().toJSON().slice(0, 10),
+                activities: '',
+                from_fetch: false
+            })
 
     }
 
@@ -702,6 +702,7 @@ fieldType.push({
 
             </div>
 
+            <!-- Total TLK -->
             <div class="px-5">
 
                 <div class="w-full">
@@ -724,6 +725,7 @@ fieldType.push({
 
             </div>
 
+            <!-- Notes -->
             <div class="px-5">
 
                 <div class="w-full">

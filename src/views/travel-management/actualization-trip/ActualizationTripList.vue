@@ -19,6 +19,9 @@
     import editicon from "@/assets/navbar/edit_icon.svg"
 
     import Api from "@/utils/Api"
+    import { useActualizationStore } from "@/stores/actualization.js"
+
+    let actualization = useActualizationStore()
 
     let showingValue = ref(1)
     let showingValueDuplicate = ref(showingValue.value)
@@ -95,6 +98,16 @@
         //   getSessionForSidebar()
     })
 
+    const assignRequestTripId = (a, b, c, d, e) => {
+        actualization.viewActualizationData = {
+            status: a,
+            created_at:  b,
+            created_by: c,
+            no_request_trip: d,
+            id: e
+        }
+    }
+
 </script>
 
 <template>
@@ -110,6 +123,8 @@
             <tableContainer>
 
                 <tableTop>
+
+                    {{ sortedData }}
 
                     <!-- USER , EXPORT BUTTON, ADD NEW BUTTON -->
                     <div
@@ -293,7 +308,7 @@
                                 </td>
 
                                 <td class="flex flex-wrap gap-4 justify-center items-center">
-                                    <router-link to="/actualization-view" @click="assignRequestTripId(data.id)">
+                                    <router-link :to="`/actualization-view/${data.id}`" @click="assignRequestTripId(data.status, data.created_at, data.created_by, data.no_request_trip, data.id)">
                                         <button>
                                             <img :src="editicon" class="w-6 h-6" />
                                         </button>

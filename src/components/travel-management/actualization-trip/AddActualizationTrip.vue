@@ -78,9 +78,7 @@
                 purpose: purpose.value,
                 total_tlk: totalTLK.value,
             })
-            console.log(api)
             const api2 = await Api.post(`/actual_trip/submit/${api.data.data.id}`)
-            console.log(api2)
         }
 
     }
