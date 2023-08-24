@@ -12,6 +12,8 @@ const emits = defineEmits(["unlockScrollbar"]);
 let companyData = ref([]);
 let companyCode = ref("");
 
+const role = JSON.parse(localStorage.getItem("id_role"));
+
 const props = defineProps({
   dataJurnal: Object,
 });
@@ -94,7 +96,7 @@ let classStyle =
       </nav>
 
       <main class="modal-box-inner">
-        <div class="sticky top-0 bg-white">
+        <div class="sticky top-0 bg-white" v-if="role === 'ADM'">
           <div
             class="flex flex-wrap justify-start gap-2 items-center px-8 pt-4"
           >
