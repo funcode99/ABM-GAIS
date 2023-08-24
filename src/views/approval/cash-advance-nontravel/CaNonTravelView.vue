@@ -33,12 +33,12 @@ let dataArr = ref([]);
 let dataItem = ref([]);
 let dataApproval = ref([]);
 let listEmployee = ref([]);
+let alert = ref([]);
 
 let visibleModal = ref(false);
 let visibleModalReject = ref(false);
 let id = route.params.id;
 let tabId = ref(1);
-let alert = ref([]);
 
 const code_role = JSON.parse(localStorage.getItem("id_role"));
 
