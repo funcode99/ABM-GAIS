@@ -338,6 +338,7 @@ const format_price = (value) => {
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created By</span
@@ -346,6 +347,55 @@ const format_price = (value) => {
                 type="text"
                 disabled
                 :value="dataArr.employee_name"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Total Before Settlement</span
+              >
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">CA No</span>
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Total After Settlement</span
+              >
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Event</span>
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Type</span>
+              <input
+                type="text"
+                disabled
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
