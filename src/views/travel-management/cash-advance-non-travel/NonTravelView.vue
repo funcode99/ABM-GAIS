@@ -73,7 +73,7 @@ const saveFormHeader = async () => {
     event: dataArr.value.event,
     date: dataArr.value.date,
     id_currency: dataArr.value.id_currency,
-    grand_total: dataArr.value.grand_total,
+    grand_total: Total,
     id_cost_center: dataArr.value.id_cost_center,
   };
 
