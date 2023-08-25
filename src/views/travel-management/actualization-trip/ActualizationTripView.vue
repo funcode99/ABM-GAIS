@@ -2,6 +2,11 @@
     import { ref, onBeforeMount, provide, watch } from 'vue'
     import Api from '@/utils/Api'
 
+    import multiStepCircleVertical from '@/components/molecules/multiStepCircleVertical.vue'
+    import miniABM from '@/assets/mini-abm.png'
+    import userImg from '@/assets/3-user.png'
+    import deleteDocumentIcon from '@/assets/delete_document_icon.png'
+
     import { useRoute } from 'vue-router'
     const location = useRoute();
 
@@ -89,12 +94,15 @@ try {
 
     }
 
+    let approvalStatusData = ref()
+    
     const fetchHistoryApproval = async () => {
 
       const token = JSON.parse(localStorage.getItem('token'))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const api = await Api.get(`/actual_trip/get_history/${location.params.id}`)
       console.log(api)
+      approvalStatusData.value = api.data.data
 
     }
 
@@ -121,8 +129,6 @@ try {
 
     const editActivitiesField = async (activitiesDetail, index) => {
 
-        console.log(activitiesDetail)
-
         const token = JSON.parse(localStorage.getItem('token'))
         Api.defaults.headers.common.Authorization = `Bearer ${token}`
         const api = await Api.post(`/actual_trip/update_activities/${activitiesDetail[index].id}`, {
@@ -130,7 +136,6 @@ try {
             act_date: activitiesDetail[index].act_date,
             activities: activitiesDetail[index].activities
         })
-        console.log(api)
         fetchActivitiesByActId()
 
     }
@@ -249,6 +254,7 @@ fetchTripInfoByActId()
 
                     <!-- {{ actualization.viewActualizationData }} -->
                     <!-- {{ tripInfoDetail }} -->
+                    {{ approvalStatusData }}
 
                     <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
                     <div class="flex gap-4 mt-6 mb-3 ml-5" >
