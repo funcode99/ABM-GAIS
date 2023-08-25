@@ -98,8 +98,9 @@
         //   getSessionForSidebar()
     })
 
-    const assignRequestTripId = (a) => {
+    const assignRequestTripId = (a, b) => {
         localStorage.setItem('no_request_trip', a)
+        localStorage.setItem('no_act', b)
     }
 
 </script>
@@ -301,7 +302,8 @@
 
                                 <td class="flex flex-wrap gap-4 justify-center items-center">
                                     <router-link 
-                                    :to="`/actualization-view/${data.id}/${data.status}/${data.created_at}/${data.created_by}`" @click="assignRequestTripId(data.no_request_trip)">
+                                    :to="`/actualization-view/${data.id}/${data.status}/${data.created_at}/${data.created_by}`" 
+                                    @click="assignRequestTripId(data.no_request_trip, data.no_act)">
                                         <button>
                                             <img :src="editicon" class="w-6 h-6" />
                                         </button>

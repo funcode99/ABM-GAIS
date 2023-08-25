@@ -116,6 +116,7 @@ try {
 
     let tab = ref('details')
     let noRequestTrip = localStorage.getItem('no_request_trip')
+    let noAct = localStorage.getItem('no_act')
 
     const addActivitiesField = (fieldType) => {
 
@@ -211,12 +212,12 @@ fetchTripInfoByActId()
 
 }
 
-const deleteTripInfoField = async (tripInfoDetail, index) => {
-const token = JSON.parse(localStorage.getItem('token'))
-Api.defaults.headers.common.Authorization = `Bearer ${token}`
-const api = await Api.delete(`/actual_trip/delete_trip/${tripInfoDetail[index].id}`)
-fetchTripInfoByActId()
-}
+    const deleteTripInfoField = async (tripInfoDetail, index) => {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const api = await Api.delete(`/actual_trip/delete_trip/${tripInfoDetail[index].id}`)
+      fetchTripInfoByActId()
+    }
 
 </script>
 
@@ -239,7 +240,7 @@ fetchTripInfoByActId()
                       </router-link>
 
                       <h1 class="text-blue font-semibold">
-                        Actualization Trip<span class="text-[#0a0a0a]"> / {{ actualization.viewActualizationData.no_request_trip }}
+                        Actualization Trip<span class="text-[#0a0a0a]"> / {{ noAct }}
                         </span>
 
                       </h1>
@@ -254,7 +255,7 @@ fetchTripInfoByActId()
 
                     <!-- {{ actualization.viewActualizationData }} -->
                     <!-- {{ tripInfoDetail }} -->
-                    {{ approvalStatusData }}
+                    <!-- {{ approvalStatusData }} -->
 
                     <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
                     <div class="flex gap-4 mt-6 mb-3 ml-5" >

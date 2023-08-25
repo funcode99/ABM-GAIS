@@ -50,7 +50,7 @@
                 </button>
 
                 <!-- tunjukin gambar kalo judulnya gak ada for approval -->
-                <button v-if="props.title == null" class="bg-blue w-11 h-11 text-white rounded-full flex justify-center items-center">
+                <button v-if="props.title == null" class="w-11 h-11 text-white rounded-full flex justify-center items-center" :class="props.any.code_status == '10' ? 'bg-blue' : 'bg-[#E2E8F0]'">
                     <img :src="props.image" class="w-6 h-6" />
                 </button>
     
@@ -64,8 +64,6 @@
                 </div>
     
             </div>
-
-
 
             <!-- notification box -->
             <div v-if="props.title == null" class="w-[385px] h-[128px] bg-[#EFF4FF] rounded-2xl my-3 flex items-center">
