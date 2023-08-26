@@ -117,16 +117,23 @@ const generateNumber = async () => {
 }
 
 const addItem = async () => {
-  console.log(selectedWarehouse.value)
+  console.log(
+    selectedCompany.value,
+    selectedSite.value,
+    selectedUOM.value,
+    itemNames.value,
+    alertQuantity.value,
+    idItems.value
+  )
 
   if (
-    selectedCompany.value == "" ||
-    selectedSite.value == "" ||
+    !selectedCompany.value ||
+    !selectedSite.value ||
     selectedWarehouse.value.length == 0 ||
-    selectedUOM.value == "" ||
-    itemNames.value == "" ||
-    alertQuantity.value == "" ||
-    idItems.value == ""
+    !selectedUOM.value ||
+    !itemNames.value ||
+    !alertQuantity.value ||
+    !idItems.value
   ) {
     Swal.fire({
       position: "center",
@@ -302,267 +309,270 @@ watchEffect(() => {
         </p>
       </nav>
 
-      <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
-        <img :src="icondanger" class="w-5 h-5" />
-        <p class="font-JakartaSans font-semibold">Item Info</p>
-      </div>
-
-      <main class="modal-box-inner-brand pb-14">
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedCompany"
-              @change="changeCompany(selectedCompany)"
-              :disabled="disableCompany"
-            >
-              <option disabled selected>Company</option>
-              <option
-                v-for="(company, i) in Company"
-                :key="i"
-                :value="company.id"
-              >
-                {{ company.company_name }}
-              </option>
-            </select>
-          </div>
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Site<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedSite"
-              @change="changeSite(selectedSite)"
-              :disabled="disableSite"
-            >
-              <option disabled selected>Site</option>
-              <option v-for="(site, i) in Site" :key="i" :value="site.id">
-                {{ site.site_name }}
-              </option>
-            </select>
-          </div>
+      <main class="modal-box-inner-brand overflow-auto h-[80vh]">
+        <div class="flex flex-wrap gap-2 justify-start items-center pt-4 mx-4">
+          <img :src="icondanger" class="w-5 h-5" />
+          <p class="font-JakartaSans font-semibold">Item Info</p>
         </div>
-        <div class="flex justify-between px-6 items-center gap-2">
-          <div class="mb-6 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Details</label
-            >
-            <hr />
-          </div>
-        </div>
-        <div class="grid grid-cols-2 px-6 items-center gap-2">
-          <div class="mb-4 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Item Name<span class="text-red">*</span></label
-            >
-            <input
-              type="text"
-              v-model="itemNames"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Item Name"
-              required
-            />
-          </div>
-
-          <div class="mb-4 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm mx-2"
-              >ID Items<span class="text-red">*</span></label
-            >
-            <div
-              class="flex items-center border-b border-teal-500 py-2 mb-4 w-full mx-2"
-            >
-              <input
-                class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-                v-model="idItems"
-                maxlength="25"
-                placeholder="ID Item"
-                aria-label="Full name"
-              />
-              <button
-                class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded"
-                type="button"
-                @click="generateNumber"
+        <div>
+          <div class="flex justify-between px-6 items-center gap-2">
+            <div class="mb-6 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Company<span class="text-red">*</span></label
               >
-                <img :src="iconPlus" class="w-[10px] h-[10px]" />
-              </button>
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedCompany"
+                @change="changeCompany(selectedCompany)"
+                :disabled="disableCompany"
+              >
+                <option disabled selected>Company</option>
+                <option
+                  v-for="(company, i) in Company"
+                  :key="i"
+                  :value="company.id"
+                >
+                  {{ company.company_name }}
+                </option>
+              </select>
+            </div>
+            <div class="mb-6 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Site<span class="text-red">*</span></label
+              >
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedSite"
+                @change="changeSite(selectedSite)"
+                :disabled="disableSite"
+              >
+                <option disabled selected>Site</option>
+                <option v-for="(site, i) in Site" :key="i" :value="site.id">
+                  {{ site.site_name }}
+                </option>
+              </select>
             </div>
           </div>
-          <div class="mb-4 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >UOM<span class="text-red">*</span></label
-            >
-            <select
-              class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              required
-              v-model="selectedUOM"
-            >
-              <option disabled selected value="">UOM</option>
-              <option v-for="(uom, i) in UOM" :key="i" :value="uom.id">
-                {{ uom.uom_name }}
-              </option>
-            </select>
+          <div class="flex justify-between px-6 items-center gap-2">
+            <div class="mb-6 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Details</label
+              >
+              <hr />
+            </div>
           </div>
+          <div class="grid grid-cols-2 px-6 items-center gap-2">
+            <div class="mb-4 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Item Name<span class="text-red">*</span></label
+              >
+              <input
+                type="text"
+                v-model="itemNames"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Item Name"
+                required
+              />
+            </div>
 
-          <div class="mb-4 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Alert Quantity<span class="text-red">*</span></label
-            >
-            <input
-              type="number"
-              v-model="alertQuantity"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Alert Quantity"
-              required
-            />
-          </div>
-          <div class="mb-4 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Description</label
-            >
-            <input
-              type="text"
-              v-model="remark"
-              class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-              placeholder="Description"
-              required
-            />
-          </div>
-          <div class="mb-4 w-full">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >ATK Warehouse<span class="text-red">*</span></label
-            >
-            <Multiselect
-              v-model="selectedWarehouse"
-              mode="tags"
-              placeholder="Select Warehouse"
-              track-by="warehouse_name"
-              label="warehouse_name"
-              :close-on-select="false"
-              :searchable="true"
-              :options="Warehouse"
-              :loading="isLoading"
-            >
-              <template v-slot:tag="{ option, handleTagRemove, disabled }">
-                <div
-                  class="multiselect-tag is-user"
-                  :class="{
-                    'is-disabled': disabled,
-                  }"
+            <div class="mb-4 w-full">
+              <label
+                class="block mb-2 font-JakartaSans font-medium text-sm mx-2"
+                >ID Items<span class="text-red">*</span></label
+              >
+              <div
+                class="flex items-center border-b border-teal-500 py-2 mb-4 w-full mx-2"
+              >
+                <input
+                  class="appearance-none border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
+                  v-model="idItems"
+                  maxlength="25"
+                  placeholder="ID Item"
+                  aria-label="Full name"
+                />
+                <button
+                  class="flex-shrink-0 bg-[#015289] text-sm border-4 text-white py-1 px-2 rounded"
+                  type="button"
+                  @click="generateNumber"
                 >
-                  {{ option.warehouse_name }}
-                  <span
-                    v-if="!disabled"
-                    class="multiselect-tag-remove"
-                    @click="handleTagRemove(option, $event)"
+                  <img :src="iconPlus" class="w-[10px] h-[10px]" />
+                </button>
+              </div>
+            </div>
+            <div class="mb-4 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >UOM<span class="text-red">*</span></label
+              >
+              <select
+                class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                required
+                v-model="selectedUOM"
+              >
+                <option disabled selected value="">UOM</option>
+                <option v-for="(uom, i) in UOM" :key="i" :value="uom.id">
+                  {{ uom.uom_name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="mb-4 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Alert Quantity<span class="text-red">*</span></label
+              >
+              <input
+                type="number"
+                v-model="alertQuantity"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Alert Quantity"
+                required
+              />
+            </div>
+            <div class="mb-4 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Description</label
+              >
+              <input
+                type="text"
+                v-model="remark"
+                class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                placeholder="Description"
+                required
+              />
+            </div>
+            <div class="mb-4 w-full">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >ATK Warehouse<span class="text-red">*</span></label
+              >
+              <Multiselect
+                v-model="selectedWarehouse"
+                mode="tags"
+                placeholder="Select Warehouse"
+                track-by="warehouse_name"
+                label="warehouse_name"
+                :close-on-select="false"
+                :searchable="true"
+                :options="Warehouse"
+                :loading="isLoading"
+              >
+                <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                  <div
+                    class="multiselect-tag is-user"
+                    :class="{
+                      'is-disabled': disabled,
+                    }"
                   >
-                    <span class="multiselect-tag-remove-icon"></span>
-                  </span>
-                </div>
-              </template>
-            </Multiselect>
-          </div>
-        </div>
-
-        <div class="flex justify-center py-2">
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
-            @click="addItem"
-          >
-            Add
-          </button>
-        </div>
-
-        <!-- INNER TABLE -->
-        <div class="inner-table px-6">
-          <table class="table table-compact w-full">
-            <thead class="font-JakartaSans font-bold text-xs">
-              <tr class="bg-blue text-white h-8">
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                >
-                  ATK Warehouse
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                >
-                  ID Item
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                >
-                  Item Name
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                >
-                  UOM
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                >
-                  Alert Quantity
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                >
-                  Remarks
-                </th>
-                <th
-                  class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody class="font-JakartaSans font-normal text-xs">
-              <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
-                <td class="border border-[#B9B9B9] text-center">
-                  {{ items.nameWarehouse }}
-                </td>
-                <td class="border border-[#B9B9B9] text-center">
-                  {{ items.code_item }}
-                </td>
-                <td class="border border-[#B9B9B9] text-center">
-                  {{ items.item_name }}
-                </td>
-                <td class="border border-[#B9B9B9] text-center">
-                  {{ items.namaUOM }}
-                </td>
-                <td class="border border-[#B9B9B9] text-center">
-                  {{ items.alert_qty }}
-                </td>
-                <td class="border border-[#B9B9B9] text-center">
-                  {{ items.remarks }}
-                </td>
-                <td class="border border-[#B9B9B9]">
-                  <div class="flex flex-wrap justify-center items-center gap-2">
-                    <button @click="removeItems(i)">
-                      <img :src="deleteicon" class="w-6 h-6" />
-                    </button>
+                    {{ option.warehouse_name }}
+                    <span
+                      v-if="!disabled"
+                      class="multiselect-tag-remove"
+                      @click="handleTagRemove(option, $event)"
+                    >
+                      <span class="multiselect-tag-remove-icon"></span>
+                    </span>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </template>
+              </Multiselect>
+            </div>
+          </div>
+
+          <div class="flex justify-center py-2">
+            <button
+              class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+              @click="addItem"
+            >
+              Add
+            </button>
+          </div>
+
+          <!-- INNER TABLE -->
+          <div class="inner-table px-6">
+            <table class="table table-compact w-full">
+              <thead class="font-JakartaSans font-bold text-xs">
+                <tr class="bg-blue text-white h-8">
+                  <th
+                    class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                  >
+                    ATK Warehouse
+                  </th>
+                  <th
+                    class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                  >
+                    ID Item
+                  </th>
+                  <th
+                    class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                  >
+                    Item Name
+                  </th>
+                  <th
+                    class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                  >
+                    UOM
+                  </th>
+                  <th
+                    class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                  >
+                    Alert Quantity
+                  </th>
+                  <th
+                    class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                  >
+                    Remarks
+                  </th>
+                  <th
+                    class="border border-[#B9B9B9] bg-blue font-JakartaSans font-bold text-xs text-center"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="font-JakartaSans font-normal text-xs">
+                <tr class="h-16" v-for="(items, i) in itemsTable" :key="i">
+                  <td class="border border-[#B9B9B9] text-center">
+                    {{ items.nameWarehouse }}
+                  </td>
+                  <td class="border border-[#B9B9B9] text-center">
+                    {{ items.code_item }}
+                  </td>
+                  <td class="border border-[#B9B9B9] text-center">
+                    {{ items.item_name }}
+                  </td>
+                  <td class="border border-[#B9B9B9] text-center">
+                    {{ items.namaUOM }}
+                  </td>
+                  <td class="border border-[#B9B9B9] text-center">
+                    {{ items.alert_qty }}
+                  </td>
+                  <td class="border border-[#B9B9B9] text-center">
+                    {{ items.remarks }}
+                  </td>
+                  <td class="border border-[#B9B9B9]">
+                    <div
+                      class="flex flex-wrap justify-center items-center gap-2"
+                    >
+                      <button @click="removeItems(i)">
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </main>
-
-      <!-- <div class="sticky bottom-0 bg-white py-2"> -->
-      <div class="flex justify-center py-2">
-        <button
-          class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-          @click="save"
-        >
-          Save
-        </button>
+      <div class="sticky bottom-0 bg-white py-2 rounded-2xl">
+        <div class="flex justify-center">
+          <button
+            class="btn text-white text-base font-JakartaSans font-bold w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            @click="save"
+          >
+            Save
+          </button>
+        </div>
       </div>
-      <!-- </div> -->
     </div>
   </div>
 </template>
@@ -575,7 +585,6 @@ watchEffect(() => {
 }
 
 .modal-box-inner-brand {
-  height: 450px;
   --tw-scale-x: 1;
   --tw-scale-y: 0.9;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y))

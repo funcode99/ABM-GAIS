@@ -1,140 +1,134 @@
 <script setup>
-import iconClose from "@/assets/navbar/icon_close.svg";
-import iconPlus from "@/assets/navbar/icon_plus.svg";
-import { ref, watchEffect, onMounted } from "vue";
-import Api from "@/utils/Api";
-import Swal from "sweetalert2";
-import Multiselect from "@vueform/multiselect";
+import iconClose from "@/assets/navbar/icon_close.svg"
+import iconPlus from "@/assets/navbar/icon_plus.svg"
+import { ref, watchEffect, onMounted } from "vue"
+import Api from "@/utils/Api"
+import Swal from "sweetalert2"
+import Multiselect from "@vueform/multiselect"
 
 const props = defineProps({
   status: String,
   id: Number,
-});
+})
 
-const emits = defineEmits(["close"]);
-const id_role = JSON.parse(localStorage.getItem("id_role"));
+const emits = defineEmits(["close"])
+const id_role = JSON.parse(localStorage.getItem("id_role"))
 
 const listStatus = [
   { id: 1, title: "Available" },
   { id: 2, title: "Unavailable" },
-];
+]
 
-let listEmployee = ref([]);
-let detailEmployee = ref([]);
-let listCompany = ref([]);
-let listSite = ref([]);
-let dataArr = ref([]);
+let listEmployee = ref([])
+let detailEmployee = ref([])
+let listCompany = ref([])
+let listSite = ref([])
+let dataArr = ref([])
 
-let type = ref(props.status);
-let idItem = ref(props.id);
-let isLoading = ref(false);
+let type = ref(props.status)
+let idItem = ref(props.id)
+let isLoading = ref(false)
 
-let id_company = ref("");
-let id_site = ref("");
-let code_meeting_room = ref("");
-let floor = ref("");
-let available_status = ref("");
-let name_meeting_room = ref("");
-let capacity = ref("");
-let facility = ref([]);
-let approver = ref([]);
-let is_approval = ref(false);
-let err_messages = ref("");
-let selectSite = ref(true);
+let id_company = ref("")
+let id_site = ref("")
+let code_meeting_room = ref("")
+let floor = ref("")
+let available_status = ref("")
+let name_meeting_room = ref("")
+let capacity = ref("")
+let facility = ref([])
+let approver = ref([])
+let is_approval = ref(false)
+let err_messages = ref("")
+let selectSite = ref(true)
 
-const listFasilitis = [
-  { id: 1, name: "Projector" },
-  { id: 2, name: "TV" },
-  { id: 3, name: "Speaker" },
-  { id: 4, name: "WebCam" },
-  { id: 5, name: "Jabra" },
-];
-const rowClass = "grid grid-cols-2 px-6 items-center gap-2";
-const colClass = "mb-6 w-full";
+const listFasilitis = ["Projector", "TV", "Speaker", "WebCam", "Jabra"]
+const rowClass = "grid grid-cols-2 px-6 items-center gap-2"
+const colClass = "mb-6 w-full"
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
 // FETCH DATA
 const fetchCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("company/get");
-  listCompany.value = api.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("company/get")
+  listCompany.value = api.data.data
+}
 
 const fetchCompanyID = async (id_comp) => {
-  fetchSite(id_comp);
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_comp}`);
-  listCompany.value = res.data.data;
-  id_company.value = id_comp;
-};
+  fetchSite(id_comp)
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_comp}`)
+  listCompany.value = res.data.data
+  id_company.value = id_comp
+}
 
 const fetchSite = async (id_comp) => {
-  let idComp = id_comp ? id_comp : id_company.value;
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`site/get_by_company/${idComp}`);
-  listSite.value = api.data.data;
-  selectSite.value = false;
+  let idComp = id_comp ? id_comp : id_company.value
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get(`site/get_by_company/${idComp}`)
+  listSite.value = api.data.data
+  selectSite.value = false
   for (let index = 0; index < api.data.data.length; index++) {
-    const element = api.data.data[index];
+    const element = api.data.data[index]
     if (type.value == "add") {
       if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
-        id_site.value = element.id;
+        id_site.value = element.id
       }
     } else {
       if (id_site.value === element.id) {
-        id_site.value = element.id;
+        id_site.value = element.id
       }
     }
   }
   if (id_role == "ADM") {
     listSite.value = listSite.value.filter(
       (e) => e.id == localStorage.getItem("id_site")
-    );
+    )
   }
-};
+}
 
 const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`master_meeting_room/get/${id}`);
-  dataArr.value = res.data.data[0];
-  code_meeting_room.value = dataArr.value.code_meeting_room;
-  id_company.value = dataArr.value.id_company;
-  id_site.value = dataArr.value.id_site;
-  floor.value = dataArr.value.floor;
-  name_meeting_room.value = dataArr.value.name_meeting_room;
-  available_status.value = dataArr.value.available_status;
-  capacity.value = dataArr.value.capacity;
-  facility.value = dataArr.value.facility;
-  is_approval.value = dataArr.value.is_approval;
-  approver.value = dataArr.value.approver;
-  fetchSite(id_company.value);
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`master_meeting_room/get/${id}`)
+  dataArr.value = res.data.data[0]
+  code_meeting_room.value = dataArr.value.code_meeting_room
+  id_company.value = dataArr.value.id_company
+  id_site.value = dataArr.value.id_site
+  floor.value = dataArr.value.floor
+  name_meeting_room.value = dataArr.value.name_meeting_room
+  available_status.value = dataArr.value.available_status
+  capacity.value = dataArr.value.capacity
+  facility.value = dataArr.value.facility
+  is_approval.value = dataArr.value.is_approval
+  approver.value = dataArr.value.approver
+  fetchSite(id_company.value)
+}
 
 const fetchEmployee = async (query) => {
   let payload = {
     search: query,
     filterRole: 91, //secretary
-  };
-  isLoading.value = true;
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  }
+  isLoading.value = true
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   await Api.get(`users/${id_site.value}`, {
     params: payload,
   }).then((res) => {
-    listEmployee.value = res.data.data;
-    isLoading.value = false;
-  });
-};
+    listEmployee.value = res.data.data
+    isLoading.value = false
+  })
+}
 // END
 
 const generateNumber = async () => {
-  code_meeting_room.value = Math.floor(100000000 + Math.random() * 900000000);
-};
+  code_meeting_room.value = Math.floor(100000000 + Math.random() * 900000000)
+}
 
 const saveForm = async () => {
   const payload = {
@@ -147,13 +141,13 @@ const saveForm = async () => {
     facility: facility.value,
     is_approval: is_approval.value,
     approver: is_approval.value ? approver.value : [""],
-  };
-  if (type.value == "add") {
-    save(payload);
-  } else if (type.value == "edit") {
-    edit(payload);
   }
-};
+  if (type.value == "add") {
+    save(payload)
+  } else if (type.value == "edit") {
+    edit(payload)
+  }
+}
 
 const edit = async (payload) => {
   Api.post(`master_meeting_room/update_data/${idItem.value}`, payload)
@@ -164,8 +158,8 @@ const edit = async (payload) => {
         title: res.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
-      close();
+      })
+      close()
     })
     .catch((error) => {
       Swal.fire({
@@ -174,9 +168,9 @@ const edit = async (payload) => {
         title: error.response.data.error,
         showConfirmButton: false,
         timer: 1500,
-      });
-    });
-};
+      })
+    })
+}
 
 const save = async (payload) => {
   Api.post("master_meeting_room/store/", payload)
@@ -187,62 +181,59 @@ const save = async (payload) => {
         title: res.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
-      close();
+      })
+      close()
     })
     .catch((error) => {
       Object.keys(error.response.data.error).forEach(function (key, index) {
-        err_messages.value += error.response.data.error[key] + "\n";
-      });
+        err_messages.value += error.response.data.error[key] + "\n"
+      })
       Swal.fire({
         position: "center",
         icon: "error",
         title: err_messages.value,
         showConfirmButton: false,
         timer: 1500,
-      });
-    });
-};
+      })
+    })
+}
 
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company);
-};
+  const id_company = JSON.parse(localStorage.getItem("id_company"))
+  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company)
+}
 
 onMounted(() => {
-  fetchEmployee();
-  fetchCondition();
+  fetchEmployee()
+  fetchCondition()
   if (type.value == "edit" && idItem.value != 0) {
-    fetchDataById(idItem.value);
+    fetchDataById(idItem.value)
   }
-});
+})
 
 const close = () => {
-  code_meeting_room.value = "";
-  id_company.value = "";
-  id_site.value = "";
-  name_meeting_room.value = "";
-  capacity.value = "";
-  floor.value = "";
-  available_status.value = "";
-  emits("close");
-};
+  code_meeting_room.value = ""
+  id_company.value = ""
+  id_site.value = ""
+  name_meeting_room.value = ""
+  capacity.value = ""
+  floor.value = ""
+  available_status.value = ""
+  emits("close")
+}
 
 watchEffect(() => {
-  listFasilitis.map((item) => {
-    item.value = parseInt(item.id);
-  });
   listEmployee.value.map((item) => {
-    item.value = parseInt(item.id);
-  });
-});
+    item.value = parseInt(item.id)
+  })
+})
 </script>
 
 <template>
   <input type="checkbox" id="my-modal-3" class="modal-toggle" />
   <div class="modal">
-    <div class="modal-dialog bg-white w-3/5">
-      <nav class="sticky top-0 z-50 bg-[#015289]">
+    <div class="modal-dialog bg-white w-3/5 rounded-t-2xl">
+      <nav class="sticky top-0 z-50 bg-[#015289] rounded-t-2xl">
         <label
           @click="close"
           class="cursor-pointer absolute right-3 top-0 lg:top-3"
@@ -407,13 +398,13 @@ watchEffect(() => {
               v-model="facility"
               placeholder="Select Facility"
               mode="tags"
-              track-by="name"
-              label="name"
               :close-on-select="false"
               :searchable="true"
               :options="listFasilitis"
               :hide-selected="true"
-              ><template v-slot:tag="{ option, handleTagRemove, disabled }">
+              createTag
+            >
+              <!-- <template v-slot:tag="{ option, handleTagRemove, disabled }">
                 <div
                   class="multiselect-tag is-user"
                   :class="{
@@ -429,7 +420,8 @@ watchEffect(() => {
                     <span class="multiselect-tag-remove-icon"></span>
                   </span>
                 </div> </template
-            ></Multiselect>
+            > -->
+            </Multiselect>
           </div>
         </div>
       </main>

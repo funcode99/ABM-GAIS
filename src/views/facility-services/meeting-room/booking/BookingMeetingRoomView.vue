@@ -1,79 +1,118 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue";
-import Swal from "sweetalert2";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue"
+import Swal from "sweetalert2"
 
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
-import arrow from "@/assets/request-trip-view-arrow.png";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import Api from "@/utils/Api";
-import moment from "moment";
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
+import arrow from "@/assets/request-trip-view-arrow.png"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import Api from "@/utils/Api"
+import moment from "moment"
 
-import { ref, onBeforeMount } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
-import { useRoute, useRouter } from "vue-router";
+import { ref, onBeforeMount, computed } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+import { useRoute, useRouter } from "vue-router"
 
-const sidebar = useSidebarStore();
-const route = useRoute();
-const router = useRouter();
+const sidebar = useSidebarStore()
+const route = useRoute()
+const router = useRouter()
 
-let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"));
-const id_role = JSON.parse(localStorage.getItem("id_role"));
+let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
+const id_role = JSON.parse(localStorage.getItem("id_role"))
 
-let dataArr = ref([]);
+let dataArr = ref([])
 
-let lengthCounter = 0;
-let idBook = route.params.id;
-let visibleHeader = ref(false);
-let addItem = ref(false);
-let tabId = ref(1);
+let lengthCounter = 0
+let idBook = route.params.id
+let visibleHeader = ref(false)
+let addItem = ref(false)
+let tabId = ref(1)
 
 // for modal
-let statusForm = ref("add");
-let visibleModal = ref(false);
-let idItem = ref(0);
+let statusForm = ref("add")
+let visibleModal = ref(false)
+let idItem = ref(0)
+
+const bookingMeetingRoom = {
+  Draft: {
+    statusLevel: 0,
+    class: "bg-[#000] border-[#000]",
+  },
+  Booked: {
+    statusLevel: 1,
+    class: "bg-[#2970ff] border-[#2970ff]",
+  },
+  Reject: {
+    statusLevel: 2,
+    class: "bg-[#ef9d22] border-[#ef9d22]",
+  },
+  "Waiting Appove": {
+    statusLevel: 2,
+    class: "bg-[#facc15] border-[#facc15]",
+  },
+  Done: {
+    statusLevel: 3,
+    class: "bg-[#00c851] border-[#00c851]",
+  },
+  Cancel: {
+    statusLevel: 3,
+    class: "bg-red border-red",
+  },
+}
+
+const tabs = ref(["Details", "Resurrence", "Room Used Duration"])
+const tabActive = ref("Details")
 
 const tableHead = [
   { Id: 1, title: "Title", jsonData: "no" },
-  { Id: 2, title: "Meeting Room ID", jsonData: "created_at" },
+  // { Id: 2, title: "Meeting Room ID", jsonData: "created_at" },
   { Id: 3, title: "Meeting Room Name", jsonData: "no_ca" },
   { Id: 4, title: "Floor", jsonData: "employee_name" },
   { Id: 5, title: "Date", jsonData: "date" },
   { Id: 6, title: "Time", jsonData: "event" },
   { Id: 7, title: "Capacity", jsonData: "grand_total" },
-  { Id: 8, title: "Remarks", jsonData: "status" },
-];
+  { Id: 7, title: "Facility", jsonData: "facility" },
+  { Id: 8, title: "Remarks", jsonData: "notes" },
+]
 
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
+    return moment(String(value)).format("DD/MM/YYYY")
   }
-};
+}
+
+const isBookingStart = computed(() => {
+  const { start_date, start_time } = dataArr.value
+  const fullStartDate = new Date(`${start_date} ${start_time}`)
+  const today = new Date()
+
+  return today > fullStartDate
+})
 
 const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`book_meeting_room/get/${id}`);
-  dataArr.value = api.data.data[0];
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get(`book_meeting_room/get/${id}`)
+  dataArr.value = api.data.data[0]
+}
 
 const submit = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Api.post(`/book_meeting_room/book/${idBook}`)
     .then((res) => {
-      let status = res.data.success == true ? "success" : "error";
+      let status = res.data.success == true ? "success" : "error"
       Swal.fire({
         position: "center",
         icon: status,
         title: res.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
-      fetchDataById(idBook);
+      })
+      fetchDataById(idBook)
     })
     .catch((e) => {
       Swal.fire({
@@ -85,9 +124,9 @@ const submit = async () => {
         timerProgressBar: true,
         background: "#EA5455",
         color: "#ffffff",
-      });
-    });
-};
+      })
+    })
+}
 
 const cancelled = async () => {
   Swal.fire({
@@ -119,29 +158,29 @@ const cancelled = async () => {
           confirmButtonColor: "#015289",
           showConfirmButton: false,
           timer: 1500,
-        });
-      });
-      fetchDataById(idBook);
+        })
+      })
+      fetchDataById(idBook)
     } else {
-      return;
+      return
     }
-  });
-};
+  })
+}
 
 const done = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Api.post(`book_meeting_room/done/${idBook}`)
     .then((res) => {
-      let status = res.data.success == true ? "success" : "error";
+      let status = res.data.success == true ? "success" : "error"
       Swal.fire({
         position: "center",
         icon: status,
         title: res.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
-      fetchDataById(idBook);
+      })
+      fetchDataById(idBook)
     })
     .catch((e) => {
       Swal.fire({
@@ -153,36 +192,36 @@ const done = async () => {
         timerProgressBar: true,
         background: "#EA5455",
         color: "#ffffff",
-      });
-    });
-};
+      })
+    })
+}
 
 const openModal = (type, id) => {
-  visibleModal.value = true;
-  statusForm.value = type;
+  visibleModal.value = true
+  statusForm.value = type
   if (id) {
-    idItem.value = id;
+    idItem.value = id
   }
-};
+}
 
 const closeModal = () => {
-  visibleModal.value = false;
-  fetchDataById(idBook);
-};
+  visibleModal.value = false
+  fetchDataById(idBook)
+}
 
 onBeforeMount(() => {
-  getSessionForSidebar();
-  fetchDataById(idBook);
-});
+  getSessionForSidebar()
+  fetchDataById(idBook)
+})
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
-const rowClass = "flex justify-between px-6 items-center gap-2";
-const colClass = "mb-6 w-full";
+const rowClass = "flex justify-between px-6 items-center gap-2"
+const colClass = "mb-6 w-full"
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 </script>
 
 <template>
@@ -214,19 +253,11 @@ const inputClass =
                 </span>
               </h1>
             </router-link>
-            <div class="py-4">
-              <button
-                type="button"
-                :class="
-                  dataArr.status == 'Cancelled'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : dataArr.status == 'Booked'
-                    ? 'btn btn-sm border-none mx-4 capitalize  status-done'
-                    : 'btn btn-sm border-none mx-4 capitalize'
-                "
-              >
-                {{ dataArr.status }}
-              </button>
+            <div
+              class="rounded-lg p-3 text-white m-4"
+              :class="bookingMeetingRoom[dataArr.status]?.class"
+            >
+              {{ dataArr.status }}
             </div>
           </div>
           <div class="flex justify-start gap-4 mx-10">
@@ -260,7 +291,7 @@ const inputClass =
               Cancelled
             </button>
             <button
-              v-if="dataArr.status == 'Booked'"
+              v-if="dataArr.status == 'Booked' && isBookingStart"
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
             >
               Start Meeting
@@ -295,31 +326,30 @@ const inputClass =
 
           <!-- TAB & TABLE-->
           <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
-            <div class="grid grid-cols-10">
-              <div
-                class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative cursor-pointer"
-                @click="tabId = 1"
+            <div class="tabs bg-primary rounded-t-lg pt-3 py-0">
+              <tab
+                v-for="tab in tabs"
+                :key="tab"
+                class="tab flex gap-4 h-10 rounded-none bg-white text-black font-bold min-w-[120px] border-r"
+                style="border-radius: 0.5rem 0.5rem 0px 0px"
+                @click="tabActive = tab"
               >
                 <div
-                  :class="
-                    tabId == 1
-                      ? 'absolute bg-black h-full w-2 left-0 top-0 rounded-tl-lg'
-                      : 'absolute h-full w-2 left-0 top-0 rounded-tl-lg'
-                  "
+                  class="absolute left-0 w-3 h-full rounded-tl-lg"
+                  :class="{
+                    'border-black border-l-8': tabActive == tab,
+                  }"
                 ></div>
-                <p
-                  :class="
-                    tabId == 1
-                      ? 'font-JakartaSans font-normal text-sm text-center font-semibold text-blue'
-                      : 'font-JakartaSans font-normal text-sm text-center'
-                  "
-                >
-                  Details
-                </p>
-              </div>
+                <span>
+                  {{ tab }}
+                </span>
+              </tab>
             </div>
             <div class="overflow-x-auto bg-white">
-              <table class="table table-compact w-full" v-if="tabId == 1">
+              <table
+                class="table table-compact w-full"
+                v-if="tabActive == 'Details'"
+              >
                 <thead class="font-JakartaSans font-bold text-xs">
                   <tr class="bg-blue text-white h-8">
                     <th
@@ -341,9 +371,9 @@ const inputClass =
                     <td class="border border-[#B9B9B9]">
                       {{ dataArr.title }}
                     </td>
-                    <td class="border border-[#B9B9B9]">
+                    <!-- <td class="border border-[#B9B9B9]">
                       {{ dataArr.code_meeting_room }}
-                    </td>
+                    </td> -->
                     <td class="border border-[#B9B9B9]">
                       {{ dataArr.name_meeting_room }}
                     </td>
@@ -360,10 +390,12 @@ const inputClass =
                     <td class="border border-[#B9B9B9]">
                       {{ dataArr.capacity }}
                     </td>
+
                     <td class="border border-[#B9B9B9]">
-                        <span style="white-space: pre">
-                        {{ dataArr.remarks }}</span
-                      >
+                      {{ dataArr.facility }}
+                    </td>
+                    <td class="border border-[#B9B9B9]">
+                      <span style="white-space: pre"> {{ dataArr.notes }}</span>
                     </td>
                   </tr>
                 </tbody>
