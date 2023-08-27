@@ -31,7 +31,7 @@
             // position: "center",
             Swal.fire({
                 icon: "error",
-                title: error.response.data.error.email,
+                title: error.response.data.error?.email || error.response.data.message,
                 showConfirmButton: false,
                 showCloseButton: true
             })
