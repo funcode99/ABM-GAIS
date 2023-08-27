@@ -99,6 +99,7 @@ const handleNotifClick = () => {
 
   }
 
+  let childrenMenu = ref('')
 
 </script>
 
@@ -255,17 +256,20 @@ const handleNotifClick = () => {
                   </div>
 
                   <div class="fixed">
+
                     <div class="absolute left-[75px] top-[-30px] rounded-lg bg-blue">
   
-                      <div v-for="child in data.child"
-                      class=" "
-                      >
+                      <div 
+                        v-for="child in data.child">
   
-                      <router-link :to="`${child.url}`"
-                      v-if="!sidebar.isWide & sidebar.sidebarMenu === data.menu"
-                        >
-                            <div
-                              class="flex items-center cursor-pointer  text-xs h-10 w-32  text-white"
+                      <!-- child -->
+                      <router-link 
+                        :to="`${child.url}`"
+                        v-if="!sidebar.isWide & sidebar.sidebarMenu === data.menu">
+                            
+                          <div
+                              class="flex items-center cursor-pointer text-xs h-10 w-32  text-white"
+                              @mouseover="childrenMenu = child.menu"
                             >
                               
                             <!-- <img
@@ -292,18 +296,58 @@ const handleNotifClick = () => {
                                     ? `anchorImage anchorSubMenu`
                                     : '',
                                 ]" -->
+
                               <p
-                                  class="ml-2"
+                                class="ml-2"
+                            
                               >
                                 {{ child.menu }}
                               </p>
   
                             </div>
-                        </router-link>
+                      </router-link>
+
+                      <!-- grand child -->
+                      <div class="fixed">
+
+                        <div class="absolute left-[135px] top-[-41px] border-2 bg-blue border-white rounded-lg">
+                          
+                          <router-link
+                              :to="grandchild.url"
+                              v-for="grandchild in child.child"
+                              v-if="!sidebar.isWide & sidebar.sidebarMenu === data.menu & childrenMenu === child.menu"
+                            >
+
+                            <!-- {{ child.menu }} -->
+  
+                            <!-- class="flex gap-[10px] items-center cursor-pointer pl-8 py-2" -->
+  
+                              <div
+                                class="flex items-center cursor-pointer text-xs h-10 w-40 text-white"
+                              >
+  
+                                <!-- <img :src="submenuInner" alt="" class="w-2 h-2" /> -->
+    
+                                <p class="ml-2">
+                                  {{ grandchild.menu }}
+                                </p>
+    
+                                <!-- <div class="flex-1"></div> -->
+    
+                                <!-- <img class="w-5 h-5" :src="groupIcon" alt="" /> -->
+  
+                              </div>
+  
+                          </router-link>
+  
+                        </div>
+
+                      </div>
                       
                       </div>
   
                     </div>
+
                   </div>
 
                 </div>
