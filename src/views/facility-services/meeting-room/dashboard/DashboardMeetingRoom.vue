@@ -335,7 +335,6 @@ onBeforeMount(async () => {
               style="width: 300px; height: 70vh"
               class="basis-8/12"
               :on-event-click="openModal"
-              hide-title-bar
             >
               <template #split-label="{ split }">
                 <strong :style="`color: ${split.color}`">{{
@@ -562,7 +561,7 @@ onBeforeMount(async () => {
   overflow-x: auto;
 }
 
-
-
-
+.vuecal__heading {
+  height: auto !important;
+}
 </style>
