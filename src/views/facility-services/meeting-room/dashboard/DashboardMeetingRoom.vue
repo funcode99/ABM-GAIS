@@ -14,9 +14,14 @@ import VueCal from "vue-cal"
 import "vue-cal/dist/vuecal.css"
 import { Modal } from "usemodal-vue3"
 
-import { ref, onBeforeMount, reactive } from "vue"
+import { ref, onBeforeMount, reactive, computed } from "vue"
 import { useSidebarStore } from "@/stores/sidebar.js"
+
+import { fetchSiteByUseID } from "@/utils/Api/reference/site.js"
+import storageHelper from "@/utils/storage.helper.js"
+
 const sidebar = useSidebarStore()
+
 const inputClass =
   "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
@@ -60,6 +65,7 @@ const showFilter = ref(true)
 const formData = ref(null)
 const dialogKey = ref(0)
 const date = ref(null)
+const userSites = ref([])
 
 // FETCH DATA
 const fetch = async () => {
@@ -73,7 +79,11 @@ const fetch = async () => {
       let arr = {
         start: dt.start_date + " " + dt.start_time,
         end: dt.end_date + " " + dt.end_time,
-        content: "<p class='my-2 '>" + dt.title + "</p>" + dt.name_created,
+        content:
+          "<p class='my-2 font-bold'>" +
+          dt.title +
+          "</p>" +
+          `<p class='badge bg-white text-black rounded-xl'> ${dt.name_created} </p>`,
         class: `${chartStatusColor[dt.status]} text-whtie`,
         split: dt.id_meeting_room,
         data: { ...dt },
@@ -89,13 +99,16 @@ const fetchRoom = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const api = await Api.get("master_meeting_room/get")
   const res = await api.data.data
-  header.value = res.map((dt) => {
-    return {
-      id: dt.id,
-      label: dt.name_meeting_room.split("_").join(" "),
-      active: true,
-    }
-  })
+  header.value = res
+    .map((dt) => {
+      return {
+        id: dt.id,
+        label: dt.name_meeting_room.split("_").join(" "),
+        id_site: dt.id_site,
+        active: true,
+      }
+    })
+    .filter((room) => room.id_site == id_site.value)
 }
 
 const filterDataByType = async () => {
@@ -110,6 +123,7 @@ const filterDataByType = async () => {
   const api = await Api.get("book_meeting_room/dashboard", { params: payload })
   dataArr.value = api.data.data
   datas.value = []
+  header.value = []
 
   api.data.data.forEach((dt) => {
     if (dt.status != "Cancelled") {
@@ -122,12 +136,13 @@ const filterDataByType = async () => {
       }
       datas.value.push(arr)
     }
-    // let arrHeader = {
-    //   id: dt.id_meeting_room,
-    //   label: dt.name_meeting_room,
-    // }
-    // header.value.push(arrHeader)
-    // filter.room.push(arrHeader)
+    let arrHeader = {
+      id: dt.id,
+      label: dt.name_meeting_room.split("_").join(" "),
+      id_site: dt.id_site,
+      active: true,
+    }
+    header.value.push({ ...arrHeader })
   })
 }
 
@@ -239,11 +254,32 @@ const scrollToCurrentTime = () => {
   calendar.scrollTo({ top: hours * 100, behavior: "smooth" })
 }
 
-onBeforeMount(() => {
-  getSessionForSidebar()
-  fetch()
-  fetchRoom()
-  fetchCondition()
+const fetchSitesByUserId = async () => {
+  const token = localStorage.getItem("token")
+  const decodeToken = storageHelper.decodeToken(token)
+  const userId = decodeToken?.users?.id
+
+  const res = await fetchSiteByUseID(userId)
+
+  userSites.value = res?.data || []
+}
+
+const filteredSites = computed(() => {
+  const primarySite = JSON.parse(localStorage.getItem("id_site"))
+  const userSitesIds = [
+    ...userSites.value.map(({ id_site }) => id_site),
+    primarySite,
+  ]
+
+  return listSite.value?.filter(({ id }) => userSitesIds.includes(id))
+})
+
+onBeforeMount(async () => {
+  await getSessionForSidebar()
+  await fetch()
+  await fetchCondition()
+  await fetchSitesByUserId()
+  await fetchRoom()
 })
 </script>
 
@@ -286,7 +322,7 @@ onBeforeMount(() => {
               :time-step="30"
               :time-cell-height="50"
               :disable-views="['years', 'year', 'month']"
-              :editable-events="{ title: true, drag: false, create: true }"
+              :editable-events="{ title: false, drag: false, create: true }"
               :events="datas"
               :split-days="header.filter(({ active }) => active)"
               :min-cell-width="200"
@@ -299,6 +335,7 @@ onBeforeMount(() => {
               style="width: 300px; height: 70vh"
               class="basis-8/12"
               :on-event-click="openModal"
+              hide-title-bar
             >
               <template #split-label="{ split }">
                 <strong :style="`color: ${split.color}`">{{
@@ -370,16 +407,38 @@ onBeforeMount(() => {
                   :class="inputClass"
                   :disabled="selectSite"
                   class="mb-3"
+                  @input="fetchRoom()"
                 >
                   <option disabled selected>Site</option>
                   <option
-                    v-for="data in listSite"
+                    v-for="data in filteredSites"
                     :key="data.id"
                     :value="data.id"
                   >
                     {{ data.site_code }} - {{ data.site_name }}
                   </option>
                 </select>
+
+                <!-- <div class="my-3 grid grid-cols-2">
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250] mr-2"
+                    @click="filterDataByType()"
+                  >
+                    <span>
+                      <img :src="icon_filter" class="w-5 h-5" />
+                    </span>
+                    Filter
+                  </button>
+                  <button
+                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
+                    @click="resetData"
+                  >
+                    <span>
+                      <img :src="icon_reset" class="w-5 h-5" />
+                    </span>
+                    Reset
+                  </button>
+                </div> -->
                 <!-- <div>
                   <Multiselect
                     v-model="filter.room"
@@ -415,26 +474,6 @@ onBeforeMount(() => {
                     />
                     <span class="text-start text-sm">{{ item.label }}</span>
                   </label>
-                </div>
-                <div class="my-3 grid grid-cols-2">
-                  <button
-                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250] mr-2"
-                    @click="filterDataByType()"
-                  >
-                    <span>
-                      <img :src="icon_filter" class="w-5 h-5" />
-                    </span>
-                    Filter
-                  </button>
-                  <button
-                    class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-red bg-red gap-2 items-center hover:bg-[#D92D20] hover:text-white hover:border-[#D92D20]"
-                    @click="resetData"
-                  >
-                    <span>
-                      <img :src="icon_reset" class="w-5 h-5" />
-                    </span>
-                    Reset
-                  </button>
                 </div>
               </div>
             </div>
@@ -503,6 +542,7 @@ onBeforeMount(() => {
 .vuecal__event {
   color: white;
   background-color: rgba(76, 172, 175, 0.35);
+  padding-top: 30px;
 }
 
 .day-split-header {
@@ -521,4 +561,8 @@ onBeforeMount(() => {
 .multiselect-tags {
   overflow-x: auto;
 }
+
+
+
+
 </style>

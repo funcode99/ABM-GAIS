@@ -325,8 +325,8 @@ const inputClass =
           </div>
 
           <!-- TAB & TABLE-->
-          <div class="bg-blue rounded-lg pt-2 mx-[70px]" v-if="!addItem">
-            <div class="tabs bg-primary rounded-t-lg pt-3 py-0">
+          <div class="bg-blue rounded-lg pt-2 mx-[70px] border " v-if="!addItem">
+            <div class="tabs bg-primary rounded-t-lg pt-3 py-0 border-b">
               <tab
                 v-for="tab in tabs"
                 :key="tab"
@@ -345,7 +345,7 @@ const inputClass =
                 </span>
               </tab>
             </div>
-            <div class="overflow-x-auto bg-white">
+            <div class="overflow-x-auto bg-white min-h-[300px]">
               <table
                 class="table table-compact w-full"
                 v-if="tabActive == 'Details'"
@@ -400,6 +400,25 @@ const inputClass =
                   </tr>
                 </tbody>
               </table>
+
+              <div v-else-if="tabActive == 'Resurrence'" class="p-5">
+                <div class="bg-[#EFF4FF] rounded-2xl p-5 w-[50%]">
+                  <table>
+                    <tr>
+                      <th class="text-start">Start Date</th>
+                      <td>: 25/08/2023</td>
+                    </tr>
+                    <tr>
+                      <th class="text-start">Recurrence</th>
+                      <td>: Weekly</td>
+                    </tr>
+                    <tr>
+                      <th class="text-start">Until</th>
+                      <td>: 25/08/2023</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -432,5 +451,14 @@ const inputClass =
 }
 .this {
   overflow-x: hidden;
+}
+
+td,
+tr {
+  padding: 5px;
+  font-family: Plus Jakarta Sans;
+  font-size: 14px;
+  font-style: normal;
+  line-height: normal;
 }
 </style>
