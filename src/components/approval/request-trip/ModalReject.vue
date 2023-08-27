@@ -78,7 +78,7 @@ const rejectRequest = async () => {
             <div class="form-control">
               <label class="label cursor-pointer gap-4">
                 <input
-                  @click="isRevision = false"
+                @click="isRevision = false"
                   type="radio"
                   name="radio-10"
                   class="radio checked:bg-green"
@@ -90,11 +90,11 @@ const rejectRequest = async () => {
             </div>
           </div>
 
-          <p v-if="isRevision" class="font-JakartaSans font-medium text-sm py-2">
+          <p class="font-JakartaSans font-medium text-sm py-2">
             Notes<span class="text-red">*</span>
           </p>
+
           <input
-            v-if="isRevision"
             v-model="notes"
             type="text"
             name="notes"

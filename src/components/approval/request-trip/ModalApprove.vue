@@ -10,6 +10,7 @@ const router = useRouter();
 
 const props = defineProps({
   approvalId: Number,
+  listEmployee: Array,
 });
 
 let notes = ref("");
@@ -30,28 +31,7 @@ const approveRequest = async () => {
   } catch (error) {}
 };
 
-let approverBehalfList = ref();
-
-const fetchApproveBehalf = async () => {
-  try {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    let api = await Api.get(
-      `/employee/approval_behalf?id_employee=${localStorage.getItem(
-        "id_employee"
-      )}&id_company=${localStorage.getItem(
-        "id_company"
-      )}&id_site=${localStorage.getItem("id_site")}&id_approval_auth=`
-    );
-    approverBehalfList.value = api.data.data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-onBeforeMount(() => {
-  fetchApproveBehalf();
-});
+let approverBehalfList = ref(props.listEmployee);
 
 let role = JSON.parse(localStorage.getItem("id_role"));
 </script>
@@ -132,7 +112,7 @@ let role = JSON.parse(localStorage.getItem("id_role"));
             </div>
           </div>
 
-          <p class="font-JakartaSans font-medium text-sm py-2">Attachment</p>
+          <p class="font-JakartaSans font-medium text-sm py-2">Attachment<span class="text-red">*</span></p>
 
           <input
             type="file"

@@ -26,11 +26,6 @@
 
   import arrow from "@/assets/request-trip-view-arrow.png"
 
-  // import expandArrow from "@/assets/ExpandArrow.png"
-  // import editicon from "@/assets/navbar/edit_icon.svg"
-  // import deleteicon from "@/assets/navbar/delete_icon.svg"
-  // import iconplus from "@/assets/navbar/icon_plus.svg"
-
   const route = useRoute()
   const sidebar = useSidebarStore()
   let requestTripId = route.params.id
@@ -69,6 +64,8 @@
   provide('cashAdvanceDataView', cashAdvanceData)
 
   let purposeOfTripName = ref('')
+
+
 
     const getPurposeOfTrip = async () => {
       try {
@@ -170,8 +167,35 @@
       }
     }
 
+    let dataArr = ref([])
+
+    const fetchDataById = async (id) => {
+      const token = JSON.parse(localStorage.getItem("token"))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      const res = await Api.get(`/approval_request_trip/get_data/${id}`)
+      dataArr.value = res.data.data[0]
+      fetchDataEmployee(dataArr.value)
+    }
+
+    let listEmployee = ref([])
+
+    const fetchDataEmployee = async (dt) => {
+      const token = JSON.parse(localStorage.getItem("token"))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      let payload = {
+        id_employee: dt.id_employee,
+        id_company: dt.id_company,
+        id_site: dt.id_site,
+        id_approval_auth: dt.id_approval_auth,
+      };
+      const res = await Api.get("/employee/approval_behalf", {
+        params: payload,
+      });
+      console.log(res)
+      listEmployee.value = res.data.data
+    }
+
 onBeforeMount(() => {
-  
   getSessionForSidebar()
   getPurposeOfTrip()
   getTravellerGuest()
@@ -181,20 +205,12 @@ onBeforeMount(() => {
   getAccomodation()
   getCashAdvance()
   getApprovalStatus()
-
+  fetchDataById(requestTripId)
 })
 
 const getSessionForSidebar = () => {
   sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
 }
-
-// let tab = ref("details")
-// let showTraveller = ref(true)
-// let showAirlines = ref(true)
-// let showTaxiVoucher = ref(true)
-// let showOtherTransportation = ref(true)
-// let showAccomodation = ref(true)
-// let showCashAdvance = ref(true)
 
 watch(purposeOfTripData, () => {
       notes.value = purposeOfTripData.value[currentIndex].notes
@@ -274,8 +290,22 @@ watch(purposeOfTripData, () => {
 
           <!-- APPROVE & REJECT BUTTON -->
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
-            <ModalApprove :approvalId="approvalId" />
-            <ModalReject :approvalId="approvalId" />
+            
+            <ModalApprove 
+              :approvalId="approvalId"
+              :list-employee="listEmployee"
+              :role-code="code_role"
+              @close="closeModal"
+              @approve="(data) => approveData(data)"
+            />
+
+            <ModalReject 
+              :approvalId="approvalId"
+              :id="id"
+              @close="closeModalReject"
+              @reject="(data) => rejectData(data)"
+            />
+            
           </div>
 
           <!-- FORM READ ONLY-->

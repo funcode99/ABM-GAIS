@@ -7,6 +7,11 @@
     import userImg from '@/assets/3-user.png'
     import deleteDocumentIcon from '@/assets/delete_document_icon.png'
 
+    import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
+    import buttonCancelFormView from '@/components/atomics/buttonCancelFormView.vue'
+    import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
+    import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
+
     import { useRoute } from 'vue-router'
     const location = useRoute();
 
@@ -30,25 +35,52 @@
 
     let activitiesTableHead = ref([
         {title: 'Date'},
-        {title: 'Activity'},
-        {title: 'Actions'}
+        {title: 'Activity'}
     ])
+
+    let isEditing = ref(false)
 
     let cityData = ref([{}])
     let createdBy = ref()
     let tripInfoDetail = ref()
     let activitiesDetail = ref()
 
-    const fetchUserName = async () => {
+    const fetchUserName = async (Id) => {
         
         try {
             const token = JSON.parse(localStorage.getItem('token'))
             Api.defaults.headers.common.Authorization = `Bearer ${token}`
-            const api = await Api.get(`/users/${location.params.created_by}`)
+            const api = await Api.get(`/users/${Id}`)
             createdBy.value = api?.data?.data[0]?.employee_name            
         } catch (error) {
             console.log(error)
         }
+
+    }
+
+    let fetchByTripIdData = ref()
+    let notes = ref()
+    let purpose = ref()
+    let totalTLK = ref()
+    let createdDate = ref()
+    let userId = ref(0)
+    let status = ref('')
+
+    const fetchByTripId = async () => {
+        
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        const api = await Api.get(`/actual_trip/get_by_id_trip/${location.params.tripId}`)
+        
+        fetchByTripIdData.value = api?.data?.data[0]
+        notes.value = fetchByTripIdData.value.notes
+        purpose.value = fetchByTripIdData.value.purpose
+        totalTLK.value = fetchByTripIdData.value.total_tlk
+        status.value = fetchByTripIdData.value.status
+        createdDate.value = new Date(fetchByTripIdData.value.created_at).toJSON().slice(0, 10)
+        
+        userId.value = fetchByTripIdData.value.created_by
+        fetchUserName(userId.value)
 
     }
 
@@ -107,11 +139,11 @@ try {
     }
 
     onBeforeMount(() => {
-      fetchUserName()
-      fetchActivitiesByActId()
-      fetchTripInfoByActId()
-      fetchHistoryApproval()
-      fetchCityUtils(cityData)
+        fetchByTripId()
+        fetchActivitiesByActId()
+        fetchTripInfoByActId()
+        fetchHistoryApproval()
+        fetchCityUtils(cityData)
     })
 
     let tab = ref('details')
@@ -219,6 +251,19 @@ fetchTripInfoByActId()
       fetchTripInfoByActId()
     }
 
+    const updateHeaderActualizationTrip = async () => {
+        const token = JSON.parse(localStorage.getItem('token'))
+        Api.defaults.headers.common.Authorization = `Bearer ${token}`
+        let api = await Api.post(`/actual_trip/update_data/${location.params.id}`, {
+            total_tlk: totalTLK.value,
+            notes: notes.value,
+            purpose: purpose.value,
+            id_request_trip: location.params.tripId
+        })
+        console.log(api)
+        fetchByTripId()
+    }
+
 </script>
 
 <template>
@@ -248,7 +293,7 @@ fetchTripInfoByActId()
                       <div class="flex-1"></div>
 
                       <div class=" min-w-[114px] h-[42px] text-center text-base font-bold rounded-t-lg rounded-bl-3xl rounded-br-lg border flex items-center justify-center border-black px-3">
-                        {{ location.params.status }}
+                        {{ status }}
                       </div>
                       
                     </div>
@@ -260,18 +305,18 @@ fetchTripInfoByActId()
                     <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
                     <div class="flex gap-4 mt-6 mb-3 ml-5" >
                         
-                      <buttonEditFormView />
-                      <buttonSaveFormView />
-                        
+                      <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
+
                       <!-- SUBMIT BUTTON -->
-                      <button 
+                      <!-- <button 
                         v-if="!isEditing" 
-                        @click="submitRequestTrip" 
                         class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                        @click="updateHeaderActualizationTrip"
                       >
                         Submit
-                      </button>
+                      </button> -->
 
+                      <buttonSaveFormView v-if="isEditing" @click="updateHeaderActualizationTrip" />  
                       <buttonCancelFormView
                         v-if="isEditing"
                         @click="isEditing = false; showCreateNewCAHeader = false"
@@ -296,7 +341,7 @@ fetchTripInfoByActId()
                                 type="text" 
                                 disabled
                                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]"
-                                :value="location.params.created_date" 
+                                :value="createdDate" 
                             />
                         </div>
 
@@ -396,7 +441,7 @@ fetchTripInfoByActId()
 
                                 </div>
 
-                                <div class="flex justify-center items-start gap-1">
+                                <div v-if="isEditing" class="flex justify-center items-start gap-1">
                           
                                   <button 
                                     @click="data.isEdit = true"
@@ -544,6 +589,7 @@ fetchTripInfoByActId()
                                   type="text" 
                                   placeholder="Purpose"
                                   required
+                                  :disabled="!isEditing"
                               />
                           </div>
 
@@ -558,8 +604,13 @@ fetchTripInfoByActId()
                                 
                                 <thead class="text-center font-JakartaSans text-sm font-bold h-10">
                                     <tr>
-                                        <th v-for="data in activitiesTableHead">
+                                        <th 
+                                            v-for="data in activitiesTableHead"
+                                        >
                                             {{ data.title }}
+                                        </th>
+                                        <th v-if="isEditing">
+                                            Actions
                                         </th>
                                     </tr>
                                 </thead>
@@ -568,28 +619,39 @@ fetchTripInfoByActId()
 
                                     <tr v-for="(data, index) in activitiesDetail">
                                         <td>
-                                            <input type="date" v-model="data.act_date" />
+                                            <input 
+                                                type="date" 
+                                                v-model="data.act_date" 
+                                                class="w-full" 
+                                                :class="$inputStyling"
+                                                :disabled="!isEditing" 
+                                            />
                                         </td>
                                         <td>
-                                            <input type="text" v-model="data.activities" />
+                                            <input 
+                                            type="text" 
+                                            v-model="data.activities" 
+                                            class="w-full" :class="$inputStyling"                                                 :disabled="!isEditing"  />
                                         </td>
-                                        <td class="flex justify-center gap-3">
-                                            <button 
-                                                type="button" 
-                                                @click="data.from_fetch === true ? 
-                                                    editActivitiesField(activitiesDetail, index) : 
-                                                    submitActivitiesField(activitiesDetail, index)"
+                                        <td v-if="isEditing">
+                                            <div class="flex gap-3 items-center justify-center">
+                                                <button 
+                                                    type="button" 
+                                                    @click="data.from_fetch === true ? 
+                                                        editActivitiesField(activitiesDetail, index) : 
+                                                        submitActivitiesField(activitiesDetail, index)"
+                                                    >
+                                                    <img :src="editIcon" class="w-6 h-6" />
+                                                </button>
+                                                <button 
+                                                    type="button"
+                                                    @click="data.from_fetch === true ? 
+                                                    deleteActivitiesField(index, activitiesDetail) : 
+                                                    removeActivitiesField(index, activitiesDetail)"
                                                 >
-                                                <img :src="editIcon" class="w-6 h-6" />
-                                            </button>
-                                            <button 
-                                                type="button"
-                                                @click="data.from_fetch === true ? 
-                                                deleteActivitiesField(index, activitiesDetail) : 
-                                                removeActivitiesField(index, activitiesDetail)"
-                                            >
-                                                <img :src="deleteicon" class="w-6 h-6" />
-                                            </button>
+                                                    <img :src="deleteicon" class="w-6 h-6" />
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                     
@@ -597,7 +659,7 @@ fetchTripInfoByActId()
 
                                         <td></td>
                                         <td></td>
-                                        <td class="flex justify-center items-center h-full">
+                                        <td v-if="isEditing" class="flex justify-center items-center h-full">
                                             <img 
                                                 @click="addActivitiesField(activitiesDetail)" 
                                                 class="cursor-pointer w-7 h-7" 
@@ -632,6 +694,7 @@ fetchTripInfoByActId()
                                     type="text" 
                                     placeholder="Total TLK"
                                     required
+                                    :disabled="!isEditing"
                                 />
                             </div>
 
@@ -655,6 +718,7 @@ fetchTripInfoByActId()
                                     id="notes"
                                     :class="$inputStyling"
                                     placeholder="Notes"
+                                    :disabled="!isEditing"
                                 ></textarea>
 
                             </div>

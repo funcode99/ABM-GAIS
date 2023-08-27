@@ -1399,7 +1399,7 @@ const router = createRouter(
       },
     },
     {
-      path: '/actualization-view/:id?/:status?/:created_date?/:created_by?',
+      path: '/actualization-view/:id/:tripId',
       name: "Actualization Trip View",
       component: ActualizationTripView,
       meta: {

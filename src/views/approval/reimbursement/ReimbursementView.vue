@@ -86,6 +86,9 @@ const fetchDataEmployee = async (dt) => {
   const res = await Api.get("/employee/approval_behalf", {
     params: payload,
   });
+
+  console.log(res)
+
   listEmployee.value = res.data.data;
 };
 

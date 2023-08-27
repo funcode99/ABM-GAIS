@@ -476,22 +476,16 @@
                         @click="isEditing = false; showCreateNewCAHeader = false"
                       />
 
-                      <!-- <div>
-                        panjang = {{ actualizationData.length }}
-                      </div> -->
-
                       <AddActualizationTripModal 
-                          v-if="actualizationData.length === 0" 
+                          v-if="actualizationData.length === 0 & purposeOfTripData[currentIndex].status === 'Confirmed'" 
                           @submit-success=getActualizationByTripId
                       />
 
                       <div class="flex-1"></div>
 
-                      <EditActualizationTripModal v-if="actualizationData.length > 0"  />
+                      <EditActualizationTripModal v-if="actualizationData.length > 0 & purposeOfTripData[currentIndex].status === 'Confirmed'"  />
 
                     </div>
-
-
 
                     <!-- FORM READ ONLY -->
                     <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">

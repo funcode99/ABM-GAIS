@@ -933,14 +933,19 @@ import { useRequestTripStore } from "@/stores/requesttrip.js"
 
                 <div v-if="requestType[1] == 'Company Business'" :class="columnClass + ' mx-4 my-3'">
                     
-                    <label for="da_number">
+                  <!-- :class="labelStylingClass" -->
+                    <label 
+                    for="da_number" 
+                    >
                         DA Number
                     </label>
 
                     <input
+                      :class="$inputStyling"
                       id="da_number"
                       type="text"
                       v-model=DANumber
+                      placeholder="DA Number"
                     />
 
                 </div>

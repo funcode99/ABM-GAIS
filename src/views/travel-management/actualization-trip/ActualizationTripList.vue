@@ -248,6 +248,8 @@
 
                     </div>
 
+                    {{ sortedData }}
+
                     <tableData v-if="sortedData.length > 0">
 
                         <thead class="text-center font-JakartaSans text-sm font-bold h-10">
@@ -302,7 +304,7 @@
 
                                 <td class="flex flex-wrap gap-4 justify-center items-center">
                                     <router-link 
-                                    :to="`/actualization-view/${data.id}/${data.status}/${data.created_at}/${data.created_by}`" 
+                                    :to="`/actualization-view/${data.id}/${data.id_request_trip}`" 
                                     @click="assignRequestTripId(data.no_request_trip, data.no_act)">
                                         <button>
                                             <img :src="editicon" class="w-6 h-6" />

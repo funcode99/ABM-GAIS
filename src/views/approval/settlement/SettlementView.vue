@@ -101,7 +101,7 @@ const fetchDataEmployee = async (dt) => {
     params: payload,
   });
   listEmployee.value = res.data.data;
-};
+}
 
 const closeModal = () => {
   visibleModal.value = false;
