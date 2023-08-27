@@ -1,129 +1,129 @@
 <script setup>
-import moment from "moment";
+import moment from "moment"
+import Multiselect from "@vueform/multiselect"
 
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
 
-import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue";
-import Api from "@/utils/Api";
-import VueCal from "vue-cal";
-import "vue-cal/dist/vuecal.css";
-import { Modal } from "usemodal-vue3";
+import ModalAddBookingRoom from "@/components/facility-services/booking-meeting-room/ModalAdd.vue"
+import Api from "@/utils/Api"
+import VueCal from "vue-cal"
+import "vue-cal/dist/vuecal.css"
+import { Modal } from "usemodal-vue3"
 
-import { ref, onBeforeMount, reactive } from "vue";
-import { useSidebarStore } from "@/stores/sidebar.js";
-const sidebar = useSidebarStore();
+import { ref, onBeforeMount, reactive, computed } from "vue"
+import { useSidebarStore } from "@/stores/sidebar.js"
+
+import { fetchSiteByUseID } from "@/utils/Api/reference/site.js"
+import storageHelper from "@/utils/storage.helper.js"
+
+const sidebar = useSidebarStore()
+
 const inputClass =
-  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
+  "font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
 
-let lengthCounter = 0;
-let lockScrollbar = ref(false);
+let lengthCounter = 0
+let lockScrollbar = ref(false)
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 
 const chartStatusColor = {
   Booked: "bg-primary",
   Done: "bg-green",
   Cancelled: "bg-red",
-};
+}
 
-let dataArr = ref([]);
-let dataRoom = ref([]);
-let datas = ref([]);
-let listCompany = ref([]);
-let listSite = ref([]);
-let filter = reactive({
+let dataArr = ref([])
+let dataRoom = ref([])
+let datas = ref([])
+let listCompany = ref([])
+let listSite = ref([])
+const filter = reactive({
   id_company: "",
   date: "",
   search: "",
   room: [],
-});
-let selectSite = ref(true);
-let id_company = ref("");
-let id_site = ref("");
-let header = ref([]);
-let tempHeader = ref([]);
-const id_role = JSON.parse(localStorage.getItem("id_role"));
+})
+let selectSite = ref(true)
+let id_company = ref("")
+let id_site = ref("")
+let header = ref([])
+let tempHeader = ref([])
+const id_role = JSON.parse(localStorage.getItem("id_role"))
 
-let statusForm = ref("add");
-let visibleModal = ref(false);
-let idItem = ref(0);
-let selectedEvent = ref("");
+let statusForm = ref("add")
+let visibleModal = ref(false)
+let idItem = ref(0)
+let selectedEvent = ref("")
 
-const showFilter = ref(true);
-const formData = ref(null);
-const dialogKey = ref(0);
-const date = ref(null);
+const showFilter = ref(true)
+const formData = ref(null)
+const dialogKey = ref(0)
+const date = ref(null)
+const userSites = ref([])
 
 // FETCH DATA
 const fetch = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("book_meeting_room/dashboard");
-  dataArr.value = api.data.data;
-  datas.value = [];
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("book_meeting_room/dashboard")
+  dataArr.value = api.data.data
+  datas.value = []
   dataArr.value.forEach((dt) => {
     if (dt.status != "Cancelled") {
       let arr = {
         start: dt.start_date + " " + dt.start_time,
         end: dt.end_date + " " + dt.end_time,
-        content: "<p class='my-2 '>" + dt.title + "</p>" + dt.name_created,
+        content:
+          "<p class='my-2 font-bold'>" +
+          dt.title +
+          "</p>" +
+          `<p class='badge bg-white text-black rounded-xl'> ${dt.name_created} </p>`,
         class: `${chartStatusColor[dt.status]} text-whtie`,
         split: dt.id_meeting_room,
         data: { ...dt },
-      };
+      }
 
-      datas.value.push(arr);
+      datas.value.push({ ...arr })
     }
-  });
-  header.value = tempHeader.value.filter(
-    (obj, index) =>
-      tempHeader.value.findIndex(
-        (item) => item.id === obj.id && item.label === obj.label
-      ) === index
-  );
-  //   filter.room = [...new Set(filter.room)];
-};
+  })
+}
 
 const fetchRoom = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("master_meeting_room/get");
-  dataRoom.value = api.data.data;
-  dataRoom.value.forEach((dt) => {
-    let arrHeader = {
-      id: dt.id,
-      label: dt.name_meeting_room,
-    };
-    tempHeader.value.push(arrHeader);
-    filter.room.push(dt.id_meeting_room);
-  });
-  header.value = tempHeader.value.filter(
-    (obj, index) =>
-      tempHeader.value.findIndex(
-        (item) => item.id === obj.id && item.label === obj.label
-      ) === index
-  );
-  filter.room = [...new Set(filter.room)];
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("master_meeting_room/get")
+  const res = await api.data.data
+  header.value = res
+    .map((dt) => {
+      return {
+        id: dt.id,
+        label: dt.name_meeting_room.split("_").join(" "),
+        id_site: dt.id_site,
+        active: true,
+      }
+    })
+    .filter((room) => room.id_site == id_site.value)
+}
 
 const filterDataByType = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
   let payload = {
     id_company: id_company.value,
     id_site: id_site.value,
     id_meeting_room: filter.room,
-  };
-  const api = await Api.get("book_meeting_room/dashboard", { params: payload });
-  dataArr.value = api.data.data;
-  datas.value = [];
+  }
+  const api = await Api.get("book_meeting_room/dashboard", { params: payload })
+  dataArr.value = api.data.data
+  datas.value = []
+  header.value = []
 
   api.data.data.forEach((dt) => {
     if (dt.status != "Cancelled") {
@@ -133,90 +133,84 @@ const filterDataByType = async () => {
         content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
         class: "card-color",
         split: dt.id_meeting_room,
-      };
-      datas.value.push(arr);
+      }
+      datas.value.push(arr)
     }
     let arrHeader = {
-      id: dt.id_meeting_room,
-      label: dt.name_meeting_room,
-    };
-    tempHeader.value.push(arrHeader);
-    filter.room.push(dt.id_meeting_room);
-  });
-  header.value = tempHeader.value.filter(
-    (obj, index) =>
-      tempHeader.value.findIndex(
-        (item) => item.id === obj.id && item.label === obj.label
-      ) === index
-  );
-  filter.room = [...new Set(filter.room)];
-};
+      id: dt.id,
+      label: dt.name_meeting_room.split("_").join(" "),
+      id_site: dt.id_site,
+      active: true,
+    }
+    header.value.push({ ...arrHeader })
+  })
+}
 
 const fetchCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get("company/get");
-  listCompany.value = api.data.data;
-};
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get("company/get")
+  listCompany.value = api.data.data
+}
 
 const fetchCompanyID = async (id_comp) => {
-  fetchSite(id_comp);
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_comp}`);
-  listCompany.value = res.data.data;
-  id_company.value = id_comp;
-};
+  fetchSite(id_comp)
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_comp}`)
+  listCompany.value = res.data.data
+  id_company.value = id_comp
+}
 
 const fetchSite = async (id_comp) => {
-  let idComp = id_comp ? id_comp : id_company.value;
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const api = await Api.get(`site/get_by_company/${idComp}`);
-  listSite.value = api.data.data;
-  selectSite.value = false;
+  let idComp = id_comp ? id_comp : id_company.value
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const api = await Api.get(`site/get_by_company/${idComp}`)
+  listSite.value = api.data.data
+  selectSite.value = false
   for (let index = 0; index < api.data.data.length; index++) {
-    const element = api.data.data[index];
+    const element = api.data.data[index]
 
     if (JSON.parse(localStorage.getItem("id_site")) === element.id) {
-      id_site.value = element.id;
+      id_site.value = element.id
     }
   }
   if (id_role == "ADM") {
     listSite.value = listSite.value.filter(
       (e) => e.id == localStorage.getItem("id_site")
-    );
+    )
   }
-};
+}
 
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company);
-};
+  const id_company = JSON.parse(localStorage.getItem("id_company"))
+  id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company)
+}
 // END
 
 const resetData = () => {
-  id_company.value = "";
-  id_site.value = "";
-  filter.room = [];
-  fetch();
-  fetchCondition();
-};
+  id_company.value = ""
+  id_site.value = ""
+  filter.room = []
+  fetch()
+  fetchCondition()
+}
 
 const openModal = async (event, e) => {
-  visibleModal.value = true;
+  visibleModal.value = true
 
   if (event.data?.id) {
-    statusForm.value = "view";
-    idItem.value = parseInt(event.data.id);
+    statusForm.value = "view"
+    idItem.value = parseInt(event.data.id)
 
-    formData.value = event.data;
+    formData.value = event.data
   } else {
-    statusForm.value = "add";
-    idItem.value = parseInt(0);
+    statusForm.value = "add"
+    idItem.value = parseInt(0)
 
-    const start = event.start;
-    const end = event.end;
+    const start = event.start
+    const end = event.end
 
     const newForm = {
       start_date: moment(start).format("YYYY-MM-DD"),
@@ -224,49 +218,69 @@ const openModal = async (event, e) => {
       end_date: moment(end).format("YYYY-MM-DD"),
       end_time: moment(end).format("hh:mm:ss"),
       id_meeting_room: event.split,
-    };
+    }
 
-    console.log(event);
-    formData.value = newForm;
+    formData.value = newForm
   }
 
   setTimeout(() => {
-    document.getElementById("booking_modal").click();
-  }, 500);
-};
+    document.getElementById("booking_modal").click()
+  }, 500)
+}
 
 const closeModal = () => {
-  document.getElementById("booking_modal").click();
+  document.getElementById("booking_modal").click()
 
-  visibleModal.value = false;
-  formData.value = null;
-  selectedEvent.value = {};
+  visibleModal.value = false
+  formData.value = null
+  selectedEvent.value = {}
 
-  fetch();
+  fetch()
 
-  if (selectedEvent.value) deleteEventFunction.value();
-};
+  if (selectedEvent.value) deleteEventFunction.value()
+}
 
-const deleteEventFunction = ref();
+const deleteEventFunction = ref()
 const onEventCreate = (event, deleteFunction) => {
-  selectedEvent.value = event;
-  deleteEventFunction.value = deleteFunction;
+  selectedEvent.value = event
+  deleteEventFunction.value = deleteFunction
 
-  return event;
-};
+  return event
+}
 
 const scrollToCurrentTime = () => {
-  const calendar = document.querySelector("#vuecal .vuecal__bg");
-  const hours = 7;
-  calendar.scrollTo({ top: hours * 100, behavior: "smooth" });
-};
+  const calendar = document.querySelector("#vuecal .vuecal__bg")
+  const hours = 7
+  calendar.scrollTo({ top: hours * 100, behavior: "smooth" })
+}
 
-onBeforeMount(() => {
-  getSessionForSidebar();
-  fetch();
-  fetchRoom();
-  fetchCondition();
-});
+const fetchSitesByUserId = async () => {
+  const token = localStorage.getItem("token")
+  const decodeToken = storageHelper.decodeToken(token)
+  const userId = decodeToken?.users?.id
+
+  const res = await fetchSiteByUseID(userId)
+
+  userSites.value = res?.data || []
+}
+
+const filteredSites = computed(() => {
+  const primarySite = JSON.parse(localStorage.getItem("id_site"))
+  const userSitesIds = [
+    ...userSites.value.map(({ id_site }) => id_site),
+    primarySite,
+  ]
+
+  return listSite.value?.filter(({ id }) => userSitesIds.includes(id))
+})
+
+onBeforeMount(async () => {
+  await getSessionForSidebar()
+  await fetch()
+  await fetchCondition()
+  await fetchSitesByUserId()
+  await fetchRoom()
+})
 </script>
 
 <template>
@@ -308,17 +322,18 @@ onBeforeMount(() => {
               :time-step="30"
               :time-cell-height="50"
               :disable-views="['years', 'year', 'month']"
-              :editable-events="{ title: true, drag: false, create: true }"
+              :editable-events="{ title: false, drag: false, create: true }"
               :events="datas"
-              :split-days="header"
-              :min-cell-width="500"
+              :split-days="header.filter(({ active }) => active)"
+              :min-cell-width="200"
+              :minSplitWidth="200"
               :on-event-create="onEventCreate"
               @event-drag-create="openModal"
               sticky-split-labels
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
-              style="width: 270px; height: 80vh"
-              class="basis-9/12"
+              style="width: 300px; height: 70vh"
+              class="basis-8/12"
               :on-event-click="openModal"
             >
               <template #split-label="{ split }">
@@ -338,7 +353,7 @@ onBeforeMount(() => {
             />
 
             <div
-              class="ease-in duration-300 bg-white"
+              class="basis-auto ease-in duration-300 bg-white"
               :class="
                 showFilter
                   ? '-translate-x-0  w-[250px]'
@@ -391,31 +406,19 @@ onBeforeMount(() => {
                   :class="inputClass"
                   :disabled="selectSite"
                   class="mb-3"
+                  @input="fetchRoom()"
                 >
                   <option disabled selected>Site</option>
                   <option
-                    v-for="data in listSite"
+                    v-for="data in filteredSites"
                     :key="data.id"
                     :value="data.id"
                   >
                     {{ data.site_code }} - {{ data.site_name }}
                   </option>
                 </select>
-                <p
-                  class="cursor-pointer mb-2"
-                  v-for="data in header"
-                  :key="data.id"
-                >
-                  <input
-                    type="checkbox"
-                    checked="checked"
-                    class="checkbox checkbox-sm mr-2"
-                    :value="data.id"
-                    v-model="filter.room"
-                  />
-                  <span>{{ data.label }}</span>
-                </p>
-                <div class="my-3 grid grid-cols-2">
+
+                <!-- <div class="my-3 grid grid-cols-2">
                   <button
                     class="btn btn-sm text-white text-sm font-JakartaSans font-bold capitalize w-[full] h-[36px] border-green bg-green gap-2 items-center hover:bg-[#099250] hover:text-white hover:border-[#099250] mr-2"
                     @click="filterDataByType()"
@@ -434,6 +437,42 @@ onBeforeMount(() => {
                     </span>
                     Reset
                   </button>
+                </div> -->
+                <!-- <div>
+                  <Multiselect
+                    v-model="filter.room"
+                    mode="tags"
+                    placeholder="Select Room Meeting"
+                    track-by="label"
+                    label="label"
+                    :searchable="true"
+                    :options="header"
+                    :object="true"
+                    value-prop="id"
+                    :can-clear="false"
+                    :remove="false"
+                  >
+                  </Multiselect>
+                </div> -->
+
+                <div class="form-control">
+                  <div class="font-medium">Rooms:</div>
+                  <label
+                    class="cursor-pointer label justify-start gap-3"
+                    v-for="item in header"
+                  >
+                    <input
+                      type="checkbox"
+                      checked="checked"
+                      class="checkbox checkbox-success"
+                      v-model="item.active"
+                      :disabled="
+                        header.filter(({ active }) => active).length == 1 &&
+                        item.active
+                      "
+                    />
+                    <span class="text-start text-sm">{{ item.label }}</span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -455,9 +494,13 @@ onBeforeMount(() => {
   overflow-x: hidden;
 }
 
-.my-date {
+/* .vuecal__header{
+  overflow-x: scroll;
+} */
+
+/* .my-date {
   width: 260px !important;
-}
+} */
 /* Green-theme. */
 .vuecal__menu,
 .vuecal__cell-events-count {
@@ -498,10 +541,27 @@ onBeforeMount(() => {
 .vuecal__event {
   color: white;
   background-color: rgba(76, 172, 175, 0.35);
+  padding-top: 30px;
+}
+
+.day-split-header {
+  padding-left: 10px;
+  padding-right: 10px;
+  word-wrap: break-word !important;
+  text-overflow: ellipsis !important;
+  text-align: center;
 }
 
 :disabled {
   background: #eeeeee;
   border-color: #eeeeee;
+}
+
+.multiselect-tags {
+  overflow-x: auto;
+}
+
+.vuecal__heading {
+  height: auto !important;
 }
 </style>
