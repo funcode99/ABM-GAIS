@@ -411,6 +411,7 @@ const inputStylingClass =
       <Sidebar class="flex-none" />
 
       <tableContainer>
+
         <TableTopBar
           modalAddType="user"
           :title="'User'"
@@ -434,7 +435,8 @@ const inputStylingClass =
               v-if="sortedData.length > 0"
               class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
             >
-              <thead class="text-center font-Montserrat text-sm font-bold h-10">
+              
+            <thead class="text-center font-Montserrat text-sm font-bold h-10">
                 <tr>
                   <th>
                     <div class="flex justify-center">
@@ -532,6 +534,7 @@ const inputStylingClass =
                   </td>
                 </tr>
               </tbody>
+
             </table>
 
             <table
@@ -658,6 +661,7 @@ const inputStylingClass =
             </div>
           </div>
         </div>
+        
       </tableContainer>
     </div>
   </div>

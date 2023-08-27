@@ -75,7 +75,8 @@ import ModalReject from "@/components/approval/ModalReject.vue";
   const route = useRoute()
   const sidebar = useSidebarStore()
   let requestTripId = route.params.id
-  let approvalId = route.params.approvalid
+  // let approvalId = route.params.approvalid
+  let purposeOfTripName = ref('')
 
   let isEditing = ref(false)
   let isAdding = ref(false)
@@ -94,6 +95,9 @@ import ModalReject from "@/components/approval/ModalReject.vue";
   let cashAdvanceData = ref([{}])
   let approvalStatusData = ref([{}])
 
+  let dataArr = ref([])
+  let listEmployee = ref([])
+
   let file = ref()
   let notes = ref()
   let dataIndex = ref(0)
@@ -108,8 +112,6 @@ import ModalReject from "@/components/approval/ModalReject.vue";
   provide('otherTransportationDataView', otherTransportationData)
   provide('accomodationDataView', accomodationData)
   provide('cashAdvanceDataView', cashAdvanceData)
-
-  let purposeOfTripName = ref('')
 
 
 
@@ -213,8 +215,6 @@ import ModalReject from "@/components/approval/ModalReject.vue";
       }
     }
 
-    let dataArr = ref([])
-
     const fetchDataById = async (id) => {
       const token = JSON.parse(localStorage.getItem("token"))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -225,11 +225,15 @@ import ModalReject from "@/components/approval/ModalReject.vue";
       fetchDataEmployee(dataArr.value)
     }
 
-    let listEmployee = ref([])
-
     const fetchDataEmployee = async (dt) => {
       const token = JSON.parse(localStorage.getItem("token"))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+      console.log(dt.id_employee)
+      console.log(dt.id_company)
+      console.log(dt.id_site)
+      console.log(dt.id_approval_auth)
+
       let payload = {
         id_employee: dt.id_employee,
         id_company: dt.id_company,
@@ -243,35 +247,101 @@ import ModalReject from "@/components/approval/ModalReject.vue";
       listEmployee.value = res.data.data
     }
 
-onBeforeMount(() => {
-  getSessionForSidebar()
-  getPurposeOfTrip()
-  getTravellerGuest()
-  getAirlines()
-  getTaxiVoucher()
-  getOtherTransportation()
-  getAccomodation()
-  getCashAdvance()
-  getApprovalStatus()
-  fetchDataById(requestTripId)
-})
+    const approveData = async (payload) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.post(`/approval_settlement/approve/${id}`, payload);
 
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
-}
+  if (res.data.success) {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    closeModal();
+    router.push({ path: `/approvalsettlement` });
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: res.response.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  }
+    };
 
-watch(purposeOfTripData, () => {
+    const rejectData = async (payload) => {
+  if (payload.is_revision == true && !payload.notes) {
+    Swal.fire({
+      html: "<b>Please fill notes!</b>",
+      timer: 2000,
+      timerProgressBar: true,
+      position: "top-end",
+      background: "#EA5455",
+      color: "#ffffff",
+      showCancelButton: false,
+      showConfirmButton: false,
+      width: "300px",
+    });
+  } else {
+    const token = JSON.parse(localStorage.getItem("token"));
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const res = await Api.post(`/approval_settlement/reject/${id}`, payload);
+
+    if (res.data.success) {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: res.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      closeModalReject();
+      router.push({ path: `/approvalsettlement` });
+    } else {
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: res.response.data.message,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  }
+    };
+
+  onBeforeMount(() => {
+    getSessionForSidebar()
+    getPurposeOfTrip()
+    getTravellerGuest()
+    getAirlines()
+    getTaxiVoucher()
+    getOtherTransportation()
+    getAccomodation()
+    getCashAdvance()
+    getApprovalStatus()
+    fetchDataById(requestTripId)
+  })
+
+  const getSessionForSidebar = () => {
+    sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+  }
+
+  watch(purposeOfTripData, () => {
       notes.value = purposeOfTripData.value[currentIndex].notes
-    })
+  })
 
-    watch(headerTitle, () => {
+  watch(headerTitle, () => {
       assignSelectedData()
       dataIndex.value = 0
-    })
+  })
 
-    watch(travellerGuestData, () => {
+  watch(travellerGuestData, () => {
       currentSelectedData.value = travellerGuestData.value
-    })
+  })
 
     const changeType = (typeOfSubmit) => {
       typeOfSubmitToProps.value = typeOfSubmit
@@ -306,11 +376,11 @@ watch(purposeOfTripData, () => {
     }
 
     const closeModal = () => {
-  visibleModal.value = false;
+      visibleModal.value = false;
     };
 
     const closeModalReject = () => {
-  visibleModalReject.value = false;
+      visibleModalReject.value = false;
     };
 
 </script>
@@ -365,9 +435,10 @@ watch(purposeOfTripData, () => {
             <label
               @click="visibleModal = true"
               for="my-modal-approve"
-              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250] ${alert.isHide}`"
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]`"
             >
               <span>
+                <!-- ${alert.isHide} -->
                 <img :src="icon_done" class="w-5 h-5" />
               </span>
               Approve
@@ -376,8 +447,9 @@ watch(purposeOfTripData, () => {
             <label
               @click="visibleModalReject = true"
               for="my-modal-reject"
-              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white ${alert.isHide}`"
-            >
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white`"
+              >
+              <!-- ${alert.isHide} -->
               <span>
                 <img :src="iconClose" class="w-5 h-5" />
               </span>

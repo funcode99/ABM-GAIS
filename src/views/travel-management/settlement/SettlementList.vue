@@ -287,8 +287,9 @@ const exportToExcel = () => {
 
       <tableContainer style="overflow: auto">
         <tableTop>
+          <!-- grid grid-flow-col auto-cols-max -->
           <div
-            class="grid grid-flow-col auto-cols-max items-center justify-between mx-4 py-2"
+            class="flex items-center justify-between mx-4 py-2"
           >
             <p
               class="font-JakartaSans text-base capitalize text-[#0A0A0A] font-semibold"
@@ -328,6 +329,7 @@ const exportToExcel = () => {
 
           <div class="flex gap-2 px-4 pb-2 justify-between">
             <div class="flex gap-6">
+
               <div class="flex flex-col">
                 <p
                   class="capitalize font-JakartaSans text-xs text-black font-medium"
@@ -404,6 +406,7 @@ const exportToExcel = () => {
                   Reset
                 </button>
               </div>
+              
             </div>
 
             <div class="pt-6 flex md:mx-0">

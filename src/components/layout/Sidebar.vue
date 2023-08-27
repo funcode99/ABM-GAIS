@@ -27,6 +27,13 @@ const fetchSidebarAppearance = async () => {
   sidebar.menuData = api.data.data
 }
 
+const searchSidebar = async () => {
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  let api = await Api.get(`/role/search_sidebar?search=${searchSidebarValue.value}`)
+  sidebar.menuData = api.data.data
+}
+
 onBeforeMount(() => {
   if (sidebar.menuData === "") {
     fetchSidebarAppearance()
@@ -128,7 +135,7 @@ const handleNotifClick = () => {
         class="rounded-r-2xl bg-[#f5f5f5] h-10 pl-2 outline-none"
         placeholder="Search..."
         v-model="searchSidebarValue"
-        @keyup="searchSidebar(searchSidebarValue)"
+        @keyup.enter="searchSidebar()"
       />
     </div>
 
@@ -141,6 +148,7 @@ const handleNotifClick = () => {
 
           <ul id="myMenu" class="pb-20">
 
+            <!-- search icon saat sidebar nya mengecil -->
             <li>
               <div
                 class="flex justify-center items-center cursor-pointer py-4"
@@ -154,6 +162,38 @@ const handleNotifClick = () => {
 
             <li v-for="data in sidebar.menuData">
 
+              <!-- jika tidak ada child -->
+              <router-link :to="`${data.url}`" 
+                @click="sidebar.increment(data.menu)"
+                v-if="!data.child"
+                class="w-full rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
+                :class="
+                  sidebar.sidebarMenu === data.menu
+                    ? 'text-white bg-[#015289]'
+                    : ''
+                "
+              >
+                                  
+                <!-- jika parent menu nya tidak ada child -->
+                <div class="flex justify-between w-full items-center">
+                    
+                    <div class="flex gap-4 items-center">
+
+                      <img :src="data.icon_path" class="w-6 h-6"  />
+
+                      <h3
+                        class="text-left"
+                        :class="sidebar.isWide === true ? '' : 'hidden'"
+                      >
+                        {{ data.menu }}
+                      </h3>
+
+                    </div>
+
+                </div>
+              </router-link>
+
+              <!-- jika parent menu ada child -->
               <button
                 v-if="data.child"
                 @click="sidebar.increment(data.menu)"
@@ -167,7 +207,7 @@ const handleNotifClick = () => {
 
                 <!-- jika parent menu nya ada child -->
                 <div class="flex justify-between w-full items-center">
-
+                    
                   <div class="flex gap-4 items-center">
 
                     <img :src="data.icon_path" class="w-6 h-6"  />
@@ -181,6 +221,7 @@ const handleNotifClick = () => {
 
                   </div>
 
+                  <!-- arrow image -->
                   <div class="relative">
                     
                     <div
@@ -213,40 +254,61 @@ const handleNotifClick = () => {
                     
                   </div>
 
+                  <div class="fixed">
+                    <div class="absolute left-[75px] top-[-30px] rounded-lg bg-blue">
+  
+                      <div v-for="child in data.child"
+                      class=" "
+                      >
+  
+                      <router-link :to="`${child.url}`"
+                      v-if="!sidebar.isWide & sidebar.sidebarMenu === data.menu"
+                        >
+                            <div
+                              class="flex items-center cursor-pointer  text-xs h-10 w-32  text-white"
+                            >
+                              
+                            <!-- <img
+                                class="h-[2px] w-2"
+                                :class="[
+                                  $route.path === data.menu ? 'hidden' : 'inline',
+                                ]"
+                                :src="submenuLine"
+                                alt=""
+                              />
+  
+                              <img
+                                class="h-[2px] w-2"
+                                :class="[
+                                  $route.path === data.menu ? 'inline' : 'hidden',
+                                ]"
+                                :src="submenuLineSelected"
+                                alt=""
+                              /> -->
+  
+                              <!-- class="flex items-center w-full justify-between" -->
+                                <!-- :class="[
+                                  $route.path === child.url
+                                    ? `anchorImage anchorSubMenu`
+                                    : '',
+                                ]" -->
+                              <p
+                                  class="ml-2"
+                              >
+                                {{ child.menu }}
+                              </p>
+  
+                            </div>
+                        </router-link>
+                      
+                      </div>
+  
+                    </div>
+                  </div>
+
                 </div>
 
               </button>
-
-              <router-link :to="`${data.url}`" 
-                @click="sidebar.increment(data.menu)"
-                v-if="!data.child"
-                class="w-full rounded-lg flex sm:justify-between items-center gap-4 text-left p-4"
-                :class="
-                  sidebar.sidebarMenu === data.menu
-                    ? 'text-white bg-[#015289]'
-                    : ''
-                "
-              >
-                                  
-                <!-- jika parent menu nya tidak ada child -->
-                <div class="flex justify-between w-full items-center">
-                    
-                    <div class="flex gap-4 items-center">
-
-                      <img :src="data.icon_path" class="w-6 h-6"  />
-
-                      <h3
-                        class="text-left"
-                        :class="sidebar.isWide === true ? '' : 'hidden'"
-                      >
-                        {{ data.menu }}
-                      </h3>
-
-                    </div>
-
-                </div>
-
-              </router-link>
 
               <div v-if="sidebar.isWide">
                 <collapse-transition v-if="data.child" dimension="height" :duration="500">
@@ -403,4 +465,5 @@ const handleNotifClick = () => {
 .z-Infinite {
   z-index: 9999;
 }
+
 </style>

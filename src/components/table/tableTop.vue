@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-white w-full rounded-t-xl pb-3  relative custom-card">
+  <!-- relative -->
+  <div class="bg-white w-full rounded-t-xl pb-3 custom-card z-50">
     <slot></slot>
   </div>
 </template>

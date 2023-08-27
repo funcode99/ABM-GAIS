@@ -332,7 +332,7 @@ const resetDataHistory = () => {
             </div>
 
             <div
-              class="grid grid-flow-col auto-cols-max gap-2 px-4 pb-2 justify-between"
+              class="flex flex-wrap gap-2 px-4 pb-2 justify-between"
             >
               <div class="flex flex-wrap items-center gap-4">
                 <div>
