@@ -248,8 +248,6 @@
 
                     </div>
 
-                    {{ sortedData }}
-
                     <tableData v-if="sortedData.length > 0">
 
                         <thead class="text-center font-JakartaSans text-sm font-bold h-10">

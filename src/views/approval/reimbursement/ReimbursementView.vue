@@ -61,6 +61,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/approval_reimbursement/get_data/${id}`);
   dataArr.value = res.data.data[0];
+  console.log(res.data.data)
   fetchDataItem(dataArr.value.id_document);
   fetchHistoryApproval(dataArr.value.id_document);
   fetchDataEmployee(dataArr.value);

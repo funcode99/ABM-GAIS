@@ -28,7 +28,9 @@ const approveRequest = async () => {
     router.push({
       path: "/approvalrequesttrip",
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 };
 
 let approverBehalfList = ref(props.listEmployee);
@@ -37,6 +39,7 @@ let role = JSON.parse(localStorage.getItem("id_role"));
 </script>
 
 <template>
+  
   <label
     for="my-modal-approve-request"
     class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]"
@@ -154,6 +157,7 @@ let role = JSON.parse(localStorage.getItem("id_role"));
       </main>
     </div>
   </div>
+
 </template>
 
 <style scoped>

@@ -187,8 +187,10 @@ const fetchDataItem = async (id) => {
 };
 
 const fetchDataEmployee = async (dt) => {
+  
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  
   let payload = {
     id_employee: dt.id_employee,
     id_company: dt.id_company,
@@ -199,7 +201,10 @@ const fetchDataEmployee = async (dt) => {
   const res = await Api.get("/employee/approval_behalf", {
     params: payload,
   });
+
+  console.log(res.data.data)
   listEmployee.value = res.data.data;
+
 };
 
 const fetchHistoryApproval = async (id) => {
@@ -245,6 +250,7 @@ const format_price = (value) => {
 
       <tableContainer>
         <tableTop>
+
           <div class="flex justify-between">
             <router-link
               to="/approvalsettlement"
@@ -581,6 +587,7 @@ const format_price = (value) => {
               </div>
             </div>
           </div>
+
         </tableTop>
       </tableContainer>
 

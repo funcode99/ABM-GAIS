@@ -21,10 +21,56 @@
   import accomodationFormView from '@/components/request-trip/view-detail-form/accomodation-view.vue'
   import cashAdvanceFormView from '@/components/request-trip/view-detail-form/cash-advance-view.vue'
 
-  import ModalApprove from "@/components/approval/request-trip/ModalApprove.vue"
-  import ModalReject from "@/components/approval/request-trip/ModalReject.vue"
+  // import ModalApprove from "@/components/approval/request-trip/ModalApprove.vue"
+  // import ModalReject from "@/components/approval/request-trip/ModalReject.vue"
+  import ModalApprove from "@/components/approval/ModalApprove.vue";
+import ModalReject from "@/components/approval/ModalReject.vue";
 
   import arrow from "@/assets/request-trip-view-arrow.png"
+
+  let alert = ref([]);
+  const code_role = JSON.parse(localStorage.getItem("id_role"));
+
+  const listStatus = [
+  {
+    id: 0,
+    status: "Draft",
+    value: "alert bg-[#8d8e8f]",
+    isHide: "",
+    isJurnal: "hidden",
+  },
+  {
+    id: 1,
+    status: "Waiting Approval",
+    value: "alert alert-warning",
+    isHide: "",
+    isJurnal: "",
+  },
+  {
+    id: 2,
+    status: "Revision",
+    value: "alert alert-error",
+    isHide: "hidden",
+    isJurnal: "hidden",
+  },
+  {
+    id: 3,
+    status: "Fully Rejected",
+    value: "alert alert-error",
+    isHide: "hidden",
+    isJurnal: "hidden",
+  },
+  {
+    id: 10,
+    status: "Completed",
+    value: "alert alert-success",
+    isHide: "hidden",
+    isJurnal: "",
+  },
+];
+
+  let visibleModal = ref(false);
+  let visibleModalReject = ref(false);
 
   const route = useRoute()
   const sidebar = useSidebarStore()
@@ -174,6 +220,8 @@
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
       const res = await Api.get(`/approval_request_trip/get_data/${id}`)
       dataArr.value = res.data.data[0]
+      console.log(res.data.data)
+      alert = listStatus.find((item) => item.status === dataArr.value.status);
       fetchDataEmployee(dataArr.value)
     }
 
@@ -186,7 +234,7 @@
         id_employee: dt.id_employee,
         id_company: dt.id_company,
         id_site: dt.id_site,
-        id_approval_auth: dt.id_approval_auth,
+        // id_approval_auth: dt.id_approval_auth,
       };
       const res = await Api.get("/employee/approval_behalf", {
         params: payload,
@@ -257,6 +305,14 @@ watch(purposeOfTripData, () => {
       headerTitle.value = title
     }
 
+    const closeModal = () => {
+  visibleModal.value = false;
+    };
+
+    const closeModalReject = () => {
+  visibleModalReject.value = false;
+    };
+
 </script>
 
 <template>
@@ -291,7 +347,7 @@ watch(purposeOfTripData, () => {
           <!-- APPROVE & REJECT BUTTON -->
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
             
-            <ModalApprove 
+            <!-- <ModalApprove 
               :approvalId="approvalId"
               :list-employee="listEmployee"
               :role-code="code_role"
@@ -304,7 +360,43 @@ watch(purposeOfTripData, () => {
               :id="id"
               @close="closeModalReject"
               @reject="(data) => rejectData(data)"
-            />
+            /> -->
+
+            <label
+              @click="visibleModal = true"
+              for="my-modal-approve"
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250] ${alert.isHide}`"
+            >
+              <span>
+                <img :src="icon_done" class="w-5 h-5" />
+              </span>
+              Approve
+            </label>
+
+            <label
+              @click="visibleModalReject = true"
+              for="my-modal-reject"
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white ${alert.isHide}`"
+            >
+              <span>
+                <img :src="iconClose" class="w-5 h-5" />
+              </span>
+              Reject
+            </label>
+
+              <ModalApprove
+                v-if="visibleModal"
+                :role-code="code_role"
+                :list-employee="listEmployee"
+                @close="closeModal"
+                @approve="(data) => approveData(data)"
+               />
+              <ModalReject
+                v-if="visibleModalReject"
+                :id="id"
+                @close="closeModalReject"
+                @reject="(data) => rejectData(data)"
+              />
             
           </div>
 
