@@ -3,19 +3,23 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
+import ModalJurnal from "@/components/approval/ModalJurnal.vue";
 import ModalApprove from "@/components/approval/ModalApprove.vue";
 import ModalReject from "@/components/approval/ModalReject.vue";
+
+import tableContainer from "@/components/table/tableContainer.vue";
+import tableTop from "@/components/table/tableTop.vue";
 
 import DataNotFound from "@/components/element/dataNotFound.vue";
 import HistoryApproval from "@/components/approval/HistoryApproval.vue";
 
-import Api from "@/utils/Api";
-import moment from "moment";
-import Swal from "sweetalert2";
-
 import arrow from "@/assets/request-trip-view-arrow.png";
 import icon_done from "@/assets/icon_done.svg";
 import iconClose from "@/assets/navbar/icon_close.svg";
+
+import Api from "@/utils/Api";
+import moment from "moment";
+import Swal from "sweetalert2";
 
 import { ref, onBeforeMount } from "vue";
 import { useSidebarStore } from "@/stores/sidebar.js";
@@ -24,17 +28,57 @@ import { useRoute, useRouter } from "vue-router";
 const sidebar = useSidebarStore();
 const route = useRoute();
 const router = useRouter();
+
 let dataArr = ref([]);
 let dataItem = ref([]);
 let dataApproval = ref([]);
+let listEmployee = ref([]);
+let alert = ref([]);
 
-let lengthCounter = 0;
 let visibleModal = ref(false);
 let visibleModalReject = ref(false);
+let id = route.params.id;
 let tabId = ref(1);
 
-let id = route.params.id;
 const code_role = JSON.parse(localStorage.getItem("id_role"));
+
+const listStatus = [
+  {
+    id: 0,
+    status: "Draft",
+    value: "alert bg-[#8d8e8f]",
+    isHide: "",
+    isJurnal: "hidden",
+  },
+  {
+    id: 1,
+    status: "Waiting Approval",
+    value: "alert alert-warning",
+    isHide: "",
+    isJurnal: "",
+  },
+  {
+    id: 2,
+    status: "Revision",
+    value: "alert alert-error",
+    isHide: "hidden",
+    isJurnal: "hidden",
+  },
+  {
+    id: 3,
+    status: "Fully Rejected",
+    value: "alert alert-error",
+    isHide: "hidden",
+    isJurnal: "hidden",
+  },
+  {
+    id: 10,
+    status: "Completed",
+    value: "alert alert-success",
+    isHide: "hidden",
+    isJurnal: "",
+  },
+];
 
 const tableHeadDetailsItem = [
   { id: 1, title: "Item" },
@@ -53,63 +97,6 @@ const tableHeadDetailsItemNon = [
   { id: 5, title: "Nominal Pemakaian Real" },
   { id: 6, title: "Attachment" },
 ];
-
-const format_date = (value) => {
-  if (value) {
-    return moment(String(value)).format("DD/MM/YYYY");
-  }
-};
-
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
-
-const fetchDataById = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/approval_settlement/get_data/${id}`);
-  dataArr.value = res.data.data[0];
-  fetchDataItem(dataArr.value.id_document);
-  fetchHistoryApproval(dataArr.value.id_document);
-  fetchDataEmployee(dataArr.value);
-};
-
-const fetchDataItem = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`);
-  dataItem.value = res.data.data;
-};
-
-let listEmployee = ref([]);
-
-const fetchDataEmployee = async (dt) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  let payload = {
-    id_employee: dt.id_employee,
-    id_company: dt.id_company,
-    id_site: dt.id_site,
-    id_approval_auth: dt.id_approval_auth,
-  };
-
-  const res = await Api.get("/employee/approval_behalf", {
-    params: payload,
-  });
-  listEmployee.value = res.data.data;
-}
-
-const closeModal = () => {
-  visibleModal.value = false;
-};
-
-const closeModalReject = () => {
-  visibleModalReject.value = false;
-};
 
 const approveData = async (payload) => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -177,6 +164,44 @@ const rejectData = async (payload) => {
   }
 };
 
+const getSessionForSidebar = () => {
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+};
+
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/approval_settlement/get_data/${id}`);
+  dataArr.value = res.data.data[0];
+  alert = listStatus.find((item) => item.status === dataArr.value.status);
+  fetchDataItem(dataArr.value.id_document);
+  fetchHistoryApproval(dataArr.value.id_document);
+  fetchDataEmployee(dataArr.value);
+};
+
+const fetchDataItem = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/settlement/get_detail_by_id_settlement/${id}`);
+  dataItem.value = res.data.data;
+};
+
+const fetchDataEmployee = async (dt) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  let payload = {
+    id_employee: dt.id_employee,
+    id_company: dt.id_company,
+    id_site: dt.id_site,
+    id_approval_auth: dt.id_approval_auth,
+  };
+
+  const res = await Api.get("/employee/approval_behalf", {
+    params: payload,
+  });
+  listEmployee.value = res.data.data;
+};
+
 const fetchHistoryApproval = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -189,8 +214,26 @@ onBeforeMount(() => {
   fetchDataById(id);
 });
 
-const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
+const closeModal = () => {
+  visibleModal.value = false;
+};
+
+const closeModalReject = () => {
+  visibleModalReject.value = false;
+};
+
+const format_date = (value) => {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 </script>
 
@@ -198,17 +241,10 @@ const getSessionForSidebar = () => {
   <div class="flex flex-col w-full this h-[100vh]">
     <Navbar />
     <div class="flex w-screen content mt-[115px]">
-      <Sidebar class="flex-none fixed" />
+      <Sidebar class="flex-none" />
 
-      <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
-        :class="[
-          lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
-          sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]',
-        ]"
-      >
-        <div class="bg-white w-full rounded-t-xl pb-3 relative custom-card">
-          <!-- HEADER -->
+      <tableContainer>
+        <tableTop>
           <div class="flex justify-between">
             <router-link
               to="/approvalsettlement"
@@ -223,40 +259,56 @@ const getSessionForSidebar = () => {
                 </span>
               </h1>
             </router-link>
-            <div class="py-4">
-              <button
-                type="button"
-                :class="
-                  dataArr.status == 'Revision' || dataArr.status == 'Rejected'
-                    ? ' btn btn-sm border-none mx-4 capitalize status-revision'
-                    : 'btn btn-sm border-none mx-4 capitalize status-default'
-                "
+
+            <div class="py-4 mx-4">
+              <span
+                :class="`capitalize ${alert.value} text-white text-sm font-JakartaSans font-bold`"
               >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  class="stroke-current shrink-0 w-6 h-6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
                 {{ dataArr.status }}
-              </button>
+              </span>
             </div>
           </div>
+
+          <div :class="`float-right ${alert.isJurnal}`">
+            <ModalJurnal :dataJurnal="dataArr" />
+          </div>
+
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
             <label
               @click="visibleModal = true"
               for="my-modal-approve"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250]"
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-[#099250] hover:text-white hover:border-[#099250] ${alert.isHide}`"
             >
               <span>
                 <img :src="icon_done" class="w-5 h-5" />
               </span>
               Approve
             </label>
+
             <label
               @click="visibleModalReject = true"
               for="my-modal-reject"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white"
+              :class="`btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-[#D92D20] hover:border-[#D92D20] hover:text-white ${alert.isHide}`"
             >
               <span>
                 <img :src="iconClose" class="w-5 h-5" />
               </span>
               Reject
             </label>
+
             <ModalApprove
               v-if="visibleModal"
               :role-code="code_role"
@@ -264,6 +316,7 @@ const getSessionForSidebar = () => {
               @close="closeModal"
               @approve="(data) => approveData(data)"
             />
+
             <ModalReject
               v-if="visibleModalReject"
               :id="id"
@@ -285,6 +338,7 @@ const getSessionForSidebar = () => {
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
+
             <div class="flex flex-col gap-2">
               <span class="font-JakartaSans font-medium text-sm"
                 >Created By</span
@@ -293,6 +347,55 @@ const getSessionForSidebar = () => {
                 type="text"
                 disabled
                 :value="dataArr.employee_name"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Total Before Settlement</span
+              >
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">CA No</span>
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm"
+                >Total After Settlement</span
+              >
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Event</span>
+              <input
+                type="text"
+                disabled
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
+              />
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <span class="font-JakartaSans font-medium text-sm">Type</span>
+              <input
+                type="text"
+                disabled
                 class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%] font-JakartaSans font-semibold text-base"
               />
             </div>
@@ -359,6 +462,7 @@ const getSessionForSidebar = () => {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody
                   class="font-JakartaSans font-normal text-xs"
                   v-if="dataItem.length > 0 && dataArr.type_ca == '1'"
@@ -413,6 +517,7 @@ const getSessionForSidebar = () => {
                     </td>
                   </tr>
                 </tbody>
+
                 <tbody
                   v-else-if="dataItem.length > 0 && dataArr.id_ca_type == '2'"
                 >
@@ -460,12 +565,14 @@ const getSessionForSidebar = () => {
                     </td>
                   </tr>
                 </tbody>
+
                 <tbody v-else-if="dataItem.length == 0">
                   <tr>
                     <DataNotFound :cnt-col="4" />
                   </tr>
                 </tbody>
               </table>
+
               <div v-if="tabId == 2">
                 <HistoryApproval
                   :data-approval="dataApproval"
@@ -474,27 +581,15 @@ const getSessionForSidebar = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <Footer class="fixed bottom-0 left-0 right-0" />
+        </tableTop>
+      </tableContainer>
+
+      <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
-.custom-card {
-  box-shadow: 0px -4px #015289;
-  border-radius: 4px;
-}
-
-.status-revision {
-  background: #ef3022;
-}
-
-.status-default {
-  background: #2970ff;
-}
-
 .this {
   overflow-x: hidden;
 }
