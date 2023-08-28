@@ -19,6 +19,8 @@ let GLData = ref([]);
 let GLDataByID = ref([]);
 let companyData = ref([]);
 let companyCode = ref("");
+let costCenterData = ref([]);
+// let idJurnalHeader = ref("");
 
 let isVisibleTableHeaders = ref(false);
 let isEditMode = ref(true);
@@ -78,6 +80,11 @@ const fetchDataDetailJurnal = async (id) => {
   const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
   // console.log(res);
   dataDetailJurnal.value = res.data.data;
+  let idJurnalHeader = dataDetailJurnal.value.map(
+    (item) => item.id_jurnal_header
+  );
+  return idJurnalHeader;
+  // console.log("id_jurnal_header array:", idJurnalHeaderArray);
 };
 
 const fetchGLAccount = async () => {
@@ -96,10 +103,19 @@ const selectedItems = computed(() => {
   return selectedItem ? [selectedItem] : [];
 });
 
+const fetchCostCenter = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get_cost_center");
+  // console.log(res.data.data);
+  costCenterData.value = res.data.data;
+};
+
 onBeforeMount(() => {
   fetchCompany();
   fetchDataById(id);
   fetchGLAccount();
+  fetchCostCenter();
 });
 
 const editTableHeader = () => {
@@ -110,6 +126,36 @@ const editTableHeader = () => {
 const cancelTableHeader = () => {
   isVisibleTableHeaders.value = false;
   isEditMode = true;
+};
+
+const saveTableDetails = async (data) => {
+  const payload = {
+    // id_jurnal_header: idJurnalHeader,
+    // item_number: data.item_number,
+    // posting_key: data.posting_key,
+    // dr_cr: null,
+    // vendor: null,
+    // gl_reccon_acc: selectedGL.value,
+    // pay_term: null,
+    // baseline_date: props.dataJurnal.doc_created_at,
+    // ammount: props.dataJurnal.grand_total.replace(/\./g, ""),
+    // item_text: data.item_text,
+    // account_type: null,
+    // tax_code: null,
+    // cost_center: data.cost_center,
+    // profit_center: data.profit_center,
+    // segment: null,
+  };
+
+  const api = await Api.post("/jurnal/save_sap_detail", payload);
+  Swal.fire({
+    position: "center",
+    icon: "success",
+    title: api.data.message,
+    showConfirmButton: false,
+    timer: 1500,
+  });
+  isVisibleTableHeaders.value = false;
 };
 
 const format_date = (value) => {
@@ -143,6 +189,9 @@ let classStyle =
 
 const inputClass =
   "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm ";
+
+const inputClassNotAllowed =
+  "cursor-not-allowed font-JakartaSans block bg-#e0e0e0 w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm ";
 </script>
 
 <template>
@@ -194,6 +243,7 @@ const inputClass =
 
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                @click="saveTableDetails"
               >
                 Save
               </button>
@@ -350,7 +400,16 @@ const inputClass =
                   v-for="data in dataDetailJurnal"
                   :key="data.id"
                 >
-                  <td>{{ data.item_number }}</td>
+                  <td v-if="!isEditMode">
+                    <input
+                      v-model="data.item_number"
+                      :class="inputClassNotAllowed"
+                      disabled
+                    />
+                  </td>
+                  <td v-else>
+                    {{ data.item_number }}
+                  </td>
 
                   <td v-if="!isEditMode">
                     <input v-model="data.posting_key" :class="inputClass" />
@@ -359,7 +418,16 @@ const inputClass =
                     {{ data.posting_key }}
                   </td>
 
-                  <td>{{ format_date(props.dataJurnal.doc_created_at) }}</td>
+                  <td v-if="!isEditMode">
+                    <input
+                      :value="format_date(dataJurnal.doc_created_at)"
+                      :class="inputClassNotAllowed"
+                      disabled
+                    />
+                  </td>
+                  <td v-else>
+                    {{ format_date(props.dataJurnal.doc_created_at) }}
+                  </td>
 
                   <td v-if="!isEditMode">
                     <select v-model="selectedGL" :class="inputClass">
@@ -373,7 +441,7 @@ const inputClass =
                   </td>
 
                   <td v-if="!isEditMode">
-                    <select :class="inputClass">
+                    <select :class="inputClassNotAllowed" disabled>
                       <option
                         v-for="item in selectedItems"
                         :key="item.id"
@@ -389,12 +457,13 @@ const inputClass =
 
                   <td v-if="!isEditMode">
                     <input
-                      v-model="props.dataJurnal.grand_total"
-                      :class="inputClass"
+                      :value="format_price(props.dataJurnal.grand_total)"
+                      :class="inputClassNotAllowed"
+                      disabled
                     />
                   </td>
                   <td v-else>
-                    {{ props.dataJurnal.grand_total }}
+                    {{ format_price(props.dataJurnal.grand_total) }}
                   </td>
 
                   <td v-if="!isEditMode">
@@ -405,7 +474,11 @@ const inputClass =
                   </td>
 
                   <td v-if="!isEditMode">
-                    <input v-model="data.cost_center" :class="inputClass" />
+                    <select v-model="data.cost_center" :class="inputClass">
+                      <option v-for="data in costCenterData" :key="data.id">
+                        {{ data.cost_center_name }}
+                      </option>
+                    </select>
                   </td>
                   <td v-else>
                     {{ data.cost_center }}
@@ -418,9 +491,32 @@ const inputClass =
                     {{ data.profit_center }}
                   </td>
 
-                  <td>{{ data.wbs }}</td>
-                  <td>{{ data.due_date }}</td>
-                  <td></td>
+                  <td v-if="!isEditMode">
+                    <input
+                      v-model="data.wbs"
+                      :class="inputClassNotAllowed"
+                      disabled
+                    />
+                  </td>
+                  <td v-else>
+                    {{ data.wbs }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input
+                      v-model="data.due_date"
+                      :class="inputClassNotAllowed"
+                      disabled
+                    />
+                  </td>
+                  <td v-else>
+                    {{ data.due_date }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input :class="inputClassNotAllowed" disabled />
+                  </td>
+                  <td v-else></td>
                 </tr>
               </tbody>
             </table>
@@ -465,10 +561,10 @@ table {
   min-width: max-content;
 }
 
-table tbody :hover {
-  /* background-color: rgb(193, 192, 192); */
+/* table tbody :hover {
+  background-color: rgb(193, 192, 192);
   cursor: pointer;
-}
+} */
 
 tbody tr:nth-child(even) th,
 tbody tr:nth-child(even) td {
