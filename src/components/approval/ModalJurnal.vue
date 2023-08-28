@@ -5,7 +5,7 @@ import icon_jurnal from "@/assets/icon_jurnal.svg";
 import Api from "@/utils/Api";
 import moment from "moment";
 
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
 import { useRoute } from "vue-router";
 
 const emits = defineEmits(["unlockScrollbar"]);
@@ -14,8 +14,14 @@ const route = useRoute();
 let dataCaNonTravel = ref([]);
 let dataSapDoc = ref([]);
 let dataDetailJurnal = ref([]);
+let selectedGL = ref(null);
+let GLData = ref([]);
+let GLDataByID = ref([]);
 let companyData = ref([]);
 let companyCode = ref("");
+
+let isVisibleTableHeaders = ref(false);
+let isEditMode = ref(true);
 
 let id = route.params.id;
 
@@ -38,7 +44,6 @@ const tableHead = [
   { Id: 10, title: "Wbs", jsonData: "wbs" },
   { Id: 11, title: "Due Date", jsonData: "due_date" },
   { Id: 12, title: "Posting Date", jsonData: "posting_date" },
-  { Id: 12, title: "Actions" },
 ];
 
 const fetchCompany = async () => {
@@ -75,10 +80,37 @@ const fetchDataDetailJurnal = async (id) => {
   dataDetailJurnal.value = res.data.data;
 };
 
+const fetchGLAccount = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/gl_account/");
+  GLData.value = res.data.data;
+  GLDataByID.value = res.data.data;
+  // console.log(res.data.data);
+};
+
+const selectedItems = computed(() => {
+  const selectedItem = GLData.value.find(
+    (item) => item.gl_account === selectedGL.value
+  );
+  return selectedItem ? [selectedItem] : [];
+});
+
 onBeforeMount(() => {
   fetchCompany();
   fetchDataById(id);
+  fetchGLAccount();
 });
+
+const editTableHeader = () => {
+  isEditMode = false;
+  isVisibleTableHeaders.value = true;
+};
+
+const cancelTableHeader = () => {
+  isVisibleTableHeaders.value = false;
+  isEditMode = true;
+};
 
 const format_date = (value) => {
   if (value) {
@@ -108,6 +140,9 @@ const format_price = (value) => {
 
 let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
+
+const inputClass =
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm ";
 </script>
 
 <template>
@@ -142,19 +177,38 @@ let classStyle =
             class="flex flex-wrap justify-start gap-2 items-center px-8 py-3"
           >
             <button
+              v-if="!isVisibleTableHeaders"
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-blue border-blue hover:bg-white hover:border-blue hover:text-blue"
+              @click="editTableHeader"
             >
               Edit
             </button>
 
+            <div class="flex justify-end gap-2" v-if="isVisibleTableHeaders">
+              <button
+                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                @click="cancelTableHeader"
+              >
+                Cancel
+              </button>
+
+              <button
+                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
+
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-green border-green hover:bg-white hover:border-green hover:text-green"
+              v-if="!isVisibleTableHeaders"
             >
               Posting
             </button>
 
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-[#FF9900] border-[#FF9900] hover:bg-white hover:border-[#FF9900] hover:text-[#FF9900]"
+              v-if="!isVisibleTableHeaders"
             >
               Reverse
             </button>
@@ -297,14 +351,73 @@ let classStyle =
                   :key="data.id"
                 >
                   <td>{{ data.item_number }}</td>
-                  <td>{{ data.posting_key }}</td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.posting_key" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ data.posting_key }}
+                  </td>
+
                   <td>{{ format_date(props.dataJurnal.doc_created_at) }}</td>
-                  <td>{{ data.gl_reccon_acc }}</td>
-                  <td>{{ data.short_text }}</td>
-                  <td>{{ format_price(props.dataJurnal.grand_total) }}</td>
-                  <td>{{ data.item_text }}</td>
-                  <td>{{ data.cost_center }}</td>
-                  <td>{{ data.profit_center }}</td>
+
+                  <td v-if="!isEditMode">
+                    <select v-model="selectedGL" :class="inputClass">
+                      <option v-for="data in GLData" :key="data.id">
+                        {{ data.gl_account }}
+                      </option>
+                    </select>
+                  </td>
+                  <td v-else>
+                    {{ data.gl_reccon_acc }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <select :class="inputClass">
+                      <option
+                        v-for="item in selectedItems"
+                        :key="item.id"
+                        :value="item.gl_name"
+                      >
+                        {{ item.gl_name }}
+                      </option>
+                    </select>
+                  </td>
+                  <td v-else>
+                    {{ data.short_text }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input
+                      v-model="props.dataJurnal.grand_total"
+                      :class="inputClass"
+                    />
+                  </td>
+                  <td v-else>
+                    {{ props.dataJurnal.grand_total }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.item_text" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ data.item_text }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.cost_center" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ data.cost_center }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.profit_center" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ data.profit_center }}
+                  </td>
+
                   <td>{{ data.wbs }}</td>
                   <td>{{ data.due_date }}</td>
                   <td></td>
@@ -353,7 +466,7 @@ table {
 }
 
 table tbody :hover {
-  background-color: rgb(193, 192, 192);
+  /* background-color: rgb(193, 192, 192); */
   cursor: pointer;
 }
 
