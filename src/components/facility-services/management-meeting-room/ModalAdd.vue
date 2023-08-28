@@ -1,10 +1,12 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg"
 import iconPlus from "@/assets/navbar/icon_plus.svg"
-import { ref, watchEffect, onMounted } from "vue"
+import { ref, watchEffect, onMounted, computed } from "vue"
 import Api from "@/utils/Api"
 import Swal from "sweetalert2"
 import Multiselect from "@vueform/multiselect"
+
+import { fetchSiteByUseID } from "@/utils/Api/reference/site.js"
 
 const props = defineProps({
   status: String,
@@ -41,6 +43,7 @@ let approver = ref([])
 let is_approval = ref(false)
 let err_messages = ref("")
 let selectSite = ref(true)
+const userSites = ref([])
 
 const listFasilitis = ["Projector", "TV", "Speaker", "WebCam", "Jabra"]
 const rowClass = "grid grid-cols-2 px-6 items-center gap-2"
@@ -203,6 +206,26 @@ const fetchCondition = async () => {
   id_role === "ADMTR" ? fetchCompany() : fetchCompanyID(id_company)
 }
 
+const fetchSitesByUserId = async () => {
+  const token = localStorage.getItem("token")
+  const decodeToken = storageHelper.decodeToken(token)
+  const userId = decodeToken?.users?.id
+
+  const res = await fetchSiteByUseID(userId)
+
+  userSites.value = res?.data || []
+}
+
+const filteredSites = computed(() => {
+  const primarySite = JSON.parse(localStorage.getItem("id_site"))
+  const userSitesIds = [
+    ...userSites.value.map(({ id_site }) => id_site),
+    primarySite,
+  ]
+
+  return listSite.value?.filter(({ id }) => userSitesIds.includes(id))
+})
+
 onMounted(() => {
   fetchEmployee()
   fetchCondition()
@@ -279,7 +302,11 @@ watchEffect(() => {
               :disabled="selectSite"
             >
               <option disabled selected>Site</option>
-              <option v-for="data in listSite" :key="data.id" :value="data.id">
+              <option
+                v-for="data in filteredSites"
+                :key="data.id"
+                :value="data.id"
+              >
                 {{ data.site_code }} - {{ data.site_name }}
               </option>
             </select>
