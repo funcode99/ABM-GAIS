@@ -168,14 +168,11 @@
   <div class="flex flex-col h-screen">
     
     <NavbarLogin />
-
-    <!-- {{ account?.username }}
-    {{ accessTokenValue?.secret }} -->
   
     <!-- content -->
       <div class="flex items-center justify-center content h-full py-[20px] lg:py-[30px] bg-[#e4e4e6]">
   
-          <div class="flex flex-wrap items-center justify-center gap-8 bg-white px-[2%] lg:px-[6%] py-[1%] lg:py-[3%] rounded-lg">
+          <div class="flex flex-wrap items-center justify-center gap-8 bg-white p-4 sm:px-[2%] lg:px-[6%] sm:py-[1%] lg:py-[3%] rounded-lg">
             
             <div class="hidden sm:block">
                 <img :src=loginImage class="w-[292px] h-[200px] md:w-[408px] md:h-[280px] 2xl:w-[544px] 2xl:h-[373px] object-scale-down" alt="">
@@ -224,7 +221,7 @@
                                   </div>
                           </div>
                           <!-- remember me & forgot password -->
-                          <div class="flex justify-between text-sm">
+                          <div class="flex flex-wrap sm:justify-between gap-2 text-sm">
                                   <div class="flex gap-2 items-center">
                                     <input type="checkbox">
                                     <h1>Remember me</h1>
@@ -247,9 +244,6 @@
                           >
                                   Login via Falcon
                           </button>
-                          <!-- <button
-                            @click="SignOut"
-                          >Logout</button> -->
                       </div>
                     </div>
     
