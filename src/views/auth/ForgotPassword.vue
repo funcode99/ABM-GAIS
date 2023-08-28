@@ -31,7 +31,7 @@
             // position: "center",
             Swal.fire({
                 icon: "error",
-                title: error.response.data.error.email,
+                title: error.response.data.error?.email || error.response.data.message,
                 showConfirmButton: false,
                 showCloseButton: true
             })
@@ -50,7 +50,7 @@
 
         <NavbarLogin />
     
-        <div class="flex items-center justify-center bg-[#e4e4e6] h-full">
+        <div class="flex items-center justify-center bg-[#e4e4e6] h-full sm:px-10">
             <div class="flex flex-col flex-wrap items-center justify-center gap-8 bg-white px-[6%] py-[3%] rounded-lg">
                     
                     <div v-if="serverResponse === 0" class="text-bold text-lg text-blue bg-lime-200 py-5 w-full text-center rounded-lg">
