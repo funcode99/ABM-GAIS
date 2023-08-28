@@ -6,11 +6,18 @@ import Api from "@/utils/Api";
 import moment from "moment";
 
 import { ref, onBeforeMount } from "vue";
+import { useRoute } from "vue-router";
 
 const emits = defineEmits(["unlockScrollbar"]);
+const route = useRoute();
 
+let dataCaNonTravel = ref([]);
+let dataSapDoc = ref([]);
+let dataDetailJurnal = ref([]);
 let companyData = ref([]);
 let companyCode = ref("");
+
+let id = route.params.id;
 
 const role = JSON.parse(localStorage.getItem("id_role"));
 
@@ -19,16 +26,19 @@ const props = defineProps({
 });
 
 const tableHead = [
-  { Id: 1, title: "Item", jsonData: "item_name" },
-  { Id: 2, title: "PK", jsonData: "pk" },
+  { Id: 1, title: "Item", jsonData: "item_number" },
+  { Id: 2, title: "PK", jsonData: "posting_key" },
   { Id: 3, title: "Doc Date", jsonData: "doc_date" },
-  { Id: 4, title: "G/L Account", jsonData: "gl_account" },
-  { Id: 5, title: "Account Short Text", jsonData: "account_text" },
+  { Id: 4, title: "G/L Account", jsonData: "gl_reccon_acc" },
+  { Id: 5, title: "Account Short Text", jsonData: "short_text" },
   { Id: 6, title: "Amount", jsonData: "amount" },
-  { Id: 7, title: "Text", jsonData: "text" },
-  { Id: 8, title: "Cost Center", jsonData: "cost_center_name" },
-  { Id: 9, title: "Profit Center", jsonData: "profit_status" },
-  { Id: 10, title: "Posting Date", jsonData: "posting_date" },
+  { Id: 7, title: "Text", jsonData: "item_text" },
+  { Id: 8, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 9, title: "Profit Center", jsonData: "profit_center" },
+  { Id: 10, title: "Wbs", jsonData: "wbs" },
+  { Id: 11, title: "Due Date", jsonData: "due_date" },
+  { Id: 12, title: "Posting Date", jsonData: "posting_date" },
+  { Id: 12, title: "Actions" },
 ];
 
 const fetchCompany = async () => {
@@ -43,8 +53,31 @@ const fetchCompany = async () => {
   });
 };
 
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/approval_non_travel/get_data/${id}`);
+  dataCaNonTravel.value = res.data.data[0];
+  fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+};
+
+const fetchSapByIdDoc = async (id) => {
+  // const res = await Api.get(`/jurnal/get_sap_by_id_document/${id}`);
+  const res = await Api.get(`/jurnal/get_sap_by_id_document/1`); //using data dummy
+  // console.log(res);
+  dataSapDoc.value = res.data.data;
+  fetchDataDetailJurnal(dataSapDoc.value[0].id);
+};
+
+const fetchDataDetailJurnal = async (id) => {
+  const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
+  // console.log(res);
+  dataDetailJurnal.value = res.data.data;
+};
+
 onBeforeMount(() => {
   fetchCompany();
+  fetchDataById(id);
 });
 
 const format_date = (value) => {
@@ -63,6 +96,14 @@ const format_month = (value) => {
   if (value) {
     return moment(String(value)).format("M");
   }
+};
+
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 };
 
 let classStyle =
@@ -98,7 +139,7 @@ let classStyle =
       <main class="modal-box-inner">
         <div class="sticky top-0 bg-white" v-if="role === 'ADM'">
           <div
-            class="flex flex-wrap justify-start gap-2 items-center px-8 pt-4"
+            class="flex flex-wrap justify-start gap-2 items-center px-8 py-3"
           >
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-blue border-blue hover:bg-white hover:border-blue hover:text-blue"
@@ -250,17 +291,23 @@ let classStyle =
                 </th>
               </thead>
               <tbody>
-                <tr class="font-JakartaSans font-normal text-sm text-center">
-                  <td>1</td>
-                  <td>31</td>
-                  <td>27/03/23</td>
-                  <td>231321234</td>
-                  <td>Employee</td>
-                  <td>231.000</td>
-                  <td>Meals</td>
-                  <td>902922</td>
-                  <td>9900</td>
-                  <td>28/02/23</td>
+                <tr
+                  class="font-JakartaSans font-normal text-sm text-center"
+                  v-for="data in dataDetailJurnal"
+                  :key="data.id"
+                >
+                  <td>{{ data.item_number }}</td>
+                  <td>{{ data.posting_key }}</td>
+                  <td>{{ format_date(props.dataJurnal.doc_created_at) }}</td>
+                  <td>{{ data.gl_reccon_acc }}</td>
+                  <td>{{ data.short_text }}</td>
+                  <td>{{ format_price(props.dataJurnal.grand_total) }}</td>
+                  <td>{{ data.item_text }}</td>
+                  <td>{{ data.cost_center }}</td>
+                  <td>{{ data.profit_center }}</td>
+                  <td>{{ data.wbs }}</td>
+                  <td>{{ data.due_date }}</td>
+                  <td></td>
                 </tr>
               </tbody>
             </table>
@@ -291,7 +338,7 @@ let classStyle =
 
 .table-wrapper {
   overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: scroll;
   height: fit-content;
   max-height: 66.4vh;
   margin-top: 22px;
@@ -332,8 +379,7 @@ table th {
   color: white;
 }
 
-table th,
-table td {
+table th {
   padding: 15px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -341,6 +387,9 @@ table td {
 
 table td {
   font-size: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   padding-left: 40px;
+  padding-right: 40px;
 }
 </style>
