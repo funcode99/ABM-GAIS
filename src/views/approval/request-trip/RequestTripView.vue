@@ -1,7 +1,7 @@
 <script setup>
   import { onBeforeMount, provide, ref, watch } from "vue"
   import { useSidebarStore } from "@/stores/sidebar.js"
-  import { useRoute } from "vue-router"
+  import { useRoute, useRouter } from "vue-router"
 
   import Api from '@/utils/Api'
 
@@ -27,6 +27,7 @@
 import ModalReject from "@/components/approval/ModalReject.vue";
 
   import arrow from "@/assets/request-trip-view-arrow.png"
+  import Swal from "sweetalert2";
 
   let alert = ref([]);
   const code_role = JSON.parse(localStorage.getItem("id_role"));
@@ -73,9 +74,10 @@ import ModalReject from "@/components/approval/ModalReject.vue";
   let visibleModalReject = ref(false);
 
   const route = useRoute()
+  const router = useRouter()
   const sidebar = useSidebarStore()
   let requestTripId = route.params.id
-  // let approvalId = route.params.approvalid
+  let approvalId = route.params.approvalid
   let purposeOfTripName = ref('')
 
   let isEditing = ref(false)
@@ -112,8 +114,6 @@ import ModalReject from "@/components/approval/ModalReject.vue";
   provide('otherTransportationDataView', otherTransportationData)
   provide('accomodationDataView', accomodationData)
   provide('cashAdvanceDataView', cashAdvanceData)
-
-
 
     const getPurposeOfTrip = async () => {
       try {
@@ -216,12 +216,13 @@ import ModalReject from "@/components/approval/ModalReject.vue";
     }
 
     const fetchDataById = async (id) => {
+      console.log(id)
       const token = JSON.parse(localStorage.getItem("token"))
       Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const res = await Api.get(`/approval_request_trip/get_data/${id}`)
+      const res = await Api.get(`/approval_request_trip/get_data/${approvalId}`)
       dataArr.value = res.data.data[0]
       console.log(res.data.data)
-      alert = listStatus.find((item) => item.status === dataArr.value.status);
+      alert = listStatus.find((item) => item.status === dataArr?.value?.status);
       fetchDataEmployee(dataArr.value)
     }
 
@@ -250,7 +251,7 @@ import ModalReject from "@/components/approval/ModalReject.vue";
     const approveData = async (payload) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.post(`/approval_settlement/approve/${id}`, payload);
+  const res = await Api.post(`/approval_request_trip/approve/${approvalId}`, payload);
 
   if (res.data.success) {
     Swal.fire({
@@ -261,7 +262,7 @@ import ModalReject from "@/components/approval/ModalReject.vue";
       timer: 1500,
     });
     closeModal();
-    router.push({ path: `/approvalsettlement` });
+    router.push({ path: `/approvalrequesttrip` });
   } else {
     Swal.fire({
       position: "center",
@@ -274,6 +275,7 @@ import ModalReject from "@/components/approval/ModalReject.vue";
     };
 
     const rejectData = async (payload) => {
+      payload.id_company = 999
   if (payload.is_revision == true && !payload.notes) {
     Swal.fire({
       html: "<b>Please fill notes!</b>",
@@ -289,7 +291,7 @@ import ModalReject from "@/components/approval/ModalReject.vue";
   } else {
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-    const res = await Api.post(`/approval_settlement/reject/${id}`, payload);
+    const res = await Api.post(`/approval_request_trip/reject/${approvalId}`, payload);
 
     if (res.data.success) {
       Swal.fire({
@@ -300,7 +302,7 @@ import ModalReject from "@/components/approval/ModalReject.vue";
         timer: 1500,
       });
       closeModalReject();
-      router.push({ path: `/approvalsettlement` });
+      router.push({ path: `/approvalrequesttrip` });
     } else {
       Swal.fire({
         position: "center",
