@@ -4,6 +4,7 @@ import icon_jurnal from "@/assets/icon_jurnal.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
+import Swal from "sweetalert2";
 
 import { ref, onBeforeMount, computed } from "vue";
 import { useRoute } from "vue-router";
@@ -20,7 +21,7 @@ let GLDataByID = ref([]);
 let companyData = ref([]);
 let companyCode = ref("");
 let costCenterData = ref([]);
-// let idJurnalHeader = ref("");
+let idJurnalHeader = ref([]);
 
 let isVisibleTableHeaders = ref(false);
 let isEditMode = ref(true);
@@ -78,13 +79,10 @@ const fetchSapByIdDoc = async (id) => {
 
 const fetchDataDetailJurnal = async (id) => {
   const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
-  // console.log(res);
+  // console.log(res.data.data);
   dataDetailJurnal.value = res.data.data;
-  let idJurnalHeader = dataDetailJurnal.value.map(
-    (item) => item.id_jurnal_header
-  );
-  return idJurnalHeader;
-  // console.log("id_jurnal_header array:", idJurnalHeaderArray);
+  idJurnalHeader = dataDetailJurnal.value.map((item) => item.id_jurnal_header);
+  // console.log("id_jurnal_header arrays:", idJurnalHeader);
 };
 
 const fetchGLAccount = async () => {
@@ -129,33 +127,39 @@ const cancelTableHeader = () => {
 };
 
 const saveTableDetails = async (data) => {
-  const payload = {
-    // id_jurnal_header: idJurnalHeader,
-    // item_number: data.item_number,
-    // posting_key: data.posting_key,
-    // dr_cr: null,
-    // vendor: null,
-    // gl_reccon_acc: selectedGL.value,
-    // pay_term: null,
-    // baseline_date: props.dataJurnal.doc_created_at,
-    // ammount: props.dataJurnal.grand_total.replace(/\./g, ""),
-    // item_text: data.item_text,
-    // account_type: null,
-    // tax_code: null,
-    // cost_center: data.cost_center,
-    // profit_center: data.profit_center,
-    // segment: null,
-  };
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  try {
+    const payload = {
+      id_jurnal_header: data[0].id_jurnal_header,
+      item_number: data[0].item_number,
+      posting_key: data[0].posting_key,
+      gl_reccon_acc: selectedGL.value,
+      short_text: selectedItems.value[0].gl_name,
+      ammount: data[0].amount,
+      item_text: data[0].item_text,
+      cost_center: data[0].cost_center,
+      profit_center: data[0].profit_center,
+      wbs: data[0].wbs,
+      due_date: data[0].due_date,
+    };
+    // console.log(payload);
+    const api = await Api.post("/jurnal/save_sap_detail", payload);
 
-  const api = await Api.post("/jurnal/save_sap_detail", payload);
-  Swal.fire({
-    position: "center",
-    icon: "success",
-    title: api.data.message,
-    showConfirmButton: false,
-    timer: 1500,
-  });
-  isVisibleTableHeaders.value = false;
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: api.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    isVisibleTableHeaders.value = false;
+    isEditMode = true;
+    // fetchDataDetailJurnal(data[0].id_jurnal_header);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
 
 const format_date = (value) => {
@@ -243,7 +247,7 @@ const inputClassNotAllowed =
 
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                @click="saveTableDetails"
+                @click="saveTableDetails(dataDetailJurnal)"
               >
                 Save
               </button>
@@ -412,10 +416,14 @@ const inputClassNotAllowed =
                   </td>
 
                   <td v-if="!isEditMode">
-                    <input v-model="data.posting_key" :class="inputClass" />
+                    <select v-model="data.posting_key" :class="inputClass">
+                      <option value="15">15</option>
+                      <option value="30">30</option>
+                      <option value="45">45</option>
+                    </select>
                   </td>
                   <td v-else>
-                    {{ data.posting_key }}
+                    {{ data.gl_reccon_acc }}
                   </td>
 
                   <td v-if="!isEditMode">
@@ -456,14 +464,10 @@ const inputClassNotAllowed =
                   </td>
 
                   <td v-if="!isEditMode">
-                    <input
-                      :value="format_price(props.dataJurnal.grand_total)"
-                      :class="inputClassNotAllowed"
-                      disabled
-                    />
+                    <input v-model="data.amount" :class="inputClass" />
                   </td>
                   <td v-else>
-                    {{ format_price(props.dataJurnal.grand_total) }}
+                    {{ format_price(data.amount) }}
                   </td>
 
                   <td v-if="!isEditMode">
@@ -492,22 +496,14 @@ const inputClassNotAllowed =
                   </td>
 
                   <td v-if="!isEditMode">
-                    <input
-                      v-model="data.wbs"
-                      :class="inputClassNotAllowed"
-                      disabled
-                    />
+                    <input v-model="data.wbs" :class="inputClassNotAllowed" />
                   </td>
                   <td v-else>
                     {{ data.wbs }}
                   </td>
 
                   <td v-if="!isEditMode">
-                    <input
-                      v-model="data.due_date"
-                      :class="inputClassNotAllowed"
-                      disabled
-                    />
+                    <input v-model="data.due_date" :class="inputClass" />
                   </td>
                   <td v-else>
                     {{ data.due_date }}
