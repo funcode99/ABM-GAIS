@@ -227,7 +227,7 @@ const format_date = (value) => {
                 class="mt-3 z-[1] card card-compact dropdown-content w-52 bg-base-100 shadow"
               >
                 <ul
-                  class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-[500px] top-[50px] overflow-y-scroll overflow-x-hidden max-h-60 min-h-12"
+                  class="absolute right-0 border-[#e4e4e6] border-2 dropdown-content p-2 shadow bg-base-100 rounded-box w-[500px] top-[50px] overflow-y-scroll overflow-x-hidden max-h-60 min-h-12 mt-[-40px]"
                 >
                   <div class="tabs">
                     <a
