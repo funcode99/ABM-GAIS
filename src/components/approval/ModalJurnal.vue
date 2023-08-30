@@ -1,13 +1,12 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_jurnal from "@/assets/icon_jurnal.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
 
 import Api from "@/utils/Api";
+import Swal from "sweetalert2";
 import moment from "moment";
-// import Swal from "sweetalert2";
 
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 
 const emits = defineEmits(["unlockScrollbar"]);
@@ -15,24 +14,19 @@ const route = useRoute();
 
 let dataCaNonTravel = ref([]);
 let dataSapDoc = ref([]);
-let dataDetailJurnal = ref([]);
-let selectedGL = ref(null);
-let GLData = ref([]);
-// let GLDataByID = ref([]);
 let companyData = ref([]);
-let companyCode = ref("");
 let costCenterData = ref([]);
-// let idJurnalHeader = ref([]);
-let idEdit = ref("");
-let isVisibleTableHeaders = ref(false);
-let isEditMode = ref(true);
-let typeDoc = ref("");
 let pkData = ref([]);
+let idEdit = ref("");
+let typeDoc = ref("");
+let companyCode = ref("");
+let isVisibleTableHeaders = ref(false);
+let isEditing = ref(false);
+const array_data = ref([]);
 
 let id = route.params.id;
 
 const role = JSON.parse(localStorage.getItem("id_role"));
-const idCompany = JSON.parse(localStorage.getItem("id_company"));
 
 const props = defineProps({
   dataJurnal: Object,
@@ -53,28 +47,11 @@ const tableHead = [
   { Id: 12, title: "Posting Date", jsonData: "posting_date" },
 ];
 
-const tableHeadActive = [
-  { id: 1, title: "Item", jsonData: "item_number" },
-  { id: 2, title: "PK", jsonData: "posting_key" },
-  { id: 3, title: "Doc Date", jsonData: "doc_date" },
-  { id: 4, title: "G/L Account", jsonData: "gl_reccon_acc" },
-  { id: 5, title: "Account Short Text", jsonData: "short_text" },
-  { id: 6, title: "Amount", jsonData: "amount" },
-  { id: 7, title: "Text", jsonData: "item_text" },
-  { id: 8, title: "Cost Center", jsonData: "cost_center" },
-  { id: 9, title: "Profit Center", jsonData: "profit_center" },
-  { id: 10, title: "Wbs", jsonData: "wbs" },
-  { id: 11, title: "Due Date", jsonData: "due_date" },
-  { id: 12, title: "Posting Date", jsonData: "posting_date" },
-  { id: 13, title: "Actions", jsonData: "actions" },
-];
-
 const fetchCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get/");
   companyData.value = res.data.data;
-  // console.log(res.data.data);
   companyData.value.map((item) => {
     if (item.id === props.dataJurnal.id_company) {
       companyCode.value = item.company_code;
@@ -103,44 +80,18 @@ const fetchSapByIdDoc = async (id) => {
       `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
     );
     dataSapDoc.value = res.data.data;
-    // console.log(dataSapDoc.value);
-    // fetchDataDetailJurnal(id);
+    // console.log(res.data.data);
+
+    array_data.value = dataSapDoc.value.map((entry) => ({
+      item_number: entry.item,
+      posting_key: entry.pk,
+      ammount: entry.ammount,
+    }));
+    // console.log("array_data:", array_data);
   } catch (error) {
     console.error("An error occurred:", error);
   }
 };
-
-// const fetchDataDetailJurnal = async (id) => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   try {
-//     const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
-//     // console.log(res.data);
-//     dataDetailJurnal.value = res.data.data;
-//     idJurnalHeader = dataDetailJurnal.value.map(
-//       (item) => item.id_jurnal_header
-//     );
-//   } catch (error) {
-//     console.error("An error occurred:", error);
-//   }
-// };
-
-// const fetchGLAccount = async (idCompany) => {
-// const idCompany = JSON.parse(localStorage.getItem("id_company"));
-// const token = JSON.parse(localStorage.getItem("token"));
-// Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-// const res = await Api.get(`/jurnal/get_gl_account/${idCompany}`);
-// GLData.value = res.data.data;
-// console.log(res.data.data);
-// GLDataByID.value = res.data.data;
-// };
-
-// const selectedItems = computed(() => {
-//   const selectedItem = GLData.value.find(
-//     (item) => item.gl_account === selectedGL.value
-//   );
-//   return selectedItem ? [selectedItem] : [];
-// });
 
 const fetchCostCenter = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -159,62 +110,61 @@ const fetchPK = async () => {
 onBeforeMount(() => {
   fetchCompany();
   fetchDataById(id);
-  // fetchGLAccount();
   fetchCostCenter();
   fetchPK();
 });
 
 const editTableHeader = () => {
-  isEditMode = true;
   isVisibleTableHeaders.value = true;
+  isEditing.value = !isEditing.value;
 };
 
 const cancelTableHeader = () => {
   isVisibleTableHeaders.value = false;
-  isEditMode = true;
-  idEdit.value = null;
+  isEditing.value = false;
 };
 
-const editTableItems = (id) => {
-  idEdit.value = id;
+const saveJurnal = async (data, array_data) => {
+  console.log("array_data:", array_data);
+  console.log("data.item:", data.item);
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  try {
+    let payload = {
+      doc_number_sap: null,
+      company_code: companyCode.value,
+      document_date: props.dataJurnal.doc_created_at,
+      posting_date: null,
+      reference_doc: props.dataJurnal.no_ca,
+      fis_year: format_year(props.dataJurnal.doc_created_at),
+      currency: props.dataJurnal.currency_code,
+      fis_period: format_month(props.dataJurnal.doc_created_at),
+      order: null,
+      claim_cat: props.dataJurnal.code_document,
+      [array_data[0].item_number]: data.item,
+      [array_data[0].posting_key]: data.pk,
+      gl_reccon_acc: null,
+      short_text: null,
+      [array_data[0].ammount]: data.ammount,
+      item_text: null,
+      cost_center: null,
+      profit_center: null,
+      wbs: null,
+      due_date: null,
+    };
+    const res = await Api.post("/jurnal/save_sap", payload);
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
-
-const cancelButtonTableDetails = () => {
-  idEdit.value = null;
-};
-
-// const updateTableDetails = async (data) => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   try {
-//     const payload = {
-//       id_jurnal_header: data[0].id_jurnal_header,
-//       item_number: data[0].item_number,
-//       posting_key: data[0].posting_key,
-//       gl_reccon_acc: selectedGL.value,
-//       short_text: selectedItems.value[0].gl_name,
-//       ammount: data[0].amount,
-//       item_text: data[0].item_text,
-//       cost_center: data[0].cost_center,
-//       profit_center: data[0].profit_center,
-//       wbs: data[0].wbs,
-//       due_date: data[0].due_date,
-//     };
-//     const api = await Api.post("/jurnal/save_sap_detail", payload);
-
-//     Swal.fire({
-//       position: "center",
-//       icon: "success",
-//       title: api.data.message,
-//       showConfirmButton: false,
-//       timer: 1500,
-//     });
-
-//     isVisibleTableHeaders.value = false;
-//   } catch (error) {
-//     console.error("An error occurred:", error);
-//   }
-// };
 
 const format_date = (value) => {
   if (value) {
@@ -233,14 +183,6 @@ const format_month = (value) => {
     return moment(String(value)).format("M");
   }
 };
-
-// const format_price = (value) => {
-//   if (!value) {
-//     return "0.00";
-//   }
-//   let val = (value / 1).toFixed(2).replace(".", ",");
-//   return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-// };
 
 let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
@@ -296,14 +238,9 @@ const inputClass =
                 Cancel
               </button>
 
-              <!-- <button
-                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Done
-              </button> -->
-
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                @click="saveJurnal(dataSapDoc, array_data)"
               >
                 Save
               </button>
@@ -445,20 +382,8 @@ const inputClass =
             <table>
               <thead class="text-center font-JakartaSans text-sm font-bold">
                 <th
-                  v-if="isEditMode"
                   v-for="data in tableHead"
                   :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                >
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }}
-                  </span>
-                </th>
-
-                <th
-                  v-else
-                  v-for="data in tableHeadActive"
-                  :key="data.id"
                   class="overflow-x-hidden cursor-pointer"
                 >
                   <span class="flex justify-center items-center gap-1">
@@ -481,18 +406,16 @@ const inputClass =
                   </td>
 
                   <td>
-                    <!-- <input
-                      v-model="data.pk"
-                      :class="inputClass"
-                      :disabled="data.id == idEdit ? true : true"
-                    /> -->
                     <select
                       v-model="data.pk"
                       :class="inputClass"
-                      :disabled="data.id == idEdit ? false : true"
+                      :disabled="data.id === idEdit || !isEditing"
                     >
-                      <option v-for="data in pkData" :key="data.no_pk">
-                        {{ data.no_pk }}
+                      <option
+                        v-for="pkDataItem in pkData"
+                        :key="pkDataItem.no_pk"
+                      >
+                        {{ pkDataItem.no_pk }}
                       </option>
                     </select>
                   </td>
@@ -510,16 +433,6 @@ const inputClass =
                       :class="inputClass"
                       :disabled="data.id == idEdit ? true : true"
                     />
-                    <!-- <select
-                      :key="data.id"
-                      v-model="selectedGL"
-                      :class="inputClass"
-                      :disabled="data.id == idEdit ? false : true"
-                    >
-                      <option v-for="data in GLData" :key="data.id">
-                        {{ data.gl_account }}
-                      </option>
-                    </select> -->
                   </td>
 
                   <td>
@@ -527,26 +440,13 @@ const inputClass =
                       :class="inputClass"
                       :disabled="data.id == idEdit ? true : true"
                     />
-                    <!-- <select
-                      :key="data.id"
-                      :class="inputClass"
-                      :disabled="data.id == idEdit ? true : true"
-                    >
-                      <option
-                        v-for="item in selectedItems"
-                        :key="item.id"
-                        :value="item.gl_name"
-                      >
-                        {{ item.gl_name }}
-                      </option>
-                    </select> -->
                   </td>
 
                   <td>
                     <input
                       v-model="data.ammount"
                       :class="inputClass"
-                      :disabled="data.id == idEdit ? false : true"
+                      :disabled="data.id === idEdit || !isEditing"
                     />
                   </td>
 
@@ -559,10 +459,6 @@ const inputClass =
                   </td>
 
                   <td>
-                    <!-- <input
-                      :class="inputClass"
-                      :disabled="data.id == idEdit ? true : true"
-                    /> -->
                     <select
                       v-model="data.cost_center"
                       :class="inputClass"
@@ -603,39 +499,6 @@ const inputClass =
                       :class="inputClass"
                       :disabled="data.id == idEdit ? true : true"
                     />
-                  </td>
-
-                  <td v-if="!isEditMode">
-                    <button :key="data.id">
-                      <img
-                        :src="editicon"
-                        :class="`w-8 h-8 ${
-                          data.id == idEdit ? `hidden` : null
-                        }`"
-                        @click="editTableItems(data.id)"
-                      />
-                    </button>
-
-                    <button
-                      :key="`cancel-${data.id}`"
-                      :class="`mx-2 btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red 
-                      ${data.id == idEdit ? null : `hidden`}
-                      `"
-                      @click="cancelButtonTableDetails"
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      :key="`save-${data.id}`"
-                      :class="`btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green 
-                      ${data.id == idEdit ? null : `hidden`}
-
-                      `"
-                      @click="updateTableDetails(dataDetailJurnal)"
-                    >
-                      Save
-                    </button>
                   </td>
                 </tr>
               </tbody>
