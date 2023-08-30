@@ -477,8 +477,8 @@
                       />
 
                       <AddActualizationTripModal 
-                          v-if="actualizationData.length === 0 & purposeOfTripData[currentIndex].status === 'Confirmed'" 
-                          @submit-success=getActualizationByTripId
+                        v-if="actualizationData.length === 5 & purposeOfTripData[currentIndex].status === 'Confirmed'" 
+                        @submit-success=getActualizationByTripId
                       />
 
                       <div class="flex-1"></div>
