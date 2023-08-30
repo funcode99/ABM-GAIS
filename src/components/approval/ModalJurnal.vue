@@ -5,7 +5,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 
 import { ref, onBeforeMount, computed } from "vue";
 import { useRoute } from "vue-router";
@@ -18,18 +18,21 @@ let dataSapDoc = ref([]);
 let dataDetailJurnal = ref([]);
 let selectedGL = ref(null);
 let GLData = ref([]);
-let GLDataByID = ref([]);
+// let GLDataByID = ref([]);
 let companyData = ref([]);
 let companyCode = ref("");
 let costCenterData = ref([]);
-let idJurnalHeader = ref([]);
+// let idJurnalHeader = ref([]);
 let idEdit = ref("");
 let isVisibleTableHeaders = ref(false);
 let isEditMode = ref(true);
+let typeDoc = ref("");
+let pkData = ref([]);
 
 let id = route.params.id;
 
 const role = JSON.parse(localStorage.getItem("id_role"));
+const idCompany = JSON.parse(localStorage.getItem("id_company"));
 
 const props = defineProps({
   dataJurnal: Object,
@@ -71,6 +74,7 @@ const fetchCompany = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get/");
   companyData.value = res.data.data;
+  // console.log(res.data.data);
   companyData.value.map((item) => {
     if (item.id === props.dataJurnal.id_company) {
       companyCode.value = item.company_code;
@@ -81,51 +85,83 @@ const fetchCompany = async () => {
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/approval_non_travel/get_data/${id}`);
-  dataCaNonTravel.value = res.data.data[0];
-  fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+  try {
+    const res = await Api.get(`/approval_non_travel/get_data/${id}`);
+    dataCaNonTravel.value = res.data.data[0];
+    typeDoc.value = props.dataJurnal.code_document;
+    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
 
 const fetchSapByIdDoc = async (id) => {
-  // const res = await Api.get(`/jurnal/get_sap_by_id_document/${id}`);
-  const res = await Api.get(`/jurnal/get_sap_by_id_document/1`); //using data dummy
-  dataSapDoc.value = res.data.data;
-  fetchDataDetailJurnal(dataSapDoc.value[0].id);
-};
-
-const fetchDataDetailJurnal = async (id) => {
-  const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
-  dataDetailJurnal.value = res.data.data;
-  idJurnalHeader = dataDetailJurnal.value.map((item) => item.id_jurnal_header);
-};
-
-const fetchGLAccount = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/gl_account/");
-  GLData.value = res.data.data;
-  GLDataByID.value = res.data.data;
+  try {
+    const res = await Api.get(
+      `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
+    );
+    dataSapDoc.value = res.data.data;
+    // console.log(dataSapDoc.value);
+    // fetchDataDetailJurnal(id);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
 
-const selectedItems = computed(() => {
-  const selectedItem = GLData.value.find(
-    (item) => item.gl_account === selectedGL.value
-  );
-  return selectedItem ? [selectedItem] : [];
-});
+// const fetchDataDetailJurnal = async (id) => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   try {
+//     const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
+//     // console.log(res.data);
+//     dataDetailJurnal.value = res.data.data;
+//     idJurnalHeader = dataDetailJurnal.value.map(
+//       (item) => item.id_jurnal_header
+//     );
+//   } catch (error) {
+//     console.error("An error occurred:", error);
+//   }
+// };
 
-const fetchCostCenter = async () => {
+// const fetchGLAccount = async (idCompany) => {
+// const idCompany = JSON.parse(localStorage.getItem("id_company"));
+// const token = JSON.parse(localStorage.getItem("token"));
+// Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+// const res = await Api.get(`/jurnal/get_gl_account/${idCompany}`);
+// GLData.value = res.data.data;
+// console.log(res.data.data);
+// GLDataByID.value = res.data.data;
+// };
+
+// const selectedItems = computed(() => {
+//   const selectedItem = GLData.value.find(
+//     (item) => item.gl_account === selectedGL.value
+//   );
+//   return selectedItem ? [selectedItem] : [];
+// });
+
+// const fetchCostCenter = async () => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   const res = await Api.get("/company/get_cost_center");
+//   costCenterData.value = res.data.data;
+// };
+
+const fetchPK = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get_cost_center");
-  costCenterData.value = res.data.data;
+  const res = await Api.get("/jurnal/get_pk");
+  pkData.value = res.data.data;
 };
 
 onBeforeMount(() => {
   fetchCompany();
   fetchDataById(id);
-  fetchGLAccount();
-  fetchCostCenter();
+  // fetchGLAccount();
+  // fetchCostCenter();
+  fetchPK();
 });
 
 const editTableHeader = () => {
@@ -147,38 +183,38 @@ const cancelButtonTableDetails = () => {
   idEdit.value = null;
 };
 
-const saveTableDetails = async (data) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  try {
-    const payload = {
-      id_jurnal_header: data[0].id_jurnal_header,
-      item_number: data[0].item_number,
-      posting_key: data[0].posting_key,
-      gl_reccon_acc: selectedGL.value,
-      short_text: selectedItems.value[0].gl_name,
-      ammount: data[0].amount,
-      item_text: data[0].item_text,
-      cost_center: data[0].cost_center,
-      profit_center: data[0].profit_center,
-      wbs: data[0].wbs,
-      due_date: data[0].due_date,
-    };
-    const api = await Api.post("/jurnal/save_sap_detail", payload);
+// const updateTableDetails = async (data) => {
+//   const token = JSON.parse(localStorage.getItem("token"));
+//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+//   try {
+//     const payload = {
+//       id_jurnal_header: data[0].id_jurnal_header,
+//       item_number: data[0].item_number,
+//       posting_key: data[0].posting_key,
+//       gl_reccon_acc: selectedGL.value,
+//       short_text: selectedItems.value[0].gl_name,
+//       ammount: data[0].amount,
+//       item_text: data[0].item_text,
+//       cost_center: data[0].cost_center,
+//       profit_center: data[0].profit_center,
+//       wbs: data[0].wbs,
+//       due_date: data[0].due_date,
+//     };
+//     const api = await Api.post("/jurnal/save_sap_detail", payload);
 
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: api.data.message,
-      showConfirmButton: false,
-      timer: 1500,
-    });
+//     Swal.fire({
+//       position: "center",
+//       icon: "success",
+//       title: api.data.message,
+//       showConfirmButton: false,
+//       timer: 1500,
+//     });
 
-    isVisibleTableHeaders.value = false;
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
-};
+//     isVisibleTableHeaders.value = false;
+//   } catch (error) {
+//     console.error("An error occurred:", error);
+//   }
+// };
 
 const format_date = (value) => {
   if (value) {
@@ -258,6 +294,18 @@ const inputClass =
                 @click="cancelTableHeader"
               >
                 Cancel
+              </button>
+
+              <button
+                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Done
+              </button>
+
+              <button
+                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
               </button>
             </div>
 
@@ -421,39 +469,48 @@ const inputClass =
               <tbody>
                 <tr
                   class="font-JakartaSans font-normal text-sm text-center"
-                  v-for="data in dataDetailJurnal"
+                  v-for="data in dataSapDoc"
                   :key="data.id"
                 >
                   <td>
                     <input
-                      v-model="data.item_number"
+                      v-model="data.item"
                       :class="inputClass"
                       :disabled="data.id == idEdit ? true : true"
                     />
                   </td>
 
                   <td>
+                    <!-- <input
+                      v-model="data.pk"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
+                    /> -->
                     <select
-                      v-model="data.posting_key"
+                      v-model="data.pk"
                       :class="inputClass"
                       :disabled="data.id == idEdit ? false : true"
                     >
-                      <option value="15">15</option>
-                      <option value="30">30</option>
-                      <option value="45">45</option>
+                      <option v-for="data in pkData" :key="data.no_pk">
+                        {{ data.no_pk }}
+                      </option>
                     </select>
                   </td>
 
                   <td>
                     <input
-                      :value="format_date(dataJurnal.doc_created_at)"
+                      :value="format_date(data.doc_date)"
                       :class="inputClass"
                       :disabled="data.id == idEdit ? true : true"
                     />
                   </td>
 
                   <td>
-                    <select
+                    <input
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
+                    />
+                    <!-- <select
                       :key="data.id"
                       v-model="selectedGL"
                       :class="inputClass"
@@ -462,11 +519,15 @@ const inputClass =
                       <option v-for="data in GLData" :key="data.id">
                         {{ data.gl_account }}
                       </option>
-                    </select>
+                    </select> -->
                   </td>
 
                   <td>
-                    <select
+                    <input
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
+                    />
+                    <!-- <select
                       :key="data.id"
                       :class="inputClass"
                       :disabled="data.id == idEdit ? true : true"
@@ -478,12 +539,12 @@ const inputClass =
                       >
                         {{ item.gl_name }}
                       </option>
-                    </select>
+                    </select> -->
                   </td>
 
                   <td>
                     <input
-                      v-model="data.amount"
+                      v-model="data.ammount"
                       :class="inputClass"
                       :disabled="data.id == idEdit ? false : true"
                     />
@@ -498,7 +559,11 @@ const inputClass =
                   </td>
 
                   <td>
-                    <select
+                    <input
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
+                    />
+                    <!-- <select
                       v-model="data.cost_center"
                       :class="inputClass"
                       :disabled="data.id == idEdit ? false : true"
@@ -506,7 +571,7 @@ const inputClass =
                       <option v-for="data in costCenterData" :key="data.id">
                         {{ data.cost_center_name }}
                       </option>
-                    </select>
+                    </select> -->
                   </td>
 
                   <td>
@@ -567,7 +632,7 @@ const inputClass =
                       ${data.id == idEdit ? null : `hidden`}
 
                       `"
-                      @click="saveTableDetails(dataDetailJurnal)"
+                      @click="updateTableDetails(dataDetailJurnal)"
                     >
                       Save
                     </button>
