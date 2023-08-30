@@ -59,20 +59,20 @@ const fetchDetailById = async (id) => {
   if (props.dataArr.status == "Approve") {
     const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`)
     const get_wh = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
-    console.log("dwaodkawokd")
 
     itemTable.value = res.data.data
-    console.log(itemTable.value)
     itemTable.value.map((element, index) => {
       element.total_stock = element.stock_real_wh
       idWh.value[index] = element.id_warehouse
       element.qtyApproved = element.qty_approved
       element.qty_requested = element.qty_approved
-      element.array_warehouse = get_wh.data.data[0].array_warehouse
+      element.array_warehouse = element.array_warehouse
     })
   } else {
     const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
-    itemTable.value = res.data.data
+    itemTable.value = res.data.data.map((item) => {
+      return [item]
+    })
   }
 }
 
@@ -103,7 +103,7 @@ const addItem = async (ind, data) => {
   //   status: "add_new",
   // }
 
-  itemTable.value.push({
+  itemTable.value[ind].push({
     ...data,
     qtyApproved: null,
     id_warehouse: null,
@@ -131,8 +131,8 @@ const updateQty = (index, data) => {
   // }
 }
 
-const removeItem = async (ind) => {
-  itemTable.value.splice(ind, 1)
+const removeItem = async (indexItem, indexDetail) => {
+  itemTable.value[indexItem].splice(indexDetail, 1)
   tableKey.value++
 }
 
@@ -232,151 +232,166 @@ onBeforeMount(() => {
           <span v-else>Approval Confirmation</span>
         </p>
       </nav>
-      <main class="modal-box-inner-approval-atk">
-        <table class="table table-compact w-full">
-          <thead class="font-JakartaSans font-bold text-xs">
-            <tr class="bg-blue text-white h-8">
-              <th
-                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-              >
-                Item
-              </th>
-              <th
-                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-              >
-                Uom
-              </th>
-              <th
-                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-              >
-                <span v-if="props.dataArr.status == 'Approve'">
-                  Quantity Approve
-                </span>
-                <span v-else>Quantity Requested</span>
-              </th>
-              <th
-                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-              >
-                ATK Warehouse
-              </th>
-              <th
-                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-              >
-                Stock Available
-              </th>
-              <th
-                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-              >
-                <span v-if="props.dataArr.status == 'Approve'"
-                  >Quantity Delivery</span
+      <main
+        class="modal-box-inner-approval-atk p-10 h-[50vh] overflow-y-scroll w-ful"
+      >
+        <div v-for="(item, ind) in itemTable" :key="ind">
+          <table class="table table-compact w-full mb-5">
+            <thead class="font-JakartaSans font-bold text-xs">
+              <tr class="bg-blue text-white h-8">
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
-                <span v-else>Quantity Approve</span>
-              </th>
-              <th
-                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
-                v-if="!disableField"
-              >
-                Action
-              </th>
-            </tr>
-          </thead>
-
-          <tbody
-            class="font-JakartaSans font-normal text-xs"
-            v-for="(value, ind) in itemTable"
-            :key="ind"
-          >
-            <tr class="h-16">
-              <td class="border border-[#B9B9B9]">
-                {{ value.code_item }} - {{ value.item_name }}
-              </td>
-              <td class="border border-[#B9B9B9]">
-                {{ value.uom_name }}
-              </td>
-              <td class="border border-[#B9B9B9]">
-                {{ value?.qty_requested }}
-              </td>
-
-              <td class="border border-[#B9B9B9] w-150px">
-                <Multiselect
-                  class="text-sm"
-                  v-model="value.id_warehouse"
-                  :options="value.array_warehouse"
-                  label="warehouse_name"
-                  value-prop="id_warehouse"
-                  :can-clear="false"
-                  @select="
-                    (option, select$) => {
-                      value.total_stock = select$.stock_available
-                    }
-                  "
-                  @open="
-                    () => {
-                      const selectedWh = itemTable
-                        .map(({ id_warehouse }) => id_warehouse)
-                        .filter((item) => item)
-
-                      value.array_warehouse.forEach((item) => {
-                        item.disabled = selectedWh.includes(item.id_warehouse)
-                          ? true
-                          : false
-                      })
-
-                      updateQty(ind, value)
-                    }
-                  "
+                  Item
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
-                </Multiselect>
-              </td>
-              <td class="border border-[#B9B9B9]">
-                {{ value.total_stock }} - {{ value.id_warehouse }}
-              </td>
-
-              <td class="border border-[#B9B9B9]" style="max-width: auto">
-                <input
-                  type="number"
-                  v-model="value.qtyApproved"
-                  class="bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
-                  @input="
-                    () => {
-                      updateQty(ind, value)
-                    }
-                  "
-                  :disabled="!value?.id_warehouse"
-                />
-              </td>
-              <td
-                class="border border-[#B9B9B9] text-center"
-                v-if="!disableField"
-              >
-                <button
-                  @click="addItem(ind, value)"
-                  v-if="
-                    itemTable.length < value.array_warehouse.length &&
-                    ind == itemTable.length - 1
-                  "
+                  Uom
+                </th>
+                <th
+                  class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 >
-                  <img :src="icon_add" class="w-6 h-6" alt="" />
-                </button>
-                <button @click="removeItem(ind)" v-else>
-                  <img :src="deleteicon" class="w-6 h-6" alt="" />
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  <span v-if="props.dataArr.status == 'Approve'">
+                    Quantity Approve
+                  </span>
+                  <span v-else>Quantity Requested</span>
+                </th>
+                <th
+                  class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  ATK Warehouse
+                </th>
+                <th
+                  class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  Stock Available
+                </th>
+                <th
+                  class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                >
+                  <span v-if="props.dataArr.status == 'Approve'"
+                    >Quantity Delivery</span
+                  >
+                  <span v-else>Quantity Approve</span>
+                </th>
+                <th
+                  class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                  v-if="!disableField"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
 
-        <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
-        <textarea
-          type="text"
-          rows="5"
-          v-model="notesName"
-          class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-          placeholder="Notes"
-        ></textarea>
+            <tbody class="font-JakartaSans font-normal text-xs">
+              <tr class="h-16" v-for="(value, index) in item" :key="value.id">
+                <td
+                  v-if="index == 0"
+                  :rowspan="item.length"
+                  class="border border-[#B9B9B9]"
+                >
+                  {{ value.code_item }} - {{ value.item_name }}
+                </td>
+                <td
+                  v-if="index == 0"
+                  align="center"
+                  :rowspan="item.length"
+                  class="border border-[#B9B9B9]"
+                >
+                  {{ value.uom_name }}
+                </td>
+                <td
+                  v-if="index == 0"
+                  align="center"
+                  :rowspan="item.length"
+                  class="border border-[#B9B9B9]"
+                >
+                  {{ value?.qty_requested }}
+                </td>
+
+                <td class="border border-[#B9B9B9] w-150px">
+                  <Multiselect
+                    class="text-sm"
+                    v-model="value.id_warehouse"
+                    :options="value.array_warehouse"
+                    label="warehouse_name"
+                    value-prop="id_warehouse"
+                    :can-clear="false"
+                    @select="
+                      (option, select$) => {
+                        value.total_stock = select$.stock_available
+                      }
+                    "
+                    @open="
+                      () => {
+                        const selectedWh = itemTable
+                          .map(({ id_warehouse }) => id_warehouse)
+                          .filter((item) => item)
+
+                        value.array_warehouse.forEach((item) => {
+                          item.disabled = selectedWh.includes(item.id_warehouse)
+                            ? true
+                            : false
+                        })
+
+                        updateQty(ind, value)
+                      }
+                    "
+                  >
+                  </Multiselect>
+                </td>
+                <td class="border border-[#B9B9B9]">
+                  {{ value.total_stock }}
+                </td>
+
+                <td class="border border-[#B9B9B9]" style="max-width: auto">
+                  <input
+                    type="number"
+                    v-model="value.qtyApproved"
+                    class="bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                    @input="
+                      () => {
+                        updateQty(ind, value)
+                      }
+                    "
+                    :disabled="!value?.id_warehouse"
+                  />
+                </td>
+                <td
+                  class="border border-[#B9B9B9] text-center"
+                  v-if="!disableField"
+                >
+                  <button
+                    @click="addItem(ind, value)"
+                    v-if="
+                      value.array_warehouse.length > item.length &&
+                      index == item.length - 1
+                    "
+                  >
+                    <img :src="icon_add" class="w-6 h-6" alt="" />
+                  </button>
+                  <button @click="removeItem(ind, index)" v-else>
+                    <img :src="deleteicon" class="w-6 h-6" alt="" />
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </main>
-
       <div class="sticky bottom-0 bg-white py-2">
+        <div class="w-full p-5">
+          <p class="font-JakartaSans font-medium text-sm py-2">Notes</p>
+          <textarea
+            type="text"
+            rows="5"
+            v-model="notesName"
+            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+            placeholder="Notes"
+            style="resize: none"
+          ></textarea>
+        </div>
         <div class="flex justify-end gap-4 mr-6">
           <label
             for="my-modal-approve-atk"
@@ -404,11 +419,11 @@ onBeforeMount(() => {
 }
 
 .modal-box-inner-approval-atk {
-  --tw-scale-x: 0.9;
-  --tw-scale-y: 0.9;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+  /* --tw-scale-x: 0.9;
+  --tw-scale-y: 0.9; */
+  /* transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); */
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
