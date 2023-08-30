@@ -20,8 +20,6 @@ import storageHelper from "@/utils/storage.helper.js"
 import ApprovalDialog from "./ApprovalDialog.vue"
 import WeeklyDayPicker from "./WeeklyDayPicker.vue"
 
-let listFasilitis = ["Projector", "TV", "Speaker", "WebCam", "Jabra"]
-
 const props = defineProps({
   status: String,
   id: Number,
@@ -80,6 +78,8 @@ let disabledDates = ref([])
 const selectedImage = ref(null)
 let filename = ref(null)
 
+const listFasilitis = ref([])
+
 const form = reactive({
   id_company: null,
   id_site: null,
@@ -98,6 +98,7 @@ const form = reactive({
   external: [],
   is_recurrence: false,
   recurrence: "",
+  days: [],
 })
 
 const listrecurrence = ["daily", "weekly", "monthly", "yearly"]
@@ -175,7 +176,8 @@ const getDetailRoom = async () => {
   floor.value = api.data.data[0].floor
   capacity.value = api.data.data[0].capacity
 
-  facility = api.data?.data[0].facility.map(({ id }) => id)
+  facility.value = api.data?.data[0]?.facility.map(({ id }) => id)
+  listFasilitis.value = [...api.data?.data[0]?.facility]
 }
 
 const fetchDataById = async () => {
@@ -267,8 +269,8 @@ const saveForm = async () => {
     is_online_meeting: is_online_meeting.value,
     link: link.value,
     participant: selectedEmployee.value,
-    start_date: start_date.value,
-    end_date: format_date(recurrence.value.toLowerCase()),
+    start_date: moment(start_date.value).format("yyyy-MM-DD"),
+    end_date: moment(start_date.value).format("yyyy-MM-DD"),
     start_time: time.value
       ? time.value[0].hours + ":" + time.value[0].minutes
       : "",
@@ -280,7 +282,9 @@ const saveForm = async () => {
     recurrence: recurrence.value.toLowerCase(),
     attachment: selectedImage.value,
     facility: facility.value,
-    until_ocurs: format_date(recurrence.value.toLowerCase()),
+    until_ocurs: moment(format_date(recurrence.value.toLowerCase())).format(
+      "yyyy-MM-DD"
+    ),
     days: form.days,
   }
 
@@ -329,7 +333,11 @@ const edit = async (payload) => {
 const save = async (payload) => {
   try {
     if (!isExtenalEmailsValid.value) {
-      throw "Please insert valid email on External Participant"
+      throw "Please insert valid email on External Participan!"
+    }
+
+    if (!form.days.length && recurrence.value == "weekly") {
+      throw "Please select day for weekly recurrence!"
     }
     Api.post("book_meeting_room/store/", payload)
       .then((res) => {
@@ -456,363 +464,384 @@ onMounted(async () => {
           </p>
         </nav>
 
-        <main class="modal-box-inner pb-5 overflow-auto h-[80vh]">
-          <div>
-            <div v-if="readOnly" class="flex gap-5 pb-5 px-5">
-              <button
-                class="btn btn-md w-[150px] bg-red border-none"
-                @click="
-                  () => {
-                    approvalDialog.status = true
-                    approvalDialog.type = 'reject'
-                  }
-                "
-              >
-                Reject
-              </button>
-              <button
-                class="btn btn-md w-[150px] bg-green border-none"
-                @click="
-                  () => {
-                    approvalDialog.status = true
-                    approvalDialog.type = 'approve'
-                  }
-                "
-              >
-                Approve
-              </button>
-            </div>
-            <div
-              class="flex flex-wrap gap-2 justify-start items-center px-5 pb-5 ma-5"
-            >
-              <img :src="icondanger" class="w-5 h-5" />
-              <p class="font-JakartaSans font-semibold text-lg">
-                Requestor Info
-              </p>
-            </div>
-
-            <div class="grid grid-cols-2 px-6 items-center gap-2">
-              <div class="mb-4 w-full">
-                <label
-                  for="company"
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Company<span class="text-red">*</span></label
+        <form @submit.prevent="saveForm()">
+          <main class="modal-box-inner pb-5 overflow-auto h-[80vh]">
+            <div>
+              <div v-if="readOnly" class="flex gap-5 pb-5 px-5">
+                <button
+                  class="btn btn-md w-[150px] bg-red border-none"
+                  @click="
+                    () => {
+                      approvalDialog.status = true
+                      approvalDialog.type = 'reject'
+                    }
+                  "
                 >
-                <select
-                  class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  required
-                  v-model="selectedCompany"
-                  @change="changeCompany(selectedCompany)"
-                  :disabled="props.readOnly"
+                  Reject
+                </button>
+                <button
+                  class="btn btn-md w-[150px] bg-green border-none"
+                  @click="
+                    () => {
+                      approvalDialog.status = true
+                      approvalDialog.type = 'approve'
+                    }
+                  "
                 >
-                  <option disabled selected>Company</option>
-                  <option
-                    v-for="(company, i) in Company"
-                    :key="i"
-                    :value="company.id"
-                  >
-                    {{ company.company_name }}
-                  </option>
-                </select>
+                  Approve
+                </button>
               </div>
-              <div class="mb-4 w-full">
-                <label
-                  for="site"
-                  class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Site<span class="text-red">*</span></label
-                >
-                <select
-                  class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                  required
-                  v-model="selectedSite"
-                  @input="fetchMeetingRoom()"
-                  :disabled="props.readOnly"
-                >
-                  <option disabled selected>Site</option>
-                  <option
-                    v-for="(site, i) in filteredSites"
-                    :key="i"
-                    :value="site.id"
-                  >
-                    {{ site.site_name }}
-                  </option>
-                </select>
+              <div
+                class="flex flex-wrap gap-2 justify-start items-center px-5 pb-5 ma-5"
+              >
+                <img :src="icondanger" class="w-5 h-5" />
+                <p class="font-JakartaSans font-semibold text-lg">
+                  Requestor Info
+                </p>
               </div>
 
-              <div v-if="type == 'view'">
+              <div class="grid grid-cols-2 px-6 items-center gap-2">
+                <div class="mb-4 w-full">
+                  <label
+                    for="company"
+                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Company<span class="text-red">*</span></label
+                  >
+                  <select
+                    class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                    required
+                    v-model="selectedCompany"
+                    @change="changeCompany(selectedCompany)"
+                    :disabled="props.readOnly"
+                  >
+                    <option disabled selected>Company</option>
+                    <option
+                      v-for="(company, i) in Company"
+                      :key="i"
+                      :value="company.id"
+                    >
+                      {{ company.company_name }}
+                    </option>
+                  </select>
+                </div>
+                <div class="mb-4 w-full">
+                  <label
+                    for="site"
+                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Site<span class="text-red">*</span></label
+                  >
+                  <select
+                    class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                    required
+                    v-model="selectedSite"
+                    @input="fetchMeetingRoom()"
+                    :disabled="props.readOnly"
+                  >
+                    <option disabled selected>Site</option>
+                    <option
+                      v-for="(site, i) in filteredSites"
+                      :key="i"
+                      :value="site.id"
+                    >
+                      {{ site.site_name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div v-if="type == 'view'">
+                  <div :class="colClass">
+                    <label
+                      class="block mb-2 font-JakartaSans font-medium text-sm"
+                      >Created by</label
+                    >
+                    <input
+                      v-model="dataForm.name_created"
+                      mode="single"
+                      placeholder="Created By"
+                      track-by="id"
+                      label="employee_name"
+                      :close-on-select="false"
+                      :searchable="true"
+                      :options="listEmployee"
+                      :hide-selected="true"
+                      class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                      disabled
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="flex flex-wrap gap-2 justify-start items-center p-5 ma-5"
+              >
+                <img :src="icondanger" class="w-5 h-5" />
+                <p class="font-JakartaSans font-semibold text-lg">
+                  Booking Info
+                </p>
+              </div>
+
+              <div :class="rowClass">
                 <div :class="colClass">
+                  <input type="hidden" name="idItem" v-model="itemsId" />
                   <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                    >Created by</label
+                    >Subject<span class="text-red">*</span></label
                   >
                   <input
-                    v-model="dataForm.name_created"
-                    mode="single"
-                    placeholder="Created By"
-                    track-by="id"
+                    v-model="title"
+                    type="text"
+                    name="item"
+                    :class="inputClass"
+                    placeholder="Subject"
+                    :disabled="props.readOnly"
+                    required
+                  />
+                </div>
+                <div :class="colClass">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Meeting Room<span class="text-red">*</span></label
+                  >
+                  <select
+                    v-model="id_meeting_room"
+                    :class="inputClass"
+                    @change="getDetailRoom()"
+                    :disabled="props.readOnly"
+                    @focus="fetchMeetingRoom()"
+                    required
+                  >
+                    <option disabled selected>List Meeting Room</option>
+                    <option
+                      v-for="data in listRoom"
+                      :key="data.id"
+                      :value="data.id"
+                    >
+                      {{ data.name_meeting_room }}
+                    </option>
+                  </select>
+                </div>
+                <div :class="colClass">
+                  <label
+                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >
+                    Floor
+                  </label>
+                  <input
+                    v-model="floor"
+                    type="number"
+                    name="floor"
+                    :class="inputClass"
+                    placeholder="Floor"
+                    required
+                    disabled
+                  />
+                </div>
+                <div :class="colClass">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Capacity<span class="text-red">*</span></label
+                  >
+                  <input
+                    v-model="capacity"
+                    type="number"
+                    name="capacity"
+                    :class="inputClass"
+                    placeholder="Capacity"
+                    required
+                    disabled
+                  />
+                </div>
+                <div :class="colClass">
+                  <input type="hidden" name="idItem" v-model="itemsId" />
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Date<span class="text-red">*</span></label
+                  >
+                  <VueDatePicker
+                    v-model="start_date"
+                    :enable-time-picker="false"
+                    placeholder="Select Date"
+                    :disabled="props.readOnly"
+                    :min-date="new Date()"
+                    auto-apply
+                    @update:model-value="getWeekly"
+                    required
+                  />
+                </div>
+                <div :class="colClass">
+                  <input type="hidden" name="idItem" v-model="itemsId" />
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Detail Time<span class="text-red">*</span></label
+                  >
+                  <VueDatePicker
+                    v-model="time"
+                    time-picker
+                    disable-time-range-validation
+                    range
+                    :disabled="props.readOnly"
+                    placeholder="Select Time"
+                    required
+                  />
+                </div>
+                <div :class="colClass">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Online Meetings</label
+                  >
+                  <input
+                    type="checkbox"
+                    class="toggle toggle-primary"
+                    v-model="is_online_meeting"
+                    :disabled="props.readOnly"
+                  />
+                </div>
+                <div :class="colClass" v-if="is_online_meeting">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Link<span class="text-red">*</span></label
+                  >
+                  <input
+                    v-model="link"
+                    name="link"
+                    :class="inputClass"
+                    placeholder="Generate by System"
+                    required
+                    disabled
+                  />
+                </div>
+                <div :class="colClass">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Participant <span class="text-red">*</span></label
+                  >
+                  <Multiselect
+                    v-model="selectedEmployee"
+                    mode="tags"
+                    placeholder="Select Employee"
+                    track-by="employee_name"
                     label="employee_name"
                     :close-on-select="false"
                     :searchable="true"
                     :options="listEmployee"
+                    :limit="10"
+                    :loading="isLoading"
                     :hide-selected="true"
-                    class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                    disabled
+                    :disabled="props.readOnly"
+                    @search-change="fetchEmployee"
+                    required
+                  >
+                    <template
+                      v-slot:tag="{ option, handleTagRemove, disabled }"
+                    >
+                      <div
+                        class="multiselect-tag is-user"
+                        :class="{
+                          'is-disabled': disabled,
+                        }"
+                      >
+                        {{ option.employee_name }}
+                        <span
+                          v-if="!disabled"
+                          class="multiselect-tag-remove"
+                          @click="handleTagRemove(option, $event)"
+                        >
+                          <span class="multiselect-tag-remove-icon"></span>
+                        </span>
+                      </div>
+                    </template>
+                  </Multiselect>
+                </div>
+                <div :class="colClass">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >External Participant</label
+                  >
+
+                  <Multiselect
+                    v-model="external"
+                    name="link"
+                    :searchable="true"
+                    mode="tags"
+                    :disabled="props.readOnly"
+                    :options="external"
+                    placeholder="External Participant"
+                    createTag
+                    :clear-on-select="true"
                   />
                 </div>
-              </div>
-            </div>
-
-            <div
-              class="flex flex-wrap gap-2 justify-start items-center p-5 ma-5"
-            >
-              <img :src="icondanger" class="w-5 h-5" />
-              <p class="font-JakartaSans font-semibold text-lg">Booking Info</p>
-            </div>
-
-            <div :class="rowClass">
-              <div :class="colClass">
-                <input type="hidden" name="idItem" v-model="itemsId" />
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Subject<span class="text-red">*</span></label
-                >
-                <input
-                  v-model="title"
-                  type="text"
-                  name="item"
-                  :class="inputClass"
-                  placeholder="Subject"
-                  :disabled="props.readOnly"
-                  required
-                />
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Meeting Room<span class="text-red">*</span></label
-                >
-                <select
-                  v-model="id_meeting_room"
-                  :class="inputClass"
-                  @change="getDetailRoom()"
-                  :disabled="props.readOnly"
-                  @focus="fetchMeetingRoom()"
-                >
-                  <option disabled selected>List Meeting Room</option>
-                  <option
-                    v-for="data in listRoom"
-                    :key="data.id"
-                    :value="data.id"
+                <div :class="colClass">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Recurrence<span class="text-red">*</span></label
                   >
-                    {{ data.name_meeting_room }}
-                  </option>
-                </select>
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm">
-                  Floor
-                </label>
-                <input
-                  v-model="floor"
-                  type="number"
-                  name="floor"
-                  :class="inputClass"
-                  placeholder="Floor"
-                  required
-                  disabled
-                />
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Capacity<span class="text-red">*</span></label
-                >
-                <input
-                  v-model="capacity"
-                  type="number"
-                  name="capacity"
-                  :class="inputClass"
-                  placeholder="Capacity"
-                  required
-                  disabled
-                />
-              </div>
-              <div :class="colClass">
-                <input type="hidden" name="idItem" v-model="itemsId" />
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Date<span class="text-red">*</span></label
-                >
-                <VueDatePicker
-                  v-model="start_date"
-                  :enable-time-picker="false"
-                  placeholder="Select Date"
-                  :disabled="props.readOnly"
-                  :min-date="new Date()"
-                  auto-apply
-                  @update:model-value="getWeekly"
-                />
-              </div>
-              <div :class="colClass">
-                <input type="hidden" name="idItem" v-model="itemsId" />
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Detail Time<span class="text-red">*</span></label
-                >
-                <VueDatePicker
-                  v-model="time"
-                  time-picker
-                  disable-time-range-validation
-                  range
-                  :disabled="props.readOnly"
-                  placeholder="Select Time"
-                />
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Online Meetings</label
-                >
-                <input
-                  type="checkbox"
-                  class="toggle toggle-primary"
-                  v-model="is_online_meeting"
-                  :disabled="props.readOnly"
-                />
-              </div>
-              <div :class="colClass" v-if="is_online_meeting">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Link<span class="text-red">*</span></label
-                >
-                <input
-                  v-model="link"
-                  name="link"
-                  :class="inputClass"
-                  placeholder="Generate by System"
-                  required
-                  disabled
-                />
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Participant</label
-                >
-                <Multiselect
-                  v-model="selectedEmployee"
-                  mode="tags"
-                  placeholder="Select Employee"
-                  track-by="employee_name"
-                  label="employee_name"
-                  :close-on-select="false"
-                  :searchable="true"
-                  :options="listEmployee"
-                  :limit="10"
-                  :loading="isLoading"
-                  :hide-selected="true"
-                  :disabled="props.readOnly"
-                  @search-change="fetchEmployee"
-                >
-                  <template v-slot:tag="{ option, handleTagRemove, disabled }">
-                    <div
-                      class="multiselect-tag is-user"
-                      :class="{
-                        'is-disabled': disabled,
-                      }"
-                    >
-                      {{ option.employee_name }}
-                      <span
-                        v-if="!disabled"
-                        class="multiselect-tag-remove"
-                        @click="handleTagRemove(option, $event)"
-                      >
-                        <span class="multiselect-tag-remove-icon"></span>
-                      </span>
-                    </div>
-                  </template>
-                </Multiselect>
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >External Participant</label
-                >
-
-                <Multiselect
-                  v-model="external"
-                  name="link"
-                  :searchable="true"
-                  mode="tags"
-                  :disabled="props.readOnly"
-                  :options="external"
-                  placeholder="External Participant"
-                  createTag
-                  :clear-on-select="true"
-                />
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >recurrence<span class="text-red">*</span></label
-                >
-                <input
-                  type="checkbox"
-                  class="toggle toggle-primary"
-                  v-model="is_recurrence"
-                  :disabled="props.readOnly"
-                />
-              </div>
-              <div
-                :class="colClass"
-                v-if="is_recurrence"
-                class="align-top h-full"
-              >
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >recurrence<span class="text-red">*</span></label
-                >
-                <select
-                  v-model="recurrence"
-                  :class="inputClass"
-                  :disabled="props.readOnly"
-                >
-                  <option disabled selected>List recurrence</option>
-                  <option
-                    v-for="data in listrecurrence"
-                    :key="data"
-                    :value="data"
-                  >
-                    <div class="capitalize">
-                      {{ data.toUpperCase() }}
-                    </div>
-                  </option>
-                </select>
-              </div>
-              <div
-                :class="colClass"
-                class="align-top h-full"
-                v-if="is_recurrence"
-              >
-                <input type="hidden" name="idItem" v-model="itemsId" />
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Occurs Until<span class="text-red">*</span></label
-                >
-                <VueDatePicker
-                  v-model="end_date"
-                  :enable-time-picker="false"
-                  placeholder="Select Date"
-                  :disabled="props.readOnly"
-                  :min-date="new Date()"
-                  :month-picker="recurrence == 'monthly'"
-                  :year-picker="recurrence == 'yearly'"
-                  auto-apply
-                />
+                  <input
+                    type="checkbox"
+                    class="toggle toggle-primary"
+                    v-model="is_recurrence"
+                    :disabled="props.readOnly"
+                    @change=""
+                    required
+                  />
+                </div>
                 <div
-                  v-if="recurrence == 'weekly'"
-                  class="grid grid-rows-1"
-                  :value="form.days"
+                  :class="colClass"
+                  v-if="is_recurrence"
+                  class="align-top h-full"
                 >
-                  <WeeklyDayPicker
-                    @update="
-                      ($event) => {
-                        form.days = $event
-                          .filter(({ selected }) => selected)
-                          .map(({ value }) => value)
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >recurrence<span class="text-red">*</span></label
+                  >
+                  <select
+                    v-model="recurrence"
+                    :class="inputClass"
+                    :disabled="props.readOnly"
+                    @change="
+                      () => {
+                        form.days = []
+                        end_date = null
                       }
                     "
-                  />
+                  >
+                    <option disabled selected>List recurrence</option>
+                    <option
+                      v-for="data in listrecurrence"
+                      :key="data"
+                      :value="data"
+                    >
+                      <div class="capitalize">
+                        {{ data.toUpperCase() }}
+                      </div>
+                    </option>
+                  </select>
                 </div>
+                <div
+                  :class="colClass"
+                  class="align-top h-full"
+                  v-if="is_recurrence"
+                >
+                  <input type="hidden" name="idItem" v-model="itemsId" />
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Occurs Until<span class="text-red">*</span></label
+                  >
+                  <VueDatePicker
+                    v-model="end_date"
+                    :enable-time-picker="false"
+                    placeholder="Select Date"
+                    :disabled="props.readOnly"
+                    :min-date="new Date()"
+                    :month-picker="recurrence == 'monthly'"
+                    :year-picker="recurrence == 'yearly'"
+                    auto-apply
+                    required
+                  />
+                  <div
+                    v-if="recurrence == 'weekly'"
+                    class="grid grid-rows-1"
+                    :value="form.days"
+                  >
+                    <WeeklyDayPicker
+                      @update="
+                        ($event) => {
+                          form.days = $event
+                            .filter(({ selected }) => selected)
+                            .map(({ value }) => value)
+                        }
+                      "
+                    />
+                  </div>
 
-                <!-- <VueDatePicker
+                  <!-- <VueDatePicker
                     v-model="end_date"
                     :enable-time-picker="false"
                     placeholder="Select Date"
@@ -823,7 +852,7 @@ onMounted(async () => {
                     hide-offset-dates
                   /> -->
 
-                <!-- <VueDatePicker
+                  <!-- <VueDatePicker
                   v-else-if="recurrence == 'Monthly'"
                   v-model="end_date"
                   :enable-time-picker="false"
@@ -841,23 +870,27 @@ onMounted(async () => {
                   year-picker
                   auto-apply
                 /> -->
-              </div>
+                </div>
 
-              <div :class="colClass" class="place-self-end">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Facility<span class="text-red">*</span></label
-                >
-                <Multiselect
-                  v-model="facility"
-                  placeholder="Select Facility"
-                  mode="tags"
-                  :close-on-select="false"
-                  :searchable="true"
-                  :options="listFasilitis"
-                  :hide-selected="true"
-                  :disabled="props.readOnly"
-                >
-                  <!-- <template v-slot:tag="{ option, handleTagRemove, disabled }">
+                <div :class="colClass" class="place-self-end">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Facility<span class="text-red">*</span></label
+                  >
+                  <Multiselect
+                    v-model="facility"
+                    placeholder="Select Facility"
+                    mode="tags"
+                    valueProp="id"
+                    label="facility_name"
+                    track-by="facility_name"
+                    :close-on-select="false"
+                    :searchable="true"
+                    :options="listFasilitis"
+                    :hide-selected="true"
+                    :disabled="props.readOnly"
+                    required
+                  >
+                    <!-- <template v-slot:tag="{ option, handleTagRemove, disabled }">
                   <div
                     class="multiselect-tag is-user"
                     :class="{
@@ -874,78 +907,82 @@ onMounted(async () => {
                     </span>
                   </div>
                 </template> -->
-                </Multiselect>
-              </div>
-              <div :class="colClass">
-                <div v-if="!readOnly">
-                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                    >Attachment (Optional)
-                    <span class="text-slate-400 text-xs italic"
-                      >Format file: jpg,jpeg,png,pdf,xlsx. Max file: 3MB</span
-                    >
-                  </label>
-                  <input
-                    type="file"
-                    class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                    placeholder="Attachment"
-                    accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    @change="onFileSelected"
-                    :disabled="props.readOnly"
-                  />
+                  </Multiselect>
                 </div>
+                <div :class="colClass">
+                  <div v-if="!readOnly">
+                    <label
+                      class="block mb-2 font-JakartaSans font-medium text-sm"
+                      >Attachment (Optional)
+                      <span class="text-slate-400 text-xs italic"
+                        >Format file: jpg,jpeg,png,pdf,xlsx. Max file: 3MB</span
+                      >
+                    </label>
+                    <input
+                      type="file"
+                      class="font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                      placeholder="Attachment"
+                      accept="image/*,.pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                      @change="onFileSelected"
+                      :disabled="props.readOnly"
+                    />
+                  </div>
 
-                <div
-                  v-else
-                  class="py-2 font-JakartaSans font-medium text-sm border p-2 rounded-md"
-                >
-                  <label
-                    class="block mb-2 font-JakartaSans font-medium text-sm"
+                  <div
+                    v-else
+                    class="py-2 font-JakartaSans font-medium text-sm border p-2 rounded-md"
                   >
-                    Attachment
-                  </label>
-                  <a
-                    :href="data.attachment_path"
-                    target="_blank"
-                    class="text-blue"
-                  >
-                    {{ data.attachment }}
-                  </a>
+                    <label
+                      class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >
+                      Attachment
+                    </label>
+                    <a
+                      :href="data.attachment_path"
+                      target="_blank"
+                      class="text-blue"
+                    >
+                      {{ data.attachment }}
+                    </a>
+                  </div>
                 </div>
-              </div>
-              <div :class="colClass">
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Remarks</label
-                >
-                <textarea
-                  rows="1"
-                  class="textarea textarea-bordered resize-none"
-                  placeholder="Remarks"
-                  v-model="remarks"
-                  :disabled="props.readOnly"
-                  :class="inputClass"
-                ></textarea>
+                <div :class="colClass">
+                  <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                    >Remarks</label
+                  >
+                  <textarea
+                    rows="1"
+                    class="textarea textarea-bordered resize-none"
+                    placeholder="Remarks"
+                    v-model="remarks"
+                    :disabled="props.readOnly"
+                    :class="inputClass"
+                  ></textarea>
+                </div>
               </div>
             </div>
+          </main>
+          <div
+            class="sticky bottom-0 bg-white py-2 rounded-2xl"
+            v-if="!props.readOnly"
+          >
+            <div class="flex justify-end gap-4 mr-6">
+              <button
+                type="button"
+                @click="close"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              >
+                Save
+              </button>
+            </div>
           </div>
-        </main>
-        <div
-          class="sticky bottom-0 bg-white py-2 rounded-2xl"
-          v-if="!props.readOnly"
-        >
-          <div class="flex justify-end gap-4 mr-6">
-            <label
-              @click="close"
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-              >Cancel</label
-            >
-            <button
-              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              @click="saveForm"
-            >
-              Save
-            </button>
-          </div>
-        </div>
+        </form>
       </div>
     </div>
     <ApprovalDialog

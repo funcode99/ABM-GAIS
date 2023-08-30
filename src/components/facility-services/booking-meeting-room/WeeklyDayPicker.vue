@@ -52,6 +52,7 @@ watch(props.value, () => {
   <div class="flex gap-3 p-3">
     <div v-for="day in days" :key="day.value">
       <button
+        type="button"
         class="badge h-6 w-6 p-3 text-black"
         :class="day.selected ? 'bg-primary text-white' : 'bg-slate-300'"
         @click="

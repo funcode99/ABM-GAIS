@@ -12,6 +12,8 @@ import { computed, onBeforeMount, ref } from "vue"
 import { useRouter } from "vue-router"
 import Api from "@/utils/Api"
 import Swal from "sweetalert2"
+import Multiselect from "@vueform/multiselect"
+
 const router = useRouter()
 const notesName = ref("")
 let qtyApproved = ref([])
@@ -29,6 +31,7 @@ const btnApprove = ref(
   props.dataArr.status == "Approve" ? "Delivery" : "Approve"
 )
 const disableField = ref(false)
+const tableKey = ref(0)
 
 const inputClass =
   "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
@@ -73,33 +76,17 @@ const fetchDetailById = async (id) => {
   }
 }
 
-const changeWarehouse = async (e, id_item, ind) => {
-  itemTable.value.map((element, i) => {
-    if (element.id_item == id_item && ind == i) {
-      let temp = element.array_warehouse.filter(function (item) {
-        return item.id_warehouse == e.target.value
-      })
-      element.total_stock = temp[0].stock_available
-    }
+const filteredWh = (data) => {
+  const selectedWh = (itemTable?.value || [])
+    .map(({ id_warehouse }) => id_warehouse)
+    .filter((item) => item)
+
+  return (data?.array_warehouse || []).filter(function (item) {
+    return !selectedWh.includes(item.id_warehouse)
   })
 }
 
 const addItem = async (ind, data) => {
-  const wh = Warehouse.value
-  for (let index = 0; index < wh.length; index++) {
-    const element = wh[index]
-    if (element.id == data.id_warehouse) {
-      element.qty_requested = data.qty_requested
-      warehouseName.value = element.warehouse_name
-    }
-  }
-
-  let filter_wh = data.array_warehouse.filter(function (item) {
-    return !itemTable.value.some(
-      ({ id_warehouse }) => id_warehouse == item.id_warehouse
-    )
-  })
-
   // let datas = {
   //   id_item: data.id_item,
   //   id_atk_request_detail: router.currentRoute.value.params.id,
@@ -118,13 +105,15 @@ const addItem = async (ind, data) => {
 
   itemTable.value.push({
     ...data,
-    array_warehouse: filter_wh,
     qtyApproved: null,
+    id_warehouse: null,
   })
 
   itemTable.value.map((element) => {
-    element.stock_available = data.stock_available ? data.stock_available : ""
+    element.stock_available = data?.stock_available ? data?.stock_available : ""
   })
+
+  tableKey.value++
 }
 
 const updateQty = (index, data) => {
@@ -136,16 +125,15 @@ const updateQty = (index, data) => {
     data.qtyApproved = data.qty_requested
   }
 
-  if (totalApprove() > data.qty_requested) {
-    data.qtyApproved = 0
-    data.qtyApproved = data.qty_requested - totalApprove()
-  }
-
-  console.log(totalApprove())
+  // if (totalApprove() > data.qty_requested) {
+  //   data.qtyApproved = 0
+  //   data.qtyApproved = data.qty_requested - totalApprove()
+  // }
 }
 
 const removeItem = async (ind) => {
   itemTable.value.splice(ind, 1)
+  tableKey.value++
 }
 
 const submit = async () => {
@@ -259,7 +247,7 @@ onBeforeMount(() => {
                 Uom
               </th>
               <th
-                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
               >
                 <span v-if="props.dataArr.status == 'Approve'">
                   Quantity Approve
@@ -272,12 +260,12 @@ onBeforeMount(() => {
                 ATK Warehouse
               </th>
               <th
-                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
               >
                 Stock Available
               </th>
               <th
-                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
               >
                 <span v-if="props.dataArr.status == 'Approve'"
                   >Quantity Delivery</span
@@ -285,7 +273,7 @@ onBeforeMount(() => {
                 <span v-else>Quantity Approve</span>
               </th>
               <th
-                class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
+                class="border w-[50px] border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                 v-if="!disableField"
               >
                 Action
@@ -309,35 +297,46 @@ onBeforeMount(() => {
                 {{ value?.qty_requested }}
               </td>
 
-              <td class="border border-[#B9B9B9]">
-                <select
+              <td class="border border-[#B9B9B9] w-150px">
+                <Multiselect
+                  class="text-sm"
                   v-model="value.id_warehouse"
-                  :class="inputClass"
-                  @change="
-                    ($event) => {
-                      changeWarehouse($event, value.id_item, ind)
+                  :options="value.array_warehouse"
+                  label="warehouse_name"
+                  value-prop="id_warehouse"
+                  :can-clear="false"
+                  @select="
+                    (option, select$) => {
+                      value.total_stock = select$.stock_available
+                    }
+                  "
+                  @open="
+                    () => {
+                      const selectedWh = itemTable
+                        .map(({ id_warehouse }) => id_warehouse)
+                        .filter((item) => item)
+
+                      value.array_warehouse.forEach((item) => {
+                        item.disabled = selectedWh.includes(item.id_warehouse)
+                          ? true
+                          : false
+                      })
+
                       updateQty(ind, value)
                     }
                   "
-                  :disabled="disableField || ind + 1 < itemTable.length"
                 >
-                  <option
-                    v-for="data in value.array_warehouse"
-                    :key="data.id_warehouse"
-                    :value="data.id_warehouse"
-                  >
-                    {{ data.warehouse_name }}
-                  </option>
-                </select>
+                </Multiselect>
               </td>
               <td class="border border-[#B9B9B9]">
-                {{ value.total_stock }}
+                {{ value.total_stock }} - {{ value.id_warehouse }}
               </td>
-              <td class="border border-[#B9B9B9]">
+
+              <td class="border border-[#B9B9B9]" style="max-width: auto">
                 <input
                   type="number"
                   v-model="value.qtyApproved"
-                  class="bg-white w-[320px] lg:w-56 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
+                  class="bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                   @input="
                     () => {
                       updateQty(ind, value)
@@ -353,16 +352,13 @@ onBeforeMount(() => {
                 <button
                   @click="addItem(ind, value)"
                   v-if="
-                    itemTable.length <= value.array_warehouse.length &&
-                    ind + 1 == itemTable.length &&
-                    value?.id_warehouse &&
-                    value?.qtyApproved &&
-                    totalApprove() < value.qty_requested
+                    itemTable.length < value.array_warehouse.length &&
+                    ind == itemTable.length - 1
                   "
                 >
                   <img :src="icon_add" class="w-6 h-6" alt="" />
                 </button>
-                <button @click="removeItem(ind)" v-else-if="ind > 0">
+                <button @click="removeItem(ind)" v-else>
                   <img :src="deleteicon" class="w-6 h-6" alt="" />
                 </button>
               </td>
