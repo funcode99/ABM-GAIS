@@ -142,12 +142,12 @@ const fetchSapByIdDoc = async (id) => {
 //   return selectedItem ? [selectedItem] : [];
 // });
 
-// const fetchCostCenter = async () => {
-//   const token = JSON.parse(localStorage.getItem("token"));
-//   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-//   const res = await Api.get("/company/get_cost_center");
-//   costCenterData.value = res.data.data;
-// };
+const fetchCostCenter = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get_cost_center");
+  costCenterData.value = res.data.data;
+};
 
 const fetchPK = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
@@ -160,12 +160,12 @@ onBeforeMount(() => {
   fetchCompany();
   fetchDataById(id);
   // fetchGLAccount();
-  // fetchCostCenter();
+  fetchCostCenter();
   fetchPK();
 });
 
 const editTableHeader = () => {
-  isEditMode = false;
+  isEditMode = true;
   isVisibleTableHeaders.value = true;
 };
 
@@ -234,13 +234,13 @@ const format_month = (value) => {
   }
 };
 
-const format_price = (value) => {
-  if (!value) {
-    return "0.00";
-  }
-  let val = (value / 1).toFixed(2).replace(".", ",");
-  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-};
+// const format_price = (value) => {
+//   if (!value) {
+//     return "0.00";
+//   }
+//   let val = (value / 1).toFixed(2).replace(".", ",");
+//   return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+// };
 
 let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
@@ -296,11 +296,11 @@ const inputClass =
                 Cancel
               </button>
 
-              <button
+              <!-- <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
                 Done
-              </button>
+              </button> -->
 
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -559,11 +559,11 @@ const inputClass =
                   </td>
 
                   <td>
-                    <input
+                    <!-- <input
                       :class="inputClass"
                       :disabled="data.id == idEdit ? true : true"
-                    />
-                    <!-- <select
+                    /> -->
+                    <select
                       v-model="data.cost_center"
                       :class="inputClass"
                       :disabled="data.id == idEdit ? false : true"
@@ -571,7 +571,7 @@ const inputClass =
                       <option v-for="data in costCenterData" :key="data.id">
                         {{ data.cost_center_name }}
                       </option>
-                    </select> -->
+                    </select>
                   </td>
 
                   <td>
