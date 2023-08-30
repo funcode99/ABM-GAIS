@@ -1,6 +1,7 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_jurnal from "@/assets/icon_jurnal.svg";
+import editicon from "@/assets/navbar/edit_icon.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
@@ -22,7 +23,7 @@ let companyData = ref([]);
 let companyCode = ref("");
 let costCenterData = ref([]);
 let idJurnalHeader = ref([]);
-
+let idEdit = ref("");
 let isVisibleTableHeaders = ref(false);
 let isEditMode = ref(true);
 
@@ -49,6 +50,22 @@ const tableHead = [
   { Id: 12, title: "Posting Date", jsonData: "posting_date" },
 ];
 
+const tableHeadActive = [
+  { id: 1, title: "Item", jsonData: "item_number" },
+  { id: 2, title: "PK", jsonData: "posting_key" },
+  { id: 3, title: "Doc Date", jsonData: "doc_date" },
+  { id: 4, title: "G/L Account", jsonData: "gl_reccon_acc" },
+  { id: 5, title: "Account Short Text", jsonData: "short_text" },
+  { id: 6, title: "Amount", jsonData: "amount" },
+  { id: 7, title: "Text", jsonData: "item_text" },
+  { id: 8, title: "Cost Center", jsonData: "cost_center" },
+  { id: 9, title: "Profit Center", jsonData: "profit_center" },
+  { id: 10, title: "Wbs", jsonData: "wbs" },
+  { id: 11, title: "Due Date", jsonData: "due_date" },
+  { id: 12, title: "Posting Date", jsonData: "posting_date" },
+  { id: 13, title: "Actions", jsonData: "actions" },
+];
+
 const fetchCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -72,17 +89,14 @@ const fetchDataById = async (id) => {
 const fetchSapByIdDoc = async (id) => {
   // const res = await Api.get(`/jurnal/get_sap_by_id_document/${id}`);
   const res = await Api.get(`/jurnal/get_sap_by_id_document/1`); //using data dummy
-  // console.log(res);
   dataSapDoc.value = res.data.data;
   fetchDataDetailJurnal(dataSapDoc.value[0].id);
 };
 
 const fetchDataDetailJurnal = async (id) => {
   const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
-  // console.log(res.data.data);
   dataDetailJurnal.value = res.data.data;
   idJurnalHeader = dataDetailJurnal.value.map((item) => item.id_jurnal_header);
-  // console.log("id_jurnal_header arrays:", idJurnalHeader);
 };
 
 const fetchGLAccount = async () => {
@@ -91,7 +105,6 @@ const fetchGLAccount = async () => {
   const res = await Api.get("/gl_account/");
   GLData.value = res.data.data;
   GLDataByID.value = res.data.data;
-  // console.log(res.data.data);
 };
 
 const selectedItems = computed(() => {
@@ -105,7 +118,6 @@ const fetchCostCenter = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get_cost_center");
-  // console.log(res.data.data);
   costCenterData.value = res.data.data;
 };
 
@@ -124,6 +136,15 @@ const editTableHeader = () => {
 const cancelTableHeader = () => {
   isVisibleTableHeaders.value = false;
   isEditMode = true;
+  idEdit.value = null;
+};
+
+const editTableItems = (id) => {
+  idEdit.value = id;
+};
+
+const cancelButtonTableDetails = () => {
+  idEdit.value = null;
 };
 
 const saveTableDetails = async (data) => {
@@ -143,7 +164,6 @@ const saveTableDetails = async (data) => {
       wbs: data[0].wbs,
       due_date: data[0].due_date,
     };
-    // console.log(payload);
     const api = await Api.post("/jurnal/save_sap_detail", payload);
 
     Swal.fire({
@@ -155,8 +175,6 @@ const saveTableDetails = async (data) => {
     });
 
     isVisibleTableHeaders.value = false;
-    isEditMode = true;
-    // fetchDataDetailJurnal(data[0].id_jurnal_header);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -192,10 +210,7 @@ let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
 
 const inputClass =
-  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm ";
-
-const inputClassNotAllowed =
-  "cursor-not-allowed font-JakartaSans block bg-#e0e0e0 w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm ";
+  "cursor-pointer font-JakartaSans block bg-#e0e0e0 w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm";
 </script>
 
 <template>
@@ -243,13 +258,6 @@ const inputClassNotAllowed =
                 @click="cancelTableHeader"
               >
                 Cancel
-              </button>
-
-              <button
-                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                @click="saveTableDetails(dataDetailJurnal)"
-              >
-                Save
               </button>
             </div>
 
@@ -389,8 +397,20 @@ const inputClassNotAllowed =
             <table>
               <thead class="text-center font-JakartaSans text-sm font-bold">
                 <th
+                  v-if="isEditMode"
                   v-for="data in tableHead"
                   :key="data.Id"
+                  class="overflow-x-hidden cursor-pointer"
+                >
+                  <span class="flex justify-center items-center gap-1">
+                    {{ data.title }}
+                  </span>
+                </th>
+
+                <th
+                  v-else
+                  v-for="data in tableHeadActive"
+                  :key="data.id"
                   class="overflow-x-hidden cursor-pointer"
                 >
                   <span class="flex justify-center items-center gap-1">
@@ -404,52 +424,53 @@ const inputClassNotAllowed =
                   v-for="data in dataDetailJurnal"
                   :key="data.id"
                 >
-                  <td v-if="!isEditMode">
+                  <td>
                     <input
                       v-model="data.item_number"
-                      :class="inputClassNotAllowed"
-                      disabled
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
                     />
                   </td>
-                  <td v-else>
-                    {{ data.item_number }}
-                  </td>
 
-                  <td v-if="!isEditMode">
-                    <select v-model="data.posting_key" :class="inputClass">
+                  <td>
+                    <select
+                      v-model="data.posting_key"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    >
                       <option value="15">15</option>
                       <option value="30">30</option>
                       <option value="45">45</option>
                     </select>
                   </td>
-                  <td v-else>
-                    {{ data.gl_reccon_acc }}
-                  </td>
 
-                  <td v-if="!isEditMode">
+                  <td>
                     <input
                       :value="format_date(dataJurnal.doc_created_at)"
-                      :class="inputClassNotAllowed"
-                      disabled
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
                     />
                   </td>
-                  <td v-else>
-                    {{ format_date(props.dataJurnal.doc_created_at) }}
-                  </td>
 
-                  <td v-if="!isEditMode">
-                    <select v-model="selectedGL" :class="inputClass">
+                  <td>
+                    <select
+                      :key="data.id"
+                      v-model="selectedGL"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    >
                       <option v-for="data in GLData" :key="data.id">
                         {{ data.gl_account }}
                       </option>
                     </select>
                   </td>
-                  <td v-else>
-                    {{ data.gl_reccon_acc }}
-                  </td>
 
-                  <td v-if="!isEditMode">
-                    <select :class="inputClassNotAllowed" disabled>
+                  <td>
+                    <select
+                      :key="data.id"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
+                    >
                       <option
                         v-for="item in selectedItems"
                         :key="item.id"
@@ -459,60 +480,98 @@ const inputClassNotAllowed =
                       </option>
                     </select>
                   </td>
-                  <td v-else>
-                    {{ data.short_text }}
+
+                  <td>
+                    <input
+                      v-model="data.amount"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    />
                   </td>
 
-                  <td v-if="!isEditMode">
-                    <input v-model="data.amount" :class="inputClass" />
-                  </td>
-                  <td v-else>
-                    {{ format_price(data.amount) }}
-                  </td>
-
-                  <td v-if="!isEditMode">
-                    <input v-model="data.item_text" :class="inputClass" />
-                  </td>
-                  <td v-else>
-                    {{ data.item_text }}
+                  <td>
+                    <input
+                      v-model="data.item_text"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    />
                   </td>
 
-                  <td v-if="!isEditMode">
-                    <select v-model="data.cost_center" :class="inputClass">
+                  <td>
+                    <select
+                      v-model="data.cost_center"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    >
                       <option v-for="data in costCenterData" :key="data.id">
                         {{ data.cost_center_name }}
                       </option>
                     </select>
                   </td>
-                  <td v-else>
-                    {{ data.cost_center }}
+
+                  <td>
+                    <input
+                      v-model="data.profit_center"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    />
+                  </td>
+
+                  <td>
+                    <input
+                      v-model="data.wbs"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    />
+                  </td>
+
+                  <td>
+                    <input
+                      v-model="data.due_date"
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? false : true"
+                    />
+                  </td>
+
+                  <td>
+                    <input
+                      :class="inputClass"
+                      :disabled="data.id == idEdit ? true : true"
+                    />
                   </td>
 
                   <td v-if="!isEditMode">
-                    <input v-model="data.profit_center" :class="inputClass" />
-                  </td>
-                  <td v-else>
-                    {{ data.profit_center }}
-                  </td>
+                    <button :key="data.id">
+                      <img
+                        :src="editicon"
+                        :class="`w-8 h-8 ${
+                          data.id == idEdit ? `hidden` : null
+                        }`"
+                        @click="editTableItems(data.id)"
+                      />
+                    </button>
 
-                  <td v-if="!isEditMode">
-                    <input v-model="data.wbs" :class="inputClassNotAllowed" />
-                  </td>
-                  <td v-else>
-                    {{ data.wbs }}
-                  </td>
+                    <button
+                      :key="`cancel-${data.id}`"
+                      :class="`mx-2 btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red 
+                      ${data.id == idEdit ? null : `hidden`}
+                      `"
+                      @click="cancelButtonTableDetails"
+                    >
+                      Cancel
+                    </button>
 
-                  <td v-if="!isEditMode">
-                    <input v-model="data.due_date" :class="inputClass" />
-                  </td>
-                  <td v-else>
-                    {{ data.due_date }}
-                  </td>
+                    <button
+                      :key="`save-${data.id}`"
+                      :class="`btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green 
+                      ${data.id == idEdit ? null : `hidden`}
 
-                  <td v-if="!isEditMode">
-                    <input :class="inputClassNotAllowed" disabled />
+                      `"
+                      @click="saveTableDetails(dataDetailJurnal)"
+                    >
+                      Save
+                    </button>
                   </td>
-                  <td v-else></td>
                 </tr>
               </tbody>
             </table>
@@ -556,11 +615,6 @@ const inputClassNotAllowed =
 table {
   min-width: max-content;
 }
-
-/* table tbody :hover {
-  background-color: rgb(193, 192, 192);
-  cursor: pointer;
-} */
 
 tbody tr:nth-child(even) th,
 tbody tr:nth-child(even) td {
