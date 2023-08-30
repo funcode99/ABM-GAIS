@@ -5,14 +5,20 @@ import Multiselect from "@vueform/multiselect"
 import { useReferenceFetchResult } from "@/stores/fetch/reference.js"
 const referenceFetch = useReferenceFetchResult()
 
-import { ref, onMounted, watch, watchEffect, computed } from "vue"
+import { ref, onMounted, watch, watchEffect, computed, reactive } from "vue"
 import Api from "@/utils/Api"
 import Swal from "sweetalert2"
 import moment from "moment"
 import { useRouter } from "vue-router"
 import icondanger from "@/assets/icon-danger-circle.png"
 
+import InputRules from "@/utils/inputRules.js"
+
+import { fetchSiteByUseID } from "@/utils/Api/reference/site.js"
+import storageHelper from "@/utils/storage.helper.js"
+
 import ApprovalDialog from "./ApprovalDialog.vue"
+import WeeklyDayPicker from "./WeeklyDayPicker.vue"
 
 let listFasilitis = ["Projector", "TV", "Speaker", "WebCam", "Jabra"]
 
@@ -63,23 +69,45 @@ let endTime = ref({ hours: 0, minutes: 0 })
 let tempTime = ref([])
 let isLoading = ref(false)
 let Company = ref("")
-let Site = ref("")
+let Site = ref([])
 let selectedCompany = ref("")
 let selectedSite = ref("")
 let is_online_meeting = ref(false)
 let is_recurrence = ref(false)
 let external = ref([])
-let reccurence = ref("")
+let recurrence = ref("")
 let disabledDates = ref([])
 const selectedImage = ref(null)
 let filename = ref(null)
 
-const listReccurence = ["Daily", "Weekly", "Monthly", "Yearly"]
+const form = reactive({
+  id_company: null,
+  id_site: null,
+  remarks: null,
+  id_meeting_room: null,
+  title: null,
+  capacity: null,
+  floor: null,
+  is_online_meeting: false,
+  participant: [],
+  facility: [],
+  start_date: null,
+  end_date: null,
+  start_time: null,
+  end_time: null,
+  external: [],
+  is_recurrence: false,
+  recurrence: "",
+})
+
+const listrecurrence = ["daily", "weekly", "monthly", "yearly"]
 const approvalDialog = ref({
   status: false,
   type: "approve",
 })
 const approvalDialogRef = ref()
+
+const userSites = ref([])
 
 const rowClass = "grid grid-cols-2 px-6 items-center gap-2"
 const colClass = "mb-6 w-full"
@@ -102,6 +130,12 @@ const format_date = (type) => {
   }
 }
 
+const isExtenalEmailsValid = computed(() => {
+  return external.value.every((email) => {
+    return InputRules.email(email)
+  })
+})
+
 // FETCH DATA
 const fetchEmployee = async (query) => {
   let payload = {
@@ -120,15 +154,16 @@ const fetchEmployee = async (query) => {
   isLoading.value = false
 }
 
-const fetchMeetingRoom = async (siteId) => {
-  console.log(id_role, siteId)
+const fetchMeetingRoom = async () => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  if (id_role == "ADMTR" || (id_role == "SUPADM" && !siteId)) {
+  if (id_role == "ADMTR" || (id_role == "SUPADM" && !selectedSite.value)) {
     const api = await Api.get(`master_meeting_room/get`)
     listRoom.value = api.data.data
   } else {
-    const api = await Api.get(`master_meeting_room/get_by_site/${siteId}`)
+    const api = await Api.get(
+      `master_meeting_room/get_by_site/${selectedSite.value}`
+    )
     listRoom.value = api.data.data
   }
 }
@@ -140,8 +175,7 @@ const getDetailRoom = async () => {
   floor.value = api.data.data[0].floor
   capacity.value = api.data.data[0].capacity
 
-  console.log(api.data)
-  listFasilitis = [...api.data?.data[0]?.facility]
+  facility = api.data?.data[0].facility.map(({ id }) => id)
 }
 
 const fetchDataById = async () => {
@@ -234,7 +268,7 @@ const saveForm = async () => {
     link: link.value,
     participant: selectedEmployee.value,
     start_date: start_date.value,
-    end_date: format_date(reccurence.value.toLowerCase()),
+    end_date: format_date(recurrence.value.toLowerCase()),
     start_time: time.value
       ? time.value[0].hours + ":" + time.value[0].minutes
       : "",
@@ -243,12 +277,15 @@ const saveForm = async () => {
       : "",
     external: external.value,
     is_recurrence: is_recurrence.value,
-    reccurence: reccurence.value.toLowerCase(),
+    recurrence: recurrence.value.toLowerCase(),
     attachment: selectedImage.value,
     facility: facility.value,
+    until_ocurs: format_date(recurrence.value.toLowerCase()),
+    days: form.days,
   }
 
   if (type.value == "add") {
+    console.log(payload)
     save(payload)
   } else if (type.value == "edit" || type.value == "view") {
     edit(payload)
@@ -256,50 +293,73 @@ const saveForm = async () => {
 }
 
 const edit = async (payload) => {
-  Api.post(`book_meeting_room/update_data/${idItem.value}`, payload)
-    .then((res) => {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: res.data.message,
-        showConfirmButton: false,
-        timer: 1500,
+  try {
+    Api.post(`book_meeting_room/update_data/${idItem.value}`, payload)
+      .then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        close()
+        router.push({ path: `/booking-meeting-room/${idItem.value}` })
       })
-      close()
-      router.push({ path: `/booking-meeting-room/${idItem.value}` })
-    })
-    .catch((error) => {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: error.response.data.message,
-        showConfirmButton: false,
-        timer: 1500,
+      .catch((error) => {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        })
       })
+  } catch (error) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: error,
+      showConfirmButton: false,
+      timer: 1500,
     })
+  }
 }
 
 const save = async (payload) => {
-  Api.post("book_meeting_room/store/", payload)
-    .then((res) => {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: res.data.message,
-        showConfirmButton: false,
-        timer: 1500,
+  try {
+    if (!isExtenalEmailsValid.value) {
+      throw "Please insert valid email on External Participant"
+    }
+    Api.post("book_meeting_room/store/", payload)
+      .then((res) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: res.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        close()
       })
-      close()
-    })
-    .catch((error) => {
-      Swal.fire({
-        position: "center",
-        icon: "error",
-        title: error.response.data.message,
-        showConfirmButton: false,
-        timer: 1500,
+      .catch((error) => {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: error.response.data.message,
+          showConfirmButton: false,
+          timer: 1500,
+        })
       })
+  } catch (error) {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: error,
+      showConfirmButton: false,
+      timer: 1500,
     })
+  }
 }
 
 const getWeekly = async () => {
@@ -350,9 +410,26 @@ watch(
   }
 )
 
-onMounted(() => {
-  fetchMeetingRoom()
+const fetchSitesByUserId = async () => {
+  const token = localStorage.getItem("token")
+  const decodeToken = storageHelper.decodeToken(token)
+  const userId = decodeToken?.users?.id
+
+  const res = await fetchSiteByUseID(userId)
+
+  userSites.value = res?.data || []
+}
+
+const filteredSites = computed(() => {
+  const primarySite = JSON.parse(localStorage.getItem("id_site"))
+  const userSitesIds = [primarySite]
+
+  return Site.value?.filter(({ id }) => userSitesIds.includes(id))
+})
+
+onMounted(async () => {
   fetchCondition()
+  await fetchSitesByUserId()
   if (dataForm.value) {
     fetchDataById()
     getDetailRoom()
@@ -448,11 +525,15 @@ onMounted(() => {
                   class="cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
                   required
                   v-model="selectedSite"
-                  @input="fetchMeetingRoom(selectedSite)"
+                  @input="fetchMeetingRoom()"
                   :disabled="props.readOnly"
                 >
                   <option disabled selected>Site</option>
-                  <option v-for="(site, i) in Site" :key="i" :value="site.id">
+                  <option
+                    v-for="(site, i) in filteredSites"
+                    :key="i"
+                    :value="site.id"
+                  >
                     {{ site.site_name }}
                   </option>
                 </select>
@@ -512,6 +593,7 @@ onMounted(() => {
                   :class="inputClass"
                   @change="getDetailRoom()"
                   :disabled="props.readOnly"
+                  @focus="fetchMeetingRoom()"
                 >
                   <option disabled selected>List Meeting Room</option>
                   <option
@@ -582,7 +664,7 @@ onMounted(() => {
               </div>
               <div :class="colClass">
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Online Meetings<span class="text-red">*</span></label
+                  >Online Meetings</label
                 >
                 <input
                   type="checkbox"
@@ -656,11 +738,12 @@ onMounted(() => {
                   :options="external"
                   placeholder="External Participant"
                   createTag
+                  :clear-on-select="true"
                 />
               </div>
               <div :class="colClass">
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Reccurence<span class="text-red">*</span></label
+                  >recurrence<span class="text-red">*</span></label
                 >
                 <input
                   type="checkbox"
@@ -669,53 +752,79 @@ onMounted(() => {
                   :disabled="props.readOnly"
                 />
               </div>
-              <div :class="colClass" v-if="is_recurrence">
+              <div
+                :class="colClass"
+                v-if="is_recurrence"
+                class="align-top h-full"
+              >
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Reccurence<span class="text-red">*</span></label
+                  >recurrence<span class="text-red">*</span></label
                 >
                 <select
-                  v-model="reccurence"
+                  v-model="recurrence"
                   :class="inputClass"
                   :disabled="props.readOnly"
                 >
-                  <option disabled selected>List Reccurence</option>
+                  <option disabled selected>List recurrence</option>
                   <option
-                    v-for="data in listReccurence"
+                    v-for="data in listrecurrence"
                     :key="data"
                     :value="data"
-                    class="capitalize"
                   >
-                    {{ data }}
+                    <div class="capitalize">
+                      {{ data.toUpperCase() }}
+                    </div>
                   </option>
                 </select>
               </div>
-              <div :class="colClass" v-if="reccurence">
+              <div
+                :class="colClass"
+                class="align-top h-full"
+                v-if="is_recurrence"
+              >
                 <input type="hidden" name="idItem" v-model="itemsId" />
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Occurs Until<span class="text-red">*</span></label
                 >
                 <VueDatePicker
-                  v-if="reccurence == 'Daily'"
                   v-model="end_date"
                   :enable-time-picker="false"
                   placeholder="Select Date"
                   :disabled="props.readOnly"
                   :min-date="new Date()"
+                  :month-picker="recurrence == 'monthly'"
+                  :year-picker="recurrence == 'yearly'"
                   auto-apply
                 />
-                <VueDatePicker
-                  v-else-if="reccurence == 'Weekly'"
-                  v-model="end_date"
-                  :enable-time-picker="false"
-                  placeholder="Select Date"
-                  :disabled="props.readOnly"
-                  :disabled-week-days="disabledDates"
-                  :min-date="new Date()"
-                  auto-apply
-                  hide-offset-dates
-                />
-                <VueDatePicker
-                  v-else-if="reccurence == 'Monthly'"
+                <div
+                  v-if="recurrence == 'weekly'"
+                  class="grid grid-rows-1"
+                  :value="form.days"
+                >
+                  <WeeklyDayPicker
+                    @update="
+                      ($event) => {
+                        form.days = $event
+                          .filter(({ selected }) => selected)
+                          .map(({ value }) => value)
+                      }
+                    "
+                  />
+                </div>
+
+                <!-- <VueDatePicker
+                    v-model="end_date"
+                    :enable-time-picker="false"
+                    placeholder="Select Date"
+                    :disabled="props.readOnly"
+                    :disabled-week-days="disabledDates"
+                    :min-date="new Date()"
+                    auto-apply
+                    hide-offset-dates
+                  /> -->
+
+                <!-- <VueDatePicker
+                  v-else-if="recurrence == 'Monthly'"
                   v-model="end_date"
                   :enable-time-picker="false"
                   placeholder="Select Date"
@@ -724,16 +833,17 @@ onMounted(() => {
                   auto-apply
                 />
                 <VueDatePicker
-                  v-else-if="reccurence == 'Yearly'"
+                  v-else-if="recurrence == 'Yearly'"
                   v-model="end_date"
                   :enable-time-picker="false"
                   placeholder="Select Date"
                   :disabled="props.readOnly"
                   year-picker
                   auto-apply
-                />
+                /> -->
               </div>
-              <div :class="colClass">
+
+              <div :class="colClass" class="place-self-end">
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
                   >Facility<span class="text-red">*</span></label
                 >

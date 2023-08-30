@@ -1,12 +1,14 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg"
 import iconPlus from "@/assets/navbar/icon_plus.svg"
-import { ref, watchEffect, onMounted, computed } from "vue"
+import { ref, watchEffect, onMounted, computed, reactive } from "vue"
 import Api from "@/utils/Api"
 import Swal from "sweetalert2"
 import Multiselect from "@vueform/multiselect"
 
+import FacilityService from "@/utils/Api/reference/facility.js"
 import { fetchSiteByUseID } from "@/utils/Api/reference/site.js"
+import storageHelper from "@/utils/storage.helper.js"
 
 const props = defineProps({
   status: String,
@@ -44,8 +46,10 @@ let is_approval = ref(false)
 let err_messages = ref("")
 let selectSite = ref(true)
 const userSites = ref([])
+const references = reactive({
+  facility: [],
+})
 
-const listFasilitis = ["Projector", "TV", "Speaker", "WebCam", "Jabra"]
 const rowClass = "grid grid-cols-2 px-6 items-center gap-2"
 const colClass = "mb-6 w-full"
 const inputClass =
@@ -106,7 +110,7 @@ const fetchDataById = async (id) => {
   name_meeting_room.value = dataArr.value.name_meeting_room
   available_status.value = dataArr.value.available_status
   capacity.value = dataArr.value.capacity
-  facility.value = dataArr.value.facility
+  facility.value = dataArr.value.facility.map(({ id }) => id)
   is_approval.value = dataArr.value.is_approval
   approver.value = dataArr.value.approver
   fetchSite(id_company.value)
@@ -176,6 +180,7 @@ const edit = async (payload) => {
 }
 
 const save = async (payload) => {
+  // console.log(payload)
   Api.post("master_meeting_room/store/", payload)
     .then((res) => {
       Swal.fire({
@@ -226,9 +231,14 @@ const filteredSites = computed(() => {
   return listSite.value?.filter(({ id }) => userSitesIds.includes(id))
 })
 
-onMounted(() => {
+onMounted(async () => {
   fetchEmployee()
   fetchCondition()
+
+  await fetchSitesByUserId()
+
+  references.facility = await FacilityService.list()
+
   if (type.value == "edit" && idItem.value != 0) {
     fetchDataById(idItem.value)
   }
@@ -392,6 +402,7 @@ watchEffect(() => {
               placeholder="Select Employee"
               track-by="username"
               label="username"
+              valueProp="id"
               mode="tags"
               :close-on-select="false"
               :searchable="true"
@@ -427,9 +438,11 @@ watchEffect(() => {
               mode="tags"
               :close-on-select="false"
               :searchable="true"
-              :options="listFasilitis"
+              :options="references.facility"
               :hide-selected="true"
-              createTag
+              valueProp="id"
+              trackBy="facility_name"
+              label="facility_name"
             >
               <!-- <template v-slot:tag="{ option, handleTagRemove, disabled }">
                 <div
