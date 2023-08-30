@@ -4,13 +4,29 @@ import icon_jurnal from "@/assets/icon_jurnal.svg";
 
 import Api from "@/utils/Api";
 import moment from "moment";
+import Swal from "sweetalert2";
 
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, computed } from "vue";
+import { useRoute } from "vue-router";
 
 const emits = defineEmits(["unlockScrollbar"]);
+const route = useRoute();
 
+let dataCaNonTravel = ref([]);
+let dataSapDoc = ref([]);
+let dataDetailJurnal = ref([]);
+let selectedGL = ref(null);
+let GLData = ref([]);
+let GLDataByID = ref([]);
 let companyData = ref([]);
 let companyCode = ref("");
+let costCenterData = ref([]);
+let idJurnalHeader = ref([]);
+
+let isVisibleTableHeaders = ref(false);
+let isEditMode = ref(true);
+
+let id = route.params.id;
 
 const role = JSON.parse(localStorage.getItem("id_role"));
 
@@ -19,16 +35,18 @@ const props = defineProps({
 });
 
 const tableHead = [
-  { Id: 1, title: "Item", jsonData: "item_name" },
-  { Id: 2, title: "PK", jsonData: "pk" },
+  { Id: 1, title: "Item", jsonData: "item_number" },
+  { Id: 2, title: "PK", jsonData: "posting_key" },
   { Id: 3, title: "Doc Date", jsonData: "doc_date" },
-  { Id: 4, title: "G/L Account", jsonData: "gl_account" },
-  { Id: 5, title: "Account Short Text", jsonData: "account_text" },
+  { Id: 4, title: "G/L Account", jsonData: "gl_reccon_acc" },
+  { Id: 5, title: "Account Short Text", jsonData: "short_text" },
   { Id: 6, title: "Amount", jsonData: "amount" },
-  { Id: 7, title: "Text", jsonData: "text" },
-  { Id: 8, title: "Cost Center", jsonData: "cost_center_name" },
-  { Id: 9, title: "Profit Center", jsonData: "profit_status" },
-  { Id: 10, title: "Posting Date", jsonData: "posting_date" },
+  { Id: 7, title: "Text", jsonData: "item_text" },
+  { Id: 8, title: "Cost Center", jsonData: "cost_center" },
+  { Id: 9, title: "Profit Center", jsonData: "profit_center" },
+  { Id: 10, title: "Wbs", jsonData: "wbs" },
+  { Id: 11, title: "Due Date", jsonData: "due_date" },
+  { Id: 12, title: "Posting Date", jsonData: "posting_date" },
 ];
 
 const fetchCompany = async () => {
@@ -43,9 +61,106 @@ const fetchCompany = async () => {
   });
 };
 
+const fetchDataById = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/approval_non_travel/get_data/${id}`);
+  dataCaNonTravel.value = res.data.data[0];
+  fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+};
+
+const fetchSapByIdDoc = async (id) => {
+  // const res = await Api.get(`/jurnal/get_sap_by_id_document/${id}`);
+  const res = await Api.get(`/jurnal/get_sap_by_id_document/1`); //using data dummy
+  // console.log(res);
+  dataSapDoc.value = res.data.data;
+  fetchDataDetailJurnal(dataSapDoc.value[0].id);
+};
+
+const fetchDataDetailJurnal = async (id) => {
+  const res = await Api.get(`/jurnal/get_sap_detail_by_id_header/${id}`);
+  // console.log(res.data.data);
+  dataDetailJurnal.value = res.data.data;
+  idJurnalHeader = dataDetailJurnal.value.map((item) => item.id_jurnal_header);
+  // console.log("id_jurnal_header arrays:", idJurnalHeader);
+};
+
+const fetchGLAccount = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/gl_account/");
+  GLData.value = res.data.data;
+  GLDataByID.value = res.data.data;
+  // console.log(res.data.data);
+};
+
+const selectedItems = computed(() => {
+  const selectedItem = GLData.value.find(
+    (item) => item.gl_account === selectedGL.value
+  );
+  return selectedItem ? [selectedItem] : [];
+});
+
+const fetchCostCenter = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get("/company/get_cost_center");
+  // console.log(res.data.data);
+  costCenterData.value = res.data.data;
+};
+
 onBeforeMount(() => {
   fetchCompany();
+  fetchDataById(id);
+  fetchGLAccount();
+  fetchCostCenter();
 });
+
+const editTableHeader = () => {
+  isEditMode = false;
+  isVisibleTableHeaders.value = true;
+};
+
+const cancelTableHeader = () => {
+  isVisibleTableHeaders.value = false;
+  isEditMode = true;
+};
+
+const saveTableDetails = async (data) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  try {
+    const payload = {
+      id_jurnal_header: data[0].id_jurnal_header,
+      item_number: data[0].item_number,
+      posting_key: data[0].posting_key,
+      gl_reccon_acc: selectedGL.value,
+      short_text: selectedItems.value[0].gl_name,
+      ammount: data[0].amount,
+      item_text: data[0].item_text,
+      cost_center: data[0].cost_center,
+      profit_center: data[0].profit_center,
+      wbs: data[0].wbs,
+      due_date: data[0].due_date,
+    };
+    // console.log(payload);
+    const api = await Api.post("/jurnal/save_sap_detail", payload);
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: api.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    });
+
+    isVisibleTableHeaders.value = false;
+    isEditMode = true;
+    // fetchDataDetailJurnal(data[0].id_jurnal_header);
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};
 
 const format_date = (value) => {
   if (value) {
@@ -65,8 +180,22 @@ const format_month = (value) => {
   }
 };
 
+const format_price = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+  let val = (value / 1).toFixed(2).replace(".", ",");
+  return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+};
+
 let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
+
+const inputClass =
+  "cursor-pointer font-JakartaSans block bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm ";
+
+const inputClassNotAllowed =
+  "cursor-not-allowed font-JakartaSans block bg-#e0e0e0 w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm ";
 </script>
 
 <template>
@@ -98,22 +227,42 @@ let classStyle =
       <main class="modal-box-inner">
         <div class="sticky top-0 bg-white" v-if="role === 'ADM'">
           <div
-            class="flex flex-wrap justify-start gap-2 items-center px-8 pt-4"
+            class="flex flex-wrap justify-start gap-2 items-center px-8 py-3"
           >
             <button
+              v-if="!isVisibleTableHeaders"
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-blue border-blue hover:bg-white hover:border-blue hover:text-blue"
+              @click="editTableHeader"
             >
               Edit
             </button>
 
+            <div class="flex justify-end gap-2" v-if="isVisibleTableHeaders">
+              <button
+                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
+                @click="cancelTableHeader"
+              >
+                Cancel
+              </button>
+
+              <button
+                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
+                @click="saveTableDetails(dataDetailJurnal)"
+              >
+                Save
+              </button>
+            </div>
+
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-green border-green hover:bg-white hover:border-green hover:text-green"
+              v-if="!isVisibleTableHeaders"
             >
               Posting
             </button>
 
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-[#FF9900] border-[#FF9900] hover:bg-white hover:border-[#FF9900] hover:text-[#FF9900]"
+              v-if="!isVisibleTableHeaders"
             >
               Reverse
             </button>
@@ -250,17 +399,120 @@ let classStyle =
                 </th>
               </thead>
               <tbody>
-                <tr class="font-JakartaSans font-normal text-sm text-center">
-                  <td>1</td>
-                  <td>31</td>
-                  <td>27/03/23</td>
-                  <td>231321234</td>
-                  <td>Employee</td>
-                  <td>231.000</td>
-                  <td>Meals</td>
-                  <td>902922</td>
-                  <td>9900</td>
-                  <td>28/02/23</td>
+                <tr
+                  class="font-JakartaSans font-normal text-sm text-center"
+                  v-for="data in dataDetailJurnal"
+                  :key="data.id"
+                >
+                  <td v-if="!isEditMode">
+                    <input
+                      v-model="data.item_number"
+                      :class="inputClassNotAllowed"
+                      disabled
+                    />
+                  </td>
+                  <td v-else>
+                    {{ data.item_number }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <select v-model="data.posting_key" :class="inputClass">
+                      <option value="15">15</option>
+                      <option value="30">30</option>
+                      <option value="45">45</option>
+                    </select>
+                  </td>
+                  <td v-else>
+                    {{ data.gl_reccon_acc }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input
+                      :value="format_date(dataJurnal.doc_created_at)"
+                      :class="inputClassNotAllowed"
+                      disabled
+                    />
+                  </td>
+                  <td v-else>
+                    {{ format_date(props.dataJurnal.doc_created_at) }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <select v-model="selectedGL" :class="inputClass">
+                      <option v-for="data in GLData" :key="data.id">
+                        {{ data.gl_account }}
+                      </option>
+                    </select>
+                  </td>
+                  <td v-else>
+                    {{ data.gl_reccon_acc }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <select :class="inputClassNotAllowed" disabled>
+                      <option
+                        v-for="item in selectedItems"
+                        :key="item.id"
+                        :value="item.gl_name"
+                      >
+                        {{ item.gl_name }}
+                      </option>
+                    </select>
+                  </td>
+                  <td v-else>
+                    {{ data.short_text }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.amount" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ format_price(data.amount) }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.item_text" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ data.item_text }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <select v-model="data.cost_center" :class="inputClass">
+                      <option v-for="data in costCenterData" :key="data.id">
+                        {{ data.cost_center_name }}
+                      </option>
+                    </select>
+                  </td>
+                  <td v-else>
+                    {{ data.cost_center }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.profit_center" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ data.profit_center }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.wbs" :class="inputClassNotAllowed" />
+                  </td>
+                  <td v-else>
+                    {{ data.wbs }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input v-model="data.due_date" :class="inputClass" />
+                  </td>
+                  <td v-else>
+                    {{ data.due_date }}
+                  </td>
+
+                  <td v-if="!isEditMode">
+                    <input :class="inputClassNotAllowed" disabled />
+                  </td>
+                  <td v-else></td>
                 </tr>
               </tbody>
             </table>
@@ -291,7 +543,7 @@ let classStyle =
 
 .table-wrapper {
   overflow-y: scroll;
-  overflow-x: hidden;
+  overflow-x: scroll;
   height: fit-content;
   max-height: 66.4vh;
   margin-top: 22px;
@@ -305,10 +557,10 @@ table {
   min-width: max-content;
 }
 
-table tbody :hover {
+/* table tbody :hover {
   background-color: rgb(193, 192, 192);
   cursor: pointer;
-}
+} */
 
 tbody tr:nth-child(even) th,
 tbody tr:nth-child(even) td {
@@ -332,8 +584,7 @@ table th {
   color: white;
 }
 
-table th,
-table td {
+table th {
   padding: 15px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -341,6 +592,9 @@ table td {
 
 table td {
   font-size: 15px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   padding-left: 40px;
+  padding-right: 40px;
 }
 </style>
