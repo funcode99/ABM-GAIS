@@ -279,172 +279,178 @@ watchEffect(() => {
           Meeting Room
         </p>
       </nav>
-      <main class="modal-box-inner pb-4 lg:pb-16">
-        <div :class="rowClass">
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company<span class="text-red">*</span></label
-            >
-            <select
-              v-model="id_company"
-              id="id_company"
-              :class="inputClass"
-              @change="fetchSite()"
-            >
-              <option disabled selected>Company</option>
-              <option
-                v-for="data in listCompany"
-                :key="data.id"
-                :value="data.id"
+      <form @submit.prevent="saveForm()">
+        <main class="modal-box-inner pb-4 lg:pb-16">
+          <div :class="rowClass">
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Company<span class="text-red">*</span></label
               >
-                {{ data.company_code }} - {{ data.company_name }}
-              </option>
-            </select>
-          </div>
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Site<span class="text-red">*</span></label
-            >
-            <select
-              v-model="id_site"
-              id="id_site"
-              :class="inputClass"
-              :disabled="selectSite"
-            >
-              <option disabled selected>Site</option>
-              <option
-                v-for="data in filteredSites"
-                :key="data.id"
-                :value="data.id"
+              <select
+                v-model="id_company"
+                id="id_company"
+                :class="inputClass"
+                @change="fetchSite()"
+                required
               >
-                {{ data.site_code }} - {{ data.site_name }}
-              </option>
-            </select>
-          </div>
-        </div>
-
-        <div class="mx-3">
-          <p class="font-JakartaSans font-medium text-sm pb-2">Details Item</p>
-          <hr class="h-px bg-[#8B8B8B] border-0 mb-4" />
-        </div>
-
-        <div :class="rowClass">
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Meeting Room Name<span class="text-red">*</span></label
-            >
-            <input
-              v-model="name_meeting_room"
-              type="text"
-              name="remarks"
-              :class="inputClass"
-              placeholder="Meeting Room Name"
-              required
-            />
-          </div>
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Floor</label
-            >
-            <input
-              v-model="floor"
-              type="number"
-              name="floor"
-              :class="inputClass"
-              placeholder="Floor"
-              required
-            />
-          </div>
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Capacity<span class="text-red">*</span></label
-            >
-            <input
-              v-model="capacity"
-              type="number"
-              name="capacity"
-              :class="inputClass"
-              placeholder="Capacity"
-              required
-            />
-          </div>
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Available Status<span class="text-red">*</span></label
-            >
-            <select v-model="available_status" :class="inputClass" required>
-              <option disabled selected>Status</option>
-              <option
-                v-for="data in listStatus"
-                :key="data.id"
-                :value="data.title"
-              >
-                {{ data.title }}
-              </option>
-            </select>
-          </div>
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Approval<span class="text-red">*</span></label
-            >
-            <input
-              type="checkbox"
-              class="toggle toggle-primary"
-              v-model="is_approval"
-            />
-          </div>
-          <div :class="colClass" v-if="is_approval">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Approver<span class="text-red">*</span></label
-            >
-            <Multiselect
-              v-model="approver"
-              placeholder="Select Employee"
-              track-by="username"
-              label="username"
-              valueProp="id"
-              mode="tags"
-              :close-on-select="false"
-              :searchable="true"
-              :options="listEmployee"
-              :limit="10"
-              :loading="isLoading"
-              :hide-selected="true"
-              ><template v-slot:tag="{ option, handleTagRemove, disabled }">
-                <div
-                  class="multiselect-tag is-user"
-                  :class="{
-                    'is-disabled': disabled,
-                  }"
+                <option disabled selected>Company</option>
+                <option
+                  v-for="data in listCompany"
+                  :key="data.id"
+                  :value="data.id"
                 >
-                  {{ option.email }}
-                  <span
-                    v-if="!disabled"
-                    class="multiselect-tag-remove"
-                    @click="handleTagRemove(option, $event)"
-                  >
-                    <span class="multiselect-tag-remove-icon"></span>
-                  </span>
-                </div> </template
-            ></Multiselect>
+                  {{ data.company_code }} - {{ data.company_name }}
+                </option>
+              </select>
+            </div>
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Site<span class="text-red">*</span></label
+              >
+              <select
+                v-model="id_site"
+                id="id_site"
+                :class="inputClass"
+                :disabled="selectSite"
+                required
+              >
+                <option disabled selected>Site</option>
+                <option
+                  v-for="data in filteredSites"
+                  :key="data.id"
+                  :value="data.id"
+                >
+                  {{ data.site_code }} - {{ data.site_name }}
+                </option>
+              </select>
+            </div>
           </div>
-          <div :class="colClass">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Facility<span class="text-red">*</span></label
-            >
-            <Multiselect
-              v-model="facility"
-              placeholder="Select Facility"
-              mode="tags"
-              :close-on-select="false"
-              :searchable="true"
-              :options="references.facility"
-              :hide-selected="true"
-              valueProp="id"
-              trackBy="facility_name"
-              label="facility_name"
-            >
-              <!-- <template v-slot:tag="{ option, handleTagRemove, disabled }">
+
+          <div class="mx-3">
+            <p class="font-JakartaSans font-medium text-sm pb-2">
+              Details Item
+            </p>
+            <hr class="h-px bg-[#8B8B8B] border-0 mb-4" />
+          </div>
+
+          <div :class="rowClass">
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Meeting Room Name<span class="text-red">*</span></label
+              >
+              <input
+                v-model="name_meeting_room"
+                type="text"
+                name="remarks"
+                :class="inputClass"
+                placeholder="Meeting Room Name"
+                required
+              />
+            </div>
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Floor</label
+              >
+              <input
+                v-model="floor"
+                type="number"
+                name="floor"
+                :class="inputClass"
+                placeholder="Floor"
+              />
+            </div>
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Capacity<span class="text-red">*</span></label
+              >
+              <input
+                v-model="capacity"
+                type="number"
+                name="capacity"
+                :class="inputClass"
+                placeholder="Capacity"
+                required
+              />
+            </div>
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Available Status<span class="text-red">*</span></label
+              >
+              <select v-model="available_status" :class="inputClass" required>
+                <option disabled selected>Status</option>
+                <option
+                  v-for="data in listStatus"
+                  :key="data.id"
+                  :value="data.title"
+                >
+                  {{ data.title }}
+                </option>
+              </select>
+            </div>
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Approval<span class="text-red">*</span></label
+              >
+              <input
+                type="checkbox"
+                class="toggle toggle-primary"
+                v-model="is_approval"
+              />
+            </div>
+            <div :class="colClass" v-if="is_approval">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Approver</label
+              >
+              <Multiselect
+                v-model="approver"
+                placeholder="Select Employee"
+                track-by="username"
+                label="username"
+                valueProp="id"
+                mode="tags"
+                :close-on-select="false"
+                :searchable="true"
+                :options="listEmployee"
+                :limit="10"
+                :loading="isLoading"
+                :hide-selected="true"
+                required
+                ><template v-slot:tag="{ option, handleTagRemove, disabled }">
+                  <div
+                    class="multiselect-tag is-user"
+                    :class="{
+                      'is-disabled': disabled,
+                    }"
+                  >
+                    {{ option.email }}
+                    <span
+                      v-if="!disabled"
+                      class="multiselect-tag-remove"
+                      @click="handleTagRemove(option, $event)"
+                    >
+                      <span class="multiselect-tag-remove-icon"></span>
+                    </span>
+                  </div> </template
+              ></Multiselect>
+            </div>
+            <div :class="colClass">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Facility<span class="text-red">*</span></label
+              >
+              <Multiselect
+                v-model="facility"
+                placeholder="Select Facility"
+                mode="tags"
+                :close-on-select="false"
+                :searchable="true"
+                :options="references.facility"
+                :hide-selected="true"
+                valueProp="id"
+                trackBy="facility_name"
+                label="facility_name"
+                required
+              >
+                <!-- <template v-slot:tag="{ option, handleTagRemove, disabled }">
                 <div
                   class="multiselect-tag is-user"
                   :class="{
@@ -461,26 +467,27 @@ watchEffect(() => {
                   </span>
                 </div> </template
             > -->
-            </Multiselect>
+              </Multiselect>
+            </div>
+          </div>
+        </main>
+
+        <div class="sticky bottom-0 bg-white py-2">
+          <div class="flex justify-end gap-4 mr-6">
+            <label
+              @click="close"
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
+              >Cancel</label
+            >
+            <button
+              type="submit"
+              class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+            >
+              Save
+            </button>
           </div>
         </div>
-      </main>
-
-      <div class="sticky bottom-0 bg-white py-2">
-        <div class="flex justify-end gap-4 mr-6">
-          <label
-            @click="close"
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-            >Cancel</label
-          >
-          <button
-            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
-            @click="saveForm"
-          >
-            Save
-          </button>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
