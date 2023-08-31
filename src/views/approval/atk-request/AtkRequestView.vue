@@ -450,11 +450,11 @@ const format_date = (value) => {
                       >
                         ATK Warehouse
                       </th>
-                      <th
+                      <!-- <th
                         class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                       >
                         Stock Available
-                      </th>
+                      </th> -->
                       <th
                         class="border border-[#B9B9B9] bg-blue capitalize font-JakartaSans font-bold text-xs"
                       >
@@ -482,9 +482,9 @@ const format_date = (value) => {
                       <td class="border border-[#B9B9B9]">
                         {{ value.warehouse_name }}
                       </td>
-                      <td class="border border-[#B9B9B9]">
+                      <!-- <td class="border border-[#B9B9B9]">
                         {{ value.stock_available_wh }}
-                      </td>
+                      </td> -->
                       <td class="border border-[#B9B9B9]">
                         {{ value.qty_approved }}
                       </td>

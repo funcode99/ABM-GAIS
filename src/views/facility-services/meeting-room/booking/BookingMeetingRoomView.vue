@@ -80,6 +80,7 @@ const tableHead = [
   { Id: 7, title: "Capacity", jsonData: "grand_total" },
   { Id: 7, title: "Facility", jsonData: "facility" },
   { Id: 8, title: "Remarks", jsonData: "notes" },
+  { Id: 8, title: "Attachment", jsonData: "notes" },
 ]
 
 const format_date = (value) => {
@@ -397,10 +398,22 @@ const inputClass =
                     </td>
 
                     <td class="border border-[#B9B9B9]">
-                      {{ dataArr.facility }}
+                      <div
+                        v-for="(facility, index) in dataArr.facility_array.map(
+                          ({ facility_name }) => facility_name
+                        )"
+                      >
+                        {{ index + 1 }}. {{ facility }}
+                      </div>
                     </td>
                     <td class="border border-[#B9B9B9]">
                       <span style="white-space: pre"> {{ dataArr.notes }}</span>
+                    </td>
+
+                    <td class="border border-[#B9B9B9]">
+                      <a :href="dataArr.attachment_path" target="_blank">
+                        {{ dataArr.attachment }}</a
+                      >
                     </td>
                   </tr>
                 </tbody>
