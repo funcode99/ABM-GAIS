@@ -99,6 +99,23 @@ const isBookingStart = computed(() => {
   return today > fullStartDate
 })
 
+const duration = computed(() => {
+  // start time and end time
+  var startTime = moment(dataArr.value.duration_start)
+  var endTime = moment(dataArr.value.duration_end)
+
+  // calculate total duration
+  var duration = moment.duration(endTime.diff(startTime))
+
+  // duration in hours
+  var hours = parseInt(duration.asHours())
+
+  // duration in minutes
+  var minutes = parseInt(duration.asMinutes()) % 60
+
+  return hours + " hour and " + minutes + " minutes."
+})
+
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -142,6 +159,32 @@ const startMeeting = async () => {
     const res = BookingRoomService.startMeeting(bookingId)
 
     console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const endMeeting = async () => {
+  try {
+    Swal.fire({
+      title: "End Booking?",
+      text: "Are you sure want to end this meeting room?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const bookingId = route.params.id
+        const res = BookingRoomService.endMeeting(bookingId)
+        console.log(res)
+
+        if (res.data.success) {
+          Swal.fire("Booking Ended!", `Succcess End Booking Meeting`, "success")
+        }
+      }
+    })
   } catch (error) {
     console.error(error)
   }
@@ -229,11 +272,11 @@ const closeModal = () => {
 }
 
 const fullStartMeeting = computed(() => {
-  return moment(dataArr.start_date + dataArr.start_time).toLocaleString()
+  return new Date(`${dataArr.value.start_date} ${dataArr.value.start_time}`)
 })
 
 const fullEndMeeting = computed(() => {
-  return moment(dataArr.end_date + dataArr.start_time).toLocaleString()
+  return new Date(`${dataArr.value.end_date} ${dataArr.value.end_time}`)
 })
 
 onBeforeMount(() => {
@@ -310,16 +353,20 @@ const inputClass =
             >
               Book
             </button>
-            {{ fullStartMeeting }} - {{ fullEndMeeting }}
+
             <button
-              v-if="dataArr.status == 'Booked' && !dataArr.duration_start"
+              v-if="
+                dataArr.status == 'Booked' &&
+                !dataArr.duration_start &&
+                new Date() > endMeeting
+              "
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
               @click="cancelled"
             >
               Cancel
             </button>
             <button
-              v-if="!isBookingStart"
+              v-if="new Date() > fullStartMeeting && !dataArr.duration_start"
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               @click="startMeeting()"
             >
@@ -327,7 +374,7 @@ const inputClass =
             </button>
 
             <button
-              v-if="dataArr.duration_start"
+              v-if="dataArr.duration_start && !dataArr.duration_end"
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-red bg-red hover:bg-white hover:text-red hover:border-red"
               @click="endMeeting()"
             >
@@ -503,18 +550,31 @@ const inputClass =
                   <table>
                     <tr>
                       <th>Start Meeting</th>
-                      <td>: {{ dataArr.duration_start }}</td>
+                      <td>
+                        :
+                        {{
+                          moment(dataArr.duration_start).format(
+                            "DD/MM/YY hh:mm:ss"
+                          )
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <th>End Meeting</th>
-                      <td>: {{ dataArr.duration_end }}</td>
+                      <td>
+                        :
+                        {{
+                          moment(dataArr.duration_end).format(
+                            "DD/MM/YY hh:mm:ss"
+                          )
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <th>Duration</th>
-                      <td>
+                      <td v-if="dataArr.duration_end && dataArr.duration_start" class="font-medium">
                         :
-
-                        {{ dataArr.duration_end - dataArr.duration_start || 0 }}
+                        {{ duration }}
                       </td>
                     </tr>
                   </table>
@@ -529,7 +589,7 @@ const inputClass =
   </div>
 </template>
 
-<style scoped>
+<style>
 .custom-card {
   box-shadow: 0px -4px #015289;
   border-radius: 4px;
@@ -562,5 +622,12 @@ th {
   font-style: normal;
   line-height: normal;
   text-align: start;
+}
+
+.swal2-actions {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding-left: 0px !important;
 }
 </style>
