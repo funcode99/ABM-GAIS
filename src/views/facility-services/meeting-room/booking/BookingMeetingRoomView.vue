@@ -12,6 +12,8 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg"
 import Api from "@/utils/Api"
 import moment from "moment"
 
+import BookingRoomService from "@/utils/Api/facility-service-system/booking-room-meeting/bookingMeetingRoom.js"
+
 import { ref, onBeforeMount, computed } from "vue"
 import { useSidebarStore } from "@/stores/sidebar.js"
 import { useRoute, useRouter } from "vue-router"
@@ -134,11 +136,22 @@ const submit = async () => {
     })
 }
 
+const startMeeting = async () => {
+  try {
+    const bookingId = route.params.id
+    const res = BookingRoomService.startMeeting(bookingId)
+
+    console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const cancelled = async () => {
   Swal.fire({
     title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to cancelled this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will cancelled this data permanently, You cannot undo this action.</div>",
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to cancel this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will cancel this data permanently, You cannot undo this action.</div>",
     iconHtml: `<img src="${icondanger}" />`,
     showCloseButton: true,
     closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
@@ -215,6 +228,14 @@ const closeModal = () => {
   fetchDataById(idBook)
 }
 
+const fullStartMeeting = computed(() => {
+  return moment(dataArr.start_date + dataArr.start_time).toLocaleString()
+})
+
+const fullEndMeeting = computed(() => {
+  return moment(dataArr.end_date + dataArr.start_time).toLocaleString()
+})
+
 onBeforeMount(() => {
   getSessionForSidebar()
   fetchDataById(idBook)
@@ -289,18 +310,28 @@ const inputClass =
             >
               Book
             </button>
+            {{ fullStartMeeting }} - {{ fullEndMeeting }}
             <button
-              v-if="dataArr.status == 'Booked'"
+              v-if="dataArr.status == 'Booked' && !dataArr.duration_start"
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
               @click="cancelled"
             >
-              Cancelled
+              Cancel
             </button>
             <button
-              v-if="dataArr.status == 'Booked' && isBookingStart"
+              v-if="!isBookingStart"
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              @click="startMeeting()"
             >
               Start Meeting
+            </button>
+
+            <button
+              v-if="dataArr.duration_start"
+              class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-red bg-red hover:bg-white hover:text-red hover:border-red"
+              @click="endMeeting()"
+            >
+              End Meeting
             </button>
           </div>
 
@@ -411,7 +442,11 @@ const inputClass =
                     </td>
 
                     <td class="border border-[#B9B9B9]">
-                      <a :href="dataArr.attachment_path" target="_blank">
+                      <a
+                        class="text-primary font-medium"
+                        :href="dataArr.attachment_path"
+                        target="_blank"
+                      >
                         {{ dataArr.attachment }}</a
                       >
                     </td>
@@ -420,7 +455,10 @@ const inputClass =
               </table>
 
               <div v-else-if="tabActive == 'Resurrence'" class="p-5">
-                <div class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]">
+                <div
+                  v-if="is_recurrence"
+                  class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]"
+                >
                   <table>
                     <tr>
                       <th class="text-start">Start Date</th>
@@ -458,7 +496,10 @@ const inputClass =
               </div>
 
               <div v-else-if="tabActive == 'Meeting Duration'" class="p-5">
-                <div class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]">
+                <div
+                  v-if="dataArr.duration_start"
+                  class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]"
+                >
                   <table>
                     <tr>
                       <th>Start Meeting</th>
@@ -473,7 +514,7 @@ const inputClass =
                       <td>
                         :
 
-                        {{ dataArr.duration_end - dataArr.duration_start }}
+                        {{ dataArr.duration_end - dataArr.duration_start || 0 }}
                       </td>
                     </tr>
                   </table>

@@ -278,7 +278,7 @@ const saveForm = async () => {
       ? time.value[1].hours + ":" + time.value[1].minutes
       : "",
     external: external.value,
-    is_recurrence: is_recurrence.value,
+    is_recurrence: is_recurrence.value ? 1 : 0,
     recurrence: recurrence.value.toLowerCase(),
     attachment: selectedImage.value,
     facility: facility.value,
@@ -291,7 +291,6 @@ const saveForm = async () => {
   if (!payload.is_recurrence) delete payload.until_ocurs
 
   if (type.value == "add") {
-    console.log(payload)
     save(payload)
   } else if (type.value == "edit" || type.value == "view") {
     edit(payload)
