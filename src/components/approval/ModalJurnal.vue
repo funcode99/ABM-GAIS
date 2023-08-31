@@ -80,7 +80,7 @@ const fetchSapByIdDoc = async (id) => {
       `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
     );
     dataSapDoc.value = res.data.data;
-    // console.log(res.data.data);
+    console.log("data sap doc", res.data.data);
 
     array_data.value = dataSapDoc.value.map((entry) => ({
       item_number: entry.item,
@@ -125,8 +125,13 @@ const cancelTableHeader = () => {
 };
 
 const saveJurnal = async (data, array_data) => {
-  console.log("array_data:", array_data);
-  console.log("data.item:", data.item);
+  // console.log("array_data:", array_data);
+  // console.log("data:", data);
+  const dataArray = data.map(({ doc_date, item, pk, template, ...rest }) => {
+    return { ...rest, item_number: item, posting_key: pk };
+  });
+  console.log("data array", dataArray);
+
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   try {
@@ -141,17 +146,16 @@ const saveJurnal = async (data, array_data) => {
       fis_period: format_month(props.dataJurnal.doc_created_at),
       order: null,
       claim_cat: props.dataJurnal.code_document,
-      [array_data[0].item_number]: data.item,
-      [array_data[0].posting_key]: data.pk,
+      array_data: dataArray,
       gl_reccon_acc: null,
       short_text: null,
-      [array_data[0].ammount]: data.ammount,
       item_text: null,
       cost_center: null,
       profit_center: null,
       wbs: null,
       due_date: null,
     };
+    console.log("payload", payload);
     const res = await Api.post("/jurnal/save_sap", payload);
 
     Swal.fire({
@@ -444,7 +448,7 @@ const inputClass =
 
                   <td>
                     <input
-                      v-model="data.ammount"
+                      v-model="data.amount"
                       :class="inputClass"
                       :disabled="data.id === idEdit || !isEditing"
                     />
