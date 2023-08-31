@@ -72,6 +72,32 @@ const onChangePage = (pageOfItem) => {
   fetch(pageOfItem)
 }
 
+const bookingMeetingRoomStatus = {
+  Draft: {
+    statusLevel: 0,
+    class: "bg-[#000] border-[#000]",
+  },
+  Booked: {
+    statusLevel: 1,
+    class: "text-[#2970ff]",
+  },
+  Reject: {
+    statusLevel: 2,
+    class: "text-[#ef9d22]",
+  },
+  "Waiting Approval": {
+    statusLevel: 2,
+    class: "text-[#facc15]",
+  },
+  Done: {
+    statusLevel: 3,
+    class: "text-[#00c851]",
+  },
+  Cancel: {
+    statusLevel: 3,
+    class: "text-red",
+  },
+}
 //for check & uncheck all
 const selectAll = (checkValue) => {
   selectAllCheckbox(checkValue, deleteArray, sortedData)
@@ -583,13 +609,7 @@ onBeforeMount(() => {
                     <td>{{ data.site_name }}</td>
                     <td>
                       <span
-                        :class="
-                          data.status == 'Done'
-                            ? 'status-done'
-                            : data.status == 'Booked'
-                            ? 'status-default'
-                            : 'status-revision'
-                        "
+                        :class="bookingMeetingRoomStatus[data.status].class"
                         >{{ data.status }}</span
                       >
                     </td>
@@ -681,21 +701,6 @@ tr th {
 
 .my-date {
   width: 260px !important;
-}
-
-.status-revision {
-  color: #ef3022;
-  font-weight: 800;
-}
-
-.status-default {
-  color: #2970ff;
-  font-weight: 800;
-}
-
-.status-done {
-  color: #00c851;
-  font-weight: 800;
 }
 
 .truncate {

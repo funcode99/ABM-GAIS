@@ -1,11 +1,15 @@
 <script setup>
-import { reactive, watch } from "vue"
+import { onMounted, reactive, watch } from "vue"
 
 const emits = defineEmits(["update"])
 const props = defineProps({
   value: {
     type: Array,
     default: [],
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -40,11 +44,17 @@ const days = reactive([
   },
 ])
 
-watch(props.value, () => {
+const setSelectedDay = () => {
   days.forEach((item) => {
     const isSelected = props.value.includes(item.value)
     item.selected = isSelected ? true : false
   })
+}
+
+watch(props.value, () => {}, { deep: true })
+
+onMounted(() => {
+  setSelectedDay()
 })
 </script>
 
@@ -53,6 +63,7 @@ watch(props.value, () => {
     <div v-for="day in days" :key="day.value">
       <button
         type="button"
+        :disabled="disabled"
         class="badge h-6 w-6 p-3 text-black"
         :class="day.selected ? 'bg-primary text-white' : 'bg-slate-300'"
         @click="

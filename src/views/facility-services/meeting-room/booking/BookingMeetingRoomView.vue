@@ -16,6 +16,10 @@ import { ref, onBeforeMount, computed } from "vue"
 import { useSidebarStore } from "@/stores/sidebar.js"
 import { useRoute, useRouter } from "vue-router"
 
+import { toFilterDate } from "@/utils/filters.js"
+
+import WeeklyDayPicker from "@/components/facility-services/booking-meeting-room/WeeklyDayPicker.vue"
+
 const sidebar = useSidebarStore()
 const route = useRoute()
 const router = useRouter()
@@ -49,7 +53,7 @@ const bookingMeetingRoom = {
     statusLevel: 2,
     class: "bg-[#ef9d22] border-[#ef9d22]",
   },
-  "Waiting Appove": {
+  "Waiting Approval": {
     statusLevel: 2,
     class: "bg-[#facc15] border-[#facc15]",
   },
@@ -63,7 +67,7 @@ const bookingMeetingRoom = {
   },
 }
 
-const tabs = ref(["Details", "Resurrence", "Room Used Duration"])
+const tabs = ref(["Details", "Resurrence", "Meeting Duration"])
 const tabActive = ref("Details")
 
 const tableHead = [
@@ -97,6 +101,7 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const api = await Api.get(`book_meeting_room/get/${id}`)
   dataArr.value = api.data.data[0]
+  dataArr.value.days = dataArr.value.days.split(",").map((day) => parseInt(day))
 }
 
 const submit = async () => {
@@ -325,7 +330,7 @@ const inputClass =
           </div>
 
           <!-- TAB & TABLE-->
-          <div class="bg-blue rounded-lg pt-2 mx-[70px] border " v-if="!addItem">
+          <div class="bg-blue rounded-lg pt-2 mx-[70px] border" v-if="!addItem">
             <div class="tabs bg-primary rounded-t-lg pt-3 py-0 border-b">
               <tab
                 v-for="tab in tabs"
@@ -402,19 +407,61 @@ const inputClass =
               </table>
 
               <div v-else-if="tabActive == 'Resurrence'" class="p-5">
-                <div class="bg-[#EFF4FF] rounded-2xl p-5 w-[50%]">
+                <div class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]">
                   <table>
                     <tr>
                       <th class="text-start">Start Date</th>
-                      <td>: 25/08/2023</td>
+                      <td>
+                        :
+                        {{
+                          toFilterDate(dataArr.recurrence_start, "DD/MM/yyyy")
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <th class="text-start">Recurrence</th>
-                      <td>: Weekly</td>
+                      <td class="capitalize">: {{ dataArr.recurrence }}</td>
                     </tr>
+
                     <tr>
                       <th class="text-start">Until</th>
-                      <td>: 25/08/2023</td>
+                      <td>
+                        :
+                        {{ toFilterDate(dataArr.recurrence_end, "DD/MM/yyyy") }}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th class="text-start">Days</th>
+                      <td class="flex items-center h-full">
+                        <div class="">:</div>
+                        <div>
+                          <WeeklyDayPicker disabled :value="dataArr.days" />
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+              <div v-else-if="tabActive == 'Meeting Duration'" class="p-5">
+                <div class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]">
+                  <table>
+                    <tr>
+                      <th>Start Meeting</th>
+                      <td>: {{ dataArr.duration_start }}</td>
+                    </tr>
+                    <tr>
+                      <th>End Meeting</th>
+                      <td>: {{ dataArr.duration_end }}</td>
+                    </tr>
+                    <tr>
+                      <th>Duration</th>
+                      <td>
+                        :
+
+                        {{ dataArr.duration_end - dataArr.duration_start }}
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -454,11 +501,12 @@ const inputClass =
 }
 
 td,
-tr {
+th {
   padding: 5px;
   font-family: Plus Jakarta Sans;
   font-size: 14px;
   font-style: normal;
   line-height: normal;
+  text-align: start;
 }
 </style>

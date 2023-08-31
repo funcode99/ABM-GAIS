@@ -288,6 +288,8 @@ const saveForm = async () => {
     days: form.days,
   }
 
+  if (!payload.is_recurrence) delete payload.until_ocurs
+
   if (type.value == "add") {
     console.log(payload)
     save(payload)
@@ -763,7 +765,7 @@ onMounted(async () => {
                 </div>
                 <div :class="colClass">
                   <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                    >Recurrence<span class="text-red">*</span></label
+                    >Recurrence</label
                   >
                   <input
                     type="checkbox"
@@ -771,7 +773,6 @@ onMounted(async () => {
                     v-model="is_recurrence"
                     :disabled="props.readOnly"
                     @change=""
-                    required
                   />
                 </div>
                 <div

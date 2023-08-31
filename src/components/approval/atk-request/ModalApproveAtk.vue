@@ -326,7 +326,7 @@ onBeforeMount(() => {
                   {{ value?.qty_requested }}
                 </td>
 
-                <td v-else class="border border-[#B9B9B9]">
+                <td v-else-if="props.dataArr.status == 'Approve'" class="border border-[#B9B9B9]">
                   {{ value?.qty_approved }}
                 </td>
 
