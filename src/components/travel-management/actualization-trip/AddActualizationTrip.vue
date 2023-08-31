@@ -7,13 +7,14 @@
     import deleteicon from "@/assets/navbar/delete_icon.svg"
 
     import Api from '@/utils/Api'
+    import Swal from "sweetalert2"
 
     import modalHeader from "@/components/modal/modalHeader.vue"
     import modalFooter from "@/components/modal/modalFooter.vue"
 
     import fetchCityUtils from '@/utils/Fetch/Reference/fetchCity'
 
-    const emits = defineEmits('submitsSuccess')
+    const emits = defineEmits('submitSuccess')
     
     let isVisible = ref(false)
     let departureDate = ref(new Date().toJSON().slice(0, 10))
@@ -79,6 +80,15 @@
                 total_tlk: totalTLK.value,
             })
             const api2 = await Api.post(`/actual_trip/submit/${api.data.data.id}`)
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: "Your work has been saved",
+                showConfirmButton: false,
+                timer: 1500,
+            });
+            isVisible.value = false
+            emits('submitSuccess')
         }
 
     }
