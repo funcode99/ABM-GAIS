@@ -38,14 +38,6 @@ const inputClass =
 
 const isApprove = ref(false)
 
-const totalApprove = () => {
-  return itemTable.value
-    .map(({ qtyApproved }) => qtyApproved)
-    .reduce((accumulator, currentValue) => {
-      return accumulator + currentValue
-    }, 0)
-}
-
 const changeSite = async (id_site) => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
@@ -60,14 +52,21 @@ const fetchDetailById = async (id) => {
     const res = await Api.get(`/request_atk/get_by_atk_request_w_id/${id}`)
     const get_wh = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
 
-    itemTable.value = res.data.data
-    itemTable.value.map((element, index) => {
-      element.total_stock = element.stock_real_wh
-      idWh.value[index] = element.id_warehouse
-      element.qtyApproved = element.qty_approved
-      element.qty_requested = element.qty_approved
-      element.array_warehouse = element.array_warehouse
+    console.log(res.data.data)
+    itemTable.value = res.data.data.map((element, index) => {
+      return {
+        ...element,
+        total_stock: element.stock_real_wh,
+        qtyApproved: element.qty_approved,
+        qty_requested: element.qty_approved,
+      }
     })
+
+    itemTable.value = itemTable.value.reduce((acc, detail) => {
+      const item_name = detail.item_name
+      ;(acc[item_name] = acc[item_name] || []).push(detail)
+      return acc
+    }, {})
   } else {
     const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
     itemTable.value = res.data.data.map((item) => {
@@ -116,7 +115,7 @@ const addItem = async (ind, data) => {
   tableKey.value++
 }
 
-const updateQty = (index, data) => {
+const updateQty = (item, data) => {
   if (data.qtyApproved > data.total_stock || data.qtyApproved < 0) {
     data.qtyApproved = data.total_stock
   }
@@ -125,10 +124,20 @@ const updateQty = (index, data) => {
     data.qtyApproved = data.qty_requested
   }
 
-  // if (totalApprove() > data.qty_requested) {
-  //   data.qtyApproved = 0
-  //   data.qtyApproved = data.qty_requested - totalApprove()
-  // }
+  const countTotalApprove = parseInt(totalApprove(item))
+  // console.log(totalApprove(item), data.qty_requested)
+
+  if (countTotalApprove > data.qty_requested) {
+    data.qtyApproved = Math.abs(countTotalApprove - data.qty_requested)
+  }
+}
+
+const totalApprove = (item) => {
+  return item
+    .map(({ qtyApproved }) => qtyApproved)
+    .reduce((accumulator, currentValue) => {
+      return accumulator + currentValue
+    }, 0)
 }
 
 const removeItem = async (indexItem, indexDetail) => {
@@ -138,7 +147,7 @@ const removeItem = async (indexItem, indexDetail) => {
 
 const submit = async () => {
   itemPayload.value = []
-  const warehouse_detail = itemTable.value.map((element, index) => {
+  const warehouse_detail = itemTable.value.flat().map((element, index) => {
     // element.remarks = notesName.value ? notesName.value : ""
     // element.qty_approved = qtyApproved.value[index]
     // element.id_warehouse = idWh.value[index]
@@ -158,7 +167,7 @@ const submit = async () => {
     notes: notesName.value ? notesName.value : "",
   }
 
-  console.log(payload.value)
+  // console.log(payload.value)
 
   isApprove.value = true
   if (isApprove.value) {
@@ -233,9 +242,9 @@ onBeforeMount(() => {
         </p>
       </nav>
       <main
-        class="modal-box-inner-approval-atk p-10 h-[50vh] overflow-y-scroll w-ful"
+        class="modal-box-inner-approval-atk p-5 h-[50vh] overflow-y-scroll w-ful"
       >
-        <div v-for="(item, ind) in itemTable" :key="ind">
+        <div>
           <table class="table table-compact w-full mb-5">
             <thead class="font-JakartaSans font-bold text-xs">
               <tr class="bg-blue text-white h-8">
@@ -284,7 +293,11 @@ onBeforeMount(() => {
               </tr>
             </thead>
 
-            <tbody class="font-JakartaSans font-normal text-xs">
+            <tbody
+              v-for="(item, ind) in itemTable"
+              :key="ind"
+              class="font-JakartaSans font-normal text-xs"
+            >
               <tr class="h-16" v-for="(value, index) in item" :key="value.id">
                 <td
                   v-if="index == 0"
@@ -295,14 +308,17 @@ onBeforeMount(() => {
                 </td>
                 <td
                   v-if="index == 0"
-                  align="center"
                   :rowspan="item.length"
+                  align="center"
                   class="border border-[#B9B9B9]"
                 >
                   {{ value.uom_name }}
                 </td>
+
                 <td
-                  v-if="index == 0"
+                  v-if="
+                    index == 0 && props.dataArr.status == 'Waiting Approval'
+                  "
                   align="center"
                   :rowspan="item.length"
                   class="border border-[#B9B9B9]"
@@ -310,36 +326,46 @@ onBeforeMount(() => {
                   {{ value?.qty_requested }}
                 </td>
 
+                <td v-else class="border border-[#B9B9B9]">
+                  {{ value?.qty_approved }}
+                </td>
+
                 <td class="border border-[#B9B9B9] w-150px">
-                  <Multiselect
-                    class="text-sm"
-                    v-model="value.id_warehouse"
-                    :options="value.array_warehouse"
-                    label="warehouse_name"
-                    value-prop="id_warehouse"
-                    :can-clear="false"
-                    @select="
-                      (option, select$) => {
-                        value.total_stock = select$.stock_available
-                      }
-                    "
-                    @open="
-                      () => {
-                        const selectedWh = itemTable
-                          .map(({ id_warehouse }) => id_warehouse)
-                          .filter((item) => item)
+                  <div v-if="value.array_warehouse">
+                    <Multiselect
+                      class="text-sm"
+                      v-model="value.id_warehouse"
+                      :options="value.array_warehouse"
+                      label="warehouse_name"
+                      value-prop="id_warehouse"
+                      :can-clear="false"
+                      @select="
+                        (option, select$) => {
+                          value.total_stock = select$.stock_available
+                        }
+                      "
+                      @open="
+                        () => {
+                          const selectedWh = item
+                            .map(({ id_warehouse }) => id_warehouse)
+                            .filter((item) => item)
 
-                        value.array_warehouse.forEach((item) => {
-                          item.disabled = selectedWh.includes(item.id_warehouse)
-                            ? true
-                            : false
-                        })
+                          value.array_warehouse.forEach((item) => {
+                            item.disabled = selectedWh.includes(
+                              item.id_warehouse
+                            )
+                              ? true
+                              : false
+                          })
 
-                        updateQty(ind, value)
-                      }
-                    "
-                  >
-                  </Multiselect>
+                          updateQty(item, value)
+                        }
+                      "
+                    >
+                    </Multiselect>
+                  </div>
+
+                  <div v-else>{{ value.warehouse_name }}</div>
                 </td>
                 <td class="border border-[#B9B9B9]">
                   {{ value.total_stock }}
@@ -352,7 +378,13 @@ onBeforeMount(() => {
                     class="bg-white w-full border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                     @input="
                       () => {
-                        updateQty(ind, value)
+                        if (props.dataArr.status == 'Waiting Approval') {
+                          updateQty(item, value)
+                        } else {
+                          if (value.qtyApproved > value.qty_approved) {
+                            value.qtyApproved = 0
+                          }
+                        }
                       }
                     "
                     :disabled="!value?.id_warehouse"
@@ -366,12 +398,16 @@ onBeforeMount(() => {
                     @click="addItem(ind, value)"
                     v-if="
                       value.array_warehouse.length > item.length &&
-                      index == item.length - 1
+                      index == item.length - 1 &&
+                      value.qtyApproved
                     "
                   >
                     <img :src="icon_add" class="w-6 h-6" alt="" />
                   </button>
-                  <button @click="removeItem(ind, index)" v-else>
+                  <button
+                    @click="removeItem(ind, index)"
+                    v-else-if="value.qtyApproved"
+                  >
                     <img :src="deleteicon" class="w-6 h-6" alt="" />
                   </button>
                 </td>
@@ -418,12 +454,12 @@ onBeforeMount(() => {
   overscroll-behavior: contain;
 }
 
-.modal-box-inner-approval-atk {
-  /* --tw-scale-x: 0.9;
-  --tw-scale-y: 0.9; */
-  /* transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+table {
+  --tw-scale-x: 0.9;
+  --tw-scale-y: 0.9;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y))
     rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); */
+    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
