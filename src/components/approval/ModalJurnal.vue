@@ -26,6 +26,8 @@ let isEditing = ref(false);
 let isHideButtonSave = ref(false);
 let alreadySave = ref(false);
 let isNoEdit = ref(false);
+let GLData = ref([]);
+let idCompany = ref("");
 
 let id = route.params.id;
 
@@ -76,6 +78,8 @@ const fetchCompany = async () => {
       companyCode.value = item.company_code;
     }
   });
+
+  fetchGLAccount(props.dataJurnal.id_company);
 };
 
 const fetchDataById = async (id) => {
@@ -84,6 +88,7 @@ const fetchDataById = async (id) => {
   try {
     const res = await Api.get(`/approval_non_travel/get_data/${id}`);
     dataCaNonTravel.value = res.data.data[0];
+    // console.log(dataCaNonTravel.value);
     typeDoc.value = props.dataJurnal.code_document;
     fetchSapByIdDoc(dataCaNonTravel.value.id_document);
   } catch (error) {
@@ -99,6 +104,7 @@ const fetchSapByIdDoc = async (id) => {
       `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
     );
     dataSapDoc.value = res.data.data;
+    // console.log(dataSapDoc.value);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -118,11 +124,20 @@ const fetchPK = async () => {
   pkData.value = res.data.data;
 };
 
+const fetchGLAccount = async (id) => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const res = await Api.get(`/jurnal/get_gl_account/${id}`);
+  GLData.value = res.data.data;
+  // console.log(res.data.data);
+};
+
 onBeforeMount(() => {
   fetchCompany();
   fetchDataById(id);
   fetchCostCenter();
   fetchPK();
+  // fetchGLAccount();
 });
 
 const editTableHeader = () => {
@@ -147,6 +162,7 @@ const saveJurnal = async (data) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   try {
     let payload = {
+      id_document: props.dataJurnal.id_document,
       doc_number_sap: null,
       company_code: companyCode.value,
       document_date: props.dataJurnal.doc_created_at,
@@ -158,16 +174,16 @@ const saveJurnal = async (data) => {
       order: null,
       claim_cat: props.dataJurnal.code_document,
       array_data: dataArray,
-      gl_reccon_acc: null,
+      gl_reccon_acc: data.gl_reccon_acc,
       short_text: null,
-      item_text: null,
-      cost_center: null,
-      profit_center: null,
-      wbs: null,
-      due_date: null,
+      item_text: data.item_text,
+      cost_center: data.cost_center,
+      profit_center: data.profit_center,
+      wbs: data.wbs,
+      due_date: data.due_date,
     };
     const res = await Api.post("/jurnal/save_sap", payload);
-
+    console.log(payload);
     Swal.fire({
       position: "center",
       icon: "success",
@@ -178,6 +194,7 @@ const saveJurnal = async (data) => {
     isEditing.value = false;
     isNoEdit.value = true;
     alreadySave.value = true;
+    fetchSapByIdDoc();
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -273,7 +290,8 @@ const inputClass =
                 v-if="isHideButtonSave"
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
-                Done
+                <!-- Done -->
+                Save
               </button>
 
               <button
@@ -489,17 +507,29 @@ const inputClass =
                   </td>
 
                   <td>
-                    <input
+                    <select
+                      v-model="data.gl_reccon_acc"
                       :class="inputClass"
-                      :disabled="data.item == idEdit ? false : true"
-                    />
+                      :disabled="
+                        idEdit == null && isEditing && !alreadySave
+                          ? false
+                          : data.item == idEdit
+                          ? false
+                          : true
+                      "
+                    >
+                      <option
+                        v-for="dataGL in GLData"
+                        :key="dataGL.id"
+                        :value="dataGL.gl_account"
+                      >
+                        {{ dataGL.gl_account }}
+                      </option>
+                    </select>
                   </td>
 
                   <td>
-                    <input
-                      :class="inputClass"
-                      :disabled="data.item == idEdit ? false : true"
-                    />
+                    <input :class="inputClass" disabled />
                   </td>
 
                   <td>
@@ -520,7 +550,13 @@ const inputClass =
                     <input
                       v-model="data.item_text"
                       :class="inputClass"
-                      :disabled="data.item == idEdit ? false : true"
+                      :disabled="
+                        idEdit == null && isEditing && !alreadySave
+                          ? false
+                          : data.item == idEdit
+                          ? false
+                          : true
+                      "
                     />
                   </td>
 
@@ -528,10 +564,20 @@ const inputClass =
                     <select
                       v-model="data.cost_center"
                       :class="inputClass"
-                      :disabled="data.item == idEdit ? false : true"
+                      :disabled="
+                        idEdit == null && isEditing && !alreadySave
+                          ? false
+                          : data.item == idEdit
+                          ? false
+                          : true
+                      "
                     >
-                      <option v-for="data in costCenterData" :key="data.id">
-                        {{ data.cost_center_name }}
+                      <option
+                        v-for="dataCostCenter in costCenterData"
+                        :key="dataCostCenter.id"
+                        :value="dataCostCenter.cost_center_code"
+                      >
+                        {{ dataCostCenter.cost_center_name }}
                       </option>
                     </select>
                   </td>
@@ -540,7 +586,13 @@ const inputClass =
                     <input
                       v-model="data.profit_center"
                       :class="inputClass"
-                      :disabled="data.item == idEdit ? false : true"
+                      :disabled="
+                        idEdit == null && isEditing && !alreadySave
+                          ? false
+                          : data.item == idEdit
+                          ? false
+                          : true
+                      "
                     />
                   </td>
 
@@ -548,7 +600,13 @@ const inputClass =
                     <input
                       v-model="data.wbs"
                       :class="inputClass"
-                      :disabled="data.item == idEdit ? false : true"
+                      :disabled="
+                        idEdit == null && isEditing && !alreadySave
+                          ? false
+                          : data.item == idEdit
+                          ? false
+                          : true
+                      "
                     />
                   </td>
 
@@ -556,7 +614,13 @@ const inputClass =
                     <input
                       v-model="data.due_date"
                       :class="inputClass"
-                      :disabled="data.item == idEdit ? false : true"
+                      :disabled="
+                        idEdit == null && isEditing && !alreadySave
+                          ? false
+                          : data.item == idEdit
+                          ? false
+                          : true
+                      "
                     />
                   </td>
 
