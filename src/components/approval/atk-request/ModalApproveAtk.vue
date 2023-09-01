@@ -124,20 +124,24 @@ const updateQty = (item, data) => {
     data.qtyApproved = data.qty_requested
   }
 
-  const countTotalApprove = parseInt(totalApprove(item))
-  // console.log(totalApprove(item), data.qty_requested)
+  const countTotalApprove = totalApprove([...item])
+  console.log(totalApprove(item), data.qty_requested)
 
   if (countTotalApprove > data.qty_requested) {
-    data.qtyApproved = Math.abs(countTotalApprove - data.qty_requested)
+    data.qtyApproved = 0
+    data.qtyApproved = Math.abs(data.qty_requested - totalApprove([...item]))
   }
 }
 
 const totalApprove = (item) => {
-  return item
+  const total = item
     .map(({ qtyApproved }) => qtyApproved)
     .reduce((accumulator, currentValue) => {
       return accumulator + currentValue
     }, 0)
+
+
+    return parseInt(total)
 }
 
 const removeItem = async (indexItem, indexDetail) => {
@@ -326,7 +330,10 @@ onBeforeMount(() => {
                   {{ value?.qty_requested }}
                 </td>
 
-                <td v-else-if="props.dataArr.status == 'Approve'" class="border border-[#B9B9B9]">
+                <td
+                  v-else-if="props.dataArr.status == 'Approve'"
+                  class="border border-[#B9B9B9]"
+                >
                   {{ value?.qty_approved }}
                 </td>
 
@@ -399,14 +406,15 @@ onBeforeMount(() => {
                     v-if="
                       value.array_warehouse.length > item.length &&
                       index == item.length - 1 &&
-                      value.qtyApproved
+                      value.qtyApproved &&
+                      value.qty_requested > totalApprove(item)
                     "
                   >
                     <img :src="icon_add" class="w-6 h-6" alt="" />
                   </button>
                   <button
+                    v-else-if="item.length > 1"
                     @click="removeItem(ind, index)"
-                    v-else-if="value.qtyApproved"
                   >
                     <img :src="deleteicon" class="w-6 h-6" alt="" />
                   </button>

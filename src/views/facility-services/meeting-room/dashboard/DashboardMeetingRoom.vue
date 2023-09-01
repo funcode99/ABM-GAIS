@@ -36,6 +36,7 @@ const chartStatusColor = {
   Booked: "bg-primary",
   Done: "bg-green",
   Cancelled: "bg-red",
+  "Waiting Approval": "bg-red",
 }
 
 let dataArr = ref([])
@@ -329,18 +330,21 @@ onBeforeMount(async () => {
               :minSplitWidth="200"
               :on-event-create="onEventCreate"
               @event-drag-create="openModal"
-              sticky-split-labels
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
               style="width: 300px; height: 70vh"
               class="basis-8/12"
               :on-event-click="openModal"
+              :sticky-split-labels="true"
             >
-              <template #split-label="{ split }">
+              <!-- <template
+                #split-label="{ split }"
+                style="position: sticky; top: 0"
+              >
                 <strong :style="`color: ${split.color}`">{{
                   split.label
                 }}</strong>
-              </template>
+              </template> -->
             </vue-cal>
             <ModalAddBookingRoom
               v-if="visibleModal"

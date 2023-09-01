@@ -719,12 +719,12 @@ const importData = async () => {
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}
                     </td>
-                    <td class="font-JakartaSans font-normal text-sm p-0">
+                    <td class="font-JakartaSans font-bold text-sm p-0">
                       <span
                         :class="
                           data.status == 'Submitted'
-                            ? 'status-done'
-                            : 'font-bold'
+                            ? 'text-green'
+                            : 'text-black'
                         "
                         >{{ data.status }}</span
                       >

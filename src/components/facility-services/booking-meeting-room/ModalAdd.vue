@@ -181,9 +181,7 @@ const getDetailRoom = async () => {
 }
 
 const fetchDataById = async () => {
-  console.log(dataForm.value)
   remarks.value = dataForm.value?.remarks ?? ""
-  id_meeting_room.value = dataForm.value.id_meeting_room
   floor.value = dataForm.value.floor
   link.value = dataForm.value.link
   capacity.value = dataForm.value.capacity
@@ -196,14 +194,32 @@ const fetchDataById = async () => {
   startTime.value.minutes = dataForm.value.start_time.split(":")[1]
   endTime.value.hours = dataForm.value.end_time.split(":")[0]
   endTime.value.minutes = dataForm.value.end_time.split(":")[1]
+  end_date.value = dataForm.value.recurrence_end || dataForm.value.end_date
   tempTime.value[0] = startTime.value
   tempTime.value[1] = endTime.value
   time.value = tempTime.value
+  is_recurrence.value = dataForm.value.is_recurrence
   external.value = dataForm.value.external
+  recurrence.value = dataForm.value.recurrence
+  participant.value = dataForm.value.participant
 
-  const api = await Api.get(`employee/get`)
-  listEmployee.value = api.data.data
+  form.days = dataForm.value.days.split(",").map(Number)
+
+  listRoom.value = [
+    {
+      id: dataForm.value.id_meeting_room,
+      name_meeting_room: dataForm.value.name_meeting_room,
+    },
+  ]
+  id_meeting_room.value = dataForm.value.id_meeting_room
+
+  listEmployee.value = dataForm.value.participant_array.map((item) => {
+    return { ...item, id: item.id_employee }
+  })
   selectedEmployee.value = dataForm.value.participant
+
+  // selectedEmployee.value = 1
+  // listEmployee.value = 1
 }
 
 const fetchGetCompany = async () => {
@@ -437,11 +453,12 @@ const filteredSites = computed(() => {
 })
 
 onMounted(async () => {
+  console.log("open")
   fetchCondition()
   await fetchSitesByUserId()
   if (dataForm.value) {
-    fetchDataById()
     getDetailRoom()
+    fetchDataById()
   }
 })
 </script>
@@ -468,7 +485,10 @@ onMounted(async () => {
         <form @submit.prevent="saveForm()">
           <main class="modal-box-inner pb-5 overflow-auto h-[80vh]">
             <div>
-              <div v-if="readOnly" class="flex gap-5 pb-5 px-5">
+              <div
+                v-if="readOnly && dataForm.status == 'Waiting Approval'"
+                class="flex gap-5 pb-5 px-5"
+              >
                 <button
                   class="btn btn-md w-[150px] bg-red border-none"
                   @click="
@@ -714,6 +734,7 @@ onMounted(async () => {
                     placeholder="Select Employee"
                     track-by="employee_name"
                     label="employee_name"
+                    valueProp="id"
                     :close-on-select="false"
                     :searchable="true"
                     :options="listEmployee"
@@ -825,12 +846,10 @@ onMounted(async () => {
                     auto-apply
                     required
                   />
-                  <div
-                    v-if="recurrence == 'weekly'"
-                    class="grid grid-rows-1"
-                    :value="form.days"
-                  >
+                  <div v-if="recurrence == 'weekly'" class="grid grid-rows-1">
                     <WeeklyDayPicker
+                      :disabled="readOnly"
+                      :value="form.days"
                       @update="
                         ($event) => {
                           form.days = $event

@@ -121,7 +121,8 @@ const fetchDataById = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const api = await Api.get(`book_meeting_room/get/${id}`)
   dataArr.value = api.data.data[0]
-  dataArr.value.days = dataArr.value.days.split(",").map((day) => parseInt(day))
+  dataArr.value.days =
+    dataArr.value?.days?.split(",").map((day) => parseInt(day)) || []
 }
 
 const submit = async () => {
@@ -366,7 +367,11 @@ const inputClass =
               Cancel
             </button>
             <button
-              v-if="new Date() > fullStartMeeting && !dataArr.duration_start"
+              v-if="
+                new Date() > fullStartMeeting &&
+                !dataArr.duration_start &&
+                dataArr.status == 'Booked'
+              "
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               @click="startMeeting()"
             >
@@ -477,9 +482,11 @@ const inputClass =
 
                     <td class="border border-[#B9B9B9]">
                       <div
-                        v-for="(facility, index) in dataArr.facility_array.map(
+                        v-for="(
+                          facility, index
+                        ) in dataArr?.facility_array?.map(
                           ({ facility_name }) => facility_name
-                        )"
+                        ) || []"
                       >
                         {{ index + 1 }}. {{ facility }}
                       </div>
@@ -572,7 +579,10 @@ const inputClass =
                     </tr>
                     <tr>
                       <th>Duration</th>
-                      <td v-if="dataArr.duration_end && dataArr.duration_start" class="font-medium">
+                      <td
+                        v-if="dataArr.duration_end && dataArr.duration_start"
+                        class="font-medium"
+                      >
                         :
                         {{ duration }}
                       </td>
