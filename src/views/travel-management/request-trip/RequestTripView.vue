@@ -1,1094 +1,1506 @@
 <script setup>
-    import { ref, onBeforeMount, provide, watch } from 'vue'
-    
-    import miniABM from '@/assets/mini-abm.png'
-    import userImg from '@/assets/3-user.png'
-    import deleteDocumentIcon from '@/assets/delete_document_icon.png'
+  import {
+    ref,
+    onBeforeMount,
+    provide,
+    watch
+  } from 'vue'
 
-    import Api from '@/utils/Api'
+  import miniABM from '@/assets/mini-abm.png'
+  import userImg from '@/assets/3-user.png'
+  import deleteDocumentIcon from '@/assets/delete_document_icon.png'
+  import iconClose from "@/assets/navbar/icon_close.svg"
+  import Api from '@/utils/Api'
 
-    import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
-    import buttonCancelFormView from '@/components/atomics/buttonCancelFormView.vue'
-    import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
-    import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
+  import buttonAddFormView from '@/components/atomics/buttonAddFormView.vue'
+  import buttonCancelFormView from '@/components/atomics/buttonCancelFormView.vue'
+  import buttonEditFormView from '@/components/atomics/buttonEditFormView.vue'
+  import buttonSaveFormView from '@/components/atomics/buttonSaveFormView.vue'
 
-    import AddActualizationTripModal from '@/components/travel-management/actualization-trip/AddActualizationTrip.vue'
-    import EditActualizationTripModal from '@/components/travel-management/actualization-trip/EditActualizationTrip.vue'
-    
-    import Navbar from '@/components/layout/Navbar.vue'
-    import Sidebar from '@/components/layout/Sidebar.vue'
-    import Footer from '@/components/layout/Footer.vue'
-    import multiStepCircleVertical from '@/components/molecules/multiStepCircleVertical.vue'
-    import detailsFormHeader from '@/components/organisms/detailsFormHeader.vue'
+  import AddActualizationTripModal from '@/components/travel-management/actualization-trip/AddActualizationTrip.vue'
+  import EditActualizationTripModal from '@/components/travel-management/actualization-trip/EditActualizationTrip.vue'
 
-    import guestAsTravellerFormView from '@/components/request-trip/view-detail-form/guest-as-traveller-view.vue'
-    import airlinesFormView from '@/components/request-trip/view-detail-form/airlines-view.vue'
-    import taxiVoucherFormView from '@/components/request-trip/view-detail-form/taxi-voucher-view.vue'
-    import otherTransportationFormView from '@/components/request-trip/view-detail-form/other-transportation-view.vue'
-    import accomodationFormView from '@/components/request-trip/view-detail-form/accomodation-view.vue'
-    import cashAdvanceFormView from '@/components/request-trip/view-detail-form/cash-advance-view.vue'
+  import Navbar from '@/components/layout/Navbar.vue'
+  import Sidebar from '@/components/layout/Sidebar.vue'
+  import Footer from '@/components/layout/Footer.vue'
+  import multiStepCircleVertical from '@/components/molecules/multiStepCircleVertical.vue'
+  import detailsFormHeader from '@/components/organisms/detailsFormHeader.vue'
 
-    import guestAsTravellerTableView from '@/components/request-trip/table-step-form/guest-as-traveller-table.vue'
-    import airlinesTableView from '@/components/request-trip/table-step-form/airlines-table.vue'
-    import taxiVoucherTableView from '@/components/request-trip/table-step-form/taxi-voucher-table.vue'
-    import otherTransportationTableView from '@/components/request-trip/table-step-form/other-transportation-table.vue'
-    import accomodationTableView from '@/components/request-trip/table-step-form/accomodation-table.vue'
-    import cashAdvanceTableView from '@/components/request-trip/table-step-form/cash-advance-table.vue'
+  import checkButton from '@/components/molecules/checkButton.vue'
 
-    import arrow from '@/assets/request-trip-view-arrow.png'
+  import guestAsTravellerFormView from '@/components/request-trip/view-detail-form/guest-as-traveller-view.vue'
+  import airlinesFormView from '@/components/request-trip/view-detail-form/airlines-view.vue'
+  import taxiVoucherFormView from '@/components/request-trip/view-detail-form/taxi-voucher-view.vue'
+  import otherTransportationFormView from '@/components/request-trip/view-detail-form/other-transportation-view.vue'
+  import accomodationFormView from '@/components/request-trip/view-detail-form/accomodation-view.vue'
+  import cashAdvanceFormView from '@/components/request-trip/view-detail-form/cash-advance-view.vue'
 
-    import { useSidebarStore } from "@/stores/sidebar.js"
-    const sidebar = useSidebarStore()
+  import guestAsTravellerTableView from '@/components/request-trip/table-step-form/guest-as-traveller-table.vue'
+  import airlinesTableView from '@/components/request-trip/table-step-form/airlines-table.vue'
+  import taxiVoucherTableView from '@/components/request-trip/table-step-form/taxi-voucher-table.vue'
+  import otherTransportationTableView from '@/components/request-trip/table-step-form/other-transportation-table.vue'
+  import accomodationTableView from '@/components/request-trip/table-step-form/accomodation-table.vue'
+  import cashAdvanceTableView from '@/components/request-trip/table-step-form/cash-advance-table.vue'
 
-    let requestorName = localStorage.getItem('username')
+  import arrow from '@/assets/request-trip-view-arrow.png'
 
-    let headerCAData = ref(true)
+  import {
+    useSidebarStore
+  } from "@/stores/sidebar.js"
+  const sidebar = useSidebarStore()
 
-    let isEditing = ref(false)
-    let isAdding = ref(false)
+  let requestorName = localStorage.getItem('username')
 
-    let tab = ref('details')
-    let headerTitle = ref('Traveller')
-    let currentIndex = 0
-    let typeOfSubmitToProps = ref('none')
+  let headerCAData = ref(true)
 
-    let purposeOfTripData = ref([{}])
-    let travellerGuestData = ref([{}])
-    let airlinesData = ref([{}])
-    let taxiVoucherData = ref([{}])
-    let otherTransportationData = ref([{}])
-    let accomodationData = ref([{}])
-    let cashAdvanceData = ref([{}])
-    let approvalStatusData = ref([{}])
+  let isEditing = ref(false)
+  let isAdding = ref(false)
 
-    let file = ref()
-    let filename = ref()
-    let fileSend = ref(null)
-    let notes = ref()
-    let dataIndex = ref(0)
-    let detailIndex = ref(0)
-    let currentSelectedData = ref(travellerGuestData.value)
+  let tab = ref('details')
+  let headerTitle = ref('Traveller')
+  let currentIndex = 0
+  let typeOfSubmitToProps = ref('none')
 
-    let showingValue = ref(1)
-    let viewLayout = ref('document')
-    let purposeOfTripName = ref('')
+  let purposeOfTripData = ref([{}])
+  let travellerGuestData = ref([{}])
+  let airlinesData = ref([{}])
+  let taxiVoucherData = ref([{}])
+  let otherTransportationData = ref([{}])
+  let accomodationData = ref([{}])
+  let cashAdvanceData = ref([{}])
+  let approvalStatusData = ref([{}])
 
-    provide('travellerDataView', travellerGuestData)
-    provide('airlinesDataView', airlinesData)
-    provide('taxiVoucherDataView', taxiVoucherData)
-    provide('otherTransportationDataView', otherTransportationData)
-    provide('accomodationDataView', accomodationData)
-    provide('cashAdvanceDataView', cashAdvanceData)
+  let file = ref()
+  let filename = ref()
+  let fileSend = ref(null)
+  let notes = ref()
+  let dataIndex = ref(0)
+  let detailIndex = ref(0)
+  let currentSelectedData = ref(travellerGuestData.value)
 
-    let listOfFormDataProps = [travellerGuestData, airlinesData, taxiVoucherData, otherTransportationData, accomodationData, cashAdvanceData] 
+  let showingValue = ref(1)
+  let viewLayout = ref('document')
+  let purposeOfTripName = ref('')
 
-    const getPurposeOfTrip = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/request_trip/get/${localStorage.getItem('tripIdView')}`)      
-        purposeOfTripData.value = api.data.data
-        file.value = purposeOfTripData.value[currentIndex].file
-        filename.value = purposeOfTripData.value[currentIndex].file_name
-        purposeOfTripName.value = purposeOfTripData.value[currentIndex].document_name
-      } catch (error) {
-        console.log(error)
-        purposeOfTripData.value = [{}]
-      }      
-    }
+  let lockScrollbarEdit = ref(false)
 
-    const getTravellerGuest = async () => {
-      
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        let api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
-        travellerGuestData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        travellerGuestData.value = [{}]
-      }
+  provide('travellerDataView', travellerGuestData)
+  provide('airlinesDataView', airlinesData)
+  provide('taxiVoucherDataView', taxiVoucherData)
+  provide('otherTransportationDataView', otherTransportationData)
+  provide('accomodationDataView', accomodationData)
+  provide('cashAdvanceDataView', cashAdvanceData)
 
-    }
+  let listOfFormDataProps = [travellerGuestData, airlinesData, taxiVoucherData, otherTransportationData,
+    accomodationData, cashAdvanceData
+  ]
 
-    const getAirlines = async () => {
-
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/flight_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)      
-        airlinesData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        airlinesData.value = [{}]
-      }
-
-    }
- 
-    const getTaxiVoucher = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/taxi_voucher/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)      
-        taxiVoucherData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        taxiVoucherData.value = [{}]
-      }
-    }
-
-    const getOtherTransportation = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/other_transport/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)      
-        otherTransportationData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        otherTransportationData.value = [{}]
-      }
-    }
-
-    const getAccomodation = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
-        accomodationData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        accomodationData.value = [{}]
-      }
-    }
-
-    const getCashAdvance = async () => {
-      console.log('masuk ke get cash advance')
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-        let api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)    
-        cashAdvanceData.value = api.data.data
-        headerCAData.value = true
-        console.log(headerCAData.value)
-      } catch (error) {
-        console.log(error)
-        cashAdvanceData.value = [{}]
-        headerCAData.value = false
-        console.log(headerCAData.value)
-      }
-    }
-
-    const getApprovalStatus = async () => {
-      try {
-        const token = JSON.parse(localStorage.getItem('token'))
-        Api.defaults.headers.common.Authorization = `Bearer ${token}`
-        let api = await Api.get(`/request_trip/get_history_approval/${localStorage.getItem('tripIdView')}`)    
-        approvalStatusData.value = api.data.data
-      } catch (error) {
-        console.log(error)
-        approvalStatusData.value = [{}]
-      }
-    }
-
-    const submitRequestTrip = async () => {
-      
+  const getPurposeOfTrip = async () => {
+    try {
       const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      
-      try {
-        const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripIdView")}`)
-        console.log(api)
-      } catch (error) {
-        console.log(error)
-      }
-
-    }
-
-    const submitPurposeOfTrip = async () => {
-
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-
-      const payload = {
-        id_site: purposeOfTripData.value[0].id_site,
-        id_employee: purposeOfTripData.value[0].id_employee,
-        code_document: purposeOfTripData.value[0].id_document,
-        no_request_trip: purposeOfTripData.value[0].no_request_trip,
-        notes: notes.value,
-        id_city_from: purposeOfTripData.value[0].id_city_from,
-        id_city_to: purposeOfTripData.value[0].id_city_to,
-        date_departure: purposeOfTripData.value[0].date_departure,
-        date_arrival: purposeOfTripData.value[0].date_arrival,
-        id_zona: purposeOfTripData.value[0].id_zona,
-        tlk_per_day: purposeOfTripData.value[0].tlk_per_day,
-        total_tlk: purposeOfTripData.value[0].total_tlk,
-      }
-
-      if(fileSend !== null) {
-        payload.file = fileSend.value
-      }
-
-      const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, payload)
-
-      delete payload.file
-      fileSend.value = null
-      isEditing.value = false
-
-    }
-
-    const changeSelected = (title) => {
-      headerTitle.value = title
-    }
-
-    const assignSelectedData = () => {
-      headerTitle.value === 'Traveller' ? currentSelectedData.value = travellerGuestData.value 
-      : headerTitle.value === 'Airlines' ? currentSelectedData.value = airlinesData.value 
-      : headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value
-      : headerTitle.value === 'Other Transportation' ? currentSelectedData.value = otherTransportationData.value
-      : headerTitle.value === 'Accomodation' ? currentSelectedData.value = accomodationData.value
-      : headerTitle.value === 'Cash Advance' ? currentSelectedData.value = cashAdvanceData.value
-      : travellerGuestData.value
-    }
-
-    let actualizationData = ref([])
-
-    const getActualizationByTripId = async () => {
-
-      const token = JSON.parse(localStorage.getItem('token'))
-      Api.defaults.headers.common.Authorization = `Bearer ${token}`
-      const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem("tripIdView")}`)
-      actualizationData.value = api.data.data
-
-    }
-
-    onBeforeMount(() => {
-      getPurposeOfTrip()
-      getTravellerGuest()
-      getAirlines()
-      getTaxiVoucher()
-      getOtherTransportation()
-      getAccomodation()
-      getCashAdvance()
-      getApprovalStatus()
-      getActualizationByTripId()
-    })
-
-    watch(purposeOfTripData, () => {
-      notes.value = purposeOfTripData.value[currentIndex].notes
-    })
-
-    let propsCheck = ref(null)
-
-    const assignToCheckProps = () => {
-      if(headerTitle.value === 'Traveller') {
-        propsCheck.value = travellerGuestData.value
-      } else if (headerTitle.value === 'Airlines') {
-        propsCheck.value = airlinesData.value
-      } else if (headerTitle.value === 'Taxi Voucher') {
-        propsCheck.value = taxiVoucherData.value  
-      } else if (headerTitle.value === 'Other Transportation') {
-        propsCheck.value = otherTransportationData.value    
-      } else if (headerTitle.value === 'Accomodation') {
-        propsCheck.value = accomodationData.value      
-      } else if (headerTitle.value === 'Accomodation') {
-        propsCheck.value = cashAdvanceData.value        
-      }
-    }
-
-    watch(headerTitle, () => {
-      
-      assignToCheckProps()
-
-      assignSelectedData()
-      dataIndex.value = 0
-      showingValue.value = 1
-
-      if(headerTitle.value === 'Cash Advance') {
-        getCashAdvance()
-      }
-
-    })
-
-    watch(listOfFormDataProps, () => {
-      assignToCheckProps()
-    })
-
-    let count = ref(1)
-
-    // watch semua fetch data biar ui nya ke update, asu tenan
-    // bentrok assignment value nya kampret
-    watch(travellerGuestData, () => {
-      currentSelectedData.value = travellerGuestData.value
-      count.value < 7 ? count.value++ : count.value
-    })
-
-    watch(airlinesData, () => {
-      currentSelectedData.value = airlinesData.value
-      count.value < 7 ? count.value++ : count.value
-    })
-
-    watch(taxiVoucherData, () => {
-      currentSelectedData.value = taxiVoucherData.value
-      count.value < 7 ? count.value++ : count.value
-    })
-
-    watch(otherTransportationData, () => {
-      currentSelectedData.value = otherTransportationData.value
-      count.value < 7 ? count.value++ : count.value
-    })
-
-    watch(accomodationData, () => {
-      currentSelectedData.value = accomodationData.value
-      count.value < 7 ? count.value++ : count.value
-    })
-
-    watch(cashAdvanceData, () => {
-      currentSelectedData.value = cashAdvanceData.value
-      count.value < 7 ? count.value++ : count.value
-    })
-
-    watch(count, () => {
-      if(count.value === 7) {
-        currentSelectedData.value = travellerGuestData.value
-      }
-    })
-
-    watch(currentSelectedData, () => {
-      dataIndex.value = 0
-      showingValue.value = 1
-    })
-
-    watch(isEditing, () => {
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      let api = await Api.get(`/request_trip/get/${localStorage.getItem('tripIdView')}`)
+      purposeOfTripData.value = api.data.data
       file.value = purposeOfTripData.value[currentIndex].file
-      if(isEditing.value === false) {
-        typeOfSubmitToProps.value = 'none'
-        isAdding.value = false
-      }
-    })
+      filename.value = purposeOfTripData.value[currentIndex].file_name
+      purposeOfTripName.value = purposeOfTripData.value[currentIndex].document_name
+    } catch (error) {
+      console.log(error)
+      purposeOfTripData.value = [{}]
+    }
+  }
 
-    const changeType = (typeOfSubmit) => {
+  const getTravellerGuest = async () => {
 
-      if(typeOfSubmit === 'Check Props') {
-        JSON.stringify(propsCheck.value) === '[{}]' ? typeOfSubmit = 'Submit Add' : typeOfSubmit = 'Add'
-      }
-
-      typeOfSubmitToProps.value = typeOfSubmit
-
-      if(typeOfSubmit === 'Add') {
-        isAdding.value = true
-      }
-
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      let api = await Api.get(`/travel_guest/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
+      travellerGuestData.value = api.data.data
+    } catch (error) {
+      console.log(error)
+      travellerGuestData.value = [{}]
     }
 
-    const resetTypeOfSubmit = (Type) => {
+  }
+
+  const getAirlines = async () => {
+
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      let api = await Api.get(`/flight_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
+      airlinesData.value = api.data.data
+    } catch (error) {
+      console.log(error)
+      airlinesData.value = [{}]
+    }
+
+  }
+
+  const getTaxiVoucher = async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      let api = await Api.get(`/taxi_voucher/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
+      taxiVoucherData.value = api.data.data
+    } catch (error) {
+      console.log(error)
+      taxiVoucherData.value = [{}]
+    }
+  }
+
+  const getOtherTransportation = async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      let api = await Api.get(`/other_transport/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
+      otherTransportationData.value = api.data.data
+    } catch (error) {
+      console.log(error)
+      otherTransportationData.value = [{}]
+    }
+  }
+
+  const getAccomodation = async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      let api = await Api.get(`/accomodation_trip/get_by_travel_id/trip_id/${localStorage.getItem('tripIdView')}`)
+      accomodationData.value = api.data.data
+    } catch (error) {
+      console.log(error)
+      accomodationData.value = [{}]
+    }
+  }
+
+  const getCashAdvance = async () => {
+    console.log('masuk ke get cash advance')
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+      let api = await Api.get(`/cash_advance/get_by_trip_id/${localStorage.getItem('tripIdView')}`)
+      cashAdvanceData.value = api.data.data
+      headerCAData.value = true
+      console.log(headerCAData.value)
+    } catch (error) {
+      console.log(error)
+      cashAdvanceData.value = [{}]
+      headerCAData.value = false
+      console.log(headerCAData.value)
+    }
+  }
+
+  const getApprovalStatus = async () => {
+    try {
+      const token = JSON.parse(localStorage.getItem('token'))
+      Api.defaults.headers.common.Authorization = `Bearer ${token}`
+      let api = await Api.get(`/request_trip/get_history_approval/${localStorage.getItem('tripIdView')}`)
+      approvalStatusData.value = api.data.data
+    } catch (error) {
+      console.log(error)
+      approvalStatusData.value = [{}]
+    }
+  }
+
+  const submitRequestTrip = async () => {
+
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+    try {
+      const api = await Api.post(`/request_trip/submit/${localStorage.getItem("tripIdView")}`)
+      console.log(api)
+    } catch (error) {
+      console.log(error)
+    }
+
+  }
+
+  const submitPurposeOfTrip = async () => {
+
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+
+    const payload = {
+      id_site: purposeOfTripData.value[0].id_site,
+      id_employee: purposeOfTripData.value[0].id_employee,
+      code_document: purposeOfTripData.value[0].id_document,
+      no_request_trip: purposeOfTripData.value[0].no_request_trip,
+      notes: notes.value,
+      id_city_from: purposeOfTripData.value[0].id_city_from,
+      id_city_to: purposeOfTripData.value[0].id_city_to,
+      date_departure: purposeOfTripData.value[0].date_departure,
+      date_arrival: purposeOfTripData.value[0].date_arrival,
+      id_zona: purposeOfTripData.value[0].id_zona,
+      tlk_per_day: purposeOfTripData.value[0].tlk_per_day,
+      total_tlk: purposeOfTripData.value[0].total_tlk,
+    }
+
+    if (fileSend !== null) {
+      payload.file = fileSend.value
+    }
+
+    const api = await Api.post(`/request_trip/update_data/${localStorage.getItem("tripIdView")}`, payload)
+
+    delete payload.file
+    fileSend.value = null
+    isEditing.value = false
+
+  }
+
+  const changeSelected = (title) => {
+    headerTitle.value = title
+  }
+
+  const showModal = () => {
+    lockScrollbarEdit.value = true
+  }
+
+  const assignSelectedData = () => {
+    headerTitle.value === 'Traveller' ? currentSelectedData.value = travellerGuestData.value :
+      headerTitle.value === 'Airlines' ? currentSelectedData.value = airlinesData.value :
+      headerTitle.value === 'Taxi Voucher' ? currentSelectedData.value = taxiVoucherData.value :
+      headerTitle.value === 'Other Transportation' ? currentSelectedData.value = otherTransportationData.value :
+      headerTitle.value === 'Accomodation' ? currentSelectedData.value = accomodationData.value :
+      headerTitle.value === 'Cash Advance' ? currentSelectedData.value = cashAdvanceData.value :
+      travellerGuestData.value
+  }
+
+  let actualizationData = ref([])
+
+  const getActualizationByTripId = async () => {
+
+    const token = JSON.parse(localStorage.getItem('token'))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
+    const api = await Api.get(`/actual_trip/get_by_id_trip/${localStorage.getItem("tripIdView")}`)
+    actualizationData.value = api.data.data
+
+  }
+
+  onBeforeMount(() => {
+    getPurposeOfTrip()
+    getTravellerGuest()
+    getAirlines()
+    getTaxiVoucher()
+    getOtherTransportation()
+    getAccomodation()
+    getCashAdvance()
+    getApprovalStatus()
+    getActualizationByTripId()
+  })
+
+  watch(purposeOfTripData, () => {
+    notes.value = purposeOfTripData.value[currentIndex].notes
+  })
+
+  let propsCheck = ref(null)
+
+  const assignToCheckProps = () => {
+    if (headerTitle.value === 'Traveller') {
+      propsCheck.value = travellerGuestData.value
+    } else if (headerTitle.value === 'Airlines') {
+      propsCheck.value = airlinesData.value
+    } else if (headerTitle.value === 'Taxi Voucher') {
+      propsCheck.value = taxiVoucherData.value
+    } else if (headerTitle.value === 'Other Transportation') {
+      propsCheck.value = otherTransportationData.value
+    } else if (headerTitle.value === 'Accomodation') {
+      propsCheck.value = accomodationData.value
+    } else if (headerTitle.value === 'Accomodation') {
+      propsCheck.value = cashAdvanceData.value
+    }
+  }
+
+  watch(headerTitle, () => {
+
+    assignToCheckProps()
+
+    assignSelectedData()
+    dataIndex.value = 0
+    showingValue.value = 1
+
+    if (headerTitle.value === 'Cash Advance') {
+      getCashAdvance()
+    }
+
+  })
+
+  watch(listOfFormDataProps, () => {
+    assignToCheckProps()
+  })
+
+  let count = ref(1)
+
+  // watch semua fetch data biar ui nya ke update, asu tenan
+  // bentrok assignment value nya kampret
+  watch(travellerGuestData, () => {
+    currentSelectedData.value = travellerGuestData.value
+    count.value < 7 ? count.value++ : count.value
+  })
+
+  watch(airlinesData, () => {
+    currentSelectedData.value = airlinesData.value
+    count.value < 7 ? count.value++ : count.value
+  })
+
+  watch(taxiVoucherData, () => {
+    currentSelectedData.value = taxiVoucherData.value
+    count.value < 7 ? count.value++ : count.value
+  })
+
+  watch(otherTransportationData, () => {
+    currentSelectedData.value = otherTransportationData.value
+    count.value < 7 ? count.value++ : count.value
+  })
+
+  watch(accomodationData, () => {
+    currentSelectedData.value = accomodationData.value
+    count.value < 7 ? count.value++ : count.value
+  })
+
+  watch(cashAdvanceData, () => {
+    currentSelectedData.value = cashAdvanceData.value
+    count.value < 7 ? count.value++ : count.value
+  })
+
+  watch(count, () => {
+    if (count.value === 7) {
+      currentSelectedData.value = travellerGuestData.value
+    }
+  })
+
+  watch(currentSelectedData, () => {
+    dataIndex.value = 0
+    showingValue.value = 1
+  })
+
+  watch(isEditing, () => {
+    file.value = purposeOfTripData.value[currentIndex].file
+    if (isEditing.value === false) {
       typeOfSubmitToProps.value = 'none'
-      Type === 'Add' ? isAdding.value = false : ''
+      isAdding.value = false
+    }
+  })
+
+  const changeType = (typeOfSubmit) => {
+
+    if (typeOfSubmit === 'Check Props') {
+      JSON.stringify(propsCheck.value) === '[{}]' ? typeOfSubmit = 'Submit Add' : typeOfSubmit = 'Add'
     }
 
-    const onChangePage = (pageOfItem) => {
-      typeOfSubmitToProps.value = 'none'
-      assignSelectedData()
-      dataIndex.value = pageOfItem-1
+    typeOfSubmitToProps.value = typeOfSubmit
+
+    if (typeOfSubmit === 'Add') {
+      isAdding.value = true
     }
 
-    const changeViewLayout = (layout) => {
-      viewLayout.value = layout
+  }
+
+  const resetTypeOfSubmit = (Type) => {
+    typeOfSubmitToProps.value = 'none'
+    Type === 'Add' ? isAdding.value = false : ''
+  }
+
+  const onChangePage = (pageOfItem) => {
+    typeOfSubmitToProps.value = 'none'
+    assignSelectedData()
+    dataIndex.value = pageOfItem - 1
+  }
+
+  const changeViewLayout = (layout) => {
+    viewLayout.value = layout
+  }
+
+  const enterNewTab = () => {
+    if (JSON.stringify(file.value) === "{}") {
+      return 0
+    } else {
+      window.open(file.value, '_blank')
     }
+  }
 
-    const enterNewTab = () => {
-      if(JSON.stringify(file.value) === "{}") {
-        return 0
-      } else {
-        window.open(file.value, '_blank')
-      }
-    }
+  const updatePhoto = (event) => {
+    fileSend.value = event.target.files[0]
+  }
 
-    const updatePhoto = (event) => {
-      fileSend.value = event.target.files[0]
-    }
+  const showCreateNewCAHeader = ref(false)
+  const submitNewCA = ref(false)
 
-    const showCreateNewCAHeader = ref(false)
-    const submitNewCA = ref(false)
+  let currentlyEditCAHeader = ref(false)
 
-    let currentlyEditCAHeader = ref(false)
+  // manggil localstorage harus banget pake kutip dua
+  let roleName = ref(JSON.parse(localStorage.getItem("id_role")))
 
-    // manggil localstorage harus banget pake kutip dua
-    let roleName = ref(JSON.parse(localStorage.getItem("id_role")))
-
+  const rowClass = 'flex justify-between mx-4 items-center gap-3 my-3'
+  const columnClass = 'flex flex-col flex-1'
+  const inputStylingClass =
+    'w-full md:w-full lg:w-full py-2 px-4 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer'
+  const labelStylingClass = 'block mb-2 font-JakartaSans font-medium text-sm'
 </script>
 
 <template>
 
-    <div class="flex flex-col w-full this h-[100vh]">
+  <div class="flex flex-col w-full this h-[100vh]">
 
-        <Navbar />
+    <Navbar />
 
-        <div class="flex w-screen content mt-[115px]">
+    <div class="flex w-screen content mt-[115px]">
 
-            <Sidebar class="flex-none" />
+      <Sidebar class="flex-none" />
 
-            <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin duration-500 ease-in-out"
-            :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
-          
-                <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
+      <div class="bg-[#e4e4e6] pb-20 pt-10 px-8 w-screen clean-margin duration-500 ease-in-out"
+        :class="[sidebar.isWide === true ? 'ml-[260px]' : 'ml-[100px]']">
 
-                    <div class="flex items-center gap-2">
+        <div class="bg-white rounded-xl pb-3 relative py-9 px-5">
 
-                      <router-link to="/request">
-                        <img :src="arrow" class="w-3 h-3" alt="">
-                      </router-link>
+          <div class="flex items-center gap-2">
 
-                      <h1 class="text-blue font-semibold">
-                        Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[currentIndex].no_request_trip }}</span>
-                      </h1>
+            <router-link to="/request">
+              <img :src="arrow" class="w-3 h-3" alt="">
+            </router-link>
 
-                      <div class="flex-1"></div>
+            <h1 class="text-blue font-semibold">
+              Request Trip<span class="text-[#0a0a0a]"> / {{ purposeOfTripData[currentIndex].no_request_trip }}</span>
+            </h1>
 
-                      <div class=" min-w-[114px] h-[42px] text-center text-base font-bold rounded-t-lg rounded-bl-3xl rounded-br-lg border flex items-center justify-center border-black px-3">
-                        {{ purposeOfTripData[currentIndex].status }}
-                      </div>
-                      
-                    </div>
+            <div class="flex-1"></div>
 
-                    <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
-                    <div class="flex gap-4 mt-6 mb-3 ml-5" 
-                  
-                    >
-                        
-                      <div 
-                      v-if="purposeOfTripData[currentIndex].status === 'Draft' || purposeOfTripData[currentIndex].status === 'Revision'"
-                      >
-                        <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
-                        <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
-                      </div>
-                        
-                      <!-- SUBMIT BUTTON -->
-                      <button 
-                        v-if="!isEditing" 
-                        @click="submitRequestTrip" 
-                        class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
-                      >
-                        Submit
-                      </button>
+            <div
+              class=" min-w-[114px] h-[42px] text-center text-base font-bold rounded-t-lg rounded-bl-3xl rounded-br-lg border flex items-center justify-center border-black px-3">
+              {{ purposeOfTripData[currentIndex].status }}
+            </div>
 
-                      <buttonCancelFormView
-                        v-if="isEditing"
-                        @click="isEditing = false; showCreateNewCAHeader = false"
-                      />
+          </div>
 
-                      <AddActualizationTripModal 
-                        v-if="actualizationData.length === 0 & purposeOfTripData[currentIndex].status === 'Confirmed'" 
-                        @submit-success=getActualizationByTripId
-                      />
+          <!-- SUBMIT & EDIT BUTTON FOR REQUEST TRIP HEADER -->
+          <div class="flex gap-4 mt-6 mb-3 ml-5">
 
-                      <div class="flex-1"></div>
+            <div
+              v-if="purposeOfTripData[currentIndex].status === 'Draft' || purposeOfTripData[currentIndex].status === 'Revision'">
+              <buttonEditFormView v-if="!isEditing" @click="isEditing = true" />
+              <buttonSaveFormView v-if="isEditing" @click="submitPurposeOfTrip" />
+            </div>
 
-                      <EditActualizationTripModal v-if="actualizationData.length > 0 & purposeOfTripData[currentIndex].status === 'Confirmed'"  />
+            <!-- SUBMIT BUTTON -->
+            <button v-if="!isEditing" @click="submitRequestTrip"
+              class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold">
+              Submit
+            </button>
 
-                    </div>
+            <buttonCancelFormView v-if="isEditing" @click="isEditing = false; showCreateNewCAHeader = false" />
 
-                    <!-- FORM READ ONLY -->
-                    <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
+            <AddActualizationTripModal
+              v-if="actualizationData.length === 0 & purposeOfTripData[currentIndex].status === 'Confirmed'"
+              @submit-success=getActualizationByTripId />
 
-                        <div class="flex flex-col gap-2">
-                                <span>Date Created <span class="text-[#f5333f]">*</span></span>
-                                <input 
-                                  type="text" 
-                                  disabled
-                                  :value="purposeOfTripData[currentIndex].created_at" 
-                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                                />
-                        </div>
+            <div class="flex-1"></div>
 
-                        <div class="flex flex-col gap-2">
+            <EditActualizationTripModal
+              v-if="actualizationData.length > 0 & purposeOfTripData[currentIndex].status === 'Confirmed'" />
 
-                          <span>File Attachment <span class="text-[#f5333f]">*</span></span>
+          </div>
 
-                          <div @click="enterNewTab">
+          <!-- FORM READ ONLY -->
+          <div class="grid grid-cols-2 pl-[71px] gap-y-3 mb-7">
 
-                                  <input
-                                    v-model="filename"
-                                    v-if="!isEditing"
-                                    type="text"
-                                    class="px-4 py-3 border border-[#e0e0e0] rounded-lg min-w-[80%] cursor-pointer" 
-                                    :disabled="!isEditing"                                 
-                                  />
+            <div class="flex flex-col gap-2">
+              <span>Date Created <span class="text-[#f5333f]">*</span></span>
+              <input type="text" disabled :value="purposeOfTripData[currentIndex].created_at"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" />
+            </div>
 
-                          </div>
-                              
-                          <input 
-                              @change="updatePhoto" 
-                              v-if="isEditing"
-                              type="file"
-                              class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                          />
+            <div class="flex flex-col gap-2">
 
-                        </div>
+              <span>File Attachment <span class="text-[#f5333f]">*</span></span>
 
-                        <div class="flex flex-col gap-2">
-                                <span>
-                                  Purpose of Trip <span class="text-[#f5333f]">*</span>
-                                </span>
-                                <input
-                                  type="text" 
-                                  :value="purposeOfTripData[currentIndex].document_name" 
-                                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                                  disabled
-                                />
-                        </div>
+              <div @click="enterNewTab">
 
-                        <div class="flex flex-col gap-2">
-                            <span>Requestor <span class="text-[#f5333f]">*</span></span>
-                            <input type="text" disabled :value="purposeOfTripData[currentIndex].employee_name"  class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
-                        </div>
+                <input v-model="filename" v-if="!isEditing" type="text"
+                  class="px-4 py-3 border border-[#e0e0e0] rounded-lg min-w-[80%] cursor-pointer"
+                  :disabled="!isEditing" />
 
-                        <div class="flex flex-col gap-2">
-                          <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
-                          <input 
-                            v-model="notes"
-                            type="text" 
-                            :disabled="!isEditing" 
-                            class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" 
-                          />
-                        </div>
+              </div>
 
-                    </div>
+              <input @change="updatePhoto" v-if="isEditing" type="file"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" />
 
-                    <!-- TAB BACKGROUND -->
-                    <div class="bg-blue rounded-lg pt-2">
-                            
-                            <button @click="tab = 'details'" class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative">
-                                <div
-                                class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg" 
-                                :class="tab == 'details' ? 'block' : 'hidden'" 
-                                ></div>
-                                Details
-                            </button>
-                    
+            </div>
 
-                            <button 
-                              v-if="roleName !== 'EMPLY'"
-                              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative"
-                              @click="tab = 'tlk'" 
-                            >
+            <div class="flex flex-col gap-2">
+              <span>
+                Purpose of Trip <span class="text-[#f5333f]">*</span>
+              </span>
+              <input type="text" :value="purposeOfTripData[currentIndex].document_name"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" disabled />
+            </div>
 
-                                <div 
-                                  class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
-                                  :class="tab == 'tlk' ? 'block' : 'hidden'" 
-                                  ></div>
-                                TLK Info
+            <div class="flex flex-col gap-2">
+              <span>Requestor <span class="text-[#f5333f]">*</span></span>
+              <input type="text" disabled :value="purposeOfTripData[currentIndex].employee_name"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]">
+            </div>
 
-                            </button>
+            <div class="flex flex-col gap-2">
+              <span>Notes to Purpose of Trip <span class="text-[#f5333f]">*</span></span>
+              <input v-model="notes" type="text" :disabled="!isEditing"
+                class="px-4 py-3 border border-[#e0e0e0] rounded-lg max-w-[80%]" />
+            </div>
 
-                            <button 
-                              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative"
-                              @click="tab = 'approval'" 
-                              >
+          </div>
 
-                                <div 
-                                  class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
-                                  :class="tab == 'approval' ? 'block' : 'hidden'" 
-                                  ></div>
-                                Approval
+          <!-- TAB BACKGROUND -->
+          <div class="bg-blue rounded-lg pt-2">
 
-                            </button>
+            <button @click="tab = 'details'"
+              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative">
+              <div class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
+                :class="tab == 'details' ? 'block' : 'hidden'"></div>
+              Details
+            </button>
 
-                    </div>
 
-                    <!-- TAB -->
+            <button v-if="roleName !== 'EMPLY'"
+              class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative" @click="tab = 'tlk'">
 
-                    <!-- DOCUMENT DETAIL -->
-                    <div v-if="tab == 'details'" class="flex">
-                                          
-                        <!-- step circle -->
-                        <div>
+              <div class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
+                :class="tab == 'tlk' ? 'block' : 'hidden'"></div>
+              TLK Info
 
-                            <div class="py-12 px-4" v-if="purposeOfTripName === 'Field Break'">
-                                
-                                <multiStepCircleVertical 
-                                  number="1" 
-                                  title="Traveller"                                
-                                  @change-header="changeSelected('Traveller')" 
-                                  :selectedTitle="headerTitle" 
-                                />
+            </button>
 
-                                <multiStepCircleVertical 
-                                  number="2" 
-                                  title="Airlines" 
-                                  @change-header="changeSelected('Airlines')" 
-                                  :selectedTitle="headerTitle" 
-                                />
+            <button class="py-3 px-4 bg-white rounded-t-xl w-[132px] border border-[#e0e0e0] relative"
+              @click="tab = 'approval'">
 
-                                <multiStepCircleVertical number="3" title="Other Transportation" @change-header="changeSelected('Other Transportation')" :selectedTitle="headerTitle" limit="3"  />
-                            
-                              </div>
+              <div class="absolute bg-black h-full w-3 left-0 top-0 rounded-tl-lg"
+                :class="tab == 'approval' ? 'block' : 'hidden'"></div>
+              Approval
 
-                            <div class="py-12 px-4" v-else-if="purposeOfTripName === 'Taxi Voucher'">
-                              <multiStepCircleVertical number="1" title="Traveller" 
-                                @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="2" title="Taxi Voucher" @change-header="changeSelected('Taxi Voucher')" :selectedTitle="headerTitle" limit="2"  />
-                            </div>
+            </button>
 
-                            <div class="py-12 px-4" v-else>
-                                <multiStepCircleVertical number="1" title="Traveller" 
-                                @change-header="changeSelected('Traveller')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="2" title="Airlines" 
-                                @change-header="changeSelected('Airlines')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="3" title="Taxi Voucher" @change-header="changeSelected('Taxi Voucher')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="4" title="Other Transportation" @change-header="changeSelected('Other Transportation')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="5" title="Accomodation" @change-header="changeSelected('Accomodation')" :selectedTitle="headerTitle" />
-                                <multiStepCircleVertical number="6" title="Cash Advance" @change-header="changeSelected('Cash Advance')" limit="6" :selectedTitle="headerTitle" />
-                            </div>
+          </div>
 
-                        </div>
+          <!-- TAB -->
 
-                        <!-- UNTUK MELIHAT DOCUMENT DETAIL DARI TIAP STEP REQUEST TRIP -->
-                        <form class="flex-1" @submit.prevent="">
+          <!-- DOCUMENT DETAIL -->
+          <div v-if="tab == 'details'" class="flex">
 
-                          <!-- {{ currentSelectedData }} -->
+            <!-- step circle -->
+            <div>
 
-                          <!-- DISINI UNTUK NON CASH ADVANCE -->
-                          
-                          <!-- BUTTON INI MUNCUL UNTUK MENGEDIT DOCUMENT REQUEST TRIP YANG SUDAH ADA (READ, UPDATE, DELETE) -->
-                          <detailsFormHeader 
-                            v-if="!isAdding & headerTitle !== 'Cash Advance' " 
-                            :title="headerTitle" 
-                            @changeView="changeViewLayout"
-                          >
+              <div class="py-12 px-4" v-if="purposeOfTripName === 'Field Break'">
 
-                            <div class="ml-7" v-if="viewLayout === 'document'"></div>
+                <multiStepCircleVertical number="1" title="Traveller" @change-header="changeSelected('Traveller')"
+                  :selectedTitle="headerTitle" />
 
-                            <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
+                <multiStepCircleVertical number="2" title="Airlines" @change-header="changeSelected('Airlines')"
+                  :selectedTitle="headerTitle" />
 
-                              <buttonEditFormView
-                              v-if="isEditing & headerTitle !== 'Cash Advance' && JSON.stringify(propsCheck) !== '[{}]'" 
-                              @click="changeType('Edit')"
-                               />
+                <multiStepCircleVertical number="3" title="Other Transportation"
+                  @change-header="changeSelected('Other Transportation')" :selectedTitle="headerTitle" limit="3" />
 
-                               <buttonAddFormView 
-                                title="Add"
-                                v-if="isEditing & headerTitle !== 'Cash Advance' " 
-                                @click="changeType('Check Props')"
-                                />
-  
-                              <!-- Issued Ticket Button -->
-                              <button 
-                                class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" 
-                                v-if="$route.path === '/approvalrequesttrip'"
-                              >
-                                Issued Ticket
-                              </button>
-  
-                              <!-- Revise Button -->
-                              <button 
-                                class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
-                                v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'" 
-                              >
-                                Revise
-                              </button>
-  
-                              <!-- Showing data quantity -->
-                              <div 
-                                class="flex gap-2 justify-between items-center mx-1 py-2"
-                              >
-  
-                                <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                                  Showing {{ showingValue }} 
-                                  of {{ currentSelectedData.length }} entries
+              </div>
+
+              <div class="py-12 px-4" v-else-if="purposeOfTripName === 'Taxi Voucher'">
+                <multiStepCircleVertical number="1" title="Traveller" @change-header="changeSelected('Traveller')"
+                  :selectedTitle="headerTitle" />
+                <multiStepCircleVertical number="2" title="Taxi Voucher" @change-header="changeSelected('Taxi Voucher')"
+                  :selectedTitle="headerTitle" limit="2" />
+              </div>
+
+              <div class="py-12 px-4" v-else>
+                <multiStepCircleVertical number="1" title="Traveller" @change-header="changeSelected('Traveller')"
+                  :selectedTitle="headerTitle" />
+                <multiStepCircleVertical number="2" title="Airlines" @change-header="changeSelected('Airlines')"
+                  :selectedTitle="headerTitle" />
+                <multiStepCircleVertical number="3" title="Taxi Voucher" @change-header="changeSelected('Taxi Voucher')"
+                  :selectedTitle="headerTitle" />
+                <multiStepCircleVertical number="4" title="Other Transportation"
+                  @change-header="changeSelected('Other Transportation')" :selectedTitle="headerTitle" />
+                <multiStepCircleVertical number="5" title="Accomodation" @change-header="changeSelected('Accomodation')"
+                  :selectedTitle="headerTitle" />
+                <multiStepCircleVertical number="6" title="Cash Advance" @change-header="changeSelected('Cash Advance')"
+                  limit="6" :selectedTitle="headerTitle" />
+              </div>
+
+            </div>
+
+            <!-- UNTUK MELIHAT DOCUMENT DETAIL DARI TIAP STEP REQUEST TRIP -->
+            <form class="flex-1" @submit.prevent="">
+
+              <!-- {{ currentSelectedData }} -->
+
+              <!-- DISINI UNTUK NON CASH ADVANCE -->
+
+              <!-- BUTTON INI MUNCUL UNTUK MENGEDIT DOCUMENT REQUEST TRIP YANG SUDAH ADA (READ, UPDATE, DELETE) -->
+              <detailsFormHeader v-if="!isAdding & headerTitle !== 'Cash Advance' " :title="headerTitle"
+                @changeView="changeViewLayout">
+
+                <div class="ml-7" v-if="viewLayout === 'document'"></div>
+
+                <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
+
+                  <buttonEditFormView
+                    v-if="isEditing & headerTitle !== 'Cash Advance' && JSON.stringify(propsCheck) !== '[{}]'"
+                    @click="changeType('Edit')" />
+
+                  <buttonAddFormView title="Add" v-if="isEditing & headerTitle !== 'Cash Advance' "
+                    @click="changeType('Check Props')" />
+
+                  <!-- Issued Ticket Button -->
+                  <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                    v-if="$route.path === '/approvalrequesttrip'">
+                    Issued Ticket
+                  </button>
+
+                  <!-- Revise Button -->
+                  <button class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                    v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'">
+                    Revise
+                  </button>
+
+                  <!-- Reschedule Button -->
+
+                  <label for="my-modal-reject-atk"
+                    v-if="headerTitle === 'Airlines' && purposeOfTripData[currentIndex].status === 'Waiting Approval' || purposeOfTripData[currentIndex].status === 'Confirmed'"
+                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-orange border-orange hover:bg-orange hover:border-orange hover:text-white">
+                    Reschedule
+                  </label>
+
+                  <input type="checkbox" id="my-modal-reject-atk" class="modal-toggle" />
+                  <div class="modal">
+                    <div class="modal-dialog bg-white w-2/5 rounded-2xl">
+                      <nav class="sticky top-0 bg-[#015289] rounded-t-2xl">
+                        <label for="my-modal-reject-atk" class="cursor-pointer absolute right-3 top-3">
+                          <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+                        </label>
+                        <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
+                          Reschedule Menu
+                        </p>
+                      </nav>
+
+                      <main class="modal-box-inner-brand overflow-auto">
+                        <form class="pt-4 p-4">
+
+
+                          <p class="font-JakartaSans font-medium text-sm py-2 ">
+                            Reason<span class="text-red">*</span>
+                          </p>
+                          <input type="text" v-model="notesName"
+                            class="font-JakartaSans capitalize block bg-white w-full border border-slate-300 rounded-md py-2 px-4  shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                            placeholder="Reason" required />
+                        </form>
+                      </main>
+
+                      <div class="sticky bottom-0 bg-white py-2 rounded-2xl">
+                        <div class="flex justify-end gap-4 mr-6">
+                          <label for="my-modal-reject-atk"
+                            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">Cancel</label>
+                          <label for="my_modal_6"
+                            class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-[#015289] hover:bg-white hover:text-[#015289] hover:border-[#015289]">Confirm</label>
+
+                          <!-- Put this part before </body> tag -->
+                          <input type="checkbox" id="my_modal_6" class="modal-toggle" />
+                          <div class="modal">
+                            <div class="modal-dialog bg-white w-3/5 h-auto rounded-2xl">
+                              <nav class="sticky top-0 bg-[#015289] rounded-t-2xl">
+                                <label for="my_modal_6" class="cursor-pointer absolute right-3 top-3">
+                                  <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+                                </label>
+                                <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
+                                  Airlines
                                 </p>
-  
-                                <vue-awesome-paginate
-                                  :total-items="currentSelectedData.length"
-                                  :items-per-page="1"
-                                  :on-click="onChangePage"
-                                  v-model="showingValue"
-                                  :max-pages-shown="3"
-                                  :show-breakpoint-buttons="false"
-                                  :show-jump-buttons="true"
-                                />
-  
-                              </div>
+                              </nav>
+                              <main class="modal-box-inner-brand overflow-y-auto">
+                                <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="submitAirlines">
 
-                            </div>
+                                  <div :class="rowClass">
 
-                            <div class="flex-1" v-if="viewLayout === 'document'"></div>
-                            
-                            <!-- DELETE BUTTON -->
-                            <button 
-                              @click="changeType('Delete')"
-                              v-if="isEditing && viewLayout === 'document' && JSON.stringify(propsCheck) !== '[{}]'" 
-                              class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
-                            >
+                                    <div :class="columnClass">
 
-                              <img :src="deleteDocumentIcon" class="w-6 h-6" />
-                              Delete
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                          Traveller<span class="text-red-star">*</span>
+                                        </label>
+                                        <select :class="inputStylingClass" id="flight-class" required>
+                                          <option>- Pilih -</option>
+                                        </select>
+                                      </div>
 
-                            </button>
+                                    </div>
 
-                          </detailsFormHeader>
+                                    <div :class="columnClass">
 
-                          <!-- BUTTON INI MUNCUL UNTUK MENAMBAH DOCUMENT REQUEST TRIP (Add) -->
-                          <detailsFormHeader 
-                            :title="headerTitle"
-                            v-if="isAdding & headerTitle !== 'Cash Advance'"
-                            @changeView="changeViewLayout"
-                          >
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass" for="flight-class">
+                                          Departure<span class="text-red-star">*</span>
+                                        </label>
 
-                            <buttonAddFormView 
-                              title="Confirm Add"
-                              @click="changeType('Submit Add')"
-                              class="mx-7"
-                            />
-                            
-                            <buttonCancelFormView 
-                              @click="isAdding = false, changeType('none')"  
-                            />
-
-                          </detailsFormHeader>
-
-
-                          <!-- form Step 3 -->
-                          <guestAsTravellerFormView
-                            v-if="headerTitle === 'Traveller' && viewLayout === 'document'"
-                            class="ml-8" 
-                            :isEditing="isEditing" 
-                            :currentIndex="dataIndex" 
-                            :typeOfSubmitData="typeOfSubmitToProps"
-                            @fetchGuestTraveller="getTravellerGuest"
-                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
-                          />
-
-                          <!-- table Step 3 -->
-                          <guestAsTravellerTableView
-                            v-if="headerTitle === 'Traveller' && viewLayout === 'table'"
-                            class="ml-8"
-                          />
-
-                          <!-- form Step 4 -->
-                          <airlinesFormView 
-                            v-if="headerTitle === 'Airlines' && viewLayout === 'document'" 
-                            class="ml-8" 
-                            :isEditing="isEditing" 
-                            :currentIndex="dataIndex" 
-                            :typeOfSubmitData="typeOfSubmitToProps"
-                            @fetchAirlines="getAirlines"
-                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
-                          />
-
-                          <!-- table Step 4 -->
-                          <airlinesTableView 
-                            v-if="headerTitle === 'Airlines' && viewLayout === 'table'"
-                            class="ml-8"
-                          />
-
-                          <!-- form Step 5 -->
-                          <taxiVoucherFormView 
-                            v-if="headerTitle === 'Taxi Voucher' && viewLayout === 'document'" 
-                            class="ml-8" 
-                            :isEditing="isEditing" 
-                            :currentIndex="dataIndex" 
-                            :typeOfSubmitData="typeOfSubmitToProps"
-                            @fetchTaxiVoucher="getTaxiVoucher"
-                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
-                          />
-
-                          <!-- table Step 5 -->
-                          <taxiVoucherTableView
-                            v-if="headerTitle === 'Taxi Voucher' && viewLayout === 'table'"
-                            class="ml-8"
-                          />
-
-                          <!-- form Step 6 -->
-                          <otherTransportationFormView 
-                            v-if="headerTitle === 'Other Transportation' && viewLayout === 'document'" 
-                            class="ml-8" 
-                            :isEditing="isEditing"
-                            :currentIndex="dataIndex"
-                            :typeOfSubmitData="typeOfSubmitToProps"
-                            @fetchOtherTransportation="getOtherTransportation"
-                            @resetTypeOfSubmitData = "resetTypeOfSubmit"
-                          />
-
-                          <!-- table Step 6 -->
-                          <otherTransportationTableView 
-                            v-if="headerTitle === 'Other Transportation' && viewLayout === 'table'" 
-                            class="ml-8"
-                          />
-
-                          <!-- form Step 7 -->
-                              <accomodationFormView 
-                                v-if="headerTitle === 'Accomodation' && viewLayout === 'document'" 
-                                class="ml-8" 
-                                :isEditing="isEditing" 
-                                :currentIndex="dataIndex"
-                                :typeOfSubmitData="typeOfSubmitToProps"
-                                @fetchAccomodation="getAccomodation"
-                                @resetTypeOfSubmitData = "resetTypeOfSubmit"
-                              />
-
-                          <!-- table Step 7 -->
-                          <accomodationTableView 
-                            v-if="headerTitle === 'Accomodation' && viewLayout === 'table'" 
-                            class="ml-8"
-                          />
-
-                          <!-- form Step 8 -->
-                          <cashAdvanceFormView 
-                            
-                            v-if="headerTitle === 'Cash Advance' && viewLayout === 'document'" 
-                            class="ml-8" 
-                            :isAddingFromRequestTrip="isAdding"
-                            :isEditingFromRequestTrip="isEditing"
-                            :currentIndex="dataIndex" 
-                            :currentDetailIndex="detailIndex"
-                            :isHeaderExist="headerCAData"
-                            :typeOfSubmitData="typeOfSubmitToProps"
-                            
-                            :showCreateCAHeader="showCreateNewCAHeader"
-                            
-                            @fetchCashAdvance="getCashAdvance"
-                            @resetTypeOfSubmitData="resetTypeOfSubmit"
-
-                            :currentlyEditCAHeader="currentlyEditCAHeader"
-                            @resetEditCAHeaderState="currentlyEditCAHeader = false"
-                            
-                            >
-
-                            <!-- {{headerCAData}} -->
-
-                            <!-- UNTUK CASH ADVANCE -->
-                          
-                          <!-- Button khusus CA, muncul tombol add saja saat CA Header nya kosong -->
-                          <detailsFormHeader v-if="headerTitle === 'Cash Advance' & !headerCAData"
-                            :title="headerTitle" 
-                            @changeView="changeViewLayout"
-                            >
-
-                            <!-- muncul saat Cash Advance Header nya kosong -->
-                            <div 
-                              class="flex gap-2"
-                              >
-
-                              <div class="ml-7"></div>
-
-                              <!-- saat CA Header kosong muncul Create -->
-                              <buttonAddFormView
-                                title="Create New CA Document"
-                                v-if="isEditing & !showCreateNewCAHeader"
-                                @click="showCreateNewCAHeader = true" 
-                              />
-
-                              <!-- saat klik create, maka akan muncul menu submit -->
-                              <buttonAddFormView 
-                                title="Add CA from empty header"
-                                v-if="isEditing & showCreateNewCAHeader"
-                                @click="changeType('Add')"
-                                />
-  
-                              <!-- button cancel untuk membatalkan create -->
-                              <buttonCancelFormView 
-                                v-if="isEditing & showCreateNewCAHeader"
-                                @click="showCreateNewCAHeader = false"               
-                              />
-
-                            </div>
-
-                          </detailsFormHeader>
-
-                          <!-- Button khusus CA, untuk Add saat data CA header sudah ada -->
-                          <detailsFormHeader 
-                            v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader" :title=headerTitle
-                          >
-                            
-                            <div
-                              class="flex gap-2"
-                            >
-                              <buttonAddFormView
-                                title="Add CA from not empty header"
-                                v-if="isEditing"
-                                @click="changeType('Add')"
-                              />
-
-                              <buttonCancelFormView 
-                                v-if="isEditing"
-                                @click="showCreateNewCAHeader = false; changeType('Reset')"               
-                              />
-                            </div>
-
-                          </detailsFormHeader>
-
-                          <!-- Button khusus CA, untuk RUD muncul saat ada data CA Header -->
-                          <detailsFormHeader 
-                            v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader" :title=headerTitle
-                          >
-
-                            <!-- muncul saat Cash Advance Header nya ada -->
-                            <div
-                              class="flex gap-2"
-                            >
-
-                                  <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
-
-                                    <buttonEditFormView 
-                                      v-if="isEditing & !currentlyEditCAHeader"
-                                      @click="currentlyEditCAHeader = !currentlyEditCAHeader"
-                                    />
-
-                                    <buttonEditFormView
-                                      v-if="currentlyEditCAHeader" 
-                                      @click="changeType('Edit')"
-                                    />
-
-                                    <buttonCancelFormView 
-                                      v-if="currentlyEditCAHeader"
-                                      @click="currentlyEditCAHeader = !currentlyEditCAHeader"
-                                    />
-
-                                    <buttonAddFormView
-                                      title="Add Cash Advance"
-                                      v-if="isEditing & !currentlyEditCAHeader"
-                                      @click="showCreateNewCAHeader = true; changeType('Empty')"
-                                    />
-
-                                    <!-- Issued Ticket Button -->
-                                    <button 
-                                      class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold" 
-                                      v-if="$route.path === '/approvalrequesttrip'"
-                                    >
-                                      Issued Ticket
-                                    </button>
-
-                                    <!-- Revise Button -->
-                                    <button 
-                                      class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
-                                      v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'" 
-                                    >
-                                      Revise
-                                    </button>
-
-                                    <!-- Showing data quantity -->
-                                    <div 
-                                      v-if="!currentlyEditCAHeader"
-                                      class="flex gap-2 justify-between items-center mx-1 py-2"
-                                    >
-
-                                      <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                                        Showing {{ showingValue }} 
-                                        of {{ currentSelectedData.length }} entries
-                                      </p>
-
-                                      <vue-awesome-paginate
-                                        :total-items="currentSelectedData.length"
-                                        :items-per-page="1"
-                                        :on-click="onChangePage"
-                                        v-model="showingValue"
-                                        :max-pages-shown="3"
-                                        :show-breakpoint-buttons="false"
-                                        :show-jump-buttons="true"
-                                      />
+                                        <select :class="inputStylingClass" id="flight-class" required>
+                                          <option>- Pilih -</option>
+                                        </select>
+                                      </div>
 
                                     </div>
 
                                   </div>
-                                  
+
+                                  <div :class="rowClass">
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                          <!-- {{ dateDeparture }} {{ dateArrival }} -->
+                                          Departure Date<span class="text-red-star">*</span>
+                                        </label>
+                                        <input type="date" :class="inputStylingClass" />
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                          Arrival Date<span class="text-red-star">*</span>
+                                        </label>
+                                        <input type="date" :class="inputStylingClass" />
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  <div class="flex justify-between mx-4 items-start gap-2 my-6">
+
+                                    <!-- Departure Location -->
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">Flight Class<span
+                                            class="text-red-star">*</span></label>
+                                        <select :class="inputStylingClass">
+                                          <option>- Pilih -</option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                          Passengers<span class="text-red-star">*</span>
+                                        </label>
+                                        <select :class="inputStylingClass">
+                                          <option disabled selected>Adult</option>
+                                          <option>1</option>
+                                          <option>2</option>
+                                          <option>3</option>
+                                          <option>4</option>
+                                          <option>5</option>
+                                          <option>6</option>
+                                          <option>7</option>
+                                          <option>8</option>
+                                          <option>9</option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  <div :class="rowClass">
+
+                                    <div :class="columnClass">
+                                      <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                        Round Trip<span class="text-red-star">*</span>
+                                      </label>
+                                      <div class="py-1 flex justify-left">
+                                        <Switch :class="enabled ? 'bg-teal-900' : 'bg-teal-700'"
+                                          class="relative inline-flex h-[30px] w-[70px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-45">
+                                          <span aria-hidden="true" :class="enabled ? 'translate-x-10' : 'translate-x-0'"
+                                            class="pointer-events-none inline-block h-[25px] w-[35px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
+                                        </Switch>
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <select :class="inputStylingClass">
+                                          <option disabled selected>Infant</option>
+                                          <option>1</option>
+                                          <option>2</option>
+                                          <option>3</option>
+                                          <option>4</option>
+                                          <option>5</option>
+                                          <option>6</option>
+                                          <option>7</option>
+                                          <option>8</option>
+                                          <option>9</option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                  </div>
+                                  <div :class="rowClass">
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                          <!-- {{ dateDeparture }} {{ dateArrival }} -->
+                                          Return Date<span class="text-red-star">*</span>
+                                        </label>
+                                        <input type="date" :class="inputStylingClass" />
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <select :class="inputStylingClass">
+                                          <option disabled selected>Child</option>
+                                          <option>1</option>
+                                          <option>2</option>
+                                          <option>3</option>
+                                          <option>4</option>
+                                          <option>5</option>
+                                          <option>6</option>
+                                          <option>7</option>
+                                          <option>8</option>
+                                          <option>9</option>
+                                        </select>
+
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  <checkButton />
+
+                                  <h1 class="mt-4 text-center text-sm font-bold">Flight Schedule</h1>
+
+
+                                  <hr class="w-full border border-black">
+
+                                  <div class="overflow-x-auto block">
+                                    <table class="table w-full">
+                                      <thead>
+                                        <tr>
+                                          <th>
+                                            Airline
+                                          </th>
+                                          <th>
+                                            Flight No
+                                          </th>
+                                          <th>
+                                            Depart
+                                          </th>
+                                          <th>
+                                            Arrival
+                                          </th>
+                                          <th>
+                                            Stops
+                                          </th>
+                                          <th>
+                                            Class
+                                          </th>
+                                          <th>
+                                            Price
+                                          </th>
+                                          <th>
+
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <!-- <img class="w-20 h-[18px]" :src="data.Airline"> -->
+                                            CityLink
+                                          </td>
+                                          <td>
+                                            QG-121
+                                          </td>
+                                          <td>
+                                            Jakarta
+                                          </td>
+                                          <td>
+                                            Surabaya
+                                          </td>
+                                          <td>
+                                            2h 30m
+                                            <br>
+                                            Direct
+                                            <!-- {{ data.StopsMethod}} -->
+                                          </td>
+                                          <td>
+                                            Economy
+                                          </td>
+                                          <td>
+                                            832.000
+                                          </td>
+                                          <td>
+                                            <button type="button"
+                                              class=" text-white rounded-lg px-4 py-3 font-bold bg-green">
+                                              Select
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+
+                                  <!-- <modalFooter @closeEdit="$emit('changeVisibility')" class="py-5" /> -->
+
+                                </form>
+                              </main>
+                              <div class="sticky bottom-0 bg-white py-2">
+                                <div class="flex justify-end gap-4 mr-6">
+                                  <label for="my_modal_6"
+                                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">Cancel</label>
+                                  <button
+                                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+                                    >
+                                    Next
+                                  </button>
                                 </div>
-                                
-                                <div class="flex-1" v-if="viewLayout === 'document'"></div>
-
-                                <!-- DELETE BUTTON, IT WORKS -->
-                                <button 
-                                  @click="changeType('Delete')"
-                                  v-if="isEditing & viewLayout === 'document' & !currentlyEditCAHeader" 
-                                  class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3"
-                                >
-
-                                  <img :src="deleteDocumentIcon" class="w-6 h-6" />
-                                  Delete
-
-                                </button>
-
-                          </detailsFormHeader>
-
-                          </cashAdvanceFormView>
-
-                          <!-- table Step 8 -->
-                          <cashAdvanceTableView
-                          v-if="headerTitle === 'Cash Advance' && viewLayout === 'table'" 
-                            class="ml-8"
-                          />
-
-                        </form>
-
-                    </div>
-                    
-
-                    <div v-else-if="tab == 'tlk'">
-
-                            <h1>TLK</h1>
-                            <hr class="border-black border-2">
-
-                            <div class="flex flex-col mt-3">
-                                <span>Requestor <span class="text-red-star">*</span></span>
-                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" :value="requestorName" disabled>
+                              </div>
                             </div>
-
-                            <div class="flex flex-col mt-3">
-                                <span>Job Band <span class="text-red-star">*</span></span>
-                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="B" disabled>
-                            </div>
-
-                            <div class="flex flex-col mt-3">
-                                <span>TLK <span class="text-red-star">*</span></span>
-                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="A" disabled>
-                            </div>
-
-                            <div class="flex flex-col mt-3">
-                                <span>Total TLK <span class="text-red-star">*</span></span>
-                                <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="569.000" disabled>
-                            </div>
-
-                    </div>
-
-
-                    <div v-else-if="tab == 'approval'">
-
-                      <div class="flex justify-start">
-                        <div class="flex flex-col items-center">
-                          <img :src="miniABM" class="h-[60px] w-60" />
-                          <h1 class="text-2xl font-medium leading-7">Approval</h1>
+                          </div>
                         </div>
                       </div>
-
-                      <div class="flex justify-center">
-
-                        <div class="py-12 px-4">
-
-                          <multiStepCircleVertical 
-                            :image="userImg" v-for="(data, index) in approvalStatusData" 
-                            :key="index" 
-                            :data="data.text" 
-                            :stop="index+1 === approvalStatusData.length ? true : false" 
-                            :any="data" 
-                          />
-
-                        </div>
-
-                        <div>
-
-                        </div>
-
-                      </div>
-
                     </div>
+                  </div>
+
+                  <!-- Revise Button -->
+                  <label for="my-modal-reject-atk2"
+                    v-if="headerTitle === 'Airlines' && purposeOfTripData[currentIndex].status === 'Waiting Approval' || purposeOfTripData[currentIndex].status === 'Confirmed'"
+                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-red hover:border-red hover:text-white">
+                    Revise
+                  </label>
+
+                  <input type="checkbox" id="my-modal-reject-atk2" class="modal-toggle" />
+                  <div class="modal">
+                            <div class="modal-dialog bg-white w-3/5 h-auto rounded-2xl">
+                              <nav class="sticky top-0 bg-[#015289] rounded-t-2xl">
+                                <label for="my-modal-reject-atk2" class="cursor-pointer absolute right-3 top-3">
+                                  <img :src="iconClose" class="w-[34px] h-[34px] hover:scale-75" />
+                                </label>
+                                <p class="font-JakartaSans text-2xl font-semibold text-white mx-4 py-2">
+                                  Airlines
+                                </p>
+                              </nav>
+                              <main class="modal-box-inner-brand overflow-y-auto">
+                                <form class="px-3 text-left modal-box-inner-inner" @submit.prevent="submitAirlines">
+
+                                  <div :class="rowClass">
+
+                                    <div :class="columnClass">
+
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                          Traveller<span class="text-red-star">*</span>
+                                        </label>
+                                        <select :class="inputStylingClass" id="flight-class" required>
+                                          <option>- Pilih -</option>
+                                        </select>
+                                      </div>
+
+                                    </div>
+
+                                    <div :class="columnClass">
+
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass" for="flight-class">
+                                          Departure<span class="text-red-star">*</span>
+                                        </label>
+
+                                        <select :class="inputStylingClass" id="flight-class" required>
+                                          <option>- Pilih -</option>
+                                        </select>
+                                      </div>
+
+                                    </div>
+
+                                  </div>
+
+                                  <div :class="rowClass">
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                          <!-- {{ dateDeparture }} {{ dateArrival }} -->
+                                          Departure Date<span class="text-red-star">*</span>
+                                        </label>
+                                        <input type="date" :class="inputStylingClass" />
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                          Arrival Date<span class="text-red-star">*</span>
+                                        </label>
+                                        <input type="date" :class="inputStylingClass" />
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  <div class="flex justify-between mx-4 items-start gap-2 my-6">
+
+                                    <!-- Departure Location -->
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">Flight Class<span
+                                            class="text-red-star">*</span></label>
+                                        <select :class="inputStylingClass">
+                                          <option>- Pilih -</option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                          Passengers<span class="text-red-star">*</span>
+                                        </label>
+                                        <select :class="inputStylingClass">
+                                          <option disabled selected>Adult</option>
+                                          <option>1</option>
+                                          <option>2</option>
+                                          <option>3</option>
+                                          <option>4</option>
+                                          <option>5</option>
+                                          <option>6</option>
+                                          <option>7</option>
+                                          <option>8</option>
+                                          <option>9</option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  <div :class="rowClass">
+
+                                    <div :class="columnClass">
+                                      <label class="block mb-2 font-JakartaSans font-medium text-sm">
+                                        Round Trip<span class="text-red-star">*</span>
+                                      </label>
+                                      <div class="py-1 flex justify-left">
+                                        <Switch :class="enabled ? 'bg-teal-900' : 'bg-teal-700'"
+                                          class="relative inline-flex h-[30px] w-[70px] shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-45">
+                                          <span aria-hidden="true" :class="enabled ? 'translate-x-10' : 'translate-x-0'"
+                                            class="pointer-events-none inline-block h-[25px] w-[35px] transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out" />
+                                        </Switch>
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <select :class="inputStylingClass">
+                                          <option disabled selected>Infant</option>
+                                          <option>1</option>
+                                          <option>2</option>
+                                          <option>3</option>
+                                          <option>4</option>
+                                          <option>5</option>
+                                          <option>6</option>
+                                          <option>7</option>
+                                          <option>8</option>
+                                          <option>9</option>
+                                        </select>
+                                      </div>
+                                    </div>
+
+                                  </div>
+                                  <div :class="rowClass">
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <label :class="labelStylingClass">
+                                          <!-- {{ dateDeparture }} {{ dateArrival }} -->
+                                          Return Date<span class="text-red-star">*</span>
+                                        </label>
+                                        <input type="date" :class="inputStylingClass" />
+                                      </div>
+                                    </div>
+
+                                    <div :class="columnClass">
+                                      <div class="w-full">
+                                        <select :class="inputStylingClass">
+                                          <option disabled selected>Child</option>
+                                          <option>1</option>
+                                          <option>2</option>
+                                          <option>3</option>
+                                          <option>4</option>
+                                          <option>5</option>
+                                          <option>6</option>
+                                          <option>7</option>
+                                          <option>8</option>
+                                          <option>9</option>
+                                        </select>
+
+                                      </div>
+                                    </div>
+
+                                  </div>
+
+                                  <checkButton />
+
+                                  <h1 class="mt-4 text-center text-sm font-bold">Flight Schedule</h1>
+
+
+                                  <hr class="w-full border border-black">
+
+                                  <div class="overflow-x-auto block">
+                                    <table class="table w-full">
+                                      <thead>
+                                        <tr>
+                                          <th>
+                                            Airline
+                                          </th>
+                                          <th>
+                                            Flight No
+                                          </th>
+                                          <th>
+                                            Depart
+                                          </th>
+                                          <th>
+                                            Arrival
+                                          </th>
+                                          <th>
+                                            Stops
+                                          </th>
+                                          <th>
+                                            Class
+                                          </th>
+                                          <th>
+                                            Price
+                                          </th>
+                                          <th>
+
+                                          </th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <!-- <img class="w-20 h-[18px]" :src="data.Airline"> -->
+                                            CityLink
+                                          </td>
+                                          <td>
+                                            QG-121
+                                          </td>
+                                          <td>
+                                            Jakarta
+                                          </td>
+                                          <td>
+                                            Surabaya
+                                          </td>
+                                          <td>
+                                            2h 30m
+                                            <br>
+                                            Direct
+                                            <!-- {{ data.StopsMethod}} -->
+                                          </td>
+                                          <td>
+                                            Economy
+                                          </td>
+                                          <td>
+                                            832.000
+                                          </td>
+                                          <td>
+                                            <button type="button"
+                                              class=" text-white rounded-lg px-4 py-3 font-bold bg-green">
+                                              Select
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+
+                                  <!-- <modalFooter @closeEdit="$emit('changeVisibility')" class="py-5" /> -->
+
+                                </form>
+                              </main>
+                              <div class="sticky bottom-0 bg-white py-2">
+                                <div class="flex justify-end gap-4 mr-6">
+                                  <label for="my-modal-reject-atk2"
+                                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] bg-red border-red hover:bg-white hover:border-red hover:text-red">Cancel</label>
+                                  <button
+                                    class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-blue bg-blue hover:bg-white hover:text-blue hover:border-blue"
+                                    >
+                                    Next
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                  <!-- Showing data quantity -->
+                  <div class="flex gap-2 justify-between items-center mx-1 py-2">
+
+                    <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                      Showing {{ showingValue }}
+                      of {{ currentSelectedData.length }} entries
+                    </p>
+
+                    <vue-awesome-paginate :total-items="currentSelectedData.length" :items-per-page="1"
+                      :on-click="onChangePage" v-model="showingValue" :max-pages-shown="3"
+                      :show-breakpoint-buttons="false" :show-jump-buttons="true" />
+
+                  </div>
 
                 </div>
 
+                <div class="flex-1" v-if="viewLayout === 'document'"></div>
+
+                <!-- DELETE BUTTON -->
+                <button @click="changeType('Delete')"
+                  v-if="isEditing && viewLayout === 'document' && JSON.stringify(propsCheck) !== '[{}]'"
+                  class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3">
+
+                  <img :src="deleteDocumentIcon" class="w-6 h-6" />
+                  Delete
+
+                </button>
+
+              </detailsFormHeader>
+
+              <!-- BUTTON INI MUNCUL UNTUK MENAMBAH DOCUMENT REQUEST TRIP (Add) -->
+              <detailsFormHeader :title="headerTitle" v-if="isAdding & headerTitle !== 'Cash Advance'"
+                @changeView="changeViewLayout">
+
+                <buttonAddFormView title="Confirm Add" @click="changeType('Submit Add')" class="mx-7" />
+
+                <buttonCancelFormView @click="isAdding = false, changeType('none')" />
+
+              </detailsFormHeader>
+
+              <!-- form Step 3 -->
+              <guestAsTravellerFormView v-if="headerTitle === 'Traveller' && viewLayout === 'document'" class="ml-8"
+                :isEditing="isEditing" :currentIndex="dataIndex" :typeOfSubmitData="typeOfSubmitToProps"
+                @fetchGuestTraveller="getTravellerGuest" @resetTypeOfSubmitData="resetTypeOfSubmit" />
+
+              <!-- table Step 3 -->
+              <guestAsTravellerTableView v-if="headerTitle === 'Traveller' && viewLayout === 'table'" class="ml-8" />
+
+              <!-- form Step 4 -->
+              <airlinesFormView v-if="headerTitle === 'Airlines' && viewLayout === 'document'" class="ml-8"
+                :isEditing="isEditing" :currentIndex="dataIndex" :typeOfSubmitData="typeOfSubmitToProps"
+                @fetchAirlines="getAirlines" @resetTypeOfSubmitData="resetTypeOfSubmit" />
+
+              <!-- table Step 4 -->
+              <airlinesTableView v-if="headerTitle === 'Airlines' && viewLayout === 'table'" class="ml-8" />
+
+              <!-- form Step 5 -->
+              <taxiVoucherFormView v-if="headerTitle === 'Taxi Voucher' && viewLayout === 'document'" class="ml-8"
+                :isEditing="isEditing" :currentIndex="dataIndex" :typeOfSubmitData="typeOfSubmitToProps"
+                @fetchTaxiVoucher="getTaxiVoucher" @resetTypeOfSubmitData="resetTypeOfSubmit" />
+
+              <!-- table Step 5 -->
+              <taxiVoucherTableView v-if="headerTitle === 'Taxi Voucher' && viewLayout === 'table'" class="ml-8" />
+
+              <!-- form Step 6 -->
+              <otherTransportationFormView v-if="headerTitle === 'Other Transportation' && viewLayout === 'document'"
+                class="ml-8" :isEditing="isEditing" :currentIndex="dataIndex" :typeOfSubmitData="typeOfSubmitToProps"
+                @fetchOtherTransportation="getOtherTransportation" @resetTypeOfSubmitData="resetTypeOfSubmit" />
+
+              <!-- table Step 6 -->
+              <otherTransportationTableView v-if="headerTitle === 'Other Transportation' && viewLayout === 'table'"
+                class="ml-8" />
+
+              <!-- form Step 7 -->
+              <accomodationFormView v-if="headerTitle === 'Accomodation' && viewLayout === 'document'" class="ml-8"
+                :isEditing="isEditing" :currentIndex="dataIndex" :typeOfSubmitData="typeOfSubmitToProps"
+                @fetchAccomodation="getAccomodation" @resetTypeOfSubmitData="resetTypeOfSubmit" />
+
+              <!-- table Step 7 -->
+              <accomodationTableView v-if="headerTitle === 'Accomodation' && viewLayout === 'table'" class="ml-8" />
+
+              <!-- form Step 8 -->
+              <cashAdvanceFormView v-if="headerTitle === 'Cash Advance' && viewLayout === 'document'" class="ml-8"
+                :isAddingFromRequestTrip="isAdding" :isEditingFromRequestTrip="isEditing" :currentIndex="dataIndex"
+                :currentDetailIndex="detailIndex" :isHeaderExist="headerCAData" :typeOfSubmitData="typeOfSubmitToProps"
+                :showCreateCAHeader="showCreateNewCAHeader" @fetchCashAdvance="getCashAdvance"
+                @resetTypeOfSubmitData="resetTypeOfSubmit" :currentlyEditCAHeader="currentlyEditCAHeader"
+                @resetEditCAHeaderState="currentlyEditCAHeader = false">
+
+                <!-- {{headerCAData}} -->
+
+                <!-- UNTUK CASH ADVANCE -->
+
+                <!-- Button khusus CA, muncul tombol add saja saat CA Header nya kosong -->
+                <detailsFormHeader v-if="headerTitle === 'Cash Advance' & !headerCAData" :title="headerTitle"
+                  @changeView="changeViewLayout">
+
+                  <!-- muncul saat Cash Advance Header nya kosong -->
+                  <div class="flex gap-2">
+
+                    <div class="ml-7"></div>
+
+                    <!-- saat CA Header kosong muncul Create -->
+                    <buttonAddFormView title="Create New CA Document" v-if="isEditing & !showCreateNewCAHeader"
+                      @click="showCreateNewCAHeader = true" />
+
+                    <!-- saat klik create, maka akan muncul menu submit -->
+                    <buttonAddFormView title="Add CA from empty header" v-if="isEditing & showCreateNewCAHeader"
+                      @click="changeType('Add')" />
+
+                    <!-- button cancel untuk membatalkan create -->
+                    <buttonCancelFormView v-if="isEditing & showCreateNewCAHeader"
+                      @click="showCreateNewCAHeader = false" />
+
+                  </div>
+
+                </detailsFormHeader>
+
+                <!-- Button khusus CA, untuk Add saat data CA header sudah ada -->
+                <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & showCreateNewCAHeader"
+                  :title=headerTitle>
+
+                  <div class="flex gap-2">
+                    <buttonAddFormView title="Add CA from not empty header" v-if="isEditing"
+                      @click="changeType('Add')" />
+
+                    <buttonCancelFormView v-if="isEditing"
+                      @click="showCreateNewCAHeader = false; changeType('Reset')" />
+                  </div>
+
+                </detailsFormHeader>
+
+                <!-- Button khusus CA, untuk RUD muncul saat ada data CA Header -->
+                <detailsFormHeader v-if="headerTitle === 'Cash Advance' & headerCAData & !showCreateNewCAHeader"
+                  :title=headerTitle>
+
+                  <!-- muncul saat Cash Advance Header nya ada -->
+                  <div class="flex gap-2">
+
+                    <div class="flex gap-2 " :class="viewLayout === 'document' ? 'visible' : 'invisible'">
+
+                      <buttonEditFormView v-if="isEditing & !currentlyEditCAHeader"
+                        @click="currentlyEditCAHeader = !currentlyEditCAHeader" />
+
+                      <buttonEditFormView v-if="currentlyEditCAHeader" @click="changeType('Edit')" />
+
+                      <buttonCancelFormView v-if="currentlyEditCAHeader"
+                        @click="currentlyEditCAHeader = !currentlyEditCAHeader" />
+
+                      <buttonAddFormView title="Add Cash Advance" v-if="isEditing & !currentlyEditCAHeader"
+                        @click="showCreateNewCAHeader = true; changeType('Empty')" />
+
+                      <!-- Issued Ticket Button -->
+                      <button class="bg-green text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                        v-if="$route.path === '/approvalrequesttrip'">
+                        Issued Ticket
+                      </button>
+
+                      <!-- Revise Button -->
+                      <button class="bg-orange text-white rounded-lg text-base py-[5px] px-[18px] font-bold"
+                        v-if="purposeOfTripData[currentIndex].status === 'Confirmed' & $route.path === '/approvalrequesttrip'">
+                        Revise
+                      </button>
+
+                      <!-- Showing data quantity -->
+                      <div v-if="!currentlyEditCAHeader" class="flex gap-2 justify-between items-center mx-1 py-2">
+
+                        <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                          Showing {{ showingValue }}
+                          of {{ currentSelectedData.length }} entries
+                        </p>
+
+                        <vue-awesome-paginate :total-items="currentSelectedData.length" :items-per-page="1"
+                          :on-click="onChangePage" v-model="showingValue" :max-pages-shown="3"
+                          :show-breakpoint-buttons="false" :show-jump-buttons="true" />
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div class="flex-1" v-if="viewLayout === 'document'"></div>
+
+                  <!-- DELETE BUTTON, IT WORKS -->
+                  <button @click="changeType('Delete')"
+                    v-if="isEditing & viewLayout === 'document' & !currentlyEditCAHeader"
+                    class="bg-red-star text-white rounded-lg text-base py-[5px] px-[12px] font-bold items-center flex gap-2 mr-3">
+
+                    <img :src="deleteDocumentIcon" class="w-6 h-6" />
+                    Delete
+
+                  </button>
+
+                </detailsFormHeader>
+
+              </cashAdvanceFormView>
+
+              <!-- table Step 8 -->
+              <cashAdvanceTableView v-if="headerTitle === 'Cash Advance' && viewLayout === 'table'" class="ml-8" />
+
+            </form>
+
+          </div>
+
+
+          <div v-else-if="tab == 'tlk'">
+
+            <h1>TLK</h1>
+            <hr class="border-black border-2">
+
+            <div class="flex flex-col mt-3">
+              <span>Requestor <span class="text-red-star">*</span></span>
+              <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" :value="requestorName" disabled>
             </div>
+
+            <div class="flex flex-col mt-3">
+              <span>Job Band <span class="text-red-star">*</span></span>
+              <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="B" disabled>
+            </div>
+
+            <div class="flex flex-col mt-3">
+              <span>TLK <span class="text-red-star">*</span></span>
+              <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="A" disabled>
+            </div>
+
+            <div class="flex flex-col mt-3">
+              <span>Total TLK <span class="text-red-star">*</span></span>
+              <input type="text" class="px-4 py-3 max-w-[80%] rounded-lg" value="569.000" disabled>
+            </div>
+
+          </div>
+
+
+          <div v-else-if="tab == 'approval'">
+
+            <div class="flex justify-start">
+              <div class="flex flex-col items-center">
+                <img :src="miniABM" class="h-[60px] w-60" />
+                <h1 class="text-2xl font-medium leading-7">Approval</h1>
+              </div>
+            </div>
+
+            <div class="flex justify-center">
+
+              <div class="py-12 px-4">
+
+                <multiStepCircleVertical :image="userImg" v-for="(data, index) in approvalStatusData" :key="index"
+                  :data="data.text" :stop="index+1 === approvalStatusData.length ? true : false" :any="data" />
+
+              </div>
+
+              <div>
+
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
+      </div>
+
     </div>
 
-    <Footer />
+  </div>
+
+  <Footer />
 
 </template>
