@@ -566,7 +566,7 @@ const inputClass =
                         :
                         {{
                           moment(dataArr.duration_start).format(
-                            "DD/MM/YY hh:mm:ss"
+                            "dddd, DD MMMM YYYY ;hh:mm"
                           )
                         }}
                       </td>
@@ -577,7 +577,7 @@ const inputClass =
                         :
                         {{
                           moment(dataArr.duration_end).format(
-                            "DD/MM/YY hh:mm:ss"
+                            "dddd, DD MMMM YYYY ;hh:mm"
                           )
                         }}
                       </td>
@@ -610,7 +610,7 @@ const inputClass =
       type="cancel"
       :dialog="approvalDialog"
     >
-    <template></template>
+      <template></template>
     </ApprovalDialog>
   </div>
 </template>
