@@ -18,6 +18,8 @@ const props = defineProps({
 });
 let titles = ref(['Mr','Mrs',"Mstr","Miss",'INF']);
 
+const emits = defineEmits(["submitData"]);
+
 const submitAirlines = async () => {
   //   const token = JSON.parse(localStorage.getItem("token"));
   //   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -28,7 +30,10 @@ const submitAirlines = async () => {
   //     code_airlines: flightIdAirlines.value,
   //     ticket_price: bundleData.value[1],
   //   });
-  //   emits("fetchAirlines");
+  emits('submitData',{
+    'first_name'  : 'First Name',
+    'last_name' : 'Last Name',
+  })
   //   emits("changeVisibility");
 };
 
@@ -295,9 +300,9 @@ const inputStylingClassSmall =
             <div class="w-2/5">
               <div>
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Passport Number<span class="text-red-star">*</span></label
+                  >Passport Number</label
                 >
-                <input :class="inputStylingClass" type="text" required />
+                <input :class="inputStylingClass" type="text"  />
               </div>
             </div>
           </div>
@@ -307,37 +312,17 @@ const inputStylingClassSmall =
             <div class="w-2/5">
               <div>
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Passport Origin<span class="text-red-star">*</span></label
+                  >Passport Origin</label
                 >
-                <input :class="inputStylingClass" type="text" required />
+                <input :class="inputStylingClass" type="text"  />
               </div>
             </div>
             <div class="w-2/5">
               <div>
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Passport Expired<span class="text-red-star">*</span></label
+                  >Passport Expired</label
                 >
-                <input :class="inputStylingClass" type="text" required />
-              </div>
-            </div>
-          </div>
-          <div :class="rowClassInLarge">
-            <div class="w-1/5">
-            </div>
-            <div class="w-2/5">
-              <div>
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Emergency Full Name<span class="text-red-star">*</span></label
-                >
-                <input :class="inputStylingClass" type="text" required />
-              </div>
-            </div>
-            <div class="w-2/5">
-              <div>
-                <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Emergency Email<span class="text-red-star">*</span></label
-                >
-                <input :class="inputStylingClass" type="text" required />
+                <input :class="inputStylingClass" type="text"  />
               </div>
             </div>
           </div>
@@ -347,9 +332,29 @@ const inputStylingClassSmall =
             <div class="w-2/5">
               <div>
                 <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                  >Emergency Phone<span class="text-red-star">*</span></label
+                  >Emergency Full</label
                 >
-                <input :class="inputStylingClass" type="text" required />
+                <input :class="inputStylingClass" type="text"  />
+              </div>
+            </div>
+            <div class="w-2/5">
+              <div>
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >Emergency Email</label
+                >
+                <input :class="inputStylingClass" type="text"  />
+              </div>
+            </div>
+          </div>
+          <div :class="rowClassInLarge">
+            <div class="w-1/5">
+            </div>
+            <div class="w-2/5">
+              <div>
+                <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                  >Emergency Phone</label
+                >
+                <input :class="inputStylingClass" type="text"  />
               </div>
             </div>
             <div class="w-2/5">

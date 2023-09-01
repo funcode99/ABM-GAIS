@@ -306,7 +306,7 @@ const savePurposeOfTrip = async () => {
         notes: notesToPurposeOfTrip.value,
         date_departure: departureDate.value,
         date_arrival: returnDate.value,
-        tlk_per_day: 100000,
+        tlk_per_day: TLKperDay.value,
         total_tlk: totalTLK,
         id_site: siteVisitLocation.value,
         file: siteVisitAttachmentFile.value,
@@ -324,7 +324,7 @@ const savePurposeOfTrip = async () => {
         notes: notesToPurposeOfTrip.value,
         date_departure: departureDate.value,
         date_arrival: returnDate.value,
-        tlk_per_day: 100000,
+        tlk_per_day: TLKperDay.value,
         total_tlk: totalTLK,
         file: siteVisitAttachmentFile.value,
         id_site: localStorage.getItem("id_site"),
@@ -342,7 +342,7 @@ const savePurposeOfTrip = async () => {
         notes: notesToPurposeOfTrip.value,
         date_departure: departureDate.value,
         date_arrival: returnDate.value,
-        tlk_per_day: 100000,
+        tlk_per_day: TLKperDay.value,
         total_tlk: totalTLK,
         id_site: localStorage.getItem("id_site"),
         number_da: DANumber.value,
@@ -365,7 +365,7 @@ const savePurposeOfTrip = async () => {
         notes: notesToPurposeOfTrip.value,
         date_departure: departureDate.value,
         date_arrival: returnDate.value,
-        tlk_per_day: 100000,
+        tlk_per_day: TLKperDay.value,
         total_tlk: totalTLK,
         id_site: localStorage.getItem("id_site"),
       });
@@ -676,6 +676,12 @@ const updateFile = (event) => {
 const submitAirLinesForm = (data) =>{
   isVisibleAirlines.value = false
   isVisibleAirlinesFormDetail.value  = true
+  
+  console.log(data)
+}
+
+const submitAirLinesFormDetail = (data) => {
+  isVisibleAirlinesFormDetail.value  = false
   console.log(data)
 }
 
