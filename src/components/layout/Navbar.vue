@@ -423,8 +423,8 @@ const format_date = (value) => {
                   <a>Settings</a>
                 </button>
               </li>
-              <li @click="logout" class="py-2 border-b-2">
-                <button>
+              <li class="py-2 border-b-2">
+                <button @click="logout" type="button">
                   <a>Logout</a>
                 </button>
               </li>
