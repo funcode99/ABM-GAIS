@@ -1689,7 +1689,7 @@ onMounted(async () => {
                       class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"
                       v-if="tempId.includes(data.id)"
                     >
-                      {{ dt.booked_stock_wh ? dt.booked_stock_wh : "-" }}
+                      {{ dt.booked_stock_wh || 0 }}
                     </td>
                     <td
                       class="font-JakartaSans font-normal text-sm p-0 text-center bg-purple-200"

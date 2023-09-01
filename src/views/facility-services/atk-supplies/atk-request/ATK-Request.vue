@@ -28,7 +28,7 @@ const sidebar = useSidebarStore()
 const atkRequestStatus = {
   Draft: {
     statusLevel: 0,
-    class: "bg-[#000] border-[#000]",
+    class: "text-[#000]",
   },
   "Waiting Approval": {
     statusLevel: 1,
