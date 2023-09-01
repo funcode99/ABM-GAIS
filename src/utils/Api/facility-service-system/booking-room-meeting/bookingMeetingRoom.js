@@ -25,4 +25,22 @@ export default {
       console.error(error)
     }
   },
+  approveMeeting: async (id, body) => {
+    return await Api.post(`${ENDPOINT}/booked/${id}`, body)
+      .then((res) => {
+        return res
+      })
+      .catch((error) => {
+        return error.response
+      })
+  },
+  rejectMeeting: async (id, body) => {
+    return await Api.post(`${ENDPOINT}/cancel/${id}`, body)
+      .then((res) => {
+        return res
+      })
+      .catch((error) => {
+        return error.response
+      })
+  },
 }

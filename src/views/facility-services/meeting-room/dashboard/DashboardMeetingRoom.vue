@@ -88,6 +88,7 @@ const fetch = async () => {
         class: `${chartStatusColor[dt.status]} text-whtie`,
         split: dt.id_meeting_room,
         data: { ...dt },
+        title: `<p class='font-medium mb-5 bg-white text-black'> ${dt.status} </p>`,
       }
 
       datas.value.push({ ...arr })
@@ -134,6 +135,7 @@ const filterDataByType = async () => {
         content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
         class: "card-color",
         split: dt.id_meeting_room,
+        title: dt.status,
       }
       datas.value.push(arr)
     }

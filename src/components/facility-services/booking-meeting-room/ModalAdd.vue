@@ -203,7 +203,7 @@ const fetchDataById = async () => {
   recurrence.value = dataForm.value.recurrence
   participant.value = dataForm.value.participant
 
-  form.days = dataForm.value.days.split(",").map(Number)
+  form.days = dataForm.value?.days?.split(",").map(Number) || []
 
   listRoom.value = [
     {
@@ -481,7 +481,6 @@ onMounted(async () => {
             Booking Meeting Room
           </p>
         </nav>
-
         <form @submit.prevent="saveForm()">
           <main class="modal-box-inner pb-5 overflow-auto h-[80vh]">
             <div>
@@ -490,6 +489,7 @@ onMounted(async () => {
                 class="flex gap-5 pb-5 px-5"
               >
                 <button
+                  type="button"
                   class="btn btn-md w-[150px] bg-red border-none"
                   @click="
                     () => {
@@ -501,6 +501,7 @@ onMounted(async () => {
                   Reject
                 </button>
                 <button
+                  type="button"
                   class="btn btn-md w-[150px] bg-green border-none"
                   @click="
                     () => {
@@ -1012,7 +1013,7 @@ onMounted(async () => {
       :type="approvalDialog.type"
       :dialog="approvalDialog.status"
     >
-      <template></template>
+      <tempDate></tempDate>
     </ApprovalDialog>
   </div>
 </template>

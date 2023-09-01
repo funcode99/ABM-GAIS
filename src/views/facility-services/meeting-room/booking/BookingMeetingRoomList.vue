@@ -93,7 +93,7 @@ const bookingMeetingRoomStatus = {
     statusLevel: 3,
     class: "text-[#00c851]",
   },
-  Cancel: {
+  Cancelled: {
     statusLevel: 3,
     class: "text-red",
   },
@@ -607,9 +607,11 @@ onBeforeMount(() => {
                     </td>
                     <td>{{ data.start_time }} - {{ data.end_time }}</td>
                     <td>{{ data.site_name }}</td>
-                    <td>
+                    <td class="font-bold">
                       <span
-                        :class="bookingMeetingRoomStatus[data.status].class"
+                        :class="
+                          bookingMeetingRoomStatus?.[data.status]?.class
+                        "
                         >{{ data.status }}</span
                       >
                     </td>

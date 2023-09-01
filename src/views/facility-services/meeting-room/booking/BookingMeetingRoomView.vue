@@ -14,6 +14,8 @@ import moment from "moment"
 
 import BookingRoomService from "@/utils/Api/facility-service-system/booking-room-meeting/bookingMeetingRoom.js"
 
+import ApprovalDialog from "@/components/facility-services/booking-meeting-room/ApprovalDialog.vue"
+
 import { ref, onBeforeMount, computed } from "vue"
 import { useSidebarStore } from "@/stores/sidebar.js"
 import { useRoute, useRouter } from "vue-router"
@@ -30,6 +32,9 @@ let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
 const id_role = JSON.parse(localStorage.getItem("id_role"))
 
 let dataArr = ref([])
+
+const approvalDialog = ref(false)
+const approvalDialogRef = ref()
 
 let lengthCounter = 0
 let idBook = route.params.id
@@ -63,7 +68,7 @@ const bookingMeetingRoom = {
     statusLevel: 3,
     class: "bg-[#00c851] border-[#00c851]",
   },
-  Cancel: {
+  Cancelled: {
     statusLevel: 3,
     class: "bg-red border-red",
   },
@@ -326,7 +331,7 @@ const inputClass =
             </router-link>
             <div
               class="rounded-lg p-3 text-white m-4"
-              :class="bookingMeetingRoom[dataArr.status]?.class"
+              :class="bookingMeetingRoom?.[dataArr.status]?.class || ''"
             >
               {{ dataArr.status }}
             </div>
@@ -359,10 +364,10 @@ const inputClass =
               v-if="
                 dataArr.status == 'Booked' &&
                 !dataArr.duration_start &&
-                new Date() > endMeeting
+                new Date() > fullStartMeeting
               "
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-              @click="cancelled"
+              @click="approvalDialog = true"
             >
               Cancel
             </button>
@@ -596,6 +601,17 @@ const inputClass =
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
+
+    <ApprovalDialog
+      ref="approvalDialogRef"
+      @success="fetchDataById()"
+      @close="approvalDialog = false"
+      :data="dataArr"
+      type="cancel"
+      :dialog="approvalDialog"
+    >
+    <template></template>
+    </ApprovalDialog>
   </div>
 </template>
 
