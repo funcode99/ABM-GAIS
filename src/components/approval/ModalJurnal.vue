@@ -6,6 +6,7 @@ import editicon from "@/assets/navbar/edit_icon.svg";
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
 import moment from "moment";
+import Multiselect from "@vueform/multiselect";
 
 import { ref, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
@@ -103,8 +104,8 @@ const fetchSapByIdDoc = async (id) => {
     const res = await Api.get(
       `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
     );
-    dataSapDoc.value = res.data.data;
-    // console.log(dataSapDoc.value);
+    dataSapDoc.value = res.data.data.detail;
+    console.log(dataSapDoc.value);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -507,7 +508,7 @@ const inputClass =
                   </td>
 
                   <td>
-                    <select
+                    <!-- <select
                       v-model="data.gl_reccon_acc"
                       :class="inputClass"
                       :disabled="
@@ -525,11 +526,53 @@ const inputClass =
                       >
                         {{ dataGL.gl_account }}
                       </option>
-                    </select>
+                    </select> -->
+
+                    <Multiselect
+                      v-model="data.gl_reccon_acc"
+                      mode="tags"
+                      track-by="gl_account"
+                      label="gl_account"
+                      :close-on-select="false"
+                      :searchable="true"
+                      :options="GLData"
+                      :disabled="
+                        idEdit == null && isEditing && !alreadySave
+                          ? false
+                          : data.item == idEdit
+                          ? false
+                          : true
+                      "
+                      class="w-[250px]"
+                    >
+                      <template
+                        v-slot:tag="{ option, handleTagRemove, disabled }"
+                      >
+                        <div
+                          class="multiselect-tag is-user"
+                          :class="{
+                            'is-disabled': disabled,
+                          }"
+                        >
+                          {{ option.gl_account }}
+                          <span
+                            v-if="!disabled"
+                            class="multiselect-tag-remove"
+                            @click="handleTagRemove(option, $event)"
+                          >
+                            <span class="multiselect-tag-remove-icon"></span>
+                          </span>
+                        </div>
+                      </template>
+                    </Multiselect>
                   </td>
 
                   <td>
-                    <input :class="inputClass" disabled />
+                    <input
+                      :class="inputClass"
+                      disabled
+                      v-model="data.gl_name"
+                    />
                   </td>
 
                   <td>
