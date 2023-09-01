@@ -1,7 +1,7 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_jurnal from "@/assets/icon_jurnal.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
+// import editicon from "@/assets/navbar/edit_icon.svg";
 
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
@@ -19,16 +19,17 @@ let dataSapDoc = ref([]);
 let companyData = ref([]);
 let costCenterData = ref([]);
 let pkData = ref([]);
-let idEdit = ref(null);
+let GLData = ref([]);
+// let idCompany = ref("");
 let typeDoc = ref("");
 let companyCode = ref("");
+let glName = ref("");
 let isVisibleTableHeaders = ref(false);
 let isEditing = ref(false);
 let isHideButtonSave = ref(false);
 let alreadySave = ref(false);
 let isNoEdit = ref(false);
-let GLData = ref([]);
-let idCompany = ref("");
+let idEdit = ref(null);
 
 let id = route.params.id;
 
@@ -105,7 +106,7 @@ const fetchSapByIdDoc = async (id) => {
       `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
     );
     dataSapDoc.value = res.data.data.detail;
-    console.log(dataSapDoc.value);
+    // console.log(dataSapDoc.value);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -116,6 +117,11 @@ const fetchCostCenter = async () => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get("/company/get_cost_center");
   costCenterData.value = res.data.data;
+  costCenterData.value.map((item) => {
+    item.value = item.id;
+    item.format = `${item.cost_center_code} - ${item.cost_center_name}`;
+    // console.log(item.format);
+  });
 };
 
 const fetchPK = async () => {
@@ -131,6 +137,10 @@ const fetchGLAccount = async (id) => {
   const res = await Api.get(`/jurnal/get_gl_account/${id}`);
   GLData.value = res.data.data;
   // console.log(res.data.data);
+  GLData.value.map((item) => {
+    item.value = item.id;
+    item.format = `${item.gl_account}`;
+  });
 };
 
 onBeforeMount(() => {
@@ -138,20 +148,19 @@ onBeforeMount(() => {
   fetchDataById(id);
   fetchCostCenter();
   fetchPK();
-  // fetchGLAccount();
 });
 
 const editTableHeader = () => {
   isVisibleTableHeaders.value = true;
-  isEditing.value = !isEditing.value;
-  isNoEdit.value = true;
+  // isEditing.value = !isEditing.value;
+  // isNoEdit.value = true;
 };
 
 const cancelTableHeader = () => {
   isVisibleTableHeaders.value = false;
-  isEditing.value = false;
-  isNoEdit.value = false;
-  idEdit.value = null;
+  // isEditing.value = false;
+  // isNoEdit.value = false;
+  // idEdit.value = null;
 };
 
 const saveJurnal = async (data) => {
@@ -176,7 +185,7 @@ const saveJurnal = async (data) => {
       claim_cat: props.dataJurnal.code_document,
       array_data: dataArray,
       gl_reccon_acc: data.gl_reccon_acc,
-      short_text: null,
+      short_text: data.gl_name,
       item_text: data.item_text,
       cost_center: data.cost_center,
       profit_center: data.profit_center,
@@ -184,7 +193,7 @@ const saveJurnal = async (data) => {
       due_date: data.due_date,
     };
     const res = await Api.post("/jurnal/save_sap", payload);
-    console.log(payload);
+    // console.log(payload);
     Swal.fire({
       position: "center",
       icon: "success",
@@ -193,26 +202,26 @@ const saveJurnal = async (data) => {
       timer: 1500,
     });
     isEditing.value = false;
-    isNoEdit.value = true;
+    // isNoEdit.value = true;
     alreadySave.value = true;
-    fetchSapByIdDoc();
+    isVisibleTableHeaders.value = false;
   } catch (error) {
     console.error("An error occurred:", error);
   }
 };
 
 const editTableDetails = (id) => {
-  idEdit.value = id;
+  // idEdit.value = id;
 };
 
 const cancelTableDetails = () => {
-  idEdit.value = null;
-  isEditing.value = false;
+  // idEdit.value = null;
+  // isEditing.value = false;
 };
 
 const saveTableDetails = () => {
-  idEdit.value = null;
-  isEditing.value = false;
+  // idEdit.value = null;
+  // isEditing.value = false;
 };
 
 const format_date = (value) => {
@@ -287,13 +296,12 @@ const inputClass =
                 Cancel
               </button>
 
-              <button
+              <!-- <button
                 v-if="isHideButtonSave"
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >
-                <!-- Done -->
-                Save
-              </button>
+                Done
+              </button> -->
 
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
@@ -508,29 +516,9 @@ const inputClass =
                   </td>
 
                   <td>
-                    <!-- <select
-                      v-model="data.gl_reccon_acc"
-                      :class="inputClass"
-                      :disabled="
-                        idEdit == null && isEditing && !alreadySave
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                    >
-                      <option
-                        v-for="dataGL in GLData"
-                        :key="dataGL.id"
-                        :value="dataGL.gl_account"
-                      >
-                        {{ dataGL.gl_account }}
-                      </option>
-                    </select> -->
-
                     <Multiselect
                       v-model="data.gl_reccon_acc"
-                      mode="tags"
+                      mode="single"
                       track-by="gl_account"
                       label="gl_account"
                       :close-on-select="false"
@@ -554,7 +542,7 @@ const inputClass =
                             'is-disabled': disabled,
                           }"
                         >
-                          {{ option.gl_account }}
+                          {{ GLData.gl_account }}
                           <span
                             v-if="!disabled"
                             class="multiselect-tag-remove"
@@ -604,9 +592,14 @@ const inputClass =
                   </td>
 
                   <td>
-                    <select
+                    <Multiselect
                       v-model="data.cost_center"
-                      :class="inputClass"
+                      mode="single"
+                      track-by="cost_center_name"
+                      label="format"
+                      :close-on-select="false"
+                      :searchable="true"
+                      :options="costCenterData"
                       :disabled="
                         idEdit == null && isEditing && !alreadySave
                           ? false
@@ -614,15 +607,28 @@ const inputClass =
                           ? false
                           : true
                       "
+                      class="w-[500px]"
                     >
-                      <option
-                        v-for="dataCostCenter in costCenterData"
-                        :key="dataCostCenter.id"
-                        :value="dataCostCenter.cost_center_code"
+                      <template
+                        v-slot:tag="{ option, handleTagRemove, disabled }"
                       >
-                        {{ dataCostCenter.cost_center_name }}
-                      </option>
-                    </select>
+                        <div
+                          class="multiselect-tag is-user"
+                          :class="{
+                            'is-disabled': disabled,
+                          }"
+                        >
+                          {{ costCenterData.item.format }}
+                          <span
+                            v-if="!disabled"
+                            class="multiselect-tag-remove"
+                            @click="handleTagRemove(option, $event)"
+                          >
+                            <span class="multiselect-tag-remove-icon"></span>
+                          </span>
+                        </div>
+                      </template>
+                    </Multiselect>
                   </td>
 
                   <td>
@@ -670,7 +676,7 @@ const inputClass =
                   <td>
                     <input :class="inputClass" disabled />
                   </td>
-                  <td v-if="isNoEdit && alreadySave">
+                  <!-- <td v-if="isNoEdit && alreadySave">
                     <button
                       :key="data.item"
                       @click="editTableDetails(data.item)"
@@ -697,7 +703,7 @@ const inputClass =
                     >
                       Save
                     </button>
-                  </td>
+                  </td> -->
                 </tr>
               </tbody>
             </table>
