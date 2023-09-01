@@ -7,9 +7,6 @@ import modalFooter from "@/components/modal/modalFooter.vue";
 import profileImage from '@/assets/profile.png'
 import citilinkLogo from '@/assets/airlines-1.png'
 
-import fetchEmployeeByLoginUtils from "@/utils/Fetch/Reference/fetchEmployeeByLogin";
-import fetchCityUtils from "@/utils/Fetch/Reference/fetchCity";
-
 import { useRequestTripStore } from "@/stores/requesttrip.js";
 const requestTrip = useRequestTripStore();
 
@@ -21,20 +18,11 @@ let titles = ref(['Mr','Mrs',"Mstr","Miss",'INF']);
 const emits = defineEmits(["submitData"]);
 
 const submitAirlines = async () => {
-  //   const token = JSON.parse(localStorage.getItem("token"));
-  //   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  //   const api = await Api.post("/flight_trip/store", {
-  //     id_request_trip: localStorage.getItem("tripId"),
-  //     id_vendor: vendor.value,
-  //     flight_no: bundleData.value[0],
-  //     code_airlines: flightIdAirlines.value,
-  //     ticket_price: bundleData.value[1],
-  //   });
+  // data will Store here
   emits('submitData',{
     'first_name'  : 'First Name',
     'last_name' : 'Last Name',
   })
-  //   emits("changeVisibility");
 };
 
 let modalPaddingHeight = "15vh";
