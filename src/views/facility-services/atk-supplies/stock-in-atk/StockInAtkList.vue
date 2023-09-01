@@ -1,64 +1,64 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icondanger from "@/assets/Danger.png";
-import iconClose from "@/assets/navbar/icon_close.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import editicon from "@/assets/navbar/edit_icon.svg";
-import gearicon from "@/assets/system-configuration-not-selected.png";
-import viewicon from "@/assets/eye.png";
+import icon_filter from "@/assets/icon_filter.svg"
+import icondanger from "@/assets/Danger.png"
+import iconClose from "@/assets/navbar/icon_close.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icon_receive from "@/assets/icon-receive.svg"
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import editicon from "@/assets/navbar/edit_icon.svg"
+import gearicon from "@/assets/system-configuration-not-selected.png"
+import viewicon from "@/assets/eye.png"
 
-import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue";
-import downloadIcon from "@/assets/download-template-icon.png";
-import importIcon from "@/assets/import-data-icon.png";
+import ModalAdd from "@/components/facility-services/atk-supplies/stock-in-atk/ModalAdd.vue"
+import downloadIcon from "@/assets/download-template-icon.png"
+import importIcon from "@/assets/import-data-icon.png"
 // import stockindata from "@/utils/Api/facility-service-system/stock-in-atk/stockindata.js";
-import { useRouter } from "vue-router";
-import { ref, onBeforeMount, computed } from "vue";
-import Api from "@/utils/Api";
-import { useSidebarStore } from "@/stores/sidebar.js";
-import Swal from "sweetalert2";
-import moment from "moment";
-const sidebar = useSidebarStore();
-const router = useRouter();
-const fileImport = ref("");
+import { useRouter } from "vue-router"
+import { ref, onBeforeMount, computed } from "vue"
+import Api from "@/utils/Api"
+import { useSidebarStore } from "@/stores/sidebar.js"
+import Swal from "sweetalert2"
+import moment from "moment"
+const sidebar = useSidebarStore()
+const router = useRouter()
+const fileImport = ref("")
 
 //for sort & search
-const start_date = ref("");
-const end_date = ref("");
-const search = ref("");
-const searchFilter = ref("");
-let sortedData = ref([]);
+const start_date = ref("")
+const end_date = ref("")
+const search = ref("")
+const searchFilter = ref("")
+let sortedData = ref([])
 const selectedType =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
     ? ref("")
-    : ref(JSON.parse(localStorage.getItem("id_company")));
-const status = ref("");
-let StatusItems = ref([]);
+    : ref(JSON.parse(localStorage.getItem("id_company")))
+const status = ref("")
+let StatusItems = ref([])
 // const status = ref("");
-let itemdata = ref("");
-let Company = ref("");
-let Warehouse = ref("");
-let sortedbyASC = true;
-let instanceArray = [];
-let lengthCounter = 0;
-let lockScrollbar = ref(false);
+let itemdata = ref("")
+let Company = ref("")
+let Warehouse = ref("")
+let sortedbyASC = true
+let instanceArray = []
+let lengthCounter = 0
+let lockScrollbar = ref(false)
 
-let statusForm = ref("add");
-let visibleModal = ref(false);
-let idItem = ref(0);
+let statusForm = ref("add")
+let visibleModal = ref(false)
+let idItem = ref(0)
 
 //for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
-let lenghtPagination = ref(0);
+let showingValue = ref(1)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
+let lenghtPagination = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -72,14 +72,14 @@ const onChangePage = (pageOfItem) => {
     end_date.value,
     searchFilter.value,
     pageMultiplier.value
-  );
-};
+  )
+}
 
 //for filter & reset button
 const filterDataByType = () => {
   // console.log(start_date.value[1])
-  const start = moment(String(start_date.value[0])).format("YYYY-MM-DD");
-  const end = moment(String(start_date.value[1])).format("YYYY-MM-DD");
+  const start = moment(String(start_date.value[0])).format("YYYY-MM-DD")
+  const end = moment(String(start_date.value[1])).format("YYYY-MM-DD")
   // console.log(test)
   if (start_date.value[0] == undefined) {
     fetchData(
@@ -90,7 +90,7 @@ const filterDataByType = () => {
       "",
       searchFilter.value,
       pageMultiplier.value
-    );
+    )
   } else {
     fetchData(
       1,
@@ -100,7 +100,7 @@ const filterDataByType = () => {
       end,
       searchFilter.value,
       pageMultiplier.value
-    );
+    )
   }
   // if (status.value === "") {
   //   sortedData.value = instanceArray;
@@ -109,18 +109,18 @@ const filterDataByType = () => {
   //     (item) => item.status === status.value
   //   );
   // }
-};
+}
 
 //for filter & reset button
 const resetData = () => {
   selectedType.value =
     JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
       ? ""
-      : JSON.parse(localStorage.getItem("id_company"));
+      : JSON.parse(localStorage.getItem("id_company"))
 
-  status.value = "";
-  start_date.value = "";
-  end_date.value = "";
+  status.value = ""
+  start_date.value = ""
+  end_date.value = ""
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -129,26 +129,26 @@ const resetData = () => {
     "",
     searchFilter.value,
     pageMultiplier.value
-  );
+  )
   // sortedData.value = instanceArray;
   // status.value = "Type";
-};
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
+  const checkList = checkValue
   if (checkList == true) {
-    let check = document.getElementsByName("checks");
+    let check = document.getElementsByName("checks")
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type == "checkbox") check[i].checked = true
     }
   } else {
-    let check = document.getElementsByName("checks");
+    let check = document.getElementsByName("checks")
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type == "checkbox") check[i].checked = false
     }
   }
-};
+}
 
 //for tablehead
 const tableHead = [
@@ -186,18 +186,18 @@ const tableHead = [
     Id: 7,
     title: "Actions",
   },
-];
+]
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
   }
-};
+}
 const fetchData = async (
   page,
   selectedType,
@@ -207,22 +207,22 @@ const fetchData = async (
   search,
   perpage
 ) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const res = await Api.get(
     `/stock_in/get?page=${page}&id_company=${selectedType}&code_status_doc=${status}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`
-  );
+  )
   // console.log(res.data.data)
-  itemdata.value = res.data.data.data;
-  instanceArray = itemdata.value;
+  itemdata.value = res.data.data.data
+  instanceArray = itemdata.value
   // console.log(instanceArray)
-  sortedData.value = instanceArray;
-  lengthCounter = sortedData.value.length;
-  lenghtPagination = res.data.data.total;
-  paginateIndex.value = res.data.data.current_page - 1;
-  showingValue.value = res.data.data.current_page;
+  sortedData.value = instanceArray
+  lengthCounter = sortedData.value.length
+  lenghtPagination = res.data.data.total
+  paginateIndex.value = res.data.data.current_page - 1
+  showingValue.value = res.data.data.current_page
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const perPage = async () => {
   // console.log(pageMultiplier.value)
   fetchData(
@@ -233,35 +233,35 @@ const perPage = async () => {
     end_date.value,
     searchFilter.value,
     pageMultiplier.value
-  );
+  )
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const fetchGetCompany = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get("/company/get");
-  Company.value = res.data.data;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get("/company/get")
+  Company.value = res.data.data
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const fetchGetCompanyID = async (id_company) => {
   // changeCompany(id_company)
-  const token = JSON.parse(localStorage.getItem("token"));
+  const token = JSON.parse(localStorage.getItem("token"))
   // const id_company = JSON.parse(localStorage.getItem("id_company"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-  const res = await Api.get(`/company/get/${id_company}`);
-  Company.value = res.data.data;
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const res = await Api.get(`/company/get/${id_company}`)
+  Company.value = res.data.data
   // console.log(res.data.data)
   for (let index = 0; index < res.data.data.length; index++) {
-    const element = res.data.data[index];
+    const element = res.data.data[index]
     if (id_company === element.id) {
-      selectedType.value = id_company;
+      selectedType.value = id_company
     }
   }
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const deleteValue = async (id) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Swal.fire({
     title:
       "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to delete this?</span>",
@@ -291,7 +291,7 @@ const deleteValue = async (id) => {
           confirmButtonColor: "#015289",
           showConfirmButton: false,
           timer: 1500,
-        });
+        })
         fetchData(
           showingValue.value,
           selectedType.value,
@@ -300,22 +300,22 @@ const deleteValue = async (id) => {
           end_date.value,
           searchFilter.value,
           pageMultiplier.value
-        );
-      });
+        )
+      })
     } else {
-      return;
+      return
     }
-  });
+  })
 
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const fetchCondition = async () => {
-  const id_company = JSON.parse(localStorage.getItem("id_company"));
-  const id_role = JSON.parse(localStorage.getItem("id_role"));
-  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company);
-};
+  const id_company = JSON.parse(localStorage.getItem("id_company"))
+  const id_role = JSON.parse(localStorage.getItem("id_role"))
+  id_role === "ADMTR" ? fetchGetCompany() : fetchGetCompanyID(id_company)
+}
 onBeforeMount(() => {
-  getSessionForSidebar();
+  getSessionForSidebar()
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -324,8 +324,8 @@ onBeforeMount(() => {
     end_date.value,
     searchFilter.value,
     pageMultiplier.value
-  );
-  fetchCondition();
+  )
+  fetchCondition()
   StatusItems.value.push(
     {
       id: 0,
@@ -335,8 +335,8 @@ onBeforeMount(() => {
       id: 1,
       name: "Submitted",
     }
-  );
-});
+  )
+})
 
 //for searching
 const filteredItems = (search) => {
@@ -348,28 +348,28 @@ const filteredItems = (search) => {
     end_date.value,
     search,
     pageMultiplier.value
-  );
-};
+  )
+}
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD-MM-YYYY");
+    return moment(String(value)).format("DD-MM-YYYY")
   }
-};
+}
 
 const openModal = (type, id) => {
-  visibleModal.value = true;
-  statusForm.value = type;
+  visibleModal.value = true
+  statusForm.value = type
   if (id) {
-    idItem.value = parseInt(id);
+    idItem.value = parseInt(id)
   }
-};
+}
 
 const closeModal = () => {
-  visibleModal.value = false;
+  visibleModal.value = false
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -378,24 +378,24 @@ const closeModal = () => {
     end_date.value,
     searchFilter.value,
     pageMultiplier.value
-  );
-};
+  )
+}
 
 const downloadTemplate = async () => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Api.get(`/stock_in/download_template`, {
     responseType: "blob",
   }).then((res) => {
     let blob = new Blob([res.data], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-    let link = document.createElement("a");
-    link.href = window.URL.createObjectURL(blob);
-    link.download = "Template Stock In.xlsx";
-    link.click();
-  });
-};
+    })
+    let link = document.createElement("a")
+    link.href = window.URL.createObjectURL(blob)
+    link.download = "Template Stock In.xlsx"
+    link.click()
+  })
+}
 
 const onFileSelected = (event) => {
   if (event.target.files[0].size >= 3000000) {
@@ -409,18 +409,18 @@ const onFileSelected = (event) => {
       showCancelButton: false,
       showConfirmButton: false,
       width: "300px",
-    });
+    })
   } else {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
 
-    fileImport.value = file ? file : null;
+    fileImport.value = file ? file : null
   }
-};
+}
 
 const importData = async () => {
   if (fileImport.value) {
-    const token = JSON.parse(localStorage.getItem("token"));
-    Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+    const token = JSON.parse(localStorage.getItem("token"))
+    Api.defaults.headers.common.Authorization = `Bearer ${token}`
     Api.post(`/stock_in/import_data`, {
       file: fileImport.value,
     })
@@ -431,8 +431,8 @@ const importData = async () => {
           title: res.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-        router.go();
+        })
+        router.go()
       })
       .catch((error) => {
         Swal.fire({
@@ -441,8 +441,8 @@ const importData = async () => {
           title: error.response.data.message,
           showConfirmButton: false,
           timer: 1500,
-        });
-      });
+        })
+      })
   } else {
     Swal.fire({
       position: "center",
@@ -450,9 +450,9 @@ const importData = async () => {
       title: "File is Required",
       showConfirmButton: false,
       timer: 1500,
-    });
+    })
   }
-};
+}
 </script>
 
 <template>
@@ -764,12 +764,12 @@ const importData = async () => {
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}
                     </td>
-                    <td class="font-JakartaSans font-normal text-sm p-0">
+                    <td class="font-JakartaSans font-bold text-sm p-0">
                       <span
                         :class="
                           data.status == 'Submitted'
-                            ? 'status-done'
-                            : 'font-bold'
+                            ? 'text-green'
+                            : 'text-black'
                         "
                         >{{ data.status }}</span
                       >

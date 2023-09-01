@@ -1,49 +1,73 @@
 <script setup>
-import Navbar from "@/components/layout/Navbar.vue";
-import Sidebar from "@/components/layout/Sidebar.vue";
-import Footer from "@/components/layout/Footer.vue";
+import Navbar from "@/components/layout/Navbar.vue"
+import Sidebar from "@/components/layout/Sidebar.vue"
+import Footer from "@/components/layout/Footer.vue"
 
 // import ModalRejectShortcutAtk from "@/components/approval/atk-request/ModalRejectShortcutAtk.vue";
 
-import icon_filter from "@/assets/icon_filter.svg";
-import icon_reset from "@/assets/icon_reset.svg";
-import icon_ceklis from "@/assets/icon_ceklis.svg";
-import iconClose from "@/assets/navbar/icon_close.svg";
-import arrowicon from "@/assets/navbar/icon_arrow.svg";
-import icon_receive from "@/assets/icon-receive.svg";
-import viewicon from "@/assets/eye.png";
+import icon_filter from "@/assets/icon_filter.svg"
+import icon_reset from "@/assets/icon_reset.svg"
+import icon_ceklis from "@/assets/icon_ceklis.svg"
+import iconClose from "@/assets/navbar/icon_close.svg"
+import arrowicon from "@/assets/navbar/icon_arrow.svg"
+import icon_receive from "@/assets/icon-receive.svg"
+import viewicon from "@/assets/eye.png"
 
 // import atkrequestdata from "../../../utils/Api/approval/atk-request/atkrequestdata.js";
 
-import { ref, onBeforeMount, computed } from "vue";
-import Api from "@/utils/Api";
-import { useSidebarStore } from "@/stores/sidebar.js";
-import Swal from "sweetalert2";
-import moment from "moment";
-const sidebar = useSidebarStore();
+import { ref, onBeforeMount, computed } from "vue"
+import Api from "@/utils/Api"
+import { useSidebarStore } from "@/stores/sidebar.js"
+import Swal from "sweetalert2"
+import moment from "moment"
+const sidebar = useSidebarStore()
+
+const atkRequestStatus = {
+  Draft: {
+    statusLevel: 0,
+    class: "bg-[#000] border-[#000]",
+  },
+  "Waiting Approval": {
+    statusLevel: 1,
+    class: "text-[#2970ff]",
+  },
+  Approve: {
+    statusLevel: 2,
+    class: "text-[#ef9d22]",
+  },
+
+  Completed: {
+    statusLevel: 3,
+    class: "text-[#00c851]",
+  },
+  Rejected: {
+    statusLevel: 3,
+    class: "text-red",
+  },
+}
 
 //for sort & search
-const start_date = ref("");
-const end_date = ref("");
-const search = ref("");
-const searchFilter = ref("");
-let sortedData = ref([]);
+const start_date = ref("")
+const end_date = ref("")
+const search = ref("")
+const searchFilter = ref("")
+let sortedData = ref([])
 const selectedType =
   JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
     ? ref("")
-    : ref(JSON.parse(localStorage.getItem("id_company")));
-let sortedbyASC = true;
-let itemdata = ref("");
-let instanceArray = [];
-let lengthCounter = 0;
-let Company = ref("");
-const status = ref("");
+    : ref(JSON.parse(localStorage.getItem("id_company")))
+let sortedbyASC = true
+let itemdata = ref("")
+let instanceArray = []
+let lengthCounter = 0
+let Company = ref("")
+const status = ref("")
 //for paginations
-let showingValue = ref(1);
-let pageMultiplier = ref(10);
-let pageMultiplierReactive = computed(() => pageMultiplier.value);
-let paginateIndex = ref(0);
-let lenghtPagination = ref(0);
+let showingValue = ref(1)
+let pageMultiplier = ref(10)
+let pageMultiplierReactive = computed(() => pageMultiplier.value)
+let paginateIndex = ref(0)
+let lenghtPagination = ref(0)
 
 //for paginations
 const onChangePage = (pageOfItem) => {
@@ -55,13 +79,13 @@ const onChangePage = (pageOfItem) => {
     end_date.value,
     searchFilter.value,
     pageMultiplier.value
-  );
-};
+  )
+}
 
 //for filter & reset button
 const filterDataByType = () => {
-  const start = moment(String(start_date.value[0])).format("YYYY-MM-DD");
-  const end = moment(String(start_date.value[1])).format("YYYY-MM-DD");
+  const start = moment(String(start_date.value[0])).format("YYYY-MM-DD")
+  const end = moment(String(start_date.value[1])).format("YYYY-MM-DD")
   // console.log(test)
   if (start_date.value[0] == undefined) {
     fetchData(
@@ -72,7 +96,7 @@ const filterDataByType = () => {
       "",
       searchFilter.value,
       pageMultiplier.value
-    );
+    )
   } else {
     fetchData(
       1,
@@ -82,19 +106,19 @@ const filterDataByType = () => {
       end,
       searchFilter.value,
       pageMultiplier.value
-    );
+    )
   }
-};
+}
 
 //for filter & reset button
 const resetData = () => {
   selectedType.value =
     JSON.parse(localStorage.getItem("id_role")) === "ADMTR"
       ? ""
-      : JSON.parse(localStorage.getItem("id_company"));
-  status.value = "";
-  start_date.value = "";
-  end_date.value = "";
+      : JSON.parse(localStorage.getItem("id_company"))
+  status.value = ""
+  start_date.value = ""
+  end_date.value = ""
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -103,24 +127,24 @@ const resetData = () => {
     "",
     searchFilter.value,
     pageMultiplier.value
-  );
-};
+  )
+}
 
 //for check & uncheck all
 const selectAll = (checkValue) => {
-  const checkList = checkValue;
+  const checkList = checkValue
   if (checkList == true) {
-    let check = document.getElementsByName("checks");
+    let check = document.getElementsByName("checks")
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = true;
+      if (check[i].type == "checkbox") check[i].checked = true
     }
   } else {
-    let check = document.getElementsByName("checks");
+    let check = document.getElementsByName("checks")
     for (let i = 0; i < check.length; i++) {
-      if (check[i].type == "checkbox") check[i].checked = false;
+      if (check[i].type == "checkbox") check[i].checked = false
     }
   }
-};
+}
 
 //for tablehead
 const tableHead = [
@@ -131,18 +155,18 @@ const tableHead = [
   { Id: 5, title: "Item Count", jsonData: "item_count" },
   { Id: 6, title: "Status", jsonData: "status" },
   { Id: 7, title: "Actions" },
-];
+]
 
 //for sort
 const sortList = (sortBy) => {
   if (sortedbyASC) {
-    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1));
-    sortedbyASC = false;
+    sortedData.value.sort((x, y) => (x[sortBy] > y[sortBy] ? -1 : 1))
+    sortedbyASC = false
   } else {
-    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1));
-    sortedbyASC = true;
+    sortedData.value.sort((x, y) => (x[sortBy] < y[sortBy] ? -1 : 1))
+    sortedbyASC = true
   }
-};
+}
 
 const perPage = async () => {
   // console.log(pageMultiplier.value)
@@ -154,9 +178,9 @@ const perPage = async () => {
     end_date.value,
     searchFilter.value,
     pageMultiplier.value
-  );
+  )
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 const fetchData = async (
   page,
   selectedType,
@@ -166,21 +190,21 @@ const fetchData = async (
   search,
   perpage
 ) => {
-  const token = JSON.parse(localStorage.getItem("token"));
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const token = JSON.parse(localStorage.getItem("token"))
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`
   Api.get(
     `/approval_request_atk/get_data?page=${page}&id_company=${selectedType}&start_date=${start_date}&end_date=${end_date}&search=${search}&perPage=${perpage}`
   )
     .then((res) => {
       // console.log(res.data.data)
-      itemdata.value = res.data.data.data;
-      instanceArray = itemdata.value;
+      itemdata.value = res.data.data.data
+      instanceArray = itemdata.value
       // console.log(instanceArray)
-      sortedData.value = instanceArray;
-      lengthCounter = sortedData.value.length;
-      lenghtPagination = res.data.data.total;
-      paginateIndex.value = res.data.data.current_page - 1;
-      showingValue.value = res.data.data.current_page;
+      sortedData.value = instanceArray
+      lengthCounter = sortedData.value.length
+      lenghtPagination = res.data.data.total
+      paginateIndex.value = res.data.data.current_page - 1
+      showingValue.value = res.data.data.current_page
     })
     .catch((error) => {
       Swal.fire({
@@ -189,13 +213,13 @@ const fetchData = async (
         title: error.response.data.message,
         showConfirmButton: false,
         timer: 1500,
-      });
+      })
       // console.log(error.response.data.message)
-    });
+    })
   // console.log("ini data parent" + JSON.stringify(res.data.data));
-};
+}
 onBeforeMount(() => {
-  getSessionForSidebar();
+  getSessionForSidebar()
   fetchData(
     showingValue.value,
     selectedType.value,
@@ -204,8 +228,8 @@ onBeforeMount(() => {
     end_date.value,
     searchFilter.value,
     pageMultiplier.value
-  );
-});
+  )
+})
 
 //for searching
 const filteredItems = (search) => {
@@ -217,17 +241,17 @@ const filteredItems = (search) => {
     end_date.value,
     search,
     pageMultiplier.value
-  );
-};
+  )
+}
 
 const getSessionForSidebar = () => {
-  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"));
-};
+  sidebar.setSidebarRefresh(sessionStorage.getItem("isOpen"))
+}
 const format_date = (value) => {
   if (value) {
-    return moment(String(value)).format("DD-MM-YYYY");
+    return moment(String(value)).format("DD-MM-YYYY")
   }
-};
+}
 </script>
 
 <template>
@@ -413,27 +437,23 @@ const format_date = (value) => {
                     <td class="font-JakartaSans font-normal text-sm p-0">
                       {{ data.item_count }}
                     </td>
-                    <td class="font-JakartaSans font-normal text-sm p-0">
-                      <span
-                        :class="
-                          data.status == 'Waiting Approval'
-                            ? 'status-default'
-                            : data.status == 'Rejected'
-                            ? 'status-rejected'
-                            : data.status == 'Completed'
-                            ? 'status-done'
-                            : data.status == 'Partial Completed' || data.status == 'Approve'
-                            ? 'status-partial'
-                            : 'font-bold'
-                        "
-                        >{{ data.status }}</span
-                      >
+                    <td class="font-JakartaSans text-sm p-0 font-bold">
+                      <span :class="atkRequestStatus[data.status].class">{{
+                        data.status
+                      }}</span>
                     </td>
                     <td class="flex flex-nowrap gap-1 justify-center">
-                      <router-link :to="`/viewapprovalatkrrequest/${data.id}`" >
+                      <router-link :to="`/viewapprovalatkrrequest/${data.id}`">
                         <button>
-                          <img :src="icon_ceklis" class="w-6 h-6" v-if="data.status == 'Waiting Approval' || data.status == 'Approve'"/>
-                          <img :src="viewicon" class="w-6 h-6" v-else/>
+                          <img
+                            :src="icon_ceklis"
+                            class="w-6 h-6"
+                            v-if="
+                              data.status == 'Waiting Approval' ||
+                              data.status == 'Approve'
+                            "
+                          />
+                          <img :src="viewicon" class="w-6 h-6" v-else />
                         </button>
                       </router-link>
                     </td>

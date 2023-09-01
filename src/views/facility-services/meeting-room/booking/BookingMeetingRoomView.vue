@@ -12,9 +12,17 @@ import arrowicon from "@/assets/navbar/icon_arrow.svg"
 import Api from "@/utils/Api"
 import moment from "moment"
 
+import BookingRoomService from "@/utils/Api/facility-service-system/booking-room-meeting/bookingMeetingRoom.js"
+
+import ApprovalDialog from "@/components/facility-services/booking-meeting-room/ApprovalDialog.vue"
+
 import { ref, onBeforeMount, computed } from "vue"
 import { useSidebarStore } from "@/stores/sidebar.js"
 import { useRoute, useRouter } from "vue-router"
+
+import { toFilterDate } from "@/utils/filters.js"
+
+import WeeklyDayPicker from "@/components/facility-services/booking-meeting-room/WeeklyDayPicker.vue"
 
 const sidebar = useSidebarStore()
 const route = useRoute()
@@ -24,6 +32,9 @@ let selectedEmployee = JSON.parse(localStorage.getItem("id_employee"))
 const id_role = JSON.parse(localStorage.getItem("id_role"))
 
 let dataArr = ref([])
+
+const approvalDialog = ref(false)
+const approvalDialogRef = ref()
 
 let lengthCounter = 0
 let idBook = route.params.id
@@ -49,7 +60,7 @@ const bookingMeetingRoom = {
     statusLevel: 2,
     class: "bg-[#ef9d22] border-[#ef9d22]",
   },
-  "Waiting Appove": {
+  "Waiting Approval": {
     statusLevel: 2,
     class: "bg-[#facc15] border-[#facc15]",
   },
@@ -57,13 +68,13 @@ const bookingMeetingRoom = {
     statusLevel: 3,
     class: "bg-[#00c851] border-[#00c851]",
   },
-  Cancel: {
+  Cancelled: {
     statusLevel: 3,
     class: "bg-red border-red",
   },
 }
 
-const tabs = ref(["Details", "Resurrence", "Room Used Duration"])
+const tabs = ref(["Details", "Resurrence", "Meeting Duration"])
 const tabActive = ref("Details")
 
 const tableHead = [
@@ -76,6 +87,7 @@ const tableHead = [
   { Id: 7, title: "Capacity", jsonData: "grand_total" },
   { Id: 7, title: "Facility", jsonData: "facility" },
   { Id: 8, title: "Remarks", jsonData: "notes" },
+  { Id: 8, title: "Attachment", jsonData: "notes" },
 ]
 
 const format_date = (value) => {
@@ -92,11 +104,30 @@ const isBookingStart = computed(() => {
   return today > fullStartDate
 })
 
+const duration = computed(() => {
+  // start time and end time
+  var startTime = moment(dataArr.value.duration_start)
+  var endTime = moment(dataArr.value.duration_end)
+
+  // calculate total duration
+  var duration = moment.duration(endTime.diff(startTime))
+
+  // duration in hours
+  var hours = parseInt(duration.asHours())
+
+  // duration in minutes
+  var minutes = parseInt(duration.asMinutes()) % 60
+
+  return hours + " hour and " + minutes + " minutes."
+})
+
 const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"))
   Api.defaults.headers.common.Authorization = `Bearer ${token}`
   const api = await Api.get(`book_meeting_room/get/${id}`)
   dataArr.value = api.data.data[0]
+  dataArr.value.days =
+    dataArr.value?.days?.split(",").map((day) => parseInt(day)) || []
 }
 
 const submit = async () => {
@@ -128,11 +159,48 @@ const submit = async () => {
     })
 }
 
+const startMeeting = async () => {
+  try {
+    const bookingId = route.params.id
+    const res = BookingRoomService.startMeeting(bookingId)
+
+    console.log(res)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const endMeeting = async () => {
+  try {
+    Swal.fire({
+      title: "End Booking?",
+      text: "Are you sure want to end this meeting room?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const bookingId = route.params.id
+        const res = BookingRoomService.endMeeting(bookingId)
+        console.log(res)
+
+        if (res.data.success) {
+          Swal.fire("Booking Ended!", `Succcess End Booking Meeting`, "success")
+        }
+      }
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
 const cancelled = async () => {
   Swal.fire({
     title:
-      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to cancelled this?</span>",
-    html: "<div class='font-JakartaSans font-medium text-sm'>This will cancelled this data permanently, You cannot undo this action.</div>",
+      "<span class='font-JakartaSans font-medium text-[28px]'>Are you sure want to cancel this?</span>",
+    html: "<div class='font-JakartaSans font-medium text-sm'>This will cancel this data permanently, You cannot undo this action.</div>",
     iconHtml: `<img src="${icondanger}" />`,
     showCloseButton: true,
     closeButtonHtml: `<img src="${iconClose}" class="hover:scale-75"/>`,
@@ -209,6 +277,14 @@ const closeModal = () => {
   fetchDataById(idBook)
 }
 
+const fullStartMeeting = computed(() => {
+  return new Date(`${dataArr.value.start_date} ${dataArr.value.start_time}`)
+})
+
+const fullEndMeeting = computed(() => {
+  return new Date(`${dataArr.value.end_date} ${dataArr.value.end_time}`)
+})
+
 onBeforeMount(() => {
   getSessionForSidebar()
   fetchDataById(idBook)
@@ -255,7 +331,7 @@ const inputClass =
             </router-link>
             <div
               class="rounded-lg p-3 text-white m-4"
-              :class="bookingMeetingRoom[dataArr.status]?.class"
+              :class="bookingMeetingRoom?.[dataArr.status]?.class || ''"
             >
               {{ dataArr.status }}
             </div>
@@ -283,18 +359,36 @@ const inputClass =
             >
               Book
             </button>
+
             <button
-              v-if="dataArr.status == 'Booked'"
+              v-if="
+                dataArr.status == 'Booked' &&
+                !dataArr.duration_start &&
+                new Date() > fullStartMeeting
+              "
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
-              @click="cancelled"
+              @click="approvalDialog = true"
             >
-              Cancelled
+              Cancel
             </button>
             <button
-              v-if="dataArr.status == 'Booked' && isBookingStart"
+              v-if="
+                new Date() > fullStartMeeting &&
+                !dataArr.duration_start &&
+                dataArr.status == 'Booked'
+              "
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
+              @click="startMeeting()"
             >
               Start Meeting
+            </button>
+
+            <button
+              v-if="dataArr.duration_start && !dataArr.duration_end"
+              class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[150px] border-red bg-red hover:bg-white hover:text-red hover:border-red"
+              @click="endMeeting()"
+            >
+              End Meeting
             </button>
           </div>
 
@@ -325,7 +419,7 @@ const inputClass =
           </div>
 
           <!-- TAB & TABLE-->
-          <div class="bg-blue rounded-lg pt-2 mx-[70px] border " v-if="!addItem">
+          <div class="bg-blue rounded-lg pt-2 mx-[70px] border" v-if="!addItem">
             <div class="tabs bg-primary rounded-t-lg pt-3 py-0 border-b">
               <tab
                 v-for="tab in tabs"
@@ -392,29 +486,111 @@ const inputClass =
                     </td>
 
                     <td class="border border-[#B9B9B9]">
-                      {{ dataArr.facility }}
+                      <div
+                        v-for="(
+                          facility, index
+                        ) in dataArr?.facility_array?.map(
+                          ({ facility_name }) => facility_name
+                        ) || []"
+                      >
+                        {{ index + 1 }}. {{ facility }}
+                      </div>
                     </td>
                     <td class="border border-[#B9B9B9]">
                       <span style="white-space: pre"> {{ dataArr.notes }}</span>
+                    </td>
+
+                    <td class="border border-[#B9B9B9]">
+                      <a
+                        class="text-primary font-medium"
+                        :href="dataArr.attachment_path"
+                        target="_blank"
+                      >
+                        {{ dataArr.attachment }}</a
+                      >
                     </td>
                   </tr>
                 </tbody>
               </table>
 
               <div v-else-if="tabActive == 'Resurrence'" class="p-5">
-                <div class="bg-[#EFF4FF] rounded-2xl p-5 w-[50%]">
+                <div
+                  v-if="is_recurrence"
+                  class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]"
+                >
                   <table>
                     <tr>
                       <th class="text-start">Start Date</th>
-                      <td>: 25/08/2023</td>
+                      <td>
+                        :
+                        {{
+                          toFilterDate(dataArr.recurrence_start, "DD/MM/yyyy")
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <th class="text-start">Recurrence</th>
-                      <td>: Weekly</td>
+                      <td class="capitalize">: {{ dataArr.recurrence }}</td>
                     </tr>
+
                     <tr>
                       <th class="text-start">Until</th>
-                      <td>: 25/08/2023</td>
+                      <td>
+                        :
+                        {{ toFilterDate(dataArr.recurrence_end, "DD/MM/yyyy") }}
+                      </td>
+                    </tr>
+
+                    <tr>
+                      <th class="text-start">Days</th>
+                      <td class="flex items-center h-full">
+                        <div class="">:</div>
+                        <div>
+                          <WeeklyDayPicker disabled :value="dataArr.days" />
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+              <div v-else-if="tabActive == 'Meeting Duration'" class="p-5">
+                <div
+                  v-if="dataArr.duration_start"
+                  class="bg-[#EFF4FF] rounded-2xl p-5 w-[80%]"
+                >
+                  <table>
+                    <tr>
+                      <th>Start Meeting</th>
+                      <td>
+                        :
+                        {{
+                          moment(dataArr.duration_start).format(
+                            "dddd, DD MMMM YYYY ;hh:mm"
+                          )
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>End Meeting</th>
+                      <td>
+                        :
+                        {{
+                          moment(dataArr.duration_end).format(
+                            "dddd, DD MMMM YYYY ;hh:mm"
+                          )
+                        }}
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Duration</th>
+                      <td
+                        v-if="dataArr.duration_end && dataArr.duration_start"
+                        class="font-medium"
+                      >
+                        :
+                        {{ duration }}
+                      </td>
                     </tr>
                   </table>
                 </div>
@@ -425,10 +601,21 @@ const inputClass =
       </div>
       <Footer class="fixed bottom-0 left-0 right-0" />
     </div>
+
+    <ApprovalDialog
+      ref="approvalDialogRef"
+      @success="fetchDataById()"
+      @close="approvalDialog = false"
+      :data="dataArr"
+      type="cancel"
+      :dialog="approvalDialog"
+    >
+      <template></template>
+    </ApprovalDialog>
   </div>
 </template>
 
-<style scoped>
+<style>
 .custom-card {
   box-shadow: 0px -4px #015289;
   border-radius: 4px;
@@ -454,11 +641,19 @@ const inputClass =
 }
 
 td,
-tr {
+th {
   padding: 5px;
   font-family: Plus Jakarta Sans;
   font-size: 14px;
   font-style: normal;
   line-height: normal;
+  text-align: start;
+}
+
+.swal2-actions {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  padding-left: 0px !important;
 }
 </style>

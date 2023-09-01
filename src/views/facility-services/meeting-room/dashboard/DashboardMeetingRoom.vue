@@ -36,6 +36,7 @@ const chartStatusColor = {
   Booked: "bg-primary",
   Done: "bg-green",
   Cancelled: "bg-red",
+  "Waiting Approval": "bg-red",
 }
 
 let dataArr = ref([])
@@ -87,6 +88,7 @@ const fetch = async () => {
         class: `${chartStatusColor[dt.status]} text-whtie`,
         split: dt.id_meeting_room,
         data: { ...dt },
+        title: `<p class='font-medium mb-5 bg-white text-black'> ${dt.status} </p>`,
       }
 
       datas.value.push({ ...arr })
@@ -133,6 +135,7 @@ const filterDataByType = async () => {
         content: "<p class='my-2'>" + dt.title + "</p>" + dt.name_created,
         class: "card-color",
         split: dt.id_meeting_room,
+        title: dt.status,
       }
       datas.value.push(arr)
     }
@@ -329,18 +332,21 @@ onBeforeMount(async () => {
               :minSplitWidth="200"
               :on-event-create="onEventCreate"
               @event-drag-create="openModal"
-              sticky-split-labels
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
               style="width: 300px; height: 70vh"
               class="basis-8/12"
               :on-event-click="openModal"
+              :sticky-split-labels="true"
             >
-              <template #split-label="{ split }">
+              <!-- <template
+                #split-label="{ split }"
+                style="position: sticky; top: 0"
+              >
                 <strong :style="`color: ${split.color}`">{{
                   split.label
                 }}</strong>
-              </template>
+              </template> -->
             </vue-cal>
             <ModalAddBookingRoom
               v-if="visibleModal"

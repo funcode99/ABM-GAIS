@@ -413,10 +413,20 @@ const format_date = (value) => {
               v-if="isOpen"
               class="mt-3 p-2 shadow bg-base-100 rounded-box w-52 absolute"
             >
-              <li class="py-2 border-b-2"><a>Profile</a></li>
-              <li class="py-2 border-b-2"><a>Settings</a></li>
-              <li @click="logout" class="py-2 border-b-2 cursor-pointer">
-                <a>Logout</a>
+              <li class="py-2 border-b-2">
+                <button>
+                  <a>Profile</a>
+                </button>
+              </li>
+              <li class="py-2 border-b-2">
+                <button>
+                  <a>Settings</a>
+                </button>
+              </li>
+              <li class="py-2 border-b-2">
+                <button @click="logout" type="button">
+                  <a>Logout</a>
+                </button>
               </li>
             </ul>
           </div>

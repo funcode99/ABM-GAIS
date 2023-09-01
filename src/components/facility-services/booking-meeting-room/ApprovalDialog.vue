@@ -1,15 +1,17 @@
 <script setup>
 import { ref, watch } from "vue"
 import { Modal } from "usemodal-vue3"
+import Swal from "sweetalert2"
 
 import modalHeader from "@/components/modal/modalHeader.vue"
 import modalFooter from "@/components/modal/modalFooter.vue"
 import FieldTitle from "@/components/atomics/FieldTitle.vue"
 
+import BookingService from "@/utils/Api/facility-service-system/booking-room-meeting/bookingMeetingRoom.js"
+
 const emits = defineEmits(["success", "close"])
 
 const dialog = ref(false)
-const form = ref({})
 
 const props = defineProps({
   data: {
@@ -25,11 +27,50 @@ const props = defineProps({
     default: "",
   },
 })
+
+const form = ref({
+  notes: null,
+})
+
+const submit = async () => {
+  let res
+  const bookingId = props.data.id
+  const payload = {
+    notes: form.value.notes,
+  }
+
+  if (props.type == "approve") {
+    res = await BookingService.approveMeeting(bookingId, payload)
+  } else {
+    res = await BookingService.rejectMeeting(bookingId, payload)
+  }
+
+  if (await res.data.success) {
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    })
+
+    emits("close")
+  } else {
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: res.data.message,
+      showConfirmButton: false,
+      timer: 1500,
+    })
+  }
+}
 </script>
 
 <template>
   <slot>
     <button
+      type="button"
       @click="dialog = true"
       class="btn btn-success bg-green border-green hover:bg-none capitalize text-white font-JakartaSans text-xs hover:bg-white hover:text-green hover:border-green"
     >
@@ -47,7 +88,7 @@ const props = defineProps({
       @closeVisibility="emits('close')"
       :title="`${props.type} Booking Meeting`"
     />
-    <form @submit.prevent="">
+    <form @submit.prevent="submit()">
       <main class="overflow-y-scroll max-h-[70vh]">
         <div class="px-5 pt-5">
           Are you sure want to
@@ -55,6 +96,7 @@ const props = defineProps({
             class="font-bold"
             :class="{
               'text-error': type == 'reject',
+              'text-error': type == 'cancel',
               'text-green': type == 'approve',
             }"
             >{{ props.type }}
