@@ -80,9 +80,7 @@
       {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Matrix Name', jsonData: 'approval_name'},
       {Id: 3, title: 'Menu', jsonData: 'menu'},
-      {Id: 4, title: 'Document', jsonData: 'document_name'},
-      {Id: 5, title: 'Min Amount (CA)', jsonData: 'min_amount'},
-      {Id: 6, title: 'Max Amount (CA)', jsonData: 'max_amount'}
+      {Id: 4, title: 'Document', jsonData: 'document_name'}
     ]
 
     const sortList = (sortBy) => {
@@ -366,27 +364,15 @@
                       </span>
                     </td>
 
-                    <td style="width: 15%;">
+                    <td style="width: 30%;">
                       <span>
                         {{ data.menu }}
                       </span>
                     </td>
 
-                    <td style="width: 15%;">
+                    <td style="width: 30%;">
                       <span>
                         {{ data.document_name }}
-                      </span>
-                    </td>
-
-                    <td style="width: 15%;">
-                      <span>
-                        {{ data.min_amount }}
-                      </span>
-                    </td>
-
-                    <td style="width: 15%;">
-                      <span>
-                        {{ data.max_amount }}
                       </span>
                     </td>
 

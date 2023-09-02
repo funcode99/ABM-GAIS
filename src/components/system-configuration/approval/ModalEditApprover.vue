@@ -251,6 +251,7 @@
 
       approverLines.value.map((item) => {
         item.is_flight_fetch = item.is_flight
+        item.is_notif_fetch = item.is_notif
       })
 
       addCompanyData.value = referenceFetch.fetchCompanyResult
@@ -289,7 +290,7 @@
 
       <modalHeader
         @closeVisibility="isVisible = false"
-        title="Edit Matrix"
+        title="Edit Matrix Approval"
       />
 
       <form class="modal-box-inner-inner px-3" @submit.prevent="saveField">
@@ -471,6 +472,10 @@
                     </th>
 
                     <th>
+                      <span class="flex justify-center">Notif Only</span>
+                    </th>
+
+                    <th>
                       <span class="flex justify-center">Flight</span>
                     </th>
 
@@ -543,6 +548,19 @@
                     
                   </td>
 
+                  <td>
+                    <input 
+                      :disabled="input.isEdit == false ? true : false"
+                      v-model="approverLines[index].another"
+                      class="h-6 w-6" 
+                      type="checkbox"
+                      @click="approverLines[index].is_notif_fetch === 1 ? approverLines[index].is_notif_fetch = 0 : approverLines[index].is_notif_fetch = 1"
+                      @change="approverLines[index].another === true ? approverLines[index].is_notif_fetch = 1 : approverLines[index].is_notif_fetch = 0"
+                    />
+
+                    <div v-if="approverLines[index].is_notif_fetch === 1 ? approverLines[index].another = true : approverLines[index].another = false"></div>
+
+                    </td>
                   <td>
 
                       <!-- {{ approverLines[index].another }}

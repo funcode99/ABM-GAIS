@@ -162,7 +162,7 @@ const fetchParentCompany = async (id_company) => {
       <div class="flex items-end flex-wrap gap-4">
 
         <!-- sort group company filter -->
-        <div v-if="props.modalAddType !== 'approval'" class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1">
 
           <p class="capitalize font-Fira text-xs text-black font-medium">
             Group Company
