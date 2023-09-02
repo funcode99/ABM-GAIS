@@ -66,6 +66,8 @@
       min_ammount: 0,
       max_ammount: 0,
       is_flight: 0,
+      is_notif: 0,
+      is_notif_checkbox: false,
       is_flight_checkbox: false,
     })
 
@@ -198,11 +200,11 @@
 
           <modalHeader
             @closeVisibility="isVisible = false"
-            title="New Matrix"
+            title="New Matrix Approval"
           />
 
           <!-- px-8 -->
-          <form class="pr-4 modal-box-inner-inner" @submit.prevent="saveField">
+          <form class="modal-box-inner-inner w-[671px]" @submit.prevent="saveField">
 
               <!-- bagian atas -->
               <div class="mb-3">
@@ -344,6 +346,10 @@
                       </th>
 
                       <th>
+                        <span class="flex justify-center">Notif Only</span>
+                      </th>
+
+                      <th>
                         <span class="flex justify-center">Flight</span>
                       </th>
 
@@ -410,6 +416,10 @@
                           </option>
                         </select>
 
+                      </td>
+
+                      <td>
+                        <input class="h-6 w-6" type="checkbox" v-model="input.is_notif_checkbox" :value="input.is_notif_checkbox === false ? input.is_notif = 0 : input.is_notif = 1" />
                       </td>
 
                       <td>

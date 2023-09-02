@@ -79,7 +79,8 @@
     const tableHead = [
       {Id: 1, title: 'No', jsonData: 'no'},
       {Id: 2, title: 'Matrix Name', jsonData: 'approval_name'},
-      {Id: 3, title: 'Menu', jsonData: 'menu'}
+      {Id: 3, title: 'Menu', jsonData: 'menu'},
+      {Id: 4, title: 'Document', jsonData: 'document_name'}
     ]
 
     const sortList = (sortBy) => {
@@ -357,15 +358,21 @@
                       {{ data.no }} 
                     </td>
 
-                    <td style="width: 40%;">
+                    <td style="width: 20%;">
                       <span>
                         {{ data.approval_name }}
                       </span>
                     </td>
 
-                    <td style="width: 40%;">
+                    <td style="width: 30%;">
                       <span>
                         {{ data.menu }}
+                      </span>
+                    </td>
+
+                    <td style="width: 30%;">
+                      <span>
+                        {{ data.document_name }}
                       </span>
                     </td>
 
