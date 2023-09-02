@@ -203,16 +203,30 @@
 
         <form class="pr-4 modal-box-inner-inner text-left" @submit.prevent="submitEdit">
   
-          <div class="mb-6">
-            <span>Employee?<span class="text-red-star">*</span></span>
-            <div class="flex gap-2 pt-2">
-              <div class="flex gap-1">
-                <input type="radio" name="employee" v-model="isEmployee" :value="true" class="border border-black w-[26px] h-[26px]" disabled>
-                <label for="">Yes</label>
+          <div class="w-[519px] h-[71px] flex-col justify-start items-start gap-1 inline-flex">
+            <div class="self-stretch"><span class="text-black text-sm font-medium">Employee?</span><span class="text-red-star text-sm font-medium">*</span></div>
+            <div class="w-[519px] justify-start items-start inline-flex">
+              <div class="w-[98px] h-[49px] relative bg-white">
+                <input
+                  type="radio"
+                  name="employee"
+                  v-model="isEmployee"
+                  :value="true"
+                  class="w-[26px] h-[26px] left-[12px] top-[11px] absolute bg-cyan-700 rounded-full"
+                  disabled
+                >
+                <div class="left-[54px] top-[17px] absolute text-black text-xs font-medium">Yes</div>
               </div>
-              <div class="flex gap-1">
-                <input type="radio" name="employee" v-model="isEmployee" :value="false" class="border border-black w-[26px] h-[26px]" disabled>
-                <label for="">No</label>
+              <div class="w-[421px] h-[49px] pl-3 pr-[350px] pt-[11px] pb-3 bg-white justify-start items-center gap-4 inline-flex">
+                <input
+                  type="radio"
+                  name="employee"
+                  v-model="isEmployee"
+                  :value="false"
+                  class="w-[26px] h-[26px] rounded-full border border-black"
+                  disabled
+                >
+                <div class="text-black text-xs font-medium">No</div>
               </div>
             </div>
           </div>
