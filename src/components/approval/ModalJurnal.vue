@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import moment from "moment";
 import Multiselect from "@vueform/multiselect";
 
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const emits = defineEmits(["unlockScrollbar"]);
@@ -23,7 +23,7 @@ let GLData = ref([]);
 // let idCompany = ref("");
 let typeDoc = ref("");
 let companyCode = ref("");
-let glName = ref("");
+// let glName = ref("");
 let isVisibleTableHeaders = ref(false);
 let isEditing = ref(false);
 let isHideButtonSave = ref(false);
@@ -142,6 +142,23 @@ const fetchGLAccount = async (id) => {
     item.format = `${item.gl_account}`;
   });
 };
+
+watch(
+  dataSapDoc,
+  (newDataSapDoc) => {
+    newDataSapDoc.forEach((item) => {
+      if (item.gl_reccon_acc) {
+        const selectedGL = GLData.value.find(
+          (gl) => gl.id === item.gl_reccon_acc
+        );
+        if (selectedGL) {
+          item.gl_name = selectedGL.gl_name;
+        }
+      }
+    });
+  },
+  { deep: true }
+);
 
 onBeforeMount(() => {
   fetchCompany();
