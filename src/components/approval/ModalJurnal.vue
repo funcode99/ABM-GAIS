@@ -259,6 +259,25 @@ const format_month = (value) => {
   }
 };
 
+const formatPriceForInput = (value) => {
+  if (!value) {
+    return "0.00";
+  }
+
+  const numericValue = parseFloat(value.replace(/[^0-9-]/g, ""));
+  const hasMinusSign = value.endsWith("-");
+  const formattedValue = numericValue.toLocaleString("id-ID");
+
+  if (hasMinusSign) {
+    return formattedValue + "-";
+  } else {
+    return formattedValue;
+  }
+};
+
+const updateAmount = (rowData, newValue) => {
+  rowData.amount = formatPriceForInput(newValue);
+};
 let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
 
@@ -500,7 +519,11 @@ const inputClass =
                   :key="data.item"
                 >
                   <td>
-                    <input v-model="data.item" :class="inputClass" disabled />
+                    <input
+                      v-model="data.item"
+                      disabled
+                      class="cursor-pointer font-JakartaSans block bg-#e0e0e0 w-[60px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                    />
                   </td>
 
                   <td>
@@ -582,8 +605,9 @@ const inputClass =
 
                   <td>
                     <input
-                      v-model="data.amount"
+                      :value="formatPriceForInput(data.amount)"
                       :class="inputClass"
+                      @input="updateAmount(data, $event.target.value)"
                       :disabled="
                         idEdit == null && isEditing && !alreadySave
                           ? false
