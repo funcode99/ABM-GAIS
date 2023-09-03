@@ -141,9 +141,9 @@ const cancelled = async () => {
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
     confirmButtonText: "Yes",
-  }).then((result) => {
+  }).then(async (result) => {
     if (result.isConfirmed) {
-      Api.post(`book_meeting_room/cancel/${idBook}`).then((res) => {
+      await Api.post(`book_meeting_room/cancel/${idBook}`).then((res) => {
         Swal.fire({
           title: "Successfully",
           text: "Data has been cancelled.",
@@ -154,7 +154,7 @@ const cancelled = async () => {
           timer: 1500,
         })
       })
-      fetchDataById(idBook)
+      await fetchDataById(idBook)
     } else {
       return
     }
