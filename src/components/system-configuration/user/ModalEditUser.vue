@@ -1,5 +1,5 @@
 <script setup>
-    import { computed, ref, watch } from 'vue'
+    import { ref, watch } from 'vue'
     import { Modal } from 'usemodal-vue3'
 
     import Api from '@/utils/Api'
@@ -84,12 +84,6 @@
       console.log(error)
     }
   }
-
-  const isSuperAdmin = computed(() => {
-    const userRole = localStorage.getItem("id_role")
-
-    return userRole == `"SUPADM"`
-  })
 
   const submitEdit = () => {
 
@@ -426,9 +420,9 @@
           </div>
 
           <!-- Secondary Company Location -->
-          <div v-if="isSuperAdmin">
+          <div v-if="role === 2">
 
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 mb-6">
               <input
                 type="checkbox" 
                 id="is_approver" 
