@@ -246,12 +246,14 @@ const saveJurnal = async (data) => {
   }
 };
 
-const postingJurnal = async (id) => {
+const postingJurnal = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
+  const id_document = dataCaNonTravel.value.id_document;
+
   try {
-    const res = await Api.get(`/export/sap/journal/${id}`);
+    const res = await Api.get(`/export/sap/journal/${id_document}`);
     // console.log(res.message);
     Swal.fire({
       position: "center",
