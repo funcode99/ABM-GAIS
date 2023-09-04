@@ -299,6 +299,7 @@ const callEditApi = async () => {
     id_company: formEditState.user.companyId,
     id_site: formEditState.user.siteId,
     is_active: formEditState.user.idStatusMenu,
+    is_approver: formEditState.user.isApprover ? 1 : 0,
     array_detail: formEditState.user.secondaryCompany,
   });
   console.log(api);
@@ -526,6 +527,7 @@ const inputStylingClass =
                         data.id_employee,
                         data.is_active,
                         data.id,
+                        data.is_approver,
                       ]"
                     />
                     <button @click="deleteData(data.id)">
