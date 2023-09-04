@@ -20,6 +20,7 @@ let companyData = ref([]);
 let costCenterData = ref([]);
 let pkData = ref([]);
 let GLData = ref([]);
+let DataPosting = ref([]);
 // let idCompany = ref("");
 let typeDoc = ref("");
 let companyCode = ref("");
@@ -90,23 +91,36 @@ const fetchDataById = async (id) => {
   try {
     const res = await Api.get(`/approval_non_travel/get_data/${id}`);
     dataCaNonTravel.value = res.data.data[0];
-    // console.log(dataCaNonTravel.value);
+    // console.log("dataCaNonTravel", dataCaNonTravel.value);
     typeDoc.value = props.dataJurnal.code_document;
     fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+    // postingJurnal(dataCaNonTravel.value.id_document);
   } catch (error) {
     console.error("An error occurred:", error);
   }
 };
 
 const fetchSapByIdDoc = async (id) => {
+  // console.log("ini iD", id);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   try {
     const res = await Api.get(
       `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
     );
-    dataSapDoc.value = res.data.data.detail;
-    // console.log(dataSapDoc.value);
+    const dataArray = res.data.data.detail.map(
+      ({ document_date, item_number, posting_key, ...rest }) => {
+        return {
+          ...rest,
+          doc_date: document_date,
+          item: item_number,
+          pk: posting_key,
+        };
+      }
+    );
+    dataSapDoc.value = dataArray;
+    // console.log("ini data sapDoc dadta aray", dataArray);
+    // console.log("ini data sapDoc datasapdoc", res.data.data.detail);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -152,7 +166,7 @@ watch(
           (gl) => gl.id === item.gl_reccon_acc
         );
         if (selectedGL) {
-          item.gl_name = selectedGL.gl_name;
+          item.short_text = selectedGL.gl_name;
         }
       }
     });
@@ -169,20 +183,24 @@ onBeforeMount(() => {
 
 const editTableHeader = () => {
   isVisibleTableHeaders.value = true;
-  // isEditing.value = !isEditing.value;
+  isEditing.value = !isEditing.value;
   // isNoEdit.value = true;
 };
 
 const cancelTableHeader = () => {
   isVisibleTableHeaders.value = false;
-  // isEditing.value = false;
+  isEditing.value = false;
   // isNoEdit.value = false;
   // idEdit.value = null;
 };
 
 const saveJurnal = async (data) => {
   const dataArray = data.map(({ doc_date, item, pk, template, ...rest }) => {
-    return { ...rest, item_number: item, posting_key: pk };
+    return {
+      ...rest,
+      item_number: item,
+      posting_key: pk,
+    };
   });
 
   const token = JSON.parse(localStorage.getItem("token"));
@@ -202,7 +220,7 @@ const saveJurnal = async (data) => {
       claim_cat: props.dataJurnal.code_document,
       array_data: dataArray,
       gl_reccon_acc: data.gl_reccon_acc,
-      short_text: data.gl_name,
+      short_text: data.short_text,
       item_text: data.item_text,
       cost_center: data.cost_center,
       profit_center: data.profit_center,
@@ -210,7 +228,7 @@ const saveJurnal = async (data) => {
       due_date: data.due_date,
     };
     const res = await Api.post("/jurnal/save_sap", payload);
-    // console.log(payload);
+    // console.log("ini payload", payload);
     Swal.fire({
       position: "center",
       icon: "success",
@@ -218,28 +236,51 @@ const saveJurnal = async (data) => {
       showConfirmButton: false,
       timer: 1500,
     });
-    isEditing.value = false;
+    // await fetchSapByIdDoc(props.dataJurnal.id_document);
     // isNoEdit.value = true;
-    alreadySave.value = true;
+    // alreadySave.value = true;
     isVisibleTableHeaders.value = false;
+    isEditing.value = false;
   } catch (error) {
     console.error("An error occurred:", error);
   }
 };
 
-const editTableDetails = (id) => {
-  // idEdit.value = id;
+const postingJurnal = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  const id_document = dataCaNonTravel.value.id_document;
+
+  try {
+    const res = await Api.get(`/export/sap/journal/${id_document}`);
+    // console.log(res.message);
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Posting Successfully",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // console.log("berhasil posting");
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
 };
 
-const cancelTableDetails = () => {
-  // idEdit.value = null;
-  // isEditing.value = false;
-};
+// const editTableDetails = (id) => {
+//   idEdit.value = id;
+// };
 
-const saveTableDetails = () => {
-  // idEdit.value = null;
-  // isEditing.value = false;
-};
+// const cancelTableDetails = () => {
+//   idEdit.value = null;
+//   isEditing.value = false;
+// };
+
+// const saveTableDetails = () => {
+//   idEdit.value = null;
+//   isEditing.value = false;
+// };
 
 const format_date = (value) => {
   if (value) {
@@ -278,6 +319,7 @@ const formatPriceForInput = (value) => {
 const updateAmount = (rowData, newValue) => {
   rowData.amount = formatPriceForInput(newValue);
 };
+
 let classStyle =
   "font-JakartaSans font-semibold text-base capitalize block bg-#e0e0e0 w-96 border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 cursor-not-allowed";
 
@@ -354,6 +396,7 @@ const inputClass =
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-green border-green hover:bg-white hover:border-green hover:text-green"
               v-if="!isVisibleTableHeaders"
+              @click="postingJurnal()"
             >
               Posting
             </button>
@@ -549,7 +592,7 @@ const inputClass =
 
                   <td>
                     <input
-                      :value="format_date(data.doc_date)"
+                      :value="format_date(props.dataJurnal.doc_created_at)"
                       :class="inputClass"
                       disabled
                     />
@@ -599,7 +642,7 @@ const inputClass =
                     <input
                       :class="inputClass"
                       disabled
-                      v-model="data.gl_name"
+                      v-model="data.short_text"
                     />
                   </td>
 
@@ -717,6 +760,7 @@ const inputClass =
                   <td>
                     <input :class="inputClass" disabled />
                   </td>
+
                   <!-- <td v-if="isNoEdit && alreadySave">
                     <button
                       :key="data.item"

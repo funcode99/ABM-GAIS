@@ -42,6 +42,7 @@
     let fullname = ref(props.formContent[0])
     let usernameEmployee = ref(props.formContent[8])
     let idStatusMenu = ref(props.formContent[9])
+    let isApprover = ref(props.formContent[11] == 1 ? true : false)
 
     let responseCompanyArray = ref([])
     let responseEmployeeArray = ref([])
@@ -56,7 +57,9 @@
   const addField = (arrayList) => {
 
     arrayList.push({
-      responseSiteByCompanyIdArray: []
+      responseSiteByCompanyIdArray: [],
+      is_approver: 0,
+      is_approver_checkbox: false,
     })
 
   }
@@ -96,6 +99,7 @@
       formEditState.user.siteId = location.value
       formEditState.user.fullname = fullname.value
       formEditState.user.idStatusMenu = idStatusMenu.value
+      formEditState.user.isApprover = isApprover.value
       formEditState.user.secondaryCompany = secondaryList.value
       emits('changeUser')
       isVisible.value = false
@@ -111,6 +115,7 @@
       role.value = props.formContent[3]
       isEmployee.value = props.formContent[6] == 1 ? true : false 
       fullname.value = props.formContent[0]
+      isApprover.value = props.formContent[11] == 1 ? true : false 
   }
 
 
@@ -425,9 +430,8 @@
             <div class="flex items-center gap-2 mb-6">
               <input
                 type="checkbox" 
-                id="is_approver" 
-                @click="selected = is_approver" 
-                :checked="selected === is_approver" 
+                id="is_approver"
+                v-model="isApprover"
               />
               <label>Is Approver</label>
             </div>
@@ -506,7 +510,7 @@
                     </td>
 
                     <td>
-                      <input class="h-6 w-6" type="checkbox" />
+                      <input class="h-6 w-6" type="checkbox"  v-model="input.is_approver_checkbox" :value="input.is_approver_checkbox === false ? input.is_approver = 0 : input.is_approver = 1" />
                     </td>
 
                     <td class="flex flex-wrap gap-4 justify-center">
