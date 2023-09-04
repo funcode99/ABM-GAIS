@@ -1,12 +1,25 @@
 import Api from "@/utils/Api"
 
 const ENDPOINT = "book_meeting_room"
+const EMPLOYEE = "employee"
 
 const token = JSON.parse(localStorage.getItem("token"))
 
 Api.defaults.headers.common.Authorization = `Bearer ${token}`
 
 export default {
+  getSecretaryByCompanyId: async (id, params) => {
+    try {
+      const res = await Api.get(
+        `${EMPLOYEE}/get_secretary_by_company/${id}`,
+        params
+      )
+
+      return res.data
+    } catch (error) {
+      console.error(error)
+    }
+  },
   startMeeting: async (id, params) => {
     try {
       const res = await Api.post(`${ENDPOINT}/start_meeting/${id}`, params)

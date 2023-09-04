@@ -77,7 +77,7 @@ const selectAll = (checkValue) => {
 //for tablehead
 const tableHead = [
   { Id: 1, title: "No", jsonData: "no" },
-  { Id: 2, title: "ID Meeting Room", jsonData: "created_at" },
+  // { Id: 2, title: "ID Meeting Room", jsonData: "created_at" },
   { Id: 3, title: "Meeting Room Name", jsonData: "name_meeting_room" },
   { Id: 4, title: "Capacity", jsonData: "capacity" },
   { Id: 5, title: "Available Status", jsonData: "available_status" },
@@ -550,7 +550,7 @@ onBeforeMount(() => {
                       />
                     </td>
                     <td>{{ (showingValue - 1) * 10 + index + 1 }}</td>
-                    <td>{{ data.code_meeting_room }}</td>
+                    <!-- <td>{{ data.code_meeting_room }}</td> -->
                     <td>{{ data.name_meeting_room }}</td>
                     <td>{{ data.capacity }}</td>
                     <td>

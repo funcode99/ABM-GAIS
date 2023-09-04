@@ -361,7 +361,7 @@ onBeforeMount(() => {
       <Sidebar class="fixed basis-0" />
 
       <div
-        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin ease-in-out duration-500"
+        class="bg-[#e4e4e6] pt-5 pb-16 px-8 w-screen h-full clean-margin"
         :class="[
           lengthCounter < 6 ? 'backgroundHeight' : 'h-full',
           sidebar.isWide === true ? 'ml-[260px]  ' : 'ml-[100px]  ',
@@ -609,9 +609,7 @@ onBeforeMount(() => {
                     <td>{{ data.site_name }}</td>
                     <td class="font-bold">
                       <span
-                        :class="
-                          bookingMeetingRoomStatus?.[data.status]?.class
-                        "
+                        :class="bookingMeetingRoomStatus?.[data.status]?.class"
                         >{{ data.status }}</span
                       >
                     </td>

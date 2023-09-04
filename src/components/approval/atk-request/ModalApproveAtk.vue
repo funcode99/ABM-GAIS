@@ -108,9 +108,9 @@ const addItem = async (ind, data) => {
     id_warehouse: null,
   })
 
-  itemTable.value.map((element) => {
-    element.stock_available = data?.stock_available ? data?.stock_available : ""
-  })
+  // itemTable.value.map((element) => {
+  //   element.stock_available = data?.stock_available ? data?.stock_available : 0
+  // })
 
   tableKey.value++
 }
@@ -131,6 +131,10 @@ const updateQty = (item, data) => {
     data.qtyApproved = 0
     data.qtyApproved = Math.abs(data.qty_requested - totalApprove([...item]))
   }
+
+  if (data.qtyApproved < 0) {
+    data.qtyApproved = 0
+  }
 }
 
 const totalApprove = (item) => {
@@ -140,8 +144,7 @@ const totalApprove = (item) => {
       return accumulator + currentValue
     }, 0)
 
-
-    return parseInt(total)
+  return parseInt(total)
 }
 
 const removeItem = async (indexItem, indexDetail) => {
@@ -339,11 +342,15 @@ onBeforeMount(() => {
 
                 <td class="border border-[#B9B9B9] w-150px">
                   <div v-if="value.array_warehouse">
+                    <!-- <pre>
+                      {{ value.array_warehouse }}
+                    </pre> -->
                     <Multiselect
                       class="text-sm"
                       v-model="value.id_warehouse"
                       :options="value.array_warehouse"
                       label="warehouse_name"
+                      track-by="warehouse_name"
                       value-prop="id_warehouse"
                       :can-clear="false"
                       @select="
@@ -389,7 +396,11 @@ onBeforeMount(() => {
                           updateQty(item, value)
                         } else {
                           if (value.qtyApproved > value.qty_approved) {
-                            value.qtyApproved = 0
+                            value.qtyApproved = value.qty_requested
+                          }
+
+                          if (value.qtyApproved < 0) {
+                            value.qtyApproved = value.qty_requested
                           }
                         }
                       }

@@ -10,6 +10,8 @@ import FacilityService from "@/utils/Api/reference/facility.js"
 import { fetchSiteByUseID } from "@/utils/Api/reference/site.js"
 import storageHelper from "@/utils/storage.helper.js"
 
+import BookingService from "@/utils/Api/facility-service-system/booking-room-meeting/bookingMeetingRoom.js"
+
 const props = defineProps({
   status: String,
   id: Number,
@@ -116,20 +118,23 @@ const fetchDataById = async (id) => {
   fetchSite(id_company.value)
 }
 
-const fetchEmployee = async (query) => {
-  let payload = {
-    search: query,
-    filterRole: 91, //secretary
-  }
+const fetchApprover = async () => {
   isLoading.value = true
-  const token = JSON.parse(localStorage.getItem("token"))
-  Api.defaults.headers.common.Authorization = `Bearer ${token}`
-  await Api.get(`users/${id_site.value}`, {
-    params: payload,
-  }).then((res) => {
-    listEmployee.value = res.data.data
-    isLoading.value = false
-  })
+  // const token = JSON.parse(localStorage.getItem("token"))
+  // Api.defaults.headers.common.Authorization = `Bearer ${token}`
+  const companyId = localStorage.getItem("id_company")
+  const res = await BookingService.getSecretaryByCompanyId(companyId)
+
+  console.log(res)
+
+  listEmployee.value = res?.data || []
+
+  // await Api.get(`users/${id_site.value}`, {
+  //   params: payload,
+  // }).then((res) => {
+  //   listEmployee.value = res.data.data
+  //   isLoading.value = false
+  // })
 }
 // END
 
@@ -147,7 +152,7 @@ const saveForm = async () => {
     available_status: available_status.value,
     facility: facility.value,
     is_approval: is_approval.value,
-    approver: is_approval.value ? approver.value : [""],
+    approver: is_approval.value ? approver.value : [],
   }
   if (type.value == "add") {
     save(payload)
@@ -232,8 +237,8 @@ const filteredSites = computed(() => {
 })
 
 onMounted(async () => {
-  fetchEmployee()
-  fetchCondition()
+  await fetchApprover()
+  await fetchCondition()
 
   await fetchSitesByUserId()
 
@@ -389,7 +394,7 @@ watchEffect(() => {
             </div>
             <div :class="colClass">
               <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Approval<span class="text-red">*</span></label
+                >Approval</label
               >
               <input
                 type="checkbox"
@@ -404,18 +409,17 @@ watchEffect(() => {
               <Multiselect
                 v-model="approver"
                 placeholder="Select Employee"
-                track-by="username"
-                label="username"
+                track-by="employee_name"
+                label="employee_name"
                 valueProp="id"
                 mode="tags"
                 :close-on-select="false"
                 :searchable="true"
                 :options="listEmployee"
-                :limit="10"
-                :loading="isLoading"
                 :hide-selected="true"
                 required
-                ><template v-slot:tag="{ option, handleTagRemove, disabled }">
+              >
+                <!-- <template v-slot:tag="{ option, handleTagRemove, disabled }">
                   <div
                     class="multiselect-tag is-user"
                     :class="{
@@ -430,8 +434,9 @@ watchEffect(() => {
                     >
                       <span class="multiselect-tag-remove-icon"></span>
                     </span>
-                  </div> </template
-              ></Multiselect>
+                  </div> </template -->
+                ></Multiselect
+              >
             </div>
             <div :class="colClass">
               <label class="block mb-2 font-JakartaSans font-medium text-sm"

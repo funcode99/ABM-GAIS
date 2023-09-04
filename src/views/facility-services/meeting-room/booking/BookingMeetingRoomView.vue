@@ -364,7 +364,7 @@ const inputClass =
               v-if="
                 dataArr.status == 'Booked' &&
                 !dataArr.duration_start &&
-                new Date() > fullStartMeeting
+                new Date() < fullStartMeeting
               "
               class="btn btn-sm text-white text-base font-JakartaSans font-bold capitalize w-[100px] bg-red border-red hover:bg-white hover:border-red hover:text-red"
               @click="approvalDialog = true"
@@ -562,7 +562,7 @@ const inputClass =
                   <table>
                     <tr>
                       <th>Start Meeting</th>
-                      <td>
+                      <td v-if="dataArr.duration_start">
                         :
                         {{
                           moment(dataArr.duration_start).format(
@@ -573,7 +573,7 @@ const inputClass =
                     </tr>
                     <tr>
                       <th>End Meeting</th>
-                      <td>
+                      <td v-if="dataArr.duration_end">
                         :
                         {{
                           moment(dataArr.duration_end).format(

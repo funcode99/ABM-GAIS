@@ -36,7 +36,7 @@ const chartStatusColor = {
   Booked: "bg-primary",
   Done: "bg-green",
   Cancelled: "bg-red",
-  "Waiting Approval": "bg-red",
+  "Waiting Approval": "bg-[#facc15]",
 }
 
 let dataArr = ref([])
@@ -81,14 +81,14 @@ const fetch = async () => {
         start: dt.start_date + " " + dt.start_time,
         end: dt.end_date + " " + dt.end_time,
         content:
-          "<p class='my-2 font-bold'>" +
+          "<div class='my-2 font-bold'>" +
           dt.title +
-          "</p>" +
-          `<p class='badge bg-white text-black rounded-xl'> ${dt.name_created} </p>`,
-        class: `${chartStatusColor[dt.status]} text-whtie`,
+          "</div>" +
+          `<div class='badge bg-white text-black rounded-xl '> ${dt.name_created} </div>`,
+        class: `${chartStatusColor[dt.status]} text-white`,
         split: dt.id_meeting_room,
         data: { ...dt },
-        title: `<p class='font-medium mb-5 bg-white text-black'> ${dt.status} </p>`,
+        title: `<p class='badge mb-5 bg-white text-black'> ${dt.status} </p>`,
       }
 
       datas.value.push({ ...arr })
