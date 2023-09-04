@@ -420,10 +420,20 @@
           </div>
 
           <!-- Secondary Company Location -->
-          <div>
+          <div v-if="role === 2">
+
+            <div class="flex items-center gap-2 mb-6">
+              <input
+                type="checkbox" 
+                id="is_approver" 
+                @click="selected = is_approver" 
+                :checked="selected === is_approver" 
+              />
+              <label>Is Approver</label>
+            </div>
 
             <span class="text-sm">
-              Secondary company location<span class="text-red-star">*</span> 
+              Secondary Company Location<span class="text-red-star">*</span> 
             </span>
 
             <table class="table table-zebra table-compact border w-full rounded-lg">
@@ -438,6 +448,9 @@
                     </th>
                     <th>
                       <span>Location</span>
+                    </th>
+                    <th>
+                      <span>Is Approver</span>
                     </th>
                     <th>
                       <span>Action</span>
@@ -492,6 +505,10 @@
 
                     </td>
 
+                    <td>
+                      <input class="h-6 w-6" type="checkbox" />
+                    </td>
+
                     <td class="flex flex-wrap gap-4 justify-center">
                       
                       <button type="button" @click="removeField(secondaryList, index, input.id)">
@@ -504,6 +521,7 @@
 
                   <tr>
 
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
