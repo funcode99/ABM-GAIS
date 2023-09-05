@@ -24,6 +24,7 @@ let typeDoc = ref("");
 let companyCode = ref("");
 let IdPostJurnal = ref("");
 let currentStatus = ref("");
+let postingDate = ref("");
 let isVisibleTableHeaders = ref(false);
 let isEditing = ref(false);
 let isHideButtonSave = ref(false);
@@ -119,6 +120,8 @@ const fetchSapByIdDoc = async (id) => {
     );
     dataSapDoc.value = dataArray;
     IdPostJurnal = res.data.data.id;
+    postingDate = res.data.data.posting_date;
+    // console.log(postingDate);
 
     if (res.data.data.is_csv_created) {
       currentStatus = "POSTED";
@@ -270,6 +273,7 @@ const postingJurnal = async () => {
       timer: 1500,
     });
     // console.log("berhasil posting");
+    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -493,7 +497,13 @@ const inputClass =
             <label class="block mb-2 font-JakartaSans font-medium text-sm"
               >Posting Date</label
             >
-            <input type="text" name="post_date" :class="classStyle" disabled />
+            <input
+              type="text"
+              name="post_date"
+              :class="classStyle"
+              disabled
+              :value="format_date(postingDate)"
+            />
           </div>
 
           <div class="mb-3">
@@ -803,7 +813,11 @@ const inputClass =
                   </td>
 
                   <td>
-                    <input :class="inputClass" disabled />
+                    <input
+                      :class="inputClass"
+                      :value="format_date(postingDate)"
+                      disabled
+                    />
                   </td>
 
                   <!-- <td v-if="isNoEdit && alreadySave">
