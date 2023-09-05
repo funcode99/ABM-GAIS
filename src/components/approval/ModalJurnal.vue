@@ -251,6 +251,7 @@ const saveJurnal = async (data) => {
     });
     // isNoEdit.value = true;
     // alreadySave.value = true;
+    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
     isVisibleTableHeaders.value = false;
     isEditing.value = false;
   } catch (error) {
