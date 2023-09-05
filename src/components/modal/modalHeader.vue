@@ -7,7 +7,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <div class="px-5 sticky top-0 z-50">
+  <div class="px-5 sticky top-0 z-50 bg-blue">
     <div class="" style="z-index: 9999; border-bottom: solid 1px #f2f2f2">
       <button
         @click="$emit('closeVisibility')"
@@ -17,7 +17,7 @@ const props = defineProps({
       </button>
 
       <p
-        class="font-JakartaSans text-2xl font-semibold py-3 text-start"
+        class="font-JakartaSans text-2xl font-semibold text-white py-3 text-start"
       >
         {{ props.title }}
       </p>

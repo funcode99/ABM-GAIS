@@ -541,7 +541,7 @@
                         :class="inputStylingClass"
                         v-for="name in approverLines[index].employee"
                       >
-                            {{ name }}
+                        {{ name }}
                       </option>
 
                     </select>
@@ -551,56 +551,45 @@
                   <td>
                     <input 
                       :disabled="input.isEdit == false ? true : false"
-                      v-model="approverLines[index].another"
+                      v-model="approverLines[index].is_notif_fetch"
                       class="h-6 w-6" 
                       type="checkbox"
-                      @click="approverLines[index].is_notif_fetch === 1 ? approverLines[index].is_notif_fetch = 0 : approverLines[index].is_notif_fetch = 1"
-                      @change="approverLines[index].another === true ? approverLines[index].is_notif_fetch = 1 : approverLines[index].is_notif_fetch = 0"
+                      @click="approverLines[index].is_notif_fetch === true ? approverLines[index].is_notif = 1 : approverLines[index].is_notif = 0"
+                      @change="approverLines[index].is_notif_fetch === true ? approverLines[index].is_notif = 1 : approverLines[index].is_notif = 0"
                     />
-
-                    <div v-if="approverLines[index].is_notif_fetch === 1 ? approverLines[index].another = true : approverLines[index].another = false"></div>
-
-                    </td>
+                  </td>
                   <td>
-
-                      <!-- {{ approverLines[index].another }}
-                      {{ approverLines[index].is_flight }}
-                      {{ approverLines[index].is_flight_fetch }} -->
-
                     <input 
-                    :disabled="input.isEdit == false ? true : false"
-                      v-model="approverLines[index].another"
+                      :disabled="input.isEdit == false ? true : false"
+                      v-model="approverLines[index].is_flight_fetch"
                       class="h-6 w-6" 
                       type="checkbox"
-                      @click="approverLines[index].is_flight_fetch === 1 ? approverLines[index].is_flight_fetch = 0 : approverLines[index].is_flight_fetch = 1"
-                      @change="approverLines[index].another === true ? approverLines[index].is_flight_fetch = 1 : approverLines[index].is_flight_fetch = 0"
+                      @click="approverLines[index].is_flight_fetch === true ? approverLines[index].is_flight = 1 : approverLines[index].is_flight = 0"
+                      @change="approverLines[index].is_flight_fetch === true ? approverLines[index].is_flight = 1 : approverLines[index].is_flight = 0"
                     />
-
-                    <div v-if="approverLines[index].is_flight_fetch === 1 ? approverLines[index].another = true : approverLines[index].another = false"></div>
-
                   </td>
 
                   <td>
-                        <input 
-                          class="border border-black rounded-lg limited p-1" 
-                          @input="formatCurrency('a', input)"
-                          id="minCA"
-                          v-model="approverLines[index].min_ammount"
-                          placeholder="Amount"
-                          :disabled="input.isEdit == false ? true : false"
-                        />
-                      </td>
+                    <input 
+                      class="border border-black rounded-lg limited p-1" 
+                      @input="formatCurrency('a', input)"
+                      id="minCA"
+                      v-model="approverLines[index].min_ammount"
+                      placeholder="Amount"
+                      :disabled="input.isEdit == false ? true : false"
+                    />
+                  </td>
 
-                      <td>
-                        <input
-                          class="border border-black rounded-lg limited p-1"
-                          @input="formatCurrency('b', input)"
-                          id="maxCA"
-                          v-model="approverLines[index].max_ammount"
-                          placeholder="Amount"
-                          :disabled="input.isEdit == false ? true : false"
-                         />
-                      </td>
+                  <td>
+                    <input
+                      class="border border-black rounded-lg limited p-1"
+                      @input="formatCurrency('b', input)"
+                      id="maxCA"
+                      v-model="approverLines[index].max_ammount"
+                      placeholder="Amount"
+                      :disabled="input.isEdit == false ? true : false"
+                    />
+                  </td>
 
                   <td class="flex flex-wrap gap-4 justify-center" >
 

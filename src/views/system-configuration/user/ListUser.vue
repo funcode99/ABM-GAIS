@@ -528,6 +528,7 @@ const inputStylingClass =
                         data.is_active,
                         data.id,
                         data.is_approver,
+                        data.code_role,
                       ]"
                     />
                     <button @click="deleteData(data.id)">
