@@ -36,6 +36,7 @@
     let email = ref(props.formContent[1])
     let selected = ref(props.formContent[2])
     let role = ref(props.formContent[3])
+    let roleCode = ref(props.formContent[12])
     let company = ref(props.formContent[4])
     let location = ref(props.formContent[5])
     let isEmployee = ref(props.formContent[6] == 1 ? true : false)
@@ -128,6 +129,14 @@
       secondaryList.value.map((item, index) => {
         fetchIndividualLocation(item, index)
       })
+  }
+
+  const handleRoleChange = () => {
+      const selectedData = responseRoleArray.value.find(data => data.id === role.value);
+      
+      if (selectedData) {
+        roleCode.value = selectedData.code_role
+      }
   }
 
     watch(isVisible, () => {
@@ -302,7 +311,7 @@
               >User Role<span class="text-red">*</span>
             </label>
 
-            <select id="user_role" :class="inputStylingClass" v-model="role" required>
+            <select id="user_role" :class="inputStylingClass" v-model="role" required @change="handleRoleChange">
               <option v-for="data in responseRoleArray" :key="data.id" :value="data.id" :selected="data.id == role[0] ? true : false">
                 {{ data.role_name }}
               </option>
@@ -425,8 +434,7 @@
           </div>
 
           <!-- Secondary Company Location -->
-          <div v-if="role === 2">
-
+          <div v-if="roleCode === 'SUPADM'">
             <div class="flex items-center gap-2 mb-6">
               <input
                 type="checkbox" 
@@ -538,9 +546,103 @@
                 </tbody>
 
             </table>
-
           </div>
-  
+
+          <div v-if="roleCode === 'SCTR'">
+            <span class="text-sm">
+              Chief
+            </span>
+            <table class="table table-zebra table-compact border w-full rounded-lg">      
+                <thead>
+                  <tr class="text-center">
+                    <th>
+                      <span>No</span>
+                    </th>
+                    <th>
+                      <span>Company</span>
+                    </th>
+                    <th>
+                      <span>Name</span>
+                    </th>
+                    <th>
+                      <span>Action</span>
+                    </th>
+                  </tr>
+                </thead>
+
+                <tbody class="bg-[#F5F5F5]">
+                  
+                  <tr class="text-center" v-for="(input, index) in secondaryList" :key="`${index}`">
+
+                    <td>
+                      {{ index+1 }}
+                    </td>
+
+                    <td>
+                      
+                      <select 
+                        :class="inputStylingClass"
+                        v-model="input.id_company"
+                        @change="fetchIndividualLocation(input, index)"
+                      >
+
+                        <option 
+                          v-for="data in responseCompanyArray"
+                          :key="data.id"
+                          :value="data.id"                        
+                        >
+                            {{ data.company_name }}
+                        </option>
+
+                      </select>
+
+                    </td>
+
+                    <td>
+                      
+                      <select     
+                        :class="inputStylingClass"
+                        v-model="input.id_site"
+                      >
+
+                        <option 
+                          v-for="data in input.responseSiteByCompanyIdArray"
+                          :key="data.id"
+                          :value="data.id"
+                        >
+                            {{ data.site_name }}
+                        </option>
+
+                      </select>
+
+                    </td>
+
+                    <td class="flex flex-wrap gap-4 justify-center">
+                      
+                      <button type="button" @click="removeField(secondaryList, index, input.id)">
+                        <img :src="deleteicon" class="w-6 h-6" />
+                      </button>
+
+                    </td>
+
+                  </tr>
+
+                  <tr>
+
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="flex justify-center">
+                        <img @click="addField(secondaryList)" class="cursor-pointer" :src="iconPlus" alt="">
+                    </td>
+
+                  </tr>
+
+                </tbody>
+
+            </table>
+          </div>
+
           <modalFooter
             class="mt-6 pt-5"
             @closeEdit="isVisible = false"
