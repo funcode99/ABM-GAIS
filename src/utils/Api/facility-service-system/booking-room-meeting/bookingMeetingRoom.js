@@ -48,6 +48,15 @@ export default {
       })
   },
   rejectMeeting: async (id, body) => {
+    return await Api.post(`${ENDPOINT}/reject/${id}`, body)
+      .then((res) => {
+        return res
+      })
+      .catch((error) => {
+        return error.response
+      })
+  },
+  cancelMeeting: async (id, body) => {
     return await Api.post(`${ENDPOINT}/cancel/${id}`, body)
       .then((res) => {
         return res

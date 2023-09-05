@@ -323,30 +323,21 @@ onBeforeMount(async () => {
               active-view="day"
               :time-from="0 * 60"
               :time-step="30"
-              :time-cell-height="50"
+              :time-cell-height="150"
               :disable-views="['years', 'year', 'month']"
               :editable-events="{ title: false, drag: false, create: true }"
               :events="datas"
               :split-days="header.filter(({ active }) => active)"
-              :min-cell-width="200"
-              :minSplitWidth="200"
               :on-event-create="onEventCreate"
+              :min-split-width="150"
               @event-drag-create="openModal"
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
-              style="width: 300px; height: 70vh"
+              style="width: 50vw; height: 70vh"
               class="basis-8/12"
               :on-event-click="openModal"
               :sticky-split-labels="true"
             >
-              <!-- <template
-                #split-label="{ split }"
-                style="position: sticky; top: 0"
-              >
-                <strong :style="`color: ${split.color}`">{{
-                  split.label
-                }}</strong>
-              </template> -->
             </vue-cal>
             <ModalAddBookingRoom
               v-if="visibleModal"
@@ -556,6 +547,22 @@ onBeforeMount(async () => {
   word-wrap: break-word !important;
   text-overflow: ellipsis !important;
   text-align: center;
+  max-height: 50px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* .vuecal__flex .vuecal__cell-split {
+  min-width: 200px !important;
+}
+
+.vuecal__flex .day-split-header {
+  min-width: 200px !important;
+} */
+
+.vuecal--overflow-x.vuecal--day-view.vuecal--sticky-split-labels
+  .vuecal__time-column {
+  margin-top: 50px;
 }
 
 :disabled {
