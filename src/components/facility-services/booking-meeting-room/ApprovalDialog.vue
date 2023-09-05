@@ -42,7 +42,7 @@ const submit = async () => {
   if (props.type == "approve") {
     res = await BookingService.approveMeeting(bookingId, payload)
   } else {
-    res = await BookingService.rejectMeeting(bookingId, payload)
+    res = await BookingService.cancelMeeting(bookingId, payload)
   }
 
   if (await res.data.success) {
