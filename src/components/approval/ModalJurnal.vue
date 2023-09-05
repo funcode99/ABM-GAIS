@@ -25,6 +25,7 @@ let DataPosting = ref([]);
 let typeDoc = ref("");
 let companyCode = ref("");
 // let glName = ref("");
+let IdPostJurnal = ref("");
 let isVisibleTableHeaders = ref(false);
 let isEditing = ref(false);
 let isHideButtonSave = ref(false);
@@ -119,8 +120,11 @@ const fetchSapByIdDoc = async (id) => {
       }
     );
     dataSapDoc.value = dataArray;
-    // console.log("ini data sapDoc dadta aray", dataArray);
+    IdPostJurnal = res.data.data.id;
+    // console.log(IdPostJurnal);
+    // console.log("ini data array", dataArray);
     // console.log("ini data sapDoc datasapdoc", res.data.data.detail);
+    // console.log("ini data id", res.data.data.id);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -250,10 +254,10 @@ const postingJurnal = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
-  const id_document = dataCaNonTravel.value.id_document;
+  // const iD = dataCaNonTravel.value.id;
 
   try {
-    const res = await Api.get(`/export/sap/journal/${id_document}`);
+    const res = await Api.get(`/export/sap/journal/${IdPostJurnal}`);
     // console.log(res.message);
     Swal.fire({
       position: "center",
