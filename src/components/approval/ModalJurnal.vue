@@ -20,12 +20,10 @@ let companyData = ref([]);
 let costCenterData = ref([]);
 let pkData = ref([]);
 let GLData = ref([]);
-let DataPosting = ref([]);
-// let idCompany = ref("");
 let typeDoc = ref("");
 let companyCode = ref("");
-// let glName = ref("");
 let IdPostJurnal = ref("");
+let currentStatus = ref("");
 let isVisibleTableHeaders = ref(false);
 let isEditing = ref(false);
 let isHideButtonSave = ref(false);
@@ -121,10 +119,18 @@ const fetchSapByIdDoc = async (id) => {
     );
     dataSapDoc.value = dataArray;
     IdPostJurnal = res.data.data.id;
+
+    if (res.data.data.is_csv_created) {
+      currentStatus = "POSTED";
+    } else {
+      currentStatus = "PARKING";
+    }
+
     // console.log(IdPostJurnal);
     // console.log("ini data array", dataArray);
     // console.log("ini data sapDoc datasapdoc", res.data.data.detail);
     // console.log("ini data id", res.data.data.id);
+    // console.log("ini status csv", res.data.data.is_csv_created);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -240,7 +246,6 @@ const saveJurnal = async (data) => {
       showConfirmButton: false,
       timer: 1500,
     });
-    // await fetchSapByIdDoc(props.dataJurnal.id_document);
     // isNoEdit.value = true;
     // alreadySave.value = true;
     isVisibleTableHeaders.value = false;
@@ -253,8 +258,6 @@ const saveJurnal = async (data) => {
 const postingJurnal = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
-
-  // const iD = dataCaNonTravel.value.id;
 
   try {
     const res = await Api.get(`/export/sap/journal/${IdPostJurnal}`);
@@ -378,13 +381,6 @@ const inputClass =
                 Cancel
               </button>
 
-              <!-- <button
-                v-if="isHideButtonSave"
-                class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
-              >
-                Done
-              </button> -->
-
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
                 @click="
@@ -411,6 +407,51 @@ const inputClass =
             >
               Reverse
             </button>
+
+            <div class="absolute right-8 top-3 items-center">
+              <div
+                class="alert h-10"
+                :class="{
+                  'alert-warning': currentStatus === 'PARKING',
+                  'alert-success': currentStatus === 'POSTED',
+                }"
+                v-if="currentStatus"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="stroke-current shrink-0 h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke="white"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    v-if="currentStatus === 'PARKING'"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                  <path
+                    stroke="white"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    v-if="currentStatus === 'POSTED'"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <span
+                  v-if="currentStatus === 'PARKING'"
+                  class="text-white font-JakartaSans font-bold text-lg"
+                  >PARKING</span
+                >
+                <span
+                  v-if="currentStatus === 'POSTED'"
+                  class="text-white font-JakartaSans font-bold text-lg"
+                  >POSTED</span
+                >
+              </div>
+            </div>
           </div>
         </div>
 
