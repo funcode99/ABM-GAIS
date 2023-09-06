@@ -30,15 +30,23 @@ let isCancelButtonVisible = ref(false);
 let isSaveButtonVisible = ref(false);
 let isPostButtonVisible = ref(false);
 let isReverseButtonVisible = ref(false);
+let isTab = ref(false);
 
 let idEdit = ref(null);
 let id = route.params.id;
+
+const tabs = ref(["POSTING", "REVERSE"]);
+const activeTab = ref(0);
 
 const role = JSON.parse(localStorage.getItem("id_role"));
 
 const props = defineProps({
   dataJurnal: Object,
 });
+
+const changeTab = (index) => {
+  activeTab.value = index;
+};
 
 const tableHead = [
   { Id: 1, title: "Item", jsonData: "item_number" },
@@ -186,13 +194,14 @@ const editTableHeader = () => {
   isSaveButtonVisible.value = true;
   isPostButtonVisible.value = false;
   isEditing.value = !isEditing.value;
+  isTab.value = false;
 };
 
 const cancelTableHeader = () => {
   isEditButtonVisible.value = true;
   isCancelButtonVisible.value = false;
   isSaveButtonVisible.value = false;
-  isPostButtonVisible.value = true;
+  isPostButtonVisible.value = false;
   isEditing.value = false;
 };
 
@@ -264,6 +273,29 @@ const postingJurnal = async () => {
     fetchSapByIdDoc(dataCaNonTravel.value.id_document);
     isPostButtonVisible.value = false;
     isReverseButtonVisible.value = true;
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};
+
+const reverseJurnal = async () => {
+  const token = JSON.parse(localStorage.getItem("token"));
+  Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+
+  try {
+    const res = await Api.get(`/export/sap/journal/reversal/${IdPostJurnal}`);
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Reverse Successfully",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+    // fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+    isEditButtonVisible.value = false;
+    isPostButtonVisible.value = false;
+    isReverseButtonVisible.value = false;
+    isTab.value = true;
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -341,7 +373,7 @@ const inputClass =
       </nav>
 
       <main class="modal-box-inner">
-        <div class="sticky top-0 bg-white" v-if="role === 'ADM'">
+        <div class="sticky top-0 bg-white z-50 min-h-16" v-if="role === 'ADM'">
           <div
             class="flex flex-wrap justify-start gap-2 items-center px-8 py-3"
           >
@@ -380,6 +412,7 @@ const inputClass =
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-[#FF9900] border-[#FF9900] hover:bg-white hover:border-[#FF9900] hover:text-[#FF9900]"
               v-if="isReverseButtonVisible"
+              @click="reverseJurnal()"
             >
               Reverse
             </button>
@@ -431,355 +464,736 @@ const inputClass =
           </div>
         </div>
 
-        <div class="flex flex-wrap justify-around items-center pt-4">
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Doc Number</label
-            >
-            <input type="text" name="doc_number" :class="classStyle" disabled />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Company Code</label
-            >
-            <input
-              type="text"
-              name="company_code"
-              :class="classStyle"
-              disabled
-              v-model="companyCode"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Doc Date</label
-            >
-            <input
-              type="text"
-              name="doc_date"
-              :class="classStyle"
-              disabled
-              :value="format_date(props.dataJurnal.doc_created_at)"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Posting Date</label
-            >
-            <input
-              type="text"
-              name="post_date"
-              :class="classStyle"
-              disabled
-              :value="format_date(postingDate)"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Ref Doc</label
-            >
-            <input
-              type="text"
-              name="ref_doc"
-              :class="classStyle"
-              disabled
-              :value="props.dataJurnal.no_ca"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Fiscal Year</label
-            >
-            <input
-              type="text"
-              name="fiscal_year"
-              :class="classStyle"
-              disabled
-              :value="format_year(props.dataJurnal.doc_created_at)"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Currency</label
-            >
-            <input
-              type="text"
-              name="currency"
-              :class="classStyle"
-              disabled
-              :value="props.dataJurnal.currency_code"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Period</label
-            >
-            <input
-              type="text"
-              name="period"
-              :class="classStyle"
-              disabled
-              :value="format_month(props.dataJurnal.doc_created_at)"
-            />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Order</label
-            >
-            <input type="text" name="order" :class="classStyle" disabled />
-          </div>
-
-          <div class="mb-3">
-            <label class="block mb-2 font-JakartaSans font-medium text-sm"
-              >Claim Category</label
-            >
-            <input
-              type="text"
-              name="claim_category"
-              :class="classStyle"
-              disabled
-              :value="props.dataJurnal.code_document"
-            />
-          </div>
+        <div class="tabs" v-if="isTab">
+          <a
+            v-for="(tab, index) in tabs"
+            :key="index"
+            :class="[
+              'tab',
+              'tab-bordered',
+              'tab-lifted',
+              'font-JakartaSans font-normal text-md',
+              { 'tab-active': activeTab === index },
+            ]"
+            @click="changeTab(index)"
+          >
+            {{ tab }}
+          </a>
         </div>
 
-        <!-- TABLE -->
-        <div class="pb-4">
-          <div class="table-wrapper">
-            <table>
-              <thead class="text-center font-JakartaSans text-sm font-bold">
-                <th
-                  v-for="data in tableHead"
-                  :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                >
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }}
-                  </span>
-                </th>
-              </thead>
-              <tbody>
-                <tr
-                  class="font-JakartaSans font-normal text-sm text-center"
-                  v-for="data in dataSapDoc"
-                  :key="data.item"
-                >
-                  <td>
-                    <input
-                      v-model="data.item"
-                      disabled
-                      class="cursor-pointer font-JakartaSans block bg-#e0e0e0 w-[60px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
-                    />
-                  </td>
+        <main v-if="activeTab === 0">
+          <div class="flex flex-wrap justify-around items-center pt-4">
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Doc Number</label
+              >
+              <input
+                type="text"
+                name="doc_number"
+                :class="classStyle"
+                disabled
+              />
+            </div>
 
-                  <td>
-                    <select
-                      v-model="data.pk"
-                      :class="inputClass"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                    >
-                      <option
-                        v-for="pkDataItem in pkData"
-                        :key="pkDataItem.no_pk"
-                      >
-                        {{ pkDataItem.no_pk }}
-                      </option>
-                    </select>
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Company Code</label
+              >
+              <input
+                type="text"
+                name="company_code"
+                :class="classStyle"
+                disabled
+                v-model="companyCode"
+              />
+            </div>
 
-                  <td>
-                    <input
-                      :value="format_date(props.dataJurnal.doc_created_at)"
-                      :class="inputClass"
-                      disabled
-                    />
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Doc Date</label
+              >
+              <input
+                type="text"
+                name="doc_date"
+                :class="classStyle"
+                disabled
+                :value="format_date(props.dataJurnal.doc_created_at)"
+              />
+            </div>
 
-                  <td>
-                    <Multiselect
-                      v-model="data.gl_reccon_acc"
-                      mode="single"
-                      track-by="gl_account"
-                      label="gl_account"
-                      :close-on-select="false"
-                      :searchable="true"
-                      :options="GLData"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                      class="w-[250px]"
-                    >
-                      <template
-                        v-slot:tag="{ option, handleTagRemove, disabled }"
-                      >
-                        <div
-                          class="multiselect-tag is-user"
-                          :class="{
-                            'is-disabled': disabled,
-                          }"
-                        >
-                          {{ GLData.gl_account }}
-                          <span
-                            v-if="!disabled"
-                            class="multiselect-tag-remove"
-                            @click="handleTagRemove(option, $event)"
-                          >
-                            <span class="multiselect-tag-remove-icon"></span>
-                          </span>
-                        </div>
-                      </template>
-                    </Multiselect>
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Posting Date</label
+              >
+              <input
+                type="text"
+                name="post_date"
+                :class="classStyle"
+                disabled
+                :value="format_date(postingDate)"
+              />
+            </div>
 
-                  <td>
-                    <input
-                      :class="inputClass"
-                      disabled
-                      v-model="data.short_text"
-                    />
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Ref Doc</label
+              >
+              <input
+                type="text"
+                name="ref_doc"
+                :class="classStyle"
+                disabled
+                :value="props.dataJurnal.no_ca"
+              />
+            </div>
 
-                  <td>
-                    <input
-                      :value="formatPriceForInput(data.amount)"
-                      :class="inputClass"
-                      @input="updateAmount(data, $event.target.value)"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                    />
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Fiscal Year</label
+              >
+              <input
+                type="text"
+                name="fiscal_year"
+                :class="classStyle"
+                disabled
+                :value="format_year(props.dataJurnal.doc_created_at)"
+              />
+            </div>
 
-                  <td>
-                    <input
-                      v-model="data.item_text"
-                      :class="inputClass"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                    />
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Currency</label
+              >
+              <input
+                type="text"
+                name="currency"
+                :class="classStyle"
+                disabled
+                :value="props.dataJurnal.currency_code"
+              />
+            </div>
 
-                  <td>
-                    <Multiselect
-                      v-model="data.cost_center"
-                      mode="single"
-                      track-by="cost_center_name"
-                      label="format"
-                      :close-on-select="false"
-                      :searchable="true"
-                      :options="costCenterData"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                      class="w-[500px]"
-                    >
-                      <template
-                        v-slot:tag="{ option, handleTagRemove, disabled }"
-                      >
-                        <div
-                          class="multiselect-tag is-user"
-                          :class="{
-                            'is-disabled': disabled,
-                          }"
-                        >
-                          {{ costCenterData.item.format }}
-                          <span
-                            v-if="!disabled"
-                            class="multiselect-tag-remove"
-                            @click="handleTagRemove(option, $event)"
-                          >
-                            <span class="multiselect-tag-remove-icon"></span>
-                          </span>
-                        </div>
-                      </template>
-                    </Multiselect>
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Period</label
+              >
+              <input
+                type="text"
+                name="period"
+                :class="classStyle"
+                disabled
+                :value="format_month(props.dataJurnal.doc_created_at)"
+              />
+            </div>
 
-                  <td>
-                    <input
-                      v-model="data.profit_center"
-                      :class="inputClass"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                    />
-                  </td>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Order</label
+              >
+              <input type="text" name="order" :class="classStyle" disabled />
+            </div>
 
-                  <td>
-                    <input
-                      v-model="data.wbs"
-                      :class="inputClass"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      v-model="data.due_date"
-                      :class="inputClass"
-                      :disabled="
-                        idEdit == null && isEditing
-                          ? false
-                          : data.item == idEdit
-                          ? false
-                          : true
-                      "
-                    />
-                  </td>
-
-                  <td>
-                    <input
-                      :class="inputClass"
-                      :value="format_date(postingDate)"
-                      disabled
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Claim Category</label
+              >
+              <input
+                type="text"
+                name="claim_category"
+                :class="classStyle"
+                disabled
+                :value="props.dataJurnal.code_document"
+              />
+            </div>
           </div>
-        </div>
+
+          <!-- TABLE -->
+          <div class="pb-4">
+            <div class="table-wrapper">
+              <table>
+                <thead class="text-center font-JakartaSans text-sm font-bold">
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                  >
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                    </span>
+                  </th>
+                </thead>
+                <tbody>
+                  <tr
+                    class="font-JakartaSans font-normal text-sm text-center"
+                    v-for="data in dataSapDoc"
+                    :key="data.item"
+                  >
+                    <td>
+                      <input
+                        v-model="data.item"
+                        disabled
+                        class="cursor-pointer font-JakartaSans block bg-#e0e0e0 w-[60px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                      />
+                    </td>
+
+                    <td>
+                      <select
+                        v-model="data.pk"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      >
+                        <option
+                          v-for="pkDataItem in pkData"
+                          :key="pkDataItem.no_pk"
+                        >
+                          {{ pkDataItem.no_pk }}
+                        </option>
+                      </select>
+                    </td>
+
+                    <td>
+                      <input
+                        :value="format_date(props.dataJurnal.doc_created_at)"
+                        :class="inputClass"
+                        disabled
+                      />
+                    </td>
+
+                    <td>
+                      <Multiselect
+                        v-model="data.gl_reccon_acc"
+                        mode="single"
+                        track-by="gl_account"
+                        label="gl_account"
+                        :close-on-select="false"
+                        :searchable="true"
+                        :options="GLData"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                        class="w-[250px]"
+                      >
+                        <template
+                          v-slot:tag="{ option, handleTagRemove, disabled }"
+                        >
+                          <div
+                            class="multiselect-tag is-user"
+                            :class="{
+                              'is-disabled': disabled,
+                            }"
+                          >
+                            {{ GLData.gl_account }}
+                            <span
+                              v-if="!disabled"
+                              class="multiselect-tag-remove"
+                              @click="handleTagRemove(option, $event)"
+                            >
+                              <span class="multiselect-tag-remove-icon"></span>
+                            </span>
+                          </div>
+                        </template>
+                      </Multiselect>
+                    </td>
+
+                    <td>
+                      <input
+                        :class="inputClass"
+                        disabled
+                        v-model="data.short_text"
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        :value="formatPriceForInput(data.amount)"
+                        :class="inputClass"
+                        @input="updateAmount(data, $event.target.value)"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.item_text"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <Multiselect
+                        v-model="data.cost_center"
+                        mode="single"
+                        track-by="cost_center_name"
+                        label="format"
+                        :close-on-select="false"
+                        :searchable="true"
+                        :options="costCenterData"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                        class="w-[500px]"
+                      >
+                        <template
+                          v-slot:tag="{ option, handleTagRemove, disabled }"
+                        >
+                          <div
+                            class="multiselect-tag is-user"
+                            :class="{
+                              'is-disabled': disabled,
+                            }"
+                          >
+                            {{ costCenterData.item.format }}
+                            <span
+                              v-if="!disabled"
+                              class="multiselect-tag-remove"
+                              @click="handleTagRemove(option, $event)"
+                            >
+                              <span class="multiselect-tag-remove-icon"></span>
+                            </span>
+                          </div>
+                        </template>
+                      </Multiselect>
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.profit_center"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.wbs"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.due_date"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        :class="inputClass"
+                        :value="format_date(postingDate)"
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+
+        <main v-else>
+          <div class="flex flex-wrap justify-around items-center pt-4">
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Doc Number</label
+              >
+              <input
+                type="text"
+                name="doc_number"
+                :class="classStyle"
+                disabled
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Company Code</label
+              >
+              <input
+                type="text"
+                name="company_code"
+                :class="classStyle"
+                disabled
+                v-model="companyCode"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Doc Date</label
+              >
+              <input
+                type="text"
+                name="doc_date"
+                :class="classStyle"
+                disabled
+                :value="format_date(props.dataJurnal.doc_created_at)"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Posting Date</label
+              >
+              <input
+                type="text"
+                name="post_date"
+                :class="classStyle"
+                disabled
+                :value="format_date(postingDate)"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Ref Doc</label
+              >
+              <input
+                type="text"
+                name="ref_doc"
+                :class="classStyle"
+                disabled
+                :value="props.dataJurnal.no_ca"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Fiscal Year</label
+              >
+              <input
+                type="text"
+                name="fiscal_year"
+                :class="classStyle"
+                disabled
+                :value="format_year(props.dataJurnal.doc_created_at)"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Currency</label
+              >
+              <input
+                type="text"
+                name="currency"
+                :class="classStyle"
+                disabled
+                :value="props.dataJurnal.currency_code"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Period</label
+              >
+              <input
+                type="text"
+                name="period"
+                :class="classStyle"
+                disabled
+                :value="format_month(props.dataJurnal.doc_created_at)"
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Order</label
+              >
+              <input type="text" name="order" :class="classStyle" disabled />
+            </div>
+
+            <div class="mb-3">
+              <label class="block mb-2 font-JakartaSans font-medium text-sm"
+                >Claim Category</label
+              >
+              <input
+                type="text"
+                name="claim_category"
+                :class="classStyle"
+                disabled
+                :value="props.dataJurnal.code_document"
+              />
+            </div>
+          </div>
+
+          <!-- TABLE -->
+          <!-- <div class="pb-4">
+            <div class="table-wrapper">
+              <table>
+                <thead class="text-center font-JakartaSans text-sm font-bold">
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                  >
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                    </span>
+                  </th>
+                </thead>
+                <tbody>
+                  <tr
+                    class="font-JakartaSans font-normal text-sm text-center"
+                    v-for="data in dataSapDoc"
+                    :key="data.item"
+                  >
+                    <td>
+                      <input
+                        v-model="data.item"
+                        disabled
+                        class="cursor-pointer font-JakartaSans block bg-#e0e0e0 w-[60px] border border-slate-300 rounded-md py-2 px-4 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm"
+                      />
+                    </td>
+
+                    <td>
+                      <select
+                        v-model="data.pk"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      >
+                        <option
+                          v-for="pkDataItem in pkData"
+                          :key="pkDataItem.no_pk"
+                        >
+                          {{ pkDataItem.no_pk }}
+                        </option>
+                      </select>
+                    </td>
+
+                    <td>
+                      <input
+                        :value="format_date(props.dataJurnal.doc_created_at)"
+                        :class="inputClass"
+                        disabled
+                      />
+                    </td>
+
+                    <td>
+                      <Multiselect
+                        v-model="data.gl_reccon_acc"
+                        mode="single"
+                        track-by="gl_account"
+                        label="gl_account"
+                        :close-on-select="false"
+                        :searchable="true"
+                        :options="GLData"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                        class="w-[250px]"
+                      >
+                        <template
+                          v-slot:tag="{ option, handleTagRemove, disabled }"
+                        >
+                          <div
+                            class="multiselect-tag is-user"
+                            :class="{
+                              'is-disabled': disabled,
+                            }"
+                          >
+                            {{ GLData.gl_account }}
+                            <span
+                              v-if="!disabled"
+                              class="multiselect-tag-remove"
+                              @click="handleTagRemove(option, $event)"
+                            >
+                              <span class="multiselect-tag-remove-icon"></span>
+                            </span>
+                          </div>
+                        </template>
+                      </Multiselect>
+                    </td>
+
+                    <td>
+                      <input
+                        :class="inputClass"
+                        disabled
+                        v-model="data.short_text"
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        :value="formatPriceForInput(data.amount)"
+                        :class="inputClass"
+                        @input="updateAmount(data, $event.target.value)"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.item_text"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <Multiselect
+                        v-model="data.cost_center"
+                        mode="single"
+                        track-by="cost_center_name"
+                        label="format"
+                        :close-on-select="false"
+                        :searchable="true"
+                        :options="costCenterData"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                        class="w-[500px]"
+                      >
+                        <template
+                          v-slot:tag="{ option, handleTagRemove, disabled }"
+                        >
+                          <div
+                            class="multiselect-tag is-user"
+                            :class="{
+                              'is-disabled': disabled,
+                            }"
+                          >
+                            {{ costCenterData.item.format }}
+                            <span
+                              v-if="!disabled"
+                              class="multiselect-tag-remove"
+                              @click="handleTagRemove(option, $event)"
+                            >
+                              <span class="multiselect-tag-remove-icon"></span>
+                            </span>
+                          </div>
+                        </template>
+                      </Multiselect>
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.profit_center"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.wbs"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        v-model="data.due_date"
+                        :class="inputClass"
+                        :disabled="
+                          idEdit == null && isEditing
+                            ? false
+                            : data.item == idEdit
+                            ? false
+                            : true
+                        "
+                      />
+                    </td>
+
+                    <td>
+                      <input
+                        :class="inputClass"
+                        :value="format_date(postingDate)"
+                        disabled
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div> -->
+        </main>
       </main>
     </div>
   </div>
