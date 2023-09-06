@@ -1,7 +1,6 @@
 <script setup>
 import iconClose from "@/assets/navbar/icon_close.svg";
 import icon_jurnal from "@/assets/icon_jurnal.svg";
-// import editicon from "@/assets/navbar/edit_icon.svg";
 
 import Api from "@/utils/Api";
 import Swal from "sweetalert2";
@@ -25,13 +24,14 @@ let companyCode = ref("");
 let IdPostJurnal = ref("");
 let currentStatus = ref("");
 let postingDate = ref("");
-let isVisibleTableHeaders = ref(false);
+let isEditButtonVisible = ref(true);
 let isEditing = ref(false);
-let isHideButtonSave = ref(false);
-let alreadySave = ref(false);
-let isNoEdit = ref(false);
-let idEdit = ref(null);
+let isCancelButtonVisible = ref(false);
+let isSaveButtonVisible = ref(false);
+let isPostButtonVisible = ref(false);
+let isReverseButtonVisible = ref(false);
 
+let idEdit = ref(null);
 let id = route.params.id;
 
 const role = JSON.parse(localStorage.getItem("id_role"));
@@ -55,22 +55,6 @@ const tableHead = [
   { Id: 12, title: "Posting Date", jsonData: "posting_date" },
 ];
 
-const tableHeadActive = [
-  { id: 1, title: "Item", jsonData: "item_number" },
-  { id: 2, title: "PK", jsonData: "posting_key" },
-  { id: 3, title: "Doc Date", jsonData: "doc_date" },
-  { id: 4, title: "G/L Account", jsonData: "gl_reccon_acc" },
-  { id: 5, title: "Account Short Text", jsonData: "short_text" },
-  { id: 6, title: "Amount", jsonData: "amount" },
-  { id: 7, title: "Text", jsonData: "item_text" },
-  { id: 8, title: "Cost Center", jsonData: "cost_center" },
-  { id: 9, title: "Profit Center", jsonData: "profit_center" },
-  { id: 10, title: "Wbs", jsonData: "wbs" },
-  { id: 11, title: "Due Date", jsonData: "due_date" },
-  { id: 12, title: "Posting Date", jsonData: "posting_date" },
-  { id: 13, title: "Actions", jsonData: "actions" },
-];
-
 const fetchCompany = async () => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
@@ -91,23 +75,34 @@ const fetchDataById = async (id) => {
   try {
     const res = await Api.get(`/approval_non_travel/get_data/${id}`);
     dataCaNonTravel.value = res.data.data[0];
-    // console.log("dataCaNonTravel", dataCaNonTravel.value);
     typeDoc.value = props.dataJurnal.code_document;
     fetchSapByIdDoc(dataCaNonTravel.value.id_document);
-    // postingJurnal(dataCaNonTravel.value.id_document);
   } catch (error) {
     console.error("An error occurred:", error);
   }
 };
 
 const fetchSapByIdDoc = async (id) => {
-  // console.log("ini iD", id);
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   try {
     const res = await Api.get(
       `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
     );
+
+    if (res.data.data.hasOwnProperty("id")) {
+      // console.log("ini memiliki ID");
+      if (res.data.data.is_csv_created) {
+        isEditButtonVisible.value = false;
+        isPostButtonVisible.value = false;
+        isReverseButtonVisible.value = true;
+      } else {
+        isPostButtonVisible.value = true;
+      }
+    } else {
+      // console.log("ini tidak memiliki ID");
+    }
+
     const dataArray = res.data.data.detail.map(
       ({ document_date, item_number, posting_key, ...rest }) => {
         return {
@@ -121,19 +116,12 @@ const fetchSapByIdDoc = async (id) => {
     dataSapDoc.value = dataArray;
     IdPostJurnal = res.data.data.id;
     postingDate = res.data.data.posting_date;
-    // console.log(postingDate);
 
     if (res.data.data.is_csv_created) {
       currentStatus = "POSTED";
     } else {
       currentStatus = "PARKING";
     }
-
-    // console.log(IdPostJurnal);
-    // console.log("ini data array", dataArray);
-    // console.log("ini data sapDoc datasapdoc", res.data.data.detail);
-    // console.log("ini data id", res.data.data.id);
-    // console.log("ini status csv", res.data.data.is_csv_created);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -147,7 +135,6 @@ const fetchCostCenter = async () => {
   costCenterData.value.map((item) => {
     item.value = item.id;
     item.format = `${item.cost_center_code} - ${item.cost_center_name}`;
-    // console.log(item.format);
   });
 };
 
@@ -163,7 +150,6 @@ const fetchGLAccount = async (id) => {
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   const res = await Api.get(`/jurnal/get_gl_account/${id}`);
   GLData.value = res.data.data;
-  // console.log(res.data.data);
   GLData.value.map((item) => {
     item.value = item.id;
     item.format = `${item.gl_account}`;
@@ -195,16 +181,19 @@ onBeforeMount(() => {
 });
 
 const editTableHeader = () => {
-  isVisibleTableHeaders.value = true;
+  isEditButtonVisible.value = false;
+  isCancelButtonVisible.value = true;
+  isSaveButtonVisible.value = true;
+  isPostButtonVisible.value = false;
   isEditing.value = !isEditing.value;
-  // isNoEdit.value = true;
 };
 
 const cancelTableHeader = () => {
-  isVisibleTableHeaders.value = false;
+  isEditButtonVisible.value = true;
+  isCancelButtonVisible.value = false;
+  isSaveButtonVisible.value = false;
+  isPostButtonVisible.value = true;
   isEditing.value = false;
-  // isNoEdit.value = false;
-  // idEdit.value = null;
 };
 
 const saveJurnal = async (data) => {
@@ -241,7 +230,6 @@ const saveJurnal = async (data) => {
       due_date: data.due_date,
     };
     const res = await Api.post("/jurnal/save_sap", payload);
-    // console.log("ini payload", payload);
     Swal.fire({
       position: "center",
       icon: "success",
@@ -249,10 +237,11 @@ const saveJurnal = async (data) => {
       showConfirmButton: false,
       timer: 1500,
     });
-    // isNoEdit.value = true;
-    // alreadySave.value = true;
     fetchSapByIdDoc(dataCaNonTravel.value.id_document);
-    isVisibleTableHeaders.value = false;
+    isEditButtonVisible.value = true;
+    isCancelButtonVisible.value = false;
+    isSaveButtonVisible.value = false;
+    isPostButtonVisible.value = true;
     isEditing.value = false;
   } catch (error) {
     console.error("An error occurred:", error);
@@ -265,7 +254,6 @@ const postingJurnal = async () => {
 
   try {
     const res = await Api.get(`/export/sap/journal/${IdPostJurnal}`);
-    // console.log(res.message);
     Swal.fire({
       position: "center",
       icon: "success",
@@ -273,26 +261,13 @@ const postingJurnal = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    // console.log("berhasil posting");
     fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+    isPostButtonVisible.value = false;
+    isReverseButtonVisible.value = true;
   } catch (error) {
     console.error("An error occurred:", error);
   }
 };
-
-// const editTableDetails = (id) => {
-//   idEdit.value = id;
-// };
-
-// const cancelTableDetails = () => {
-//   idEdit.value = null;
-//   isEditing.value = false;
-// };
-
-// const saveTableDetails = () => {
-//   idEdit.value = null;
-//   isEditing.value = false;
-// };
 
 const format_date = (value) => {
   if (value) {
@@ -371,14 +346,14 @@ const inputClass =
             class="flex flex-wrap justify-start gap-2 items-center px-8 py-3"
           >
             <button
-              v-if="!isVisibleTableHeaders"
+              v-if="isEditButtonVisible"
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-blue border-blue hover:bg-white hover:border-blue hover:text-blue"
               @click="editTableHeader"
             >
               Edit
             </button>
 
-            <div class="flex justify-end gap-2" v-if="isVisibleTableHeaders">
+            <div class="flex justify-end gap-2" v-if="isCancelButtonVisible">
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red"
                 @click="cancelTableHeader"
@@ -388,11 +363,7 @@ const inputClass =
 
               <button
                 class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green"
-                @click="
-                  saveJurnal(dataSapDoc);
-                  isHideButtonSave = true;
-                "
-                v-if="!isHideButtonSave"
+                @click="saveJurnal(dataSapDoc)"
               >
                 Save
               </button>
@@ -400,7 +371,7 @@ const inputClass =
 
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-green border-green hover:bg-white hover:border-green hover:text-green"
-              v-if="!isVisibleTableHeaders"
+              v-if="isPostButtonVisible"
               @click="postingJurnal()"
             >
               Posting
@@ -408,7 +379,7 @@ const inputClass =
 
             <button
               class="btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-[#FF9900] border-[#FF9900] hover:bg-white hover:border-[#FF9900] hover:text-[#FF9900]"
-              v-if="!isVisibleTableHeaders"
+              v-if="isReverseButtonVisible"
             >
               Reverse
             </button>
@@ -586,24 +557,8 @@ const inputClass =
             <table>
               <thead class="text-center font-JakartaSans text-sm font-bold">
                 <th
-                  v-if="
-                    (isNoEdit && !alreadySave) ||
-                    (!isNoEdit && !alreadySave) ||
-                    (!isNoEdit && alreadySave)
-                  "
                   v-for="data in tableHead"
                   :key="data.Id"
-                  class="overflow-x-hidden cursor-pointer"
-                >
-                  <span class="flex justify-center items-center gap-1">
-                    {{ data.title }}
-                  </span>
-                </th>
-
-                <th
-                  v-if="isNoEdit && alreadySave"
-                  v-for="data in tableHeadActive"
-                  :key="data.id"
                   class="overflow-x-hidden cursor-pointer"
                 >
                   <span class="flex justify-center items-center gap-1">
@@ -630,7 +585,7 @@ const inputClass =
                       v-model="data.pk"
                       :class="inputClass"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -664,7 +619,7 @@ const inputClass =
                       :searchable="true"
                       :options="GLData"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -708,7 +663,7 @@ const inputClass =
                       :class="inputClass"
                       @input="updateAmount(data, $event.target.value)"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -722,7 +677,7 @@ const inputClass =
                       v-model="data.item_text"
                       :class="inputClass"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -741,7 +696,7 @@ const inputClass =
                       :searchable="true"
                       :options="costCenterData"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -776,7 +731,7 @@ const inputClass =
                       v-model="data.profit_center"
                       :class="inputClass"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -790,7 +745,7 @@ const inputClass =
                       v-model="data.wbs"
                       :class="inputClass"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -804,7 +759,7 @@ const inputClass =
                       v-model="data.due_date"
                       :class="inputClass"
                       :disabled="
-                        idEdit == null && isEditing && !alreadySave
+                        idEdit == null && isEditing
                           ? false
                           : data.item == idEdit
                           ? false
@@ -820,35 +775,6 @@ const inputClass =
                       disabled
                     />
                   </td>
-
-                  <!-- <td v-if="isNoEdit && alreadySave">
-                    <button
-                      :key="data.item"
-                      @click="editTableDetails(data.item)"
-                      :class="`${data.item == idEdit ? 'hidden' : null}`"
-                    >
-                      <img :src="editicon" class="w-8 h-8" />
-                    </button>
-                    <button
-                      :key="data.item"
-                      @click="cancelTableDetails"
-                      :class="`mx-2 btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize bg-red border-red hover:bg-white hover:border-red hover:text-red ${
-                        data.item == idEdit ? null : 'hidden'
-                      }`"
-                    >
-                      Cancel
-                    </button>
-
-                    <button
-                      :key="data.item"
-                      @click="saveTableDetails"
-                      :class="`btn btn-sm w-[100px] h-[36px] text-white text-base font-JakartaSans font-bold capitalize border-green bg-green hover:bg-white hover:text-green hover:border-green ${
-                        data.item == idEdit ? null : 'hidden'
-                      }`"
-                    >
-                      Save
-                    </button>
-                  </td> -->
                 </tr>
               </tbody>
             </table>
