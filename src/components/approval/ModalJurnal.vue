@@ -19,6 +19,7 @@ let companyData = ref([]);
 let costCenterData = ref([]);
 let pkData = ref([]);
 let GLData = ref([]);
+// let dataSapDocRev = ref([]);
 let typeDoc = ref("");
 let companyCode = ref("");
 let IdPostJurnal = ref("");
@@ -124,6 +125,17 @@ const fetchSapByIdDoc = async (id) => {
     dataSapDoc.value = dataArray;
     IdPostJurnal = res.data.data.id;
     postingDate = res.data.data.posting_date;
+
+    console.log(res.data.data.reversal);
+
+    if (res.data.data.hasOwnProperty("reversal")) {
+      // console.log("ini memiliki reversal");
+      isReverseButtonVisible.value = false;
+      isTab.value = true;
+    } else {
+      // console.log("ini tidak memiliki reversal");
+      isReverseButtonVisible.value = true;
+    }
 
     if (res.data.data.is_csv_created) {
       currentStatus = "POSTED";
@@ -291,7 +303,7 @@ const reverseJurnal = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    // fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
     isEditButtonVisible.value = false;
     isPostButtonVisible.value = false;
     isReverseButtonVisible.value = false;
@@ -965,7 +977,7 @@ const inputClass =
           </div>
 
           <!-- TABLE -->
-          <!-- <div class="pb-4">
+          <div class="pb-4">
             <div class="table-wrapper">
               <table>
                 <thead class="text-center font-JakartaSans text-sm font-bold">
@@ -1192,7 +1204,7 @@ const inputClass =
                 </tbody>
               </table>
             </div>
-          </div> -->
+          </div>
         </main>
       </main>
     </div>
