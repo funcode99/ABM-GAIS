@@ -126,21 +126,27 @@ const fetchSapByIdDoc = async (id) => {
     IdPostJurnal = res.data.data.id;
     postingDate = res.data.data.posting_date;
 
-    console.log(res.data.data.reversal);
+    // console.log(res.data.data.reversal);
 
     if (res.data.data.hasOwnProperty("reversal")) {
       // console.log("ini memiliki reversal");
       isReverseButtonVisible.value = false;
       isTab.value = true;
     } else {
-      // console.log("ini tidak memiliki reversal");
-      isReverseButtonVisible.value = true;
+      if (res.data.data.is_csv_created == 1) {
+        isReverseButtonVisible.value = true;
+        // console.log("ini tidak memiliki reversal");
+      } else {
+        isReverseButtonVisible.value = false;
+      }
     }
 
-    if (res.data.data.is_csv_created) {
+    if (res.data.data.is_csv_created == 1) {
       currentStatus = "POSTED";
+    } else if (res.data.data.is_csv_created == 2) {
+      currentStatus = "REVERSED";
     } else {
-      currentStatus = "PARKING";
+      currentStatus = "";
     }
   } catch (error) {
     console.error("An error occurred:", error);
@@ -433,7 +439,7 @@ const inputClass =
               <div
                 class="alert h-10"
                 :class="{
-                  'alert-warning': currentStatus === 'PARKING',
+                  'alert-info': currentStatus === 'REVERSED',
                   'alert-success': currentStatus === 'POSTED',
                 }"
                 v-if="currentStatus"
@@ -449,8 +455,8 @@ const inputClass =
                     stroke-linecap="round"
                     stroke-linejoin="round"
                     stroke-width="2"
-                    v-if="currentStatus === 'PARKING'"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    v-if="currentStatus === 'REVERSED'"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                   <path
                     stroke="white"
@@ -462,9 +468,9 @@ const inputClass =
                   />
                 </svg>
                 <span
-                  v-if="currentStatus === 'PARKING'"
+                  v-if="currentStatus === 'REVERSED'"
                   class="text-white font-JakartaSans font-bold text-lg"
-                  >PARKING</span
+                  >REVERSED</span
                 >
                 <span
                   v-if="currentStatus === 'POSTED'"
