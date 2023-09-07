@@ -24,9 +24,9 @@ let level = ref(props.currentLevel)
 let typeApproval = ref(props.type)
 
 let classDone =
-  "absolute flex items-center justify-center rounded-full w-8 h-8 ring-4 bg-blue"
+  "flex items-center justify-center rounded-full w-8 h-8 ring-4 bg-blue"
 let classWaiting =
-  "absolute flex items-center justify-center rounded-full w-8 h-8 ring-0 bg-slate-200"
+  "flex items-center justify-center rounded-full w-8 h-8 ring-0 bg-slate-200"
 </script>
 
 <template>

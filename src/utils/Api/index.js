@@ -5,8 +5,7 @@ const Api = axios.create({
   headers: {
     accept: 'application/json',
     "Content-Type": "multipart/form-data",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "GET,POST,OPTIONS,DELETE,PUT"
+    "Content-Length" : 0
   },
 });
 

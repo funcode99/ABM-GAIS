@@ -113,6 +113,7 @@ const tableHead = [
   { Id: 6, title: "Date", jsonData: "start_date" },
   { Id: 7, title: "Time", jsonData: "status" },
   { Id: 8, title: "Site", jsonData: "site_name" },
+  { Id: 8, title: "Link", jsonData: "link" },
   { Id: 9, title: "Status", jsonData: "status" },
 ]
 
@@ -607,6 +608,15 @@ onBeforeMount(() => {
                     </td>
                     <td>{{ data.start_time }} - {{ data.end_time }}</td>
                     <td>{{ data.site_name }}</td>
+                    <td>
+                      <a
+                        v-if="data.link"
+                        :href="data.link"
+                        target="_blank"
+                        class="btn btn-xs btn-blue capitalize"
+                        >Click Here to Join</a
+                      >
+                    </td>
                     <td class="font-bold">
                       <span
                         :class="bookingMeetingRoomStatus?.[data.status]?.class"

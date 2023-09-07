@@ -165,6 +165,7 @@ const startMeeting = async () => {
     const res = BookingRoomService.startMeeting(bookingId)
 
     console.log(res)
+    await fetchDataById()
   } catch (error) {
     console.error(error)
   }
@@ -179,17 +180,19 @@ const endMeeting = async () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
+      confirmButtonText: "Yes, End this Room!",
+    }).then(async (result) => {
       if (result.isConfirmed) {
         const bookingId = route.params.id
-        const res = BookingRoomService.endMeeting(bookingId)
+        const res = await BookingRoomService.endMeeting(bookingId)
         console.log(res)
 
         if (res.data.success) {
           Swal.fire("Booking Ended!", `Succcess End Booking Meeting`, "success")
         }
       }
+
+      await fetchDataById()
     })
   } catch (error) {
     console.error(error)
@@ -374,6 +377,7 @@ const inputClass =
             <button
               v-if="
                 new Date() > fullStartMeeting &&
+                new Date() < fullEndMeeting &&
                 !dataArr.duration_start &&
                 dataArr.status == 'Booked'
               "
