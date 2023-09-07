@@ -393,8 +393,8 @@ const format_date = (value) => {
 
                 <div
                   class="cursor-pointer w-full"
-                  v-click-outside="changeViewStatus"
                 >
+                  
                   <div
                     class="min-h-max py-3 flex items-center justify-evenly w-full"
                   >
@@ -405,13 +405,16 @@ const format_date = (value) => {
                     </p>
                     <img class="w-[18px] h-[18px]" :src="arrow" alt="" />
                   </div>
+
                 </div>
+
               </div>
             </div>
 
             <ul
               v-if="isOpen"
               class="mt-3 p-2 shadow bg-base-100 rounded-box w-52 absolute"
+              v-click-outside="changeViewStatus"
             >
               <li class="py-2 border-b-2">
                 <button>
@@ -423,8 +426,8 @@ const format_date = (value) => {
                   <a>Settings</a>
                 </button>
               </li>
-              <li class="py-2 border-b-2">
-                <button @click="logout" type="button">
+              <li @click="logout" class="py-2 border-b-2">
+                <button  type="button">
                   <a>Logout</a>
                 </button>
               </li>
