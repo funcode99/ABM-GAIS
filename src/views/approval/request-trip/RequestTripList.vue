@@ -498,7 +498,7 @@ const getSessionForSidebar = () => {
                   </tr>
               </thead>
 
-              <SkeletonLoadingTable :column="6" :row="5" />
+              <SkeletonLoadingTable :column="8" :row="5" />
             
             </table>
 
