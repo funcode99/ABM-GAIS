@@ -377,8 +377,8 @@ const format_date = (value) => {
           <div class="relative cursor-pointer">
             
             <div
+              @click="isOpen = true"
               class="rounded-full flex items-center bg-[#E4E4E4] w-[195px] h-[60px]"
-              @click="isOpen = !isOpen"
             >
               <div class="flex gap-2 items-center px-3 w-full">
                 <div>
@@ -427,9 +427,11 @@ const format_date = (value) => {
                   <a>Settings</a>
                 </button>
               </li>
-                <button type="button" @click="logout" class="py-2 border-b-2">
+              <li @click="logout" @touchend="logout" class="py-2 border-b-2">
+                <button>
                   <a>Logout</a>
                 </button>
+              </li>
             </ul>
 
           </div>
