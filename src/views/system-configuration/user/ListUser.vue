@@ -3,12 +3,12 @@ import Sidebar from "@/components/layout/Sidebar.vue";
 import Navbar from "@/components/layout/Navbar.vue";
 import TableTopBar from "@/components/layout/TableTopBar.vue";
 import Footer from "@/components/layout/Footer.vue";
-import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue";
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue"
 
-import tableContainer from "@/components/table/tableContainer.vue";
+import tableContainer from "@/components/table/tableContainer.vue"
 
-import deleteicon from "@/assets/navbar/delete_icon.svg";
-import icondanger from "@/assets/Danger.png";
+import deleteicon from "@/assets/navbar/delete_icon.svg"
+import icondanger from "@/assets/Danger.png"
 import iconClose from "@/assets/navbar/icon_close.svg";
 
 import exportExcel from "@/utils/exportToExcel.js";
@@ -63,7 +63,7 @@ let pageMultiplier = ref(10);
 let paginateIndex = ref(0);
 
 // for catch message response from server when status is not 2xx
-let responseMessage = ref("");
+let responseMessage = ref("")
 
 let addRoleData = ref([]);
 let addCompanyData = ref([]);
@@ -353,7 +353,7 @@ const fetch = async () => {
     lastPage.value = additionalData.value.last_page;
 
     isLoading.value = false
-    // isError.value = false  
+    isError.value = false
 
   } catch (error) {
     sortedData.value = [];
@@ -485,8 +485,6 @@ const inputStylingClass =
                   </th>
                 </tr>
               </thead>
-
-              <!-- {{ deleteArray }} -->
 
               <tbody>
                 <!-- sortir nya harus sama dengan key yang di data dummy -->

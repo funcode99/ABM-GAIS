@@ -32,7 +32,9 @@
     import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
 
-    let responseStatus = ref("")
+    let isError = ref(false)
+    let isLoading = ref(false)
+    let responseMessage = ref("")
 
     const sidebar = useSidebarStore()
     const referenceFetch = useReferenceFetchResult()
@@ -96,14 +98,15 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
         if(date.value[0] !== '' & date.value[1] !== '') {
+
+          isLoading.value = true
           
           console.log('ada tanggal nya')
 
           let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
           let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
 
-          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}&search=${searchTable.value}&page=${paginateIndex.value}&perPage=${pageMultiplier.value}`
-            )
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}&search=${searchTable.value}&page=${paginateIndex.value}&perPage=${pageMultiplier.value}`)
           
           instanceArray = api.data.data.data
           additionalData.value = api.data.data
@@ -115,7 +118,12 @@
           perPage.value = additionalData.value.per_page
           lastPage.value = additionalData.value.last_page
 
+          isLoading.value = false
+          isError.value = false
+
         } else {
+
+          isLoading.value = true
           
           console.log('tidak ada tanggal nya')
           let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&search=${searchTable.value}&page=${paginateIndex.value + 1}&perPage=${pageMultiplier.value}`)
@@ -129,13 +137,17 @@
           totalData.value = additionalData.value.total
           perPage.value = additionalData.value.per_page
           lastPage.value = additionalData.value.last_page
+
+          isLoading.value = false
+          isError.value = false
           
         }
 
       } catch (error) {
-        console.log(error)
         sortedData.value = []
-        responseStatus.value = error.response.status;
+        isLoading.value = false
+        isError.value = true
+        responseMessage.value = error?.response?.data?.message || error.message;
       }
 
     }
@@ -503,7 +515,7 @@
             </table>
 
             <table
-              v-else-if="sortedData.length == 0 && responseStatus == ''"
+              v-else-if="isLoading"
               class="table table-zebra table-compact border h-full w-full rounded-lg"
             >
 
@@ -541,10 +553,11 @@
 
             </table>
 
-            <table v-else-if="
-              (sortedData.length == 0 && responseStatus == 200) ||
-              (sortedData.length == 0 && responseStatus == 404)
-            ">
+            <!-- (sortedData.length == 0 && responseStatus == 200) ||
+            (sortedData.length == 0 && responseStatus == 404) -->
+
+            <table
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === false">
               
                 <thead class="text-center font-JakartaSans text-sm font-bold h-10">
                   
@@ -593,6 +606,62 @@
                   </tr>
                 </tbody>
 
+            </table>
+
+            <table
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === true"
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+            >
+
+                <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+                  
+                  <tr>
+
+                    <th>
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+                    </th>
+
+                    <th
+                      v-for="data in tableHeadTaxiVoucher"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="8"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >
+                      <div>
+                        Terjadi Error!
+                      </div>
+                      {{ responseMessage }}
+                    </td>
+                  </tr>
+                </tbody>
             </table>
 
             <!-- PAGINATION -->
