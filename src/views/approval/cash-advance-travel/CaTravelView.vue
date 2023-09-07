@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar.vue";
 import Sidebar from "@/components/layout/Sidebar.vue";
 import Footer from "@/components/layout/Footer.vue";
 
+import JurnalCat from "@/components/approval/JurnalCat.vue";
 import ModalApprove from "@/components/approval/ModalApprove.vue";
 import ModalReject from "@/components/approval/ModalReject.vue";
 
@@ -37,13 +38,9 @@ let alert = ref([]);
 let visibleModal = ref(false);
 let visibleModalReject = ref(false);
 let id = route.params.id;
-let lengthCounter = 0;
 let tabId = ref(1);
 
 const code_role = JSON.parse(localStorage.getItem("id_role"));
-// const company_id = JSON.parse(localStorage.getItem("id_company"));
-// const site_id = JSON.parse(localStorage.getItem("id_site"));
-// const employee_id = JSON.parse(localStorage.getItem("id_site"));
 
 const listStatus = [
   {
@@ -267,6 +264,10 @@ const format_price = (value) => {
                 {{ dataArr.status }}
               </span>
             </div>
+          </div>
+
+          <div :class="`float-right ${alert.isJurnal}`">
+            <JurnalCat :dataJurnal="dataArr" />
           </div>
 
           <div class="flex flex-wrap justify-start gap-4 px-[70px]">
