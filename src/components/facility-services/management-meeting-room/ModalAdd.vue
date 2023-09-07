@@ -114,7 +114,7 @@ const fetchDataById = async (id) => {
   capacity.value = dataArr.value.capacity
   facility.value = dataArr.value.facility.map(({ id }) => id)
   is_approval.value = dataArr.value.is_approval
-  approver.value = dataArr.value.approver
+  approver.value = (dataArr.value?.approver || []).map(({ id }) => id)
   fetchSite(id_company.value)
 }
 
@@ -151,7 +151,7 @@ const saveForm = async () => {
     floor: floor.value,
     available_status: available_status.value,
     facility: facility.value,
-    is_approval: is_approval.value,
+    is_approval: is_approval.value ? 1 : 0,
     approver: is_approval.value ? approver.value : [],
   }
   if (type.value == "add") {
@@ -209,6 +209,8 @@ const save = async (payload) => {
         timer: 1500,
       })
     })
+
+  await fetchDataById()
 }
 
 const fetchCondition = async () => {
@@ -229,7 +231,7 @@ const fetchSitesByUserId = async () => {
 const filteredSites = computed(() => {
   const primarySite = JSON.parse(localStorage.getItem("id_site"))
   const userSitesIds = [
-    ...userSites.value.map(({ id_site }) => id_site),
+    // ...userSites.value.map(({ id_site }) => id_site),
     primarySite,
   ]
 
@@ -404,7 +406,7 @@ watchEffect(() => {
             </div>
             <div :class="colClass" v-if="is_approval">
               <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                >Approver</label
+                >Approver <span class="text-red">*</span></label
               >
               <Multiselect
                 v-model="approver"
