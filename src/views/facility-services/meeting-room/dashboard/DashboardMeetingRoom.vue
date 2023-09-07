@@ -82,7 +82,7 @@ const fetch = async () => {
         end: dt.end_date + " " + dt.end_time,
         content:
           "<div class='my-2 font-bold'>" +
-          dt.title +
+          `<div class='p-1'>${dt.title} </div>` +
           "</div>" +
           `<div class='badge bg-white text-black rounded-xl '> ${dt.name_created} </div>`,
         class: `${chartStatusColor[dt.status]} text-white`,
@@ -329,7 +329,7 @@ onBeforeMount(async () => {
               :events="datas"
               :split-days="header.filter(({ active }) => active)"
               :on-event-create="onEventCreate"
-              :min-split-width="150"
+              :min-split-width="200"
               @event-drag-create="openModal"
               :watchRealTime="true"
               @ready="scrollToCurrentTime"
@@ -338,6 +338,10 @@ onBeforeMount(async () => {
               :on-event-click="openModal"
               :sticky-split-labels="true"
             >
+              <!-- <template #title="{ title, view }">
+                <a href="">Click here to join the meeting</a>
+                <div>dwada</div>
+              </template> -->
             </vue-cal>
             <ModalAddBookingRoom
               v-if="visibleModal"
