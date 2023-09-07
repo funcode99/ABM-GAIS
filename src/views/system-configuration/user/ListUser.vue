@@ -354,9 +354,9 @@ const fetch = async () => {
 };
 
 watch(showingValue, () => {
-  showingValueDuplicate.value = showingValue.value;
-  filteredItems();
-});
+  showingValueDuplicate.value = showingValue.value
+  filteredItems()
+})
 
 watch(searchTable, () => {
   onChangePage(1);
