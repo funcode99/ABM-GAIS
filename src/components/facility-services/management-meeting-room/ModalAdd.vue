@@ -209,6 +209,8 @@ const save = async (payload) => {
         timer: 1500,
       })
     })
+
+  await fetchDataById()
 }
 
 const fetchCondition = async () => {
