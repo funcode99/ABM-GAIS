@@ -44,6 +44,7 @@ let selectedEmployee = ref([])
 let type = ref(props.status)
 let idItem = ref(props.id)
 let dataForm = ref(props.data)
+const loading = ref(false)
 
 let id_meeting_room = ref("")
 let facility = ref([])
@@ -62,8 +63,8 @@ let time = ref("")
 let itemsId = 0
 let title = ref("")
 let tempDate = ref([])
-let startTime = ref({ hours: 0, minutes: 0 })
-let endTime = ref({ hours: 0, minutes: 0 })
+let startTime = ref({ hours: 0, minutes: 0, seconds: 0 })
+let endTime = ref({ hours: 0, minutes: 0, seconds: 0 })
 let tempTime = ref([])
 let isLoading = ref(false)
 let Company = ref("")
@@ -202,6 +203,7 @@ const fetchDataById = async () => {
   external.value = dataForm.value.external
   recurrence.value = dataForm.value.recurrence
   participant.value = dataForm.value.participant
+  is_online_meeting.value = dataForm.value.is_online_meeting
 
   form.days = dataForm.value?.days?.split(",").map(Number) || []
 
@@ -274,42 +276,51 @@ const onFileSelected = (event) => {
 }
 
 const saveForm = async () => {
-  const payload = {
-    id_company: id_company,
-    id_site: site_local,
-    remarks: remarks.value,
-    id_meeting_room: id_meeting_room.value,
-    title: title.value,
-    capacity: capacity.value,
-    floor: floor.value,
-    is_online_meeting: is_online_meeting.value,
-    link: link.value,
-    participant: selectedEmployee.value,
-    start_date: moment(start_date.value).format("yyyy-MM-DD"),
-    end_date: moment(start_date.value).format("yyyy-MM-DD"),
-    start_time: time.value
-      ? time.value[0].hours + ":" + time.value[0].minutes
-      : "",
-    end_time: time.value
-      ? time.value[1].hours + ":" + time.value[1].minutes
-      : "",
-    external: external.value,
-    is_recurrence: is_recurrence.value ? 1 : 0,
-    recurrence: recurrence.value.toLowerCase(),
-    attachment: selectedImage.value,
-    facility: facility.value,
-    until_ocurs: moment(format_date(recurrence.value.toLowerCase())).format(
-      "yyyy-MM-DD"
-    ),
-    days: form.days,
-  }
+  loading.value = true
+  try {
+    const payload = {
+      id_company: id_company,
+      id_site: site_local,
+      remarks: remarks.value,
+      id_meeting_room: id_meeting_room.value,
+      title: title.value,
+      capacity: capacity.value,
+      floor: floor.value,
+      is_online_meeting: is_online_meeting.value ? 1 : 0,
+      link: link.value,
+      participant: selectedEmployee.value,
+      start_date: moment(start_date.value).format("yyyy-MM-DD"),
+      end_date: moment(start_date.value).format("yyyy-MM-DD"),
+      start_time: time.value
+        ? time.value[0].hours + ":" + time.value[0].minutes + ":00"
+        : "",
+      end_time: time.value
+        ? time.value[1].hours + ":" + time.value[1].minutes + ":00"
+        : "",
+      external: external.value,
+      is_recurrence: is_recurrence.value ? 1 : 0,
+      recurrence: recurrence.value.toLowerCase(),
+      attachment: selectedImage.value,
+      facility: facility.value,
+      until_ocurs: moment(format_date(recurrence.value.toLowerCase())).format(
+        "yyyy-MM-DD"
+      ),
+      days: form.days,
+    }
 
-  if (!payload.is_recurrence) delete payload.until_ocurs
+    if (!payload.is_recurrence) delete payload.until_ocurs
 
-  if (type.value == "add") {
-    save(payload)
-  } else if (type.value == "edit" || type.value == "view") {
-    edit(payload)
+    if (type.value == "add") {
+      save(payload)
+    }
+
+    // else if (type.value == "edit" || type.value == "view") {
+    //   edit(payload)
+    // }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -724,7 +735,11 @@ onMounted(async () => {
                     required
                     disabled
                   />
+                  <a :href="link" v-if="link" target="_blank" class="btn btn-xs btn-blue"
+                    >Click Here to Join</a
+                  >
                 </div>
+
                 <div :class="colClass">
                   <label class="block mb-2 font-JakartaSans font-medium text-sm"
                     >Participant <span class="text-red">*</span></label
@@ -802,7 +817,7 @@ onMounted(async () => {
                   class="align-top h-full"
                 >
                   <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                    >recurrence<span class="text-red">*</span></label
+                    >Recurrence Type<span class="text-red">*</span></label
                   >
                   <select
                     v-model="recurrence"
@@ -995,6 +1010,7 @@ onMounted(async () => {
                 Cancel
               </button>
               <button
+                :disabled="loading"
                 type="submit"
                 class="btn text-white text-base font-JakartaSans font-bold capitalize w-[141px] border-green bg-green hover:bg-white hover:text-green hover:border-green"
               >

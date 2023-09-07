@@ -54,7 +54,7 @@ const submit = async () => {
       timer: 1500,
     })
 
-    emits("close")
+    emits("success")
   } else {
     Swal.fire({
       position: "center",

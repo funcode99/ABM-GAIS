@@ -1,4 +1,6 @@
 <script setup>
+import _ from "lodash"
+
 import iconClose from "@/assets/navbar/icon_close.svg"
 import icon_done from "@/assets/icon_done.svg"
 import icon_add from "@/assets/icon_add_square.svg"
@@ -62,13 +64,20 @@ const fetchDetailById = async (id) => {
       }
     })
 
-    itemTable.value = itemTable.value.reduce((acc, detail) => {
-      const item_name = detail.item_name
-      ;(acc[item_name] = acc[item_name] || []).push(detail)
-      return acc
-    }, {})
+    // itemTable.value = itemTable.value.reduce((acc, detail) => {
+    //   const item_name = detail.item_name
+    //   ;(acc[item_name] = acc[item_name] || []).push(detail)
+    //   return acc
+    // }, {})
+
+    const groupedItems = _.groupBy(itemTable.value, "item_name")
+
+    itemTable.value = _.values(groupedItems)
+
+    console.log(itemTable.value)
   } else {
     const res = await Api.get(`/request_atk/get_by_atk_request_id/${id}`)
+    console.log(res.data.data)
     itemTable.value = res.data.data.map((item) => {
       return [item]
     })
@@ -154,6 +163,7 @@ const removeItem = async (indexItem, indexDetail) => {
 
 const submit = async () => {
   itemPayload.value = []
+  console.log(itemTable.value)
   const warehouse_detail = itemTable.value.flat().map((element, index) => {
     // element.remarks = notesName.value ? notesName.value : ""
     // element.qty_approved = qtyApproved.value[index]
