@@ -429,7 +429,7 @@ const format_date = (value) => {
               </li>
               <!--  -->
              
-              <li @click="logout" class="py-2 border-b-2">
+              <li @click.prevent="logout" class="py-2 border-b-2">
                 <button>
                   <p>Logout</p>
                 </button>
