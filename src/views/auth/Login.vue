@@ -129,9 +129,11 @@
     }
 
     let MSEmail = ref('')
-
+    const loginRequest = {
+      scopes: [ "openid", "profile", "User.Read" ,"Calendars.ReadWrite","OnlineMeetings.ReadWrite"]
+    };
     const SignIn = async () => {
-        await msalStore.msalInstance.loginPopup({}).then(() => {
+        await msalStore.msalInstance.loginPopup(loginRequest).then(() => {
             const myAccounts = msalStore.msalInstance.getAllAccounts()
             account.value = myAccounts[0]
             MSEmail.value = account.value.username

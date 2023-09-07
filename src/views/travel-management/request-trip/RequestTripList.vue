@@ -3,6 +3,7 @@
     import Navbar from "@/components/layout/Navbar.vue"
     import Sidebar from "@/components/layout/Sidebar.vue"
     import Footer from "@/components/layout/Footer.vue"
+    import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue"
 
     import RequestTripModal from "@/components/request-trip/company-business/RequestTripModal.vue"
 
@@ -30,6 +31,11 @@
 
     import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
+
+    let isError = ref(false)
+    let isLoading = ref(false)
+    let responseMessage = ref("")
+
     const sidebar = useSidebarStore()
     const referenceFetch = useReferenceFetchResult()
 
@@ -49,6 +55,14 @@
     let pageMultiplier = ref(10)
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let paginateIndex = ref(0)
+
+    let from = ref(0)
+    let to = ref(0)
+    let totalData = ref(0)
+    let perPage = ref(1)
+    let lastPage = ref(0)
+    let searchTable = ref("")
+    let additionalData = ref()
 
     //for check & uncheck all
     const selectAll = (checkValue) => {
@@ -84,29 +98,56 @@
         Api.defaults.headers.common.Authorization = `Bearer ${token}`;
 
         if(date.value[0] !== '' & date.value[1] !== '') {
+
+          isLoading.value = true
           
           console.log('ada tanggal nya')
 
           let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
           let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
 
-          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}`)
-          instanceArray = api.data.data
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}&search=${searchTable.value}&page=${paginateIndex.value}&perPage=${pageMultiplier.value}`)
+          
+          instanceArray = api.data.data.data
+          additionalData.value = api.data.data
+          sortedData.value = api.data.data.data
+
+          from.value = additionalData.value.from
+          to.value = additionalData.value.to
+          totalData.value = additionalData.value.total
+          perPage.value = additionalData.value.per_page
+          lastPage.value = additionalData.value.last_page
+
+          isLoading.value = false
+          isError.value = false
 
         } else {
+
+          isLoading.value = true
           
           console.log('tidak ada tanggal nya')
-          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)
-          instanceArray = api.data.data
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&search=${searchTable.value}&page=${paginateIndex.value + 1}&perPage=${pageMultiplier.value}`)
+
+          instanceArray = api.data.data.data
+          additionalData.value = api.data.data
+          sortedData.value = api.data.data.data
+
+          from.value = additionalData.value.from
+          to.value = additionalData.value.to
+          totalData.value = additionalData.value.total
+          perPage.value = additionalData.value.per_page
+          lastPage.value = additionalData.value.last_page
+
+          isLoading.value = false
+          isError.value = false
           
         }
 
-        sortedData.value = instanceArray
-
       } catch (error) {
-        console.log(error)
         sortedData.value = []
-        date.value = ['', '']
+        isLoading.value = false
+        isError.value = true
+        responseMessage.value = error?.response?.data?.message || error.message;
       }
 
     }
@@ -138,8 +179,9 @@
 
     //for paginations
     const onChangePage = (pageOfItem) => {
-      paginateIndex.value = pageOfItem - 1;
-      showingValue.value = pageOfItem;
+      paginateIndex.value = pageOfItem - 1
+      showingValue.value = pageOfItem
+      fetch()
     }
 
     const deleteData = async (event) => {
@@ -201,21 +243,32 @@
 
     const filteredItems = () => {
 
-      sortedData.value = instanceArray
-        
-      const filteredR = sortedData.value.filter(item => {
-        
-        return (
-          (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.status.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
-        )
+      if (typeof search.value !== "undefined") {
+        searchTable.value = search.value
+        fetch()
+      } else if (search.value === "") {
+        searchTable.value = search.value
+        fetch()
+      } else {
+        fetch()
+      }
 
-      })
+      // sortedData.value = instanceArray
+        
+      // const filteredR = sortedData.value.filter(item => {
+        
+      //   return (
+      //     (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.status.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
+      //   )
 
-      sortedData.value = filteredR
+      // })
+
+      // sortedData.value = filteredR
+
       onChangePage(1)
       
     }
@@ -377,7 +430,7 @@
               <select
                 class="font-JakartaSans bg-white w-full lg:w-16 border border-slate-300 rounded-md py-1 px-2 shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm cursor-pointer"
                 v-model="pageMultiplier"
-                @change="fillPageMultiplier"
+                @change="fetch"
               >
                 <option>10</option>
                 <option>25</option>
@@ -391,7 +444,10 @@
 
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
 
-            <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
+            <table 
+              v-if="sortedData.length > 0" 
+              class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+              >
 
                 <thead class="text-center font-JakartaSans text-sm font-bold h-10">
                   
@@ -430,13 +486,9 @@
                 </thead>
 
                 <tbody>
-                  
+                
                   <tr class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                        paginateIndex * pageMultiplierReactive,
-                        (paginateIndex + 1) * pageMultiplierReactive
-                      )"
-                    :key="data.id"
+                    v-for="(data, index) in sortedData"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
@@ -462,23 +514,171 @@
 
             </table>
 
+            <table
+              v-else-if="isLoading"
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+            >
+
+              <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="chklead"
+                        @click="selectAll((checkLead = !checkLead))"
+                      />
+                    </div>
+                  </th>
+                  <th
+                    v-for="data in tableHeadTaxiVoucher"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                      <button class="">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </span>
+                  </th>
+                  <th>
+                    <div class="text-center">Actions</div>
+                  </th>
+                </tr>
+              </thead>
+
+              <SkeletonLoadingTable :column="8" :row="5" />
+
+            </table>
+
+            <!-- (sortedData.length == 0 && responseStatus == 200) ||
+            (sortedData.length == 0 && responseStatus == 404) -->
+
+            <table
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === false">
+              
+                <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+                  
+                  <tr>
+
+                    <th>
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+                    </th>
+
+                    <th
+                      v-for="data in tableHeadTaxiVoucher"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="6"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >
+                      Tidak ada data
+                    </td>
+                  </tr>
+                </tbody>
+
+            </table>
+
+            <table
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === true"
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+            >
+
+                <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+                  
+                  <tr>
+
+                    <th>
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+                    </th>
+
+                    <th
+                      v-for="data in tableHeadTaxiVoucher"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="8"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >
+                      <div>
+                        Terjadi Error!
+                      </div>
+                      {{ responseMessage }}
+                    </td>
+                  </tr>
+                </tbody>
+            </table>
+
             <!-- PAGINATION -->
             <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
 
-              <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-                {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-                of {{ sortedData.length }} entries
+              <p  class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                Showing {{ from }} to {{ to }} of {{ totalData }}
               </p>
 
               <vue-awesome-paginate
-                :total-items="sortedData.length"
-                :items-per-page="parseInt(pageMultiplierReactive)"
+                :total-items="totalData"
+                :items-per-page="parseInt(perPage)"
                 :on-click="onChangePage"
                 v-model="showingValue"
                 :max-pages-shown="4"
                 :show-breakpoint-buttons="false"
-                :show-jump-buttons="true"
+                :show-ending-buttons="true"
               />
 
             </div>

@@ -13,13 +13,12 @@ import { useRoute } from "vue-router";
 const emits = defineEmits(["unlockScrollbar"]);
 const route = useRoute();
 
-let dataCaNonTravel = ref([]);
+let dataCaTravel = ref([]);
 let dataSapDoc = ref([]);
 let companyData = ref([]);
 let costCenterData = ref([]);
 let pkData = ref([]);
 let GLData = ref([]);
-// let dataSapDocRev = ref([]);
 let typeDoc = ref("");
 let companyCode = ref("");
 let IdPostJurnal = ref("");
@@ -82,10 +81,15 @@ const fetchDataById = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
   try {
-    const res = await Api.get(`/approval_non_travel/get_data/${id}`);
-    dataCaNonTravel.value = res.data.data[0];
+    const res = await Api.get(`/approval_cash_advance/get_data/${id}`);
+    dataCaTravel.value = res.data.data[0];
     typeDoc.value = props.dataJurnal.code_document;
-    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+
+    if (props.dataJurnal.code_document === "CB") {
+      typeDoc.value = "CAT";
+    }
+
+    fetchSapByIdDoc(dataCaTravel.value.id_document);
   } catch (error) {
     console.error("An error occurred:", error);
   }
@@ -94,9 +98,11 @@ const fetchDataById = async (id) => {
 const fetchSapByIdDoc = async (id) => {
   const token = JSON.parse(localStorage.getItem("token"));
   Api.defaults.headers.common.Authorization = `Bearer ${token}`;
+  const type = "CAT";
+
   try {
     const res = await Api.get(
-      `/jurnal/get_sap_by_id_document/${id}?Type=${typeDoc.value}`
+      `/jurnal/get_sap_by_id_document/${id}?Type=${type}`
     );
 
     if (res.data.data.hasOwnProperty("id")) {
@@ -122,11 +128,10 @@ const fetchSapByIdDoc = async (id) => {
         };
       }
     );
+
     dataSapDoc.value = dataArray;
     IdPostJurnal = res.data.data.id;
     postingDate = res.data.data.posting_date;
-
-    // console.log(res.data.data.reversal);
 
     if (res.data.data.hasOwnProperty("reversal")) {
       // console.log("ini memiliki reversal");
@@ -264,7 +269,7 @@ const saveJurnal = async (data) => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+    fetchSapByIdDoc(dataCaTravel.value.id_document);
     isEditButtonVisible.value = true;
     isCancelButtonVisible.value = false;
     isSaveButtonVisible.value = false;
@@ -288,7 +293,7 @@ const postingJurnal = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+    fetchSapByIdDoc(dataCaTravel.value.id_document);
     isPostButtonVisible.value = false;
     isReverseButtonVisible.value = true;
   } catch (error) {
@@ -309,7 +314,7 @@ const reverseJurnal = async () => {
       showConfirmButton: false,
       timer: 1500,
     });
-    fetchSapByIdDoc(dataCaNonTravel.value.id_document);
+    fetchSapByIdDoc(dataCaTravel.value.id_document);
     isEditButtonVisible.value = false;
     isPostButtonVisible.value = false;
     isReverseButtonVisible.value = false;

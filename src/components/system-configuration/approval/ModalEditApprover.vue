@@ -76,11 +76,23 @@
       idMatrix.map((item, index) => {
         item.isEdit = false
         item.fromFetch = true
-          if(index == idMatrix.length-1) {
-          }
-          else {
-            dropdownRemoveList.value.push(item.id_approval_auth)
-          }
+        if(index == idMatrix.length-1) {
+        }
+        else {
+          dropdownRemoveList.value.push(item.id_approval_auth)
+        }
+        if(item.is_flight === 1) {
+          item.is_flight = true
+        }
+        else {
+          item.is_flight = false
+        }
+        if(item.is_notif === 1) {
+          item.is_notif = true
+        }
+        else {
+          item.is_notif = false
+        }
       })
       idMatrixActual.value = idMatrix[0].id_matrix
     }
@@ -111,7 +123,9 @@
       const api = await Api.post('/approval/store_approval_detail', {
         id_matrix: matrixId,
         level: data[idx].level,
-        id_approval_auth: data[idx].id_approval_auth
+        id_approval_auth: data[idx].id_approval_auth,
+        is_notif: data[idx].is_notif ? 1 : 0,
+        is_flight: data[idx].is_flight ? 1 : 0
       })
 
       data[idx].forAdd = undefined
@@ -150,7 +164,9 @@
       const api = await Api.post(`/approval/update_data_approval_detail/${id}`, {
         id_matrix: matrixId,
         level: data[idx].level,
-        id_approval_auth: data[idx].id_approval_auth
+        id_approval_auth: data[idx].id_approval_auth,
+        is_notif: data[idx].is_notif ? 1 : 0,
+        is_flight: data[idx].is_flight ? 1 : 0
       })
       console.log(api)
       console.log('approval telah diubah!')
@@ -189,7 +205,9 @@
             fieldType.push({
               id_approval_auth : authorities.value,
               level: levelValue.value,
-              forAdd: false
+              forAdd: false,
+              is_notif: false,
+              is_flight: false
               // approverName : ''
             })
 
@@ -248,11 +266,6 @@
     watch(isVisible, () => {
 
       fetchJobBand()
-
-      approverLines.value.map((item) => {
-        item.is_flight_fetch = item.is_flight
-        item.is_notif_fetch = item.is_notif
-      })
 
       addCompanyData.value = referenceFetch.fetchCompanyResult
       addMenuData.value = sysconfigFetch.fetchMenuResult
@@ -551,21 +564,19 @@
                   <td>
                     <input 
                       :disabled="input.isEdit == false ? true : false"
-                      v-model="approverLines[index].is_notif_fetch"
+                      v-model="approverLines[index].is_notif"
                       class="h-6 w-6" 
                       type="checkbox"
-                      @click="approverLines[index].is_notif_fetch === true ? approverLines[index].is_notif = 1 : approverLines[index].is_notif = 0"
-                      @change="approverLines[index].is_notif_fetch === true ? approverLines[index].is_notif = 1 : approverLines[index].is_notif = 0"
+                      id="is_notif"
                     />
                   </td>
                   <td>
                     <input 
                       :disabled="input.isEdit == false ? true : false"
-                      v-model="approverLines[index].is_flight_fetch"
+                      v-model="approverLines[index].is_flight"
                       class="h-6 w-6" 
                       type="checkbox"
-                      @click="approverLines[index].is_flight_fetch === true ? approverLines[index].is_flight = 1 : approverLines[index].is_flight = 0"
-                      @change="approverLines[index].is_flight_fetch === true ? approverLines[index].is_flight = 1 : approverLines[index].is_flight = 0"
+                      id="is_flight"
                     />
                   </td>
 

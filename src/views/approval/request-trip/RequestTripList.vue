@@ -5,6 +5,7 @@ import Api from "@/utils/Api"
 import Navbar from "@/components/layout/Navbar.vue"
 import Sidebar from "@/components/layout/Sidebar.vue"
 import Footer from "@/components/layout/Footer.vue"
+import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue"
 
 import moment from "moment"
 
@@ -16,6 +17,11 @@ import iconView from "@/assets/view-details.png"
 import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
 import { useSidebarStore } from "@/stores/sidebar.js"
+
+let responseMessage = ref("")
+let isError = ref(false)
+let isLoading = ref(false)
+
 const sidebar = useSidebarStore()
 
 //for sort & search
@@ -33,12 +39,21 @@ let pageMultiplier = ref(10)
 let pageMultiplierReactive = computed(() => pageMultiplier.value)
 let paginateIndex = ref(0)
 
+let from = ref(0)
+let to = ref(0)
+let totalData = ref(0)
+let perPage = ref(1)
+let lastPage = ref(0)
+let searchTable = ref("")
+let additionalData = ref()
+
 let documentCodeData = ref([])
 
 //for paginations
 const onChangePage = (pageOfItem) => {
   paginateIndex.value = pageOfItem - 1
-  showingValue.value = pageOfItem;
+  showingValue.value = pageOfItem
+  fetchRequestTrip()
 }
 
 //for filter & reset button
@@ -97,54 +112,99 @@ const fetchRequestTrip = async () => {
     if(date.value[0] !== '' & date.value[1] !== '' & selectedType.value === 'Purpose') {
 
       console.log('masuk ke 1')
+      isLoading.value = true
 
       let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
       let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
 
-      let api = await Api.get(`/approval_request_trip/get_data?start_date=${firstDate}&end_date=${lastDate}`)
-      instanceArray = api.data.data
+      let api = await Api.get(`/approval_request_trip/get_data?start_date=${firstDate}&end_date=${lastDate}&search=${searchTable.value}&page=${paginateIndex.value + 1}&perPage=${pageMultiplier.value}`)
 
-      console.log(api)
+        instanceArray = api.data.data.data
+        sortedData.value = api.data.data.data
+      
+        additionalData.value = api.data.data
+        from.value = additionalData.value.from
+        to.value = additionalData.value.to
+        totalData.value = additionalData.value.total
+        perPage.value = additionalData.value.per_page
+        lastPage.value = additionalData.value.last_page
+
+        isLoading.value = false
+        isError.value = false
 
     }
     else if (date.value[0] !== '' & date.value[1] !== '' & selectedType.value !== 'Purpose') {
 
       console.log('masuk ke 2')
+      isLoading.value = true
 
       let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
       let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
 
-      let api = await Api.get(`/approval_request_trip/get_data?code_doc=${selectedType.value}&start_date=${firstDate}&end_date=${lastDate}`)
-      instanceArray = api.data.data
+      let api = await Api.get(`/approval_request_trip/get_data?code_doc=${selectedType.value}&start_date=${firstDate}&end_date=${lastDate}&search=${searchTable.value}&page=${paginateIndex.value + 1}&perPage=${pageMultiplier.value}`)
 
-      console.log(api)
+        instanceArray = api.data.data.data
+        sortedData.value = api.data.data.data
+      
+        additionalData.value = api.data.data
+        from.value = additionalData.value.from
+        to.value = additionalData.value.to
+        totalData.value = additionalData.value.total
+        perPage.value = additionalData.value.per_page
+        lastPage.value = additionalData.value.last_page
+
+        isLoading.value = false
+        isError.value = false
+
     }
     else if (date.value[0] === '' & date.value[1] === '' & selectedType.value !== 'Purpose') {
 
       console.log('masuk ke 3')
+      isLoading.value = true
       
-      let api = await Api.get(`/approval_request_trip/get_data?code_doc=${selectedType.value}`)
-      instanceArray = api.data.data
+      let api = await Api.get(`/approval_request_trip/get_data?code_doc=${selectedType.value}&search=${searchTable.value}&page=${paginateIndex.value + 1}&perPage=${pageMultiplier.value}`)
 
-      console.log(api)
+        instanceArray = api.data.data.data
+        sortedData.value = api.data.data.data
+      
+        additionalData.value = api.data.data
+        from.value = additionalData.value.from
+        to.value = additionalData.value.to
+        totalData.value = additionalData.value.total
+        perPage.value = additionalData.value.per_page
+        lastPage.value = additionalData.value.last_page
+
+        isLoading.value = false
+        isError.value = false
 
     }
     else if (date.value[0] === '' & date.value[1] === '' & selectedType.value === 'Purpose') {
 
       console.log('masuk ke 4')
+      isLoading.value = true
       
-      let api = await Api.get(`/approval_request_trip/get_data`)
-      instanceArray = api.data.data
+      let api = await Api.get(`/approval_request_trip/get_data?&search=${searchTable.value}&page=${paginateIndex.value + 1}&perPage=${pageMultiplier.value}`)
+          
+        instanceArray = api.data.data.data
+        sortedData.value = api.data.data.data
+      
+        additionalData.value = api.data.data
+        from.value = additionalData.value.from
+        to.value = additionalData.value.to
+        totalData.value = additionalData.value.total
+        perPage.value = additionalData.value.per_page
+        lastPage.value = additionalData.value.last_page
 
-      console.log(api)
+        isLoading.value = false
+        isError.value = false
 
     }
 
-    sortedData.value = instanceArray.reverse()
-
   } catch (error) {
-    console.log(error)
     sortedData.value = []
+    isLoading.value = false
+    isError.value = true
+    responseMessage.value = error?.response?.data?.message || error.message;
   }
 
 }
@@ -326,7 +386,8 @@ const getSessionForSidebar = () => {
             class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
           >
             <div class="block overflow-x-auto">
-              <table
+              
+              <table v-if="sortedData.length > 0"
                 class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
               >
                 <thead
@@ -369,8 +430,7 @@ const getSessionForSidebar = () => {
                 <tbody>
                   <tr
                     class="font-JakartaSans font-normal text-sm"
-                    v-for="data in sortedData.slice(paginateIndex * pageMultiplierReactive, (paginateIndex + 1) * pageMultiplierReactive)"
-                    :key="data.id"
+                    v-for="data in sortedData"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
@@ -395,6 +455,166 @@ const getSessionForSidebar = () => {
                   </tr>
                 </tbody>
               </table>
+
+              <table
+              v-else-if="isLoading"
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+              >
+              
+              <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
+                  <tr>
+                    <th>
+
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+
+                    </th>
+
+                    <th
+                      v-for="data in tableHead"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
+                  </tr>
+              </thead>
+
+              <SkeletonLoadingTable :column="8" :row="5" />
+            
+            </table>
+
+              <table
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === false"
+              >
+
+              <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
+                  <tr>
+                    <th>
+
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+
+                    </th>
+
+                    <th
+                      v-for="data in tableHead"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
+                  </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="6"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                    Tidak ada data
+                  </td>
+                </tr>
+              </tbody>
+
+              </table>
+
+              <table
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === true"
+              >
+
+              <thead
+                  class="text-center font-JakartaSans text-sm font-bold h-10"
+                >
+                  <tr>
+                    <th>
+
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+
+                    </th>
+
+                    <th
+                      v-for="data in tableHead"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
+                  </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="6"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                  <div>
+                    Terjadi error!
+                  </div>
+                    {{ responseMessage }}
+                  </td>
+                </tr>
+              </tbody>
+
+              </table>
+
             </div>
           </div>
 
@@ -403,19 +623,19 @@ const getSessionForSidebar = () => {
             class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2"
           >
             <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-              Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-              {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-              of {{ sortedData.length }} entries
+              Showing {{ from }} to {{ to }} of {{ totalData }}
             </p>
+
             <vue-awesome-paginate
-              :total-items="sortedData.length"
-              :items-per-page="parseInt(pageMultiplierReactive)"
+              :total-items="totalData"
+              :items-per-page="parseInt(perPage)"
               :on-click="onChangePage"
               v-model="showingValue"
               :max-pages-shown="4"
               :show-breakpoint-buttons="false"
-              :show-jump-buttons="true"
+              :show-ending-buttons="true"
             />
+
           </div>
         </div>
       </div>
