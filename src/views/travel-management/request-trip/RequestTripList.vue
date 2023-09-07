@@ -50,6 +50,17 @@
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let paginateIndex = ref(0)
 
+    let from = ref(0);
+    let to = ref(0);
+    let totalData = ref(0);
+    let perPage = ref(1);
+    let lastPage = ref(0);
+    let searchTable = ref("");
+    let additionalData = ref();
+    let showingValueDuplicate = ref(showingValue.value);
+    let idFilter = ref(0);
+    let roleIdFilter = ref(0);
+
     //for check & uncheck all
     const selectAll = (checkValue) => {
       const checkList = checkValue;
@@ -90,18 +101,35 @@
           let firstDate = moment(date.value[0]).format("YYYY-MM-DD")
           let lastDate = moment(date.value[1]).format("YYYY-MM-DD")
 
-          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}`)
-          instanceArray = api.data.data
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&start_date=${firstDate}&end_date=${lastDate}&search=${searchTable.value}&page=${paginateIndex.value}&perPage=${pageMultiplier.value}`
+            )
+          
+          instanceArray = api.data.data.data
+          additionalData.value = api.data.data
+          sortedData.value = api.data.data.data
+
+          from.value = additionalData.value.from
+          to.value = additionalData.value.to
+          totalData.value = additionalData.value.total
+          perPage.value = additionalData.value.per_page
+          lastPage.value = additionalData.value.last_page
 
         } else {
           
           console.log('tidak ada tanggal nya')
-          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}`)
-          instanceArray = api.data.data
+          let api = await Api.get(`/request_trip/get?document=${requestTripType.value}&search=${searchTable.value}&page=${paginateIndex.value + 1}&perPage=${pageMultiplier.value}`)
+
+          instanceArray = api.data.data.data
+          additionalData.value = api.data.data
+          sortedData.value = api.data.data.data
+
+          from.value = additionalData.value.from
+          to.value = additionalData.value.to
+          totalData.value = additionalData.value.total
+          perPage.value = additionalData.value.per_page
+          lastPage.value = additionalData.value.last_page
           
         }
-
-        sortedData.value = instanceArray
 
       } catch (error) {
         console.log(error)
@@ -138,8 +166,9 @@
 
     //for paginations
     const onChangePage = (pageOfItem) => {
-      paginateIndex.value = pageOfItem - 1;
-      showingValue.value = pageOfItem;
+      paginateIndex.value = pageOfItem - 1
+      showingValue.value = pageOfItem
+      fetch()
     }
 
     const deleteData = async (event) => {
@@ -430,13 +459,9 @@
                 </thead>
 
                 <tbody>
-                  
+                
                   <tr class="font-JakartaSans font-normal text-sm"
-                    v-for="(data, index) in sortedData.slice(
-                        paginateIndex * pageMultiplierReactive,
-                        (paginateIndex + 1) * pageMultiplierReactive
-                      )"
-                    :key="data.id"
+                    v-for="(data, index) in sortedData"
                   >
                     <td>
                       <input type="checkbox" name="checks" />
@@ -465,20 +490,18 @@
             <!-- PAGINATION -->
             <div class="flex flex-wrap justify-center lg:justify-between items-center mx-4 py-2">
 
-              <p class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
-                Showing {{ (showingValue - 1) * pageMultiplier + 1 }} to
-                {{ Math.min(showingValue * pageMultiplier, sortedData.length) }}
-                of {{ sortedData.length }} entries
+              <p  class="font-JakartaSans text-xs font-normal text-[#888888] py-2">
+                Showing {{ from }} to {{ to }} of {{ totalData }}
               </p>
 
               <vue-awesome-paginate
-                :total-items="sortedData.length"
-                :items-per-page="parseInt(pageMultiplierReactive)"
+                :total-items="totalData"
+                :items-per-page="parseInt(perPage)"
                 :on-click="onChangePage"
                 v-model="showingValue"
                 :max-pages-shown="4"
                 :show-breakpoint-buttons="false"
-                :show-jump-buttons="true"
+                :show-ending-buttons="true"
               />
 
             </div>
