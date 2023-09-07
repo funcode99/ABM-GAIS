@@ -636,6 +636,7 @@ const inputStylingClass =
             </p>
 
             <div class="flex gap-5">
+              
               <div class="flex gap-2 items-center">
                 <label for="pagination-sequence"> </label>
                 <input
@@ -661,6 +662,7 @@ const inputStylingClass =
                 :show-breakpoint-buttons="false"
                 :show-ending-buttons="true"
               />
+
             </div>
           </div>
         </div>

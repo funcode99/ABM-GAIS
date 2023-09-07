@@ -50,16 +50,13 @@
     let pageMultiplierReactive = computed(() => pageMultiplier.value)
     let paginateIndex = ref(0)
 
-    let from = ref(0);
-    let to = ref(0);
-    let totalData = ref(0);
-    let perPage = ref(1);
-    let lastPage = ref(0);
-    let searchTable = ref("");
-    let additionalData = ref();
-    let showingValueDuplicate = ref(showingValue.value);
-    let idFilter = ref(0);
-    let roleIdFilter = ref(0);
+    let from = ref(0)
+    let to = ref(0)
+    let totalData = ref(0)
+    let perPage = ref(1)
+    let lastPage = ref(0)
+    let searchTable = ref("")
+    let additionalData = ref()
 
     //for check & uncheck all
     const selectAll = (checkValue) => {
