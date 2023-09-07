@@ -624,6 +624,7 @@ const inputStylingClass =
                   </td>
                 </tr>
               </tbody>
+              
             </table>
           </div>
 

@@ -3,6 +3,7 @@
     import Navbar from "@/components/layout/Navbar.vue"
     import Sidebar from "@/components/layout/Sidebar.vue"
     import Footer from "@/components/layout/Footer.vue"
+    import SkeletonLoadingTable from "@/components/layout/SkeletonLoadingTable.vue"
 
     import RequestTripModal from "@/components/request-trip/company-business/RequestTripModal.vue"
 
@@ -30,6 +31,9 @@
 
     import { useReferenceFetchResult } from '@/stores/fetch/reference.js'
     import { useSidebarStore } from "@/stores/sidebar.js"
+
+    let responseStatus = ref("")
+
     const sidebar = useSidebarStore()
     const referenceFetch = useReferenceFetchResult()
 
@@ -131,6 +135,7 @@
       } catch (error) {
         console.log(error)
         sortedData.value = []
+        responseStatus.value = error.response.status;
       }
 
     }
@@ -427,7 +432,10 @@
 
           <div class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden">
 
-            <table class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg">
+            <table 
+              v-if="sortedData.length > 0" 
+              class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
+              >
 
                 <thead class="text-center font-JakartaSans text-sm font-bold h-10">
                   
@@ -488,6 +496,99 @@
                       <button @click="deleteData(data.id)">
                         <img :src="deleteicon" class="w-6 h-6" />
                       </button>
+                    </td>
+                  </tr>
+                </tbody>
+
+            </table>
+
+            <table
+              v-else-if="sortedData.length == 0 && responseStatus == ''"
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+            >
+
+              <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="chklead"
+                        @click="selectAll((checkLead = !checkLead))"
+                      />
+                    </div>
+                  </th>
+                  <th
+                    v-for="data in tableHeadTaxiVoucher"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                      <button class="">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </span>
+                  </th>
+                  <th>
+                    <div class="text-center">Actions</div>
+                  </th>
+                </tr>
+              </thead>
+
+              <SkeletonLoadingTable :column="8" :row="5" />
+
+            </table>
+
+            <table v-else-if="
+              (sortedData.length == 0 && responseStatus == 200) ||
+              (sortedData.length == 0 && responseStatus == 404)
+            ">
+              
+                <thead class="text-center font-JakartaSans text-sm font-bold h-10">
+                  
+                  <tr>
+
+                    <th>
+                      <div class="flex justify-center">
+                        <input
+                          type="checkbox"
+                          name="checked"
+                          @click="selectAll((checkList = !checkList))"
+                        />
+                      </div>
+                    </th>
+
+                    <th
+                      v-for="data in tableHeadTaxiVoucher"
+                      :key="data.Id"
+                      class="overflow-x-hidden cursor-pointer"
+                      @click="sortList(`${data.jsonData}`)"
+                    >
+                      <span class="flex justify-center items-center gap-1">
+                        {{ data.title }}
+                        <button>
+                          <img :src="arrowicon" class="w-[9px] h-3" />
+                        </button>
+                      </span>
+                    </th>
+
+                    <th class="h-full flex justify-center items-center overflow-x-hidden">
+                        Actions
+                    </th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td
+                      colspan="6"
+                      class="text-center font-JakartaSans text-base font-medium"
+                    >
+                      Tidak ada data
                     </td>
                   </tr>
                 </tbody>

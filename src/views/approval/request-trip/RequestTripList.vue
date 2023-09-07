@@ -16,6 +16,8 @@ import iconView from "@/assets/view-details.png"
 import arrowicon from "@/assets/navbar/icon_arrow.svg"
 
 import { useSidebarStore } from "@/stores/sidebar.js"
+
+let responseStatus = ref("")
 const sidebar = useSidebarStore()
 
 //for sort & search
@@ -188,6 +190,7 @@ const fetchRequestTrip = async () => {
   } catch (error) {
     console.log(error)
     sortedData.value = []
+    responseStatus.value = error.response.status;
   }
 
 }
