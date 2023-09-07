@@ -398,7 +398,7 @@ onBeforeMount(() => {
 });
 
 const inputStylingClass =
-  "py-2 px-2 w-20 text-center border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm font-JakartaSans font-semibold text-base";
+  "py-2 px-2 w-20 text-center border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:border-sky-500 focus:ring-sky-500 focus:ring-1 sm:text-sm font-JakartaSans font-semibold text-base"
 
 </script>
 

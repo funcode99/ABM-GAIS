@@ -131,7 +131,6 @@
       } catch (error) {
         console.log(error)
         sortedData.value = []
-        date.value = ['', '']
       }
 
     }
@@ -227,21 +226,32 @@
 
     const filteredItems = () => {
 
-      sortedData.value = instanceArray
-        
-      const filteredR = sortedData.value.filter(item => {
-        
-        return (
-          (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
-          (item.status.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
-        )
+      if (typeof search.value !== "undefined") {
+        searchTable.value = search.value
+        fetch()
+      } else if (search.value === "") {
+        searchTable.value = search.value
+        fetch()
+      } else {
+        fetch()
+      }
 
-      })
+      // sortedData.value = instanceArray
+        
+      // const filteredR = sortedData.value.filter(item => {
+        
+      //   return (
+      //     (item.created_at.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.no_request_trip.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.employee_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.document_name.toLowerCase().indexOf(search.value.toLowerCase()) > -1) |
+      //     (item.status.toLowerCase().indexOf(search.value.toLowerCase()) > -1)
+      //   )
 
-      sortedData.value = filteredR
+      // })
+
+      // sortedData.value = filteredR
+
       onChangePage(1)
       
     }
