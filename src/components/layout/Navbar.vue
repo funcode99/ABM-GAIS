@@ -36,7 +36,7 @@ let sortedDataApproval = ref([]);
 let instanceArrayApproval = [];
 
 const changeViewStatus = () => {
-  isOpen.value = false;
+  isOpen.value = false
 };
 
 const changeTab = (index) => {
@@ -375,6 +375,7 @@ const format_date = (value) => {
 
           <!-- profile -->
           <div class="relative cursor-pointer">
+            
             <div
               class="rounded-full flex items-center bg-[#E4E4E4] w-[195px] h-[60px]"
               @click="isOpen = !isOpen"
@@ -426,12 +427,11 @@ const format_date = (value) => {
                   <a>Settings</a>
                 </button>
               </li>
-              <li @click="logout" class="py-2 border-b-2">
-                <button  type="button">
+                <button type="button" @click="logout" class="py-2 border-b-2">
                   <a>Logout</a>
                 </button>
-              </li>
             </ul>
+
           </div>
         </div>
       </div>
