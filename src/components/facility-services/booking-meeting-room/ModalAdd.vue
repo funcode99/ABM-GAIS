@@ -801,7 +801,7 @@ onMounted(async () => {
                 </div>
                 <div :class="colClass">
                   <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                    >Recurrence</label
+                    >Recurrent</label
                   >
                   <input
                     type="checkbox"
@@ -817,7 +817,7 @@ onMounted(async () => {
                   class="align-top h-full"
                 >
                   <label class="block mb-2 font-JakartaSans font-medium text-sm"
-                    >Recurrence Type<span class="text-red">*</span></label
+                    >Recurrent Type<span class="text-red">*</span></label
                   >
                   <select
                     v-model="recurrence"
