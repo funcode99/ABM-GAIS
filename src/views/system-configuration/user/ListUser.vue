@@ -39,6 +39,9 @@ import { useMenuAccessStore } from "@/stores/savemenuaccess";
 import { useReferenceFetchResult } from "@/stores/fetch/reference";
 import { useSysconfigFetchResult } from "@/stores/fetch/sysconfig";
 
+let isError = ref(false)
+let isLoading = ref(false)
+
 const sidebar = useSidebarStore();
 const formState = useFormAddStore();
 const formEditState = useFormEditStore();
@@ -59,8 +62,7 @@ let showingValue = ref(1);
 let pageMultiplier = ref(10);
 let paginateIndex = ref(0);
 
-// for catch status & message response from server when status is not 2xx
-let responseStatus = ref("");
+// for catch message response from server when status is not 2xx
 let responseMessage = ref("");
 
 let addRoleData = ref([]);
@@ -327,6 +329,9 @@ const runfetch = () => {
 
 const fetch = async () => {
   try {
+
+    isLoading.value = true
+
     const token = JSON.parse(localStorage.getItem("token"));
     Api.defaults.headers.common.Authorization = `Bearer ${token}`;
     const showApi = await Api.get(
@@ -346,10 +351,16 @@ const fetch = async () => {
     totalData.value = additionalData.value.total;
     perPage.value = additionalData.value.per_page;
     lastPage.value = additionalData.value.last_page;
+
+    isLoading.value = false
+    // isError.value = false  
+
   } catch (error) {
-    responseStatus.value = error.response.status;
-    responseMessage.value = error.response.data.message;
     sortedData.value = [];
+    isLoading.value = false
+    isError.value = true
+    // harus double bro garis lurus nya
+    responseMessage.value = error?.response?.data?.message || error.message;
   }
 };
 
@@ -432,6 +443,7 @@ const inputStylingClass =
           class="px-4 py-2 bg-white rounded-b-xl box-border block overflow-x-hidden"
         >
           <div class="block overflow-x-auto">
+
             <table
               v-if="sortedData.length > 0"
               class="table table-zebra table-compact border w-screen sm:w-full h-full rounded-lg"
@@ -541,7 +553,7 @@ const inputStylingClass =
             </table>
 
             <table
-              v-else-if="sortedData.length == 0 && responseStatus == ''"
+              v-else-if="isLoading"
               class="table table-zebra table-compact border h-full w-full rounded-lg"
             >
               <thead class="text-center font-Montserrat text-sm font-bold h-10">
@@ -578,12 +590,10 @@ const inputStylingClass =
             </table>
 
             <table
-              v-else-if="
-                (sortedData.length == 0 && responseStatus == 200) ||
-                (sortedData.length == 0 && responseStatus == 404)
-              "
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === false"
               class="table table-zebra table-compact border h-full w-full rounded-lg"
             >
+
               <thead class="text-center font-Montserrat text-sm font-bold h-10">
                 <tr>
                   <th>
@@ -626,6 +636,58 @@ const inputStylingClass =
               </tbody>
               
             </table>
+
+            <table
+              v-else-if="sortedData.length === 0 && isLoading === false && isError === true"
+              class="table table-zebra table-compact border h-full w-full rounded-lg"
+            >
+
+              <thead class="text-center font-Montserrat text-sm font-bold h-10">
+                <tr>
+                  <th>
+                    <div class="flex justify-center">
+                      <input
+                        type="checkbox"
+                        name="chklead"
+                        @click="selectAll((checkLead = !checkLead))"
+                      />
+                    </div>
+                  </th>
+                  <th
+                    v-for="data in tableHead"
+                    :key="data.Id"
+                    class="overflow-x-hidden cursor-pointer"
+                    @click="sortList(`${data.jsonData}`)"
+                  >
+                    <span class="flex justify-center items-center gap-1">
+                      {{ data.title }}
+                      <button class="">
+                        <img :src="arrowicon" class="w-[9px] h-3" />
+                      </button>
+                    </span>
+                  </th>
+                  <th>
+                    <div class="text-center">Actions</div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr>
+                  <td
+                    colspan="6"
+                    class="text-center font-JakartaSans text-base font-medium"
+                  >
+                  <div>
+                    Terjadi error!
+                  </div>
+                    {{ responseMessage }}
+                  </td>
+                </tr>
+              </tbody>
+              
+            </table>
+
           </div>
 
           <!-- PAGINATION -->
